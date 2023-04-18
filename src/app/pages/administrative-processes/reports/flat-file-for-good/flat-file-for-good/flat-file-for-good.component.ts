@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 interface IExcelToJson {
@@ -19,7 +21,11 @@ interface IExcelToJson {
 export class FlatFileForGoodComponent extends BasePage implements OnInit {
   flatFileGoodForm: ModelForm<any>;
   data: IExcelToJson[] = [];
-  constructor(private fb: FormBuilder, private excelService: ExcelService) {
+  constructor(
+    private fb: FormBuilder,
+    private excelService: ExcelService,
+    private siabService: SiabService
+  ) {
     super();
   }
 
@@ -56,5 +62,34 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
+  }
+
+  onSubmit() {
+    console.log(this.flatFileGoodForm.value);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERADBFILEAEXCEL.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+
+    // Crea enlace de etiqueta anchor con js
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+
+    let params = { ...this.flatFileGoodForm.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+
+    setTimeout(() => {
+      this.siabService
+        .getReport(SiabReportEndpoints.FGERADBFILEAEXCEL, params)
+        .subscribe({
+          next: response => {
+            console.log(response);
+            window.open(pdfurl, 'DOCUMENT');
+          },
+          error: () => {
+            window.open(pdfurl, 'DOCUMENT');
+          },
+        });
+    }, 4000);
   }
 }

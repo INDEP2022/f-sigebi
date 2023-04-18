@@ -34,6 +34,28 @@ export class MsIndicatorGoodsService extends HttpService {
     return this.put(this.endpoint, model);
   }
 
+  getByGoodRastrer(goodNumber: number[], good: IGoodsByProceeding) {
+    return this.post<IListResponse<IGoodsByProceeding[]>>(
+      this.endpoint + '/Insert',
+      { goodNumber }
+    ).pipe(
+      map(items => {
+        const data = items.data;
+        return {
+          ...items,
+          data: data.map(item => {
+            const row = item[0];
+            return {
+              ...row,
+              fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
+              fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+            };
+          }),
+        };
+      })
+    );
+  }
+
   getCountDictationByAct(area: string, acta: string) {
     return this.get<IListResponse<{ count: number }>>(
       this.endpoint + '/getCountDictation/' + area + '/' + acta

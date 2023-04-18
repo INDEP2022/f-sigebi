@@ -40,7 +40,7 @@ export const COLUMNS = {
     sort: false,
   },
   saeNumb: {
-    title: 'No. SAE',
+    title: 'No. INDEP',
     type: 'number',
     sort: false,
   },

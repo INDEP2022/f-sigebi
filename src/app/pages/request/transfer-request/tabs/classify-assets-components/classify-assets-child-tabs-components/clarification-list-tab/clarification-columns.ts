@@ -1,6 +1,6 @@
 export const CLARIFICATION_COLUMNS = {
   rejectionDate: {
-    title: 'Fecha de aclaracion',
+    title: 'Fecha de Aclaración',
     type: 'string',
     sort: false,
   },

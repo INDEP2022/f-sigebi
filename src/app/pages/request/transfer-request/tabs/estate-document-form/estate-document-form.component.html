@@ -26,7 +26,11 @@
         <form-field
           [control]="searchForm.get('goodId')"
           label="N&uacute;mero de gesti&oacute;n">
-          <input type="text" class="form-control" formControlName="goodId" />
+          <input
+            type="number"
+            class="form-control"
+            formControlName="goodId"
+            min="0" />
         </form-field>
       </div>
 
@@ -50,7 +54,11 @@
         <form-field
           [control]="searchForm.get('requestId')"
           label="N&uacute;mero de solicitud">
-          <input type="text" class="form-control" formControlName="requestId" />
+          <input
+            type="number"
+            class="form-control"
+            formControlName="requestId"
+            min="0" />
         </form-field>
       </div>
 

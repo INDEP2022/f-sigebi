@@ -3,20 +3,24 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthModel } from 'src/app/core/models/authentication/auth.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends BasePage implements OnInit {
   loginForm: FormGroup;
+  showPassword: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -26,6 +30,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+    this.loading = true;
     let { username, password } = this.loginForm.value;
     let token: AuthModel;
     let roles: any; //RolesModel;
@@ -37,16 +42,22 @@ export class LoginComponent implements OnInit {
     this.authService
       .getToken(username, encodeURIComponent(password))
       .subscribe({
+        error: () => (this.loading = false),
         next: data => {
           token = data;
         },
         complete: () => {
           localStorage.setItem('token', token.access_token);
+          localStorage.setItem('r_token', token.refresh_token);
           if (this.authService.existToken()) {
             let uidUser = this.authService.decodeToken().sub;
             this.authService.getRoles(uidUser).subscribe({
               next: data => {
+                this.loading = false;
                 roles = data;
+              },
+              error: () => {
+                this.loading = false;
               },
               complete: () => {
                 localStorage.setItem('username', username);

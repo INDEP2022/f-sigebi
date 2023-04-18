@@ -6,7 +6,6 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IOrderService } from 'src/app/core/models/ms-order-service/order-service.mode';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -18,7 +17,10 @@ import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.serv
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
-import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
+import {
+  RETURN_USER_SELECTED_COLUMNS,
+  TURN_SELECTED_COLUMNS,
+} from './request-in-turn-selected-columns';
 
 @Component({
   selector: 'app-select-tipe-user',
@@ -29,6 +31,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   userForm: ModelForm<any>;
   data: any; // solicitud pasada por el modal
   typeAnnex: string;
+  task: any = null;
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -53,21 +56,35 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data);
+    let column: any = null;
+    if (this.typeAnnex === 'commit-request') {
+      column = TURN_SELECTED_COLUMNS;
+    } else if (this.typeAnnex === 'returnado') {
+      column = RETURN_USER_SELECTED_COLUMNS;
+    }
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
-      columns: TURN_SELECTED_COLUMNS,
+      columns: column,
     };
     this.initForm();
 
-    this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
-      this.getUsers();
-      this.TLPMessage();
-    });
+    //TRAE USUARIOS QUE SERAN ASIGNADOS PARA LA SIGUIENTE TAREA
+    if (this.typeAnnex === 'commit-request') {
+      this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
+        this.getUsers();
+        this.TLPMessage();
+      });
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getUsers();
-    });
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getUsers();
+      });
+      //TRAE USUARIOS PARA RE TURNAR LA SOLICIUTD
+    } else if (this.typeAnnex === 'returnado') {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getReturnUsers();
+      });
+    }
   }
 
   initForm() {
@@ -126,6 +143,28 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     }
   }
 
+  getReturnUsers() {
+    /*this.params.value.addFilter(
+      'rol',
+      'SolicitudProgramacion.DelegadosRegionales'
+    );
+    this.params.value.addFilter('employeetype', 'DR');*/
+    const filter = this.params.getValue().getParams();
+    this.userProcessService.getAllUsersWithRol(filter).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
+        this.loading = false;
+        this.params.value.removeAllFilters();
+      },
+      error: error => {
+        this.loading = false;
+        this.params.value.removeAllFilters();
+      },
+    });
+  }
+
   async turnRequest() {
     if (this.user) {
       this.loader.load = true;
@@ -147,11 +186,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           let form: any = {};
           form['ddocTitle'] = `Solicitud_${this.data.id}`;
           form['xidExpediente'] = this.data.recordId;
-          form['ddocType'] = 'Document';
-          form['xNombreProceso'] = 'Captura Solicitud';
+          form['dDocType'] = 'Document';
+          form['xnombreProceso'] = 'Captura Solicitud';
           form['dSecurityGroup'] = 'Public';
-          form['xNivelRegistroNSBDB'] = 'Solicitud';
-          form['xTipoDocumento'] = '90';
+          form['xnivelRegistroNSBDB'] = 'Solicitud';
+          form['xtipoDocumento'] = '90';
           form['xnoOficio'] = this.data.paperNumber;
           form['xremitente'] = this.data.nameOfOwner;
           form['xcargoRemitente'] = this.data.holderCharge;
@@ -161,41 +200,55 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           }
           form['xidSolicitud'] = this.data.id;
           if (this.data.transferenceId) {
-            form['transferenceId'] = this.data.transferenceId;
+            form['xidTransferente'] = this.data.transferenceId;
           }
-
+          form['xdelegacionRegional'] = this.data.regionalDelegationId;
           const file: any = report;
           //TODO: Guardarlo en el content
           const addToContent = await this.addDocumentToContent(form, file);
           if (addToContent) {
             const docName = addToContent;
             console.log(docName);
+            const actualUser: any = this.authService.decodeToken();
             const title =
               'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
               this.data.id;
             const url = 'pages/request/transfer-request/verify-compliance';
+            const from = 'REGISTRO_SOLICITUD';
+            const to = 'VERIFICAR_CUMPLIMIENTO';
             /* crea una nueva tarea */
-            const taskResponse = await this.createTask(title, url);
+            debugger;
+            const taskResponse = await this.createTaskOrderService(
+              this.data,
+              title,
+              url,
+              from,
+              to,
+              true,
+              this.task.id,
+              actualUser.username,
+              'SOLICITUD_TRANSFERENCIA',
+              'Registro_Solicitud',
+              'TURNAR'
+            );
             if (taskResponse) {
-              const from = 'REGISTRO_SOLICITUD';
-              const to = 'VERIFICAR_CUMPLIMIENTO';
               /* actualizar status del bien */
-              const orderServResult = await this.createOrderService(from, to);
+              // const orderServResult = await this.createOrderService(from, to);
 
-              if (orderServResult) {
-                this.loader.load = false;
-                Swal.fire({
-                  title: 'Solicitud Turnada',
-                  text: 'La solicitud se turno correctamente',
-                  icon: 'success',
-                  showCancelButton: false,
-                  confirmButtonColor: '#9D2449',
-                  cancelButtonColor: '#B38E5D',
-                  confirmButtonText: 'Aceptar',
-                }).then(result => {
-                  this.close();
-                });
-              }
+              // if (orderServResult) {
+              this.loader.load = false;
+              Swal.fire({
+                title: 'Solicitud Turnada',
+                text: 'La solicitud se turno correctamente',
+                icon: 'success',
+                showCancelButton: false,
+                confirmButtonColor: '#9D2449',
+                cancelButtonColor: '#B38E5D',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {
+                this.closeAll();
+              });
+              //}
             }
           }
         }
@@ -206,6 +259,58 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         'Seleccione un usuario',
         'Es requerido seleccionar un usuario'
       );
+    }
+  }
+
+  /* returnar la solicitud */
+  async ReturnRequest() {
+    const actualUser: any = this.authService.decodeToken();
+    this.loader.load = true;
+    this.data.observations =
+      'Solicitud Returnada por la Delegacion Regional ' +
+      this.user.delegationreg;
+    this.data.targetUserType = 'DR';
+    this.data.requestStatus = 'Captura';
+    this.data.targetUser = this.user.id;
+
+    const requestResult = await this.saveRequest(this.data);
+    if (requestResult === true) {
+      this.loader.load = false;
+
+      const title =
+        'Registro de solicitud (Captura de Solicitud) con folio: ' +
+        this.data.id;
+      const url = 'pages/request/transfer-request/registration-request';
+      const from = 'REGISTRO_SOLICITUD';
+      const to = 'REGISTRO_SOLICITUD';
+      /* crea una nueva tarea */
+
+      const taskResponse = await this.createTaskOrderService(
+        this.data,
+        title,
+        url,
+        from,
+        to,
+        false,
+        0,
+        actualUser.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Registro_Solicitud',
+        'RETURNAR'
+      );
+      if (taskResponse) {
+        Swal.fire({
+          title: 'Solicitud Returnada',
+          text: 'La solicitud se returno correctamente',
+          icon: 'success',
+          showCancelButton: false,
+          confirmButtonColor: '#9D2449',
+          cancelButtonColor: '#B38E5D',
+          confirmButtonText: 'Aceptar',
+        }).then(result => {
+          this.closeAll();
+        });
+      }
     }
   }
 
@@ -265,32 +370,62 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     });
   }
 
-  createTask(title: string, url: string) {
+  createTaskOrderService(
+    request: any,
+    title: string,
+    url: string,
+    from: string,
+    to: string,
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
+  ) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
       const user: any = this.authService.decodeToken();
-      body['id'] = 0;
-      body['assignees'] = this.user.username;
-      body['assigneesDisplayname'] = this.user.firstName;
-      body['creator'] = user.username;
-      body['taskNumber'] = Number(this.data.id);
-      body['title'] =
-        'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
-        this.data.id;
-      /* body['isPublic'] = 's';
-      body['istestTask'] = 's'; */
-      body['programmingId'] = 0;
-      body['requestId'] = this.data.id;
-      body['expedientId'] = this.data.recordId;
-      body['urlNb'] = url;
-      this.taskService.createTask(body).subscribe({
+      let body: any = {};
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.user.username;
+      task['assigneesDisplayname'] = this.user.firstName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(request.id);
+      task['title'] = title;
+      task['programmingId'] = 0;
+      task['requestId'] = request.id;
+      task['expedientId'] = 0;
+      task['urlNb'] = url;
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = from;
+      orderservice['pNewStatus'] = to;
+      orderservice['pIdApplication'] = request.id;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+      debugger;
+      this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
+          console.log(error.error.message);
           this.loader.load = false;
-          console.log(error);
-          this.message('error', 'Error', 'Error crear la tarea');
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
         },
       });
     });
@@ -321,36 +456,10 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     });
   }
 
-  createOrderService(from: string, to: string) {
-    return new Promise((resolve, reject) => {
-      let orderservice: IOrderService = {};
-      orderservice.P_ESTATUS_ACTUAL = from;
-      orderservice.P_ESTATUS_NUEVO = to;
-      orderservice.P_ID_SOLICITUD = this.data.id;
-      orderservice.P_SIN_BIENES = '';
-      orderservice.P_BIENES_ACLARACION = '';
-      orderservice.P_FECHA_INSTANCIA = '';
-      orderservice.P_FECHA_ACTUAL = '';
-      orderservice.P_ORDEN_SERVICIO_IN = '';
-      orderservice.P_ORDEN_SERVICIO_OUT = '';
-      this.orderService.UpdateStatusGood(orderservice).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          this.loader.load = false;
-          this.message(
-            'error',
-            'Error',
-            'Error al actualizar el estatus del bien'
-          );
-          reject(error.error.message);
-        },
-      });
-    });
-  }
-
   close() {
+    this.modalRef.hide();
+  }
+  closeAll() {
     this.modalRef.hide();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }

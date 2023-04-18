@@ -14,7 +14,7 @@
         <div class="row justify-content-center">
           <div class="col-12 col-sm-12 col-md-5">
             <search-bar-simple
-              (eventEmit)="searchGoods($event)"
+              (eventEmit)="loadFinancial($event)"
               [label]="''"
               [placeholder]="'N&uacute;mero de Bien'">
             </search-bar-simple>
@@ -77,12 +77,9 @@
                   class="col-md-12"
                   [attr.class]="'table-bordered'"
                   [settings]="settings1"
-                  [source]="data1"></ng2-smart-table>
+                  [source]="finantialList"></ng2-smart-table>
               </div>
             </div>
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems1"></app-pagination>
           </div>
         </div>
         <div class="col-md-6">
@@ -95,7 +92,8 @@
                   class="col-md-12"
                   [attr.class]="'table-bordered'"
                   [settings]="settings2"
-                  [source]="data2"></ng2-smart-table>
+                  [source]="finantialList"
+                  (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
               </div>
             </div>
             <app-pagination
@@ -118,14 +116,10 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          text="Actualizar"
-          [disabled]="form.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+      <!-- <div class="m-3">
+        <confirm-button text="Actualizar" [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
-      </div>
+      </div> -->
       <div class="m-3">
         <button
           type="button"

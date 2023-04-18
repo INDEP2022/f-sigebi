@@ -79,7 +79,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
-  headingWarehouse: string = `Almacén SAE(0)`;
+  headingWarehouse: string = `Almacén INDEP(0)`;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -195,7 +195,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           const usersData = response.data.map(items => {
-            items.userCharge = items.charge.description;
+            items.userCharge = items.charge?.description;
             return items;
           });
 
@@ -359,12 +359,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           // queda pendiente mostrar el alías del almacén //
-
-          console.log('El brincos dieras', response);
           this.goodsInfoWarehouse.push(response);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+          this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
         },
       });
     });

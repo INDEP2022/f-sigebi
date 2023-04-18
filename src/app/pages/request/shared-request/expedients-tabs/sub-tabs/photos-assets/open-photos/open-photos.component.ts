@@ -52,7 +52,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
   getImagesGood() {
     const idReq: Object = {
-      xidSolicitud: this.information.requestId,
       xidBien: this.information.id,
     };
 
@@ -60,8 +59,32 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });
-      this.paragraphs.load(_data);
-      this.totalItems = this.paragraphs.count();
+
+      if (_data.length > 0) {
+        this.paragraphs.load(_data);
+        this.totalItems = this.paragraphs.count();
+      } else {
+        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+      }
+    });
+  }
+
+  updateInfoPhotos() {
+    const idReq: Object = {
+      xidBien: this.information.id,
+    };
+
+    this.wContentService.getDocumentos(idReq).subscribe(data => {
+      const _data = data.data.filter((img: any) => {
+        if (img.dDocType == 'DigitalMedia') return img;
+      });
+
+      if (_data.length > 0) {
+        this.paragraphs.load(_data);
+        this.totalItems = this.paragraphs.count();
+      } else {
+        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+      }
     });
   }
 

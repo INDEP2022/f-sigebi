@@ -1,5 +1,6 @@
 import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
+import { IExpedient } from '../ms-expedient/expedient';
 
 export interface IGood {
   id?: number;
@@ -334,7 +335,7 @@ export interface IGood {
   val118?: string;
   val119?: string;
   val120?: string;
-
+  expediente?: IExpedient;
   no_almacen?: IWarehouse;
   no_boveda?: any;
   no_etiqueta?: ILabelOKey;
@@ -357,6 +358,19 @@ export interface Estatus {
   fecVilidityFin?: any;
   observationShortStatus?: any;
   destiny: string;
+}
+
+export interface GoodGetData {
+  goodNumber: number;
+  subDelegationNumber: number;
+  clasifGoodNumber: number;
+  expedientNumber: number;
+  delegationNumber: number;
+  dateElaboration: string | Date;
+  identificator: string;
+  processExt: string;
+  statusGood: string;
+  screenKey: string;
 }
 
 // TODO: Checar si la interfaz es la del modelo:

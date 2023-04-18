@@ -48,6 +48,10 @@ export class TaskService extends HttpService {
     return this.post<any>(TaskEndpoints.Create, body);
   }
 
+  createTaskWitOrderService(body: Object) {
+    return this.post<any>(TaskEndpoints.TaskWithOrderService, body);
+  }
+
   getAll(params: ListParams | string): Observable<any> {
     return this.get<any>(TaskEndpoints.FindAll, params);
   }

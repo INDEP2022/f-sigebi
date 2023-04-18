@@ -11,14 +11,14 @@
         </div>
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+            <div *ngIf="origin" class="col-sm-12 col-12 col-md-2 p-2">
               <form-field
                 [control]="expedientesForm.get('noExpediente')"
                 label="No Expediente">
                 <input class="form-control" formControlName="noExpediente" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
+            <div *ngIf="origin" class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="expedientesForm.get('tipoDictaminacion')"
                 label="Tipo de dictaminaci&oacute;n">
@@ -26,10 +26,18 @@
                   class="form-control"
                   formControlName="tipoDictaminacion">
                   <option [value]="null">Seleccione un valor</option>
+                  <option [value]="'DONACIÓN'">DONACIÓN</option>
+                  <option [value]="'DESTRUCCIÓN'">DESTRUCCIÓN</option>
+                  <option [value]="'ENAJENACIÓN'">ENAJENACIÓN</option>
+                  <option [value]="'TRANSFERENTE'">TRANSFERENTE</option>
+                  <option [value]="'PROCEDENCIA'">PROCEDENCIA</option>
+                  <option [value]="'DEVOLUCIÓN'">DEVOLUCIÓN</option>
+                  <option [value]="'ABANDONO'">ABANDONO</option>
+                  <option [value]="'RESARCIMIENTO'">RESARCIMIENTO</option>
                 </select>
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            <div *ngIf="!origin" class="col-sm-12 col-12 col-md-3 p-2">
               <form-field
                 [control]="expedientesForm.get('averiguacionPrevia')"
                 label="Averiguaci&oacute;n Previa">
@@ -38,19 +46,19 @@
                   formControlName="averiguacionPrevia" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            <div *ngIf="!origin" class="col-sm-12 col-12 col-md-3 p-2">
               <form-field
                 [control]="expedientesForm.get('causaPenal')"
                 label="Causa Penal">
                 <input class="form-control" formControlName="causaPenal" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+            <div *ngIf="!origin" class="col-sm-12 col-12 col-md-2 p-2">
               <form-check label="Delito" for="delito">
                 <input id="delito" type="checkbox" formControlName="delito" />
               </form-check>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
+            <div *ngIf="!origin" class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="expedientesForm.get('observaciones')"
                 label="Observaciones">
@@ -59,7 +67,7 @@
                   formControlName="observaciones"></textarea>
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
+            <div *ngIf="!origin" class="col-sm-12 col-12 col-md-4 p-2">
               <div class="col-md-12 text-center text-danger">
                 <b>Observaciones</b>
               </div>
@@ -78,7 +86,36 @@
         </div>
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            <div *ngIf="origin" class="col-sm-12 col-12 col-md-3 p-2 mt-3">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaPPFF')"
+                label="Fecha P.P.F.F">
+                <input
+                  class="form-control"
+                  formControlName="fechaPPFF"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div *ngIf="origin" class="col-sm-12 col-12 col-md-3 p-2 mt-3">
+              <form-field
+                [control]="dictaminacionesForm.get('volante')"
+                label="Voalnte">
+                <input class="form-control" formControlName="volante" />
+              </form-field>
+            </div>
+            <div *ngIf="origin" class="col-sm-12 col-12 col-md-3 p-2 mt-3">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaDictamen')"
+                label="Fecha Dictaminación">
+                <input
+                  class="form-control"
+                  formControlName="fechaDictamen"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <!-- <div class="col-sm-12 col-12 col-md-3 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('etiqueta')"
                 label="Etiqueta">
@@ -114,15 +151,21 @@
                   formControlName="fechaNotificacionAseg"
                   bsDatepicker />
               </form-field>
+            </div> -->
+            <div *ngIf="origin" class="col-sm-12 col-12 col-md-3 p-2">
+              <app-user-shared
+                [form]="dictaminacionesForm"
+                [userField]="'issuingUser'"
+                [label]="'Autoriza Dictamen'"></app-user-shared>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            <div *ngIf="origin" class="col-sm-12 col-12 col-md-3 p-2 mt-3">
               <form-field
                 [control]="dictaminacionesForm.get('cveOficio')"
                 label="Clave Oficio">
                 <input class="form-control" formControlName="cveOficio" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            <div *ngIf="!origin" class="col-sm-12 col-12 col-md-3 p-2 mt-3">
               <form-field
                 [control]="dictaminacionesForm.get('estatus')"
                 label="Estatus">
@@ -156,23 +199,18 @@
                 </select>
               </form-field>
             </div>
-
-            <div class="col-md-8">
-              <form-field
-                [control]="subtipoForm.get('noExpediente')"
-                label="Subtipo &#45; Ssubtipo &#45; Sssubtipo">
-                <select class="form-control" formControlName="noExpediente">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'Alta'">Alta</option>
-                  <option [value]="'Normal'">Normal</option>
-                </select>
-              </form-field>
+            <div class="col-md-8" *ngIf="objComponent !== null">
+              <app-classification-type-ssubtype-of-goods-shared
+                (clasification)="filterGood($event)"
+                [form]="subtipoForm"
+                [obj]="
+                  objComponent
+                "></app-classification-type-ssubtype-of-goods-shared>
             </div>
           </div>
         </div>
       </div>
     </form>
-
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
         <hr class="row" />
@@ -189,28 +227,28 @@
         <button
           class="btn btn-secondary btn-sm active m-3 p-3"
           type="button"
-          (click)="addAll()">
+          (click)="addSelect()">
           <!-- Mover uno -->
           <i class="bx bxs-down-arrow-circle bx-md"></i>
         </button>
         <button
           class="btn btn-secondary btn-sm active m-3 p-3"
           type="button"
-          (click)="addSelect()">
+          (click)="addAll()">
           <!-- Mover todos -->
           <i class="bx bx-chevrons-down bx-md"></i>
         </button>
         <button
           class="btn btn-secondary btn-sm active m-3 p-3"
           type="button"
-          (click)="removeSelect()">
+          (click)="removeAll()">
           <!-- Quitar todos -->
           <i class="bx bx-chevrons-up bx-md"></i>
         </button>
         <button
           class="btn btn-secondary btn-sm active m-3 p-3"
           type="button"
-          (click)="removeAll()">
+          (click)="removeSelect()">
           <!-- Quitar uno -->
           <i class="bx bxs-up-arrow-circle bx-md"></i>
         </button>
@@ -224,7 +262,6 @@
           [source]="goodsValid"></ng2-smart-table>
       </div>
     </div>
-
     <div class="row pt-2">
       <div class="col-md-12">
         <hr class="row" />
@@ -250,7 +287,7 @@
     <form
       [formGroup]="gestionDestinoForm"
       class="container-fluid form-material">
-      <div class="row">
+      <div *ngIf="!origin" class="row">
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field
             [control]="gestionDestinoForm.get('estatus')"
@@ -263,18 +300,20 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
         <button
+          [disabled]="aprobar"
           class="btn btn-primary btn-sm active m-3 text-wrap"
           (click)="btnAprobar()"
           [routerLink]="rutaAprobado">
           Aprobar
         </button>
         <button
+          *ngIf="!origin"
           class="btn btn-danger btn-sm active m-3 text-wrap"
           (click)="btnRechazar()">
           Rechazar
         </button>
       </div>
-      <div class="col-sm-12 col-12 col-md-8 p-2 text-center">
+      <div *ngIf="!origin" class="col-sm-12 col-12 col-md-8 p-2 text-center">
         <button
           class="btn btn-info btn-sm active m-3 text-wrap"
           (click)="btnOficioSubstanciacion()">
@@ -322,8 +361,9 @@
       <div class="col-sm-12 col-12 col-md-12 p-2">
         <ng2-smart-table
           [attr.class]="'table-bordered'"
-          [settings]="settings4"
-          [source]="data4"></ng2-smart-table>
+          [settings]="settings"
+          [source]="data4"
+          (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
       </div>
       <div class="col-sm-12 col-12 col-md-12 text-right p-2">
         <div class="form-group">

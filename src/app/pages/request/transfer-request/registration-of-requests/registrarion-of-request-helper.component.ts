@@ -69,6 +69,9 @@ export class RegistrationHelper extends BasePage {
         next: resp => {
           resolve(resp);
         },
+        error: error => {
+          resolve(0);
+        },
       });
     });
   }
@@ -80,7 +83,8 @@ export class RegistrationHelper extends BasePage {
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
           //console.log(resp);
-          resolve(resp.data.lenght);
+          const length = resp.data.length;
+          resolve(length);
         },
         error: error => {
           resolve(0);
@@ -108,8 +112,7 @@ export class RegistrationHelper extends BasePage {
     const urgentPriority = request.urgentPriority;
     const priorityDate = request.priorityDate;
 
-    const lisDocument = await this.getDocument(idRequest);
-
+    const lisDocument: any = await this.getDocument(idRequest);
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
@@ -122,7 +125,7 @@ export class RegistrationHelper extends BasePage {
     } else if (lisDocument && lisDocument < 1) {
       this.message(
         'error',
-        'Error sin expediente',
+        'Error sin archivos',
         'Se debe asociar un archivo a la solicitud'
       );
       validoOk = false;
@@ -205,7 +208,6 @@ export class RegistrationHelper extends BasePage {
     }
 
     let goods: any = null;
-    //debugger;
     if (validoOk === true) {
       goods = await this.getGoodQuantity(Number(request.id));
       if (goods.count < 1) {
@@ -277,7 +279,7 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener una unidad de medida'
             );
             break;
-          } else if (good.goodDescription == null) {
+          } /* else if (good.goodDescription == null) {
             sinDescripcionT = true;
             this.message(
               'error',
@@ -285,7 +287,7 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener una descripción de bien transferente'
             );
             break;
-          }
+          } */
 
           // Se valida si la clasificacion tenga 8 caracteres
           if (good.fractionId !== null) {
@@ -293,8 +295,8 @@ export class RegistrationHelper extends BasePage {
               good.fractionId
             ); */
             if (
-              good.fractionId.fractionCode == null ||
-              good.fractionId.fractionCode.length != 8
+              good.fraccion.fractionCode === null ||
+              good.fraccion.fractionCode.length != 8
             ) {
               faltaClasificacion = true;
               this.message(
@@ -326,9 +328,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else {
-              const realEstate: any = await this.getGoodRealEstate(
-                good.idGoodProperty
-              );
+              const realEstate: any = await this.getGoodRealEstate(good.id); //
               if (realEstate.publicDeed === null) {
                 tipoRelInmueble = true;
                 this.message(
@@ -415,7 +415,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Número de Motor en Información del Vehículo esta vacio, favor de complementar'
               );
               break;
-            } else if (good.origin === null) {
+            } /* else if (good.origin === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -423,7 +423,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información del Vehículo esta vacio, favor de complementar'
               );
               break;
-            } else if (good.theftReport === null) {
+            } */ else if (good.theftReport === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -504,7 +504,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Estado Operativo en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.tuition === null) {
+            } /* else if (good.tuition === null) {
               //Matricula
               tipoRelEmbarca = true;
               this.message(
@@ -513,7 +513,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Matrícula en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.shipName === null) {
+            } */ else if (good.shipName === null) {
               //Nombre Barco
               tipoRelEmbarca = true;
               this.message(
@@ -540,7 +540,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Num. Motores en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.origin === null) {
+            } /* else if (good.origin === null) {
               //Procedencia
               tipoRelEmbarca = true;
               this.message(
@@ -549,7 +549,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información de la Embarcación esta vacio, favor de complementar'
               );
               break;
-            } else if (good.publicRegistry === null) {
+            } */ else if (good.publicRegistry === null) {
               //Registro Publico de la embarcación
               tipoRelEmbarca = true;
               this.message(
@@ -570,7 +570,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Estado Operativo en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.tuition === null) {
+            } /* else if (good.tuition === null) {
               //Matricula
               tipoRelAeronave = true;
               this.message(
@@ -579,7 +579,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Matrícula en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.model === null) {
+            } */ else if (good.model === null) {
               //Modelo
               tipoRelAeronave = true;
               this.message(
@@ -606,7 +606,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Num. Motores en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.origin === null) {
+            } /* else if (good.origin === null) {
               //Procedencia
               tipoRelAeronave = true;
               this.message(
@@ -615,7 +615,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo Procedencia en Información de Aereonave esta vacio, favor de complementar'
               );
               break;
-            } else if (good.dgacRegistry === null) {
+            } */ else if (good.dgacRegistry === null) {
               //Registro Direccion Gral
               tipoRelAeronave = true;
               this.message(
@@ -676,7 +676,13 @@ export class RegistrationHelper extends BasePage {
           tipoRelVehiculo === false &&
           tipoRelEmbarca === false &&
           tipoRelAeronave === false &&
-          tipoRelJoya === false
+          tipoRelJoya === false &&
+          faltaClasificacion === false &&
+          sinDireccion === false &&
+          sinTipoRelevante === false &&
+          sinCantidad === false &&
+          sinDestinoT === false &&
+          sinUnidadM === false
         ) {
           allOk = true;
         }

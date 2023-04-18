@@ -1,44 +1,41 @@
-export const FINANCIAL_INFORMATION_COLUMNS1 = {
-  goodId: {
-    title: 'Bien',
-    type: 'number',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.goodId;
-    // },
-  },
-  goodDescription: {
-    title: 'Descripción',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.description;
-    // },
-  },
-  quantity: {
-    title: 'Valor',
-    type: 'string',
-    sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.quantity;
-    // },
-  },
-};
+import { DatePipe } from '@angular/common';
 
-export const FINANCIAL_INFORMATION_COLUMNS2 = {
-  name: {
+export const FINANCIAL_INFORMATION_COLUMNS1 = {
+  idGoodNumber: {
     title: 'Nombre',
-    type: 'number',
+    type: 'text',
     sort: false,
-  },
-  description: {
-    title: 'Descripción',
-    type: 'number',
-    sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
+    // },
   },
   value: {
     title: 'Valor',
     type: 'number',
     sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.quantity;
+    // },
+  },
+};
+
+export const FINANCIAL_INFORMATION_COLUMNS2 = {
+  idGoodNumber: {
+    title: 'Nombre',
+    type: 'text',
+    sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
+    // },
+  },
+  idInfoDate: {
+    title: 'Descripción',
+    type: 'text',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
 };

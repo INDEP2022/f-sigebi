@@ -40,7 +40,14 @@ export class IDocReceptionndicatedFormComponent
 
   prepareForm() {
     this.indicatedForm = this.fb.group({
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(250),
+        ],
+      ],
       noRegistration: [null],
       curp: [
         null,
@@ -56,7 +63,8 @@ export class IDocReceptionndicatedFormComponent
 
   create() {
     this.loading = true;
-    this.curp.setValue(this.curp.value.toLocaleUpperCase());
+    if (this.curp.value != null)
+      this.curp.setValue(this.curp.value.toLocaleUpperCase());
     this.indicatedService.create(this.indicatedForm.value).subscribe({
       next: data => this.handleSuccess(data),
       error: error => (this.loading = false),

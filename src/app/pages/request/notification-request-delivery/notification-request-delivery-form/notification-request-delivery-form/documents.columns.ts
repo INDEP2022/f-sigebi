@@ -12,7 +12,7 @@ export const DOCUMENTS_COLUMNS = {
   },
 
   titleDocument: {
-    title: 'titulo documento',
+    title: 'Título documento',
     type: 'string',
     sort: false,
   },
@@ -38,13 +38,13 @@ export const DOCUMENTS_COLUMNS = {
 
 export const GOODS_REQUEST_COLUMNS = {
   noRequest: {
-    title: 'No. solicitud',
+    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
 
   noGestion: {
-    title: 'No. gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -74,7 +74,7 @@ export const GOODS_REQUEST_COLUMNS = {
   },
 
   descriptionGoodSae: {
-    title: 'Descripción bien sae',
+    title: 'Descripción bien INDEP',
     type: 'string',
     sort: false,
   },
@@ -110,7 +110,7 @@ export const GOODS_REQUEST_COLUMNS = {
   },
 
   saeDestiny: {
-    title: 'Destino sae',
+    title: 'Destino INDEP',
     type: 'string',
     sort: false,
   },
@@ -154,37 +154,37 @@ export const SELECT_GOODS_REQUEST_COLUMNS = {
   },
 
   subInventary: {
-    title: 'Sub inventario',
+    title: 'Sub Inventario',
     type: 'string',
     sort: false,
   },
 
   noExpedient: {
-    title: 'No. expediente',
+    title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
 
   noRequestTrasference: {
-    title: 'No. solicitud de transferencía',
+    title: 'No. Solicitud de transferencía',
     type: 'string',
     sort: false,
   },
 
   noGestion: {
-    title: 'No. gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
 
   noInventary: {
-    title: 'No. inventario',
+    title: 'No. Inventario',
     type: 'string',
     sort: false,
   },
 
   noTransactionInventary: {
-    title: 'No. transacción inventarios',
+    title: 'No. Transacción inventarios',
     type: 'number',
     sort: false,
   },

@@ -14,6 +14,9 @@ import { IParametersIndicators } from './../../../../../../core/models/catalogs/
 export class CantsComponent implements OnInit {
   @Input() id: string;
   @Input() typeProceeding: string;
+  @Input() set updateData(value: any) {
+    this.getData();
+  }
   form: FormGroup;
   proceedingIndicators: IParametersIndicators[];
   constructor(
@@ -30,11 +33,14 @@ export class CantsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // this.getData();
+  }
+
+  private getData() {
     const params = new ListParams();
     params.limit = 100;
     this.indicatorService.getAll(params).subscribe({
       next: response => {
-        // debugger;
         this.proceedingIndicators = response.data.filter(
           indicator => indicator.description === 'ENTREGA FISICA'
         );

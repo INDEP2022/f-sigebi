@@ -29,4 +29,23 @@ export class SignatoriesService extends HttpService {
     const route = `${ElectronicFirmEndpoint.Signatories}?filter.learnedType=${learnedType}&filter.learnedId=${learnedId}`;
     return this.get(route, params);
   }
+
+  getSignatoriesName(
+    learnedType: string | number,
+    learnedId: string | number,
+    name: string | number,
+    params?: string
+  ): Observable<IListResponse<ISignatories>> {
+    const route = `${ElectronicFirmEndpoint.Signatories}?filter.learnedType=${learnedType}&filter.learnedId=${learnedId}&filter.name=${name}`;
+    return this.get(route, params);
+  }
+
+  create(model: Object) {
+    return this.post(ElectronicFirmEndpoint.Signatories, model);
+  }
+
+  update(id: string | number, model: FormData) {
+    const route = `${ElectronicFirmEndpoint.Signatories}/${id}`;
+    return this.put(route, model);
+  }
 }

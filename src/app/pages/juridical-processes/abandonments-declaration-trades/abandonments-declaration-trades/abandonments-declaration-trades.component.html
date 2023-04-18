@@ -1,6 +1,26 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">DECLARATORIAS Y OFICIOS DE ABANDONOS</h5>
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="title">DECLARATORIAS Y OFICIOS DE ABANDONOS</h5>
+      </div>
+      <div class="col-md-6 pt-2">
+        <div class="d-flex justify-content-end">
+          <div class="">
+            <app-form-search-handler
+              [columnsType]="columnsType"
+              [service]="fileUpdateService"
+              [dataObservableFn]="fileUpdateService.getNotifications"
+              [fieldsToSearch]="fieldsToSearch"
+              [formData]="formData"
+              (onSearchStart)="checkSearchMode($event)"
+              (onConfirmSearch)="confirm($event)"
+              (onSelect)="selectData($event)">
+            </app-form-search-handler>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div body>
@@ -9,25 +29,169 @@
         <!-- VOLANTE/EXPEDIENTE PANTALLA -->
         <tab heading="VOLANTE/EXPEDIENTE">
           <!-- Forms VOLANTE EXPEDIENTE -->
-          <ngx-form-volante-expediente
+          <!-- <ngx-form-volante-expediente
             [form]="form"
             (formValues)="mostrarInfo($event)"
             (oficioRelacionadoEvent)="oficioRelacionado($event)"
             (capturaCopiasEvent)="
               capturaCopias($event)
-            "></ngx-form-volante-expediente>
+            "></ngx-form-volante-expediente> -->
+          <div class="mt-5 mb-0 pb-0">
+            <app-juridical-record-update
+              layout="ABANDONMENT"
+              [searchMode]="searchMode"
+              [confirmSearch]="confirmSearch"
+              [selectedNotification]="selectedRow"
+              (onSearch)="search($event)">
+            </app-juridical-record-update>
+          </div>
           <!-- Forms VOLANTE EXPEDIENTE -->
         </tab>
         <!-- VOLANTE/EXPEDIENTE PANTALLA -->
 
         <!-- DECLARATORIA PANTALLA -->
-        <tab heading="DECLARATORIA">
+        <tab heading="DECLARATORIA" *ngIf="showTabs">
           <!-- Forms DECLARATORIA -->
-          <ngx-form-declaratoria
+          <!-- <ngx-form-declaratoria
             [form]="formDeclaratoria"
             (formValues)="
               mostrarInfoDeclaratoria($event)
-            "></ngx-form-declaratoria>
+            "></ngx-form-declaratoria> -->
+          <form
+            [formGroup]="declarationForm"
+            class="container-fluid form-material">
+            <div class="row" *ngIf="dictDate != null">
+              <div class="d-flex justify-content-end">
+                <div>
+                  <h6>{{ dictDate }}</h6>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-5">
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    [control]="declarationForm.get('expedientNumber')"
+                    label="No. Expediente">
+                    <input
+                      type="text"
+                      formControlName="expedientNumber"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('preliminaryInquiry')"
+                    label="Averi. Previa">
+                    <input
+                      type="text"
+                      formControlName="preliminaryInquiry"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('criminalCase')"
+                    label="Causa Penal">
+                    <input
+                      type="text"
+                      formControlName="criminalCase"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('officeType')"
+                    label="Tipo Oficio">
+                    <ng-select
+                      formControlName="officeType"
+                      [searchable]="false"
+                      class="form-control"
+                      [clearable]="false">
+                      <ng-option value="DAN"
+                        >DECLARATORIA ABANDONO NUMERARIO</ng-option
+                      >
+                      <ng-option value="DAB"
+                        >DECLARATORIA ABANDONO BIENES</ng-option
+                      >
+                      <ng-option value="FGR"
+                        >DECLARATORIA ABANDONO FGR</ng-option
+                      >
+                      <ng-option value="PJF"
+                        >DECLARATORIA ABANDONO PJF</ng-option
+                      >
+                    </ng-select>
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    class=""
+                    [control]="declarationForm.get('sender')">
+                    <ngx-select
+                      [form]="declarationForm"
+                      [data]="senders"
+                      (fetchItems)="getSenders($event)"
+                      bindLabel="userAndName"
+                      control="sender"
+                      label="Remitente"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="30">
+                    </ngx-select>
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    class=""
+                    [control]="declarationForm.get('recipient')">
+                    <ngx-select
+                      [form]="declarationForm"
+                      [data]="recipients"
+                      (fetchItems)="getRecipients($event)"
+                      bindLabel="userAndName"
+                      control="recipient"
+                      label="Destinatario"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="30">
+                    </ngx-select>
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('passOfficeArmy')"
+                    label="Cve. Oficio">
+                    <input
+                      type="text"
+                      formControlName="passOfficeArmy"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field class="" [control]="declarationForm.get('city')">
+                    <ngx-select
+                      [form]="declarationForm"
+                      [data]="cities"
+                      (fetchItems)="getCities($event)"
+                      bindLabel="nameAndId"
+                      control="city"
+                      label="Ciudad"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="30">
+                    </ngx-select>
+                  </form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-5"></div>
+          </form>
           <!-- Forms DECLARATORIA -->
 
           <!-- Tabla de bienes DECLARATORIA -->
@@ -174,7 +338,7 @@
         </tab>
         <!-- DECLARATORIA PANTALLA page FIN -->
 
-        <tab heading="OFICIO">
+        <tab heading="OFICIO" *ngIf="showTabs">
           <!-- FORM OFICIO -->
           <ngx-fact-abandonos-oficio
             [formOficio]="formOficio"

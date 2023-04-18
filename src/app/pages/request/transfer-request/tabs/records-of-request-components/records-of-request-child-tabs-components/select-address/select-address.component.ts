@@ -3,8 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDomicile } from 'src/app/core/models/catalogs/domicile';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LocalityService } from '../../../../../../../core/services/catalogs/locality.service';
 import { MunicipalityService } from '../../../../../../../core/services/catalogs/municipality.service';
@@ -20,7 +24,7 @@ import { SELECT_ADDRESS_COLUMN } from './select-address-columns';
 })
 export class SelectAddressComponent extends BasePage implements OnInit {
   paragraphs: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   title: string = 'Domicilios de la Solicitud';
   totalItems: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
@@ -33,6 +37,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   stateOfRepublicService = inject(StateOfRepublicService);
   municipaliService = inject(MunicipalityService);
   localityService = inject(LocalityService);
+  goodsinvService = inject(GoodsInvService);
 
   constructor(
     private modelRef: BsModalRef,
@@ -42,8 +47,6 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.onlyOrigin);
-
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -51,23 +54,28 @@ export class SelectAddressComponent extends BasePage implements OnInit {
     };
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      var params = new ListParams();
-      params.page = data.inicio;
-      params.limit = data.pageSize;
-      this.getData(params);
+      //var params = new ListParams();
+      //params.page = data.inicio;
+      //params.limit = data.pageSize;
+      this.getData();
     });
   }
 
   //obtengo los nombres de los campos
-  getData(params: ListParams) {
+  getData() {
     if (this.request.id) {
       var array: any = [];
       this.loading = true;
-      params['filter.requestId'] = `$eq:${this.request.id}`;
-      this.goodDomiciliesService.getAll(params).subscribe({
+      this.params.value.addFilter('requestId', this.request.id);
+      const filter = this.params.getValue().getParams();
+      this.goodDomiciliesService.getAll(filter).subscribe({
         next: resp => {
           const result = resp.data.map(async (item: any) => {
-            item['warehouseAlias'] = item.warehouseAlias.id;
+            if (item.warehouseAlias) {
+              item['warehouseAlias'] = item.warehouseAlias.id;
+            } else {
+              item['warehouseAlias'] = '';
+            }
             var stateOfRepublic = await this.getStateOfRepublic(item);
             item['stateOfRepublicName'] = stateOfRepublic;
 
@@ -88,6 +96,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
 
           Promise.all(result).then(x => {
             this.paragraphs = resp.data;
+            this.totalItems = resp.count;
             this.loading = false;
           });
         },
@@ -116,25 +125,31 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   getMunicipality(item: any) {
     return new Promise((resolve, reject) => {
       var param = new ListParams();
-      param['filter.idMunicipality'] = `$eq:${item.municipalityKey}`;
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
       param['filter.stateKey'] = `$eq:${item.statusKey}`;
-      this.municipaliService.getAll(param).subscribe({
+
+      this.goodsinvService.getAllMunipalitiesByFilter(param).subscribe({
+        next: resp => {
+          resolve(resp.data[0].municipality);
+        },
+      });
+      /* this.municipaliService.getAll(param).subscribe({
         next: (data: any) => {
           resolve(data.data[0].nameMunicipality);
         },
-      });
+      }); */
     });
   }
 
   getLocation(item: any) {
     return new Promise((resolve, reject) => {
       var param = new ListParams();
-      param['filter.municipalityId'] = `$eq:${item.municipalityKey}`;
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
       param['filter.stateKey'] = `$eq:${item.statusKey}`;
-      param['filter.id'] = `$eq:${item.localityKey}`;
-      this.localityService.getAll(param).subscribe({
+      param['filter.townshipKey'] = `$eq:${item.localityKey}`;
+      this.goodsinvService.getAllTownshipByFilter(param).subscribe({
         next: (data: any) => {
-          resolve(data.data[0].nameLocation);
+          resolve(data.data[0].township);
         },
       });
     });
@@ -148,7 +163,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
         regDelegationId: this.request.regionalDelegationId,
         callback: (next: boolean) => {
           if (next) {
-            this.getData(new ListParams());
+            this.getData();
           }
         },
       },
@@ -167,10 +182,17 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   selectAddress() {
+    if (!this.rowSelected) {
+      this.onLoadToast(
+        'error',
+        'No hay direccion',
+        'Seleccione una direccion previamente'
+      );
+      return;
+    }
     //delete this.rowSelected.stateOfRepublicName;
     delete this.rowSelected.municipalityName;
     delete this.rowSelected.localityName;
-
     this.event.emit(this.rowSelected as IDomicile);
     this.close();
   }

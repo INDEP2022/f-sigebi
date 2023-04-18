@@ -6,6 +6,7 @@ export enum EventEndpoints {
   ComerStatusVta = 'comer-statusvta', // comer_satusvta
   ComerUsuaTxEvent = 'comer-usuatxevent',
   ComerLotEvent = 'comer-datamart-remevents',
-  FilterEvent = '?search=&filter.event.id',
+  FilterEvent = '?search=&filter.eventDad',
   FilterGood = '?search=&filter.goodNumber',
+  FilterLot = '?search=&filter.lot',
 }

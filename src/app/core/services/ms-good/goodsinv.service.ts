@@ -23,4 +23,36 @@ export class GoodsInvService extends HttpService {
       params
     );
   }
+
+  getMunicipalitiesByStateKey(params: Object) {
+    return this.post(IGoodsinvEndpoint.GetMunicipalityByParams, params);
+  }
+
+  getTownshipByStateKey(params: Object) {
+    return this.post(IGoodsinvEndpoint.GetTownshipByParams, params);
+  }
+
+  getCodePostalByStateKey(params: Object) {
+    return this.post(IGoodsinvEndpoint.GetCodePostalByParams, params);
+  }
+
+  getAllMunipalitiesByFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetMunicipalityByFilter, params);
+  }
+
+  getAllTownshipByFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.getTownshipByFilter, params);
+  }
+
+  getAllCodePostalByFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetCodePostalByFilter, params);
+  }
+
+  getAllBrandWithFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetCatBrandWithFilter, params);
+  }
+
+  getAllSubBrandWithFilter(params: ListParams | string) {
+    return this.get(IGoodsinvEndpoint.GetCatSubBrandWithFilter, params);
+  }
 }

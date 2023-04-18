@@ -28,8 +28,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
   data2: LocalDataSource = new LocalDataSource();
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
-  settings1 = { ...this.settings, actions: false };
-  settings2 = { ...this.settings, actions: {} };
+  settings2 = { ...this.settings };
   columns1: IUnitCost[] = [];
   columns2: IUnitCostDet[] = [];
   totalItems1: number = 0;
@@ -264,7 +263,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(unitCostDet.costId);
+        this.delete2(unitCostDet.costId);
         Swal.fire('Borrado', '', 'success');
       }
     });

@@ -565,7 +565,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.goodsWareh.push(response);
           this.goodsWarehouse.load(this.goodsWareh);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+          this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
         },
       });
     });
@@ -578,7 +578,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
-          this.usersData.load(response.data);
+          const userData = response.data.map(items => {
+            items.userCharge = items.charge?.description;
+            return items;
+          });
+
+          this.usersData.load(userData);
+          this.totalItems = response.count;
           this.loading = false;
         },
         error: error => (this.loading = false),

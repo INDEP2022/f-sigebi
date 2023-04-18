@@ -89,7 +89,8 @@
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="paperNumber" />
+                    formControlName="paperNumber"
+                    maxlength="30" />
                 </form-field>
               </div>
               <div class="col-md-3">
@@ -105,13 +106,14 @@
               </div>
             </div>
             <div class="row pt-5">
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <ngx-select
                   [form]="requestForm"
                   control="transferenceId"
                   (fetchItems)="getTransferent($event)"
-                  [data]="selectTransfe"
-                  bindLabel="nameTransferent"
+                  [showTooltip]="true"
+                  [data]="transferents$"
+                  bindLabel="nameAndId"
                   label="Transferente"
                   value="id"></ngx-select>
               </div>
@@ -120,9 +122,9 @@
                   [form]="requestForm"
                   control="stationId"
                   (fetchItems)="getStation($event)"
+                  [showTooltip]="true"
                   [data]="selectStation"
-                  bindLabel="stationName"
-                  [searchable]="false"
+                  bindLabel="nameAndId"
                   label="Emisora"
                   value="id"></ngx-select>
               </div>
@@ -131,12 +133,13 @@
                   [form]="requestForm"
                   control="authorityId"
                   (fetchItems)="getAuthority($event)"
+                  [showTooltip]="true"
                   [data]="selectAuthority"
-                  bindLabel="authorityName"
-                  [searchable]="false"
+                  bindLabel="nameAndId"
                   label="Autoridad"
                   value="idAuthority"></ngx-select>
               </div>
+
               <div *ngIf="op == 2" class="col-md-3">
                 <ngx-select
                   [form]="requestForm"

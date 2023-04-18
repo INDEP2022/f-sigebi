@@ -1,4 +1,9 @@
-<form [formGroup]="fileDataUpdateForm" class="container-fluid form-material">
+<form-loader *ngIf="formLoading"></form-loader>
+<form
+  [formGroup]="fileDataUpdateForm"
+  class="container-fluid form-material"
+  *ngIf="!formLoading"
+  @OnShow>
   <div class="row">
     <div class="col-md-5">
       <div class="row">
@@ -111,12 +116,13 @@
             (change)="changeDictum($event)"
             [searchOnInit]="true"
             termMaxLength="80"
-            [showTooltip]="true">
+            [showTooltip]="true"
+            [readonly]="layout == 'ABANDONMENT'">
           </ngx-select>
         </form-field>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-4" *ngIf="layout == 'FILE-UPDATE'">
         <div>
           <button
             type="button"
@@ -497,7 +503,7 @@
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="openModalAreas()">
-            <i class="bx bx-list-plus bx-sm float-icon"></i>
+            <i class="bx bx-list-ul bx-sm float-icon"></i>
           </button>
         </div> -->
       </div>
@@ -563,7 +569,7 @@
               Reasignaci&oacute;n de Turno
             </button>
           </div>
-          <div>
+          <div *ngIf="layout == 'FILE-UPDATE'">
             <button
               outline
               type="button"
@@ -573,7 +579,7 @@
               Oficio Relacionado
             </button>
           </div>
-          <div>
+          <div *ngIf="layout == 'FILE-UPDATE'">
             <button
               outline
               type="button"

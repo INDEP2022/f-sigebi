@@ -5,7 +5,7 @@ import { ITransferente } from '../catalogs/transferente.model';
 
 export interface IRequest {
   id?: number;
-  idRecord?: number;
+  recordId?: number;
   applicationDate?: string;
   receptionDate?: string;
   nameOfOwner?: string;
@@ -17,6 +17,7 @@ export interface IRequest {
   stationId?: number | string;
   emisora?: IStation;
   authorityId?: number | string;
+  state?: any;
   regionalDelegationId?: number | string;
   regionalDelegation?: IRegionalDelegation;
   sender?: string;

@@ -1,14 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
-import { ReportService } from 'src/app/core/services/reports/reports.service';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-//BasePage
-import { AbstractControl } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
+import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+
 export interface IReport {
   data: File;
 }
@@ -24,9 +42,18 @@ export interface IEntidad {
 })
 export class SummaryComponent extends BasePage implements OnInit {
   flyersForm: FormGroup;
+  @Input() showDelegation: boolean = true;
+  @Output() emitDelegation = new EventEmitter<IDelegation>();
+  @Input() delegationField: string = 'delegation';
+  @Input() subdelegationField: string = 'subdelegation';
+  @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
+  idDelegation: number = null;
   entidad = new DefaultSelect<IDelegationState>();
   select = new DefaultSelect<IDepartment>();
-
+  selectedDelegation = new DefaultSelect<IDelegation>();
+  selectedSubDelegation = new DefaultSelect<ISubdelegation>();
+  start: string;
+  end: string;
   datePickerConfig: Partial<BsDatepickerConfig> = {
     minMode: 'month',
     adaptivePosition: true,
@@ -36,17 +63,24 @@ export class SummaryComponent extends BasePage implements OnInit {
   get includeArea() {
     return this.flyersForm.get('includeArea');
   }
-  get delegdestino() {
-    return this.flyersForm.get('delegdestino');
+  get delegation() {
+    return this.flyersForm.get(this.delegationField);
   }
-  get subddestino() {
-    return this.flyersForm.get('subddestino');
+  get subdelegation() {
+    return this.flyersForm.get(this.subdelegationField);
   }
 
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,
-    private departamentService: DepartamentService
+    private departamentService: DepartamentService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private datePipe: DatePipe,
+    private delegationService: DelegationService,
+    private serviceSubDeleg: SubdelegationService,
+    private printFlyersService: PrintFlyersService
   ) {
     super();
   }
@@ -68,32 +102,32 @@ export class SummaryComponent extends BasePage implements OnInit {
       subddestino: [null],
     });
   }
+  getDelegation(params?: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          this.idDelegation = data.id;
+          data.description = `${data.id}- ${data.description}`;
+          return data;
+        });
 
+        this.selectedDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.selectedDelegation = new DefaultSelect();
+      },
+    });
+  }
   save() {}
 
-  confirm(): void {
-    let params = {
-      PN_DELEG: this.flyersForm.controls['delegation'].value,
-      PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
-      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
-      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
-      PF_FECINI: this.flyersForm.controls['PF_FECINI'].value,
-      PF_FECFIN: this.flyersForm.controls['PF_FECFIN'].value,
-      PC_ENTFED: this.flyersForm.controls['federative'].value,
-      DEPARTAMENTO: this.flyersForm.controls['department'].value,
-    };
+  Generar() {
+    const start = this.flyersForm.get('PF_FECINI').value;
+    const end = this.flyersForm.get('PF_FECFIN').value;
+    this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
+    this.end = this.datePipe.transform(end, 'dd/MM/yyyy');
 
-    const start = new Date(this.flyersForm.get('PF_FECINI').value);
-    const end = new Date(this.flyersForm.get('PF_FECFIN').value);
-
-    const startTemp = `${start.getFullYear()}-0${
-      start.getUTCMonth() + 1
-    }-0${start.getDate()}`;
-    const endTemp = `${end.getFullYear()}-0${
-      end.getUTCMonth() + 1
-    }-0${end.getDate()}`;
-
-    if (end < start) {
+    console.log(this.start);
+    if (this.end < this.start) {
       this.onLoadToast(
         'warning',
         'advertencia',
@@ -102,65 +136,58 @@ export class SummaryComponent extends BasePage implements OnInit {
       return;
     }
 
-    console.log(params);
-    // open the window
-    setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRESUMENDIAA.pdf?PN_DELEG=${params.PN_DELEG}&PN_SUBDEL=${params.PN_SUBDEL}&PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${params.PN_SUBDELEGACION}&PF_FECINI=${params.PF_FECINI}&PF_FECFIN=${params.PF_FECFIN}&PC_ENTFED=${params.PC_ENTFED}&DEPARTAMENTO=${params.DEPARTAMENTO}`;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-    setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
-    }, 2000);
+    let params = {
+      PN_DELEG: this.flyersForm.controls['delegation'].value,
+      PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
+      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
+      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
+      PF_FECINI: this.start,
+      PF_FECFIN: this.end,
+      PC_ENTFED: this.flyersForm.controls['federative'].value,
+      DEPARTAMENTO: this.flyersForm.controls['department'].value,
+    };
 
-    window.open(pdfurl, 'RGEROFPRESUMENDIAA.pdf');
-    this.loading = false;
-    this.cleanForm();
-  }
-
-  Generar() {
-    const start = new Date(this.flyersForm.get('from').value);
-    const end = new Date(this.flyersForm.get('to').value);
-
-    const startTemp = `${start.getFullYear()}-0${
-      start.getUTCMonth() + 1
-    }-0${start.getDate()}`;
-    const endTemp = `${end.getFullYear()}-0${
-      end.getUTCMonth() + 1
-    }-0${end.getDate()}`;
-
-    if (endTemp < startTemp) {
-      this.onLoadToast(
-        'warning',
-        'advertencia',
-        'Fecha final no puede ser menor a fecha de inicio'
-      );
-    }
-
-    this.reportService.getReportDiario(this.flyersForm.value).subscribe({
-      next: (resp: any) => {
-        if (resp.file.base64 !== '') {
-          this.preview(resp.file.base64);
-        } else {
-          this.onLoadToast(
-            'warning',
-            'advertencia',
-            'Sin datos para los rangos de fechas suministrados'
-          );
+    this.siabService
+      .fetchReport('FGEROFPRESUMENDIAA', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {
+                if (data) {
+                  data.map((item: any) => {
+                    return item;
+                  });
+                }
+              },
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
         }
-
-        return;
-      },
-    });
+      });
   }
 
-  preview(file: IReport) {
+  preview(url: string, params: ListParams) {
     try {
-      this.reportService.download(file).subscribe(response => {
+      this.reportService.download(url, params).subscribe(response => {
         if (response !== null) {
           let blob = new Blob([response], { type: 'application/pdf' });
           const fileURL = URL.createObjectURL(blob);
           window.open(fileURL);
+          setTimeout(() => {
+            this.onLoadToast('success', 'Reporte generado', '');
+          }, 2000);
+
+          this.loading = false;
+          this.cleanForm();
         }
       });
     } catch (e) {
@@ -172,31 +199,47 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.flyersForm.reset();
   }
 
-  // onDptosChange(idDelegation: string | number, idSubdelegation: string | number) {
-  //   this.departamentService.getByDelegationsSubdelegation(idDelegation, idSubdelegation).subscribe({
-  //     next: (resp: any) => {
-  //       if (resp.data) {
-  //         return resp.data;
-  //       } else {
-  //         this.onLoadToast(
-  //           'warning',
-  //           'advertencia',
-  //           'No hay delegaciones para éste departamento'
-  //         );
-  //       }
-
-  //       return;
-  //     },
-  //   });
-  // }
-  //  this.departamentService.getAll().subscribe(response => {
-  //    return response.data;
-  //  })
-
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
       field = null;
     });
     this.flyersForm.updateValueAndValidity();
+  }
+  getSubDelegations(params: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'delegationNumber',
+      this.flyersForm.get(this.delegationField).value
+    );
+
+    this.printFlyersService.getSubdelegations(paramsF.getParams()).subscribe({
+      next: data => {
+        this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      },
+    });
+  }
+
+  onDelegationsChange(type: any) {
+    this.resetFields([this.subdelegation]);
+    this.selectedDelegation = new DefaultSelect();
+    this.emitDelegation.emit(type);
+  }
+
+  onSubDelegationsChange(subdelegation: any) {
+    this.resetFields([this.delegation]);
+    this.selectedDelegation = new DefaultSelect();
+    // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
+    // this.delegation.setValue(subdelegation.delegation.id);
+    this.emitSubdelegation.emit(subdelegation);
   }
 }

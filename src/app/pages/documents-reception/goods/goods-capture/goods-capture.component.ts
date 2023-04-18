@@ -8,7 +8,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
@@ -269,6 +269,21 @@ export class GoodsCaptureComponent
   }
 
   async askMoreGoods() {
+    console.log({ tipoTramite: this.paperworkType });
+    if (
+      this.params.origin === FLYERS_REGISTRATION_CODE &&
+      (this.paperworkType == 2 || this.paperworkType == 3)
+    ) {
+      this.onLoadToast(
+        'success',
+        'Se agrego el bien al expediente correctamente',
+        ''
+      );
+      const _global = { ...this.globalNgrx, gCommit: 'S', gOFFCommit: 'N' };
+      this.globalVarService.updateGlobalVars(_global);
+      this.router.navigate(['/pages/documents-reception/flyers-registration']);
+      return;
+    }
     const response = await this.alertQuestion(
       'success',
       'Se agregó el bien al expediente',
@@ -361,8 +376,9 @@ export class GoodsCaptureComponent
 
   createWithTmpExp() {
     this.tmpExpedientService.getById(this.goodToSave.fileNumber).subscribe({
-      next: (expedient: any) => {
-        this._expedienService.create(expedient).subscribe({
+      next: expedient => {
+        this.paperworkType = expedient.procedureType;
+        this._expedienService.create(expedient as any).subscribe({
           next: expedient => {
             this.goodToSave.fileNumber = `${expedient.id}`;
             this.updateNotifications(expedient).subscribe({
@@ -416,7 +432,16 @@ export class GoodsCaptureComponent
       departament,
       institutionNumber,
       subDelegation,
+      minpubNumber,
     } = tmpNotification;
+    console.log({
+      affair,
+      delegation,
+      departament,
+      institutionNumber,
+      subDelegation,
+      minpubNumber,
+    });
     const _notification = {
       ...tmpNotification,
       affair: affair?.id ?? null,
@@ -424,8 +449,13 @@ export class GoodsCaptureComponent
       departament: departament?.id ?? null,
       institutionNumber: institutionNumber?.id ?? null,
       subDelegation: subDelegation?.id ?? null,
+      minpubNumber: minpubNumber?.id ?? null,
     };
-    return this.goodsCaptureService.createNotification(_notification);
+    return this.goodsCaptureService.createNotification(_notification).pipe(
+      tap(notification => {
+        this.goodToSave.flyerNumber = notification.wheelNumber;
+      })
+    );
   }
 
   saveGood() {
