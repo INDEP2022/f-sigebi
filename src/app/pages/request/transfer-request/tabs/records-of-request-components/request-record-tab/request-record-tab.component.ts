@@ -113,21 +113,9 @@ export class RequestRecordTabComponent
       this.bsPriorityDate = new Date(priDate);
     }
 
-    // if (this.requestForm.controls['fileLeagueDate'].value != null) {
-    //   const ligDate = this.requestForm.controls['fileLeagueDate'].value;
-    //   this.bsligDate = new Date(ligDate);
-    // }
-    // if (this.requestForm.controls['verificationDateCump'].value != null) {
-    //   const priDate = this.requestForm.controls['verificationDateCump'].value;
-    //   this.bsverifiyDate = new Date(priDate);
-    // }
-    //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
-    // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
-    //   if (this.requestForm.controls['priorityDate'].value !== null) {
-    //     const date = new Date(this.requestForm.controls['priorityDate'].value);
-    //     this.bsPriorityDate = date;
-    //   }
-    // });
+    if (this.requestForm.controls['affair'].value != null) {
+      this.getAffair(this.requestForm.controls['affair'].value);
+    }
   }
   prepareForm() {
     //formulario de solicitudes

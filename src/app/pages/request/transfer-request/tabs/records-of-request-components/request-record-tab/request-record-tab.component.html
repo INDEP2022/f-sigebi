@@ -133,6 +133,8 @@
               formControlName="nameOfOwner" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field [control]="requestForm.get('court')" label="Juzgado">
             <input
@@ -142,7 +144,19 @@
               formControlName="court" />
           </form-field>
         </div>
+
+        <div class="col-md-4">
+          <form-field [control]="requestForm.get('affair')" label="Asunto">
+            <input
+              type="text"
+              class="form-control"
+              [ngModelOptions]="{ standalone: true }"
+              [ngModel]="affairName"
+              [readOnly]="true" />
+          </form-field>
+        </div>
       </div>
+
       <div class="row pt-4">
         <div
           class="col-md-4"
