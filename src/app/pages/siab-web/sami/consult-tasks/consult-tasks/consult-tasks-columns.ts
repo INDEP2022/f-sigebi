@@ -19,7 +19,7 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  status: {
+  State: {
     title: 'Estatus',
     type: 'string',
     sort: false,

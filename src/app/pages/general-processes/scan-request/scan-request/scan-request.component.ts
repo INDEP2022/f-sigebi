@@ -389,15 +389,14 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         null,
         [
           Validators.minLength(7),
-          Validators.maxLength(7),
           Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
         ],
       ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
       scanStatus: ['SOLICITADO'],
       keySeparator: [null],
-      flyerNumber: [null, Validators.required],
-      numberProceedings: [null, Validators.required],
+      flyerNumber: [null],
+      numberProceedings: [null],
       scanRequestDate: [null],
       userRequestsScan: [null],
       numberDelegationRequested: [null],
@@ -544,6 +543,17 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   limit2(limit: number, field: string, value: string) {
     if (String(value).length > limit) {
       this.form.get(field).patchValue(String(value).slice(0, limit));
+    }
+  }
+
+  validateDate(value: string) {
+    if (value) {
+      if (value.length >= 2) {
+        const month = Number(value.slice(0, 2));
+        if (month > 12 || month < 1) {
+          this.form.get('significantDate').setErrors({ incorrect: true });
+        }
+      }
     }
   }
 }
