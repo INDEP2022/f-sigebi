@@ -249,14 +249,14 @@ export const WORK_MAILBOX_COLUMNS2 = {
     renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => value ?? '',
   },
-  observationAdd: {
+  /*observationAdd: {
     title: 'Observaciones Add.',
     type: 'custom',
     sort: false,
     editable: false,
     renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => value ?? '',
-  },
+  },*/
   priority: {
     title: 'Prioridad',
     sort: false,
