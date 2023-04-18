@@ -313,10 +313,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       id: selected.id,
     };
 
-    localStorage.setItem(
-      `Task-${selected.requestId}-${selected.id}`,
-      JSON.stringify(obj2Storage)
-    );
+    localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
 
     if (selected.requestId !== null || selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
