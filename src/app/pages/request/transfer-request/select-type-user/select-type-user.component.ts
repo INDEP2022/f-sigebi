@@ -31,7 +31,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   userForm: ModelForm<any>;
   data: any; // solicitud pasada por el modal
   typeAnnex: string;
-  task: number = 0;
+  task: any = null;
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -181,7 +181,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           this.data.id,
           ''
         );
-        debugger;
+
         if (report) {
           let form: any = {};
           form['ddocTitle'] = `Solicitud_${this.data.id}`;
@@ -209,6 +209,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           if (addToContent) {
             const docName = addToContent;
             console.log(docName);
+            const actualUser: any = this.authService.decodeToken();
             const title =
               'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
               this.data.id;
@@ -216,6 +217,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             const from = 'REGISTRO_SOLICITUD';
             const to = 'VERIFICAR_CUMPLIMIENTO';
             /* crea una nueva tarea */
+            debugger;
             const taskResponse = await this.createTaskOrderService(
               this.data,
               title,
@@ -223,8 +225,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               from,
               to,
               true,
-              this.task,
-              'usuario actual',
+              this.task.id,
+              actualUser.username,
               'SOLICITUD_TRANSFERENCIA',
               'Registro_Solicitud',
               'TURNAR'
@@ -262,6 +264,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   /* returnar la solicitud */
   async ReturnRequest() {
+    const actualUser: any = this.authService.decodeToken();
     this.loader.load = true;
     this.data.observations =
       'Solicitud Returnada por la Delegacion Regional ' +
@@ -281,18 +284,19 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       const from = 'REGISTRO_SOLICITUD';
       const to = 'REGISTRO_SOLICITUD';
       /* crea una nueva tarea */
+
       const taskResponse = await this.createTaskOrderService(
         this.data,
         title,
         url,
         from,
         to,
-        true,
-        this.task,
-        'usuario actual',
+        false,
+        0,
+        actualUser.username,
         'SOLICITUD_TRANSFERENCIA',
         'Registro_Solicitud',
-        'TURNAR'
+        'RETURNAR'
       );
       if (taskResponse) {
         Swal.fire({
@@ -412,7 +416,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
+      debugger;
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
