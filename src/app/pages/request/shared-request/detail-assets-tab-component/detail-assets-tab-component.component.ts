@@ -200,9 +200,12 @@ export class DetailAssetsTabComponentComponent
       );
     }
     if (this.process == 'classify-assets') {
-      console.log(this.domicilieObject.warehouseAlias);
-      console.log({ alias: this.domicilieObject.warehouseAlias });
-      this.setGoodDomicilieSelected(this.domicilieObject);
+      if (this.domicilieObject) {
+        console.log(this.domicilieObject.warehouseAlias);
+        console.log({ alias: this.domicilieObject.warehouseAlias });
+        this.setGoodDomicilieSelected(this.domicilieObject);
+      }
+
       /*  this.domicileForm
         .get('warehouseAlias')
         .setValue(this.domicilieObject.warehouseAlias);
