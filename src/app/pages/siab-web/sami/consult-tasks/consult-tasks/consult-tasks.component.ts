@@ -286,7 +286,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         next: response => {
           console.log('Response: ', response);
           this.loading = false;
-          this.tasks = response.data;
+          this.tasks = response.data.filter(
+            (record: { State: string }) => record.State != 'FINALIZADA'
+          );
           this.totalItems = response.count;
         },
         error: () => (this.loading = false),
