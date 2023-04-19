@@ -139,21 +139,22 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.loadImages(id).subscribe(
           response => {
             this.files = response;
+            // this.noDocumentsFound = false;
           },
           error => {
-            if (error.status < 500) {
-              this.noDocumentsFound = true;
-            } else {
-              this.noDocumentsFound = false;
-            }
-            if (error.status >= 500) {
-              this.noDocumentsFound = true;
-              this.onLoadToast(
-                'error',
-                'Error',
-                'Ocurrió un error al obtener los documentos'
-              );
-            }
+            // if (error.status < 500) {
+            // this.noDocumentsFound = true;
+            // } else {
+            // this.noDocumentsFound = false;
+            // }
+            // if (error.status >= 500) {
+            // this.noDocumentsFound = true;
+            // this.onLoadToast(
+            //   'error',
+            //   'Error',
+            //   'Ocurrió un error al obtener los documentos'
+            // );
+            // }
           }
         );
       })
@@ -181,16 +182,18 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     return this.getFileNamesByFolio(folio).pipe(
       catchError(error => {
         if (error.status >= 500) {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener los documentos'
-          );
+          this.noDocumentsFound = true;
+          // this.onLoadToast(
+          //   'error',
+          //   'Error',
+          //   'Ocurrió un error al obtener los documentos'
+          // );
         }
         return throwError(() => error);
       }),
       map(response => response.data.map(element => element.name)),
       tap(files => {
+        this.noDocumentsFound = false;
         this.files = files;
       })
     );
