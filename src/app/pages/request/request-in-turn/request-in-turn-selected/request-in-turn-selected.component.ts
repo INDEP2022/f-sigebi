@@ -126,7 +126,6 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.onLoadToast('info', 'Informacion', `Seleccione un usuario!`);
       return;
     }
-    debugger;
     this.loading = true;
     this.requestToTurn.map(async (item: any, i: number) => {
       let index = i + 1;
@@ -179,6 +178,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.requestService.update(request.id, request as IRequest).subscribe({
         next: resp => {
           if (resp.id) {
+            console.log('solicitud', resp);
+            console.log('solicitud', resp.id);
             resolve(resp);
           } else {
             reject(false);
