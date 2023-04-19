@@ -146,6 +146,8 @@
           <input
             class="form-control"
             type="number"
+            [max-length]="12"
+            min="0"
             formControlName="cantidad"
             (change)="amountChange()" />
         </form-field>
@@ -173,7 +175,12 @@
           class="col-md-2"
           [control]="assetsForm.get('valRef')"
           label="Valor de Referencia">
-          <input class="form-control" type="number" formControlName="valRef" />
+          <input
+            class="form-control"
+            min="0"
+            type="number"
+            formControlName="valRef"
+            [max-length]="12" />
         </form-field>
 
         <form-field
@@ -316,6 +323,7 @@
               <textarea
                 class="form-control"
                 formControlName="observaciones"
+                maxlength="600"
                 rows="5"></textarea>
             </div>
           </div>
