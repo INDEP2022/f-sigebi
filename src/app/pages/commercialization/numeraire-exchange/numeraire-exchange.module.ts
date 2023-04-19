@@ -10,6 +10,7 @@ import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-s
 import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 // import { TableSelectComponent } from './components/table-select/table-select.component';
+import CurrencyDirective from 'src/app/common/directives/currency.directive';
 import { TableExpensesComponent } from './components/table-expenses/table-expenses.component';
 import { NumeraireExchangeFormComponent } from './numeraire-exchange-form/numeraire-exchange-form.component';
 import { NumeraireExchangeRoutingModule } from './numeraire-exchange-routing.module';
@@ -31,6 +32,7 @@ import { NumeraireExchangeRoutingModule } from './numeraire-exchange-routing.mod
     GoodsSharedComponent,
     BanksSharedComponent,
     CustomSelectComponent,
+    CurrencyDirective,
     // TableExpensesComponent
   ],
 })
