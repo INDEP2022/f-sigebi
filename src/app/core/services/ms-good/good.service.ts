@@ -245,7 +245,7 @@ export class GoodService extends HttpService {
   }
   getFromGoodsAndExpedients(body: IFromGoodsAndExpedientsBody) {
     return this.post<IListResponse<IFromGoodsAndExpedientsResponse>>(
-      GoodEndpoints.DiStatusGood,
+      GoodEndpoints.GoodByDepositaryGood,
       body
     );
   }

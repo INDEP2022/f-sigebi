@@ -8,7 +8,7 @@ export interface IDictationXGood1 {
   id: number;
   descriptionDict: string;
   amountDict: string;
-  registerNumber: string;
+  registerNumber?: string;
   typeDict: string;
   proceedings?: IExpedient;
   good?: IGood;

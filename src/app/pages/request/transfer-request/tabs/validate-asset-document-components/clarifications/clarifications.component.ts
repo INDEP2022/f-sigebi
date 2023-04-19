@@ -484,6 +484,7 @@ export class ClarificationsComponent
 
   getClarifications() {
     this.paragraphs = [];
+    this.loading = true;
     const params = new ListParams();
     params['filter.goodId'] = `$eq:${this.good.id}`;
 
@@ -498,9 +499,12 @@ export class ClarificationsComponent
 
         Promise.all(clarification).then(data => {
           this.paragraphs = resp.data;
+          this.loading = false;
         });
       },
-      error: error => {},
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
@@ -565,17 +569,19 @@ export class ClarificationsComponent
   }
 
   newClarification() {
-    if (this.rowSelected.length === 0) {
-      this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
-    } else {
-      this.openForm();
+    let data = this.clariArraySelected[0];
+    if (data === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
     }
+    this.openForm();
   }
 
   deleteClarification() {
     let data = this.clariArraySelected[0];
-    if (!data) {
-      this.alert('warning', 'Cuidado', 'Tiene que seleccionar una aclaración');
+    if (data === 0) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
     }
     this.alertQuestion(
       'warning',
@@ -599,7 +605,8 @@ export class ClarificationsComponent
     });
   }
   editForm() {
-    if (this.clariArraySelected.length === 1) {
+    let data = this.clariArraySelected[0];
+    if (data === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { HOME_DEFAULT } from 'src/app/utils/constants/main-routes';
@@ -58,8 +59,11 @@ export class GoodFeaturesComponent
       } else {
         field.removeValidators(Validators.required);
       }
+      if (feature.dataType == 'D') {
+        field.addValidators(maxDate(new Date()));
+      }
       if (feature?.length > 0) {
-        field.addValidators(Validators.maxLength(80));
+        field.addValidators(Validators.maxLength(feature?.length));
       }
       field.updateValueAndValidity();
     });

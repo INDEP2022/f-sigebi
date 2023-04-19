@@ -252,7 +252,6 @@ export class ClassificationAssetsTabComponent
   }
 
   selectGood(event: any) {
-    console.log(event);
     this.formLoading = true;
     this.detailArray.reset();
     this.goodSelect = event.selected;

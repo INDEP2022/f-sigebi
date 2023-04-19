@@ -43,6 +43,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   origin: string = null;
   originFolio: string = '';
   originFlyer: string = '';
+  requestOrigin: string = '';
+  noDocumentsFound: boolean = false;
+  noFoliosFound: boolean = false;
   get controls() {
     return this.form.controls;
   }
@@ -62,6 +65,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFolio = params['folio'] ?? '';
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
+        this.requestOrigin = params['requestOrigin'] ?? null;
+        console.log(params);
       });
     this.settings = {
       ...this.settings,
@@ -99,6 +104,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.loading = false;
         this.documents = response.data;
         this.totalDocuments = response.count;
+        this.noFoliosFound = this.documents.length == 0 ? true : false;
         this.markSelected();
       })
     );
@@ -130,11 +136,27 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         const _params = new FilterParams();
         _params.addFilter('numberProceedings', document.numberProceedings);
         this.documentsParams.next(_params);
-        if (document.sheets != null) {
-          this.loadImages(id).subscribe(response => {
+        this.loadImages(id).subscribe(
+          response => {
             this.files = response;
-          });
-        }
+            // this.noDocumentsFound = false;
+          },
+          error => {
+            // if (error.status < 500) {
+            // this.noDocumentsFound = true;
+            // } else {
+            // this.noDocumentsFound = false;
+            // }
+            // if (error.status >= 500) {
+            // this.noDocumentsFound = true;
+            // this.onLoadToast(
+            //   'error',
+            //   'Error',
+            //   'Ocurrió un error al obtener los documentos'
+            // );
+            // }
+          }
+        );
       })
     );
   }
@@ -158,8 +180,20 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
 
   loadImages(folio: string | number) {
     return this.getFileNamesByFolio(folio).pipe(
+      catchError(error => {
+        if (error.status >= 500) {
+          this.noDocumentsFound = true;
+          // this.onLoadToast(
+          //   'error',
+          //   'Error',
+          //   'Ocurrió un error al obtener los documentos'
+          // );
+        }
+        return throwError(() => error);
+      }),
       map(response => response.data.map(element => element.name)),
       tap(files => {
+        this.noDocumentsFound = false;
         this.files = files;
       })
     );
@@ -291,7 +325,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.alertQuestion(
             'error',
             'Error',
-            'Ocurrio un error al eliminar la imagen'
+            'Ocurrió un error al eliminar la imagen'
           );
           return throwError(() => error);
         })
@@ -326,11 +360,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FGESTBUZONTRAMITE') {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
-
+    console.log(this.requestOrigin);
     if (this.origin == 'FACTGENSOLICDIGIT') {
-      this.router.navigate([
-        `pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
-      ]);
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
+        ],
+        { queryParams: { origin: this.requestOrigin } }
+      );
     }
   }
 }

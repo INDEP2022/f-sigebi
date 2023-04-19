@@ -53,7 +53,7 @@ export class VerifyComplianceTabComponent
   @Input() typeDoc: string = '';
   @Input() process: string = '';
   @Input() question: boolean = false;
-  @Output() response = new EventEmitter<boolean>();
+  @Output() response = new EventEmitter<string>();
 
   verifComplianceForm: ModelForm<any>;
   domicilieObject: IDomicilies;
@@ -86,6 +86,7 @@ export class VerifyComplianceTabComponent
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   clarificationData: any = [];
   clarifyRowSelected: any = [];
+  confirmation: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -162,13 +163,19 @@ export class VerifyComplianceTabComponent
     }
 
     if (changes['question'].currentValue === true) {
-      const article3 = this.article3array.length;
-      const article12 = this.article12and13array.length;
+      const article3 = this.article3array.filter(x => x.cumple === true);
+      const article12 = this.article12and13array.filter(x => x.cumple === true);
       console.log(article3, article12);
-      if (article3 >= 3 && article12 >= 3) {
-        this.response.emit(true);
+      /* verifica si tiene articulos seleccionados */
+      if (article3.length >= 3 && article12.length >= 3) {
+        /* verifica si ya el fomulario guardado */
+        if (this.confirmation === true) {
+          this.response.emit('turnar');
+        } else {
+          this.response.emit('sin guardar');
+        }
       } else {
-        this.response.emit(false);
+        this.response.emit('sin articulos');
       }
     }
   }
@@ -587,7 +594,6 @@ export class VerifyComplianceTabComponent
 
     this.requestDocumentService.getAll(params).subscribe({
       next: resp => {
-        console.table(resp.data);
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
           if (item.cumpliance['cumple'] === true) {
@@ -597,6 +603,10 @@ export class VerifyComplianceTabComponent
         });
         this.paragraphsTable1 = cumpliance;
         this.article3array = this.paragraphsTable1;
+        const artLenth = this.article3array.filter(x => x.cumple === true);
+        if (artLenth.length) {
+          this.confirmation = true;
+        }
       },
     });
   }
@@ -622,6 +632,12 @@ export class VerifyComplianceTabComponent
         });
         this.paragraphsTable2 = cumpliance;
         this.article12and13array = this.paragraphsTable2;
+        const artLenth = this.article12and13array.filter(
+          x => x.cumple === true
+        );
+        if (artLenth.length) {
+          this.confirmation = true;
+        }
       },
     });
   }
@@ -758,8 +774,6 @@ export class VerifyComplianceTabComponent
 
   async confirm() {
     this.loader.load = false;
-    console.log(this.article3array);
-    console.log(this.article12and13array);
     const article3 = this.article3array.filter(x => x.cumple === true);
     const article12Y13 = this.article12and13array.filter(
       x => x.cumple === true
@@ -775,7 +789,6 @@ export class VerifyComplianceTabComponent
     }
 
     const articles = this.article12and13array.concat(this.article3array);
-    //console.table(articles);
 
     const id = this.requestObject.id;
     articles.map(async (item: any) => {
@@ -794,6 +807,7 @@ export class VerifyComplianceTabComponent
               'Verificación Guardada',
               'Los datos se guardaron correctamente'
             );
+            this.confirmation = true;
           }
         }
       });

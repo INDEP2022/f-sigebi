@@ -120,12 +120,10 @@
       </div>
 
       <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('nameOfOwner')"
-            label="Nombre MP">
+            label="Nombre {{ transfe }}">
             <input
               type="text"
               maxlength="100"
@@ -143,34 +141,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
-          <form-field
-            [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono MP">
-            <input
-              type="text"
-              maxlength="13"
-              class="form-control"
-              formControlName="phoneOfOwner" />
-          </form-field>
-        </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
-          <form-field
-            [control]="requestForm.get('emailOfOwner')"
-            label="Correo MP">
-            <input
-              type="text"
-              maxlength="100"
-              class="form-control"
-              formControlName="emailOfOwner" />
-          </form-field>
-        </div>
-      </div>
+
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
@@ -193,8 +164,18 @@
           </form-field>
         </div>
       </div>
-
       <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('emailOfOwner')"
+            label="Correo {{ transfe }}">
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="emailOfOwner" />
+          </form-field>
+        </div>
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('receiptRoute')"
@@ -204,6 +185,19 @@
               class="form-control"
               formControlName="receiptRoute"
               [readOnly]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('phoneOfOwner')"
+            label="Tel&eacute;fono {{ transfe }}">
+            <input
+              type="text"
+              maxlength="13"
+              class="form-control"
+              formControlName="phoneOfOwner" />
           </form-field>
         </div>
 
@@ -219,10 +213,7 @@
           </form-field>
         </div>
       </div>
-
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('transferenceFile')"
@@ -235,15 +226,13 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('protectNumber')"
-            label="N&uacute;mero Amparo">
+          <form-field [control]="requestForm.get('affair')" label="Asunto">
             <input
               type="text"
-              maxlength="30"
               class="form-control"
-              formControlName="protectNumber"
-              min="0" />
+              [ngModelOptions]="{ standalone: true }"
+              [ngModel]="affairName"
+              [readOnly]="true" />
           </form-field>
         </div>
       </div>
@@ -256,7 +245,7 @@
           <!-- <div class="col-md-4" *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('previousInquiry')"
-            label="Averiguacion Previa">
+            label="Averiguacion Previa *">
             <input
               type="text"
               class="form-control"
@@ -268,11 +257,12 @@
           <!-- *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('circumstantialRecord')"
-            label="Acta Circunstancial">
+            label="Acta Circunstanciada *">
             <input
               type="text"
               class="form-control"
               formControlName="circumstantialRecord"
+              maxlength="100"
               required />
           </form-field>
         </div>
@@ -287,6 +277,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="100"
               formControlName="tocaPenal" />
           </form-field>
         </div>
@@ -294,7 +285,11 @@
           <form-field
             [control]="requestForm.get('lawsuit')"
             label="Causa Penal">
-            <input type="text" class="form-control" formControlName="lawsuit" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lawsuit"
+              maxlength="100" />
           </form-field>
         </div>
       </div>
@@ -310,7 +305,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="trialType" />
+              formControlName="trialType"
+              maxlength="100" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -326,6 +322,7 @@
           </ngx-select>
         </div>
       </div>
+
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
@@ -354,10 +351,22 @@
           </form-field>
         </div>
       </div>
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div class="row pt-4">
         <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('protectNumber')"
+            label="N&uacute;mero Amparo">
+            <input
+              type="text"
+              maxlength="30"
+              class="form-control"
+              formControlName="protectNumber"
+              min="0" />
+          </form-field>
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
           <form-field
             [control]="requestForm.get('domainExtinction')"
             label="Extinci&oacute;n Dominio">

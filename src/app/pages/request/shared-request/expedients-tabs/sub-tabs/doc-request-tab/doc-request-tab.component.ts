@@ -93,7 +93,7 @@ export class DocRequestTabComponent
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
-    console.log(this.idRequest);
+    //console.log(this.idRequest);
   }
 
   ngOnInit(): void {
@@ -138,7 +138,6 @@ export class DocRequestTabComponent
     }; */
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      console.log('Actualizando por paginación');
       this.getData(data);
     });
   }
@@ -222,10 +221,7 @@ export class DocRequestTabComponent
               return items;
             }
           });
-          console.log(filterDoc.length);
           const info = filterDoc.map(async (items: any) => {
-            console.log(items);
-
             const filter: any = await this.filterGoodDoc([
               items.xtipoDocumento,
             ]);
@@ -241,10 +237,12 @@ export class DocRequestTabComponent
               );
               items['transferentName'] = transferent;
             }
-            const state = await this.getStateDoc(items?.xestado);
-            items['stateName'] = state;
-            items.xtipoDocumento = filter[0]?.ddescription;
-            return items;
+            if (items?.xestado) {
+              const state = await this.getStateDoc(items?.xestado);
+              items['stateName'] = state;
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
+            }
           });
 
           Promise.all(info).then(x => {
@@ -255,6 +253,7 @@ export class DocRequestTabComponent
           });
         },
         error: error => {
+          console.log(error);
           this.loading = false;
         },
       });
@@ -309,7 +308,9 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.descCondition);
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
     });
   }

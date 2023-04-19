@@ -217,12 +217,13 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                           .subscribe({
                             next: resp => {
                               const file: any = resp;
+                              const user: any = this.authService.decodeToken();
                               const docName = `Reporte_${94}${this.getDocNameDate()}`;
                               const body = {
                                 ddocTitle:
                                   'Carátula del Expediente ' +
                                   solicitud.recordId,
-                                ddocAuthor: '',
+                                dDocAuthor: user.username,
                                 ddocType: '',
                                 ddocCreator: '',
                                 ddocName: docName,
@@ -360,7 +361,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   setDate(date: Date) {
     const newDate =
-      date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+      this.setMonthsAndDay(date.getDate()) +
+      '/' +
+      this.setMonthsAndDay(date.getMonth() + 1) +
+      '/' +
+      date.getFullYear();
     return newDate;
   }
 

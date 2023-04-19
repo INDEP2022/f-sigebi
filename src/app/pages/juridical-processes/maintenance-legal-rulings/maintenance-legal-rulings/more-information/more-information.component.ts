@@ -40,11 +40,11 @@ export class MoreInformationComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noDictaminacion: '',
-      tipoDictaminacion: '',
-      texto1: ['', [Validators.pattern(STRING_PATTERN)]],
-      texto2: ['', [Validators.pattern(STRING_PATTERN)]],
-      texto3: ['', [Validators.pattern(STRING_PATTERN)]],
+      numberOfDict: '',
+      typeDict: '',
+      textX: ['', [Validators.pattern(STRING_PATTERN)]],
+      textY: ['', [Validators.pattern(STRING_PATTERN)]],
+      textZ: ['', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
