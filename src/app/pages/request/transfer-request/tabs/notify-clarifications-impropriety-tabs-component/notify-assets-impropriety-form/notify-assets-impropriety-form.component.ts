@@ -254,7 +254,6 @@ export class NotifyAssetsImproprietyFormComponent
     } else {
       this.loading = true;
       const info: IChatClarifications = {
-        id: 1285447,
         requestId: this.idRequest,
         goodId: this.dataClarifications.goodId,
         senderName: this.clarificationForm.get('senderName').value,
@@ -266,10 +265,12 @@ export class NotifyAssetsImproprietyFormComponent
           this.dataClarifications.rejectNotificationId
         ),
         clarificationStatus: 'EN_ACLARACION',
+        idClarification: 24,
       };
 
       this.chatService.create(info).subscribe({
         next: async data => {
+          this.onLoadToast('success', 'Creado', '');
           this.updateNotificationAclaration(data.id);
           this.loading = false;
         },
@@ -283,11 +284,11 @@ export class NotifyAssetsImproprietyFormComponent
 
   updateNotificationAclaration(id: number) {
     const idReject: any = this.dataClarifications.rejectNotificationId;
-
+    console.log('id', idReject);
     const data: ClarificationGoodRejectNotification = {
       rejectNotificationId: idReject,
       answered: 'EN ACLARACIÓN',
-      chatClarification: id,
+      clarificationId: id,
       rejectionDate: new Date(),
     };
 
@@ -311,7 +312,7 @@ export class NotifyAssetsImproprietyFormComponent
       rejectNotificationId: idReject,
       answered: 'EN ACLARACIÓN',
       rejectionDate: new Date(),
-      documentClarificationId: data.id,
+      clarificationId: data.id,
     };
 
     this.rejectedGoodService.update(idReject, _data).subscribe({

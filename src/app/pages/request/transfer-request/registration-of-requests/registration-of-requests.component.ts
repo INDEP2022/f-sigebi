@@ -309,17 +309,17 @@ export class RegistrationOfRequestsComponent
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
+        console.log(this.requestData.typeOfTransfer);
         this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
-      this.object = request as IRequest;
-      this.requestData = request as IRequest;
-      this.getData(request); */
+        this.object = request as IRequest;
+        this.requestData = request as IRequest;
+        this.getData(request); */
       },
       error: error => {
         this.formLoading = false;
-        /*if (error.error.message === 'No se encontraron registros.') {
-          this.router.navigate(['pages/request/list']);
-        }*/
+        this.onLoadToast('error', 'Error', 'No se encontro la solicitud');
+        console.log(error.error.message);
       },
     });
   }

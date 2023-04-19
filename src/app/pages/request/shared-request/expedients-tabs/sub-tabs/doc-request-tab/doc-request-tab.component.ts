@@ -251,6 +251,7 @@ export class DocRequestTabComponent
           });
         },
         error: error => {
+          console.log(error);
           this.loading = false;
         },
       });

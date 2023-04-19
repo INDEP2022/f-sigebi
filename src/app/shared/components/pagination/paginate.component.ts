@@ -30,7 +30,7 @@ import {
             <i class="bx bx-chevron-left"></i>
           </a>
         </li>
-        <ng-container *ngFor="let page of pages">
+        <ng-container *ngFor="let page of pages | slice: startPage - 1:endPage">
           <li
             class="page-item"
             [ngClass]="page == currentPage ? 'active' : ''"
