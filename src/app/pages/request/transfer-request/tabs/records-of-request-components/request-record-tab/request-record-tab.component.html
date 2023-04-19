@@ -120,17 +120,39 @@
       </div>
 
       <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4">
           <form-field
             [control]="requestForm.get('nameOfOwner')"
-            label="Nombre MP">
+            label="Nombre del Remitente">
             <input
               type="text"
               maxlength="100"
               class="form-control"
               formControlName="nameOfOwner" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('phoneOfOwner')"
+            label="Tel&eacute;fono del Remitente">
+            <input
+              type="text"
+              maxlength="13"
+              class="form-control"
+              formControlName="phoneOfOwner" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('emailOfOwner')"
+            label="Correo del Remitente">
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="emailOfOwner" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -143,34 +165,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
-          <form-field
-            [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono MP">
-            <input
-              type="text"
-              maxlength="13"
-              class="form-control"
-              formControlName="phoneOfOwner" />
-          </form-field>
-        </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
-          <form-field
-            [control]="requestForm.get('emailOfOwner')"
-            label="Correo MP">
-            <input
-              type="text"
-              maxlength="100"
-              class="form-control"
-              formControlName="emailOfOwner" />
-          </form-field>
-        </div>
-      </div>
+
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
@@ -220,9 +215,7 @@
         </div>
       </div>
 
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('transferenceFile')"
@@ -361,10 +354,10 @@
           </form-field>
         </div>
       </div>
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
-        <div class="col-md-4">
+      <div class="row pt-4">
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
           <form-field
             [control]="requestForm.get('domainExtinction')"
             label="Extinci&oacute;n Dominio">
@@ -372,6 +365,16 @@
               type="text"
               class="form-control"
               formControlName="domainExtinction" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="requestForm.get('affair')" label="Asunto">
+            <input
+              type="text"
+              class="form-control"
+              [ngModelOptions]="{ standalone: true }"
+              [ngModel]="affairName"
+              [readOnly]="true" />
           </form-field>
         </div>
       </div>

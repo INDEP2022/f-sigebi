@@ -344,7 +344,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.modalRef.content.callback(true);
             this.close();
           },
-          error: error => {},
+          error: error => {
+            console.log(error);
+          },
         });
     }
 

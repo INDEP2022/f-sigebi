@@ -21,7 +21,7 @@ export class RefuseClarificationModalComponent
   title: string = 'Rechazo';
   edit: boolean = false;
   today: Date;
-  idRechazo: any;
+  refuseObj: IClarificationGoodsReject;
 
   constructor(
     private modalRef: BsModalRef,
@@ -33,15 +33,15 @@ export class RefuseClarificationModalComponent
   }
 
   ngOnInit(): void {
-    console.log('ID del rechazo que viene de atras', this.idRechazo);
     this.prepareForm();
+    console.log('Info del registro seleccionado a rechazar', this.refuseObj);
   }
 
   private prepareForm() {
     this.observationForm = this.fb.group({
-      rejectNotificationId: [this.idRechazo],
+      rejectNotificationId: [this.refuseObj.rejectNotificationId],
       rejectionDate: [this.today],
-      answered: [' ', []],
+      answered: ['EN ACLARACION', []],
       observations: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(255)],
@@ -64,7 +64,7 @@ export class RefuseClarificationModalComponent
   update() {
     this.loading = true;
     this.rejectedGoodService
-      .update(this.idRechazo, this.observationForm.value)
+      .update(this.refuseObj.rejectNotificationId, this.observationForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

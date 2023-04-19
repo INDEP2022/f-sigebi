@@ -4,4 +4,5 @@ export enum RejectedGoodEndpoint {
   GoodsResDevCarac = 'goods-res-dev-carac',
   GoodsResDev = 'goods-res-dev',
   RejectedGoodsTMP = 'rejected-goods-tmp',
+  GetGoodResDev = 'goods-res-dev/get-good-goodresdev',
 }

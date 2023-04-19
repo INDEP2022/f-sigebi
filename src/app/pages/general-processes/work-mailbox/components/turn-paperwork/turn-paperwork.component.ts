@@ -104,10 +104,12 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   generateReceptionFolio(response: string) {
     const token = this.jwtHelper.decodeToken();
     const user = this.paperwork.turnadoiUser;
+    const observations = this.paperwork.observation;
     const userTurn = this.form.controls.user.value;
     const body = {
       userTurn,
       user,
+      observations,
       response,
     };
     this.loading = true;

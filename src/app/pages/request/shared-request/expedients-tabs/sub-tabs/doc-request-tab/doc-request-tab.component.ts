@@ -138,7 +138,6 @@ export class DocRequestTabComponent
     }; */
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      console.log('Actualizando por paginación');
       this.getData(data);
     });
   }
@@ -222,10 +221,7 @@ export class DocRequestTabComponent
               return items;
             }
           });
-          console.log(filterDoc.length);
           const info = filterDoc.map(async (items: any) => {
-            console.log(items);
-
             const filter: any = await this.filterGoodDoc([
               items.xtipoDocumento,
             ]);
@@ -255,6 +251,7 @@ export class DocRequestTabComponent
           });
         },
         error: error => {
+          console.log(error);
           this.loading = false;
         },
       });
