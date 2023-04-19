@@ -536,6 +536,8 @@ export class JuridicalRecordUpdateComponent
     });
     if (notif.autorityNumber != null) {
       filterParams.addFilter('idAuthority', notif.autorityNumber);
+      filterParams.addFilter('idStation', notif.stationNumber);
+      filterParams.addFilter('idTransferer', notif.endTransferNumber);
       this.docRegisterService
         .getAuthoritiesFilter(filterParams.getParams())
         .subscribe({

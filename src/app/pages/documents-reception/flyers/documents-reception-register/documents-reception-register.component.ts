@@ -355,6 +355,16 @@ export class DocumentsReceptionRegisterComponent
       } else if (Object.keys(this.pageParams).length == 0) {
         console.log('params empty');
         this.canViewDocuments = true;
+        const param = new FilterParams();
+        param.addFilter('flierNumber', this.formControls.wheelNumber.value);
+        this.procedureManageService
+          .getAllFiltered(param.getParams())
+          .subscribe({
+            next: data => {
+              this.procedureId = data.data[0].id;
+              console.log(this.procedureId);
+            },
+          });
       }
     } else if (
       this.pageParams.pNoTramite != null &&
@@ -393,6 +403,7 @@ export class DocumentsReceptionRegisterComponent
       param.addFilter('flierNumber', this.formControls.wheelNumber.value);
       this.procedureManageService.getAllFiltered(param.getParams()).subscribe({
         next: data => {
+          this.procedureId = data.data[0].id;
           this.checkPgrGoods(
             data.data[0].id,
             this.formControls.wheelNumber.value
