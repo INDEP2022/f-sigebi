@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,11 +23,13 @@ export class UploadFileComponent extends BasePage implements OnInit {
   idTrans: number = 0;
   idGood: number = 0;
   date: string = '';
+  userLogName: string = '';
   constructor(
     private bsModalRef: BsModalRef,
     private requestService: RequestService,
     private wContentService: WContentService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private programmingService: ProgrammingRequestService
   ) {
     super();
   }
@@ -35,6 +38,13 @@ export class UploadFileComponent extends BasePage implements OnInit {
     this.idGood = this.data.id;
     this.infoRequest();
     this.obtainDate();
+    this.getInfoUserLog();
+  }
+
+  getInfoUserLog() {
+    this.programmingService.getUserInfo().subscribe((data: any) => {
+      this.userLogName = data.preferred_username;
+    });
   }
 
   obtainDate() {
@@ -58,6 +68,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
     fileEvents.forEach(fileEvent => {
       const formData = {
         xidcProfile: 'NSBDB_Gral',
+        dDocAuthor: this.userLogName,
         xidSolicitud: this.idRequest,
         xidTransferente: this.idTrans,
         xidBien: this.idGood,

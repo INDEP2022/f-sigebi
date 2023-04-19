@@ -55,6 +55,7 @@ export class NotificationAssetsTabComponent
 
   settings2: any;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
+  paramsNotify = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs2: any[] = [];
   totalItems2: number = 0;
   notifyAssetsSelected: any[] = [];
@@ -164,11 +165,12 @@ export class NotificationAssetsTabComponent
   }
 
   goodSelect(data: any) {
+    console.log(data);
     this.goodsReject = data;
     if (this.goodsReject.length == 1) {
       this.params2
         .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getClarificationsByGood(data[0].id));
+        .subscribe(() => this.getClarificationsByGood(data[0].goodid));
     }
   }
 
@@ -239,34 +241,22 @@ export class NotificationAssetsTabComponent
         ''
       );
     } else {
-      const goodStatus = this.goodsReject.filter(good => {
-        return good.clarificationstatus == 'ACLARADO';
-      });
-      if (goodStatus) {
-        this.alertQuestion(
-          'warning',
-          'Confirmación',
-          'Los bines seleccionados regresaran al proceso de Verificar Cumplimiento'
-        ).then(question => {
-          console.log(question);
-          //this.redirectGoodTracker(question);
-        });
-      } else {
-        this.onLoadToast(
-          'info',
-          'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
-          ''
-        );
-        console.log(goodStatus);
-      }
-      this.goodsReject.forEach(good => {
-        console.log(good);
-        if (good.clarificationstatus == 'ACLARADO') {
-          console.log(good);
+      this.goodsReject.map(items => {
+        if (items.clarificationstatus == 'REGISTRO_SOLICITUD') {
+          this.alertQuestion(
+            'warning',
+            'Confirmación',
+            'Los bines seleccionados regresaran al proceso de Verificar Cumplimiento'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.validateGoodStatus();
+            }
+            //this.redirectGoodTracker(question);
+          });
         } else {
           this.onLoadToast(
             'info',
-            'De los bienes seleccionados no hay bienes aclarados para enviar a Verificar Cumplimiento',
+            'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
             ''
           );
         }
@@ -274,6 +264,45 @@ export class NotificationAssetsTabComponent
     }
   }
 
+  validateGoodStatus() {
+    this.goodsReject.map(item => {
+      if (
+        item.clarificationstatus == 'REGISTRO_SOLICITUD' ||
+        item.clarificationstatus == 'CANCELADO'
+      ) {
+        this.updateStatusGood(
+          null,
+          'VERIFICAR_CUMPLIMIENTO',
+          item.goodid,
+          item.goodresdev,
+          item.typeorigin
+        );
+      } else {
+        this.onLoadToast(
+          'info',
+          'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
+          ''
+        );
+      }
+    });
+  }
+
+  updateStatusGood(
+    statusGood?: string,
+    statusProcess?: string,
+    idGood?: number,
+    idGoodResDev?: number,
+    typeOrigin?: string
+  ) {
+    if (typeOrigin == 'SOL_TRANSFERENCIA') {
+      console.log('bien', idGood);
+      console.log('status bien', statusGood);
+      console.log('status Process', statusProcess);
+      console.log('fecha', new Date());
+
+      //this.goodService.update();
+    }
+  }
   finishClarifiImpro() {
     let message =
       '¿Esta seguro de que desea finalizar la aclaración?\nSe sugiere subir documentación soporte para esta sección';
@@ -390,6 +419,35 @@ export class NotificationAssetsTabComponent
   reloadData() {
     if (this.columns) {
       console.log(this.columns);
+      this.columns.map(items => {
+        console.log(items.clarificationstatus);
+        if (items.clarificationstatus != 'ACLARADO') {
+          console.log('data', items.goodid);
+          this.paramsNotify.getValue()['filter.goodId'] = items.goodid;
+          this.rejectedGoodService
+            .getAllFilter(this.paramsNotify.getValue())
+            .subscribe({
+              next: response => {
+                console.log('Notificaciones', response);
+                if (response.data.length > 0) {
+                  response.data.map(notification => {
+                    console.log(
+                      'notificaciones',
+                      notification.clarificationType
+                    );
+                    if (
+                      notification.clarificationType ==
+                        'SOLICITAR_ACLARACIÓN' ||
+                      notification.clarificationType == 'SOLICITAR_ACLARACION'
+                    ) {
+                    }
+                  });
+                }
+              },
+              error: error => ({}),
+            });
+        }
+      });
     }
     /*this.params
       .pipe(takeUntil(this.$unSubscribe))
