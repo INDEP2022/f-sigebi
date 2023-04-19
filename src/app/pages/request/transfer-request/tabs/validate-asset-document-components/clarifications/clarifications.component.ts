@@ -484,6 +484,7 @@ export class ClarificationsComponent
 
   getClarifications() {
     this.paragraphs = [];
+    this.loading = true;
     const params = new ListParams();
     params['filter.goodId'] = `$eq:${this.good.id}`;
 
@@ -498,9 +499,12 @@ export class ClarificationsComponent
 
         Promise.all(clarification).then(data => {
           this.paragraphs = resp.data;
+          this.loading = false;
         });
       },
-      error: error => {},
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 

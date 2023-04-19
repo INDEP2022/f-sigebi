@@ -273,6 +273,7 @@
               type="text"
               class="form-control"
               formControlName="circumstantialRecord"
+              maxlength="100"
               required />
           </form-field>
         </div>
@@ -287,6 +288,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="100"
               formControlName="tocaPenal" />
           </form-field>
         </div>
@@ -294,7 +296,11 @@
           <form-field
             [control]="requestForm.get('lawsuit')"
             label="Causa Penal">
-            <input type="text" class="form-control" formControlName="lawsuit" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lawsuit"
+              maxlength="100" />
           </form-field>
         </div>
       </div>
@@ -310,7 +316,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="trialType" />
+              formControlName="trialType"
+              maxlength="100" />
           </form-field>
         </div>
         <div class="col-md-4">
