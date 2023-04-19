@@ -1,11 +1,13 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { GoodsDialogComponent } from '../dialogs/goods-dialog/goods-dialog.component';
 import { DICTAMINATION_X_GOOD_COLUMNS } from './goods.columns';
 
 @Component({
@@ -19,7 +21,7 @@ export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
     actions: {
       columnTitle: '',
       add: false,
-      edit: false,
+      edit: true,
       delete: false,
     },
     hideSubHeader: true,
@@ -29,7 +31,10 @@ export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
 
   dataTable: IDictationXGood1[] = [];
 
-  constructor(private dictationService: DictationXGood1Service) {
+  constructor(
+    private modalService: BsModalService,
+    private dictationService: DictationXGood1Service
+  ) {
     super();
   }
 
@@ -58,5 +63,20 @@ export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
         this.loading = false;
       },
     });
+  }
+
+  openForm(dictationXGood?: IDictationXGood1) {
+    console.log(dictationXGood);
+    let config: ModalOptions = {
+      initialState: {
+        dictationXGood,
+        callback: (next: boolean) => {
+          if (next) this.getGoods();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GoodsDialogComponent, config);
   }
 }

@@ -13,6 +13,9 @@ import { MaintenanceLegalRulingRoutingModule } from './maintenance-legal-rulings
 
 /** COMPONENTS IMPORTS */
 import { CopyDocumentationGoodsComponent } from './maintenance-legal-rulings/copy-documentation-goods/copy-documentation-goods.component';
+import { CopyDocumentationGoodsDialogComponent } from './maintenance-legal-rulings/dialogs/copy-documentation-goods-dialog/copy-documentation-goods-dialog.component';
+import { DocumentationGoodsDialogComponent } from './maintenance-legal-rulings/dialogs/documentation-goods-dialog/documentation-goods-dialog.component';
+import { GoodsDialogComponent } from './maintenance-legal-rulings/dialogs/goods-dialog/goods-dialog.component';
 import { DocumentTradeComponent } from './maintenance-legal-rulings/document-trade/document-trade.component';
 import { DocumentationGoodsComponent } from './maintenance-legal-rulings/documentation-goods/documentation-goods.component';
 import { GoodsComponent } from './maintenance-legal-rulings/goods/goods.component';
@@ -29,6 +32,9 @@ import { RulingsComponent } from './maintenance-legal-rulings/rulings/rulings.co
     DocumentationGoodsComponent,
     DocumentTradeComponent,
     CopyDocumentationGoodsComponent,
+    DocumentationGoodsDialogComponent,
+    GoodsDialogComponent,
+    CopyDocumentationGoodsDialogComponent,
   ],
   imports: [CommonModule, MaintenanceLegalRulingRoutingModule, SharedModule],
 })
