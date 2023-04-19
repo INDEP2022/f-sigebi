@@ -652,70 +652,70 @@ export class RegistrationOfRequestsComponent
   /* Metodo para guardar la clasificacion de bienes */
   async classifyGoodMethod() {
     this.loader.load = true;
-    const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/validate-document';
-      const from = 'CLASIFICAR_BIEN';
-      const to = 'DESTINO_DOCUMENTAL';
-      const user: any = this.authService.decodeToken();
-      const taskRes = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        true,
-        this.task.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Clasificar_Bien',
-        'VALIDAR_DOCUMENTACION'
+    // oldTask: any = await this.getOldTask();
+    //if (oldTask.assignees != '') {
+    const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
+    const url = 'pages/request/transfer-request/validate-document';
+    const from = 'CLASIFICAR_BIEN';
+    const to = 'DESTINO_DOCUMENTAL';
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Clasificar_Bien',
+      'VALIDAR_DOCUMENTACION'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
-      if (taskRes) {
-        this.loader.load = false;
-        this.msgGuardado(
-          'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
-        );
-      }
     }
+    //}
   }
   /* Fin Metodo para guardar clasificacion de bienes */
 
   /* Metodo de destino documental */
   async destinyDocumental() {
     this.loader.load = true;
-    const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/process-approval';
-      const from = 'DESTINO_DOCUMENTAL';
-      const to = 'SOLICITAR_APROBACION';
-      const user: any = this.authService.decodeToken();
-      const taskRes = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        true,
-        this.task.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Destino_Documental',
-        'APROBAR_SOLICITUD'
+    // const oldTask: any = await this.getOldTask();
+    //if (oldTask.assignees != '') {
+    const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+    const url = 'pages/request/transfer-request/process-approval';
+    const from = 'DESTINO_DOCUMENTAL';
+    const to = 'SOLICITAR_APROBACION';
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Destino_Documental',
+      'APROBAR_SOLICITUD'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
-      if (taskRes) {
-        this.loader.load = false;
-        this.msgGuardado(
-          'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
-        );
-      }
     }
+    //}
   }
   /* Fin metodo destino documental */
 
