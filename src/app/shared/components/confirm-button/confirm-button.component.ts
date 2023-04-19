@@ -30,6 +30,7 @@ export class ConfirmButtonComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() btnSmall?: boolean = false;
   @Input() type: 'button' | 'submit' = 'submit';
+  @Input() className: string = 'btn-primary';
   @Output() confirm = new EventEmitter<void>();
 
   constructor() {}
@@ -42,9 +43,9 @@ export class ConfirmButtonComponent implements OnInit {
 
   changeClass() {
     if (this.btnSmall) {
-      return 'btn btn-primary btn-sm active';
+      return `btn ${this.className} btn-sm active`;
     } else {
-      return 'btn btn-primary active';
+      return `btn ${this.className} active`;
     }
   }
 }
