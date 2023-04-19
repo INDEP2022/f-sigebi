@@ -307,7 +307,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Opción Carga Masiva',
-            'Algunos parametros necesarios no se recibieron en la pantalla.'
+            'Algunos parámetros necesarios no se recibieron en la pantalla'
           );
         } else {
           // let paramsData = localStorage.getItem('_flyersRegistrationParams');
@@ -448,17 +448,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               error: err => {
                 console.log(err);
                 let msg;
-                if (
-                  err.status == 400 &&
-                  err.error.message == 'No se encontrarón registros.'
-                ) {
-                  // msg = err.error.message;
-
+                if (err.status == 400) {
                   this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
                   this.reviewConditions();
                 } else {
                   msg =
-                    'Ocurrio un error al validar el Identificador de Carga, intentelo nuevamente.' +
+                    'Ocurrió un error al validar el Identificador de Carga, intentelo nuevamente' +
                     err.error.message;
                   this.alert('warning', 'Opción Carga Masiva', msg);
                 }
@@ -521,7 +516,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       const _settings = { columns: obj, actions: false };
       this.settings = { ...this.settings, ..._settings };
     } catch (error) {
-      this.alert('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
     }
   }
 
@@ -624,7 +619,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         FORM_IDENTIFICATOR_NULL,
-        'Ocurrio un error al validar el identificador, intentelo nuevamente.'
+        'Ocurrió un error al validar el identificador, intentelo nuevamente.'
       );
       return false;
     }
@@ -685,7 +680,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       if (this.tipoCarga == 'pgr') {
         this.alert(
           'warning',
-          'Error al cargar la información de los bienes, revisa los parámetros.',
+          'Error al cargar la información de los bienes, revisa los parámetros: EXPEDIENTE, VOLANTE y OFICIO',
           'Error'
         );
       } else {
@@ -726,7 +721,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Carga Masiva FGR',
-              'Ocurrio un error al cargar la información de los bienes.'
+              'Ocurrió un error al cargar la información de los bienes.'
             );
           }
         },
@@ -735,7 +730,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Carga Masiva FGR',
-            'Ocurrio un error al cargar la información de los bienes.'
+            'Ocurrió un error al cargar la información de los bienes.'
           );
         },
       });
@@ -761,7 +756,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Carga Masiva FGR',
-          'Ocurrio un error al cargar la Delegación y Subdelegación.'
+          'Ocurrió un error al cargar la Delegación y Subdelegación.'
         );
       },
     });
@@ -1103,7 +1098,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'Datos del bien',
-          'Ocurrio un error al cargar la información de los atributos del bien.'
+          'Ocurrió un error al cargar la información de los atributos del bien'
         );
       },
     });
@@ -1250,7 +1245,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     ) {
       // Mensaje de proceso de validación actual
       this.DeclarationsValidationMassive.message_progress =
-        'Validando la unidad de medida.';
+        'Validando la unidad de medida';
       console.log(this.DeclarationsValidationMassive.message_progress);
       // Validar Unidad
       if (!data.unidad) {
@@ -1277,7 +1272,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el Expediente.';
+      'Validando el Expediente';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar Expediente
     if (infoData.dataRow.expediente) {
@@ -1339,7 +1334,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando las Notificaciones de Transferente, Indiciado y Ciudad.';
+      'Validando las Notificaciones de Transferente, Indiciado y Ciudad';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar Notificaciones de Transferente, Indiciado y Ciudad
     if (
@@ -1394,7 +1389,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Obteneniendo el Transferente por Transferente Autoridad Emisora.';
+      'Obteneniendo el Transferente por Transferente Autoridad Emisora';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar Notificaciones de Transferente, Indiciado y Ciudad
     if (infoData.dataRow.transferente) {
@@ -1441,7 +1436,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el indicador.';
+      'Validando el indicador';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar el indicador
     if (infoData.dataRow.contribuyente) {
@@ -1487,7 +1482,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el Estatus.';
+      'Validando el Estatus del Bien';
     console.log(this.DeclarationsValidationMassive.message_progress);
     let status = '';
     if (this.proceso == 3) {
@@ -1536,7 +1531,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando la clasificación del bien.';
+      'Validando la clasificación del bien';
     console.log(
       this.DeclarationsValidationMassive.message_progress,
       infoData.dataRow.clasif,
@@ -1602,7 +1597,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando la unidad de medida de acuerdo a la clasificación del bien.';
+      'Validando la unidad de medida de acuerdo a la clasificación del bien';
     console.log(
       this.DeclarationsValidationMassive.message_progress,
       infoData.dataRow.clasif,
@@ -1809,7 +1804,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (opcionValid == 'sat') {
       // Mensaje de proceso de validación actual
       this.DeclarationsValidationMassive.message_progress =
-        'Validando el identificador.';
+        'Validando el identificador';
       console.log(this.DeclarationsValidationMassive.message_progress);
       // Validar Identificador padre de menaje
       if (!infoData.dataRow.identificador) {
@@ -1839,7 +1834,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el transferente.';
+      'Validando el Transferente';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
     if (infoData.dataRow.transferente > 10000) {
@@ -1905,7 +1900,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   async validMuebleSat(infoData: IValidInfoData, opcionValid: string = 'sat') {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando los datos requeridos para el mueble.';
+      'Validando los datos requeridos para el Mueble';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Opción del check para sólo autos
     const params: ListParams = {
@@ -1954,7 +1949,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando los datos requeridos para el inmueble.';
+      'Validando los datos requeridos para el Inmueble';
     console.log(this.DeclarationsValidationMassive.message_progress);
     const params: ListParams = {
       page: this.params.getValue().page,
@@ -2018,7 +2013,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.DeclarationsValidationMassive.message_progress =
         'Se detuvo el proceso por el usuario para el registro: "' +
         (infoData.contadorRegistro + 1) +
-        '".';
+        '"';
       this.reviewStopProcess();
       return;
     }
@@ -2040,7 +2035,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.DeclarationsValidationMassive.message_progress =
         'Se termino el proceso para el registro: "' +
         (infoData.contadorRegistro + 1) +
-        '".';
+        '"';
       // Fin del proceso para validar la carga SAT
       this.processValidFileSat(
         infoData.contadorRegistro + 1,
@@ -4192,7 +4187,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
-        'Se termino el proceso de carga de datos para el registro: "' +
+        'Se término el proceso de carga de datos para el registro: "' +
         (infoData.contadorRegistro + 1) +
         '".';
       // Fin del proceso para validar la carga SAT
@@ -4248,7 +4243,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
-        'Se termino el proceso de carga de datos para el registro: "' +
+        'Se término el proceso de carga de datos para el registro: "' +
         (infoData.contadorRegistro + 1) +
         '".';
       // Fin del proceso para validar la carga PGR
@@ -4288,7 +4283,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
-        'Se termino el proceso de carga de datos para el registro: "' +
+        'Se término el proceso de carga de datos para el registro: "' +
         (infoData.contadorRegistro + 1) +
         '".';
       // Fin del proceso para validar la carga GENERAL
@@ -4345,7 +4340,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       // NO EXISTE ASUNTO SAT
       this.infoDataValidation.error = this.agregarError(
         this.infoDataValidation.error,
-        'No se encontro el Asunto SAT en los parámetros'
+        'No se encontró el Asunto SAT en los parámetros'
       );
       this.infoDataValidation.error = this.infoDataValidation.error; // Setear error
       this.infoDataValidation.validLastRequest = false; // Respuesta incorrecta
@@ -4583,7 +4578,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.alertInfo(
               'info',
               'Actualización de menaje',
-              'Es un bien inmueble con menaje, se van a asociar los bienes hijos al bien padre.'
+              'Es un bien inmueble con Menaje, se van a asociar los bienes hijos al bien padre'
             ).then(() => {
               this.createMenajePGR(res.data, 0);
             });
@@ -4597,7 +4592,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'warning',
             'Actualización de menaje',
-            'Ocurrio un error al cargar la información de los bienes para actualizar el menaje.'
+            'Ocurrió un error al cargar la información de los bienes para actualizar el Menaje'
           );
         },
       });
@@ -4633,7 +4628,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'Actualización de menaje',
-          'Ocurrio un error al cargar la información del menaje.'
+          'Ocurrió un error al cargar la información del Menaje'
         );
       },
     });
@@ -4662,7 +4657,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Información del Volante Temporal',
-              'Ocurrio un error al cargar la información del Volante Temporal.'
+              'Ocurrió un error al cargar la información del Volante Temporal'
             );
           }
           console.log(err);
@@ -4710,7 +4705,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               this.onLoadToast(
                 'warning',
                 'Información del Volante',
-                'Ocurrio un error al cargar la información del Volante, para validar si se creo previamnete. Intenta nuevamente'
+                'Ocurrio un error al cargar la información del Volante. Intenta nuevamente'
               );
             }
           }
@@ -4810,7 +4805,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Información del Volante Temporal',
-              'Ocurrio un error al CREAR el Volante con la información del Volante Temporal.' +
+              'Ocurrió un error al CREAR el Volante con la información del Volante Temporal.' +
                 err.error.message
             );
           }
@@ -4833,7 +4828,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.alertInfo(
             'info',
             'Datos del Volante',
-            'Se creo correctamente el Volante: ' +
+            'Se creó correctamente el Volante: ' +
               this.paramsGeneral.p_no_volante
           ).then(() => {
             this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
@@ -4847,7 +4842,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Información del Volante Temporal',
-              'Ocurrio un error al CREAR el Volante con la información del Volante Temporal.' +
+              'Ocurrió un error al CREAR el Volante con la información del Volante Temporal.' +
                 err.error.message
             );
           }
@@ -4871,7 +4866,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'Información del Expediente Temporal',
-          'Ocurrio un error al cargar la información del Expediente Temporal.'
+          'Ocurrió un error al cargar la información del Expediente Temporal.'
         );
         console.log(err);
       },
@@ -4912,7 +4907,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Información del Expediente',
-              'Ocurrio un error al cargar la información del Expediente, para validar si se creo previamnete. Intenta nuevamente'
+              'Ocurrió un error al cargar la información del Expediente, para validar si se creo previamnete. Intenta nuevamente'
             );
           }
         }
@@ -4991,7 +4986,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.alertInfo(
             'info',
             'Datos del Expediente',
-            'Se creo correctamente el Expediente: ' +
+            'Se creó correctamente el Expediente: ' +
               this.paramsGeneral.p_no_expediente
           ).then(() => {
             this.getDataVolanteTemp(onlyCreate); // Get Temp expedient
@@ -5013,7 +5008,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'Información del Expediente Temporal',
-          'Ocurrio un error al CREAR el Expediente con la información del Expediente Temporal.' +
+          'Ocurrió un error al CREAR el Expediente con la información del Expediente Temporal.' +
             err.error.message
         );
       },
