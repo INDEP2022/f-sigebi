@@ -2275,7 +2275,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     // this.getUser();
     // this.getData();
     // this.dataTable.refresh();
-    //this.buildFilters();
+    this.buildFilters();
   }
 
   notAvailable(): void {
