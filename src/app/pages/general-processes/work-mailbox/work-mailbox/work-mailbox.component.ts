@@ -674,13 +674,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     //console.log(this.filterForm.value)
     let field = `filter.processEntryDate`;
-    /*console.log(
+    console.log(
       this.filterForm.get('startDate').invalid,
       this.filterForm.get('endDate').invalid,
       this.filterForm.get('startDate').valid,
-      this.filterForm.get('endDate').valid
-    );*/
-
+      this.filterForm.get('endDate').valid,
+      this.filterForm.get('startDate').value,
+      this.filterForm.get('endDate').value,
+      this.filterForm.value
+    );
+    let dateNow: Date = new Date(); //.toISOString().split('T')[0];
+    // console.log(dateNow, endDate);
     /*DATEFILTER*/
     if (
       this.filterForm.get('startDate').invalid ||
@@ -698,29 +702,54 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       startDate &&
       endDate
     ) {
-      let validDate = null;
-      validDate = compareDesc(startDate, endDate);
-      //console.log(validDate);
-      if (validDate >= 0) {
-        const startTemp = `${startDate.getFullYear()}-0${
-          startDate.getUTCMonth() + 1
-        }-0${startDate.getDate()}`;
-        const endTemp = `${endDate.getFullYear()}-0${
-          endDate.getUTCMonth() + 1
-        }-0${endDate.getDate()}`;
-        this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
-      } else {
-        let mensaje = '';
-        if (validDate == -1) {
-          mensaje =
-            'La Fecha "Desde" debe ser menor o igual a la Fecha "Hasta".';
-        } else {
-          mensaje = 'Ingrese Fechas correctas para realizar la búsqueda.';
-        }
-        this.onLoadToast('warning', 'Fechas incorrectas', mensaje);
+      dateNow.setHours(23, 59, 59); // Lo iniciamos a 23:59:59 horas
+      // console.log(
+      //   dateNow,
+      //   endDate,
+      //   Date.parse(dateNow.toISOString()),
+      //   Date.parse(endDate)
+      // );
+      if (Date.parse(dateNow.toISOString()) < Date.parse(endDate)) {
+        this.onLoadToast(
+          'warning',
+          'Fechas incorrectas',
+          'La Fecha "Hasta" no debe ser MAYOR al día de hoy'
+        );
         return;
+      } else {
+        let validDate = null;
+        validDate = compareDesc(startDate, endDate);
+        // console.log(validDate);
+        if (validDate >= 0) {
+          const startTemp = `${startDate.getFullYear()}-0${
+            startDate.getUTCMonth() + 1
+          }-0${startDate.getDate()}`;
+          const endTemp = `${endDate.getFullYear()}-0${
+            endDate.getUTCMonth() + 1
+          }-0${endDate.getDate()}`;
+          this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
+        } else {
+          let mensaje = '';
+          if (validDate == -1) {
+            mensaje =
+              'La Fecha "Desde" debe ser menor o igual a la Fecha "Hasta".';
+          } else {
+            mensaje = 'Ingrese Fechas correctas para realizar la búsqueda.';
+          }
+          this.onLoadToast('warning', 'Fechas incorrectas', mensaje);
+          return;
+        }
       }
     } else {
+      if (endDate || startDate) {
+        // console.log(startDate, endDate);
+        this.onLoadToast(
+          'warning',
+          'Fechas incorrectas',
+          'Si desea realizar una búsqueda por Fechas, ingrese la Fecha "Desde" y la Fecha "Hasta"'
+        );
+        return;
+      }
       delete this.columnFilters[field];
     }
     //console.log(this.filterForm.value);
