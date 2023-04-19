@@ -252,7 +252,7 @@ export class RequestInTurnFormComponent implements OnInit {
     params['filter.regionalDelegationId'] = `$eq:${delegationId}`;
 
     //filtro estado solicitudes por tunar
-    params['filter.requestStatus'] = '$eq:A_TURNAR';
+    params['filter.requestStatus'] = '$eq:POR_TURNAR';
 
     //filtro ordenar desc
     params['sortBy'] = 'applicationDate:DESC';
