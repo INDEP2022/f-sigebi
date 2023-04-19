@@ -44,6 +44,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsValue = new Date();
   requestForm: ModelForm<any>;
   isReadOnly: boolean = true;
+  requestId: number = 0;
+  taskId: number = 0;
 
   loadingTurn = false;
   bsModalRef: BsModalRef;
@@ -92,6 +94,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.getIssue();
     this.getRegionalDeleg(new ListParams());
     this.getTransferent(new ListParams());
+
+    /* crear solicitud */
+    this.generateFirstTask();
 
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
@@ -150,33 +155,45 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const form = this.requestForm.getRawValue();
     const requestResult: any = await this.createRequest(form);
     if (requestResult) {
-      const form = requestResult;
-      const from = 'REGISTRO_SOLICITUD';
-      const to = 'REGISTRO_SOLICITUD';
-      const actualUser: any = this.authService.decodeToken();
-      const taskResult = await this.createTaskOrderService(
-        form,
-        from,
-        to,
-        false,
-        0,
-        actualUser.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Nueva_Solicitud',
-        'TURNAR'
-      );
+      this.requestId = requestResult.id;
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      //body['type'] = 'SOLICITUD TRANSFERENCIA';
+
+      body['type'] = 'SOLICITUD_TRANSFERENCIA';
+      body['subtype'] = 'Nueva_Solicitud';
+      body['ssubtype'] = 'TURNAR';
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.nickName;
+      task['assigneesDisplayname'] = this.userName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestId);
+      task['title'] = 'Registro de solicitud con folio: ' + this.requestId;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestId;
+      task['expedientId'] = 0;
+      task['urlNb'] = 'pages/request/list/new-transfer-request';
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+      orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+      orderservice['pIdApplication'] = this.requestId;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+
+      //const actualUser: any = this.authService.decodeToken();
+      const taskResult: any = await this.createTaskOrderService(body);
+      if (taskResult) {
+        console.log(taskResult);
+        this.taskId = Number(taskResult.task.id);
+        this.loadingTurn = false;
+      }
     }
-    /*   const taskResult = await this.createTaskOrderService(
-            form,
-            from,
-            to,
-            false,
-            0,
-            actualUser.username,
-            'SOLICITUD_TRANSFERENCIA',
-            'Nueva_Solicitud',
-            'TURNAR'
-          ); */
   }
 
   complementaryDocumentationField(form: ModelForm<IRequest>) {
@@ -417,24 +434,43 @@ export class RequestFormComponent extends BasePage implements OnInit {
       if (result.isConfirmed) {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
-        const requestResult: any = await this.createRequest(form);
+        form.id = this.requestId;
+        const requestResult: any = await this.updateRequest(form);
         if (requestResult) {
-          const form = requestResult;
-          const from = 'REGISTRO_SOLICITUD';
-          const to = 'REGISTRO_SOLICITUD';
           const actualUser: any = this.authService.decodeToken();
-          const taskResult = await this.createTaskOrderService(
-            form,
-            from,
-            to,
-            false,
-            0,
-            actualUser.username,
-            'SOLICITUD_TRANSFERENCIA',
-            'Nueva_Solicitud',
-            'TURNAR'
-          );
-          if (taskResult === true) {
+          let body: any = {};
+          body['idTask'] = this.taskId;
+          body['userProcess'] = actualUser.username;
+
+          body['type'] = 'SOLICITUD_TRANSFERENCIA';
+          body['subtype'] = 'Nueva_Solicitud';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = this.nickName;
+          task['assigneesDisplayname'] = this.userName;
+          task['creator'] = actualUser.username;
+          task['taskNumber'] = Number(requestResult.id);
+          task['title'] =
+            'Registro de solicitud (Captura de Solicitud) con folio: ' +
+            requestResult.id;
+          task['programmingId'] = 0;
+          task['requestId'] = requestResult.id;
+          task['expedientId'] = 0;
+          task['urlNb'] = 'pages/request/transfer-request/registration-request';
+          body['task'] = task;
+
+          let orderservice: any = {};
+          orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+          orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+          orderservice['pIdApplication'] = requestResult.id;
+          orderservice['pCurrentDate'] = new Date().toISOString();
+          orderservice['pOrderServiceIn'] = '';
+
+          body['orderservice'] = orderservice;
+          const taskResult = await this.createTaskOrderService(body);
+          if (taskResult) {
             this.loadingTurn = false;
             this.msgModal(
               'Se turnar la solicitud con el Folio Nº '
@@ -446,27 +482,40 @@ export class RequestFormComponent extends BasePage implements OnInit {
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
         }
-
-        this.loadingTurn = false;
       }
     });
   }
 
   createRequest(form: any) {
     return new Promise((resolve, reject) => {
+      form.requestStatus = 'POR_TURNAR';
+      form.receiptRoute = 'FISICA';
+      form.affair = null;
+      form.applicationDate = null;
+
+      this.requestService.create(form).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loadingTurn = false;
+          this.msgModal('error', 'Error', 'Error al crear la solicitud');
+          reject(error.error);
+        },
+      });
+    });
+  }
+
+  updateRequest(form: any) {
+    return new Promise((resolve, reject) => {
       form.requestStatus = 'A_TURNAR';
       form.receiptRoute = 'FISICA';
       form.affair = 37;
+      form.typeOfTransfer = 'MANUAL';
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
 
-      let action = null;
-      if (!form.id) {
-        action = this.requestService.create(form);
-      } else {
-        action = this.requestService.update(form.id, form);
-      }
-      action.subscribe({
+      this.requestService.update(form.id, form).subscribe({
         next: resp => {
           resolve(resp);
         },
@@ -479,55 +528,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createTaskOrderService(
-    request: any,
-    from: string,
-    to: string,
-    closetask: boolean,
-    taskId: string | number,
-    userProcess: string,
-    type: string,
-    subtype: string,
-    ssubtype: string
-  ) {
+  createTaskOrderService(body: any) {
     return new Promise((resolve, reject) => {
-      const user: any = this.authService.decodeToken();
-      let body: any = {};
-      //body['type'] = 'SOLICITUD TRANSFERENCIA';
-      if (closetask) {
-        body['idTask'] = taskId;
-        body['userProcess'] = userProcess;
-      }
-
-      body['type'] = type;
-      body['subtype'] = subtype;
-      body['ssubtype'] = ssubtype;
-
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = this.nickName;
-      task['assigneesDisplayname'] = this.userName;
-      task['creator'] = user.username;
-      task['taskNumber'] = Number(request.id);
-      task['title'] =
-        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
-      task['programmingId'] = 0;
-      task['requestId'] = request.id;
-      task['expedientId'] = 0;
-      task['urlNb'] = 'pages/request/transfer-request/registration-request';
-      body['task'] = task;
-
-      let orderservice: any = {};
-      orderservice['pActualStatus'] = from;
-      orderservice['pNewStatus'] = to;
-      orderservice['pIdApplication'] = request.id;
-      orderservice['pCurrentDate'] = new Date().toISOString();
-      orderservice['pOrderServiceIn'] = '';
-
-      body['orderservice'] = orderservice;
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
-          resolve(true);
+          resolve(resp);
         },
         error: error => {
           console.log(error.error.message);
