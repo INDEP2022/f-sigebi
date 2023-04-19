@@ -355,6 +355,16 @@ export class DocumentsReceptionRegisterComponent
       } else if (Object.keys(this.pageParams).length == 0) {
         console.log('params empty');
         this.canViewDocuments = true;
+        const param = new FilterParams();
+        param.addFilter('flierNumber', this.formControls.wheelNumber.value);
+        this.procedureManageService
+          .getAllFiltered(param.getParams())
+          .subscribe({
+            next: data => {
+              this.procedureId = data.data[0].id;
+              console.log(this.procedureId);
+            },
+          });
       }
     } else if (
       this.pageParams.pNoTramite != null &&
@@ -393,6 +403,7 @@ export class DocumentsReceptionRegisterComponent
       param.addFilter('flierNumber', this.formControls.wheelNumber.value);
       this.procedureManageService.getAllFiltered(param.getParams()).subscribe({
         next: data => {
+          this.procedureId = data.data[0].id;
           this.checkPgrGoods(
             data.data[0].id,
             this.formControls.wheelNumber.value
@@ -4249,7 +4260,7 @@ export class DocumentsReceptionRegisterComponent
           this.alert(
             'error',
             'Error al verificar los registros agregados',
-            `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+            `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. No se crearon correctamente debido a un error en la captura de bienes.`
           );
         }
       },
@@ -4259,23 +4270,10 @@ export class DocumentsReceptionRegisterComponent
         this.alert(
           'error',
           'Error al verificar los registros agregados',
-          `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+          `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. No se crearon correctamente debido a un error en la captura de bienes.`
         );
       },
     });
-    // this.tmpExpedientService.getById(this.globals.gNoExpediente).subscribe({
-    //   next: data => {
-    //     if (data.affairSijNumber) {
-
-    //     } else {
-    //       console.log('No affairSijNumber');
-    //     }
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //   },
-    // });
-    // this.sendFlyerCopies();
   }
 
   updateProcedureManagement() {

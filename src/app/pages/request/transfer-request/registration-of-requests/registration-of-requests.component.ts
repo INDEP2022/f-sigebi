@@ -97,7 +97,7 @@ export class RegistrationOfRequestsComponent
   formLoading: boolean = true;
 
   question: boolean = false;
-  verifyResp: boolean = false;
+  verifyResp: string = null;
   task: any = null;
 
   constructor(
@@ -128,8 +128,8 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.task = localStorage.getItem('Task');
-    console.log('task', JSON.parse(this.task));
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    console.log('task', this.task);
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -619,34 +619,32 @@ export class RegistrationOfRequestsComponent
   /* Metodo para guardar la Verificacion de cumplimientos */
   async verifyComplianceMethod() {
     this.loader.load = true;
-    const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/classify-assets';
-      const from = 'VERIFICAR_CUMPLIMIENTO';
-      const to = 'CLASIFICAR_BIEN';
-      const user: any = this.authService.decodeToken();
-      const taskRes = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        true,
-        this.task.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Verificar_Cumplimiento',
-        'APPROVE'
+    const title = `Registro de solicitud (Clasificar Bien) con folio: ${this.requestData.id}`;
+    const url = 'pages/request/transfer-request/classify-assets';
+    const from = 'VERIFICAR_CUMPLIMIENTO';
+    const to = 'CLASIFICAR_BIEN';
+    console.log(this.task);
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Verificar_Cumplimiento',
+      'APPROVE'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
-      if (taskRes) {
-        this.loader.load = false;
-        this.msgGuardado(
-          'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
-        );
-      }
     }
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
@@ -887,7 +885,7 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-
+      debugger;
       if (closetask) {
         body['idTask'] = taskId;
         body['userProcess'] = userProcess;
@@ -897,7 +895,6 @@ export class RegistrationOfRequestsComponent
       body['subtype'] = subtype;
       body['ssubtype'] = ssubtype;
 
-      body['type'] = 'SOLICITUD TRANSFERENCIA'; //
       let task: any = {};
       task['id'] = 0;
       task['assignees'] = this.task.assignees;
@@ -907,7 +904,7 @@ export class RegistrationOfRequestsComponent
       task['title'] = title;
       task['programmingId'] = 0;
       task['requestId'] = request.id;
-      task['expedientId'] = 0;
+      task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       body['task'] = task;
 
@@ -1006,9 +1003,9 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'verificar-cumplimiento') {
           this.question = true;
           setTimeout(() => {
-            if (this.verifyResp === true) {
+            if (this.verifyResp === 'turnar') {
               this.verifyComplianceMethod();
-            } else {
+            } else if (this.verifyResp === 'sin articulos') {
               Swal.fire({
                 title: 'Error',
                 text: 'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
@@ -1021,6 +1018,16 @@ export class RegistrationOfRequestsComponent
                 if (result.isConfirmed) {
                 }
               });
+            } else if (this.verifyResp === 'sin guardar') {
+              Swal.fire({
+                title: 'No se pudo turnar la solicitud',
+                text: 'Guarde el formulario antes de turnar la solicitud',
+                icon: 'info',
+                showCancelButton: false,
+                confirmButtonColor: '#AD4766',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+              }).then(result => {});
             }
             this.question = false;
           }, 400);
