@@ -144,6 +144,7 @@
                       id="3"
                       type="checkbox"
                       class="form-control"
+                      (change)="buildFilters()"
                       formControlName="pendientes" />
                   </form-check>
                   <form-check label="Condiciones predeterminadas" for="4">
@@ -151,6 +152,7 @@
                       id="4"
                       type="checkbox"
                       class="form-control"
+                      (change)="buildFilters()"
                       formControlName="predetermined" />
                   </form-check>
                 </div>
@@ -165,6 +167,7 @@
                     label="Desde">
                     <input
                       formControlName="startDate"
+                      (bsValueChange)="buildFilters()"
                       class="form-control"
                       bsDatepicker />
                   </form-field>
@@ -175,6 +178,7 @@
                     label="Hasta">
                     <input
                       formControlName="endDate"
+                      (bsValueChange)="buildFilters()"
                       class="form-control"
                       bsDatepicker />
                   </form-field>

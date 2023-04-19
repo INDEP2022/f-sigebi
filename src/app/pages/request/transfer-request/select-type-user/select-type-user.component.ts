@@ -183,6 +183,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         );
 
         if (report) {
+          const actualUser: any = this.authService.decodeToken();
           let form: any = {};
           form['ddocTitle'] = `Solicitud_${this.data.id}`;
           form['xidExpediente'] = this.data.recordId;
@@ -194,6 +195,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           form['xnoOficio'] = this.data.paperNumber;
           form['xremitente'] = this.data.nameOfOwner;
           form['xcargoRemitente'] = this.data.holderCharge;
+          form['dDocAuthor'] = actualUser.username;
 
           if (this.data.stationId) {
             form['xestado'] = this.data.stationId;
@@ -209,7 +211,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           if (addToContent) {
             const docName = addToContent;
             console.log(docName);
-            const actualUser: any = this.authService.decodeToken();
+            //const actualUser: any = this.authService.decodeToken();
             const title =
               'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
               this.data.id;
@@ -217,7 +219,6 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             const from = 'REGISTRO_SOLICITUD';
             const to = 'VERIFICAR_CUMPLIMIENTO';
             /* crea una nueva tarea */
-            debugger;
             const taskResponse = await this.createTaskOrderService(
               this.data,
               title,

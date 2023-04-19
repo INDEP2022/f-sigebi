@@ -29,7 +29,7 @@ export class ObservationsComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      observationAdd: [
+      observation: [
         null,
         [
           Validators.required,
