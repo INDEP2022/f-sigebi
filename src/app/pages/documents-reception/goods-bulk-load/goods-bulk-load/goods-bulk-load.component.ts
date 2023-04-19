@@ -4647,7 +4647,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getDataPgrNotificationByFilter(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log('DATA VOLANTE', res);
+          console.log('DATA VOLANTE TEMPORAL', res);
           this.getDataVolante(res.data[0]);
         },
         error: err => {
@@ -4674,7 +4674,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getPgrNotificationByFilter(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log('DATA VOLANTE', res);
+          console.log('DATA VOLANTE PRINCIPAL', res);
           if (onlyCreate == false) {
             this.endProcess = true;
             let main = document.documentElement.querySelector('.fin-proceso');
@@ -4785,7 +4785,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (update) {
       this.goodsBulkService.updatePgrNotification(bodyData).subscribe({
         next: res => {
-          console.log('DATA VOLANTE', res);
+          console.log('DATA VOLANTE UPDATE', res);
           this.paramsGeneral.p_no_volante = bodyData.wheelNumber.toString();
           this.alertInfo(
             'info',
@@ -4814,7 +4814,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else {
       this.goodsBulkService.createPgrNotification(bodyData).subscribe({
         next: res => {
-          console.log('DATA VOLANTE', res);
+          console.log('DATA VOLANTE CREATE', res);
           this.paramsGeneral.p_no_volante = res.wheelNumber.toString();
           // if (onlyCreate == false && this.DeclarationsUploadValidationMassive) {
           //   // Agregar contador de volantes
