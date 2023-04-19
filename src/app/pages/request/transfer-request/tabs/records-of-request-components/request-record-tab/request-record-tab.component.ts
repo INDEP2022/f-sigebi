@@ -10,9 +10,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
 import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
@@ -50,15 +50,16 @@ export class RequestRecordTabComponent
   priorityString: string = 'N';
   transferenceNumber: number = 0;
   formLoading: boolean = false;
-
+  transfe: string = '';
   paperDateLabel: any = '';
-
+  rem: string = 'del Remitente';
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
     private genericsService: GenericService,
     private requestService: RequestService,
-    private minPub: MinPubService
+    private minPub: MinPubService,
+    private transferenteService: TransferenteService
   ) {
     super();
   }
@@ -105,7 +106,7 @@ export class RequestRecordTabComponent
       this.transferenceNumber = Number(
         this.requestForm.controls['transferenceId'].value
       );
-      console.log(this.transferenceNumber);
+      this.getTrans(this.transferenceNumber);
     }
 
     if (this.requestForm.controls['urgentPriority'].value === 'Y') {
@@ -250,6 +251,25 @@ export class RequestRecordTabComponent
       },
       error: error => {
         this.affairName = '';
+      },
+    });
+  }
+
+  getTrans(transferenceNumber: number) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${transferenceNumber}`;
+    this.transferenteService.getAll(params).subscribe({
+      next: ({ data }) => {
+        console.log(this.transfe);
+        if (transferenceNumber === 1 || transferenceNumber === 120) {
+          this.transfe = this.rem;
+        } else {
+          this.transfe = data[0].keyTransferent;
+        }
+        console.log(this.transfe);
+      },
+      error: error => {
+        this.transfe = '';
       },
     });
   }

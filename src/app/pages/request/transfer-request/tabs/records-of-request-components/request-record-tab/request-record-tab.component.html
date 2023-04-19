@@ -123,7 +123,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('nameOfOwner')"
-            label="Nombre del Remitente">
+            label="Nombre {{ transfe }}">
             <input
               type="text"
               maxlength="100"
@@ -134,7 +134,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono del Remitente">
+            label="Tel&eacute;fono {{ transfe }}">
             <input
               type="text"
               maxlength="13"
@@ -147,7 +147,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('emailOfOwner')"
-            label="Correo del Remitente">
+            label="Correo {{ transfe }}">
             <input
               type="text"
               maxlength="100"
