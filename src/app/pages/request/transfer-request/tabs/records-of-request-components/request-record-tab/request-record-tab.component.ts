@@ -262,11 +262,10 @@ export class RequestRecordTabComponent
       next: ({ data }) => {
         console.log(this.transfe);
         if (transferenceNumber === 1 || transferenceNumber === 120) {
-          this.transfe = this.rem;
+          this.transfe = 'MP';
         } else {
-          this.transfe = data[0].keyTransferent;
+          this.transfe = this.rem;
         }
-        console.log(this.transfe);
       },
       error: error => {
         this.transfe = '';
