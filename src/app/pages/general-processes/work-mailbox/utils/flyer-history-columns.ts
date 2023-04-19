@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const FLYER_HISTORY_COLUMNS = {
   consecutive: {
@@ -26,5 +27,14 @@ export const FLYER_HISTORY_COLUMNS = {
   observations: {
     title: 'Observaciones',
     sort: false,
+    type: 'custom',
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
+    renderComponent: SeeMoreComponent,
   },
 };

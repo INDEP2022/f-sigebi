@@ -247,7 +247,13 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
     editable: false,
     renderComponent: SeeMoreComponent,
-    valuePrepareFunction: (value: string) => value ?? '',
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
   },
   /*observationAdd: {
     title: 'Observaciones Add.',
