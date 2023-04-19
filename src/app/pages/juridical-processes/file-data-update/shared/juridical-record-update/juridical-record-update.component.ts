@@ -416,6 +416,7 @@ export class JuridicalRecordUpdateComponent
   }
 
   getData() {
+    this.formLoading = true;
     this.fileUpdateService.getProcedure(this.pageParams.pNoTramite).subscribe({
       next: data => {
         console.log(data);
@@ -427,6 +428,7 @@ export class JuridicalRecordUpdateComponent
             if (data.count > 0) {
               this.fillForm(data.data[0]);
             } else {
+              this.formLoading = false;
               this.onLoadToast(
                 'warning',
                 'Datos no encontrados',
@@ -435,6 +437,7 @@ export class JuridicalRecordUpdateComponent
             }
           },
           error: () => {
+            this.formLoading = false;
             this.onLoadToast(
               'warning',
               'Datos no encontrados',
@@ -444,6 +447,7 @@ export class JuridicalRecordUpdateComponent
         });
       },
       error: () => {
+        this.formLoading = false;
         this.onLoadToast(
           'warning',
           'Datos no encontrados',
@@ -454,6 +458,7 @@ export class JuridicalRecordUpdateComponent
   }
 
   fillForm(notif: INotification) {
+    this.fileDataUpdateForm.enable();
     this.fileDataUpdateForm.reset();
     const filterParams = new FilterParams();
     this.formLoading = true;
@@ -487,29 +492,43 @@ export class JuridicalRecordUpdateComponent
         'Este volante no tiene asociado un expediente.'
       );
     }
+    this.formControls.receiptDate.enable();
     this.formControls.receiptDate.setValue(
       format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
     );
+    this.formControls.receiptDate.disable();
+    this.formControls.externalOfficeDate.enable();
     this.formControls.externalOfficeDate.setValue(
       format(this.parseDateNoOffset(notif.externalOfficeDate), 'dd/MM/yyyy')
     );
+    this.formControls.externalOfficeDate.disable();
+    this.formControls.wheelType.enable();
     if (notif.wheelType != null)
       this.formControls.wheelType.setValue(notif.wheelType);
+    this.formControls.wheelType.disable();
     this.initialCondition = notif.wheelType;
     this.fileUpdateService.getAffair(notif.affairKey).subscribe({
       next: data => {
+        this.formControls.affairKey.enable();
         this.formControls.affairKey.setValue(data);
+        this.formControls.affairKey.disable();
       },
       error: () => {},
     });
     if (notif.cityNumber != null)
       this.docRegisterService.getCity(notif.cityNumber).subscribe({
-        next: data => this.formControls.cityNumber.setValue(data),
+        next: data => {
+          this.formControls.cityNumber.enable();
+          this.formControls.cityNumber.setValue(data);
+          this.formControls.cityNumber.disable();
+        },
       });
     if (notif.entFedKey != null) {
       this.docRegisterService.getByTableKeyOtKey(1, notif.entFedKey).subscribe({
         next: data => {
+          this.formControls.entFedKey.enable();
           this.formControls.entFedKey.setValue(data.data);
+          this.formControls.entFedKey.disable();
         },
       });
     }
@@ -518,19 +537,27 @@ export class JuridicalRecordUpdateComponent
         .getTransferent(notif.endTransferNumber)
         .subscribe({
           next: data => {
+            this.formControls.endTransferNumber.enable();
             this.formControls.endTransferNumber.setValue(data);
+            this.formControls.endTransferNumber.disable();
           },
         });
     if (notif.courtNumber != null)
       this.docRegisterService.getCourt(notif.courtNumber).subscribe({
-        next: data => this.formControls.courtNumber.setValue(data),
+        next: data => {
+          this.formControls.courtNumber.enable();
+          this.formControls.courtNumber.setValue(data);
+          this.formControls.courtNumber.disable();
+        },
       });
     if (notif.stationNumber != null) filterParams.removeAllFilters();
     filterParams.addFilter('id', notif.stationNumber);
     filterParams.addFilter('idTransferent', notif.endTransferNumber);
     this.docRegisterService.getStations(filterParams.getParams()).subscribe({
       next: data => {
+        this.formControls.stationNumber.enable();
         this.formControls.stationNumber.setValue(data.data[0]);
+        this.formControls.stationNumber.disable();
         this.getStations({ page: 1, limit: 10 });
       },
     });
@@ -543,7 +570,9 @@ export class JuridicalRecordUpdateComponent
         .subscribe({
           next: data => {
             if (data.count > 0) {
+              this.formControls.autorityNumber.enable();
               this.formControls.autorityNumber.setValue(data.data[0]);
+              this.formControls.autorityNumber.disable();
               this.getAuthorities({ page: 1, limit: 10 });
             }
           },
@@ -559,7 +588,9 @@ export class JuridicalRecordUpdateComponent
       .subscribe({
         next: data => {
           if (data.count > 0) {
+            this.formControls.uniqueKey.enable();
             this.formControls.uniqueKey.setValue(data.data[0]);
+            this.formControls.uniqueKey.disable();
           }
         },
         error: () => {},
@@ -567,26 +598,44 @@ export class JuridicalRecordUpdateComponent
     if (notif.minpubNumber != null) {
       const minpub = notif.minpubNumber as IMinpub;
       this.docRegisterService.getMinPub(minpub.id).subscribe({
-        next: data => this.formControls.minpubNumber.setValue(data),
+        next: data => {
+          this.formControls.minpubNumber.enable();
+          this.formControls.minpubNumber.setValue(data);
+          this.formControls.minpubNumber.disable();
+        },
       });
     }
     if (notif.crimeKey != null)
       this.docRegisterService.getByTableKeyOtKey(2, notif.crimeKey).subscribe({
-        next: data => this.formControls.crimeKey.setValue(data.data),
+        next: data => {
+          this.formControls.crimeKey.enable();
+          this.formControls.crimeKey.setValue(data.data);
+          this.formControls.crimeKey.disable();
+        },
       });
     if (notif.indiciadoNumber != null)
       this.docRegisterService.getDefendant(notif.indiciadoNumber).subscribe({
-        next: data => this.formControls.indiciadoNumber.setValue(data),
+        next: data => {
+          this.formControls.indiciadoNumber.enable();
+          this.formControls.indiciadoNumber.setValue(data);
+          this.formControls.indiciadoNumber.disable();
+        },
       });
     if (notif.viaKey != null)
       this.docRegisterService.getByTableKeyOtKey(9, notif.viaKey).subscribe({
-        next: data => this.formControls.viaKey.setValue(data.data),
+        next: data => {
+          this.formControls.viaKey.enable();
+          this.formControls.viaKey.setValue(data.data);
+          this.formControls.viaKey.disable();
+        },
       });
     if (notif.institutionNumber != null) {
       const institution = notif.institutionNumber as IInstitutionNumber;
       this.fileUpdateService.getInstitution(institution.id).subscribe({
         next: data => {
+          this.formControls.institutionNumber.enable();
           this.formControls.institutionNumber.setValue(data);
+          this.formControls.institutionNumber.disable();
         },
         error: () => {},
       });
@@ -598,7 +647,9 @@ export class JuridicalRecordUpdateComponent
         next: data => {
           if (data.count > 0) {
             const dictum = data.data[0];
+            this.formControls.dictumKey.enable();
             this.formControls.dictumKey.setValue(dictum);
+            this.formControls.dictumKey.disable();
             this.prevDictumKey = this.formControls.dictumKey.value;
             this.dictum = dictum.description;
             this.dictOffice = dictum.dict_ofi;
@@ -625,39 +676,55 @@ export class JuridicalRecordUpdateComponent
       },
     });
     if (notif.delDestinyNumber != null) {
+      this.formControls.delDestinyNumber.enable();
       this.formControls.delDestinyNumber.setValue(notif.delDestinyNumber);
+      this.formControls.delDestinyNumber.disable();
       if (notif.delegation != null) {
+        this.formControls.delegationName.enable();
         this.formControls.delegationName.setValue(notif.delegation.description);
+        this.formControls.delegationName.disable();
       } else {
         this.fileUpdateService
           .getDelegation(notif.delDestinyNumber)
-          .subscribe(data =>
-            this.formControls.delegationName.setValue(data.description)
-          );
+          .subscribe(data => {
+            this.formControls.delegationName.enable();
+            this.formControls.delegationName.setValue(data.description);
+            this.formControls.delegationName.disable();
+          });
       }
     }
     if (notif.subDelDestinyNumber != null) {
+      this.formControls.subDelDestinyNumber.enable();
       this.formControls.subDelDestinyNumber.setValue(notif.subDelDestinyNumber);
+      this.formControls.subDelDestinyNumber.disable();
       if (notif.subDelegation != null) {
+        this.formControls.subDelegationName.enable();
         this.formControls.subDelegationName.setValue(
           notif.subDelegation.description
         );
+        this.formControls.subDelegationName.disable();
       } else {
         this.fileUpdateService
           .getSubDelegation(notif.subDelDestinyNumber)
-          .subscribe(data =>
-            this.formControls.subDelegationName.setValue(data.description)
-          );
+          .subscribe(data => {
+            this.formControls.subDelegationName.enable();
+            this.formControls.subDelegationName.setValue(data.description);
+            this.formControls.subDelegationName.disable();
+          });
       }
     }
     if (notif.departamentDestinyNumber != null) {
+      this.formControls.departamentDestinyNumber.enable();
       this.formControls.departamentDestinyNumber.setValue(
         notif.departamentDestinyNumber
       );
+      this.formControls.departamentDestinyNumber.disable();
       if (notif.departament != null) {
+        this.formControls.destinationArea.enable();
         this.formControls.destinationArea.setValue(
           notif.departament.description
         );
+        this.formControls.destinationArea.disable();
       } else {
         this.docRegisterService.getPhaseEdo().subscribe({
           next: data => {
@@ -673,11 +740,13 @@ export class JuridicalRecordUpdateComponent
             filterParams.addFilter('phaseEdo', data.stagecreated);
             this.docRegisterService
               .getDepartamentsFiltered(filterParams.getParams())
-              .subscribe(data =>
+              .subscribe(data => {
+                this.formControls.destinationArea.enable();
                 this.formControls.destinationArea.setValue(
                   data.data[0].description
-                )
-              );
+                );
+                this.formControls.destinationArea.disable();
+              });
           },
           error: err => {
             console.log(err);
@@ -701,9 +770,11 @@ export class JuridicalRecordUpdateComponent
             .subscribe({
               next: data => {
                 if (data.count > 0) {
+                  this.formControls.userRecipient.enable();
                   this.formControls.userRecipient.setValue(
                     data.data[0].userDetail.name
                   );
+                  this.formControls.userRecipient.disable();
                 }
               },
               error: () => {},
@@ -720,7 +791,6 @@ export class JuridicalRecordUpdateComponent
     // } else {
     //   this.fileDataUpdateForm.enable();
     // }
-    this.fileDataUpdateForm.enable();
     for (const key in this.formControls) {
       if (
         key != 'dictumKey' ||
