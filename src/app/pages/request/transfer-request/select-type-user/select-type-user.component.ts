@@ -206,6 +206,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           }
           form['xdelegacionRegional'] = this.data.regionalDelegationId;
           const file: any = report;
+          debugger;
           //TODO: Guardarlo en el content
           const addToContent = await this.addDocumentToContent(form, file);
           if (addToContent) {
