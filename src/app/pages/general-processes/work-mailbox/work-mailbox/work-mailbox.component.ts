@@ -674,7 +674,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     //console.log(this.filterForm.value)
     let field = `filter.processEntryDate`;
-    console.log(
+    /*console.log(
       this.filterForm.get('startDate').invalid,
       this.filterForm.get('endDate').invalid,
       this.filterForm.get('startDate').valid,
@@ -682,7 +682,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.filterForm.get('startDate').value,
       this.filterForm.get('endDate').value,
       this.filterForm.value
-    );
+    );*/
     let dateNow: Date = new Date(); //.toISOString().split('T')[0];
     // console.log(dateNow, endDate);
     /*DATEFILTER*/
