@@ -209,7 +209,8 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
       if (this.form.get(this.control).value[this.bindLabel])
         this.title = this.form.get(this.control).value[this.bindLabel];
     } else {
-      this.title = this.form.get(this.control).value;
+      if (this.form.get(this.control).value != null)
+        this.title = this.form.get(this.control).value;
     }
   }
 

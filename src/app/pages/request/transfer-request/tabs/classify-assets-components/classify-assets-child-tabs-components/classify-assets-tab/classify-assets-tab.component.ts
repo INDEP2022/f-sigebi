@@ -61,6 +61,7 @@ export class ClassifyAssetsTabComponent
   good: any = null;
   formLoading: boolean = false;
   noItemsFoundMessage = 'No se encontraron elementos';
+  fractionCode: string = null;
 
   constructor(
     private fb: FormBuilder,
@@ -697,6 +698,15 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
+    if (this.fractionCode.length < 8) {
+      this.message(
+        'error',
+        'Codigo de fraccion',
+        'Todos los bienes deben tener una fracción de 8 números'
+      );
+      return;
+    }
+
     if (!goods.idGoodProperty) {
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
@@ -792,6 +802,7 @@ export class ClassifyAssetsTabComponent
           )[0];
 
           if (fractionCode) {
+            this.fractionCode = fractionCode.fractionCode;
             this.getUnidMeasure(fractionCode.fractionCode);
             this.setFractionId(
               dataChapter,
@@ -824,6 +835,7 @@ export class ClassifyAssetsTabComponent
             this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
 
+          this.fractionCode = fractionCode;
           this.getUnidMeasure(fractionCode);
           this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
 
@@ -853,6 +865,7 @@ export class ClassifyAssetsTabComponent
           )[0];
 
           if (fraction) {
+            this.fractionCode = fraction.fractionCode;
             this.getUnidMeasure(fraction.fractionCode);
 
             const relativeTypeId = this.getRelevantTypeId(
@@ -882,6 +895,7 @@ export class ClassifyAssetsTabComponent
           )[0];
 
           if (fraction) {
+            this.fractionCode = fraction.fractionCode;
             this.getUnidMeasure(fraction.fractionCode);
             this.setFractionId(dataLevel3, fraction.fractionCode, 'Nivel 3');
 
@@ -916,6 +930,7 @@ export class ClassifyAssetsTabComponent
           )[0];
 
           if (fraction) {
+            this.fractionCode = fraction.fractionCode;
             this.getUnidMeasure(fraction.fractionCode);
             this.setFractionId(dataLevel4, fraction.fractionCode, 'Nivel 4');
             this.getNorma(fraction);
