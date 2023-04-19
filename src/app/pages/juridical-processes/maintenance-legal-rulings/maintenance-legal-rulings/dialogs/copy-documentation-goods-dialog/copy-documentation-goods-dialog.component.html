@@ -1,0 +1,99 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="copiesOfficialForm">
+      <div class="row">
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="No. Dictamen"
+            [control]="copiesOfficialForm.get('numberOfDicta')">
+            <input
+              required
+              type="number"
+              class="form-control"
+              maxlength="11"
+              formControlName="numberOfDicta" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Tipo de Dictamen"
+            [control]="copiesOfficialForm.get('typeDictamination')">
+            <input
+              required
+              type="text"
+              class="form-control"
+              maxlength="15"
+              formControlName="typeDictamination" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Destinatario Copia"
+            [control]="copiesOfficialForm.get('recipientCopy')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="15"
+              formControlName="recipientCopy" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="No. Destinatario Copia"
+            [control]="copiesOfficialForm.get('copyDestinationNumber')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="3"
+              formControlName="copyDestinationNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Persona Ext Int"
+            [control]="copiesOfficialForm.get('personExtInt')">
+            <input
+              required
+              type="text"
+              class="form-control"
+              maxlength="15"
+              formControlName="personExtInt" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Nombre Persona Ext"
+            [control]="copiesOfficialForm.get('namePersonExt')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="1500"
+              formControlName="namePersonExt" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -353,12 +353,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe), debounceTime(700))
       .subscribe(change => {
-        // console.log(change);
+        //console.log(change);
         if (change.action === 'filter') {
+          this.params.value.page = 1;
+          this.params.value.limit = 10;
           this.resetDataFilter = false;
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            // console.log(filter);
+            // //console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -569,7 +571,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          console.log(this.columnFilters, this.resetDataFilter);
+          //console.log(this.columnFilters, this.resetDataFilter);
           if (this.resetDataFilter) {
             this.resetDataFilter = false;
             this.columnFilters = [];
@@ -583,14 +585,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
         // this.workService.getStatus().subscribe({
         //   next: (resp: any) => {
-        //     console.log(resp);
+        //     //console.log(resp);
         //
         //   }
         // })
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      console.log('se ejecutó');
+      //console.log('se ejecutó');
       if (this.predeterminedF.value) {
         this.getUser();
       } else {
@@ -604,7 +606,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //this.loadPermissions();
     /*this.workService.getView().subscribe({
       next: (resp: any) => {
-        console.log(resp);
+        //console.log(resp);
         if (resp.data) {
           resp.data.forEach((item: any) => {
             this.data.push({
@@ -632,7 +634,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     params.addFilter('id', userId.toUpperCase(), SearchFilter.EQ);
     this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: data => {
-        console.log(data);
+        //console.log(data);
         this.filterParams.getValue().removeAllFilters();
         data.data.map(user => {
           user.userAndName = `${user.id}- ${user.name}`;
@@ -650,10 +652,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   /*BUILD FILTERS*/
   buildFilters(): void {
-    console.log(this.managementAreaF.value);
-    console.log(this.user.value);
+    //console.log(this.managementAreaF.value);
+    //console.log(this.user.value);
     this.filterParams.getValue().removeAllFilters();
     this.filterForm.controls['priority'].setValue(this.priority$);
+    this.params.value.page = 1;
+    this.params.value.limit = 10;
 
     let {
       priority,
@@ -668,14 +672,19 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       endDate,
     } = this.filterForm.value;
 
+    //console.log(this.filterForm.value)
     let field = `filter.processEntryDate`;
-    console.log(
+    /*console.log(
       this.filterForm.get('startDate').invalid,
       this.filterForm.get('endDate').invalid,
       this.filterForm.get('startDate').valid,
-      this.filterForm.get('endDate').valid
-    );
-
+      this.filterForm.get('endDate').valid,
+      this.filterForm.get('startDate').value,
+      this.filterForm.get('endDate').value,
+      this.filterForm.value
+    );*/
+    let dateNow: Date = new Date(); //.toISOString().split('T')[0];
+    // console.log(dateNow, endDate);
     /*DATEFILTER*/
     if (
       this.filterForm.get('startDate').invalid ||
@@ -693,34 +702,59 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       startDate &&
       endDate
     ) {
-      let validDate = null;
-      validDate = compareDesc(startDate, endDate);
-      console.log(validDate);
-      if (validDate >= 0) {
-        const startTemp = `${startDate.getFullYear()}-0${
-          startDate.getUTCMonth() + 1
-        }-0${startDate.getDate()}`;
-        const endTemp = `${endDate.getFullYear()}-0${
-          endDate.getUTCMonth() + 1
-        }-0${endDate.getDate()}`;
-        this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
-      } else {
-        let mensaje = '';
-        if (validDate == -1) {
-          mensaje =
-            'La Fecha "Desde" debe ser menor o igual a la Fecha "Hasta".';
-        } else {
-          mensaje = 'Ingrese Fechas correctas para realizar la búsqueda.';
-        }
-        this.onLoadToast('warning', 'Fechas incorrectas', mensaje);
+      dateNow.setHours(23, 59, 59); // Lo iniciamos a 23:59:59 horas
+      // console.log(
+      //   dateNow,
+      //   endDate,
+      //   Date.parse(dateNow.toISOString()),
+      //   Date.parse(endDate)
+      // );
+      if (Date.parse(dateNow.toISOString()) < Date.parse(endDate)) {
+        this.onLoadToast(
+          'warning',
+          'Fechas incorrectas',
+          'La Fecha "Hasta" no debe ser MAYOR al día de hoy'
+        );
         return;
+      } else {
+        let validDate = null;
+        validDate = compareDesc(startDate, endDate);
+        // console.log(validDate);
+        if (validDate >= 0) {
+          const startTemp = `${startDate.getFullYear()}-0${
+            startDate.getUTCMonth() + 1
+          }-0${startDate.getDate()}`;
+          const endTemp = `${endDate.getFullYear()}-0${
+            endDate.getUTCMonth() + 1
+          }-0${endDate.getDate()}`;
+          this.columnFilters[field] = `$btw:${startTemp},${endTemp}`;
+        } else {
+          let mensaje = '';
+          if (validDate == -1) {
+            mensaje =
+              'La Fecha "Desde" debe ser menor o igual a la Fecha "Hasta".';
+          } else {
+            mensaje = 'Ingrese Fechas correctas para realizar la búsqueda.';
+          }
+          this.onLoadToast('warning', 'Fechas incorrectas', mensaje);
+          return;
+        }
       }
     } else {
+      if (endDate || startDate) {
+        // console.log(startDate, endDate);
+        this.onLoadToast(
+          'warning',
+          'Fechas incorrectas',
+          'Si desea realizar una búsqueda por Fechas, ingrese la Fecha "Desde" y la Fecha "Hasta"'
+        );
+        return;
+      }
       delete this.columnFilters[field];
     }
-    console.log(this.filterForm.value);
+    //console.log(this.filterForm.value);
 
-    console.log(priority);
+    //console.log(priority);
     field = `filter.processStatus`;
     let filter = `$eq`;
     if (managementArea !== null) {
@@ -782,7 +816,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     if (this.verTramiteG.value && user !== null) {
       this.getSegXAreas(user)
         .then(resp => {
-          console.log(resp);
+          //console.log(resp);
           isSegAreas = resp;
           if (isSegAreas) {
             const token = this.authService.decodeToken();
@@ -804,10 +838,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           this.getData();
         })
         .catch(err => {
-          console.log(err);
+          //console.log(err);
         });
     } else {
-      console.log(this.predeterminedF.value);
+      //console.log(this.predeterminedF.value);
       field = `filter.turnadoiUser`;
 
       if (this.predeterminedF.value) {
@@ -888,7 +922,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             this.turnar = resp.data[0].turnar
             this.watch = resp.data[0].watch
 
-            console.log(resp.data)
+            //console.log(resp.data)
           }
         },
         error: error => (this.loading = false),
@@ -896,9 +930,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getData() {
-    /*console.log(this.filterParams.getValue());
+    /*//console.log(this.filterParams.getValue());
     let filters : FilterParams =this.filterParams.getValue()*/
-    console.log(this.predeterminedF.value);
+    //console.log(this.predeterminedF.value);
     let field = `filter.turnadoiUser`;
     //let field = `search`;
     //let searchBy = `searchBy`;
@@ -924,10 +958,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
 
-    console.log(params);
+    //console.log(params);
     this.workService.getView(params).subscribe({
       next: (resp: any) => {
-        console.log(resp);
+        //console.log(resp);
         if (resp.data) {
           this.data = resp.data;
           this.totalItems = resp.count || 0;
@@ -937,7 +971,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         }
       },
       error: error => {
-        console.log(error);
+        //console.log(error);
         this.dataTable.load([]);
         this.totalItems = 0;
         this.dataTable.refresh();
@@ -948,19 +982,19 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   insertIntoTmp(body: any) {
-    console.log(body);
+    //console.log(body);
     return this.tmpManagementProcedureService.create(body);
   }
 
   deleteFromTmp(id: string | number) {
-    console.log(id);
+    //console.log(id);
     return this.tmpManagementProcedureService.remove(id);
   }
 
   selectEvent(e: any) {
     this.showPGRDocs, this.showScan, (this.showValDoc = false);
-    console.log(e);
-    console.log(e.data);
+    //console.log(e);
+    //console.log(e.data);
 
     const { processNumber, folioRep, turnadoiUser } = e.data;
     this.dataSelect = {};
@@ -975,7 +1009,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.workService.getProcedureManagement(processNumber).subscribe({
         next: (resp: any) => {
           if (resp) {
-            console.log(resp);
+            //console.log(resp);
             this.selectedRow = {
               ...this.selectedRow,
               typeManagement: resp?.typeManagement || null,
@@ -1026,7 +1060,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   //
                   /*this.satInterface.getSatTransfer(body).subscribe({
                   next: (resp: any) => {
-                    console.log(resp);
+                    //console.log(resp);
                     if (resp) {
                       this.P_SAT_TIPO_EXP = resp.data[0].satTypeProceedings;
                     }
@@ -1050,19 +1084,19 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   work2() {
     //Substring 2 FIRST LETTER STATUS
     let processStatus = this.selectedRow.processStatus.substring(0, 2);
-    console.log(processStatus);
+    //console.log(processStatus);
     this.procedureManagementService
       .getManagamentArea({ 'filter.id': processStatus })
       .subscribe({
         next: (resp: any) => {
-          console.log(resp);
+          //console.log(resp);
           if (resp) {
             if (resp.data[0].screenKey === 'FACTJURDICTAMASG') {
-              console.log('PUP_LANZA_DICTAMEN_ABANDONO');
+              //console.log('PUP_LANZA_DICTAMEN_ABANDONO');
               let TIPO_DIC = 'ABANDONO';
               let wheelType = this.selectedRow.wheelType;
               if (wheelType !== null) {
-                console.log('call FACTJURDICTAMASG');
+                //console.log('call FACTJURDICTAMASG');
                 this.getGlobalVars();
                 this.globalVars = {
                   ...this.globalVars,
@@ -1087,7 +1121,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 );
               }
             } else if (resp.data[0].screenKey === 'FACTOFPREGRECDOCM') {
-              console.log(this.docsDataService.flyersRegistrationParams);
+              //console.log(this.docsDataService.flyersRegistrationParams);
               this.docsDataService.flyersRegistrationParams = {
                 pIndicadorSat: null,
                 pGestOk: 1,
@@ -1096,8 +1130,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 pSatTipoExp: this.P_SAT_TIPO_EXP || null,
                 noTransferente: null,
               };
-              console.log(this.selectedRow);
-              console.log(this.docsDataService.flyersRegistrationParams);
+              //console.log(this.selectedRow);
+              //console.log(this.docsDataService.flyersRegistrationParams);
               this.router.navigateByUrl(
                 '/pages/documents-reception/flyers-registration'
               );
@@ -1113,7 +1147,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                     `Pantalla`,
                     'No disponible en este momento'
                   );
-              console.log('other screenKey');
+              //console.log('other screenKey');
               //TODO:MAP SCREENS AND ROUTING
             }
           }
@@ -1129,9 +1163,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.workService.getSatOfficeType(officeNumber).subscribe({
         next: (resp: any) => {
           if (resp.data) {
-            console.log(resp.data);
+            //console.log(resp.data);
             this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
-            console.log(this.P_SAT_TIPO_EXP);
+            //console.log(this.P_SAT_TIPO_EXP);
             // if (this.P_SAT_TIPO_EXP !== '') {
             let typeManagement = this.selectedRow.typeManagement;
             let folio = this.selectedRow.folioRep;
@@ -1156,7 +1190,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                     );
                 break;
               default:
-                //console.log('No es 2 ni 3, work()');
+                ////console.log('No es 2 ni 3, work()');
                 this.work2();
                 break;
             }
@@ -1195,12 +1229,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       .getGlobalVars$()
       .subscribe((globalVars: IGlobalVars) => {
         this.globalVars = globalVars;
-        console.log(globalVars);
+        //console.log(globalVars);
       });
   }
 
   areaChange(area: IManagementArea) {
-    console.log(area);
+    //console.log(area);
     this.buildFilters();
     const user = this.user.value;
     const _area = this.managementAreaF.value;
@@ -1210,7 +1244,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   setDefaultValuesByArea(area: IManagementArea, user: any) {
-    console.log({ area, user });
+    //console.log({ area, user });
     //this.filterForm.controls['managementArea'].setValue(area);
     const params = new FilterParams();
     params.addFilter('managementArea', area.id);
@@ -1237,7 +1271,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           return throwError(() => error);
         }),
         tap(resp => {
-          console.log(resp);
+          //console.log(resp);
           this.areas$ = new DefaultSelect(resp.data, resp.count);
           //if (resp.data.length > 0)
           //this.filterForm.controls['managementArea'].setValue(resp.data[0]);
@@ -1264,6 +1298,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //params.search = $params.text;
 
     const user = this.user.value;
+    //console.log(user)
     if (user) {
       _params.addFilter('user', user.id);
       this.getAllManagementGroupAreas(_params)
@@ -1280,6 +1315,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         .subscribe({
           next: () => {},
           error: error => {
+            this.buildFilters();
             this.areas$ = new DefaultSelect();
             this.filterForm.controls['managementArea'].setValue(null);
           },
@@ -1325,7 +1361,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //               this.areas$ = new DefaultSelect(data, resp.count);
 
     //               //let managementArea=this.areas$.filter(ar=>ar.managementArea===groups.)
-    //               console.log(assignedArea);
+    //               //console.log(assignedArea);
     //               predetermined
     //                 ? this.filterForm.controls['managementArea'].setValue(
     //                     assignedArea[0]
@@ -1338,7 +1374,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //               this.send = resp.data[0].send;
     //               this.turnar = resp.data[0].turnar;
     //               this.watch = resp.data[0].watch;
-    //               console.log(this.areas$);
+    //               //console.log(this.areas$);
     //               this.getData();
     //             },
     //             error: error => (this.loading = false),
@@ -1465,7 +1501,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.type = 'PGR';
       this.pgrDocs().subscribe();
     } else if (typeManagement == 2) {
-      console.log('sat', typeManagement);
+      //console.log('sat', typeManagement);
       this.type = 'SAT';
       this.satDocs();
     } else {
@@ -1488,7 +1524,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.satTransferService
       .getCountRegisters({ officeNumber, valid })
       .subscribe(res => {
-        console.log(res);
+        //console.log(res);
       });
   }
 
@@ -1685,7 +1721,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   viewDoc() {
     const { flierNumber, proceedingsNumber, officeNumber } = this.selectedRow;
-    console.log(this.selectedRow);
+    //console.log(this.selectedRow);
     if (!flierNumber && !proceedingsNumber) {
       this.alert(
         'info',
@@ -1749,7 +1785,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   determinatePgr(folio: string | number | null, action: string) {
-    console.log(folio);
+    //console.log(folio);
     if (!folio) {
       const { flierNumber, proceedingsNumber } = this.selectedRow;
       this.getPgrFolio(flierNumber, proceedingsNumber, action);
@@ -2104,7 +2140,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   acptionBienes() {
     // this.workService.getViewBienes('598154').subscribe({
     //   next: (resp: any) => {
-    //     console.log(resp);
+    //     //console.log(resp);
     //   }
     // })
     const $obs = this.workService.getViewBienes;
@@ -2130,7 +2166,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   acptionAntecedente() {
     // this.workService.getViewAntecedente('598154').subscribe({
     //   next: (resp: any) => {
-    //     console.log(resp);
+    //     //console.log(resp);
     //   }
     // })
     const $obs = this.workService.getViewAntecedente;
@@ -2154,15 +2190,17 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   userChange(user: any) {
-    console.log(user);
+    //console.log(user);
     if (user == undefined) {
       delete this.columnFilters['filter.turnadoiUser'];
     }
     const params = new ListParams();
+    //console.log(params)
+    this.filterForm.controls['managementArea'].setValue(null);
     this.areas$ = new DefaultSelect([], 0, true);
     this.getGroupWork(params, true);
     const _user = this.user.value;
-    console.log(_user);
+    //console.log(_user);
     const _area = this.managementAreaF.value;
     if (_user && _area) {
       this.setDefaultValuesByArea(_area, _user);
@@ -2170,7 +2208,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   getUsers($params: ListParams) {
-    console.log($params);
+    //console.log($params);
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
@@ -2230,14 +2268,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       endDate: [null],
     });
     this.filterForm.updateValueAndValidity();
-    console.log(this.filterForm.value);
+    //console.log(this.filterForm.value);
     let field = `filter.processEntryDate`;
     delete this.columnFilters[field];
     this.resetDataFilter = true;
     // this.getUser();
     // this.getData();
     // this.dataTable.refresh();
-    //this.buildFilters();
+    this.buildFilters();
   }
 
   notAvailable(): void {
@@ -2370,7 +2408,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         'RGESTBUZONTRAMITE No disponible',
         'Reporte no disponible en este momento'
       );
-      console.log(report);
+      //console.log(report);
     } else {
       if (this.selectedRow?.processStatus === 'OPI') {
         const params = {
@@ -2417,12 +2455,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   getIdentifier(): void {
     this.loading = true;
     //Get NextVal SEQ_RASTREADOR
-    console.log(this.selectedRow.flierNumber);
+    //console.log(this.selectedRow.flierNumber);
     if (this.selectedRow?.flierNumber) {
       const flierNumber = this.selectedRow?.flierNumber;
       this.goodTrackerService.getIdentifier().subscribe({
         next: (resp: any) => {
-          console.log(resp);
+          //console.log(resp);
           if (resp.nextval) {
             const tmpTracker = {
               identificator: resp.nextval,
@@ -2430,7 +2468,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             };
             this.goodTrackerService.createTmpTracker(tmpTracker).subscribe({
               next: (resp: any) => {
-                console.log('insert tmp_rastreador');
+                //console.log('insert tmp_rastreador');
                 this.loading = false;
                 this.getFlyersReport(tmpTracker.identificator);
               },

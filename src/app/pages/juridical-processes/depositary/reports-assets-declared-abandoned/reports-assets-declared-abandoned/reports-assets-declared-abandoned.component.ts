@@ -1,8 +1,10 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-reports-assets-declared-abandoned',
@@ -14,38 +16,12 @@ export class ReportsAssetsDeclaredAbandonedComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-
-  /*   get numberDelegation() {
-    return this.form.get('numberDelegation');
-  }
-  get delegationDescription() {
-    return this.form.get('delegationDescription');
-  }
-  get numberSubdelegation() {
-    return this.form.get('numberSubdelegation');
-  }
-  get delegationSubdelegation() {
-    return this.form.get('delegationSubdelegation');
-  }
-  get dateInitRatification() {
-    return this.form.get('dateInitRatification');
-  }
-  get dateFinish() {
-    return this.form.get('dateFinish');
-  }
-  get ofFile() {
-    return this.form.get('ofFile');
-  }
-  get atFile() {
-    return this.form.get('atFile');
-  }
-  get capturingUser() {
-    return this.form.get('capturingUser');
-  } */
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  public delegations = new DefaultSelect();
+  public subdelegations = new DefaultSelect();
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, datePipe: DatePipe) {
     super();
   }
 
@@ -72,12 +48,49 @@ export class ReportsAssetsDeclaredAbandonedComponent
     });
   }
 
-  confirm() {
+  confirm(): void {
     this.loading = true;
-    //console.log(this.checkedListFA,this.checkedListFI)
-    console.log(this.form.value);
-    setTimeout((st: any) => {
-      this.loading = false;
-    }, 5000);
+    // const pdfurl =
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGERJURDECLARABAND.pdf?PARAMFORM=NO&PN_DELEG=` +
+    //   this.form.controls['delegation'].value +
+    //   `&PN_SUBDEL=` +
+    //   this.form.controls['subdelegation'].value +
+    //   `&PF_FECINI=` +
+    //   this.datePipe.transform(
+    //     this.form.controls['dateInitRatification'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&PF_FECFIN=` +
+    //   this.datePipe.transform(
+    //     this.form.controls['dateFinish'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&PN_BIENINI=` +
+    //   this.datePipe.transform(
+    //     this.form.controls['ofgood'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&PN_BIENFIN=` +
+    //   this.datePipe.transform(
+    //     this.form.controls['atgood'].value,
+    //     'dd-mm-yyyy'
+    //   ) +
+    //   `&PN_EXPEDINI=` +
+    //   this.form.controls['ofFile'].value +
+    //   `&PN_EXPEDFIN=` +
+    //   this.form.controls['atFile'].value +
+    //   `&PC_USUARIO=` +
+    //   this.form.controls['capturingUser'].value;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
   }
 }

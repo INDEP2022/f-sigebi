@@ -1,10 +1,10 @@
 export interface ICopiesOfficialOpinion {
   numberOfDicta: number;
   typeDictamination: string;
-  recipientCopy: null;
+  recipientCopy: string;
   copyDestinationNumber: number;
   personExtInt: string;
-  namePersonExt: null;
+  namePersonExt: string;
   registerNumber?: number;
   rullings?: IRullings;
 }

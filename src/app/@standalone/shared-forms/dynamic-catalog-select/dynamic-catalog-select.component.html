@@ -23,6 +23,7 @@
       [ngSwitch]="feature.dataType">
       <input
         type="number"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         min="0"
         class="form-control"
@@ -30,6 +31,7 @@
         *ngSwitchCase="'N'" />
       <input
         type="number"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         class="form-control"
         min="0"
@@ -37,6 +39,7 @@
         *ngSwitchCase="'F'" />
       <input
         type="text"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         class="form-control"
         [placeholder]="feature.dsAttribute"
@@ -44,6 +47,7 @@
         bsDatepicker />
       <input
         type="text"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         class="form-control"
         [placeholder]="feature.dsAttribute"
