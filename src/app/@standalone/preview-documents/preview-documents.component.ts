@@ -91,8 +91,8 @@ export class PreviewDocumentsComponent extends BasePage implements OnInit {
     this.zoom > 0 ? this.zoomInit(this.zoom) : null;
     // this.zoomInit(1.4);
     if (this.documento.type == 'pdf') this.loading = false;
-    this.overSizeFiles();
     console.log(this.documento.type);
+    this.overSizeFiles();
   }
 
   overSizeFiles() {
@@ -103,6 +103,7 @@ export class PreviewDocumentsComponent extends BasePage implements OnInit {
       this.documento.urlDoc.changingThisBreaksApplicationSecurity.length;
     const bytesSize = 4 * Math.ceil(base64Length / 3) * 0.5624896334383812;
     const KbSize = bytesSize / 1000;
+
     if (KbSize > 2000) {
       const alert = this.alertQuestion(
         'info',

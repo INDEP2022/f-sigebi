@@ -49,6 +49,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   isParams: boolean = false;
   origin: string = null;
   today: Date = new Date();
+  loadingDoc: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -304,7 +305,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.form.get('numberProceedings').patchValue(expedientNumber);
       this.form.get('flyerNumber').patchValue(wheelNumber);
       this.form.get('userRequestsScan').patchValue(userId.toUpperCase());
-      this.form.get('scanRequestDate').patchValue(new Date());
+      this.form
+        .get('scanRequestDate')
+        .patchValue(this.parseDateNoOffset(new Date()));
       this.form.get('numberDelegationRequested').patchValue(this.delegation);
       this.form
         .get('numberSubdelegationRequests')
@@ -315,9 +318,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         next: resp => {
           this.onLoadToast(
             'success',
-            'Documento creado, procesando reporte',
+            'Solicitud generada, procesando reporte...',
             ''
           );
+          this.loadingDoc = false;
           this.form.patchValue(resp);
           this.idFolio = this.form.get('id').value;
           this.form.get('id').disable();
@@ -331,6 +335,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   }
 
   async validations(): Promise<boolean> {
+    this.loadingDoc = true;
     const { expedientNumber, wheelNumber } = this.formNotification.value;
     let { keyTypeDocument, keySeparator } = this.form.value;
 
@@ -340,6 +345,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         'Falta el número de expediente o volante, favor de verificar.',
         ''
       );
+      this.loadingDoc = false;
       return false;
     }
 
@@ -354,6 +360,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         'Falta el número de expediente o separador o tipo de documento, favor de verificar.',
         ''
       );
+      this.loadingDoc = false;
       return false;
     }
 
@@ -363,10 +370,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
     if (this.idFolio) {
       this.onLoadToast('error', 'Ya ha sido solicitado ese documento', '');
+      this.loadingDoc = false;
       return false;
     }
 
     return true;
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   createForm() {
@@ -427,6 +442,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.notificationServ.getAllFilter(filter.getParams()).subscribe({
         next: () => {
           check(true);
+          this.loadingDoc = false;
         },
         error: () => {
           this.onLoadToast(
@@ -435,6 +451,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
             ''
           );
           check(false);
+          this.loadingDoc = false;
         },
       });
     });

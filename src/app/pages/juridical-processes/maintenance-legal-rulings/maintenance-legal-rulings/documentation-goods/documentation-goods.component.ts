@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DocumentationGoodsDialogComponent } from '../dialogs/documentation-goods-dialog/documentation-goods-dialog.component';
 import { DOCUMENTS_DICTUM_X_STATE } from './documentation-goods.columns';
 
 @Component({
@@ -21,7 +23,7 @@ export class DocumentationGoodsComponent
     actions: {
       columnTitle: '',
       add: false,
-      edit: false,
+      edit: true,
       delete: false,
     },
     hideSubHeader: true,
@@ -30,7 +32,10 @@ export class DocumentationGoodsComponent
     columns: DOCUMENTS_DICTUM_X_STATE,
   };
   dataTable: IDocumentsDictumXStateM[] = [];
-  constructor(private documentService: DocumentsDictumStatetMService) {
+  constructor(
+    private documentService: DocumentsDictumStatetMService,
+    private modalService: BsModalService
+  ) {
     super();
   }
 
@@ -59,5 +64,20 @@ export class DocumentationGoodsComponent
         this.loading = false;
       },
     });
+  }
+
+  openForm(documentsDictumXStateM?: IDocumentsDictumXStateM) {
+    console.log(documentsDictumXStateM);
+    let config: ModalOptions = {
+      initialState: {
+        documentsDictumXStateM,
+        callback: (next: boolean) => {
+          if (next) this.getDocuments();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(DocumentationGoodsDialogComponent, config);
   }
 }
