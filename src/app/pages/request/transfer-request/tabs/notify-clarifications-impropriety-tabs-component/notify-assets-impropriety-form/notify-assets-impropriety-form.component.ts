@@ -241,6 +241,7 @@ export class NotifyAssetsImproprietyFormComponent
               'Aclaración guardada correctamente',
               ''
             );
+            console.log('id del documento', data.id);
             this.openReport(data);
             this.updateNotificationImp(data);
             this.loading = false;
