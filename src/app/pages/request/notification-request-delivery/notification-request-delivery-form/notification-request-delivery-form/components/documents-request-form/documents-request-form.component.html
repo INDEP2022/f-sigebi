@@ -157,7 +157,11 @@
       </div>
       <div class="pt-3 mt-3">
         <form-field [control]="form.get('comments')" label="Comentarios">
-          <input type="text" class="form-control" formControlName="comments" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="comments"
+            maxlength="30" />
         </form-field>
       </div>
     </div>
