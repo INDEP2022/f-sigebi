@@ -15,4 +15,9 @@ export class Clarification2Srvice extends HttpService {
     const route = `clarification/id/${id}`;
     return this.put(route, model);
   }
+
+  create(model: IClarification) {
+    const route = `clarification`;
+    return this.post(route, model);
+  }
 }
