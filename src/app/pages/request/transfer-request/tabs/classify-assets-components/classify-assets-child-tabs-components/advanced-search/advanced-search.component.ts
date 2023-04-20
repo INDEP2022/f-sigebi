@@ -68,7 +68,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       ],
       description: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       typeRelevant: [null],
     });
