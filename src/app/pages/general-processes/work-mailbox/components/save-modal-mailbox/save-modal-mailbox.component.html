@@ -1,0 +1,84 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccione el usuario a enviar trámite</h5>
+  </div>
+  <div body>
+    <form [formGroup]="filterForm" class="form-material">
+      <div class="">
+        <form-field class="mb-3 mt-3" [control]="filterForm.get('user')">
+          <ngx-select
+            [form]="filterForm"
+            [data]="users$"
+            (change)="userChange($event)"
+            (fetchItems)="getUsers($event)"
+            bindLabel="userAndName"
+            control="user"
+            label="Usuario"
+            [searchOnInit]="true"
+            [showTooltip]="true"
+            termMaxLength="30"
+            [labelTemplate]="userLabel"
+            [optionTemplate]="userOption">
+          </ngx-select>
+
+          <ng-template #userLabel let-item="item">
+            {{ item.id }} - {{ item.name }}
+          </ng-template>
+          <ng-template #userOption let-item="item">
+            <div [title]="item.id + '-' + item.name">
+              {{ item.id }} - {{ item.name }}
+            </div>
+          </ng-template>
+        </form-field>
+        <form-field
+          class="mb-3 mt-3"
+          [control]="filterForm.get('managementArea')">
+          <ngx-select
+            [form]="filterForm"
+            [data]="areas$"
+            (fetchItems)="getGroupWork($event)"
+            (change)="areaChange($event)"
+            bindLabel="description"
+            control="managementArea"
+            [searchOnInit]="true"
+            [showTooltip]="true"
+            termMaxLength="30"
+            label="Buz&oacute;n de &Aacute;rea"
+            [labelTemplate]="areaLabel"
+            [optionTemplate]="areaOption">
+          </ngx-select>
+
+          <ng-template #areaLabel let-item="item"
+            >{{ item.id }} - {{ item.description }}</ng-template
+          >
+          <ng-template #areaOption let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template>
+        </form-field>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
