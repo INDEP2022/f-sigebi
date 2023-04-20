@@ -552,40 +552,15 @@ export class AppointmentsComponent
    * DATA SELECT DEL COMPONENTE
    */
 
-  getDelegationByDetail(paramsData: ListParams) {
-    console.log(this.stateSelectValue, paramsData);
-    if (!this.stateSelectValue && this.stateSelectValue != '0') {
-      return;
+  changeLocalityDetail(event: any) {
+    if (event) {
+      if (event.id) {
+        this.localitySelectValue = event.id;
+      }
+    } else {
+      this.localitySelectValue = '';
     }
-    const params: any = new FilterParams();
-    params.removeAllFilters();
-    params['sortBy'] = 'municipality:ASC';
-    params.addFilter('stateKey', this.stateSelectValue);
-    params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
-    console.log(params, paramsData);
-    let subscription = this.appointmentsService
-      .getDelegationsByFilter(params.getFilterParams())
-      .subscribe({
-        next: data => {
-          console.log(data.data);
-          this.delegations = new DefaultSelect(
-            data.data,
-            // data.data.map(i => {
-            //   i.description = '#' + i.id + ' -- ' + i.description;
-            //   return i;
-            // }),
-            data.count
-          );
-          subscription.unsubscribe();
-        },
-        error: error => {
-          this.delegations = new DefaultSelect();
-          this.onLoadToast('error', 'Error', error.error.message);
-          subscription.unsubscribe();
-        },
-      });
   }
-
   getLocalityByDetail(paramsData: ListParams) {
     console.log(this.stateSelectValue, paramsData, this.delegationSelectValue);
     if (
@@ -626,7 +601,16 @@ export class AppointmentsComponent
       });
   }
 
-  getStateByDetail(paramsData: ListParams) {
+  changeDelegationDetail(event: any) {
+    if (event) {
+      if (event.id) {
+        this.delegationSelectValue = event.id;
+      }
+    } else {
+      this.delegationSelectValue = '';
+    }
+  }
+  getDelegationByDetail(paramsData: ListParams) {
     console.log(this.stateSelectValue, paramsData);
     if (!this.stateSelectValue && this.stateSelectValue != '0') {
       return;
@@ -643,11 +627,11 @@ export class AppointmentsComponent
         next: data => {
           console.log(data.data);
           this.delegations = new DefaultSelect(
-            data.data,
-            // data.data.map(i => {
-            //   i.description = '#' + i.id + ' -- ' + i.description;
-            //   return i;
-            // }),
+            data.data.map((i: any) => {
+              i.municipality =
+                '#' + i.municipalityKey + ' -- ' + i.municipality;
+              return i;
+            }),
             data.count
           );
           subscription.unsubscribe();
@@ -658,5 +642,65 @@ export class AppointmentsComponent
           subscription.unsubscribe();
         },
       });
+  }
+
+  changeStateDetail(event: any) {
+    if (event) {
+      if (event.id) {
+        this.stateSelectValue = event.id;
+      }
+    } else {
+      this.stateSelectValue = '';
+    }
+  }
+  getStateByDetail(paramsData: ListParams) {
+    console.log(this.stateSelectValue, paramsData);
+    console.log(paramsData, this.stateSelectValue);
+    if (this.stateSelectValue) {
+      let subscription = this.appointmentsService
+        .getStateOfRepublicById(this.stateSelectValue)
+        .subscribe({
+          next: data => {
+            console.log(data);
+            this.state = new DefaultSelect(
+              [data].map(i => {
+                i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
+                return i;
+              }),
+              1
+            );
+            this.form.get('entidadFederativa').setValue(this.stateSelectValue);
+            this.form.get('entidadFederativa').updateValueAndValidity();
+            subscription.unsubscribe();
+          },
+          error: error => {
+            this.state = new DefaultSelect();
+            this.onLoadToast('error', 'Error', error.error.message);
+            subscription.unsubscribe();
+          },
+        });
+    } else {
+      paramsData['sortBy'] = 'id:ASC';
+      let subscription = this.appointmentsService
+        .getStateOfRepublicByAll(paramsData)
+        .subscribe({
+          next: data => {
+            console.log(data);
+            this.state = new DefaultSelect(
+              data.data.map(i => {
+                i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
+                return i;
+              }),
+              data.count
+            );
+            subscription.unsubscribe();
+          },
+          error: error => {
+            this.state = new DefaultSelect();
+            this.onLoadToast('error', 'Error', error.error.message);
+            subscription.unsubscribe();
+          },
+        });
+    }
   }
 }
