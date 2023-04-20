@@ -1,3 +1,0 @@
-?filter.noGood=22
-http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movementsnoGood=22
-http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movements?filter.noGood=22
