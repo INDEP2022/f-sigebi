@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -18,7 +18,8 @@ export class DocumentationGoodsComponent
   implements OnInit, OnDestroy
 {
   data: LocalDataSource = new LocalDataSource();
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -57,6 +58,7 @@ export class DocumentationGoodsComponent
       next: data => {
         this.dataTable = data.data;
         this.data.load(this.dataTable);
+        this.totalItems = data.count || 0;
         this.data.refresh();
         this.loading = false;
       },
