@@ -24,8 +24,8 @@ export class LoginComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
+      username: [null, [Validators.required]],
+      password: [null, [Validators.required]],
     });
   }
 
