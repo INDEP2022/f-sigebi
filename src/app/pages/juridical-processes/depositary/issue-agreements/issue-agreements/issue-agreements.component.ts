@@ -13,6 +13,7 @@ import { ViewCell } from 'ng2-smart-table';
 import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { EventEmitterService } from './eventEmitter.service';
 
 /** ROUTING MODULE */
@@ -53,17 +54,23 @@ export class IssueAgreementsComponent
       delete: false,
     },
     hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
+    mode: 'external', // ventana externa prueba
 
     columns: {
       noBien: {
         title: 'No. Bien',
       }, //*
-      descripcion: {
+      description: {
         title: 'Descripción',
+        valuePrepareFunction: (cell: any, row: any) => {
+          return row.good.description;
+        },
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
+        valuePrepareFunction: (cell: any, row: any) => {
+          return row.good.quantity;
+        },
       },
       estatus: {
         title: 'Estatus',
@@ -91,20 +98,7 @@ export class IssueAgreementsComponent
     },
   };
   // Data table
-  dataTable = [
-    {
-      noBien: 'No. Bien',
-      descripcion: 'Descripción',
-      cantidad: 'Cantidad',
-      estatus: 'Estatus',
-      fechaRecepcion: 'Fecha de Recepción',
-      fechaAcuerdoInicial: 'Fecha de Acuerdo Inicial',
-      diasEmitirResolucion: 'Días para Emitir Resolución',
-      fechaAudiencia: 'Fecha de Audiencia',
-      observacionesAcuerdoInicial: 'Observaciones Acuerdo Inicial',
-      aceptaSuspencion: 'Acepta Suspención',
-    },
-  ];
+  dataTable: any[] = [];
 
   paragraphs: Example[] = [];
 
@@ -112,8 +106,9 @@ export class IssueAgreementsComponent
   public formDepositario: FormGroup;
 
   constructor(
-    private fb?: FormBuilder,
-    private eventEmitterService?: EventEmitterService
+    private fb: FormBuilder,
+    private eventEmitterService: EventEmitterService,
+    private historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -128,7 +123,21 @@ export class IssueAgreementsComponent
         );
     }
     this.prepareForm();
+    this.getData();
     this.loading = true;
+  }
+
+  private getData() {
+    this.loading = true;
+    this.historyGoodService.getAllFilter().subscribe({
+      next: val => {
+        console.log(val.data);
+        this.dataTable = [...val.data];
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
 
   public open(data: any) {
