@@ -552,53 +552,101 @@ export class AppointmentsComponent
    * DATA SELECT DEL COMPONENTE
    */
 
-  getDelegationByDetail(paramsData: ListParams) {
-    console.log(this.stateSelectValue, paramsData);
-    if (!this.stateSelectValue && this.stateSelectValue != '0') {
-      return;
+  changePostalCodeDetail(event: any) {
+    if (event) {
+      if (event.postalCode) {
+        this.postalCodeSelectValue = event.postalCode;
+        if (event.stateKey) {
+          this.delegationSelectValue = event.stateKey;
+          // call function
+        }
+        if (event.municipalityKey) {
+          this.delegationSelectValue = event.municipalityKey;
+          // CALL FUNCTION
+        }
+        if (event.townshipKey) {
+          this.delegationSelectValue = event.townshipKey;
+          // call function
+        }
+      }
+    } else {
+      this.postalCodeSelectValue = '';
     }
+  }
+  getPostalCodeByDetail(
+    paramsData: ListParams,
+    onlyPostalCode: boolean = false
+  ) {
+    console.log(
+      this.stateSelectValue,
+      paramsData,
+      this.delegationSelectValue,
+      onlyPostalCode
+    );
+    // if (
+    //   !this.stateSelectValue &&
+    //   !this.delegationSelectValue &&
+    //   !this.localitySelectValue
+    // ) {
+    //   return;
+    // }
     const params: any = new FilterParams();
     params.removeAllFilters();
-    params['sortBy'] = 'municipality:ASC';
-    params.addFilter('stateKey', this.stateSelectValue);
-    params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
-    console.log(params, paramsData);
+    // params['sortBy'] = 'township:DESC';
+    if (this.delegationSelectValue) {
+      params.addFilter('municipalityKey', this.delegationSelectValue);
+    }
+    if (this.stateSelectValue) {
+      params.addFilter('stateKey', this.stateSelectValue);
+    }
+    if (this.localitySelectValue) {
+      params.addFilter('township', this.localitySelectValue);
+    }
+    params.addFilter('postalCode', paramsData['search'], SearchFilter.LIKE);
+    console.log(params, paramsData, onlyPostalCode);
     let subscription = this.appointmentsService
-      .getDelegationsByFilter(params.getFilterParams())
+      .getPostalCodeByFilter(params.getFilterParams())
       .subscribe({
         next: data => {
           console.log(data.data);
-          this.delegations = new DefaultSelect(
-            data.data,
-            // data.data.map(i => {
-            //   i.description = '#' + i.id + ' -- ' + i.description;
-            //   return i;
-            // }),
+          this.postalCode = new DefaultSelect(
+            data.data.map((i: any) => {
+              i.description = '#' + i.postalCode + ' -- ' + i.township;
+              return i;
+            }),
             data.count
           );
+          if (this.postalCodeSelectValue) {
+            this.form.get('colonia').setValue(this.postalCodeSelectValue);
+            this.form.get('colonia').updateValueAndValidity();
+          }
           subscription.unsubscribe();
         },
         error: error => {
-          this.delegations = new DefaultSelect();
+          this.postalCode = new DefaultSelect();
           this.onLoadToast('error', 'Error', error.error.message);
           subscription.unsubscribe();
         },
       });
   }
 
+  changeLocalityDetail(event: any) {
+    if (event) {
+      if (event.townshipKey) {
+        this.localitySelectValue = event.townshipKey;
+      }
+    } else {
+      this.localitySelectValue = '';
+    }
+  }
   getLocalityByDetail(paramsData: ListParams) {
     console.log(this.stateSelectValue, paramsData, this.delegationSelectValue);
-    if (
-      !this.stateSelectValue &&
-      this.stateSelectValue != '0' &&
-      !this.delegationSelectValue &&
-      this.delegationSelectValue != '0'
-    ) {
+    if (!this.stateSelectValue && !this.delegationSelectValue) {
       return;
     }
     const params: any = new FilterParams();
     params.removeAllFilters();
-    params['sortBy'] = 'township:ASC';
+    params['sortBy'] = 'township:DESC';
     params.addFilter('municipalityKey', this.delegationSelectValue);
     params.addFilter('stateKey', this.stateSelectValue);
     params.addFilter('township', paramsData['search'], SearchFilter.LIKE);
@@ -608,14 +656,66 @@ export class AppointmentsComponent
       .subscribe({
         next: data => {
           console.log(data.data);
-          this.delegations = new DefaultSelect(
-            data.data,
-            // data.data.map(i => {
-            //   i.description = '#' + i.id + ' -- ' + i.description;
-            //   return i;
-            // }),
+          this.locality = new DefaultSelect(
+            data.data.map((i: any) => {
+              i.description = '#' + i.townshipKey + ' -- ' + i.township;
+              return i;
+            }),
             data.count
           );
+          if (this.localitySelectValue) {
+            this.form.get('colonia').setValue(this.localitySelectValue);
+            this.form.get('colonia').updateValueAndValidity();
+          }
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.locality = new DefaultSelect();
+          this.onLoadToast('error', 'Error', error.error.message);
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  changeDelegationDetail(event: any) {
+    if (event) {
+      if (event.stateKey) {
+        this.delegationSelectValue = event.stateKey;
+      }
+    } else {
+      this.delegationSelectValue = '';
+    }
+  }
+  getDelegationByDetail(paramsData: ListParams) {
+    console.log(this.stateSelectValue, paramsData);
+    if (!this.stateSelectValue) {
+      return;
+    }
+    const params: any = new FilterParams();
+    params.removeAllFilters();
+    params['sortBy'] = 'municipality:DESC';
+    params.addFilter('stateKey', this.stateSelectValue);
+    params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
+    console.log(params, paramsData);
+    let subscription = this.appointmentsService
+      .getDelegationsByFilter(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data.data);
+          this.delegations = new DefaultSelect(
+            data.data.map((i: any) => {
+              i.municipality =
+                '#' + i.municipalityKey + ' -- ' + i.municipality;
+              return i;
+            }),
+            data.count
+          );
+          if (this.delegationSelectValue) {
+            this.form
+              .get('delegacionMunicipio')
+              .setValue(this.delegationSelectValue);
+            this.form.get('delegacionMunicipio').updateValueAndValidity();
+          }
           subscription.unsubscribe();
         },
         error: error => {
@@ -626,37 +726,63 @@ export class AppointmentsComponent
       });
   }
 
+  changeStateDetail(event: any) {
+    if (event) {
+      if (event.id) {
+        this.stateSelectValue = event.id;
+      }
+    } else {
+      this.stateSelectValue = '';
+    }
+  }
   getStateByDetail(paramsData: ListParams) {
     console.log(this.stateSelectValue, paramsData);
-    if (!this.stateSelectValue && this.stateSelectValue != '0') {
-      return;
+    console.log(paramsData, this.stateSelectValue);
+    if (this.stateSelectValue) {
+      let subscription = this.appointmentsService
+        .getStateOfRepublicById(this.stateSelectValue)
+        .subscribe({
+          next: data => {
+            console.log(data);
+            this.state = new DefaultSelect(
+              [data].map(i => {
+                i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
+                return i;
+              }),
+              1
+            );
+            this.form.get('entidadFederativa').setValue(this.stateSelectValue);
+            this.form.get('entidadFederativa').updateValueAndValidity();
+            subscription.unsubscribe();
+          },
+          error: error => {
+            this.state = new DefaultSelect();
+            this.onLoadToast('error', 'Error', error.error.message);
+            subscription.unsubscribe();
+          },
+        });
+    } else {
+      paramsData['sortBy'] = 'id:DESC';
+      let subscription = this.appointmentsService
+        .getStateOfRepublicByAll(paramsData)
+        .subscribe({
+          next: data => {
+            console.log(data);
+            this.state = new DefaultSelect(
+              data.data.map(i => {
+                i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
+                return i;
+              }),
+              data.count
+            );
+            subscription.unsubscribe();
+          },
+          error: error => {
+            this.state = new DefaultSelect();
+            this.onLoadToast('error', 'Error', error.error.message);
+            subscription.unsubscribe();
+          },
+        });
     }
-    const params: any = new FilterParams();
-    params.removeAllFilters();
-    params['sortBy'] = 'municipality:ASC';
-    params.addFilter('stateKey', this.stateSelectValue);
-    params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
-    console.log(params, paramsData);
-    let subscription = this.appointmentsService
-      .getDelegationsByFilter(params.getFilterParams())
-      .subscribe({
-        next: data => {
-          console.log(data.data);
-          this.delegations = new DefaultSelect(
-            data.data,
-            // data.data.map(i => {
-            //   i.description = '#' + i.id + ' -- ' + i.description;
-            //   return i;
-            // }),
-            data.count
-          );
-          subscription.unsubscribe();
-        },
-        error: error => {
-          this.delegations = new DefaultSelect();
-          this.onLoadToast('error', 'Error', error.error.message);
-          subscription.unsubscribe();
-        },
-      });
   }
 }
