@@ -1590,7 +1590,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   async onCancelPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1605,27 +1605,62 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   async onSavePaperwork() {
+    console.log(this.selectedRow);
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
-    const config = {
-      ...MODAL_CONFIG,
-      initialState: {
-        callback: (refresh: boolean) => {
-          if (refresh) {
-            this.getData();
-          }
+    if (this.selectedRow.areaATurn && this.selectedRow.userATurn) {
+      const result = await this.alertQuestion(
+        'question',
+        'Información',
+        `¿Deseas enviar el trámite al usuario ${this.selectedRow.userATurn}?`
+      );
+
+      if (result.isConfirmed) {
+        const params = new FilterParams();
+        params.addFilter('managementArea', this.selectedRow.areaATurn);
+        params.addFilter('user', this.selectedRow.userATurn);
+        this.savePaperwork('2').subscribe();
+      } else {
+        const config = {
+          ...MODAL_CONFIG,
+          initialState: {
+            callback: (refresh: boolean) => {
+              if (refresh) {
+                this.getData();
+              }
+            },
+            selectedRow: this.selectedRow,
+          },
+        };
+        const modalRef = this.modalService.show(
+          SaveModalMailboxComponent,
+          config
+        );
+      }
+    } else {
+      const config = {
+        ...MODAL_CONFIG,
+        initialState: {
+          callback: (refresh: boolean) => {
+            if (refresh) {
+              this.getData();
+            }
+          },
+          selectedRow: this.selectedRow,
         },
-        selectedRow: this.selectedRow,
-      },
-    };
-    const modalRef = this.modalService.show(SaveModalMailboxComponent, config);
+      };
+      const modalRef = this.modalService.show(
+        SaveModalMailboxComponent,
+        config
+      );
+    }
   }
 
   async onFinishPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1639,38 +1674,38 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  // savePaperwork(option: string) {
-  //   const { processNumber, areaATurn, userATurn } = this.selectedRow;
-  //   let body;
-  //   if (option === '1') {
-  //     body = {
-  //       status: this.managementAreaF.value.id + 'I',
-  //       userTurned: this.user.value.id,
-  //       situation: 1,
-  //     };
-  //   } else {
-  //     body = {
-  //       status: areaATurn + 'I',
-  //       userTurned: userATurn,
-  //       situation: 1,
-  //     };
-  //   }
+  savePaperwork(option: string) {
+    const { processNumber, areaATurn, userATurn } = this.selectedRow;
+    let body;
+    if (option === '1') {
+      body = {
+        status: this.managementAreaF.value.id + 'I',
+        userTurned: this.user.value.id,
+        situation: 1,
+      };
+    } else {
+      body = {
+        status: areaATurn + 'I',
+        userTurned: userATurn,
+        situation: 1,
+      };
+    }
 
-  //   return this.procedureManagementService.update(processNumber, body).pipe(
-  //     catchError(error => {
-  //       this.onLoadToast(
-  //         'error',
-  //         'Error',
-  //         'Ocurrio un error al enviar el trámite'
-  //       );
-  //       return throwError(() => error);
-  //     }),
-  //     tap(() => {
-  //       this.onLoadToast('success', 'El trámite se envío correctamente', '');
-  //       this.getData();
-  //     })
-  //   );
-  // }
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al enviar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se envío correctamente', '');
+        this.getData();
+      })
+    );
+  }
 
   cancelPaperwork() {
     const { processNumber, turnadoiUser } = this.selectedRow;
