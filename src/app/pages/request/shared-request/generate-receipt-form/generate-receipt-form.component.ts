@@ -68,7 +68,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro que deseas crear un nuevo recibo?'
+      '¿Estás seguro que deseas crear un nuevo recibo?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

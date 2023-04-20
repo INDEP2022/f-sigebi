@@ -283,20 +283,63 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
+  // getTransferent(params?: ListParams) {
+  //   params['filter.status'] = `$eq:${1}`;
+  //   params['filter.nameTransferent'] = `$ilike:${params.text}`;
+  //   // delete params.limit;
+  //   //delete params.page;
+  //   delete params['search'];
+  //   delete params.text;
+  //   this.transferentService.getAll(params).subscribe({
+  //     next: data => {
+  //       data.data.map(data => {
+  //         data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+  //         return data;
+  //       });
+  //       this.transferents$ = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.transferents$ = new DefaultSelect();
+  //     },
+  //   });
+  // }
+
+  replaceAccents(text: string) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   getTransferent(params?: ListParams) {
-    params['filter.status'] = `$eq:${1}`;
-    params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    // delete params.limit;
-    //delete params.page;
-    delete params['search'];
-    delete params.text;
-    this.transferentService.getAll(params).subscribe({
+    this.transferentService.getAll(new ListParams()).subscribe({
       next: data => {
+        const text = this.replaceAccents(params.text);
         data.data.map(data => {
           data.nameAndId = `${data.id} - ${data.nameTransferent}`;
           return data;
         });
         this.transferents$ = new DefaultSelect(data.data, data.count);
+
+        if (params.text) {
+          let copyData = [...data.data];
+          copyData.map(data => {
+            data.nameAndId = this.replaceAccents(data.nameAndId);
+            return data;
+          });
+
+          copyData = copyData.filter(item => {
+            return text.toUpperCase() === ''
+              ? item
+              : item.nameAndId.toUpperCase().includes(text.toUpperCase());
+          });
+
+          copyData.map(x => {
+            x.nameAndId = `${x.id} - ${x.nameTransferent}`;
+            return x;
+          });
+
+          if (copyData.length > 0) {
+            this.transferents$ = new DefaultSelect(copyData, copyData.length);
+          }
+        }
       },
       error: () => {
         this.transferents$ = new DefaultSelect();

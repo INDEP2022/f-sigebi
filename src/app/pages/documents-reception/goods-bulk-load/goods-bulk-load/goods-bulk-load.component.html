@@ -171,9 +171,25 @@
               <button
                 (click)="resetProcess()"
                 type="button"
-                [disabled]="procesandoUpload || procesandoPreload"
+                [disabled]="
+                  procesandoUpload ||
+                  procesandoPreload ||
+                  DeclarationsUploadValidationMassive
+                "
                 class="ml-2 mb-0 m-4 btn btn-danger btn-sm active">
                 Limpiar Proceso
+              </button>
+              <button
+                *ngIf="
+                  tipoCarga == 'pgr' && !DeclarationsUploadValidationMassive
+                "
+                [disabled]="
+                  procesandoUpload || procesandoPreload || cargandoPgr
+                "
+                (click)="goPageVolante()"
+                type="button"
+                class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                Regresar al proceso anterior
               </button>
             </div>
           </div>
@@ -352,11 +368,11 @@
         DeclarationsUploadValidationMassive &&
         DeclarationsUploadValidationMassive.message_progress != ''
       ">
-      <div
+      <!-- <div
         class="col-md-12 alert alert-warning"
         *ngIf="stopProcess && procesandoUpload">
         Deteniendo el proceso, Espere un momento...
-      </div>
+      </div> -->
       <div class="col-md-12">
         <h2>Proceso de validación en la carga de datos</h2>
       </div>
@@ -491,7 +507,7 @@
       </div>
       <div class="col-md-4">
         <div class="card">
-          <div class="card-header text-center">
+          <!-- <div class="card-header text-center">
             <button
               (click)="detenerProceso()"
               type="button"
@@ -499,7 +515,7 @@
               class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
               Detener Proceso
             </button>
-          </div>
+          </div> -->
           <div class="card-body">
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
