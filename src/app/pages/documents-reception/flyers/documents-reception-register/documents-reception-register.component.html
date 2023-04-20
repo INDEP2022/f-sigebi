@@ -142,7 +142,8 @@
               <button
                 [disabled]="
                   (procedureStatus == 'ENVIADO' && wheelNumber.value != null) ||
-                  wheelNumber.value == null
+                  wheelNumber.value == null ||
+                  loadingPostCapture
                 "
                 type="button"
                 class="ml-5 btn btn-warning btn-sm"
