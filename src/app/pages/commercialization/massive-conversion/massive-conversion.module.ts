@@ -9,6 +9,7 @@ import { BatchSharedComponent } from 'src/app/@standalone/shared-forms/batch-sha
 import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-select/custom-select.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AddLcModalComponent } from './components/add-lc-modal/add-lc-modal.component';
+import { TableCheckPortalDialogComponent } from './components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from './components/table-checkbox/table-checkbox.component';
 import { MassiveConversionMainComponent } from './massive-conversion-main/massive-conversion-main.component';
 import { MassiveConversionRoutingModule } from './massive-conversion-routing.module';
@@ -18,6 +19,7 @@ import { MassiveConversionRoutingModule } from './massive-conversion-routing.mod
     MassiveConversionMainComponent,
     TableCheckboxComponent,
     AddLcModalComponent,
+    TableCheckPortalDialogComponent,
   ],
   imports: [
     CommonModule,

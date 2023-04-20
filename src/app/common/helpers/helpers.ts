@@ -29,20 +29,18 @@ export function downloadReport(
   });
 }
 
-export function showToast({
-  ...data
-}: SwalOptions): Promise<SweetAlertResult<any>> {
+export function showToast(
+  data: SwalOptions | string
+): Promise<SweetAlertResult<any>> {
+  if (typeof data === 'string') data = { text: data } as SwalOptions;
   return Swal.fire({
     icon: 'success',
     toast: true,
     position: 'top-end',
     timer: 6000,
-    showConfirmButton: false,
-    showCancelButton: false,
-    confirmButtonText: 'Aceptar',
-    cancelButtonText: 'Cancelar',
-    showCloseButton: false,
+    showCloseButton: true,
     buttonsStyling: false,
+    showConfirmButton: false,
     ...data,
   });
 }

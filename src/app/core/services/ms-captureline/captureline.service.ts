@@ -21,4 +21,15 @@ export class CapturelineService extends HttpService {
   postTmpLcComer(data: ITmpLcComer) {
     return this.post<ITmpLcComer>(this.route.TmpLcComer, data);
   }
+
+  postLoadCheckPortal(body: {
+    event: string;
+    p_FLAG: boolean;
+    validation: string;
+    // createdBy: string;
+    // records: string;
+    // amount: string;
+  }) {
+    return this.post(this.route.LoadCheckPortal, body);
+  }
 }

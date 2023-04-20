@@ -6,11 +6,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, skip } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import {
-  convertFormatDate,
-  showQuestion,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { convertFormatDate, showToast } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -20,12 +16,14 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
-import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
+import { TableCheckPortalDialogComponent } from '../components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
+import { loadCheckLc } from '../tools/load-check';
 import { readFileClientIdOrRfc } from '../tools/read-file-client-id-or-rfc';
 import {
   BATCH_REWORK_COLUMNS,
@@ -39,7 +37,19 @@ import {
 @Component({
   selector: 'app-massive-conversion-main',
   templateUrl: './massive-conversion-main.component.html',
-  styles: [],
+  styles: [
+    `
+      .btn-event-search {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        padding: 5px;
+        border-radius: 50%;
+        border: none;
+        right: 5px;
+      }
+    `,
+  ],
   animations: [
     trigger('OnEventSelected', [
       transition(':enter', [
@@ -148,175 +158,13 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     },
   ];
 
-  checkTestData = [
-    {
-      eventId: 22410,
-      batchId: 3544010,
-      batch: 1,
-      clientId: 13369,
-      rfc: 'ZAVA7206027D0',
-      amount: 10000,
-      validitydate: '15/07/2021',
-      checkNumber: 2285,
-      checkBank: 'BBVA BANCOMER',
-      status: 'LC GENERADA',
-      observations: '',
-    },
-    {
-      eventId: 22410,
-      batchId: 3544011,
-      batch: 2,
-      clientId: 8696,
-      rfc: 'MOSF690531FK5',
-      amount: 10000,
-      validitydate: '15/07/2021',
-      checkNumber: 2287,
-      checkBank: 'BBVA BANCOMER',
-      status: 'LC GENERADA',
-      observations: '',
-    },
-    {
-      eventId: 22410,
-      batchId: 3544013,
-      batch: 4,
-      clientId: 9539,
-      rfc: 'NACR630606ENA',
-      amount: 10000,
-      validitydate: '15/07/2021',
-      checkNumber: 2289,
-      checkBank: 'BBVA BANCOMER',
-      status: 'LC GENERADA',
-      observations: '',
-    },
-  ];
-
-  rfcTestdata = [
-    {
-      rfc: 'MOSF690531FK5',
-      batch: 1,
-      amount: 10000,
-      palette: 1,
-      checkNumber: 2285,
-      checkBank: 'BBVA BANCOMER',
-      validityDate: '15/07/2021',
-      gsaeRef: 1133690012285,
-      gbankRef: 8012785,
-      status: 'PAG',
-      registerDate: '14/07/2021',
-      type: 'CHECK',
-    },
-    {
-      rfc: 'MOSF690531JU6',
-      batch: 1,
-      amount: 20000,
-      palette: 1,
-      checkNumber: 2286,
-      checkBank: 'BBVA BANCOMER',
-      validityDate: '15/07/2021',
-      gsaeRef: 1133690012286,
-      gbankRef: 8012486,
-      status: 'PAG',
-      registerDate: '14/07/2021',
-      type: 'CHECK',
-    },
-    {
-      rfc: 'MOSF690531LW1',
-      batch: 2,
-      amount: 10000,
-      palette: 1,
-      checkNumber: 2287,
-      checkBank: 'BBVA BANCOMER',
-      validityDate: '15/07/2021',
-      gsaeRef: 1133690012287,
-      gbankRef: 8012753,
-      status: 'PAG',
-      registerDate: '14/07/2021',
-      type: 'CHECK',
-    },
-  ];
-
-  clientIdTestData = [
-    {
-      rfc: 13369,
-      batch: 1,
-      amount: 10000,
-      palette: 1,
-      checkNumber: 2285,
-      checkBank: 'BBVA BANCOMER',
-      validityDate: '15/07/2021',
-      gsaeRef: 1133690012285,
-      gbankRef: 8012785,
-      status: 'PAG',
-      registerDate: '14/07/2021',
-      type: 'CHECK',
-    },
-    {
-      rfc: 13369,
-      batch: 1,
-      amount: 20000,
-      palette: 1,
-      checkNumber: 2286,
-      checkBank: 'BBVA BANCOMER',
-      validityDate: '15/07/2021',
-      gsaeRef: 1133690012286,
-      gbankRef: 8012486,
-      status: 'PAG',
-      registerDate: '14/07/2021',
-      type: 'CHECK',
-    },
-    {
-      rfc: 8696,
-      batch: 2,
-      amount: 10000,
-      palette: 1,
-      checkNumber: 2287,
-      checkBank: 'BBVA BANCOMER',
-      validityDate: '15/07/2021',
-      gsaeRef: 1133690012287,
-      gbankRef: 8012753,
-      status: 'PAG',
-      registerDate: '14/07/2021',
-      type: 'CHECK',
-    },
-  ];
-
-  rfcReworkTestData = [
-    {
-      rfc: 'AARM63022RJ6',
-      name: 'MISAEL VICENTE ALVAREZ RODRIGUEZ',
-    },
-    {
-      rfc: 'GOEJ800613RL8',
-      name: 'FERNANDO MORALES SOTO',
-    },
-    {
-      rfc: 'ZAVA7206027D0',
-      name: 'ROBERTO NAVA CAZARES',
-    },
-  ];
-
-  batchReworkTestData = [
-    {
-      batch: 3454963,
-      description: 'DESCRIPTION TEST 1234567890',
-    },
-    {
-      batch: 3454964,
-      description: 'DESCRIPTION TEST 1234567890',
-    },
-    {
-      batch: 3454965,
-      description: 'DESCRIPTION TEST 1234567890',
-    },
-  ];
-
   form = new FormGroup({
     eventId: new FormControl(null),
     batchId: new FormControl(null),
     status: new FormControl(null),
     operationId: new FormControl(null),
     insertDate: new FormControl(null),
-    validityDate: new FormControl({ value: null, disabled: true }),
+    validityDate: new FormControl(null),
   });
 
   dataSource = new LocalDataSource();
@@ -330,7 +178,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private capturelineService: CapturelineService,
     private guarantyService: GuarantyService,
-    private comerClientsService: ComerClientsService
+    private comerEventService: ComerEventosService
   ) {
     super();
     this.dataSettings.columns = DATA_COLUMNS;
@@ -355,6 +203,48 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
   }
 
+  searchEvent(): void {
+    const eventId = this.form.controls['eventId'].value;
+    if (!eventId) {
+      showToast({
+        title: 'Error',
+        text: 'Debe ingresar un evento',
+        icon: 'warning',
+      });
+      return;
+    }
+    this.enabledOrDisabledControl('eventId', false);
+    this.comerEventService.getComerEventById(eventId).subscribe({
+      next: (event: any) => {
+        // this.enabledOrDisabledControl('eventId', true);
+        console.log({ event });
+        this.selectedEvent = event || null;
+      },
+      error: () => {
+        this.enabledOrDisabledControl('eventId', true);
+        showToast({
+          title: 'Error',
+          text: 'No se encontró el evento',
+          icon: 'warning',
+        });
+      },
+    });
+  }
+
+  enableInputEvent(): void {
+    this.selectedEvent = null;
+    this.enabledOrDisabledControl('eventId', true);
+    this.clearTables();
+  }
+
+  enabledOrDisabledControl(control: string, enabled: boolean) {
+    if (enabled) {
+      this.form.get(control).enable();
+    } else {
+      this.form.get(control).disable();
+    }
+  }
+
   getOperations(params: ListParams) {
     if (params.text == '') {
       this.operationItems = new DefaultSelect(this.operationTestData, 5);
@@ -363,10 +253,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       const item = [this.operationTestData.filter((i: any) => i.id == id)];
       this.operationItems = new DefaultSelect(item[0], 1);
     }
-  }
-
-  selectEvent(event: any) {
-    this.selectedEvent = event;
   }
 
   resetFilter() {
@@ -442,7 +328,16 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   validConsult(): boolean {
-    return Object.values(this.form.value).some((value: any) => Boolean(value));
+    return Object.values(this.form.getRawValue()).some((value: any) =>
+      Boolean(value)
+    );
+  }
+
+  clearTables() {
+    this.dataSource.load([]);
+    this.lcsSource.load([]);
+    this.dataTotalItems = 0;
+    this.lcsTotalItems = 0;
   }
 
   readFile(event: Event, type: 'rfc' | 'client_id') {
@@ -496,59 +391,51 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
   }
 
-  // isValidHeaderExcelOrCvs(
-  //   data: { [key: string]: string },
-  //   type: 'rfc' | 'client_id'
-  // ): boolean {
-  //   const header = [
-  //     'paleta_id',
-  //     'lote',
-  //     'monto',
-  //     'no_cheque',
-  //     'exp_cheque',
-  //     'fec_vigencia',
-  //   ];
-  //   if (type === 'rfc') {
-  //     header.push('rfc');
-  //     header.push('evento');
-  //   } else if (type === 'client_id') {
-  //     header.push('cliente_id');
-  //   }
-  //   return header.every((item: any) => {
-  //     if (!data[0].hasOwnProperty(item)) {
-  //       showToast({
-  //         icon: 'error',
-  //         text: 'El archivo no contiene la columna ' + item,
-  //         title: 'Error',
-  //       });
-  //       return true;
-  //     }
-  //     return false;
-  //   });
-  // }
-
   loadChecks() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    const dateValidity = this.form.controls['validityDate'].value;
-    let ban = Boolean(dateValidity);
-
-    showQuestion({
-      text: dateValidity
-        ? `La fecha de vigencia será ${convertFormatDate(
-            dateValidity
-          )}. ¿Desea continuar?`
-        : 'La Fecha de vigencia se tomará de la tabla. ¿Desea continuar?',
-    }).then((res: any) => {
+    loadCheckLc(this.form, this.capturelineService).then((res: any) => {
       if (res.isConfirmed) {
-        this.loadChecksInServer();
+        this.openDialogCheckPortal();
       }
     });
-  }
+    // if (this.form.invalid) {
+    //   showToast({
+    //     text: 'No se ha insertado ningún filtro de búsqueda.',
+    //     title: 'Advertencia',
+    //     icon: 'warning',
+    //   });
+    //   this.form.markAllAsTouched();
+    //   return;
+    // }
+    // const { validityDate, eventId } = this.form.value;
+    // let p_FLAG = Boolean(validityDate);
 
-  loadChecksInServer(): void {}
+    // showQuestion({
+    //   text: validityDate
+    //     ? `La fecha de vigencia será ${convertFormatDate(
+    //         validityDate
+    //       )}. ¿Desea continuar?`
+    //     : 'La Fecha de vigencia se tomará de la tabla. ¿Desea continuar?',
+    // }).then((res: any) => {
+    //   if (res.isConfirmed) {
+    //     this.capturelineService
+    //       .postLoadCheckPortal({
+    //         event: eventId,
+    //         validation: convertFormatDate(validityDate),
+    //         p_FLAG,
+    //       })
+    //       .subscribe({
+    //         next: () => {
+    //           showToast({
+    //             text: 'Se cargaron los checks correctamente',
+    //             icon: 'success',
+    //           });
+    //           this.searchData();
+    //         },
+    //         error: () => {},
+    //       });
+    //   }
+    // });
+  }
 
   generateLcs() {
     // this.lcsColumns = this.lcsTestData;
@@ -573,42 +460,42 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     // this.lcsTabs.tabs[1].active = true;
   }
 
-  hideActions() {
-    setTimeout(() => {
-      let actions = document.querySelectorAll('a.ng2-smart-action');
-      actions.forEach((a, i) => {
-        let action = actions.item(i);
-        action.classList.add('d-none');
-      });
-    }, 400);
-  }
+  // hideActions() {
+  //   setTimeout(() => {
+  //     let actions = document.querySelectorAll('a.ng2-smart-action');
+  //     actions.forEach((a, i) => {
+  //       let action = actions.item(i);
+  //       action.classList.add('d-none');
+  //     });
+  //   }, 400);
+  // }
 
-  modifyType(columns: any[]) {
-    columns = columns.map((c, i) => {
-      let type: boolean;
-      c.type == 'CHECK' ? (type = true) : (type = false);
-      c = {
-        ...c,
-        typeCheck: type,
-        typeLine: !type,
-      };
-      delete c.type;
-      return c;
-    });
-    return columns;
-  }
+  // modifyType(columns: any[]) {
+  //   columns = columns.map((c, i) => {
+  //     let type: boolean;
+  //     c.type == 'CHECK' ? (type = true) : (type = false);
+  //     c = {
+  //       ...c,
+  //       typeCheck: type,
+  //       typeLine: !type,
+  //     };
+  //     delete c.type;
+  //     return c;
+  //   });
+  //   return columns;
+  // }
 
-  revertType(obj: any) {
-    let type: string;
-    obj.typeCheck == true ? (type = 'CHECK') : (type = 'LINE');
-    obj = {
-      ...obj,
-      type: type,
-    };
-    delete obj.typeCheck;
-    delete obj.typeLine;
-    return obj;
-  }
+  // revertType(obj: any) {
+  //   let type: string;
+  //   obj.typeCheck == true ? (type = 'CHECK') : (type = 'LINE');
+  //   obj = {
+  //     ...obj,
+  //     type: type,
+  //   };
+  //   delete obj.typeCheck;
+  //   delete obj.typeLine;
+  //   return obj;
+  // }
 
   modifyColumns(columns: any) {
     columns = {
@@ -644,6 +531,14 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     });
   }
 
+  openDialogCheckPortal(context?: Partial<TableCheckPortalDialogComponent>) {
+    this.modalService.show(TableCheckPortalDialogComponent, {
+      // initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  }
+
   openForm(lc?: any) {
     if (this.addRows.length == 0) {
       this.onLoadToast(
@@ -655,7 +550,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     }
     this.openModal({ lc });
     if (lc) {
-      this.editedRowModal = this.revertType(lc);
+      // this.editedRowModal = this.revertType(lc);
       this.editedRowTable = lc;
     }
   }
@@ -689,7 +584,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   addRow(lc: any) {
     let arr = [lc];
-    arr = this.modifyType(arr);
+    // arr = this.modifyType(arr);
     // this.lcSource.append(arr[0]);
     // this.layout == 'RFC'
     //   ? (this.rfcTotalItems = this.lcSource.count())
@@ -699,7 +594,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   editRow(lc: any) {
     let arr = [lc];
-    arr = this.modifyType(arr);
+    // arr = this.modifyType(arr);
     // this.lcSource.update(this.editedRowTable, arr[0]);
     let idx = this.addRows.findIndex(
       c => JSON.stringify(c) == JSON.stringify(this.editedRowModal)

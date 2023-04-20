@@ -8,14 +8,14 @@ export const DATA_COLUMNS = {
     title: 'Id Lote',
     type: 'number',
     sort: false,
-    valuePrepareFunction: (_cell: any, item: any) => {
-      return item?.comerLots?.description;
-    },
   },
   batch: {
     title: 'Lote',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (_cell: any, item: any) => {
+      return item?.comerLots?.lotPublic;
+    },
   },
   customerId: {
     title: 'Id Cliente',
@@ -55,7 +55,6 @@ export const DATA_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, _row: any) => {
-      console.log({ cell });
       if (cell == 1) return 'LC GENERADA';
       if (cell == 0) return 'SOLICITADA';
       return '';
