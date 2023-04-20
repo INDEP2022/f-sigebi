@@ -208,8 +208,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (this.userId == 'SIGEBIADMON') {
       this.userId = this.userId.toLocaleLowerCase();
     }
-    let main = document.documentElement.querySelector('.init-page');
-    main.scroll(0, 0);
+    // let main = document.documentElement.querySelector('.init-page');
+    // main.scroll(0, 0);
     // this.blockErrors(false); // OCULTAR MENSAJES DEL INTERCEPTOR
     this.globalVarsService
       .getGlobalVars$()
@@ -4730,8 +4730,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           console.log('DATA VOLANTE PRINCIPAL', res);
           if (onlyCreate == false) {
             this.endProcess = true;
-            let main = document.documentElement.querySelector('.fin-proceso');
-            main.scroll(0, 0);
+            // let main = document.documentElement.querySelector('.fin-proceso');
+            // main.scroll(0, 0);
           } else {
             // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
           }
