@@ -48,6 +48,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   noVolante: number;
   isParams: boolean = false;
   origin: string = null;
+  today: Date = new Date();
+  loadingDoc: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -303,7 +305,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.form.get('numberProceedings').patchValue(expedientNumber);
       this.form.get('flyerNumber').patchValue(wheelNumber);
       this.form.get('userRequestsScan').patchValue(userId.toUpperCase());
-      this.form.get('scanRequestDate').patchValue(new Date());
+      this.form
+        .get('scanRequestDate')
+        .patchValue(this.parseDateNoOffset(new Date()));
       this.form.get('numberDelegationRequested').patchValue(this.delegation);
       this.form
         .get('numberSubdelegationRequests')
@@ -314,9 +318,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         next: resp => {
           this.onLoadToast(
             'success',
-            'Documento creado, procesando reporte',
+            'Solicitud generada, procesando reporte...',
             ''
           );
+          this.loadingDoc = false;
           this.form.patchValue(resp);
           this.idFolio = this.form.get('id').value;
           this.form.get('id').disable();
@@ -330,15 +335,17 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   }
 
   async validations(): Promise<boolean> {
+    this.loadingDoc = true;
     const { expedientNumber, wheelNumber } = this.formNotification.value;
     let { keyTypeDocument, keySeparator } = this.form.value;
 
     if (!expedientNumber && !wheelNumber) {
       this.onLoadToast(
         'error',
-        'Falta el número de expediente ó volante, favor de verificar.',
+        'Falta el número de expediente o volante, favor de verificar.',
         ''
       );
+      this.loadingDoc = false;
       return false;
     }
 
@@ -350,9 +357,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!keySeparator || !keyTypeDocument) {
       this.onLoadToast(
         'error',
-        'Falta el número de expediente ó separador ó tipo de documento, favor de verificar.',
+        'Falta el número de expediente o separador o tipo de documento, favor de verificar.',
         ''
       );
+      this.loadingDoc = false;
       return false;
     }
 
@@ -362,10 +370,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
     if (this.idFolio) {
       this.onLoadToast('error', 'Ya ha sido solicitado ese documento', '');
+      this.loadingDoc = false;
       return false;
     }
 
     return true;
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   createForm() {
@@ -384,12 +400,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       id: [{ value: null, disabled: true }],
       keyTypeDocument: [null, Validators.required],
       natureDocument: ['ORIGINAL', Validators.required],
-      significantDate: [null, Validators.maxLength(7)],
+      significantDate: [
+        null,
+        [
+          Validators.minLength(7),
+          Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
+        ],
+      ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
       scanStatus: ['SOLICITADO'],
       keySeparator: [null],
-      flyerNumber: [null, Validators.required],
-      numberProceedings: [null, Validators.required],
+      flyerNumber: [null],
+      numberProceedings: [null],
       scanRequestDate: [null],
       userRequestsScan: [null],
       numberDelegationRequested: [null],
@@ -420,6 +442,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.notificationServ.getAllFilter(filter.getParams()).subscribe({
         next: () => {
           check(true);
+          this.loadingDoc = false;
         },
         error: () => {
           this.onLoadToast(
@@ -428,6 +451,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
             ''
           );
           check(false);
+          this.loadingDoc = false;
         },
       });
     });
@@ -523,5 +547,30 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         this.form.get('id').disable();
       },
     });
+  }
+
+  limit(limit: number, field: string, value: string) {
+    if (String(value).length > limit) {
+      this.formNotification
+        .get(field)
+        .patchValue(String(value).slice(0, limit));
+    }
+  }
+
+  limit2(limit: number, field: string, value: string) {
+    if (String(value).length > limit) {
+      this.form.get(field).patchValue(String(value).slice(0, limit));
+    }
+  }
+
+  validateDate(value: string) {
+    if (value) {
+      if (value.length >= 2) {
+        const month = Number(value.slice(0, 2));
+        if (month > 12 || month < 1) {
+          this.form.get('significantDate').setErrors({ incorrect: true });
+        }
+      }
+    }
   }
 }

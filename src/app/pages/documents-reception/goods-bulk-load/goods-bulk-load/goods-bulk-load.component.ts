@@ -34,10 +34,15 @@ import {
   INotificationTransferentIndiciadoCityGetData,
 } from 'src/app/core/models/ms-notification/notification.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import {
+  IDocReceptionFlyersRegistrationParams,
+  IDocumentsReceptionRegisterForm,
+} from '../../flyers/documents-reception-register/interfaces/documents-reception-register-form';
 import {
   GOODS_BULK_LOAD_ACTIONS,
   GOODS_BULK_LOAD_TARGETS,
@@ -163,6 +168,10 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   userDelegation: number = null;
   userSubdelegation: number = null;
   wheelCount: number = 0;
+  fileNumberCount: number = 0;
+  flyersRegistrationParams: IDocReceptionFlyersRegistrationParams = null;
+  documentsReceptionRegisterForm: Partial<IDocumentsReceptionRegisterForm> =
+    null;
 
   constructor(
     private fb: FormBuilder,
@@ -173,7 +182,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private route: ActivatedRoute,
     private router: Router,
-    private LoasFileGoodsBulkService: LoasFileGoodsBulkService
+    private LoasFileGoodsBulkService: LoasFileGoodsBulkService,
+    private msDocumentsReceptionDataService: DocumentsReceptionDataService
   ) {
     super();
     const _settings = { columns: GOODS_BULK_LOAD_COLUMNS, actions: false };
@@ -182,6 +192,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.wheelCount = 0;
+    this.fileNumberCount = 0;
     this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
     const token = this.authService.decodeToken();
     this.userId = token.preferred_username
@@ -296,9 +307,45 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Opción Carga Masiva',
-            'Algunos parametros necesarios no se recibieron en la pantalla.'
+            'Algunos parámetros necesarios no se recibieron en la pantalla'
           );
         } else {
+          // let paramsData = localStorage.getItem('_flyersRegistrationParams');
+          // if (paramsData) {
+          //   let objParams: any = JSON.parse(paramsData);
+          //   this.flyersRegistrationParams = objParams;
+          // } else {
+          //   this.flyersRegistrationParams =
+          //     this.msDocumentsReceptionDataService.flyersRegistrationParams;
+          //   if (this.flyersRegistrationParams.pNoTramite) {
+          //     let strParams = JSON.stringify(this.flyersRegistrationParams);
+          //     if (strParams) {
+          //       localStorage.setItem('_flyersRegistrationParams', strParams);
+          //     }
+          //   }
+          // }
+          // let paramsDataForm = localStorage.getItem(
+          //   '_documentsReceptionRegisterForm'
+          // );
+          // if (paramsDataForm) {
+          //   let objParams: any = JSON.parse(paramsDataForm);
+          //   this.documentsReceptionRegisterForm = objParams;
+          // } else {
+          //   this.documentsReceptionRegisterForm =
+          //     this.msDocumentsReceptionDataService.documentsReceptionRegisterForm;
+          //   if (this.documentsReceptionRegisterForm.identifier) {
+          //     let strParams = JSON.stringify(
+          //       this.documentsReceptionRegisterForm
+          //     );
+          //     if (strParams) {
+          //       localStorage.setItem(
+          //         '_documentsReceptionRegisterForm',
+          //         strParams
+          //       );
+          //     }
+          //   }
+          // }
+
           this.target.setValue(this.tipoCarga);
           this.target.updateValueAndValidity();
           this.targetChange();
@@ -340,6 +387,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (this.tipoCarga == 'pgr') {
       this.assetsForm.get('idCarga').setValue('ASEG');
       this.assetsForm.updateValueAndValidity();
+      this.validParameters();
     }
     this.resetValidationDataPreload();
     if (this.DeclarationsValidationMassive) {
@@ -400,17 +448,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               error: err => {
                 console.log(err);
                 let msg;
-                if (
-                  err.status == 400 &&
-                  err.error.message == 'No se encontrarón registros.'
-                ) {
-                  // msg = err.error.message;
-
+                if (err.status == 400) {
                   this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
                   this.reviewConditions();
                 } else {
                   msg =
-                    'Ocurrio un error al validar el Identificador de Carga, intentelo nuevamente.' +
+                    'Ocurrió un error al validar el Identificador de Carga, intentelo nuevamente' +
                     err.error.message;
                   this.alert('warning', 'Opción Carga Masiva', msg);
                 }
@@ -473,7 +516,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       const _settings = { columns: obj, actions: false };
       this.settings = { ...this.settings, ..._settings };
     } catch (error) {
-      this.alert('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
     }
   }
 
@@ -509,7 +552,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         proceso: '',
         bienes: 0,
         volantes: this.wheelCount,
-        expedientes: 0,
+        expedientes: this.fileNumberCount,
         menajes: 0,
       };
       this.DeclarationsUploadValidationMassive.data_error = [];
@@ -543,6 +586,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (!this.validLoadFile()) {
       return;
     }
+    this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
     // Inicia proceso de preload
     this.procesandoPreload = true;
     if (this.target.value == 'sat') {
@@ -551,7 +595,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (this.target.value == 'pgr') {
       this.endProcess = false;
       // console.log('PGR');
-      this.validatorPreloadMassivePgr();
+      this.validatorPreloadMassivePgr(); // Iniciar proceso de validación
     } else if (this.target.value == 'general') {
       // console.log('GENERAL');
       this.validatorPreloadMassiveGeneral();
@@ -575,7 +619,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         FORM_IDENTIFICATOR_NULL,
-        'Ocurrio un error al validar el identificador, intentelo nuevamente.'
+        'Ocurrió un error al validar el identificador, intentelo nuevamente.'
       );
       return false;
     }
@@ -636,7 +680,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       if (this.tipoCarga == 'pgr') {
         this.alert(
           'warning',
-          'Error al cargar la información de los bienes, revisa los parámetros.',
+          'Error al cargar la información de los bienes, revisa los parámetros: EXPEDIENTE, VOLANTE y OFICIO',
           'Error'
         );
       } else {
@@ -677,7 +721,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Carga Masiva FGR',
-              'Ocurrio un error al cargar la información de los bienes.'
+              'Ocurrió un error al cargar la información de los bienes.'
             );
           }
         },
@@ -686,7 +730,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Carga Masiva FGR',
-            'Ocurrio un error al cargar la información de los bienes.'
+            'Ocurrió un error al cargar la información de los bienes.'
           );
         },
       });
@@ -712,7 +756,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Carga Masiva FGR',
-          'Ocurrio un error al cargar la Delegación y Subdelegación.'
+          'Ocurrió un error al cargar la Delegación y Subdelegación.'
         );
       },
     });
@@ -1054,7 +1098,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'Datos del bien',
-          'Ocurrio un error al cargar la información de los atributos del bien.'
+          'Ocurrió un error al cargar la información de los atributos del bien'
         );
       },
     });
@@ -1092,7 +1136,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       const _settings = { columns: obj, actions: false };
       this.settings = { ...this.settings, ..._settings };
       this.cargandoPgr = false;
-      this.getDataVolanteTemp(true); // Crear Volante para Mostrar al Usuario
     } else {
       count++; // Aumentar contador
       this.getDataVolanteData(this.pgrData[count], count); // Inicia proceso de carga y validacion
@@ -1100,7 +1143,16 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   goPageVolante() {
-    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
+    // this.msDocumentsReceptionDataService.flyersRegistrationParams =
+    //   this.flyersRegistrationParams;
+    // this.msDocumentsReceptionDataService.documentsReceptionRegisterForm =
+    //   this.documentsReceptionRegisterForm;
+    this.router
+      .navigateByUrl('/pages/documents-reception/flyers-registration')
+      .then(() => {
+        // localStorage.removeItem('_flyersRegistrationParams');
+        // localStorage.removeItem('_documentsReceptionRegisterForm');
+      });
   }
 
   /**
@@ -1193,7 +1245,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     ) {
       // Mensaje de proceso de validación actual
       this.DeclarationsValidationMassive.message_progress =
-        'Validando la unidad de medida.';
+        'Validando la unidad de medida';
       console.log(this.DeclarationsValidationMassive.message_progress);
       // Validar Unidad
       if (!data.unidad) {
@@ -1220,7 +1272,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el Expediente.';
+      'Validando el Expediente';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar Expediente
     if (infoData.dataRow.expediente) {
@@ -1282,7 +1334,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando las Notificaciones de Transferente, Indiciado y Ciudad.';
+      'Validando las Notificaciones de Transferente, Indiciado y Ciudad';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar Notificaciones de Transferente, Indiciado y Ciudad
     if (
@@ -1337,7 +1389,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Obteneniendo el Transferente por Transferente Autoridad Emisora.';
+      'Obteneniendo el Transferente por Transferente Autoridad Emisora';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar Notificaciones de Transferente, Indiciado y Ciudad
     if (infoData.dataRow.transferente) {
@@ -1384,7 +1436,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el indicador.';
+      'Validando el indicador';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar el indicador
     if (infoData.dataRow.contribuyente) {
@@ -1430,7 +1482,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el Estatus.';
+      'Validando el Estatus del Bien';
     console.log(this.DeclarationsValidationMassive.message_progress);
     let status = '';
     if (this.proceso == 3) {
@@ -1479,7 +1531,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando la clasificación del bien.';
+      'Validando la clasificación del bien';
     console.log(
       this.DeclarationsValidationMassive.message_progress,
       infoData.dataRow.clasif,
@@ -1545,7 +1597,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando la unidad de medida de acuerdo a la clasificación del bien.';
+      'Validando la unidad de medida de acuerdo a la clasificación del bien';
     console.log(
       this.DeclarationsValidationMassive.message_progress,
       infoData.dataRow.clasif,
@@ -1752,7 +1804,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (opcionValid == 'sat') {
       // Mensaje de proceso de validación actual
       this.DeclarationsValidationMassive.message_progress =
-        'Validando el identificador.';
+        'Validando el identificador';
       console.log(this.DeclarationsValidationMassive.message_progress);
       // Validar Identificador padre de menaje
       if (!infoData.dataRow.identificador) {
@@ -1782,7 +1834,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando el transferente.';
+      'Validando el Transferente';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
     if (infoData.dataRow.transferente > 10000) {
@@ -1848,7 +1900,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   async validMuebleSat(infoData: IValidInfoData, opcionValid: string = 'sat') {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando los datos requeridos para el mueble.';
+      'Validando los datos requeridos para el Mueble';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Opción del check para sólo autos
     const params: ListParams = {
@@ -1897,7 +1949,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Validando los datos requeridos para el inmueble.';
+      'Validando los datos requeridos para el Inmueble';
     console.log(this.DeclarationsValidationMassive.message_progress);
     const params: ListParams = {
       page: this.params.getValue().page,
@@ -1961,7 +2013,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.DeclarationsValidationMassive.message_progress =
         'Se detuvo el proceso por el usuario para el registro: "' +
         (infoData.contadorRegistro + 1) +
-        '".';
+        '"';
       this.reviewStopProcess();
       return;
     }
@@ -1983,7 +2035,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       this.DeclarationsValidationMassive.message_progress =
         'Se termino el proceso para el registro: "' +
         (infoData.contadorRegistro + 1) +
-        '".';
+        '"';
       // Fin del proceso para validar la carga SAT
       this.processValidFileSat(
         infoData.contadorRegistro + 1,
@@ -2075,7 +2127,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.DeclarationsValidationMassive.common_general.total_errores == 0 &&
         this.DeclarationsValidationMassive.common_general.registro_errores == 0
       ) {
-        this.validDataUploadMassivePgr();
+        this.blockErrors(false); // OCULTAR MENSAJES DEL INTERCEPTOR
+        this.getTempPgrExpedientByFilter(true); // Crear expediente y volante para continuar
+        // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
       }
     } else {
       // Mensaje de proceso de validación actual
@@ -3382,8 +3436,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         // satUniqueKey: '', // SAT_CVE_UNICA
         siabiInventoryId: infoData.dataRow['sat_cve_unica'], // SIAB_INVENTORY ES PGR_NO_BIEN
         inventoryNumber: infoData.dataRow['sat_cve_unica'], // NUMERO DE INVENTARIO
-        associatedFileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE ---- SE CAMBIO POR ESTE CAMPO EL DATOS DEL EXPEDIENTE YA QUE CON EL OTRO MANDA ERROR EL MS
-        // fileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE
+        // associatedFileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE ---- SE CAMBIO POR ESTE CAMPO EL DATOS DEL EXPEDIENTE YA QUE CON EL OTRO MANDA ERROR EL MS
+        fileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE
         description: infoData.dataRow.descripcion, // Descripcion
         quantity: infoData.dataRow.cantidad, // Cantidad
         unit: infoData.dataRow.unidad, // Unidad
@@ -3504,8 +3558,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       massiveGoodData = {
         id: this.assetsForm.get('idCarga').value, // Id de la carga masiva
         goodNumber: infoData.objInsertResponse['LNU_NO_BIEN'], // Numero de bien
-        associatedFileNumber: infoData.dataRow.expediente, // Numero de expediente ---- SE CAMBIO POR ESTE CAMPO EL DATOS DEL EXPEDIENTE YA QUE CON EL OTRO MANDA ERROR EL MS
-        // fileNumber: infoData.dataRow.expediente, // Numero de expediente
+        // associatedFileNumber: infoData.dataRow.expediente, // Numero de expediente ---- SE CAMBIO POR ESTE CAMPO EL DATOS DEL EXPEDIENTE YA QUE CON EL OTRO MANDA ERROR EL MS
+        fileNumber: infoData.dataRow.expediente, // Numero de expediente
         flyerNumber: infoData.objInsertResponse['lnu_no_volante'], // Número de volante
         user: this.userId.toUpperCase(), //'USER', // USER para que el back indique el valor
         massiveChargeDate: new Date(), // Fecha y hora actual
@@ -3517,8 +3571,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           ? infoData.dataRow.identificador
           : infoData.objInsertResponse.identificador, // Identificador -- this.assetsForm.get('idCarga').value, // Id de la carga masiva
         goodNumber: infoData.objInsertResponse['LNU_NO_BIEN'], // Numero de bien
-        associatedFileNumber: infoData.dataRow.expediente, // Numero de expediente ---- SE CAMBIO POR ESTE CAMPO EL DATOS DEL EXPEDIENTE YA QUE CON EL OTRO MANDA ERROR EL MS
-        // fileNumber: this.paramsGeneral.p_no_expediente, // Numero de expediente
+        // associatedFileNumber: infoData.dataRow.expediente, // Numero de expediente ---- SE CAMBIO POR ESTE CAMPO EL DATOS DEL EXPEDIENTE YA QUE CON EL OTRO MANDA ERROR EL MS
+        fileNumber: this.paramsGeneral.p_no_expediente, // Numero de expediente
         flyerNumber: this.paramsGeneral.p_no_volante, // Numero de volante
         user: this.userId.toUpperCase(), //'USER', // USER para que el back indique el valor
         massiveChargeDate: new Date(), // Fecha y hora actual
@@ -3641,26 +3695,60 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getDataPGRFromParams(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log(res);
+          console.log('UPDATE PGR DATA', res);
 
           let dataUpload: IPgrTransfer = res.data[0];
           // this.pgrData[infoData.contadorRegistro];
           dataUpload.saeNoGood = infoData.objInsertResponse['LNU_NO_BIEN']; // Set data
-          this.goodsBulkService.updateDataPGR(dataUpload).subscribe({
-            next: res => {
-              console.log(res);
-              this.processUploadEndPgr(infoData); //  Fin de proceso
-            },
-            error: err => {
-              console.log(err);
-            },
-          });
+          console.log('UPDATE PGR DATA', dataUpload);
+          try {
+            this.goodsBulkService.updateDataPGR(dataUpload).subscribe({
+              next: res => {
+                console.log(res);
+                this.processUploadEndPgr(infoData); //  Fin de proceso
+              },
+              error: err => {
+                console.log(err);
+                infoData.error = this.agregarErrorUploadValidation(
+                  infoData.error,
+                  'Error en el servidor al actualizar FGR Transferencia. ' +
+                    ' Con el Oficio: ' +
+                    this.paramsGeneral.p_av_previa +
+                    ' y el Número de Bien: ' +
+                    infoData.dataRow['sat_cve_unica'] +
+                    err.error.message
+                );
+                this.infoDataValidation.error = infoData.error; // Setear error
+                infoData.validLastRequest = false; // Respuesta incorrecta
+                this.processUploadEndPgr(infoData); //  Fin de proceso
+              },
+            });
+          } catch (error) {
+            console.log(error);
+            infoData.error = this.agregarErrorUploadValidation(
+              infoData.error,
+              'Error en el servidor al actualizar FGR Transferencia. ' +
+                ' Con el Oficio: ' +
+                this.paramsGeneral.p_av_previa +
+                ' y el Número de Bien: ' +
+                infoData.dataRow['sat_cve_unica'] +
+                error
+            );
+            this.infoDataValidation.error = infoData.error; // Setear error
+            infoData.validLastRequest = false; // Respuesta incorrecta
+            this.processUploadEndPgr(infoData); //  Fin de proceso
+          }
         },
         error: err => {
           console.log(err);
           infoData.error = this.agregarErrorUploadValidation(
             infoData.error,
-            'Error al actualizar FGR Transferencia'
+            'Error al obtener la información de FGR Transferencia. ' +
+              ' Con el Oficio: ' +
+              this.paramsGeneral.p_av_previa +
+              ' y el Número de Bien: ' +
+              infoData.dataRow['sat_cve_unica'] +
+              err.error.message
           );
           this.infoDataValidation.error = infoData.error; // Setear error
           infoData.validLastRequest = false; // Respuesta incorrecta
@@ -4099,7 +4187,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
-        'Se termino el proceso de carga de datos para el registro: "' +
+        'Se término el proceso de carga de datos para el registro: "' +
         (infoData.contadorRegistro + 1) +
         '".';
       // Fin del proceso para validar la carga SAT
@@ -4155,7 +4243,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
-        'Se termino el proceso de carga de datos para el registro: "' +
+        'Se término el proceso de carga de datos para el registro: "' +
         (infoData.contadorRegistro + 1) +
         '".';
       // Fin del proceso para validar la carga PGR
@@ -4195,7 +4283,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else {
       // Mensaje de proceso de validación actual
       this.DeclarationsUploadValidationMassive.message_progress =
-        'Se termino el proceso de carga de datos para el registro: "' +
+        'Se término el proceso de carga de datos para el registro: "' +
         (infoData.contadorRegistro + 1) +
         '".';
       // Fin del proceso para validar la carga GENERAL
@@ -4252,7 +4340,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       // NO EXISTE ASUNTO SAT
       this.infoDataValidation.error = this.agregarError(
         this.infoDataValidation.error,
-        'No se encontro el Asunto SAT en los parámetros'
+        'No se encontró el Asunto SAT en los parámetros'
       );
       this.infoDataValidation.error = this.infoDataValidation.error; // Setear error
       this.infoDataValidation.validLastRequest = false; // Respuesta incorrecta
@@ -4328,6 +4416,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * Validar los registros a subir al sistema antes de cargar la información
    */
   async validDataUploadMassivePgr() {
+    this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
     this.startVariables(true);
     // Total de registros
     this.DeclarationsUploadValidationMassive.common_general.total =
@@ -4489,12 +4578,13 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.alertInfo(
               'info',
               'Actualización de menaje',
-              'Es un bien inmueble con menaje, se van a asociar los bienes hijos al bien padre.'
+              'Es un bien inmueble con Menaje, se van a asociar los bienes hijos al bien padre'
             ).then(() => {
               this.createMenajePGR(res.data, 0);
             });
           } else {
-            this.getDataVolanteTemp();
+            // this.getDataVolanteTemp();
+            this.endProcess = true;
           }
         },
         error: err => {
@@ -4502,7 +4592,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'warning',
             'Actualización de menaje',
-            'Ocurrio un error al cargar la información de los bienes para actualizar el menaje.'
+            'Ocurrió un error al cargar la información de los bienes para actualizar el Menaje'
           );
         },
       });
@@ -4520,7 +4610,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         console.log(res);
         if (dataResponse.length == count + 1) {
           // TERMINO PGR
-          this.getDataVolanteTemp();
+          // this.getDataVolanteTemp();
+          this.endProcess = true;
         } else {
           count++;
           this.createMenajePGR(res.data, count);
@@ -4531,12 +4622,13 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         console.log(err);
         if (dataResponse.length == count + 1) {
           // TERMINO PGR
-          this.getDataVolanteTemp();
+          // this.getDataVolanteTemp();
+          this.endProcess = true;
         }
         this.onLoadToast(
           'warning',
           'Actualización de menaje',
-          'Ocurrio un error al cargar la información del menaje.'
+          'Ocurrió un error al cargar la información del Menaje'
         );
       },
     });
@@ -4555,7 +4647,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getDataPgrNotificationByFilter(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log('DATA VOLANTE', res);
+          console.log('DATA VOLANTE TEMPORAL', res);
           this.getDataVolante(res.data[0]);
         },
         error: err => {
@@ -4565,9 +4657,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Información del Volante Temporal',
-              'Ocurrio un error al cargar la información del Volante Temporal.'
+              'Ocurrió un error al cargar la información del Volante Temporal'
             );
-            this.cargandoPgr = false;
           }
           console.log(err);
         },
@@ -4583,45 +4674,60 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       .getPgrNotificationByFilter(params.getFilterParams())
       .subscribe({
         next: res => {
-          console.log('DATA VOLANTE', res);
-
+          console.log('DATA VOLANTE PRINCIPAL', res);
           if (onlyCreate == false) {
             this.endProcess = true;
+            let main = document.documentElement.querySelector('.fin-proceso');
+            main.scroll(0, 0);
           } else {
-            this.cargandoPgr = false;
+            // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
           }
-          let main = document.documentElement.querySelector('.fin-proceso');
-          main.scroll(0, 0);
-          this.onLoadToast(
+          this.alertInfo(
             'info',
             'Datos del Volante',
-            'Ya existe un registro del Volante.'
-          );
+            'Ya existe un registro del Volante. Se va a actualizar el registro para el Volante: ' +
+              this.paramsGeneral.p_no_volante
+          ).then(() => {
+            this.createDataVolante(volanteData, onlyCreate, true);
+          });
+          // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
+          // this.getTempPgrExpedientByFilter(onlyCreate); // Get Temp expedient
         },
         error: err => {
           console.log(err);
-          if (
-            err.error.message == 'No se encontrarón registros.' &&
-            err.status == 400
-          ) {
+          if (err.status == 400) {
             console.log('SIN RESULTADOS', volanteData);
-            this.createDataVolante(volanteData);
+            this.createDataVolante(volanteData, onlyCreate);
           } else {
             if (onlyCreate == false) {
               this.endProcess = true;
             } else {
-              this.cargandoPgr = false;
+              this.onLoadToast(
+                'warning',
+                'Información del Volante',
+                'Ocurrio un error al cargar la información del Volante. Intenta nuevamente'
+              );
             }
           }
         },
       });
   }
 
-  createDataVolante(body: INotification, onlyCreate: boolean = false) {
+  createDataVolante(
+    body: INotification,
+    onlyCreate: boolean = false,
+    update: boolean = false
+  ) {
     let numberInstitucion: any = body.institutionNumber;
     let institution: any = numberInstitucion.id
       ? numberInstitucion.id
       : numberInstitucion;
+    let minpubNumber =
+      typeof body.minpubNumber == 'number'
+        ? body.minpubNumber
+        : body.minpubNumber
+        ? body.minpubNumber.id
+        : body.minpubNumber;
     let bodyData = {
       wheelNumber: body.wheelNumber,
       receiptDate: body.receiptDate,
@@ -4650,7 +4756,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       subDelDestinyNumber: body.subDelDestinyNumber,
       departamentDestinyNumber: body.departamentDestinyNumber,
       officeNumber: body.officeNumber,
-      minpubNumber: body.minpubNumber,
+      minpubNumber: minpubNumber,
       cityNumber: body.cityNumber,
       courtNumber: body.courtNumber,
       registerNumber: body.registerNumber,
@@ -4675,60 +4781,102 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       desKnowingDate: body.desKnowingDate,
       addressGeneral: body.addressGeneral,
     };
-    console.log(bodyData);
-    this.goodsBulkService.createPgrNotification(bodyData).subscribe({
-      next: res => {
-        console.log('DATA VOLANTE', res);
-        this.paramsGeneral.p_no_volante = res.wheelNumber.toString();
-        if (onlyCreate == false && this.DeclarationsUploadValidationMassive) {
-          // Agregar contador de volantes
-          this.DeclarationsUploadValidationMassive.common_general.volantes++;
-          this.getTempPgrExpedientByFilter();
-        } else {
+    console.log('DATA VOLANTE CREATE', bodyData);
+    if (update) {
+      this.goodsBulkService.updatePgrNotification(bodyData).subscribe({
+        next: res => {
+          console.log('DATA VOLANTE UPDATE', res);
+          this.paramsGeneral.p_no_volante = bodyData.wheelNumber.toString();
+          this.alertInfo(
+            'info',
+            'Datos del Volante',
+            'Se actualizó correctamente el Volante: ' +
+              this.paramsGeneral.p_no_volante
+          ).then(() => {
+            this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
+          });
+          // mensaje update volante
+        },
+        error: err => {
+          console.log(err);
+          if (onlyCreate == false) {
+            // this.getTempPgrExpedientByFilter(onlyCreate);
+          } else {
+            this.onLoadToast(
+              'warning',
+              'Información del Volante Temporal',
+              'Ocurrió un error al CREAR el Volante con la información del Volante Temporal.' +
+                err.error.message
+            );
+          }
+        },
+      });
+    } else {
+      this.goodsBulkService.createPgrNotification(bodyData).subscribe({
+        next: res => {
+          console.log('DATA VOLANTE CREATE', res);
+          this.paramsGeneral.p_no_volante = res.wheelNumber.toString();
+          // if (onlyCreate == false && this.DeclarationsUploadValidationMassive) {
+          //   // Agregar contador de volantes
+          //   this.DeclarationsUploadValidationMassive.common_general.volantes++;
+          //   this.getTempPgrExpedientByFilter(onlyCreate);
+          // } else {
+          //   this.wheelCount++;
+          // }
+          // this.getTempPgrExpedientByFilter(onlyCreate);
           this.wheelCount++;
-          this.cargandoPgr = false;
-        }
-      },
-      error: err => {
-        console.log(err);
-        if (onlyCreate == false) {
-          this.getTempPgrExpedientByFilter();
-        } else {
-          this.onLoadToast(
-            'warning',
-            'Información del Volante Temporal',
-            'Ocurrio un error al CREAR el Volante con la información del Volante Temporal.'
-          );
-          this.cargandoPgr = false;
-        }
-      },
-    });
+          this.alertInfo(
+            'info',
+            'Datos del Volante',
+            'Se creó correctamente el Volante: ' +
+              this.paramsGeneral.p_no_volante
+          ).then(() => {
+            this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
+          });
+        },
+        error: err => {
+          console.log(err);
+          if (onlyCreate == false) {
+            // this.getTempPgrExpedientByFilter(onlyCreate);
+          } else {
+            this.onLoadToast(
+              'warning',
+              'Información del Volante Temporal',
+              'Ocurrió un error al CREAR el Volante con la información del Volante Temporal.' +
+                err.error.message
+            );
+          }
+        },
+      });
+    }
   }
 
   /**
    * Obtener información de la tabla temporal de expedientes
    */
 
-  getTempPgrExpedientByFilter() {
+  getTempPgrExpedientByFilter(onlyCreate: boolean = false) {
     let expedient = encodeURIComponent(this.paramsGeneral.p_no_expediente);
     this.goodsBulkService.getTempPgrExpedientByFilter(expedient).subscribe({
       next: res => {
         console.log('DATA EXPEDIENTE', res);
-        this.getDataExpediente(res);
+        this.getDataExpediente(res, onlyCreate);
       },
       error: err => {
         this.onLoadToast(
           'warning',
           'Información del Expediente Temporal',
-          'Ocurrio un error al cargar la información del Expediente Temporal.'
+          'Ocurrió un error al cargar la información del Expediente Temporal.'
         );
-        this.endProcess = true;
         console.log(err);
       },
     });
   }
 
-  getDataExpediente(expedientData: ITempExpedient) {
+  getDataExpediente(
+    expedientData: ITempExpedient,
+    onlyCreate: boolean = false
+  ) {
     const params = new FilterParams();
     params.removeAllFilters();
     let expedient = encodeURIComponent(this.paramsGeneral.p_no_expediente);
@@ -4736,29 +4884,42 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.goodsBulkService.getPgrExpedientByFilter(expedient).subscribe({
       next: res => {
         console.log('DATA EXPEDIENTE', res);
-        this.endProcess = true;
-        this.onLoadToast(
+        this.alertInfo(
           'info',
           'Datos del Expediente',
-          'Ya existe un registro del expediente.'
-        );
+          'Ya existe un registro del expediente. Se va a actualizar el registro para el Expediente: ' +
+            this.paramsGeneral.p_no_expediente
+        ).then(() => {
+          this.createDataExpediente(expedientData, onlyCreate, true);
+        });
+        // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
+        // this.getDataVolanteTemp(onlyCreate); // Get Temp expedient
       },
       error: err => {
         console.log(err);
-        if (
-          err.error.message == 'No se encontrarón registros.' &&
-          err.status == 400
-        ) {
+        if (err.status == 400) {
           console.log('SIN RESULTADOS', expedientData);
-          this.createDataExpediente(expedientData);
+          this.createDataExpediente(expedientData, onlyCreate);
         } else {
-          this.endProcess = true;
+          if (onlyCreate == false) {
+            this.endProcess = true;
+          } else {
+            this.onLoadToast(
+              'warning',
+              'Información del Expediente',
+              'Ocurrió un error al cargar la información del Expediente, para validar si se creo previamnete. Intenta nuevamente'
+            );
+          }
         }
       },
     });
   }
 
-  createDataExpediente(body: ITempExpedient) {
+  createDataExpediente(
+    body: ITempExpedient,
+    onlyCreate: boolean = false,
+    update: boolean = false
+  ) {
     let expedient: IExpedientMassiveFromTmp = {
       id: body.id,
       dateAgreementAssurance: body.agreementSecureDate,
@@ -4783,7 +4944,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       protectionKey: body.cveProtection,
       crimeKey: body.cveCrime,
       circumstantialRecord: body.recordCircumstanced,
-      keyPenalty: body.causePenal,
+      keyPenalty: body.cvetouchPenal,
       nameInstitution: body.institutionName,
       courtName: body.courtName,
       mpName: body.nameMp,
@@ -4797,7 +4958,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dictaminationReturnDate: body.returnRulingDate,
       alienationDate: body.alienationDate,
       federalEntityKey: body.cveEntfed,
-      dictaminationDate: body.dictamineDate,
+      dictaminationDate: body.recrevRulingDate,
       registerNumber: body.recordNumber,
       destructionDate: body.destructionDate,
       donationDate: body.donationDate,
@@ -4814,16 +4975,42 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       insertionDatehc: body.insertionHcDate,
     };
     console.log(expedient);
-    this.goodsBulkService.createExpedient(expedient).subscribe({
+    this.goodsBulkService.createExpedient(expedient, update).subscribe({
       next: res => {
-        console.log('DATA EXPEDIENTE', res);
+        console.log('DATA EXPEDIENTE CREATE UPDATE', res);
+        this.paramsGeneral.p_no_expediente = body.id.toString();
         // Agregar contador de expedientes
-        this.DeclarationsUploadValidationMassive.common_general.expedientes++;
-        this.endProcess = true;
+        // this.DeclarationsUploadValidationMassive.common_general.expedientes++;
+        if (update == false) {
+          this.fileNumberCount++;
+          this.alertInfo(
+            'info',
+            'Datos del Expediente',
+            'Se creó correctamente el Expediente: ' +
+              this.paramsGeneral.p_no_expediente
+          ).then(() => {
+            this.getDataVolanteTemp(onlyCreate); // Get Temp expedient
+          });
+        } else {
+          this.alertInfo(
+            'info',
+            'Datos del Expediente',
+            'Se actualizó correctamente el Expediente: ' +
+              this.paramsGeneral.p_no_expediente
+          ).then(() => {
+            this.getDataVolanteTemp(onlyCreate); // Get Temp expedient
+          });
+        }
+        // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
       },
       error: err => {
-        this.endProcess = true;
         console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Información del Expediente Temporal',
+          'Ocurrió un error al CREAR el Expediente con la información del Expediente Temporal.' +
+            err.error.message
+        );
       },
     });
   }

@@ -39,7 +39,7 @@ export class EntryOrderFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro de generar la orden de ingreso?'
+      '¿Estás seguro de generar la orden de ingreso?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

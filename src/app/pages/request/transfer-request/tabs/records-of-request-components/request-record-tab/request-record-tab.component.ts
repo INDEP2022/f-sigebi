@@ -10,9 +10,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
 import {
   EMAIL_PATTERN,
   NUMBERS_PATTERN,
@@ -50,15 +50,16 @@ export class RequestRecordTabComponent
   priorityString: string = 'N';
   transferenceNumber: number = 0;
   formLoading: boolean = false;
-
+  transfe: string = '';
   paperDateLabel: any = '';
-
+  rem: string = 'del Remitente';
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
     private genericsService: GenericService,
     private requestService: RequestService,
-    private minPub: MinPubService
+    private minPub: MinPubService,
+    private transferenteService: TransferenteService
   ) {
     super();
   }
@@ -105,7 +106,7 @@ export class RequestRecordTabComponent
       this.transferenceNumber = Number(
         this.requestForm.controls['transferenceId'].value
       );
-      console.log(this.transferenceNumber);
+      this.getTrans(this.transferenceNumber);
     }
 
     if (this.requestForm.controls['urgentPriority'].value === 'Y') {
@@ -113,21 +114,9 @@ export class RequestRecordTabComponent
       this.bsPriorityDate = new Date(priDate);
     }
 
-    // if (this.requestForm.controls['fileLeagueDate'].value != null) {
-    //   const ligDate = this.requestForm.controls['fileLeagueDate'].value;
-    //   this.bsligDate = new Date(ligDate);
-    // }
-    // if (this.requestForm.controls['verificationDateCump'].value != null) {
-    //   const priDate = this.requestForm.controls['verificationDateCump'].value;
-    //   this.bsverifiyDate = new Date(priDate);
-    // }
-    //establece la fecha de prioridad en el caso de que prioridad se aya seleccionado
-    // this.requestForm.controls['priorityDate'].valueChanges.subscribe(val => {
-    //   if (this.requestForm.controls['priorityDate'].value !== null) {
-    //     const date = new Date(this.requestForm.controls['priorityDate'].value);
-    //     this.bsPriorityDate = date;
-    //   }
-    // });
+    if (this.requestForm.controls['affair'].value != null) {
+      this.getAffair(this.requestForm.controls['affair'].value);
+    }
   }
   prepareForm() {
     //formulario de solicitudes
@@ -262,6 +251,24 @@ export class RequestRecordTabComponent
       },
       error: error => {
         this.affairName = '';
+      },
+    });
+  }
+
+  getTrans(transferenceNumber: number) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${transferenceNumber}`;
+    this.transferenteService.getAll(params).subscribe({
+      next: ({ data }) => {
+        console.log(this.transfe);
+        if (transferenceNumber === 1 || transferenceNumber === 120) {
+          this.transfe = 'MP';
+        } else {
+          this.transfe = this.rem;
+        }
+      },
+      error: error => {
+        this.transfe = '';
       },
     });
   }

@@ -1,3 +1,7 @@
+import { IClarification } from '../catalogs/clarification.model';
+import { IChatClarifications2 } from '../ms-chat-clarifications/chat-clarifications-model';
+import { IGood } from '../ms-good/good';
+
 export interface ClarificationGoodRejectNotification {
   id?: number;
   goodId?: number;
@@ -13,8 +17,10 @@ export interface ClarificationGoodRejectNotification {
   clarificationType?: string;
   reason?: string;
   answered?: string;
-  chatClarification?: number;
+  chatClarification?: IChatClarifications2;
   goodResDevId?: number;
   sysStsc4qbnbolbp3szu27tgt6lu?: number;
   documentClarificationId?: string;
+  clarification?: IClarification;
+  good?: IGood;
 }

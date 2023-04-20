@@ -4,7 +4,7 @@ export const COLUMNS = {
     sort: false,
   },
   wheelNumber: {
-    title: 'No. volante',
+    title: 'No. Volante',
     sort: false,
   },
   receiptDate: {
@@ -15,7 +15,7 @@ export const COLUMNS = {
     },
   },
   preliminaryInquiry: {
-    title: 'Averiguación Prevía',
+    title: 'Averiguación Previa',
     sort: false,
   },
   criminalCase: {
