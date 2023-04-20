@@ -7,7 +7,7 @@ export interface IDocumentsDictumXStateM {
   userReceipt: string;
   insertionDate: string;
   userInsertion: string;
-  numRegister: number;
+  numRegister?: number;
   officialNumber: number;
   notificationDate: string;
   secureKey: string;

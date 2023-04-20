@@ -1,0 +1,98 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="dictationXGoodForm">
+      <div class="row">
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="No. Dictaminación"
+            [control]="dictationXGoodForm.get('ofDictNumber')">
+            <input
+              required
+              type="number"
+              class="form-control"
+              maxlength="11"
+              formControlName="ofDictNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Tipo"
+            [control]="dictationXGoodForm.get('typeDict')">
+            <input
+              required
+              type="text"
+              class="form-control"
+              maxlength="15"
+              formControlName="typeDict" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="No. Expediente"
+            [control]="dictationXGoodForm.get('proceedingsNumber')">
+            <input
+              required
+              type="number"
+              class="form-control"
+              maxlength="11"
+              formControlName="proceedingsNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field label="No. Bien" [control]="dictationXGoodForm.get('id')">
+            <input
+              required
+              type="number"
+              class="form-control"
+              maxlength="11"
+              formControlName="id" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Descripción"
+            [control]="dictationXGoodForm.get('descriptionDict')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="1250"
+              formControlName="descriptionDict" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Cantidad"
+            [control]="dictationXGoodForm.get('amountDict')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="21"
+              formControlName="amountDict" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

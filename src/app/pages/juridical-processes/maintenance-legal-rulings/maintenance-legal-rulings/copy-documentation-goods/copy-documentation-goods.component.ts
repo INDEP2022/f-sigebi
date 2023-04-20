@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CopyDocumentationGoodsDialogComponent } from '../dialogs/copy-documentation-goods-dialog/copy-documentation-goods-dialog.component';
 import { COPY_DOCUMENTATION_GOODS_COLUMNS } from './copy-documentation-goods.columns';
 
 @Component({
@@ -21,7 +23,7 @@ export class CopyDocumentationGoodsComponent
     actions: {
       columnTitle: '',
       add: false,
-      edit: false,
+      edit: true,
       delete: false,
     },
     hideSubHeader: true,
@@ -32,6 +34,7 @@ export class CopyDocumentationGoodsComponent
   dataTable: ICopiesOfficialOpinion[] = [];
 
   constructor(
+    private modalService: BsModalService,
     private copiesOfficialOpinionService: CopiesOfficialOpinionService
   ) {
     super();
@@ -60,5 +63,20 @@ export class CopyDocumentationGoodsComponent
         this.loading = false;
       },
     });
+  }
+
+  openForm(copiesOfficial?: ICopiesOfficialOpinion) {
+    console.log(copiesOfficial);
+    let config: ModalOptions = {
+      initialState: {
+        copiesOfficial,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CopyDocumentationGoodsDialogComponent, config);
   }
 }
