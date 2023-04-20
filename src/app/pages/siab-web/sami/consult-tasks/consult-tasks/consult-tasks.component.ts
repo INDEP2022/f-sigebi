@@ -291,7 +291,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           );
           this.totalItems = this.tasks.length;
         },
-        error: () => (this.loading = false),
+        error: () => ((this.tasks = []), (this.loading = false)),
       });
   }
 

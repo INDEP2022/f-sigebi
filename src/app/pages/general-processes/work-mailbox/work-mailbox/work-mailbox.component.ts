@@ -67,7 +67,6 @@ import { RELATED_FOLIO_COLUMNS } from '../utils/related-folio-columns';
 import {
   CONFIRM_CANCEL,
   CONFIRM_FINISH,
-  CONFIRM_SAVE,
   NO_FLYER_NUMBER,
   NO_INDICATORS_FOUND,
 } from '../utils/work-mailbox-messages';
@@ -92,6 +91,7 @@ import { SatTransferService } from 'src/app/core/services/ms-interfacesat/sat-tr
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { TmpManagementProcedureService } from 'src/app/core/services/ms-procedure-management/tmp-management-procedure.service';
 import { ObservationsComponent } from '../components/observations/observations.component';
+import { SaveModalMailboxComponent } from '../components/save-modal-mailbox/save-modal-mailbox.component';
 import { TurnPaperworkComponent } from '../components/turn-paperwork/turn-paperwork.component';
 
 @Component({
@@ -1609,19 +1609,18 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
       return;
     }
-    const result = await this.alertQuestion(
-      'question',
-      'Advertencia',
-      CONFIRM_SAVE
-    );
-
-    if (result.isConfirmed) {
-      if (this.managementAreaF.value && this.user.value) {
-        this.savePaperwork('1').subscribe();
-      } else {
-        this.savePaperwork('2').subscribe();
-      }
-    }
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        callback: (refresh: boolean) => {
+          if (refresh) {
+            this.getData();
+          }
+        },
+        selectedRow: this.selectedRow,
+      },
+    };
+    const modalRef = this.modalService.show(SaveModalMailboxComponent, config);
   }
 
   async onFinishPaperwork() {
@@ -1640,38 +1639,38 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  savePaperwork(option: string) {
-    const { processNumber, areaATurn, userATurn } = this.selectedRow;
-    let body;
-    if (option === '1') {
-      body = {
-        status: this.managementAreaF.value.id + 'I',
-        userTurned: this.user.value.id,
-        situation: 1,
-      };
-    } else {
-      body = {
-        status: areaATurn + 'I',
-        userTurned: userATurn,
-        situation: 1,
-      };
-    }
+  // savePaperwork(option: string) {
+  //   const { processNumber, areaATurn, userATurn } = this.selectedRow;
+  //   let body;
+  //   if (option === '1') {
+  //     body = {
+  //       status: this.managementAreaF.value.id + 'I',
+  //       userTurned: this.user.value.id,
+  //       situation: 1,
+  //     };
+  //   } else {
+  //     body = {
+  //       status: areaATurn + 'I',
+  //       userTurned: userATurn,
+  //       situation: 1,
+  //     };
+  //   }
 
-    return this.procedureManagementService.update(processNumber, body).pipe(
-      catchError(error => {
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Ocurrio un error al enviar el trámite'
-        );
-        return throwError(() => error);
-      }),
-      tap(() => {
-        this.onLoadToast('success', 'El trámite se envío correctamente', '');
-        this.getData();
-      })
-    );
-  }
+  //   return this.procedureManagementService.update(processNumber, body).pipe(
+  //     catchError(error => {
+  //       this.onLoadToast(
+  //         'error',
+  //         'Error',
+  //         'Ocurrio un error al enviar el trámite'
+  //       );
+  //       return throwError(() => error);
+  //     }),
+  //     tap(() => {
+  //       this.onLoadToast('success', 'El trámite se envío correctamente', '');
+  //       this.getData();
+  //     })
+  //   );
+  // }
 
   cancelPaperwork() {
     const { processNumber, turnadoiUser } = this.selectedRow;
