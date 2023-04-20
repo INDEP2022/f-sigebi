@@ -62,7 +62,7 @@ export class LogicalTablesRegisterModalComponent
 
   create() {
     this.loading = true;
-    this.dinamicTablesService.create(this.tablesForm.value).subscribe({
+    this.dinamicTablesService.create2(this.tablesForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -71,7 +71,7 @@ export class LogicalTablesRegisterModalComponent
   update() {
     this.loading = true;
     this.dinamicTablesService
-      .update(this.dinamicTables.table, this.tablesForm.value)
+      .update2(this.dinamicTables.table, this.tablesForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

@@ -3,19 +3,21 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IPhotographMedia } from 'src/app/core/models/catalogs/photograph-media.model';
-import { BatchService } from 'src/app/core/services/catalogs/batch.service';
-import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
-import { PhotographMediaService } from 'src/app/core/services/catalogs/photograph-media.service';
+
+import {
+  IComerLotEvent,
+  IGoodPhoto,
+} from 'src/app/core/models/ms-parametercomer/parameter';
+
+import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
+import { PublicationPhotographsService } from 'src/app/core/services/ms-parametercomer/publication-photographs.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { PublicationPhotographsModalComponent } from '../publication-photographs-modal/publication-photographs-modal.component';
 import {
-  dataBatchColum,
-  numStoreColumn,
+  GoodPhoto,
+  Lot,
   PUBLICATION_PHOTO1,
   PUBLICATION_PHOTO2,
 } from './publication-photographs-columns';
@@ -39,16 +41,27 @@ export class PublicationPhotographsComponent
 {
   form: FormGroup = new FormGroup({});
   dataBatch: any;
+  transform: number;
+  selectedIndex = 0;
+  lot: IComerLotEvent;
+  // eventList = new DefaultSelect<IEvent>();
+  // events: any;
+  eventList: IComerLotEvent[] = [];
+  see: boolean;
+  lotList: IComerLotEvent[] = [];
+  photography: IGoodPhoto;
+  photographyList: IGoodPhoto[] = [];
   subtype: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   batchList: any;
   selectedCve: any = null;
+  selectedLot: any[] = [];
   cveItems = new DefaultSelect();
   totalItems: number = 0;
-  picture: IPhotographMedia;
+  totalItemsL: number = 0;
   data1: LocalDataSource = new LocalDataSource();
   // dataAllotment = DATA;
-
+  idLot: number = 0;
   data2: LocalDataSource = new LocalDataSource();
   rowSelected: boolean = false;
   rowAllotment: string = null;
@@ -67,10 +80,9 @@ export class PublicationPhotographsComponent
 
   constructor(
     private fb: FormBuilder,
-    private batchService: BatchService,
-    private photographMediaService: PhotographMediaService,
     private modalService: BsModalService,
-    private goodSubtypeService: GoodSubtypeService
+    private comerLotService: ComerLotService,
+    private publicationPhotographsService: PublicationPhotographsService
   ) {
     super();
     this.settings1 = {
@@ -87,37 +99,204 @@ export class PublicationPhotographsComponent
 
     this.settings4 = {
       ...TABLE_SETTINGS,
-      columns: { ...dataBatchColum },
+      actions: false,
+      columns: { ...Lot },
       noDataMessage: 'No se encontrarón registros',
     };
 
     this.settings3 = {
       ...TABLE_SETTINGS,
       actions: false,
-      columns: { ...numStoreColumn },
+      columns: { ...GoodPhoto },
       noDataMessage: 'No se encontrarón registros',
     };
   }
 
   ngOnInit(): void {
-    this.getCve({ page: 1, text: '' });
-    // this.data1.load(this.dataBatch);
+    // this.findEvent({ page: 1, text: '' });
+    // this.data1.load(this.lotList);
     this.prepareForm();
-    this.getBatch();
-    this.settings4.actions.delete = true;
-    this.settings4.actions.edit = true;
-    // this.getSubtype();
+    // this.see = true;
+    // this.getAllLot();
+    // this.getAllPhotoGood();
   }
 
-  private prepareForm() {
+  prepareForm() {
     this.form = this.fb.group({
-      picture: [null, [Validators.required]],
-      // favorite: [null, [Validators.required]],
-      id: [null],
-      noConsec: [null],
+      noBien: [null, [Validators.required]],
+      tpeventoId: [null],
+      statusvtaId: [null],
+      // place: [null],
+      // location: [null],
     });
   }
 
+  // getCve(params: ListParams) {
+  //   if (params.text == '') {
+  //     this.cveItems = new DefaultSelect(this.events, this.totalItems);
+  //   } else {
+  //     const id = parseInt(params.text);
+  //     const item = [this.events.filter((i: any) => i.id == id)];
+  //     this.cveItems = new DefaultSelect(item[0], 1);
+  //   }
+  // }
+  loadEvent(search: any) {
+    this.comerLotService.findEvent(search).subscribe({
+      next(data) {
+        // this.eventList = data;
+        console.log(data);
+        console.log(data.data.count);
+      },
+      error(err) {
+        console.log(err);
+      },
+    });
+    // if (params.text == '') {
+    //   this.cveItems = new DefaultSelect(this.events, this.totalItems);
+    // } else {
+    //   const id = parseInt(params.text);
+    //   const item = [this.events.filter((i: any) => i.id == id)];
+    //   this.cveItems = new DefaultSelect(item[0], 1);
+    // }
+  }
+
+  // findLot(search: any) {
+  //   // this.form.value.price = this.form.controls['price'].value;
+  //   if (this.form.value.noBien !== null) {
+  //     this.comerLotService.findEvent(search).subscribe({
+  //       next: data => {
+  //         this.rowSelectedGood = true;
+  //         this.selectedCve = data;
+  //         console.log(this.selectedCve.id);
+  //         // this.form.controls['noBien'].setValue(noBien);
+  //         // this.form.controls['tpeventoId'].setValue(noBien);
+  //         // this.form.controls['statusvtaId'].setValue(noBien);
+  //         this.loading = false;
+  //       },
+  //       error: error => console.error,
+  //     });
+  //   }
+  // }
+
+  // selectCve(event: any) {
+  //   this.selectedCve = event;
+  // }
+
+  // selectRow(row: any) {
+  //   this.data2.load(row.goodNumber); //Sub
+  //   this.data2.refresh();
+  //   this.rowAllotment = row.goodNumber; //primary
+  //   this.rowSelected = true;
+  // }
+
+  // selectRowGood() {
+  //   this.rowSelectedGood = true;
+  // }
+
+  // getAllLotEvent() {
+  //   this.comerLotService.getAll().subscribe({
+  //     next: data => {
+  //       this.lotList = data.data;
+  //       // this.lotList.forEach(resp => (this.events = resp.event));
+  //       this.totalItems = data.count;
+  //       console.log(this.lotList);
+  //       this.loading = false;
+  //       this.see = false;
+  //     },
+  //     error: error => (this.loading = false),
+  //   });
+  // }
+  // getAllPhotoGood() {
+  //   this.publicationPhotographsService.getAll().subscribe({
+  //     next: data => {
+  //       this.photographyList = data.data;
+  //       this.totalItems = data.count;
+  //       // console.log(this.photographyList);
+  //       this.loading = false;
+  //     },
+  //     error: error => (this.see = false),
+  //   });
+  // }
+
+  // getById() {
+  //   this.comerLotService.getById(this.idLot).subscribe({
+  //     next: data => {
+  //       this.lot = data.data;
+  //       // console.log(this.lot);
+  //       this.loading = false;
+  //     },
+  //     error: error => (this.loading = false),
+  //   });
+  // }
+  userRowSelect(event: any) {
+    this.lot = event.data.id;
+    // console.log(this.lot);
+    // this.comerLotService.getById(this.lot).subscribe({
+    //   next: data => {
+    //     this.lotList = data.data;
+    //     this.totalItems = data.count;
+    //     console.log(this.lotList);
+    //     this.loading = false;
+    //   },
+    //   error: error => (this.loading = false),
+    // });
+  }
+
+  // getAllGoodPhoto() {
+  //   this.comerLotService.getById(this.lot).subscribe({
+  //     next: data => {
+  //       this.lotList = data.data;
+  //       this.totalItems = data.count;
+  //       console.log(this.lotList);
+  //       this.loading = false;
+  //     },
+  //     error: error => (this.loading = false),
+  //   });
+  // }
+
+  // openForm(provider?: IPhotographMedia) {
+  //   const modalConfig = MODAL_CONFIG;
+  //   modalConfig.initialState = {
+  //     provider,
+  //     callback: (next: boolean) => {
+  //       if (next) this.getBatch();
+  //     },
+  //   };
+  //   this.modalService.show(PublicationPhotographsModalComponent, modalConfig);
+  // }
+
+  // openModal(context?: Partial<PublicationPhotographsModalComponent>) {
+  //   const modalRef = this.modalService.show(
+  //     PublicationPhotographsModalComponent,
+  //     {
+  //       initialState: { ...context },
+  //       class: 'modal-lg modal-dialog-centered',
+  //       ignoreBackdropClick: true,
+  //     }
+  //   );
+  // }
+
+  // showDeleteAlert(id: number) {
+  //   this.alertQuestion(
+  //     'warning',
+  //     'Eliminar',
+  //     'Desea eliminar este registro?'
+  //   ).then(question => {
+  //     if (question.isConfirmed) {
+  //       this.photographMediaService.remove(id).subscribe({
+  //         next: data => {
+  //           this.loading = false;
+  //           this.onLoadToast('success', 'Layout eliminado', '');
+  //           this.getBatch();
+  //         },
+  //         error: error => {
+  //           this.onLoadToast('error', 'No se puede eliminar registro', '');
+  //           this.loading = false;
+  //         },
+  //       });
+  //     }
+  //   });
+  // }
   data: any[] = [
     {
       id: '9423',
@@ -138,106 +317,6 @@ export class PublicationPhotographsComponent
       status: 'DONACIÓN',
     },
   ];
-
-  getCve(params: ListParams) {
-    if (params.text == '') {
-      this.cveItems = new DefaultSelect(this.data, 3);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.data.filter((i: any) => i.id == id)];
-      this.cveItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
-  selectCve(event: any) {
-    this.selectedCve = event;
-  }
-
-  selectRow(row: any) {
-    this.data2.load(row.numStore); //Sub
-    this.data2.refresh();
-    this.rowAllotment = row.id; //primary
-    this.rowSelected = true;
-  }
-
-  selectRowGood() {
-    this.rowSelectedGood = true;
-  }
-  getBatch() {
-    this.loading = true;
-    this.batchService.getAll(this.params.getValue()).subscribe({
-      next: data => {
-        this.batchList = data;
-        this.dataBatch = this.batchList.data;
-        this.totalItems = data.count;
-        console.log(this.dataBatch);
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }
-  getSubtype() {
-    this.loading = true;
-    this.goodSubtypeService.getAll(this.params.getValue()).subscribe({
-      next: data => {
-        this.subtype = data;
-        this.dataBatch = this.subtype.data;
-        this.totalItems = data.count;
-        console.log(this.dataBatch);
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }
-
-  openForm(provider?: IPhotographMedia) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      provider,
-      callback: (next: boolean) => {
-        if (next) this.getBatch();
-      },
-    };
-    this.modalService.show(PublicationPhotographsModalComponent, modalConfig);
-  }
-
-  openModal(context?: Partial<PublicationPhotographsModalComponent>) {
-    const modalRef = this.modalService.show(
-      PublicationPhotographsModalComponent,
-      {
-        initialState: { ...context },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-  }
-
-  showIdLayout(event: any) {
-    //enseña lo que elegistes en el input
-    console.log(event.idLayout);
-    console.log(event.idLayout);
-  }
-  showDeleteAlert(id: number) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.photographMediaService.remove(id).subscribe({
-          next: data => {
-            this.loading = false;
-            this.onLoadToast('success', 'Layout eliminado', '');
-            this.getBatch();
-          },
-          error: error => {
-            this.onLoadToast('error', 'No se puede eliminar registro', '');
-            this.loading = false;
-          },
-        });
-      }
-    });
-  }
 
   //Carrusel de fotografías
   itemsPerSlide = 5;

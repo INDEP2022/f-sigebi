@@ -1,17 +1,22 @@
-import { Component, OnDestroy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject, OnDestroy } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AES, enc } from 'crypto-js';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { Subject } from 'rxjs';
+import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { LoadingService } from 'src/app/common/services/loading.service';
+import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import Swal, {
   SweetAlertIcon,
   SweetAlertOptions,
   SweetAlertPosition,
   SweetAlertResult,
 } from 'sweetalert2';
-
+import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
 export class SweetalertModel implements SweetAlertOptions {
   title: string;
   text: string;
@@ -30,6 +35,7 @@ export class SweetalertModel implements SweetAlertOptions {
   confirmButtonClass: string;
   cancelButtonClass: string;
   timer: number;
+  timerProgressBar: boolean;
   position: SweetAlertPosition;
   constructor() {
     this.icon = 'success';
@@ -107,7 +113,12 @@ export abstract class BasePage implements OnDestroy {
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
   private readonly key = 'Pru3b4Cr1pt0S1G3B1';
-
+  private _showHide = inject(showHideErrorInterceptorService);
+  private _activatedRoute = inject(ActivatedRoute);
+  private _router = inject(Router);
+  private _screenCode = inject(ScreenCodeService);
+  private _alertsService = inject(AlertsQueueService);
+  protected loader = inject(LoadingService);
   constructor() {
     this.bsConfig = {
       minMode: this.minMode,
@@ -115,6 +126,17 @@ export abstract class BasePage implements OnDestroy {
       // minDate: new Date(),
       // maxDate: new Date(),
     };
+    this._router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          const screenCode =
+            this._activatedRoute.snapshot.data['screen'] ?? null;
+          this._screenCode.$id.next(screenCode);
+        })
+      )
+      .subscribe();
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
@@ -125,7 +147,9 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
-    Swal.fire(sweetalert);
+    sweetalert.timerProgressBar = true;
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
   }
 
   protected alert(icon: SweetAlertIcon, title: string, text: string) {
@@ -134,7 +158,17 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.text = text;
     sweetalert.icon = icon;
     sweetalert.showConfirmButton = true;
-    Swal.fire(sweetalert);
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
+  }
+
+  protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
+    let sweetalert = new SweetalertModel();
+    sweetalert.title = title;
+    sweetalert.text = text;
+    sweetalert.icon = icon;
+    sweetalert.showConfirmButton = true;
+    return Swal.fire(sweetalert);
   }
 
   protected alertQuestion(
@@ -169,8 +203,31 @@ export abstract class BasePage implements OnDestroy {
     return JSON.parse(value);
   }
 
+  hideError(show: boolean = false) {
+    this._showHide.showHideError(show);
+  }
+
+  blockErrors(condition: boolean) {
+    this._showHide.blockAllErrors = condition;
+  }
+
   ngOnDestroy(): void {
     this.$unSubscribe.next();
     this.$unSubscribe.complete();
+    this._showHide.blockAllErrors = false;
+  }
+
+  handleErrorAlert(
+    message: string,
+    error: HttpErrorResponse,
+    _status?: number
+  ) {
+    if (_status) {
+      if (error.status == _status) this.alert('error', 'Error', message);
+      return;
+    }
+    if (error.status < 500) {
+      this.alert('error', 'Error', message);
+    }
   }
 }

@@ -7,7 +7,10 @@
   </div>
 
   <div body>
-    <form [formGroup]="informationGenerationForm" class="form-material">
+    <form
+      [formGroup]="informationGenerationForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
@@ -34,20 +37,20 @@
           </form-field>
         </div>
       </div>
-    </form>
-    <div class="ch-content">
-      <h5 class="title">
-        NOTA: Los Saldos del reportes estarán dados al día del proceso.
-      </h5>
-    </div>
-    <div class="row mt-5">
-      <div class="col-md-12 col-sm-12 col-xs-12">
-        <div class="justify-content-center">
-          <button type="submit" class="btn btn-primary btn-sm active">
-            Reporte
-          </button>
+      <div class="ch-content">
+        <h5 class="title">
+          NOTA: Los Saldos del reportes estarán dados al día del proceso.
+        </h5>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-primary btn-sm active">
+              Reporte
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </app-card>

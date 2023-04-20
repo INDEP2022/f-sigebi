@@ -3,7 +3,7 @@
     <h5 class="title">Captura de bienes y sus caracter&iacute;sticas</h5>
   </div>
 
-  <div body #form>
+  <div body #form #initPage>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
       <div class="row" #top>
         <form-field
@@ -146,6 +146,8 @@
           <input
             class="form-control"
             type="number"
+            [max-length]="12"
+            min="0"
             formControlName="cantidad"
             (change)="amountChange()" />
         </form-field>
@@ -173,7 +175,12 @@
           class="col-md-2"
           [control]="assetsForm.get('valRef')"
           label="Valor de Referencia">
-          <input class="form-control" type="number" formControlName="valRef" />
+          <input
+            class="form-control"
+            min="0"
+            type="number"
+            formControlName="valRef"
+            [max-length]="12" />
         </form-field>
 
         <form-field
@@ -316,6 +323,7 @@
               <textarea
                 class="form-control"
                 formControlName="observaciones"
+                maxlength="600"
                 rows="5"></textarea>
             </div>
           </div>

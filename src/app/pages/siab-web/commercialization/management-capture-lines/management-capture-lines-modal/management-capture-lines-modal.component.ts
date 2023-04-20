@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { RFC_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-management-capture-lines-modal',
@@ -34,7 +34,7 @@ export class managementCaptureLinesModalComponent implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       dateValidity: [null, [Validators.required]],
-      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
       idClient: [null, [Validators.required]],
       client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       penalty: [

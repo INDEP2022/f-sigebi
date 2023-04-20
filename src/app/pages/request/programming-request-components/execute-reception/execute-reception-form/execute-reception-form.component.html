@@ -20,7 +20,7 @@
       <div class="col-md-4">
         <div class="form-group">
           <label class="col-lg-5 text-right"
-            >Delegaci&oacute;n regional&#58;</label
+            >Delegaci&oacute;n Regional&#58;</label
           >
           <span class="fs-4">
             {{ programming?.regionalDelegationNumber }}
@@ -126,6 +126,9 @@
         [settings]="settings"
         [source]="usersData">
       </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
 
     <div class="row pt-5">
@@ -220,7 +223,7 @@
       </div>
     </div>
 
-    <form [formGroup]="executeForm">
+    <form [formGroup]="executeForm" class="form-material">
       <div class="table-responsive text-nowrap">
         <table class="table table-bordered">
           <col style="width: 60%" />
@@ -238,84 +241,105 @@
               <th scope="col">Clave &uacute;nica</th>
               <th scope="col">Expediente</th>
               <th scope="col">Descripci&oacute;n transferente</th>
-              <th scope="col">Descripci&oacute;n SAE</th>
+              <th scope="col">Descripci&oacute;n INDEP</th>
               <th scope="col">Cantidad transferente</th>
-              <th scope="col">Cantidad SAE</th>
+              <th scope="col">Cantidad INDEP</th>
               <th scope="col">Medida transferente</th>
-              <th scope="col">Medida SAE</th>
-              <th scope="col">Estado transferente</th>
-              <th scope="col">Estado f&iacute;sico SAE</th>
+              <th scope="col">Medida INDEP</th>
+              <th scope="col">Estado f&iacute;sico transferente</th>
+              <th scope="col">Estado f&iacute;sico INDEP</th>
               <th scope="col">Conservaci&oacute;n transferente</th>
-              <th scope="col">Estado conservaci&oacute;n SAE</th>
+              <th scope="col">Estado conservaci&oacute;n INDEP</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr *ngFor="let good of goods; let i = index">
               <th scope="row" class="align-baseline">
                 <input
                   type="checkbox"
                   class="form-control ng-pristine ng-valid ng-touched"
                   ng-reflect-model="true" />
               </th>
-              <td scope="row" class="align-baseline">5296016</td>
-              <td class="align-baseline">2019/02/20501</td>
-              <td class="align-baseline">2019/04/20504</td>
-              <td>Cables tomados</td>
+              <td scope="row" class="align-baseline">{{ good.googId }}</td>
+              <td class="align-baseline">{{ good.keyUnique }}</td>
+              <td class="align-baseline">{{ good.transferFile }}</td>
+              <td class="align-baseline">{{ good.descriptionGood }}</td>
+              <td>
+                <form-field [control]="executeForm.get('descriptionGoodSae')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="descriptionGoodSae" />
+                </form-field>
+              </td>
+              <td class="text-left align-baseline">
+                <div class="align-items">{{ good.quantity }}</div>
+              </td>
               <td>
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="saeDescription"
+                  formControlName="quantitySae"
                   style="width: 150px" />
               </td>
-              <td class="text-right align-baseline">
-                <div class="align-items">4</div>
+              <td class="text-left align-baseline">
+                {{ good.unitMeasurement }}
               </td>
-              <td>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="saeAmount"
-                  style="width: 150px" />
-              </td>
-              <td class="text-center align-baseline">Pieza</td>
               <td>
                 <select
                   class="form-control"
                   style="width: 150px; height: 40px; font-size: 13px !important"
-                  formControlName="satUnit">
+                  formControlName="saeMeasureUnit">
                   <option [value]="null">Seleccione un valor</option>
-                  <option [value]="1">Pieza</option>
+                  <option [value]="'A'">A</option>
                 </select>
               </td>
-              <td class="text-center align-baseline">Bueno</td>
+              <td class="text-left align-baseline">{{ good.physicalState }}</td>
 
               <td>
                 <select
                   class="form-control"
                   style="width: 150px; height: 40px; font-size: 13px !important"
-                  formControlName="stateFisicSae">
+                  formControlName="saePhysicalState">
                   <option [value]="null">Seleccione un valor</option>
-                  <option [value]="1">Bueno</option>
+                  <option [value]="1">BUENO</option>
+                  <option [value]="2">MALO</option>
                 </select>
               </td>
 
-              <td></td>
+              <td class="text-left align-baseline">
+                {{ good.stateConservation }}
+              </td>
               <td>
                 <select
                   class="form-control"
                   style="width: 150px; height: 40px; font-size: 13px !important"
                   formControlName="stateConservationSae">
                   <option [value]="null">Seleccione un valor</option>
-                  <option [value]="1">Bueno</option>
+                  <option [value]="1">BUENO</option>
+                  <option [value]="2">MALO</option>
                 </select>
               </td>
               <td class="text-center align-baseline">
                 <a class="text-center">
                   <i
                     (click)="showEstate()"
-                    class="fa fa-file"
+                    class="fa fa-file mr-2"
+                    style="cursor: pointer"></i
+                ></a>
+
+                <a class="text-center">
+                  <i
+                    (click)="updateInfoGoodTransferent(good.goodNumber)"
+                    class="fa fa-pencil-alt mr-2"
+                    style="cursor: pointer"></i
+                ></a>
+
+                <a class="text-center">
+                  <i
+                    (click)="updateInfoGood(good.goodNumber, good.googId)"
+                    class="fa fa-retweet mr-2"
                     style="cursor: pointer"></i
                 ></a>
               </td>
@@ -325,69 +349,54 @@
       </div>
     </form>
 
+    <!--Bienes seleccionados-->
     <div class="row pt-5">
       <h5 class="title">Bienes seleccionados</h5>
+
       <div class="md-tabs">
         <tabset>
-          <tab heading="Recibos" id="tab1">
-            <div class="row">
-              <div class="d-flex justify-content-end">
-                <app-columns-select
-                  [(settings)]="settingsTranGoods"></app-columns-select>
-              </div>
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settingsReceipt"
-                [source]="receipts"
-                (edit)="createReceipt()"
-                (delete)="delete()">
-              </ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
-            </div>
-            <div class="row pt-5">
-              <div class="btn-toolbar pt-5">
-                <button
-                  (click)="uploadDocuments()"
-                  class="btn btn-primary btn-sm active">
-                  <i class="fa fa-file-archive"></i> Adjuntar documentos
-                </button>
-                <button
-                  (click)="uploadPicture()"
-                  class="btn btn-info btn-sm active">
-                  <i class="fa fa-camera"></i> Integrar fotograf&iacute;a
-                </button>
+          <!--Bien a resguardo-->
+          <tab [heading]="headingGuard">
+            <div class="justify-content-start">
+              <app-columns-select
+                [(settings)]="settingsGuardGoods"></app-columns-select>
 
-                <button class="btn btn-danger btn-sm active">
-                  <i class="fa fa-trash"></i> Eliminar
-                </button>
-              </div>
+              <button
+                (click)="assingMinute()"
+                class="btn btn-primary btn-sm active ml-2">
+                Asignar Acta
+              </button>
+            </div>
+            <div class="row">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
-                [settings]="settingsTranGoods"
-                [source]="tranGoods">
+                [settings]="settingsGuardGoods"
+                [source]="guardGoods"
+                (userRowSelect)="goodsSelects($event.selected)">
               </ng2-smart-table>
               <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
+                [params]="paramsGuard"
+                [totalItems]="totalItemsGuard"></app-pagination>
+            </div>
+
+            <div class="row pt-5">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards"
+                (edit)="showGoodsReceipt($event.data)"
+                (delete)="generateReceiptGuard($event.data)">
+              </ng2-smart-table>
             </div>
           </tab>
-          <tab heading="Resguardo(0)">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsTranGoods"
-              [source]="guardGoods">
-            </ng2-smart-table>
-            <app-pagination
-              [params]="paramsGuard"
-              [totalItems]="totalItemsGuard"></app-pagination>
-          </tab>
+
+          <!--Bien a almacén-->
+
           <tab [heading]="headingWarehouse">
             <div class="row d-flex justify-content-end">
               <div class="btn-toolbar pt-5">
                 <app-columns-select
-                  [(settings)]="settingsGoodsGoods"></app-columns-select>
+                  [(settings)]="settingsWarehouseGoods"></app-columns-select>
                 <button class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta
                 </button>
@@ -396,45 +405,87 @@
                   Adjuntar documentos
                 </button>
                 <button class="btn btn-pink btn-sm active">
-                  Integrar fotografia
+                  Integrar fotografía
                 </button>
               </div>
             </div>
+            <div class="row">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsWarehouseGoods"
+                [source]="goodsWarehouse">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsGoodsWarehouse"
+                [totalItems]="totalItemsWarehouse"></app-pagination>
+            </div>
 
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsGoodsGoods"
-              [source]="goodsWarehouse">
-            </ng2-smart-table>
-            <app-pagination
-              [params]="paramsGoodsWarehouse"
-              [totalItems]="totalItemsWarehouse"></app-pagination>
-          </tab>
-
-          <tab heading="Reprogramación(0)">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsTranGoods"
-              [source]="tranGoods">
-            </ng2-smart-table>
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
-          </tab>
-
-          <tab heading="Cancelación(0)">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsTranGoods"
-              [source]="tranGoods">
-            </ng2-smart-table>
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
+            <div class="row pt-5">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards">
+              </ng2-smart-table>
+            </div>
           </tab>
         </tabset>
       </div>
     </div>
+    <!--<div class="row pt-5">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Recibos" id="tab1">
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <app-columns-select [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsReceipt" [source]="receipts"
+                (edit)="createReceipt()" (delete)="delete()">
+              </ng2-smart-table>
+              <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+            </div>
+            <div class="row pt-5">
+              <div class="btn-toolbar pt-5">
+                <button (click)="uploadDocuments()" class="btn btn-primary btn-sm active">
+                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                </button>
+                <button (click)="uploadPicture()" class="btn btn-info btn-sm active">
+                  <i class="fa fa-camera"></i> Integrar fotograf&iacute;a
+                </button>
+
+                <button class="btn btn-danger btn-sm active">
+                  <i class="fa fa-trash"></i> Eliminar
+                </button>
+              </div>
+              <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab [heading]="headingGuard">
+            <div class="d-flex justify-content-end">
+              <app-columns-select [(settings)]="settingWarehouseGoods"></app-columns-select>
+            </div>
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="guardGoods">
+            </ng2-smart-table>
+            <app-pagination [params]="paramsGuard" [totalItems]="totalItemsGuard"></app-pagination>
+          </tab>
+          
+
+          <tab heading="Reprogramación(0)">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+          </tab>
+
+          <tab heading="Cancelación(0)">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+          </tab>
+        </tabset>
+      </div>
+    </div> -->
 
     <div class="d-flex justify-content-center">
       <div class="m-3 btn-toolbar">

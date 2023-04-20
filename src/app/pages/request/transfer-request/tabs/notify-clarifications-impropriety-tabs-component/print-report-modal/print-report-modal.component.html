@@ -13,15 +13,40 @@
     <div *ngIf="printReport">
       <div class="row">
         <div class="d-flex">
-          <h5 class="mr-auto p-2">Vista Previa Reporte</h5>
+          <h5 class="mr-auto p-2">{{ btnSubTitle }}</h5>
           <div class="p-2">
-            <button class="btn btn-success btn-sm" (click)="signReport()">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="signReport()">
               <i class="bx bx-edit-alt"></i>{{ btnTitle }}
             </button>
           </div>
         </div>
       </div>
-      <div class="row">mostrar reporte</div>
+      <div class="row pt-5">
+        <button class="btn btn-primary btn-sm" (click)="print()">
+          Descargar
+        </button>
+        <div style="position: relative; height: 715px">
+          <div class="pdf-container">
+            <pdf-viewer
+              [src]="src"
+              [rotation]="0"
+              [original-size]="false"
+              [show-all]="true"
+              [fit-to-page]="false"
+              [zoom]="1"
+              [zoom-scale]="'page-width'"
+              [stick-to-page]="false"
+              [render-text]="true"
+              [external-link-target]="'blank'"
+              [autoresize]="true"
+              [show-borders]="false"
+              (after-load-complete)="onLoaded($event)"
+              style="width: 100%; height: 600px"></pdf-viewer>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Listado de firmas electronicas -->
@@ -29,18 +54,28 @@
       <div class="row">
         <div class="d-flex">
           <h5 class="mr-auto p-2">Lista de Firmas Electr&oacute;nicas</h5>
-          <div class="p-2">
-            <button class="btn btn-success btn-sm" (click)="sendSign()">
+          <div
+            class="p-2"
+            *ngIf="
+              selectedRow?.post != null &&
+              selectedRow?.rfcUser != null &&
+              selectedRow?.validationocsp == 'true'
+            ">
+            <button class="btn btn-primary btn-sm active" (click)="sendSign()">
               <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
             </button>
           </div>
           <div class="p-2">
-            <button class="btn btn-success btn-sm" (click)="backStep()">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="backStep()">
               <i class="bx bx-left-arrow-alt"></i> Anterior Paso
             </button>
           </div>
-          <div class="p-2">
-            <button class="btn btn-success btn-sm" (click)="nextStep()">
+          <div class="p-2" *ngIf="msjCheck == true">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="nextStep()">
               <i class="bx bx-right-arrow-alt"></i> Siguiente Paso
             </button>
           </div>
@@ -49,16 +84,25 @@
       <div id="noncompliance">
         <div class="row">
           <div class="col-md-12">
-            <ng-scrollbar track="all" style="min-height: 150px; border: none">
+            <div class="table-responsive">
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
-                  [source]="paragraphs">
+                  (edit)="uploadData($event.data)"
+                  (userRowSelect)="rowsSelected($event)"
+                  [source]="signatories"
+                  (rowSelect)="selectRow($event.data)">
                 </ng2-smart-table>
               </div>
-            </ng-scrollbar>
+              <app-pagination [params]="params" [totalItems]="totalItems">
+              </app-pagination>
+            </div>
           </div>
+          <span
+            >Seleccione un firmante con datos completos para firmar el
+            reporte</span
+          >
         </div>
       </div>
     </div>

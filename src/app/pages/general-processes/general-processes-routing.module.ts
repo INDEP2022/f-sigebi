@@ -69,6 +69,12 @@ const routes: Routes = [
         .DocumentsViewerModule,
   },
   {
+    path: 'system-log',
+    data: { screen: 'FCONGENBITACORA', title: 'Bitácora del sistema' },
+    loadChildren: async () =>
+      (await import('./system-log/system-log.module')).SystemLogModule,
+  },
+  {
     path: 'indicators',
     data: { screen: '', title: '' },
     loadChildren: async () =>
@@ -145,6 +151,13 @@ const routes: Routes = [
     data: { screen: 'FGESTBUZONTRAMITE', title: 'Buzón de Trabajo' },
     loadChildren: async () =>
       (await import('./work-mailbox/work-mailbox.module')).WorkMailboxModule,
+  },
+  {
+    path: 'scan-documents',
+    data: { screen: 'FIMGDOCEXPADD', title: 'Escaneo de documentos' },
+    loadChildren: async () =>
+      (await import('./scan-documents/scan-documents.module'))
+        .ScanDocumentsModule,
   },
   {
     path: 'help-screen',

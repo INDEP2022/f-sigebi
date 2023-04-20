@@ -1,0 +1,84 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="unitCostDetForm">
+      <div class="row">
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostDetForm.get('cveZoneContract')">
+            <ngx-select
+              (fetchItems)="getZoneContracts($event)"
+              [data]="zoneContracts"
+              [form]="unitCostDetForm"
+              value="id"
+              bindLabel="description"
+              label="Zona"
+              control="cveZoneContract">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Fecha inicial"
+            [control]="unitCostDetForm.get('startDate')">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Fecha final"
+            [control]="unitCostDetForm.get('finalDate')">
+            <input
+              class="form-control"
+              formControlName="finalDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Porcentaje de Inflación"
+            [control]="unitCostDetForm.get('porceInflation')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="porceInflation" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Costo Unitario"
+            [control]="unitCostDetForm.get('costUnitarian')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="costUnitarian" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

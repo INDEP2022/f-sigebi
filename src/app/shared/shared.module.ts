@@ -11,6 +11,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CardComponent } from './components/card/card.component';
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
+import { CheckboxDisabledElementComponent } from './components/checkbox-element-smarttable/checkbox-disabled-element';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
 import { ColumnsSelectComponent } from './components/columns-select/columns-select.component';
 import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
@@ -30,6 +31,7 @@ import { MaxLengthDirective } from './directives/maxlength.directive';
 import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
+import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
 
 @NgModule({
@@ -50,10 +52,12 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    CheckboxDisabledElementComponent,
     PermissionsDirective,
     MaxLengthDirective,
     NumbersFilterDirective,
     AutoSizeDirective,
+    UppercaseDirective,
   ],
   imports: [
     CommonModule,
@@ -89,6 +93,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     FormRadioComponent,
     CommonModule,
     CheckboxElementComponent,
+    CheckboxDisabledElementComponent,
     CheckboxColumnComponent,
     NgScrollbarModule,
     PermissionsDirective,
@@ -96,6 +101,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     MaxLengthDirective,
     NumbersFilterDirective,
     AutoSizeDirective,
+    UppercaseDirective,
   ],
 })
 export class SharedModule {

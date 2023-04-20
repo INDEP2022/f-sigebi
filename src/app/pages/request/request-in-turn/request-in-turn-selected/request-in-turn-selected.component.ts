@@ -4,6 +4,9 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequest } from '../../../../core/models/requests/request.model';
@@ -25,10 +28,17 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   listUser: IUserProcess[] = [];
   typeUser: string = 'TE';
   user: any;
+  username: string = '';
   requestService = inject(RequestService);
   userProcessService = inject(UserProcessService);
+  taskService = inject(TaskService);
+  orderService = inject(OrderServiceService);
 
-  constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
+  constructor(
+    public modalRef: BsModalRef,
+    public fb: FormBuilder,
+    private authService: AuthService
+  ) {
     super();
     this.settings.columns = TURN_SELECTED_COLUMNS;
     this.settings.actions = {
@@ -102,11 +112,13 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       delete request.emisora;
       delete request.state;
       delete request.proceedings;
+      delete request.regionalDelegation;
     }
   }
 
   getRow(user: any) {
     this.user = user.data;
+    this.username = user.data.username;
   }
 
   confirm() {
@@ -115,42 +127,132 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       return;
     }
     this.loading = true;
-    for (let i = 0; i < this.requestToTurn.length; i++) {
-      let request = this.requestToTurn[i];
-      request.requestStatus = 'A_TURNAR';
-      request.targetUserType = this.requestForm.controls['typeUser'].value;
-      request.targetUser = this.user.id;
-      request.modificationDate = new Date().toISOString();
+    this.requestToTurn.map(async (item: any, i: number) => {
+      let index = i + 1;
+      item.requestStatus = 'A_TURNAR';
+      item.receiptRoute = 'FISICA';
+      item.affair = 37;
+      item.targetUserType = this.requestForm.controls['typeUser'].value;
+      item.targetUser = this.user.id;
+      item.modificationDate = new Date().toISOString();
+      /* crea solicitud */
+      const resposeRequest: any = await this.saveRequest(item);
 
-      this.requestService.update(request.id, request as IRequest).subscribe(
-        (data: any) => {
-          console.log(data);
-          if (data.statusCode != 200) {
-            this.message(
-              'error',
-              'Turnado',
-              'Ocurrio un error no se pudo turnar las solicitudes'
-            );
-          }
+      if (resposeRequest) {
+        /* crea tarea */
+        const from = 'REGISTRO_SOLICITUD';
+        const to = 'REGISTRO_SOLICITUD';
+        const user: any = this.authService.decodeToken();
+        const taskResult = await this.createTaskOrderService(
+          resposeRequest,
+          from,
+          to,
+          false,
+          0,
+          user.username,
+          'SOLICITUD_TRANSFERENCIA',
+          'Nueva_Solicitud',
+          'TURNAR'
+        );
 
-          if (data.id != null) {
+        if (taskResult) {
+          if (this.requestToTurn.length === index) {
             this.message(
               'success',
-              'Turnado',
+              'Turnado Exitoso',
               'Se turnaron las solicitudes correctamente'
             );
 
             this.loading = false;
             this.modalRef.content.callback(true);
+            this.close();
           }
-          this.loading = false;
-          this.close();
-        },
-        error => {
-          this.loading = false;
         }
-      );
-    }
+      }
+    });
+  }
+
+  saveRequest(request: any) {
+    /* Se crea la solicitud */
+    return new Promise((resolve, reject) => {
+      this.requestService.update(request.id, request as IRequest).subscribe({
+        next: resp => {
+          if (resp.id) {
+            console.log('solicitud', resp);
+            console.log('solicitud', resp.id);
+            resolve(resp);
+          } else {
+            reject(false);
+          }
+        },
+        error: error => {
+          this.loading = false;
+          this.message('error', 'Error', 'Error al guardar la solicitud');
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
+  createTaskOrderService(
+    request: any,
+    from: string,
+    to: string,
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
+  ) {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      //body['type'] = 'SOLICITUD TRANSFERENCIA';
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.user.username;
+      task['assigneesDisplayname'] = this.user.firstName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(request.id);
+      task['title'] =
+        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
+      task['programmingId'] = 0;
+      task['requestId'] = request.id;
+      task['expedientId'] = 0;
+      task['urlNb'] = 'pages/request/transfer-request/registration-request';
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = from;
+      orderservice['pNewStatus'] = to;
+      orderservice['pIdApplication'] = request.id;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.loading = false;
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
   }
 
   close() {

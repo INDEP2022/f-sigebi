@@ -1,11 +1,11 @@
 const PGR_PAPERWORK_MAILBOX_COLUMNS = {
   processNumber: {
-    title: 'No. Tramite',
+    title: 'No. Trámite',
     type: 'number',
     sort: false,
   },
   processStatus: {
-    title: 'Estatus tramite',
+    title: 'Estatus Trámite',
     type: 'string',
     sort: false,
   },
@@ -14,7 +14,7 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  wheelNumber: {
+  flierNumber: {
     title: 'No. Volante',
     type: 'number',
     sort: false,
@@ -30,7 +30,7 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
     sort: false,
   },
   officeNumber: {
-    title: 'Oficio PGR',
+    title: 'Oficio FGR',
     type: 'string',
     sort: false,
   },
@@ -48,12 +48,12 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
 
 const PGR_TRANSFERS_COLUMNS = {
   pgrGoodNumber: {
-    title: 'PGR No. Bien',
+    title: 'FGR No. Bien',
     type: 'number',
     sort: false,
   },
   office: {
-    title: 'PGR Oficio',
+    title: 'FGR Oficio',
     type: 'string',
     sort: false,
   },
@@ -63,17 +63,17 @@ const PGR_TRANSFERS_COLUMNS = {
     sort: false,
   },
   saeGoodNumber: {
-    title: 'SAE No. Bien',
+    title: 'INDEP No. Bien',
     type: 'string',
     sort: false,
   },
   description: {
-    title: 'SAE Descripción',
+    title: 'INDEP Descripción',
     type: 'string',
     sort: false,
   },
   status: {
-    title: 'SAE Estatus',
+    title: 'INDEP Estatus',
     type: 'string',
     sort: false,
   },

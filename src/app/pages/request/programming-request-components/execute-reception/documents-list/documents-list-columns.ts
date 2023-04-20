@@ -1,35 +1,35 @@
 export const DOCUMENTS_LIST_COLUMNS = {
-  numberDocument: {
-    title: 'No° documento',
+  ddocName: {
+    title: 'Nombre documento',
     type: 'number',
     sort: false,
   },
 
-  numberGestion: {
-    title: 'No° gestión',
+  xidExpediente: {
+    title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
 
-  titleDocument: {
-    title: 'Titulo del documento',
+  ddocTitle: {
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },
 
-  typeDocument: {
+  typeDocName: {
     title: 'Tipo de documento',
     type: 'string',
     sort: false,
   },
 
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
 
-  creationDate: {
+  dInDate: {
     title: 'Fecha creación',
     type: 'string',
     sort: false,
@@ -37,37 +37,37 @@ export const DOCUMENTS_LIST_COLUMNS = {
 };
 
 export const DOCUMENTS_LIST_REQ_COLUMNS = {
-  numberDocument: {
-    title: 'No° documento',
+  ddocName: {
+    title: 'No. Documento',
     type: 'number',
     sort: false,
   },
 
-  numberRequest: {
-    title: 'No° solicitud',
+  xidSolicitud: {
+    title: 'No. Solicitud',
     type: 'number',
     sort: false,
   },
 
-  titleDocument: {
-    title: 'Titulo del documento',
+  ddocTitle: {
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },
 
-  typeDocument: {
+  typeDocName: {
     title: 'Tipo de documento',
     type: 'string',
     sort: false,
   },
 
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
 
-  creationDate: {
+  dInDate: {
     title: 'Fecha creación',
     type: 'string',
     sort: false,
@@ -75,37 +75,37 @@ export const DOCUMENTS_LIST_REQ_COLUMNS = {
 };
 
 export const DOCUMENTS_LIST_EST_COLUMNS = {
-  numberDocument: {
+  ddocName: {
     title: 'No° documento',
     type: 'number',
     sort: false,
   },
 
-  numberGood: {
+  xidBien: {
     title: 'No° bien',
     type: 'number',
     sort: false,
   },
 
-  titleDocument: {
-    title: 'Titulo del documento',
+  ddocTitle: {
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },
 
-  typeDocument: {
+  typeDocName: {
     title: 'Tipo de documento',
     type: 'string',
     sort: false,
   },
 
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
 
-  creationDate: {
+  dInDate: {
     title: 'Fecha creación',
     type: 'string',
     sort: false,

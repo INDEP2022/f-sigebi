@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
-const INVALID_CHARS = ['+', '-', 'e'];
+const INVALID_CHARS = ['+', '-', 'e', 'E'];
 @Directive({
   selector: 'input[type=number]',
   host: {

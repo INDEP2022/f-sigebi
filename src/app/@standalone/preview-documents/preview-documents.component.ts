@@ -5,8 +5,10 @@ import {
   Inject,
   OnInit,
   Optional,
+  Renderer2,
 } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { ImageViewerConfig } from './image-viewer.config';
 import { PreviewFullscreenDirective } from './preview-fullscreen.directive';
 
@@ -46,13 +48,14 @@ const DEFAULT_CONFIG: ImageViewerConfig = {
   templateUrl: './preview-documents.component.html',
   styleUrls: ['./preview-documents.component.scss'],
 })
-export class PreviewDocumentsComponent implements OnInit {
+export class PreviewDocumentsComponent extends BasePage implements OnInit {
   documento: any;
   zoom?: number = 0;
   private translateX?: number = 0;
   private translateY?: number = 0;
   src: string[];
   index = 0;
+  filename: string = 'descarga';
   config: ImageViewerConfig;
   public rotation: number = 0;
   // @Output() indexChange: EventEmitter<number> = new EventEmitter();
@@ -69,7 +72,6 @@ export class PreviewDocumentsComponent implements OnInit {
     webkitTransform: '',
   };
   fullscreen = false;
-  loading = true;
   private scale = 1;
   private prevX: number;
   private prevY: number;
@@ -77,9 +79,11 @@ export class PreviewDocumentsComponent implements OnInit {
   private rotate: boolean = true;
   constructor(
     @Optional() @Inject('config') public moduleConfig: ImageViewerConfig,
-    public modalRef: BsModalRef
-  ) {}
-
+    public modalRef: BsModalRef,
+    private r2: Renderer2
+  ) {
+    super();
+  }
   ngOnInit() {
     const merged = this.mergeConfig(DEFAULT_CONFIG, this.moduleConfig);
     this.config = this.mergeConfig(merged, this.config);
@@ -87,6 +91,39 @@ export class PreviewDocumentsComponent implements OnInit {
     this.zoom > 0 ? this.zoomInit(this.zoom) : null;
     // this.zoomInit(1.4);
     if (this.documento.type == 'pdf') this.loading = false;
+    console.log(this.documento.type);
+    this.overSizeFiles();
+  }
+
+  overSizeFiles() {
+    if (!this.documento.type?.includes('pdf')) {
+      return;
+    }
+    const base64Length =
+      this.documento.urlDoc.changingThisBreaksApplicationSecurity.length;
+    const bytesSize = 4 * Math.ceil(base64Length / 3) * 0.5624896334383812;
+    const KbSize = bytesSize / 1000;
+
+    if (KbSize > 2000) {
+      const alert = this.alertQuestion(
+        'info',
+        'Aviso',
+        'Debido al tamaño del archivo es posible que no se pueda visualizar, de ser así de clic en Aceptar para descargarlo.'
+      );
+      alert.then(resp => {
+        if (resp.isConfirmed) {
+          const link = document.createElement('a');
+          link.href =
+            this.documento.urlDoc.changingThisBreaksApplicationSecurity;
+          link.download = this.filename ?? 'Descarga.pdf';
+          link.click();
+          this.modalRef.hide();
+          link.remove();
+        } else {
+          this.modalRef.hide();
+        }
+      });
+    }
   }
 
   @HostListener('window:keyup.ArrowRight', ['$event'])

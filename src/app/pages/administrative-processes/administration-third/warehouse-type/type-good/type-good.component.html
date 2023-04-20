@@ -1,0 +1,82 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Tipo bien</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-6">
+        <h5 class="title pt-4">Tipo</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            #goodType
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="selectRow($event)"></ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <div class="col-md-6">
+        <h5 class="title pt-4">Sub Tipo</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="goodSubType"
+            (userRowSelect)="selectRow1($event)"></ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params1"
+          [totalItems]="totalItems1"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h5 class="title pt-4">Sub Sub Tipo</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings3"
+            [source]="goodSsubType"
+            (userRowSelect)="selectRow2($event)">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params2"
+          [totalItems]="totalItems2"></app-pagination>
+      </div>
+      <div class="col-md-6">
+        <h5 class="title pt-4">Sub Sub Sub Tipo</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings4"
+            [source]="goodSssubType"
+            (userRowSelect)="selectRow3($event)">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params3"
+          [totalItems]="totalItems3"></app-pagination>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!rowSelected"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

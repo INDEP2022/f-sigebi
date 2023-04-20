@@ -1,62 +1,78 @@
 export const EXPEDIENTS_REQUEST_COLUMNS = {
-  noRequest: {
+  id: {
     title: 'No. solicitud',
     type: 'string',
     sort: false,
   },
-  noExpedient: {
+
+  recordId: {
     title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
-  date: {
+
+  receptionDate: {
     title: 'Fecha Solicitud',
     type: 'string',
     sort: false,
   },
-  regDelega: {
+
+  regionalDelegationId: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
-  status: {
-    title: 'Estatus',
+
+  state: {
+    title: 'Estado',
     type: 'string',
     sort: false,
   },
-  tranfe: {
+  transferenceId: {
     title: 'Transferente',
     type: 'string',
     sort: false,
   },
-  transmitter: {
-    title: 'Emisor',
+
+  stationId: {
+    title: 'Emisora',
     type: 'string',
     sort: false,
   },
-  authority: {
+
+  authorityId: {
     title: 'Autoridad',
     type: 'string',
     sort: false,
   },
-  noOfi: {
-    title: 'No. Oficio',
+
+  paperNumber: {
+    title: 'No. oficio',
     type: 'string',
     sort: false,
   },
-  typeReception: {
-    title: 'Via de Recepción',
+
+  receiptRoute: {
+    title: 'Via de recepción',
     type: 'string',
     sort: false,
   },
-  subject: {
-    title: 'Asunto',
-    type: 'string',
-    sort: false,
-  },
-  typeTransfer: {
+
+  typeOfTransfer: {
     title: 'Tipo Transferencia',
     type: 'string',
     sort: false,
   },
+
+  /*receiptRoute: {
+    title: 'Via de recepción',
+    type: 'string',
+    sort: false,
+  }, */
+
+  /*requestStatus: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
+  },*/
 };

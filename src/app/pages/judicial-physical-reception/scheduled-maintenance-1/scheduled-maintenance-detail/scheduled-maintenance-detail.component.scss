@@ -19,6 +19,21 @@
   // }
 }
 
+.row {
+  > div {
+    @media screen and (max-width: 567px) {
+      padding-right: 0px;
+    }
+  }
+}
+
+.action-buttons {
+  @media screen and (max-width: 567px) {
+    padding-right: 0px;
+    margin-right: 0px !important;
+  }
+}
+
 .btn-return {
   color: #9d2449;
   padding-left: 0px;

@@ -30,6 +30,7 @@
                 (click)="getGoodsByExpedient()">
                 Buscar
               </button>
+              <span class="ml-3">{{ statusProceeding }}</span>
               <!-- <form-field
                 [control]="form.get('averPrev')"
                 label="Averiguaci&oacute;n Previa">
@@ -37,20 +38,6 @@
                   type="number"
                   class="form-control"
                   formControlName="averPrev" />
-              </form-field> -->
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-9">
-              <!--  <form-field
-                [control]="form.get('causaPenal')"
-                label="Causa Penal">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="causaPenal" />
               </form-field> -->
             </div>
           </div>
@@ -76,13 +63,12 @@
             <div class="col-md-2">
               <form-field [control]="form.get('transfer')">
                 <ngx-select
-                  (fetchItems)="getTransferentData($event)"
                   (change)="verifyTransferenteAndAct()"
                   class="disabled"
                   id="transfer"
                   control="transfer"
                   label="Transfer"
-                  bindLabel="keyTransferent"
+                  bindLabel="transferentkey"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
                 <!-- <input
@@ -99,37 +85,48 @@
                   type="text"
                   class="form-control disabled"
                   formControlName="ident"
-                  (ngModelChange)="fillActTwo()" />
+                  (change)="fillActTwo()" />
               </form-field>
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('recibe')" label="Recibe">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="recibe"
-                  (ngModelChange)="fillActTwo()" />
+              <form-field [control]="form.get('recibe')">
+                <ngx-select
+                  (fetchItems)="getRecibe($event)"
+                  (change)="fillActTwo()"
+                  control="recibe"
+                  label="Recibe"
+                  bindLabel="delegation"
+                  [data]="recibeSelect"
+                  [form]="form"></ngx-select>
               </form-field>
             </div>
 
             <div class="col">
-              <form-field [control]="form.get('admin')" label="Admin">
-                <input
-                  type="number"
+              <form-field [control]="form.get('admin')">
+                <ngx-select
+                  (fetchItems)="getAdmin($event)"
+                  (change)="fillActTwo()"
+                  control="admin"
+                  label="Admin"
+                  bindLabel="delegation"
+                  [data]="adminSelect"
+                  [form]="form"></ngx-select>
+                <!--       <input
+                  type="text"
                   class="form-control"
                   formControlName="admin"
-                  (ngModelChange)="fillActTwo()" />
+                  (ngModelChange)="fillActTwo()" /> -->
               </form-field>
             </div>
 
             <div class="col">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   formControlName="folio"
-                  (ngModelChange)="fillActTwo()" />
+                  (change)="fillActTwo()" />
               </form-field>
             </div>
             <div class="col">
@@ -221,7 +218,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="folioEscaneo" />
+                  formControlName="folioEscaneo"
+                  maxlength="15" />
               </form-field>
             </div>
 
@@ -310,8 +308,12 @@
             <div class="col-md-12">
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-info active btn-sm">
-                Abrir Carta
+                [class]="btnCSSAct"
+                [disabled]="!form.valid"
+                class="btn btn-sm active mr-2 ml-2"
+                (click)="toggleActaBtn()"
+                size="small">
+                {{ labelActa }}
               </button>
               <a
                 [routerLink]="['partialization']"
@@ -375,6 +377,7 @@
           <button
             type="button"
             class="mx-2 btn btn-secondary btn-sm active"
+            [disabled]="!act2Valid"
             (click)="pushData()">
             <i class="fa fa-angle-down"></i>
           </button>

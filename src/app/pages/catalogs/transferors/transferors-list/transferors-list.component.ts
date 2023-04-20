@@ -162,11 +162,11 @@ export class TransferorsListComponent extends BasePage implements OnInit {
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
-        error: error => (this.loading2 = false),
+        error: error => (this.showNullRegister(), (this.loading = false)),
       });
   }
 
-  //Modal del formulario para actualizar un transferente
+  //Modal del formulario para actualizar un estado
   openForm2(stateByTransferent?: IStateByTransferent) {
     const idTrans = { ...this.transferents };
     let transferentsI = this.transferents;
@@ -183,6 +183,19 @@ export class TransferorsListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(StateModalComponent, config);
+  }
+
+  //Msj de que no existe estado de transferente
+  showNullRegister() {
+    this.alertQuestion(
+      'warning',
+      'Transferente sin Estado',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm2();
+      }
+    });
   }
 
   //Muestra información de la fila seleccionada de Transferentes

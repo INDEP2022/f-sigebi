@@ -22,7 +22,6 @@ export class WarehouseService
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IWarehouse>> {
-    console.log(this.route);
     return this.warehouseRepository.getAllPaginated(this.route, params);
   }
 
@@ -32,7 +31,7 @@ export class WarehouseService
   }
 
   getById(id: string | number): Observable<IWarehouse> {
-    return this.warehouseRepository.getById(this.route, id);
+    return this.warehouseRepository.getById(`${this.route}/id`, id);
   }
 
   create(model: any): Observable<IWarehouse> {
@@ -49,5 +48,9 @@ export class WarehouseService
 
   getAllFilter(params: _Params) {
     return this.get<IListResponse<IWarehouse>>('warehouse', params);
+  }
+
+  getAllFilterSelf(self?: WarehouseService, params?: _Params) {
+    return self.get<IListResponse<IWarehouse>>('warehouse', params);
   }
 }

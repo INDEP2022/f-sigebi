@@ -14,33 +14,36 @@
     </div>
   </div>
   <!--  <form [formGroup]="verifComplianceForm" class="form-material"> -->
-  <div class="row pt-4">
-    <p>
-      Seleccione al menos los 3 primeros cumplimientos de los Arituculos 3&#44;
-      12 y 13
-    </p>
-  </div>
-  <div class="row pt-1">
-    <div class="col-md-12">
-      <ng2-smart-table
-        (userRowSelect)="article3Selected($event)"
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="paragraphsTable1">
-      </ng2-smart-table>
+  <div>
+    <div class="row pt-4">
+      <p>
+        Seleccione al menos los 3 primeros cumplimientos de los Art&iacute;culos
+        3&#44; 12 y 13
+      </p>
     </div>
-  </div>
-  <div class="row pt-4">
-    <div class="col-md-12">
-      <ng2-smart-table
-        (userRowSelect)="article12y13Selected($event)"
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="paragraphsTable2">
-      </ng2-smart-table>
+    <div class="row pt-1">
+      <div class="col-md-6">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="paragraphsTable1">
+        </ng2-smart-table>
+      </div>
+      <!-- </div>
+  <div class="row pt-4"> -->
+      <div class="col-md-6">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="paragraphsTable2">
+        </ng2-smart-table>
+      </div>
     </div>
   </div>
   <!-- </form> -->
+</div>
+<div>
+  <hr />
 </div>
 <div>
   <div class="row">
@@ -53,75 +56,6 @@
 
   <div class="row pt-4">
     <div class="col-md-12">
-      <!--  <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">
-              <div class="" style="text-align: center">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="selectAll"
-                  (change)="selectAll($event)"
-                  style="position: relative" />
-              </div>
-            </th>
-            <th scope="col">No. Gestion</th>
-            <th scope="col">Descripción de Bien Transferente</th>
-            <th scope="col">Descripción Bien SAE</th>
-            <th scope="col">Tipo Bien</th>
-            <th scope="col">Cantidad de la Transferente</th>
-            <th scope="col">Unidad de Medida Ligia</th>
-            <th scope="col">Unidad de Medida Transferente</th>
-            <th scope="col">Clave Única</th>
-            <th scope="col">Estado Fisico</th>
-            <th scope="col">Estado de Concervación</th>
-            <th scope="col">Destino Ligie</th>
-            <th scope="col">Destino Transferente</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let detail of detallesBienes; let i = index"
-            (click)="clicked(detail)">
-            <td>
-              <input
-                class="form-check-input"
-                type="checkbox"
-                value="{{ detail.id }}"
-                [(ngModel)]="detail.checked"
-                id="selectOne"
-                (change)="selectOne($event)" />
-            </td>
-            <td>{{ detail.gestion }}</td>
-            <td>{{ detail.descripEstateTransfe }}</td>
-            <td>
-              <input
-                style="
-                  width: 20rem;
-                  height: 3rem;
-                  border: 1px solid #ccc;
-                  border-radius: 4px;
-                "
-                class="form-control"
-                type="text"
-                [(ngModel)]="detail.descriptionEstateSAE"
-                value="{{ detail.descriptionEstateSAE }}" />
-            </td>
-            <td>{{ detail.typeEstate }}</td>
-            <td>{{ detail.quantityTransfe }}</td>
-            <td>{{ detail.measureUnitLigia }}</td>
-            <td>{{ detail.measureUnit }}</td>
-            <td>{{ detail.uniqueKey }}</td>
-            <td>{{ detail.physicalState }}</td>
-            <td>{{ detail.stateConservation }}</td>
-            <td>{{ detail.destinyLigie }}</td>
-            <td>{{ detail.transferDestina }}</td>
-          </tr>
-        </tbody>
-      </table> -->
-
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
           (userRowSelect)="selectGood($event)"
@@ -135,22 +69,74 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
-  <div class="d-flex justify-content-end pt-4">
-    <div class="buttons">
-      <button class="btn btn-primary btn-sm active" (click)="confirm()">
-        <i class="bx bx-save"></i> Guardar
-      </button>
+  <div>
+    <hr />
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <h5 class="title">Aclaraciones</h5>
     </div>
   </div>
-  <div *ngIf="goodsSelected.length == 1" class="row pt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="float-right" style="padding-bottom: 3px">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="newClarification()">
+          Nuevo
+        </button>
+        <button
+          style="margin-left: 2px"
+          class="btn btn-secondary btn-sm active"
+          (click)="editForm()">
+          Editar
+        </button>
+        <button
+          style="margin-left: 2px"
+          class="btn btn-danger btn-sm active"
+          (click)="deleteClarification()">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <!-- <ng-scrollbar track="all" style="min-height: 200px; border: none"> -->
+      <div [class]="loadingClarification ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="clarifySetting"
+          [source]="clarificationData"
+          (userRowSelect)="clarificationSelected($event)"
+          ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+        </ng2-smart-table>
+      </div>
+      <!-- </ng-scrollbar> -->
+    </div>
+  </div>
+  <div>
+    <hr />
+  </div>
+
+  <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+    <form-loader *ngIf="formLoading"></form-loader>
+  </div>
+  <!-- Componente donde se muestra el detalle de los bienes -->
+  <div
+    *ngIf="
+      goodsSelected.length === 1 && isGoodSelected === true && !formLoading
+    "
+    class="row pt-4">
     <app-detail-assets-tab-component
       [typeDoc]="typeDoc"
       [requestObject]="requestObject"
       [detailAssets]="detailArray"
+      [process]="process"
       [domicilieObject]="domicilieObject"></app-detail-assets-tab-component>
 
     <!--[requestObject]="requestObject"
-      [detailAssets]="classiGoodsForm" 
+      [detailAssets]="classiGoodsForm"
         [domicilieObject]="domicilieObject" -->
   </div>
 </div>

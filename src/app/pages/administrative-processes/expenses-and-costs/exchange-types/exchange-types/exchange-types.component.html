@@ -8,7 +8,7 @@
       <div class="">
         <button
           type="button"
-          (click)="openModal()"
+          (click)="openForm()"
           class="btn btn-primary btn-sm active mx-4">
           AGREGAR
         </button>
@@ -21,7 +21,9 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="exchangeTypes">
+              [source]="exchangeTypes"
+              (edit)="openForm($event.data)">
+              >
             </ng2-smart-table>
           </div>
         </div>

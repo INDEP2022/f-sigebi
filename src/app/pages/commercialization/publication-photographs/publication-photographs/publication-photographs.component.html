@@ -1,4 +1,4 @@
-<!-- <app-card [header]="true">
+<app-card [header]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">Publicaci&oacute;n de fotograf&iacute;as</h5>
@@ -7,35 +7,45 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
-          <h5 class="font-size-14 d-inline">Seleccione Cve Proceso</h5>
-          <ngx-select [form]="form" [data]="cveItems" value="id" bindLabel="description" (fetchItems)="getCve($event)"
-            (change)="selectCve($event)" control="id">
-          </ngx-select>
+        <div class="row justify-content-center">
+          <div class="ch-content">
+            <h5 class="title">Evento</h5>
+          </div>
+          <div class="col-12 col-sm-12 col-md-5">
+            <search-bar-simple
+              (eventEmit)="loadEvent($event)"
+              [label]="''"
+              [placeholder]="'N&uacute;mero de Evento Padre'">
+            </search-bar-simple>
+          </div>
         </div>
+        <!-- <h5 class="font-size-14 d-inline">Seleccione Cve Proceso</h5>
+          <ngx-select [form]="form" [data]="cveItems" value="id" bindLabel="observations" (fetchItems)="getCve($event)"
+            (change)="selectCve($event)" control="id">
+          </ngx-select> -->
+
         <div class="col-md-3" *ngIf="selectedCve != null">
           <h5 class="font-size-14 d-inline">ID de Proceso</h5>
           <p class="mt-2 font-size-28 text-muted">{{ selectedCve.id }}</p>
         </div>
         <div class="col-md-3" *ngIf="selectedCve != null">
           <h5 class="font-size-14 d-inline">Tipo</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedCve.type }}</p>
+          <p class="mt-2 font-size-28 text-muted">
+            {{ selectedCve.tpeventoId }}
+          </p>
         </div>
         <div class="col-md-3" *ngIf="selectedCve != null">
           <h5 class="font-size-14 d-inline">Estatus</h5>
-          <p class="mt-2 font-size-28 text-muted">{{ selectedCve.status }}</p>
+          <p class="mt-2 font-size-28 text-muted">
+            {{ selectedCve.statusvtaId }}
+          </p>
         </div>
       </div>
     </form>
   </div>
-</app-card> 
+</app-card>
 
-<app-card [header]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Publicaci&oacute;n de fotograf&iacute;as</h5>
-    </div>
-  </div>
+<app-card [header]="true" *ngIf="selectedCve">
   <div header>
     <div class="ch-content">
       <h5 class="title">Lotes</h5>
@@ -44,29 +54,19 @@
   <div body>
     <div class="col-md-2">
       <div class="w-100 m-1 img-container">
-        <img src="https://samyak.co.in/wp-content/uploads/2021/04/image.jpg" alt="" class="w-50" />
+        <img
+          src="https://samyak.co.in/wp-content/uploads/2021/04/image.jpg"
+          alt=""
+          class="w-50" />
       </div>
     </div>
-    <div class="col-md-10">
+    <!-- <div class="col-md-10">
       <div class="table-responsive">
         <ng2-smart-table [settings]="settings1" [source]="data1"
           (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
       </div>
-    </div> 
-
-    <div class="row">
-      <label for="">Lotes</label>
-    </div>
-    <div class="row pt-2 scroll-table justify-content-center">
-      <ng2-smart-table class="col-md-12" [attr.class]="'table-bordered'" [settings]="settings4"
-        [source]="dataBatch"></ng2-smart-table>
-    </div>
-    <div class="row mt-5 d-flex justify-content-center">
-      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-    </div>
+    </div> -->
   </div>
-
-  <br /><br />
 </app-card>
 
 <app-card [header]="true" *ngIf="rowSelected">
@@ -75,12 +75,12 @@
       <h5 class="title">Bienes del lote {{ rowAllotment }}</h5>
     </div>
   </div>
-  <div body>
+  <!-- <div body>
     <div class="table-responsive">
       <ng2-smart-table [settings]="settings2" [source]="data2" (userRowSelect)="selectRowGood()">
       </ng2-smart-table>
     </div>
-  </div>
+  </div> -->
 </app-card>
 
 <app-card [header]="true" *ngIf="rowSelectedGood">
@@ -93,78 +93,42 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <button type="button" class="btn btn-primary btn-sm active" [disabled]="!form.valid">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!form.valid">
             Publicar como favorito
           </button>
         </div>
       </div>
       <div class="row pt-5">
-        <carousel [itemsPerSlide]="itemsPerSlide" [singleSlideOffset]="singleSlideOffset" [startFromIndex]="6"
+        <carousel
+          [itemsPerSlide]="itemsPerSlide"
+          [singleSlideOffset]="singleSlideOffset"
+          [startFromIndex]="6"
           [interval]="0">
           <slide *ngFor="let slide of slides; let index = index">
-            <img [src]="slide.image" alt="image slide" style="
+            <img
+              [src]="slide.image"
+              alt="image slide"
+              style="
                 display: block;
                 height: 250px;
                 width: 300px;
                 object-fit: cover;
               " />
             <form-check for="keep-{{ index }}" class="float-check">
-              <input type="checkbox" id="keep-{{ index }}" formControlName="favorite" class="form-control" />
+              <input
+                type="checkbox"
+                id="keep-{{ index }}"
+                formControlName="favorite"
+                class="form-control" />
             </form-check>
-            <div class="carousel-caption">
-              <h4>Fotograf&iacute;a {{ index }}</h4>
+            <div class="carousel-csaption">
+              <h6>Fotograf&iacute;a {{ index }}</h6>
             </div>
           </slide>
         </carousel>
-      </div>
-    </form>
-  </div>
-</app-card> -->
-
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Publicaci&oacute;n de fotograf&iacute;as</h5>
-  </div>
-
-  <div body>
-    <form class="form-material" [formGroup]="form">
-      <div body>
-        <div class="row">
-          <label for="">Lotes</label>
-        </div>
-        <div class="row pt-2 scroll-table justify-content-center">
-          <ng2-smart-table
-            class="col-md-12"
-            [attr.class]="'table-bordered'"
-            [settings]="settings4"
-            [source]="dataBatch"
-            (edit)="openForm($event.data)"
-            (delete)="showDeleteAlert($event)"></ng2-smart-table>
-        </div>
-        <div class="row mt-5 d-flex justify-content-center">
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
-        </div>
-      </div>
-
-      <div body>
-        <div class="row">
-          <h5 class="title">Bienes del lote {{ rowAllotment }}</h5>
-        </div>
-        <div class="table-responsive">
-          <ng2-smart-table
-            class="col-md-12"
-            [attr.class]="'table-bordered'"
-            [settings]="settings3"
-            [source]="dataBatch"></ng2-smart-table>
-        </div>
-      </div>
-
-      <div class="row mt-5 d-flex justify-content-center">
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
       </div>
     </form>
   </div>

@@ -16,7 +16,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './select-form.component.html',
-  styles: [],
+  styles: [``],
 })
 export class SelectFormComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
@@ -53,10 +53,11 @@ export class SelectFormComponent extends BasePage implements OnInit {
     this.getData();
   }
   @Output() paramsChange = new EventEmitter<ListParams>();
+  @Output() selectEvent = new EventEmitter();
   _paramsFilter: FilterParams;
   _params: ListParams = new ListParams();
   data: DefaultSelect = new DefaultSelect();
-
+  otherData: any[];
   get select() {
     return this.form.get(this.formField);
   }
@@ -85,7 +86,7 @@ export class SelectFormComponent extends BasePage implements OnInit {
     if (this.params.text.trim().toLowerCase() === '') {
       this.data = new DefaultSelect(
         this.haveTodos
-          ? [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...this.list]
+          ? [{ [this.value]: 'null', [this.bindLabel]: 'Todos' }, ...this.list]
           : this.list
       );
     } else {
@@ -106,6 +107,7 @@ export class SelectFormComponent extends BasePage implements OnInit {
     this.getListObservable.subscribe({
       next: data => {
         console.log(data);
+        this.otherData = data.data;
         this.data = new DefaultSelect(
           this.haveTodos
             ? [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...data.data]
@@ -134,6 +136,10 @@ export class SelectFormComponent extends BasePage implements OnInit {
   }
 
   onChange(event: any) {
+    if (this.otherData) {
+      this.selectEvent.emit(event);
+      // console.log(event);
+    }
     this.form.updateValueAndValidity();
   }
 }

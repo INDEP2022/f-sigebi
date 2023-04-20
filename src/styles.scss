@@ -116,17 +116,25 @@
 
 .table-loading tbody:after {
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.2);
   background-image: url('./assets/images/loader-button.gif');
+  vertical-align: -50% !important;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100px 100px;
   z-index: 100;
-  content: '';
+  content: 'Cargando... por favor espere...';
+  font-size: 25px;
+  text-align: center;
+  font-weight: bold;
+  line-height: 26px;
 }
 
 .btn-header {
@@ -417,4 +425,18 @@ ng-scrollbar.table-scrollbar {
       padding: 0px;
     }
   }
+}
+
+.loader:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('./assets/images/loader-button.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  z-index: 100;
+  content: '';
 }

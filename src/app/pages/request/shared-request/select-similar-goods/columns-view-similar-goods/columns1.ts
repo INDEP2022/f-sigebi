@@ -55,7 +55,7 @@ export const COLUMNS1 = {
     sort: false,
   },
   saeNo: {
-    title: 'No. SAE',
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },

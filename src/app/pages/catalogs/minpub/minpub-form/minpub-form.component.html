@@ -5,112 +5,102 @@
   <div body>
     <form class="form-material" [formGroup]="minpubForm">
       <div class="row">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="minpubForm.get('id')" label="Registro">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6">
           <form-field
-            [control]="minpubForm.get('descripcion')"
+            [control]="minpubForm.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="descripcion" />
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="minpubForm.get('manager')" label="Responsable">
+            <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field
-            [control]="minpubForm.get('responsable')"
-            label="Responsable">
+        <div class="col-md-6">
+          <form-field [control]="minpubForm.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="minpubForm.get('outNumber')" label="No. Ext">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="responsable" />
+              formControlName="outNumber" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <ngx-select
-            [form]="minpubForm"
-            [data]="items"
-            label="Ciudad"
-            bindLabel="nameCity"
-            value="idCity"
-            (fetchItems)="getFromSelect($event)"
-            control="no_ciudad">
-          </ngx-select>
-        </div>
-      </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="minpubForm.get('colonia')" label="Colonia">
-            <input type="text" class="form-control" formControlName="colonia" />
-          </form-field>
-        </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-3">
           <form-field
-            [control]="minpubForm.get('codigo_postal')"
-            label="C&oacute;digo postal">
+            [control]="minpubForm.get('insideNumber')"
+            label="No. Int.">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="codigo_postal" />
+              formControlName="insideNumber" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="minpubForm.get('calle')" label="Calle">
-            <input type="text" class="form-control" formControlName="calle" />
+        <div class="col-md-6">
+          <form-field [control]="minpubForm.get('colony')" label="Colonia">
+            <input type="text" class="form-control" formControlName="colony" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
-          <div class="row">
-            <div class="col-12 col-md-6">
-              <form-field
-                [control]="minpubForm.get('no_interior')"
-                label="Número interior">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="no_interior" />
-              </form-field>
-            </div>
-            <div class="col-12 col-md-6">
-              <form-field
-                [control]="minpubForm.get('no_exterior')"
-                label="N&uacute;mero exterior">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="no_exterior" />
-              </form-field>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6">
           <form-field
-            [control]="minpubForm.get('deleg_munic')"
+            [control]="minpubForm.get('delegNunic')"
             label="Delegaci&oacute;n municipal">
             <input
               type="text"
               class="form-control"
-              formControlName="deleg_munic" />
+              formControlName="delegNunic" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-4">
           <form-field
-            [control]="minpubForm.get('telefono')"
+            [control]="minpubForm.get('zipCode')"
+            label="C&oacute;digo postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="minpubForm.get('phone')"
             label="Tel&eacute;fono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="minpubForm.get('city')">
+            <!-- <input type="text" class="form-control" formControlName="city" /> -->
+            <ngx-select
+              [form]="minpubForm"
+              [data]="items"
+              label="Ciudad"
+              bindLabel="idCity"
+              value="idCity"
+              (fetchItems)="getFromSelect($event)"
+              control="city"
+              (change)="onValuesChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="minpubForm.get('nameCity')">
             <input
               type="text"
               class="form-control"
-              formControlName="telefono" />
+              formControlName="nameCity" />
           </form-field>
         </div>
       </div>

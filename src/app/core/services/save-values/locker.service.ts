@@ -15,7 +15,7 @@ export class LockersService extends HttpService {
 
   constructor(private lockerRepository: LockerRepository<ILocker>) {
     super();
-    this.microservice = 'catalog';
+    this.microservice = LockerEndpoints.BasePage;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ILocker>> {
@@ -53,9 +53,8 @@ export class LockersService extends HttpService {
     return httpParams;
   }
 
-  /*getGoodsByRecordId(recordId: number) {
-    return this.goodRepository.getAllPaginated(
-      'good/good/getidReferenceGood/' + recordId
-    );
-  }*/
+  remove(id: string | number) {
+    const route = `${LockerEndpoints.Locker}/id/${id}`;
+    return this.delete(route);
+  }
 }

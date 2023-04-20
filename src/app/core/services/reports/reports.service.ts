@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
-import { IDelegation } from '../../models/catalogs/delegation.model';
-import { ISubdelegation } from '../../models/catalogs/subdelegation.model';
+import { SiabService } from '../jasper-reports/siab.service';
 @Injectable({
   providedIn: 'root',
 })
 export class ReportService extends HttpService {
-  constructor() {
+  constructor(public siabService: SiabService) {
     super();
   }
 
+  uri =
+    'http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf';
   /**
    * @deprecated Checar como se usara esta parte
    */
@@ -33,24 +35,18 @@ export class ReportService extends HttpService {
       `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?NO_OFICIO=${params}`
     );
   }
-  download(params: any): Observable<any> {
+  download(uri: string, params: any): Observable<any> {
     const header: Object = {
       responseType: 'arraybuffer',
     };
 
-    return this.httpClient.get(
-      `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?NO_OFICIO=${params}`
-    );
+    return this.httpClient.get(`${uri}?params=${params}`);
   }
-  getRecepcion(
-    PN_DELEG: IDelegation,
-    PN_SUBDEL: ISubdelegation,
-    PF_MES: string,
-    PF_ANIO: string
-  ) {
-    return this.httpClient.get(
-      `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${PN_DELEG}&PN_SUBDEL=${PN_SUBDEL}&PF_MES=${PF_MES}&PF_ANIO=${PF_ANIO}`
-    );
+  getRecepcion(params: ListParams) {
+    return this.siabService.fetchReport('RGEROFPRECEPDOCUM', params);
+    // return this.httpClient.get(
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${PN_DELEG}&PN_SUBDEL=${PN_SUBDEL}&PF_MES=${PF_MES}&PF_ANIO=${PF_ANIO}`
+    // );
   }
 
   getGood() {
@@ -61,6 +57,11 @@ export class ReportService extends HttpService {
   getBatch(text: string) {
     return this.httpClient.get(
       `http://reportsqa.indep.gob.mx/catalog/api/v1//batch/search=${text}`
+    );
+  }
+  getGoodType() {
+    return this.httpClient.get(
+      `http://sigebimsqa.indep.gob.mx/catalog/api/v1/good-type`
     );
   }
 }

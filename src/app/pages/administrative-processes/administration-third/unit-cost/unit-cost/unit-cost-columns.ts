@@ -1,100 +1,180 @@
+import { IZoneContract } from 'src/app/core/models/catalogs/zone-contract.model';
+import { IStrategyProcess } from 'src/app/core/models/ms-strategy-process/strategy-process.model';
+import { IStrategyServiceType } from 'src/app/core/models/ms-strategy-service-type/strategy-service-type.model';
+import { IStrategyService } from 'src/app/core/models/ms-strategy-service/strategy-service.model';
+import { IStrategyShift } from 'src/app/core/models/ms-strategy-shift/strategy-shift.model';
+import { IStrategyVariableCost } from 'src/app/core/models/ms-strategy-variable-cost/strategy-variable-cost.model';
+
 export const COSTKEY_COLUMNS = {
-  noProcess: {
+  processNumber: {
     title: 'N°',
-    width: '5%',
+    // width: '5%',
     sort: false,
   },
-  process: {
+  strategyProcess: {
     title: 'Proceso',
-    width: '10%',
     sort: false,
+    valuePrepareFunction: (value: IStrategyProcess) => {
+      if (value) {
+        return value.description;
+      } else {
+        return '';
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noService: {
+  serviceNumber: {
     title: 'N°',
-    width: '5%',
     sort: false,
   },
-  service: {
+  strategyService: {
     title: 'Servicio',
-    width: '10%',
     sort: false,
+    valuePrepareFunction: (value: IStrategyService) => {
+      if (value) {
+        return value.description;
+      } else {
+        return '';
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noSpecification: {
+  serviceTypeNumber: {
     title: 'N°',
-    width: '5%',
     sort: false,
   },
-  specification: {
+  strategyServicetype: {
     title: 'Especificación',
-    width: '10%',
+    type: 'string',
     sort: false,
+    valuePrepareFunction: (value: IStrategyServiceType) => {
+      if (value) {
+        return value.description;
+      } else {
+        return '';
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noTurnType: {
+  shiftNumber: {
     title: 'N°',
-    width: '5%',
     sort: false,
   },
-  turnType: {
+  strategyShift: {
     title: 'Turno/Tipo',
-    width: '10%',
     sort: false,
+    valuePrepareFunction: (value: IStrategyShift) => {
+      if (value) {
+        return value.description;
+      } else {
+        return '';
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  noVariableCost: {
+  varCostNumber: {
     title: 'N°',
-    width: '5%',
     sort: false,
   },
-  variableCost: {
+  strategyVariableCost: {
     title: 'Variable costo',
-    width: '15%',
     sort: false,
+    valuePrepareFunction: (value: IStrategyVariableCost) => {
+      if (value) {
+        return value.description;
+      } else {
+        return '';
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
-  idCost: {
+  costId: {
     title: 'Id Costo',
-    width: '10%',
     sort: false,
   },
 };
 export const VALIDITYCOST_COLUMNS = {
-  cve: {
-    title: 'CVE',
-    width: '5%',
-    sort: false,
-  },
   zone: {
     title: 'Zona',
-    width: '15%',
     sort: false,
+    valuePrepareFunction: (value: IZoneContract) => {
+      if (value) {
+        return value.description;
+      } else {
+        return '';
+      }
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   startDate: {
-    title: 'Fecha page',
-    width: '10%',
+    title: 'Fecha inicial',
     sort: false,
   },
-
   finalDate: {
     title: 'Fecha final',
-    width: '10%',
     sort: false,
   },
-  unitCost: {
+  costUnitarian: {
     title: 'Costo unitario',
-    width: '10%',
     sort: false,
   },
-  inflammationIndex: {
-    title: '% Indice inflamacion',
-    width: '10%',
+  porceInflation: {
+    title: '% Indice inflación',
     sort: false,
   },
-  amount: {
-    title: 'Importe',
-    width: '10%',
+  validity: {
+    title: 'Vigente',
     sort: false,
-  },
-  vig: {
-    title: 'Vig.',
-    width: '5%',
-    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value === '0') {
+        return 'No';
+      } else if (value === '1') {
+        return 'Sí';
+      } else {
+        return '';
+      }
+    },
   },
 };

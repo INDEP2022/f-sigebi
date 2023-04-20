@@ -20,7 +20,7 @@ export class RequestService extends HttpService {
 
   getById(id: string | number) {
     const route = `${ENDPOINT_LINKS.request}/${id}`;
-    return this.get<IListResponse<IRequest>>(route);
+    return this.get(route);
   }
 
   create(request: IRequest) {
@@ -35,5 +35,10 @@ export class RequestService extends HttpService {
   remove(id: string | number) {
     const route = `${ENDPOINT_LINKS.request}/${id}`;
     return this.delete(route);
+  }
+
+  update2(id: string | number, obj: Object) {
+    const route = `${ENDPOINT_LINKS.request}/${id}`;
+    return this.put(route, obj);
   }
 }

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IDynamicStatusXScreen,
+  IGoodStatusScreen,
   IStatus,
   IStatusXScreen,
 } from '../../models/ms-screen-status/status.model';
@@ -17,16 +19,20 @@ export class ScreenStatusService extends HttpService {
     this.microservice = ScreenStatusEndpoints.BasePath;
   }
 
-  getStatus(filters: { screen: string; goodArray: number[]; action: string }) {
+  getStatus(filters: IGoodStatusScreen) {
     return this.post<IListResponse<IStatus>>(
       `${this.endpoint.StatusXScreenAndGoods}`,
       filters
     );
   }
-  getStatusXScreen(filters: { screen: string; status: string }) {
+  getStatusXScreen(filters: IDynamicStatusXScreen) {
     return this.post<IListResponse<IStatusXScreen>>(
       `${this.endpoint.StatusXScreen}`,
       filters
     );
+  }
+
+  getAllFiltered(params: _Params) {
+    return this.get<IListResponse<IStatusXScreen>>('status-x-screen', params);
   }
 }

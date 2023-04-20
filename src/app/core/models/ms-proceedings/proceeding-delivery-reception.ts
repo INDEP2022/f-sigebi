@@ -42,6 +42,9 @@ export interface IProceedingDeliveryReception {
   affair: string;
   numDelegation_1?: NumDelegation;
   numDelegation_2?: NumDelegation;
+  numDelegation1Description?: string;
+  numDelegation2Description?: string;
+  file?: NumFile;
 }
 
 export interface Identifier {

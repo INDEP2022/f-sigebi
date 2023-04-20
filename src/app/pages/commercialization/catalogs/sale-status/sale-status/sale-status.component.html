@@ -3,8 +3,17 @@
     <h5 class="title">ESTATUS DE VENTA</h5>
   </div>
   <div body>
-    <div class="row mb-3 mt-3">
-      <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline">
+    <div class="row">
+      <div class="col-12" *ngIf="selectedRow">
+        <label for="">Estatus</label>
+        <div class="mt-4">
+          <h5 class="font-size-14 text-muted">
+            <i class="bx bxs-circle me-1 text-muted"></i>
+            {{ selectedRow?.id }}
+          </h5>
+        </div>
+      </div>
+      <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline">
         <div class="row">
           <div class="form-material col-12">
             <search-bar
@@ -12,8 +21,8 @@
               [filterField]="searchFilter"></search-bar>
           </div>
         </div>
-      </div>
-      <div
+      </div> -->
+      <!-- <div
         class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline"
         *ngIf="rowSelected">
         <div class="row mb-3 mt-3 justify-content-end">
@@ -27,14 +36,14 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
     <!--SALE STATUS TABLE-->
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
             (deleteConfirm)="onDeleteConfirm($event)"
@@ -45,11 +54,11 @@
         </div>
       </div>
     </div>
-    <app-pagination [filterParams]="params" [totalItems]="totalItems">
+    <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
     <!--STATUS-->
-    <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+    <div class="row">
+      <div class="col-12" *ngIf="selectedRow">
         <label for="">Estatus</label>
         <div class="mt-4">
           <h5 class="font-size-14 text-muted">
@@ -59,5 +68,16 @@
         </div>
       </div>
     </div>
+    <!-- <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+        <label for="">Estatus</label>
+        <div class="mt-4">
+          <h5 class="font-size-14 text-muted">
+            <i class="bx bxs-circle me-1 text-muted"></i>
+            {{ selectedRow?.id }}
+          </h5>
+        </div>
+      </div>
+    </div> -->
   </div>
 </app-card>

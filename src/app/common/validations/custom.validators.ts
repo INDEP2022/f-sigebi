@@ -9,10 +9,10 @@ function transferenteAndAct(actValue: any): ValidatorFn {
       const transfer = control.value;
       if (
         acta === 'A' &&
-        transfer.keyTransferent != 'PGR' &&
-        transfer.keyTransferent != 'PJF'
+        transfer.transferentkey != 'PGR' &&
+        transfer.transferentkey != 'PJF'
       ) {
-        return { TransferenteAndAct: { transferent: transfer.keyTransferent } };
+        return { TransferenteAndAct: { transferent: transfer.transferentkey } };
       } else {
         return null;
       }

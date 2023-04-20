@@ -105,16 +105,17 @@ export class AuthorityService
   }
   getAuthorityIssuingByAverPrevia(body: IAuthorityIssuingParams | any) {
     return this.authorityRepository.getAuthorityIssuingByParams(
-      'catalog/api/v1/authority/authority-and-station?limit=1&page=1',
+      'catalog/authority/authority-and-station?limit=1&page=1',
       body
     );
   }
 
   getAuthorityByTransferent(
     id: string | number,
+    id2: string | number,
     params?: ListParams
   ): Observable<IListResponse<IAuthority2>> {
-    const route = `${AuthorityEndpoints.Authority}?filter.idStation=${id}`;
+    const route = `${AuthorityEndpoints.Authority}?filter.idStation=${id}&filter.idTransferer=${id2}`;
     return this.get(route, params);
   }
 

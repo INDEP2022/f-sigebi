@@ -80,6 +80,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    let main = document.documentElement.querySelector('.init-page');
+    setTimeout(() => {
+      main.scroll(0, 0);
+    }, 300);
     this.setSettingsTables();
     this.prepareForm();
     this.initPage();
@@ -143,10 +147,16 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getCoordinador(params: ListParams) {
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.pgrSubjectsRegisterService
       .getCoordinadorBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.cordinators = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -156,7 +166,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.cordinators = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -164,10 +175,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**
@@ -176,12 +184,19 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getStatusProcess(params: ListParams) {
-    params.take = 20;
+    params.take = 10;
+    params['orderColumn'] = 'id';
     params['order'] = 'DESC';
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.pgrSubjectsRegisterService
       .getStatusBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.processStatus = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -191,7 +206,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.processStatus = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -199,10 +215,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**
@@ -243,7 +256,9 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (
       this.pgrTransferForm.get('pgrGoodNumber').value ||
       this.pgrTransferForm.get('saeGoodNumber').value ||
-      this.pgrTransferForm.get('status').value
+      this.pgrTransferForm.get('status').value ||
+      this.pgrTransferForm.get('aveprev').value ||
+      this.pgrTransferForm.get('office').value
     ) {
       valid = true;
     } else {
@@ -321,7 +336,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Gestión Trámites PGR')
+              NOT_FOUND_MESSAGE('Gestión Trámites FGR')
             );
           }
           this.loadingGestionPgr = false;
@@ -337,18 +352,18 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista PGR Transferencia
    */
   async getPgrTransferencia(resetValues: boolean = false) {
-    let filtrados =
+    if (resetValues == false) {
+      this.pgrTransferForm.get('aveprev').reset();
+      this.pgrTransferForm.get('office').reset();
+      this.pgrTransferForm.updateValueAndValidity();
+    }
+    let filtrados: any =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.pgrTransferForm.value,
         this.paramsPgrTransferencia.value,
         this.filtroPaginado,
         'filter'
       );
-    if (resetValues == true) {
-      this.pgrTransferForm.get('aveprev').reset();
-      this.pgrTransferForm.get('office').reset();
-      this.pgrTransferForm.updateValueAndValidity();
-    }
     this.pgrSubjectsRegisterService
       .getPgrTransferenciaBySearch(filtrados)
       .subscribe({
@@ -360,7 +375,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Transferencias PGR')
+              NOT_FOUND_MESSAGE('Transferencias FGR')
             );
           }
           this.loadingPgrTransferencia = false;
@@ -391,13 +406,36 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     if (data.length == 0) {
       this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
     }
+    let dataChangeNames = this.setNombreData(opcion, data);
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(data, {
+    this.excelService.export(dataChangeNames, {
       filename:
         opcion == 'gestion'
-          ? `GestionPgr__Listado_Tramites_PGR${new Date().getTime()}`
-          : `PgrTransferencia_Listado_Cves_PGR${new Date().getTime()}`,
+          ? `GestionFGR__Listado_Tramites_FGR${new Date().getTime()}`
+          : `FGRTransferencia_Listado_Cves_FGR${new Date().getTime()}`,
     });
+  }
+
+  setNombreData(opcion: string, data: any[]) {
+    let dataSet: any[] = [];
+    let gestionData = PGR_PAPERWORK_MAILBOX_COLUMNS;
+    let transferData = PGR_TRANSFERS_COLUMNS;
+    data.forEach(elementData => {
+      let newObj: any = {};
+      for (const key in elementData) {
+        if (Object.prototype.hasOwnProperty.call(elementData, key)) {
+          if (opcion == 'gestion') {
+            newObj[gestionData[key as keyof typeof gestionData].title] =
+              elementData[key];
+          } else {
+            newObj[transferData[key as keyof typeof transferData].title] =
+              elementData[key];
+          }
+        }
+      }
+      dataSet.push(newObj);
+    });
+    return dataSet;
   }
 
   /**
@@ -431,13 +469,13 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           if (data.base64) {
             this.downloadFile(
               data.base64,
-              `GestionSat__Listado_Tramites_PGR${new Date().getTime()}`
+              `GestionSat__Listado_Tramites_FGR${new Date().getTime()}`
             );
           } else {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Gestión Trámites PGR')
+              NOT_FOUND_MESSAGE('Gestión Trámites FGR')
             );
           }
           this.downloading = false;
@@ -451,7 +489,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   /**
    * Obtener el listado de Transferencia PGR
    */
-  getReportTransferenciaPgr() {
+  getReportTransferenciaPgr(filtroForm: boolean = false) {
     let objParams: any = {
       aveprev: this.pgrTransferForm.value.issue,
       pgrGoodNumber: this.pgrTransferForm.value.pgrGoodNumber,
@@ -469,19 +507,22 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     );
     delete filtrados.page;
     // delete filtrados.limit;
-    filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    if (filtroForm == true) {
+      filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
+    }
+    // filtrados.limit = this.maxLimitReport; // Valor de cero para obtener todos los resultados
     this.downloadingTransferente = true;
     this.pgrSubjectsRegisterService
       .getReport(filtrados, 'transferencia_pgr')
       .subscribe({
         next: (data: any) => {
           if (data.base64) {
-            this.downloadFile(data.base64, 'Listado_Cves_PGR');
+            this.downloadFile(data.base64, 'Listado_Cves_FGR');
           } else {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Transferencias PGR')
+              NOT_FOUND_MESSAGE('Transferencias FGR')
             );
           }
           this.downloadingTransferente = false;
@@ -504,10 +545,10 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   selectRow(row: any) {
-    this.pgrTransferForm.get('aveprev').setValue(row.issue);
-    this.pgrTransferForm.get('office').setValue(row.officeNumber);
-    this.pgrTransferForm.updateValueAndValidity();
     if (row.issue && row.officeNumber) {
+      this.pgrTransferForm.get('aveprev').setValue(row.issue);
+      this.pgrTransferForm.get('office').setValue(row.officeNumber);
+      this.pgrTransferForm.updateValueAndValidity();
       this.onLoadToast(
         'info',
         '¡Búsqueda!',
@@ -515,6 +556,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       );
     } else {
       if (row.issue) {
+        this.pgrTransferForm.get('aveprev').setValue(row.issue);
+        this.pgrTransferForm.updateValueAndValidity();
         this.onLoadToast(
           'info',
           '¡Búsqueda!',
@@ -522,11 +565,13 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         );
       }
       if (row.officeNumber) {
+        this.pgrTransferForm.get('office').setValue(row.officeNumber);
+        this.pgrTransferForm.updateValueAndValidity();
         this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_PGR);
       }
     }
     setTimeout(() => {
       this.consultarPgrTransferForm(true, true);
-    }, 100);
+    }, 300);
   }
 }

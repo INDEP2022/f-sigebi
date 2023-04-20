@@ -186,7 +186,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCOMERRECIBOS.pdf?PN_DELEG=${params.PN_DELEG}&DESTYPE=${params.DESTYPE}&ID_RECIBOPAGO=${params.ID_RECIBOPAGO}&FECHA_EMISION=${params.FECHA_EMISION}&RECIBIMOS_DE=${params.RECIBIMOS_DE}&DOMICILIO=${params.DOMICILIO}&COLONIA=${params.COLONIA}&DELEGACION=${params.DELEGACION}&ESTADO=${params.ESTADO}&CP=${params.CP}&PRECIO_VENTA=${params.PRECIO_VENTA}&IVA=${params.IVA}&TOTAL=${params.TOTAL}&CANTIDAD_RECIBIDA=${params.CANTIDAD_RECIBIDA}&SALDO_RESTANTE=${params.SALDO_RESTANTE}&PORC_APPIVA=${params.PORC_APPIVA}&PORC_NOAPPIVA=${params.PORC_NOAPPIVA}&CVE_TRANSF=${params.CVE_TRANSF}&DESC_EVENTO=${params.DESC_EVENTO}&ETIQUETA_PROC=${params.ETIQUETA_PROC}&CVE_PROCESO=${params.CVE_PROCESO}&FEC_EVENTO=${params.FEC_EVENTO}&ID_LOTE=${params.ID_LOTE}&ENTREGA_INM=${params.ENTREGA_INM}&OBSERVACIONES=${params.OBSERVACIONES}&NOTARIO_NOM=${params.NOTARIO_NOM}&NOTARIO_NUM=${params.NOTARIO_NUM}&NOTARIO_DOM=${params.NOTARIO_DOM}&NOTARIO_TEL=${params.NOTARIO_TEL}&PENA=${params.PENA}&APODERADO_LEGAL=${params.APODERADO_LEGAL}&RECIBI=${params.RECIBI}`;
-    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RCOMERRECIBOS.pdf');
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');

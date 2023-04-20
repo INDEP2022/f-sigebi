@@ -22,6 +22,7 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
@@ -157,10 +158,7 @@ export class Repository<T> implements IRepository<T> {
     );
   }
   update3(route: string, formData: Object) {
-    return this.httpClient.put(
-      `${environment.API_URL2}catalog/api/v1/${route}`,
-      formData
-    );
+    return this.httpClient.put(`${environment.API_URL2}${route}`, formData);
   }
   remove2(route: string, id: number | string) {
     return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
@@ -253,7 +251,7 @@ export class Repository<T> implements IRepository<T> {
   getAuthorityIssuingByParams(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
 
-    return this.httpClient.post<IAuthorityIssuingResponse[]>(
+    return this.httpClient.post<IListResponse<IAuthorityIssuingResponse>>(
       `${fullRoute}`,
       formData
     );
@@ -272,5 +270,10 @@ export class Repository<T> implements IRepository<T> {
     // console.log(formData);
 
     return this.httpClient.put(`${fullRoute}`, formData);
+  }
+  getClassif(classif: string | number): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}/catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
+    );
   }
 }

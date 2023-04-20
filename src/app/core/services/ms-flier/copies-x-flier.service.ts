@@ -41,14 +41,13 @@ export class CopiesXFlierService extends HttpService {
     return this.post(this.endpoint, body);
   }
 
-  update(body: ICopiesxFlier) {
+  update(body: Partial<ICopiesxFlier>) {
     const route = `${this.endpoint}`;
     return this.put(route, body);
   }
 
-  remove(id: string | number) {
-    const route = `${this.endpoint}/${id}`;
-    return this.delete(route);
+  remove(body: { copyNumber: number; flierNumber: number }) {
+    return this.delete(this.endpoint, body);
   }
 
   getNotificationDetail(

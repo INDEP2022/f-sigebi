@@ -1,8 +1,15 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Configuracion Layouts</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings6"></app-columns-select>
+      <!-- <div>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
+          Nuevo
+        </button>
+      </div> -->
+    </div>
   </div>
-
   <div body>
     <form class="form-material" [formGroup]="form">
       <!--    <div class="row">
@@ -122,8 +129,9 @@
 
       <div body>
         <div class="row">
-          <label for="">Layouts</label>
+          <label for="">LAYOUTS</label>
         </div>
+
         <div class="row pt-2 scroll-table justify-content-center">
           <ng2-smart-table
             class="col-md-12"
@@ -132,16 +140,23 @@
             [source]="layoutsList"
             (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
         </div>
-        <div class="row mt-5 d-flex justify-content-center">
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
-        </div>
+        <br /><br /><br /><br />
+        <!-- <div class="row mt-5 d-flex justify-content-center">
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        </div> -->
       </div>
 
       <div body>
         <div class="row">
-          <h5 class="title">Estructura Layouts {{ idLayout }}</h5>
+          <label for="">ESTRUCTURA LAYOUTS {{ idLayout }}</label>
+        </div>
+        <div class="row w-100">
+          <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+            <span>
+              SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA PARA PROCEDER AL
+              APARTADO DE ACCIONES&#46;</span
+            >
+          </div>
         </div>
         <div class="table-responsive">
           <ng2-smart-table

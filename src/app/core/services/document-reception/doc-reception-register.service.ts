@@ -3,7 +3,7 @@ import { map, Observable, tap } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
@@ -16,6 +16,7 @@ import {
   ITransferingLevelView,
 } from 'src/app/core/models/catalogs/transferente.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { CourtByCityService } from 'src/app/core/services/catalogs/court-by-city.service';
 import { ConvertiongoodEndpoints } from '../../../common/constants/endpoints/ms-convertiongood-endpoints';
 import { DocumentsEndpoints } from '../../../common/constants/endpoints/ms-documents-endpoints';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -28,6 +29,7 @@ import { AuthorityService } from '../catalogs/authority.service';
 import { CourtService } from '../catalogs/court.service';
 import { DelegationService } from '../catalogs/delegation.service';
 import { DepartamentService } from '../catalogs/departament.service';
+import { IdentifierService } from '../catalogs/identifier.service';
 import { IndiciadosService } from '../catalogs/indiciados.service';
 import { MinPubService } from '../catalogs/minpub.service';
 import { StationService } from '../catalogs/station.service';
@@ -53,7 +55,9 @@ export class DocReceptionRegisterService extends HttpService {
     private procedureManageService: ProcedureManagementService,
     private indiciadosService: IndiciadosService,
     private goodParametersService: GoodParametersService,
-    private departamentService: DepartamentService
+    private departamentService: DepartamentService,
+    private identifierService: IdentifierService,
+    private courtsService: CourtByCityService
   ) {
     super();
   }
@@ -63,12 +67,16 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = partials[0];
     return this.get<IListResponse<IStation>>(partials[1], params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(s => {
             return { ...s, nameAndId: `${s.id} - ${s.stationName}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.stationName < b.stationName ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -79,12 +87,16 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = partials[0];
     return this.get<IListResponse<IAuthority>>(partials[1], params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(a => {
             return { ...a, nameAndId: `${a.idAuthority} - ${a.authorityName}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.authorityName < b.authorityName ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -95,12 +107,16 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = partials[0];
     return this.get<IListResponse<IMinpub>>(partials[1], params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(m => {
             return { ...m, nameAndId: `${m.id} - ${m.description}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.description < b.description ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -110,6 +126,14 @@ export class DocReceptionRegisterService extends HttpService {
     let partials = ENDPOINT_LINKS.Identifier.split('/');
     this.microservice = partials[0];
     return this.get<IListResponse<IIdentifier>>(partials[1], params).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(i => {
+            return { ...i, nameAndId: `${i.id} - ${i.description}` };
+          }),
+        };
+      }),
       tap(() => (this.microservice = ''))
     );
   }
@@ -131,12 +155,16 @@ export class DocReceptionRegisterService extends HttpService {
     const route = `transferent/active/not-in`;
     return this.post<IListResponse<ITransferente>>(route, body).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(t => {
             return { ...t, nameAndId: `${t.id} - ${t.nameTransferent}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.nameTransferent < b.nameTransferent ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -185,12 +213,16 @@ export class DocReceptionRegisterService extends HttpService {
   getManagementAreasFiltered(params?: string) {
     return this.procedureManageService.getManagementAreasFiltered(params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(a => {
             return { ...a, nameAndId: `${a.id} - ${a.description}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.description < b.description ? -1 : 1;
+        });
+        return data;
       })
     );
   }
@@ -204,12 +236,16 @@ export class DocReceptionRegisterService extends HttpService {
       params
     ).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(u => {
             return { ...u, userAndName: `${u.user} - ${u.userDetail.name}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.user < b.user ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -233,9 +269,25 @@ export class DocReceptionRegisterService extends HttpService {
     let partials = ENDPOINT_LINKS.Transferente.split('/');
     self.microservice = partials[0];
     const route = `${partials[1]}/transferring-levels-view`;
-    return self
-      .get<IListResponse<ITransferingLevelView>>(route, params)
-      .pipe(tap(() => (self.microservice = '')));
+    return self.get<IListResponse<ITransferingLevelView>>(route, params).pipe(
+      map(data => {
+        data = {
+          ...data,
+          data: data.data.map(e => {
+            return {
+              ...e,
+              cityDesc: `${e.cityNum} - ${e.cityDesc}`,
+              federalEntityDesc: `${e.federalEntityCve} - ${e.federalEntityDesc}`,
+              transfereeDesc: `${e.transfereeNum} - ${e.transfereeDesc}`,
+              stationDesc: `${e.stationNum} - ${e.stationDesc}`,
+              authorityDesc: `${e.authorityNum} - ${e.authorityDesc}`,
+            };
+          }),
+        };
+        return data;
+      }),
+      tap(() => (self.microservice = ''))
+    );
   }
 
   getGoods(params?: string): Observable<IListResponse<IGood>> {
@@ -294,25 +346,32 @@ export class DocReceptionRegisterService extends HttpService {
       );
   }
 
-  getCities(params?: ListParams): Observable<IListResponse<ICity>> {
+  getCities(params?: _Params): Observable<IListResponse<ICity>> {
     let partials = ENDPOINT_LINKS.City.split('/');
     this.microservice = partials[0];
     const route = partials[1];
     return this.get<IListResponse<ICity>>(route, params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(c => {
             return { ...c, nameAndId: `${c.idCity} - ${c.nameCity}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.nameCity < b.nameCity ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
   }
 
   getCity(id: string | number): Observable<ICity> {
-    return this.cityRepository.getById(ENDPOINT_LINKS.City, id).pipe(
+    const segments = ENDPOINT_LINKS.City.split('/');
+    this.microservice = segments[0];
+    const route = `${segments[1]}/id/${id}`;
+    return this.get(route).pipe(
       map(data => {
         return {
           ...data,
@@ -325,12 +384,16 @@ export class DocReceptionRegisterService extends HttpService {
   getDynamicTables(id: number | string, params: ListParams) {
     return this.dynamicTablesService.getTvalTable1ByTableKey(id, params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(t => {
             return { ...t, otKeyAndValue: `${t.otKey} - ${t.value}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.value < b.value ? -1 : 1;
+        });
+        return data;
       })
     );
   }
@@ -395,13 +458,33 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getCourts(params?: ListParams) {
-    return this.courtService.getAll(params).pipe(
+  getCourtsUnrelated(params?: _Params) {
+    return this.courtService.getAllFiltered(params).pipe(
+      map(data => {
+        data = {
+          ...data,
+          data: data.data.map(c => {
+            return { ...c, nameAndId: `${c.id} - ${c.description}` };
+          }),
+        };
+        data.data.sort((a, b) => {
+          return a.description < b.description ? -1 : 1;
+        });
+        return data;
+      })
+    );
+  }
+
+  getCourts(params?: string) {
+    return this.courtsService.getAllWithFilters(params).pipe(
       map(data => {
         return {
           ...data,
           data: data.data.map(c => {
-            return { ...c, nameAndId: `${c.id} - ${c.description}` };
+            return {
+              ...c.courtNumber,
+              nameAndId: `${c.courtNumber.id} - ${c.courtNumber.description}`,
+            };
           }),
         };
       })
@@ -419,18 +502,23 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
-  getDefendants(params?: ListParams): Observable<IListResponse<IIndiciados>> {
-    let partials = ENDPOINT_LINKS.Indiciados.split('/');
-    this.microservice = partials[0];
-    const route = partials[1];
-    return this.get<IListResponse<IIndiciados>>(route, params).pipe(
+  getCourtsByCity(params: string) {
+    return this.courtsService.getAllWithFilters(params);
+  }
+
+  getDefendants(params?: _Params): Observable<IListResponse<IIndiciados>> {
+    return this.indiciadosService.getAllFiltered(params).pipe(
       map(data => {
-        return {
+        data = {
           ...data,
           data: data.data.map(c => {
             return { ...c, nameAndId: `${c.id} - ${c.name}` };
           }),
         };
+        data.data.sort((a, b) => {
+          return a.name < b.name ? -1 : 1;
+        });
+        return data;
       }),
       tap(() => (this.microservice = ''))
     );
@@ -449,5 +537,16 @@ export class DocReceptionRegisterService extends HttpService {
 
   getPhaseEdo() {
     return this.goodParametersService.getPhaseEdo();
+  }
+
+  getIdentifier(id: string | number) {
+    return this.identifierService.getById(id).pipe(
+      map(data => {
+        return {
+          ...data,
+          nameAndId: `${data.id} - ${data.description}`,
+        };
+      })
+    );
   }
 }

@@ -19,17 +19,13 @@ export class TdescCveService extends HttpService {
     private htpp: HttpClient
   ) {
     super();
-    this.microservice = 'parametergood';
+    this.microservice = ParameterGoodEndpoints.BasePath;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ITdescCve>> {
     return this.parametergoodRepository.getAll(this.route.TDescCve, params);
   }
 
-  // create(id: string | number, tdescCve: ITdescCve) {
-  //   const route = `${ParameterGoodEndpoints.TDescCve}/${id}`;
-  //   return this.put(route, tdescCve);
-  // }
   create(model: ITdescCve): Observable<ITdescCve> {
     return this.parametergoodRepository.create(this.route.TDescCve, model);
   }
@@ -55,5 +51,19 @@ export class TdescCveService extends HttpService {
   getById2(id: string | number) {
     const url = `${environment.API_URL}parametergood/api/v1/tdesccve/${id}`;
     return this.htpp.get(url);
+  }
+
+  create2(model: ITdescCve) {
+    return this.post(ParameterGoodEndpoints.TDescCve, model);
+  }
+
+  update2(id: string | number, model: ITdescCve) {
+    const route = `${ParameterGoodEndpoints.TDescCve}/${id}`;
+    return this.put(route, model);
+  }
+
+  remove(id: string | number) {
+    const route = `${ParameterGoodEndpoints.TDescCve}/${id}`;
+    return this.delete(route);
   }
 }

@@ -4,20 +4,40 @@
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
         <button
-          *ngIf="changeFlyerOption || flyerEditMode"
+          *ngIf="flyerReceptionMode"
+          class="btn btn-danger active btn-sm"
+          [disabled]="loadingPostCapture"
+          (click)="endProcess()">
+          <i class="bx bx-chevron-left float-icon"></i>Regresar
+        </button>
+        <button
+          *ngIf="(changeFlyerOption || flyerEditMode) && !flyerReceptionMode"
           class="btn btn-primary active btn-sm"
+          [disabled]="loadingPostCapture"
           (click)="chooseOther()">
           Seleccionar Volante
         </button>
       </div>
     </div>
   </div>
-
-  <div body>
+  <div body class="init-page">
+    <div class="row mb-5" *ngIf="loadingPostCapture">
+      <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center">
+          <div class="loader">
+            <!-- <i class="bx bx-loader bx-lg bx-spin spinner"></i> -->
+          </div>
+          <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+        </div>
+      </div>
+    </div>
+    <form-loader *ngIf="formLoading"></form-loader>
     <form
       [formGroup]="documentsReceptionForm"
       (submit)="(false)"
-      class="form-material">
+      class="form-material"
+      *ngIf="!formLoading"
+      @OnShow>
       <div class="row">
         <div class="col-md-7">
           <div class="d-flex">
@@ -26,6 +46,7 @@
                 outline
                 class="btn btn-primary btn-sm mr-3 active"
                 size="small"
+                [disabled]="loadingPostCapture || wheelNumber.value == null"
                 (click)="sendToRecordUpdate()">
                 Antecedentes
               </button>
@@ -61,7 +82,7 @@
                 [form]="documentsReceptionForm"
                 [data]="identifiers"
                 (fetchItems)="getIdentifiers($event)"
-                bindLabel="description"
+                bindLabel="nameAndId"
                 control="identifier"
                 label="Identificador"
                 [searchOnInit]="true"
@@ -77,13 +98,14 @@
               <input
                 type="text"
                 formControlName="externalRemitter"
-                class="form-control" />
+                class="form-control"
+                [max-length]="60" />
             </form-field>
           </div>
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('affair')"
               label="Asunto">
               <input
@@ -98,7 +120,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="openModalAffairs()">
-                <i class="bx bx-list-plus bx-sm float-icon"></i>
+                <i class="bx bx-list-ul bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -118,7 +140,11 @@
             </div>
             <div class="col-md-4">
               <button
-                [disabled]="procedureStatus == 'ENVIADO' || wheelNumber == null"
+                [disabled]="
+                  (procedureStatus == 'ENVIADO' && wheelNumber.value != null) ||
+                  wheelNumber.value == null ||
+                  loadingPostCapture
+                "
                 type="button"
                 class="ml-5 btn btn-warning btn-sm"
                 (click)="sendFlyer()">
@@ -276,7 +302,8 @@
               <input
                 type="text"
                 formControlName="circumstantialRecord"
-                class="form-control" />
+                class="form-control"
+                [max-length]="30" />
             </form-field>
 
             <form-field
@@ -287,7 +314,8 @@
                 type="text"
                 formControlName="preliminaryInquiry"
                 class="form-control"
-                [readonly]="pgrInterface" />
+                [readonly]="pgrInterface"
+                [max-length]="200" />
             </form-field>
           </div>
 
@@ -300,7 +328,8 @@
                 type="text"
                 formControlName="criminalCase"
                 class="form-control"
-                [readonly]="pgrInterface" />
+                [readonly]="pgrInterface"
+                [max-length]="40" />
             </form-field>
 
             <form-field
@@ -311,13 +340,16 @@
               <input
                 type="text"
                 formControlName="protectionKey"
-                class="form-control" />
+                class="form-control"
+                [max-length]="100" />
             </form-field>
           </div>
 
-          <div class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}">
+          <div
+            class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}"
+            *ngIf="!pgrInterface">
             <form-field
-              *ngIf="!pgrInterface && initialCondition == 'T'"
+              *ngIf="initialCondition == 'T'"
               class="col-md-12"
               [control]="documentsReceptionForm.get('judgementType')"
               label="Tipo Juicio">
@@ -340,7 +372,8 @@
               <input
                 type="text"
                 formControlName="touchPenaltyKey"
-                class="form-control" />
+                class="form-control"
+                [max-length]="30" />
             </form-field>
           </div>
           <div class="row"></div>
@@ -354,7 +387,8 @@
                 type="text"
                 formControlName="officeExternalKey"
                 class="form-control"
-                [readonly]="pgrInterface" />
+                [readonly]="pgrInterface"
+                [max-length]="35" />
             </form-field>
 
             <form-field
@@ -393,7 +427,8 @@
               <input
                 type="text"
                 formControlName="expedientTransferenceNumber"
-                class="form-control" />
+                class="form-control"
+                [max-length]="150" />
             </form-field>
           </div>
 
@@ -405,7 +440,9 @@
                 rows="5"
                 formControlName="observations"
                 class="form-control"
-                [readonly]="pgrInterface"></textarea>
+                [readonly]="pgrInterface"
+                [max-length]="1000"
+                uppercase></textarea>
             </form-field>
           </div>
         </div>
@@ -431,7 +468,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="openModalKeys()">
-                <i class="bx bx-list-plus bx-sm float-icon"></i>
+                <i class="bx bx-list-ul bx-sm float-icon"></i>
               </button>
             </div>
 
@@ -448,18 +485,10 @@
                 [searchOnInit]="true"
                 (change)="cityChange($event)"
                 termMaxLength="60"
-                [showTooltip]="true">
+                [showTooltip]="true"
+                [readonly]="cityLoading">
               </ngx-select>
             </form-field>
-
-            <!-- <div class="col-md-2">
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active"
-                (click)="clearCityState()">
-                <i class="bx bxs-eraser bx-sm float-icon"></i>
-              </button>
-            </div> -->
           </div>
 
           <div class="row pt-5">
@@ -475,7 +504,8 @@
                 label="Ent. Fed"
                 [searchOnInit]="true"
                 termMaxLength="80"
-                [showTooltip]="true">
+                [showTooltip]="true"
+                (change)="entFedChange($event)">
               </ngx-select>
             </form-field>
 
@@ -527,7 +557,7 @@
                 control="autorityNumber"
                 label="Autoridad"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface || stationLoading || transferorLoading"
+                [readonly]="stationLoading || transferorLoading"
                 termMaxLength="400"
                 [showTooltip]="true">
               </ngx-select>
@@ -562,7 +592,7 @@
                 control="crimeKey"
                 label="Delito"
                 [searchOnInit]="true"
-                [readonly]="pgrInterface"
+                [showTooltip]="true"
                 termMaxLength="80">
               </ngx-select>
             </form-field>
@@ -570,7 +600,6 @@
 
           <div class="row pt-5">
             <form-field
-              *ngIf="initialCondition != 'T'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('courtNumber')">
               <ngx-select
@@ -585,11 +614,28 @@
                 [showTooltip]="true">
               </ngx-select>
             </form-field>
+
+            <form-field
+              class="col-md-6"
+              [control]="documentsReceptionForm.get('transference')"
+              *ngIf="showTransference">
+              <ngx-select
+                [form]="documentsReceptionForm"
+                (fetchItems)="getTransferees($event)"
+                [data]="transferees"
+                bindLabel="nameAndId"
+                control="transference"
+                label=" "
+                [searchOnInit]="true"
+                termMaxLength="200"
+                [showTooltip]="true">
+              </ngx-select>
+            </form-field>
           </div>
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('indiciadoNumber')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -604,8 +650,19 @@
               </ngx-select>
             </form-field>
 
+            <div class="col-md-2">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="openModalDefendant()">
+                <i class="bx bx-user-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('viaKey')">
               <ngx-select
                 [form]="documentsReceptionForm"
@@ -622,7 +679,7 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-6"
+              class="col-md-8"
               [control]="documentsReceptionForm.get('destinationArea')"
               label="&Aacute;rea Destino">
               <input
@@ -638,7 +695,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="openModalAreas()">
-                <i class="bx bx-list-plus bx-sm float-icon"></i>
+                <i class="bx bx-list-ul bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -688,7 +745,7 @@
       </div>
       <hr />
     </form>
-    <div class="row pt-5 mb-4">
+    <div class="row pt-5 mb-4" *ngIf="!formLoading">
       <form [formGroup]="flyerCopyRecipientForm" class="form-material col-md-6">
         <form-field class="" [control]="flyerCopyRecipientForm.get('copyuser')">
           <ngx-select
@@ -718,35 +775,37 @@
         </form-field>
       </form>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="!formLoading">
       <div class="d-flex justify-content-center">
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'N' &&
-            !pgrInterface &&
-            !satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'N' &&
+              !pgrInterface &&
+              !satInterface) ||
+            pgrGoodsProcessed
           ">
           <confirm-button
             text="Guardar"
             loadingText="Cargando"
-            [disabled]="procedureBlocked"
+            [disabled]="procedureBlocked || loadingPostCapture"
             [loading]="loading"
             (confirm)="save()"></confirm-button>
         </div>
         <div
           class="m-3"
           *ngIf="
-            documentsReceptionForm.get('goodRelation').value == 'S' ||
-            pgrInterface ||
-            satInterface
+            (documentsReceptionForm.get('goodRelation').value == 'S' ||
+              pgrInterface ||
+              satInterface) &&
+            !pgrGoodsProcessed
           ">
           <confirm-button
             text="Siguiente"
             loadingText="Cargando"
-            [disabled]="procedureBlocked"
+            [disabled]="procedureBlocked || loadingPostCapture"
             [loading]="loading"
-            (confirm)="goodsCaptureCheck()"></confirm-button>
+            (confirm)="nextStep()"></confirm-button>
         </div>
       </div>
     </div>

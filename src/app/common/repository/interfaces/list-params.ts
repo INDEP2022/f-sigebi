@@ -13,6 +13,7 @@ export class FilterParams {
   page?: number = 1;
   limit?: number = 10;
   search?: string = '';
+  sortBy?: string = null;
   private filters: string[] = [];
 
   constructor(filter?: FilterParams) {
@@ -20,8 +21,13 @@ export class FilterParams {
       this.page = filter.page ?? 1;
       this.limit = filter.limit ?? 10;
       this.search = filter.search ?? '';
+      //this.sortBy = filter.sortBy ?? '';
       this.filters = filter.filters ?? [];
     }
+  }
+
+  addFilter2(filter: string) {
+    this.filters.push(filter);
   }
 
   addFilter(field: string, value: string | number, operator?: SearchFilter) {
@@ -48,6 +54,9 @@ export class FilterParams {
     paginationParams.push(`page=${this.page}`);
     paginationParams.push(`limit=${this.limit}`);
     paginationParams.push(`search=${this.search ?? ''}`);
+    if (this.sortBy) {
+      paginationParams.push(`sortBy=${this.sortBy}`);
+    }
     return paginationParams;
   }
 }
@@ -61,7 +70,9 @@ class DynamicFilter {
 
   getParams() {
     if (this.value == SearchFilter.NULL) {
-      return `filter.${this.field}=${SearchFilter.NULL}`;
+      return `filter.${this.field}=${this.operator ? this.operator + ':' : ''}${
+        SearchFilter.NULL
+      }`;
     }
     return `filter.${this.field}=${this.operator}:${this.value}`;
   }
@@ -72,6 +83,7 @@ export enum SearchFilter {
   IN = '$in',
   LIKE = '$ilike',
   NOT = '$not',
+  NEQ = '$neq',
   NULL = '$null',
   ILIKE = '$ilike',
   GT = '$gt',
@@ -79,6 +91,7 @@ export enum SearchFilter {
   GTE = '$gte',
   LTE = '$lte',
   BTW = '$btw',
+  OR = '$or',
 }
 
 export interface DynamicFilterLike {

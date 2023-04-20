@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
+import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { DynamicCatalogEndpoint } from 'src/app/common/constants/endpoints/ms-dynamiccatalog-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DynamicCatalogRepository } from 'src/app/common/repository/repositories/ms-dynamiccatalog-repository';
@@ -7,6 +8,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ISingleTable,
+  ITable,
   ITables,
   ITablesData,
   TvalTable1Data,
@@ -39,14 +41,8 @@ export class DynamicTablesService extends HttpService {
     return this.get<ISingleTable>(route);
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<ITables>> {
-    console.log(
-      this.get<IListResponse<ITablesData>>(
-        DynamicCatalogEndpoint.DinamicTables,
-        params
-      )
-    );
-    return this.get<IListResponse<ITablesData>>(
+  getAll(params?: ListParams): Observable<IListResponse<ITable>> {
+    return this.get<IListResponse<ITable>>(
       DynamicCatalogEndpoint.DinamicTables,
       params
     );
@@ -72,5 +68,22 @@ export class DynamicTablesService extends HttpService {
     return this.get<IListResponse<TvalTable1Data>>(fullRoute);
   }
 
-  /* getfindTvaltable1ByTableKey() */
+  getTablesList(params?: string): Observable<IListResponse<ITable>> {
+    let partials = ENDPOINT_LINKS.DinamicTablesSelect.split('/');
+    this.microservice = partials[0];
+    return this.get<IListResponse<ITable>>(partials[1], params).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(m => {
+            return {
+              ...m,
+              name: `${m.name} - ${m.description} - ${m.tableType}`,
+            };
+          }),
+        };
+      }),
+      tap(() => (this.microservice = ''))
+    );
+  }
 }

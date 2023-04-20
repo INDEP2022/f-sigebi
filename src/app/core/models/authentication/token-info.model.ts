@@ -23,4 +23,7 @@ export interface TokenInfoModel {
   family_name: string;
   email: string;
   department: string;
+  cargonivel1: string;
+  cargonivel2: string;
+  cargonivel3: string;
 }

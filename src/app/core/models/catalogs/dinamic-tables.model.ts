@@ -28,10 +28,10 @@ export interface ITablesType {
 
 export interface ITable {
   table?: string;
-  name: string;
-  description: string;
-  actionType: string;
-  tableType: number;
+  name?: string;
+  description?: string;
+  actionType?: string;
+  tableType?: number;
   //numRegister: number;
 }
 

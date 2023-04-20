@@ -1,33 +1,33 @@
 import { SeePhotoComponent } from '../actions/see-photo/see-photo.component';
 
 export const PHOTOS_TABLE_COLUMNS = {
-  noPhoto: {
-    title: 'No. Fotografia',
+  dDocName: {
+    title: 'No. Fotografía',
     type: 'string',
     sort: false,
   },
-  documentTitle: {
-    title: 'Titulo del Documento',
+  ddocTitle: {
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
-  creationDate: {
+  dInDate: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
   },
-  noManagement: {
-    title: 'No. Gestion',
+  xidBien: {
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
   actions: {
-    title: 'Actions',
+    title: 'Acciones',
     type: 'custom',
     class: 'open-photos',
     filter: false,

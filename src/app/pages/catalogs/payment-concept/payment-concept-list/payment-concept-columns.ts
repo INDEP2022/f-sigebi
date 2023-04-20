@@ -1,17 +1,13 @@
 export const PAYMENT_CONCEPT_COLUMNS = {
   id: {
-    title: 'Registro',
+    title: 'No.',
     type: 'number',
     sort: false,
+    width: '10%',
   },
   description: {
     title: 'Descripción',
     type: 'string',
-    sort: false,
-  },
-  numRegister: {
-    title: 'No. registro',
-    type: 'number',
     sort: false,
   },
 };

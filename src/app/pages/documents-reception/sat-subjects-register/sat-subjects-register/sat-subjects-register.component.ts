@@ -162,7 +162,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       this.satTransferForm.get('satOnlyKey').value ||
       this.satTransferForm.get('satProceedings').value ||
       this.satTransferForm.get('satHouseGuide').value ||
-      this.satTransferForm.get('satMasterGuide').value
+      this.satTransferForm.get('satMasterGuide').value ||
+      this.satTransferForm.get('job').value
     ) {
       valid = true;
     } else {
@@ -279,7 +280,6 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       .getReport(filtrados, 'gestion_sat')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data.base64) {
             this.downloadFile(
               data.base64,
@@ -375,6 +375,11 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista SAT Transferencia
    */
   async getSatTransferencia(resetValues: boolean = false) {
+    if (resetValues == false) {
+      this.satTransferForm.get('satProceedings').reset();
+      this.satTransferForm.get('job').reset();
+      this.satTransferForm.updateValueAndValidity();
+    }
     let filtrados =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.satTransferForm.value,
@@ -382,10 +387,6 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         this.filtroPaginado,
         'filter'
       );
-    if (resetValues == true) {
-      this.satTransferForm.get('job').reset();
-      this.satTransferForm.updateValueAndValidity();
-    }
     this.satSubjectsRegisterService
       .getSatTransferenciaBySearch(filtrados)
       .subscribe({
@@ -415,10 +416,16 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getCoordinador(params: ListParams) {
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.satSubjectsRegisterService
       .getCoordinadorBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.cordinators = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -428,7 +435,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.cordinators = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -436,10 +444,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**
@@ -448,12 +453,19 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * @returns
    */
   getStatusProcess(params: ListParams) {
-    params.take = 20;
+    params.take = 10;
+    params['orderColumn'] = 'id';
     params['order'] = 'DESC';
+    params['filter.description'] = '$ilike:' + params.text;
+    delete params.take;
+    delete params.text;
+    if (params['search']) {
+      delete params['search'];
+    }
     let subscription = this.satSubjectsRegisterService
       .getStatusBySearch(params)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           this.processStatus = new DefaultSelect(
             data.data.map(i => {
               i.description = '#' + i.id + ' -- ' + i.description;
@@ -463,7 +475,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        err => {
+        error: err => {
+          this.processStatus = new DefaultSelect();
           this.onLoadToast(
             'error',
             'Error',
@@ -471,10 +484,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           );
           subscription.unsubscribe();
         },
-        () => {
-          subscription.unsubscribe();
-        }
-      );
+      });
   }
 
   /**
@@ -489,6 +499,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * Dejar en blanco el campo de delegación
    */
   resetStatusProcess() {
+    this.satForm.get('processStatus').reset();
     this.satForm.get('processStatus').setValue(null);
     this.satForm.get('processStatus').updateValueAndValidity();
   }
@@ -500,8 +511,9 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     if (data.length == 0) {
       this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
     }
+    let dataChangeNames = this.setNombreData(opcion, data);
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(data, {
+    this.excelService.export(dataChangeNames, {
       filename:
         opcion == 'gestion'
           ? `GestionSat__Listado_Tramites_SAT${new Date().getTime()}`
@@ -509,11 +521,35 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     });
   }
 
+  setNombreData(opcion: string, data: any[]) {
+    let dataSet: any[] = [];
+    let gestionData = SAT_PAPERWORK_MAILBOX_COLUMNS;
+    let transferData = SAT_TRANSFER_COLUMNS;
+    data.forEach(elementData => {
+      let newObj: any = {};
+      for (const key in elementData) {
+        if (Object.prototype.hasOwnProperty.call(elementData, key)) {
+          if (opcion == 'gestion') {
+            newObj[gestionData[key as keyof typeof gestionData].title] =
+              elementData[key];
+          } else {
+            newObj[transferData[key as keyof typeof transferData].title] =
+              elementData[key];
+          }
+        }
+      }
+      dataSet.push(newObj);
+    });
+    return dataSet;
+  }
+
   selectRow(row: any) {
-    this.satTransferForm.get('satProceedings').setValue(row.proceedingsNumber);
-    this.satTransferForm.get('job').setValue(row.officeNumber);
-    this.satTransferForm.updateValueAndValidity();
     if (row.proceedingsNumber && row.officeNumber) {
+      this.satTransferForm
+        .get('satProceedings')
+        .setValue(row.proceedingsNumber);
+      this.satTransferForm.get('job').setValue(row.officeNumber);
+      this.satTransferForm.updateValueAndValidity();
       this.onLoadToast(
         'info',
         '¡Búsqueda!',
@@ -521,6 +557,10 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       );
     } else {
       if (row.proceedingsNumber) {
+        this.satTransferForm
+          .get('satProceedings')
+          .setValue(row.proceedingsNumber);
+        this.satTransferForm.updateValueAndValidity();
         this.onLoadToast(
           'info',
           '¡Búsqueda!',
@@ -528,11 +568,13 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         );
       }
       if (row.officeNumber) {
+        this.satTransferForm.get('job').setValue(row.officeNumber);
+        this.satTransferForm.updateValueAndValidity();
         this.onLoadToast('info', '¡Búsqueda!', ERROR_FORM_SEARCH_OFICIO_SAT);
       }
     }
     setTimeout(() => {
       this.consultarSatTransferForm(true, true);
-    }, 100);
+    }, 300);
   }
 }

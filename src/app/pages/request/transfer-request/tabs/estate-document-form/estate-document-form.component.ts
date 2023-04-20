@@ -6,7 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
@@ -18,8 +18,12 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
 import { EXPEDIENT_DOC_EST_COLUMNS } from '../registration-request-form/expedient-doc-columns';
@@ -42,20 +46,23 @@ export class EstateDocumentFormComponent
   showSearchForm: boolean = false;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
+  rowSelected: any = null;
+  regionalDelegacionId: number = 0;
 
   constructor(
     private modalService: BsModalService,
+    private bsParentModalRef: BsModalRef,
     private fb: FormBuilder,
     private typeRelevantService: TypeRelevantService,
     private goodServices: GoodService,
     private genericService: GenericService,
-    private fractionService: FractionService
+    private fractionService: FractionService,
+    private requestService: RequestService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
       columns: EXPEDIENT_DOC_EST_COLUMNS,
     };
   }
@@ -67,18 +74,33 @@ export class EstateDocumentFormComponent
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['requestId'].currentValue) {
-      console.log(changes['requestId'].currentValue);
+      this.searchForm.controls['requestId'].setValue(this.requestId);
       this.params.value.addFilter('requestId', this.requestId);
       this.getData();
+      if (this.requestId !== null) {
+        this.getRequest();
+      }
     }
   }
 
   initForm() {
     this.searchForm = this.fb.group({
-      goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      goodId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       goodTypeId: [null],
-      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      requestId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+    });
+  }
+
+  selectRow(event: any) {
+    this.rowSelected = event.data;
+  }
+
+  getRequest() {
+    this.requestService.getById(this.requestId).subscribe({
+      next: (resp: any) => {
+        this.regionalDelegacionId = resp.regionalDelegationId;
+      },
     });
   }
 
@@ -91,15 +113,18 @@ export class EstateDocumentFormComponent
     });
   }
 
+  //abrir ver documentos
   showDocsEstValidate() {
-    if (!this.documentSelect) {
-      alert('Selecciona un documento');
-    } else {
-      const showDoctsEst = this.modalService.show(DocumentsListComponent, {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      });
+    if (!this.rowSelected) {
+      this.message(
+        'info',
+        'Error',
+        'Seleccione un data para poder ver sus documentos'
+      );
+      return;
     }
+    this.rowSelected['regionalDelegacionId'] = this.regionalDelegacionId;
+    this.openModal(DocumentsListComponent, 'doc-bien', this.rowSelected);
   }
 
   selectDocument(selectDocument?: any) {
@@ -108,6 +133,12 @@ export class EstateDocumentFormComponent
     } else {
       this.documentSelect = false;
     }
+  }
+
+  clean() {
+    this.documentsEstData = [];
+    this.searchForm.reset();
+    this.requestId = null;
   }
 
   search() {
@@ -127,6 +158,9 @@ export class EstateDocumentFormComponent
     this.buildFilters();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getData();
+      if (this.requestId != null) {
+        this.getRequest();
+      }
     });
   }
 
@@ -139,17 +173,26 @@ export class EstateDocumentFormComponent
           const physicalStatus = await this.getPhysicalStatus(
             item.physicalStatus
           );
+          item['requestId'] = item.requestId.id;
           item['physicalStatusName'] = physicalStatus;
           const destiny = await this.getDestiny(item.physicalStatus);
           item['destinyName'] = destiny;
-          const fraction = await this.getFraction(item.fractionId);
-          item['fractionName'] = fraction;
+          if (item.fractionId) {
+            //const fraction = await this.getFraction(item.fractionId);
+            item['fractionName'] = item.fractionId.description;
+          } else {
+            item['fractionName'] = '';
+          }
         });
 
         Promise.all(result).then(data => {
           this.documentsEstData = resp.data;
           this.loading = false;
         });
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
       },
     });
   }
@@ -202,5 +245,28 @@ export class EstateDocumentFormComponent
         resolve('');
       }
     });
+  }
+
+  openModal(component: any, typeDoc: string, parameters?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        parameter: parameters,
+        typeDoc: typeDoc,
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsParentModalRef = this.modalService.show(component, config);
+
+    /*this.bsModalRef.content.event.subscribe((res: any) => {
+      this.matchLevelFraction(res);
+    });*/
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 }

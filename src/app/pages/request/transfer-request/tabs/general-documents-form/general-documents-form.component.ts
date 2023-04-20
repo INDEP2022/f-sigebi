@@ -1,4 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -19,7 +27,12 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
@@ -33,7 +46,10 @@ import { EXPEDIENT_DOC_GEN_COLUMNS } from '../registration-request-form/expedien
   templateUrl: './general-documents-form.component.html',
   styleUrls: ['../../styles/search-document-form.scss'],
 })
-export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
+export class GeneralDocumentsFormComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() searchFileForm: FormGroup;
   @Input() requestForm: any;
   searchForm: ModelForm<IRequest>;
@@ -51,6 +67,9 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   idDelegReg: number = null;
   idTransferent: number = null;
   idStation: number = null;
+  rowSelected: any;
+
+  private http = inject(HttpClient);
 
   constructor(
     private route: ActivatedRoute,
@@ -64,7 +83,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     private transferenteService: TransferenteService,
     private stationService: StationService,
     private requestService: RequestService,
-    private bsModalRef: BsModalRef,
+    private bsParentModalRef: BsModalRef,
     private requestHelperService: RequestHelperService
   ) {
     super();
@@ -73,6 +92,11 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
       actions: false,
       columns: EXPEDIENT_DOC_GEN_COLUMNS,
     };
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.requestForm.valueChanges.subscribe((data: any) => {
+      //console.log(this.requestForm.getRawValue());
+    });
   }
 
   ngOnInit(): void {
@@ -98,34 +122,73 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
 
   initSearchForm() {
     this.searchForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      authorityId: [null],
-      typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
-      recordId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      indicatedTaxpayer: [null],
-      domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
-      regionalDelegationId: [null],
-      transferenceFile: [null],
-      trialType: [null], //tipo de juicio
-      keyStateOfRepublic: [null],
-      trial: [null, [Validators.pattern(STRING_PATTERN)]],
-      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
-      transferenceId: [null],
-      lawsuit: [null, [Validators.pattern(STRING_PATTERN)]],
-      stationId: [null],
-      protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      authorityId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      typeOfTransfer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      recordId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      indicatedTaxpayer: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
+      domainExtinction: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      transferenceFile: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
+      ],
+      trialType: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ], //tipo de juicio
+      keyStateOfRepublic: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      trial: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
+      previousInquiry: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      transferenceId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      lawsuit: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
+      stationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      protectNumber: [
+        null,
+        [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(100)],
+      ],
     });
   }
 
+  //seleccionar fila
+  selectRow(event: any) {
+    this.rowSelected = event.data;
+  }
+
+  //abrir nuevo expediente
   newExpedient() {
-    this.openModal(AssociateFileComponent, this.requestForm);
+    this.openModal(AssociateFileComponent, 'doc-expediente', this.requestForm);
   }
 
+  //abrir ver documentos
   showDocsEst() {
-    const showDoctsEst = this.modalService.show(DocumentsListComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    if (!this.rowSelected) {
+      this.message(
+        'info',
+        'Error',
+        'Seleccione un data para poder ver sus documentos'
+      );
+      return;
+    }
+    this.openModal(DocumentsListComponent, 'doc-expediente', this.rowSelected);
   }
 
   /* electronicSign() {
@@ -182,11 +245,18 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
           element['paperDate'] = new Date(
             element.paperDate
           ).toLocaleDateString();
-          element['regionalDelegationName'] = element.delegation.description;
-          element['stateName'] = element.state.descCondition;
-          element['transferentName'] = element.transferent.name;
-          element['stationName'] = element.emisora.stationName;
-          element['authorityName'] = element.authority.authorityName;
+          element['regionalDelegationName'] =
+            element.regionalDelegation !== null
+              ? element.regionalDelegation.description
+              : '';
+          element['stateName'] =
+            element.state !== null ? element.state.descCondition : '';
+          element['transferentName'] =
+            element.transferent !== null ? element.transferent.name : '';
+          element['stationName'] =
+            element.emisora !== null ? element.emisora.stationName : '';
+          element['authorityName'] =
+            element.authority !== null ? element.authority.authorityName : '';
         }
 
         this.documentsGenData = resp.data;
@@ -200,7 +270,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   builtFilter(form: any) {
-    this.params.value.addFilter('requestStatus', 'A_TURNAR');
+    //this.params.value.addFilter('requestStatus', 'A_TURNAR');
     this.params.value.addFilter('recordId', 0, SearchFilter.NOT);
     for (const key in form) {
       if (form[key] !== null) {
@@ -275,10 +345,11 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     }
   }
 
-  openModal(component: any, parameters?: any) {
+  openModal(component: any, typeDoc: string, parameters?: any) {
     let config: ModalOptions = {
       initialState: {
         parameter: parameters,
+        typeDoc: typeDoc,
         callback: (next: boolean) => {
           //if(next) this.getExample();
         },
@@ -286,7 +357,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalService.show(component, config);
+    this.bsParentModalRef = this.modalService.show(component, config);
 
     /*this.bsModalRef.content.event.subscribe((res: any) => {
       this.matchLevelFraction(res);
@@ -335,7 +406,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
-        /*this.requestService.update(this.requestId, request).subscribe({
+        this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             if (resp.stateCode != null) {
               this.onLoadToast(
@@ -346,11 +417,26 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
             }
 
             if (resp.id != null) {
-              this.updateStateRequestTab();
+              Swal.fire({
+                title: 'Solicitud asociada al expediente: ' + this.requestId,
+                showDenyButton: false,
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
+                denyButtonText: `Don't save`,
+                confirmButtonColor: '#9D2449',
+              }).then(result => {
+                if (result.isConfirmed) {
+                  this.updateStateRequestTab();
+                }
+              });
             }
           },
-        });*/
+        });
       }
     });
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 }

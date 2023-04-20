@@ -233,7 +233,7 @@ export class PurgingRecordsComponent extends BasePage implements OnInit {
     const confirm = await this.alertQuestion(
       'warning',
       'Precaución',
-      '¿Estas seguro que desea realizar la integración del expediente?'
+      '¿Estás seguro que desea realizar la integración del expediente?'
     );
     if (confirm.isConfirmed) {
     }

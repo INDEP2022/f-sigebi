@@ -1,0 +1,48 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nuevo indiciado</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="indicatedForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="indicatedForm.get('name')" label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              [max-length]="250" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field [control]="indicatedForm.get('curp')" label="Curp">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              [max-length]="18" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!indicatedForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

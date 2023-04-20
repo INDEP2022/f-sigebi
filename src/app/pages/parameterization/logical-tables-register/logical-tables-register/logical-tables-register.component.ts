@@ -87,7 +87,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.dinamicTablesService.getAll(params).subscribe({
+    this.dinamicTablesService.getAll2(params).subscribe({
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
@@ -127,7 +127,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
   }
 
   delete(id: number) {
-    this.dinamicTablesService.remove(id).subscribe({
+    this.dinamicTablesService.remove2(id).subscribe({
       next: () => this.getDinamicTables(),
     });
   }

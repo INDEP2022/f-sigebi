@@ -124,6 +124,8 @@ export enum ENDPOINT_LINKS {
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
+  WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',
+  WarehouseClassifyCosts = 'parametergood/warehouse-classif-costs',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
   Document = 'documents',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
@@ -132,10 +134,11 @@ export enum ENDPOINT_LINKS {
   DocumentsForDictumType = 'documents/api/v1/documents-for-dictum',
   DocumentSeparators = 'documents/document-separator',
   DocumentsType = 'documents-types/',
-  DinamicTables = 'dynamiccatalog/dinamic-tables',
+  DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',
+  DinamicTablesFind = 'dynamiccatalog/api/v1/dinamic-tables/find-tvaltable1-by-tableKey',
   DinamicTable = 'dinamic-tables/get-tvaltable5-by-table',
   DinamicTable1 = 'dinamic-tables/tavaltable1',
 
@@ -147,13 +150,22 @@ export enum ENDPOINT_LINKS {
   NumeraryCategories = 'numerary-categories',
   NumeraryCategoriesAutom = 'categorization-autom-numerary',
   tevents = 'event/comer-tevents',
-  usuxtpevents = 'event/comer-usuxtpevents',
+  usuxtpevents = 'event/application/paComerUsuxtpevents',
   security = 'security/seg-profile',
+
   //request
   request = 'request',
+  //Verificar Cumplimiento
+  VerificationCompliance = 'verification-compliance',
+  RequestDocumentation = 'request-documentation',
+
   //expedient
   Expedient = 'expedient',
   //goodsQuery//
   GoodsQuery = 'goodsquery',
   ProgrammingGood = 'ProgrammingGood',
+  DinamicTablesSelect = 'dynamiccatalog/dinamic-tables',
+  StrategyContract = 'contract/strategy-contract',
+  ZoneContract = 'catalog/zones-contract',
+  Process = 'strategy/strategy-process',
 }

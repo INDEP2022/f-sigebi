@@ -3,6 +3,7 @@ export const IDENTIFIER_COLUMNS = {
     title: 'Código',
     type: 'string',
     sort: false,
+    width: '10%',
   },
 
   description: {
@@ -14,12 +15,6 @@ export const IDENTIFIER_COLUMNS = {
   keyview: {
     title: 'Clave vista',
     type: 'string',
-    sort: false,
-  },
-
-  noRegistration: {
-    title: 'Número de registro',
-    type: 'number',
     sort: false,
   },
 };

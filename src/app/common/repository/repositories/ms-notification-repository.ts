@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { INotificationTransferentIndiciadoCity } from 'src/app/core/models/ms-notification/notification.model';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../interfaces/list-params';
 import { INotificationMethods } from '../interfaces/ms-notification-methods';
@@ -74,5 +75,14 @@ export class NotificationRepository<T> implements INotificationMethods<T> {
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
+  }
+
+  getNotificacionesByTransferentIndiciadoCity(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.post<INotificationTransferentIndiciadoCity[]>(
+      `${fullRoute}`,
+      formData
+    );
   }
 }

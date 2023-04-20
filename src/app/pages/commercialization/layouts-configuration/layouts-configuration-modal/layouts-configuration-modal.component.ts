@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerLayouts,
+  IComerLayoutsW,
   IL,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
@@ -32,7 +33,8 @@ export class LayoutsConfigurationModalComponent
   layout: IL;
   layoutList: IComerLayouts[] = [];
   @Output() onConfirm = new EventEmitter<any>();
-  @Input() structureLayout: any;
+  @Input()
+  structureLayout: IComerLayouts;
 
   constructor(
     private modalRef: BsModalRef,
@@ -45,12 +47,17 @@ export class LayoutsConfigurationModalComponent
     this.prepareForm();
     this.structureLayoutSelected = this.structureLayout;
     // this.inpuLayout = this.idLayout.toString().toUpperCase();
-    console.log(this.structureLayoutSelected);
+    console.log(this.structureLayout);
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
       idLayout: [null],
+      // descLayout: [null, [Validators.required]],
+      // screenKey: [null, [Validators.required]],
+      // table: [null, [Validators.required]],
+      // criterion: [null, [Validators.required]],
+      indActive: [null],
       idConsec: [null],
       position: [
         null,
@@ -86,7 +93,7 @@ export class LayoutsConfigurationModalComponent
   create() {
     try {
       this.loading = false;
-      this.layoutsConfigService.create(this.structureLayout).subscribe({
+      this.layoutsConfigService.create(this.providerForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
@@ -105,8 +112,22 @@ export class LayoutsConfigurationModalComponent
       'Desea actualizar este layout?'
     ).then(question => {
       if (question.isConfirmed) {
+        let params: IComerLayoutsW = {
+          idConsec: this.provider.idConsec,
+          carFilling: this.provider.carFilling,
+          column: this.provider.column,
+          constant: this.provider.constant,
+          dateFormat: this.provider.dateFormat,
+          decimal: this.provider.decimal,
+          indActive: this.provider.indActive,
+          justification: this.provider.justification,
+          length: this.provider.length,
+          position: this.provider.position,
+          registryNumber: this.provider.registryNumber,
+          type: this.provider.type,
+        };
         this.layoutsConfigService
-          .update(this.provider.id, this.providerForm.value)
+          .updateL(this.provider.idLayout.id, params)
           .subscribe({
             next: data => this.handleSuccess(),
             error: error => {
@@ -120,9 +141,10 @@ export class LayoutsConfigurationModalComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    setTimeout(() => {
-      this.onLoadToast('success', this.title, `${message} Correctamente`);
-    }, 2000);
+    // setTimeout(() => {
+    //   this.onLoadToast('success', this.title, `${message} Correctamente`);
+    // }, 2000);
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.onConfirm.emit(true);
     this.modalRef.content.callback(true);

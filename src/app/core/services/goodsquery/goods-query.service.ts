@@ -5,7 +5,7 @@ import { GoodsQueryEndpoints } from 'src/app/common/constants/endpoints/ms-good-
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AttribClassifGoodMethodsRepository } from 'src/app/common/repository/repositories/attrib-classif-good-repository';
 import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
@@ -81,11 +81,17 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  //realiza un Post para obtener los ligies
   getUnitLigie(params: Object): Observable<any> {
     return this.goodQueryRepository.getUnitLigie(
       this.routeLigieUnitMeasure,
       params
     );
+  }
+
+  //realiza un Get para obtener las unidades
+  getUnitLigies(params: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(this.routeLigieUnitMeasure, params);
   }
 
   getZipCode(
@@ -129,9 +135,10 @@ export class GoodsQueryService extends HttpService {
   //   return this.attribClassifGoodMethodsRepository.remove(this.attribClassifGoodRoute, id);
   // }
 
+  // Se cambia getClasifXUnit por getUnit
   getClasifXUnitByClasifNum(clasifNum: number) {
     return this.httpClient.get<IListResponse<IUnityByClasif>>(
-      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getClasifXUnit/${clasifNum}`
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getUnit/${clasifNum}`
     );
   }
 
@@ -156,11 +163,21 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  getHistoryIndicatorsView(params: _Params) {
+    return this.get('views/history-indicator-view', params);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
+  }
+  getAtribuXClasif(_params: _Params) {
+    return this.get<IListResponse<IAttribClassifGoods>>(
+      GoodsQueryEndpoints.AtributesClassificationGood,
+      _params
+    );
   }
 }

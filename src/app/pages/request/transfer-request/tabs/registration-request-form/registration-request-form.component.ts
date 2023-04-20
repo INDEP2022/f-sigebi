@@ -57,10 +57,13 @@ export class RegistrationRequestFormComponent implements OnInit {
   }
 
   changeTab(event: any) {
-    console.log(event);
     if (event.changeTab === true) {
       this.docGoodRequestId = event.requestId;
       this.staticTabs.tabs[2].active = true;
+
+      setTimeout(() => {
+        this.docGoodRequestId = null;
+      }, 5000);
     }
   }
 }

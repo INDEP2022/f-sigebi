@@ -5,9 +5,11 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EXPEDIENTS_REQUEST_COLUMNS } from './expedients-request-columns';
 
@@ -23,19 +25,57 @@ export class ExpedientsRequestTabComponent
   @Input() typeDoc: string = '';
   title: string = 'Solicitudes del Expediente';
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paragraphs: any[] = [];
-
-  constructor() {
+  requestId: number = 0;
+  screen: 'expedient-tab';
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private requestService: RequestService
+  ) {
     super();
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
       columns: EXPEDIENTS_REQUEST_COLUMNS,
     };
+
+    this.requestId = this.activatedRoute.snapshot.paramMap.get(
+      'id'
+    ) as unknown as number;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getIdExpediente();
+  }
+
+  getIdExpediente() {
+    this.requestService.getById(this.requestId).subscribe(data => {
+      this.getRequestByExpedient(data.recordId);
+    });
+  }
+
+  getRequestByExpedient(expeident: number) {
+    if (expeident) {
+      this.params.getValue()['filter.recordId'] = expeident;
+      this.requestService.getAll(this.params.getValue()).subscribe({
+        next: async data => {
+          const filterInfo = data.data.map(items => {
+            items.authorityId = items.authority.authorityName;
+            items.regionalDelegationId = items.regionalDelegation.description;
+            items.transferenceId = items.transferent.name;
+            items.stationId = items.emisora.stationName;
+            items.state = items.state.descCondition;
+            return items;
+          });
+          this.paragraphs = filterInfo;
+          this.totalItems = data.count;
+        },
+        error: error => {},
+      });
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     let onChangeCurrentValue = changes['typeDoc'].currentValue;

@@ -4,9 +4,12 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IResponse,
+} from '../../interfaces/list-response.interface';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
@@ -43,6 +46,14 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get<IListResponse<{ id: string; description: string }>>(
       this.endpoint + '/get-types'
     );
+  }
+
+  paMaintenance(pusuarioDeti: string, pUsuarioReq: string, pObserv: string) {
+    return this.post<IResponse>(this.endpoint + '/pa-maintenance', {
+      pusuarioDeti,
+      pUsuarioReq,
+      pObserv,
+    });
   }
 
   deleteMasive(selecteds: IProceedingDeliveryReception[]) {
@@ -134,7 +145,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAll(
-    params?: ListParams | string
+    params?: _Params
   ): Observable<IListResponse<IProceedingDeliveryReception>> {
     return this.get<IListResponse<IProceedingDeliveryReception>>(
       this.endpoint,

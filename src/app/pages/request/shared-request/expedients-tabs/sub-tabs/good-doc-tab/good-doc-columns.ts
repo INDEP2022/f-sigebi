@@ -1,41 +1,80 @@
 export const GOOD_DOCUMENTES_COLUMNS = {
-  noGestion: {
-    title: 'No. Gestion',
+  requestId: {
+    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
-  goodsDescription: {
-    title: 'Descripción del Bien Transferente',
+
+  goodId: {
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  goodType: {
-    title: 'Tipo de Bien',
+
+  uniqueKey: {
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },
-  physicalState: {
+
+  goodTypeName: {
+    title: 'Tipo Bien',
+    type: 'string',
+    sort: false,
+  },
+
+  fractionId: {
+    title: 'Fracción',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      return value ? (value.includes('undefined') ? '' : value) : '';
+    },
+  },
+
+  requestFolio: {
+    title: 'Folio de solicitud',
+    type: 'string',
+    sort: false,
+  },
+
+  descriptionGoodSae: {
+    title: 'Descripción bien SAE',
+    type: 'string',
+    sort: false,
+    width: '200px',
+  },
+  physicalStatus: {
     title: 'Estado Fisico',
     type: 'string',
     sort: false,
   },
-  conservaState: {
-    title: 'Estado de Concervación',
+
+  stateConservation: {
+    title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
+
   unitMeasure: {
-    title: 'Unidad de Medida Transferente',
+    title: 'Unidad de medida transferente',
     type: 'string',
     sort: false,
   },
-  tranferenceUnit: {
-    title: 'Unidad de la Transferencia',
+  ligieUnit: {
+    title: 'Unidad de medida Ligie',
     type: 'string',
     sort: false,
   },
-  destinyLigie: {
-    title: 'Destino Ligie',
+
+  quantity: {
+    title: 'Cantidad de la transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  saeDestiny: {
+    title: 'Destino SAE',
     type: 'string',
     sort: false,
   },

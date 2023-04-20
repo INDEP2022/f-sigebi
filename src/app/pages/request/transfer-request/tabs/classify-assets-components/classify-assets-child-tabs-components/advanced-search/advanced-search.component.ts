@@ -62,8 +62,14 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.searchForm = this.fb.group({
-      code: [null],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      code: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+      ],
+      description: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
       typeRelevant: [null],
     });
   }
@@ -86,31 +92,31 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   search(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      /*params.page = data.inicio;
-      params.limit = data.pageSize;*/
+      let params = new ListParams();
+      params.page = data.inicio;
+      params.limit = data.pageSize;
       this.getSearch(data);
     });
   }
 
-  getSearch(data: any) {
-    let params = new ListParams();
-    params.page = data.inicio;
-    params.limit = data.pageSize;
+  getSearch(params: ListParams) {
+    //let params = new ListParams();
 
     const code = this.searchForm.controls['code'].value;
     const description = this.searchForm.controls['description'].value;
     const typeRelevant = this.searchForm.controls['typeRelevant'].value;
 
     if (code != null) {
-      params['filter.fractionCode'] = `$eq:${code}`;
+      params['filter.code'] = `$eq:${code}`;
     }
     if (description != null) {
-      params['filter.description'] = `$eq:${description}`;
+      params['filter.description'] = `$ilike:${description}`;
     }
     if (typeRelevant != null) {
       params['filter.relevantTypeId'] = `$eq:${typeRelevant}`;
     }
 
+    this.paragraphs = [];
     this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log(data);
@@ -125,6 +131,8 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
 
   clean(): void {
     this.searchForm.reset();
+    this.paragraphs = [];
+    this.totalItems = 0;
   }
 
   complianceSelected(): void {

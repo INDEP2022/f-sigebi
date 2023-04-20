@@ -1,28 +1,50 @@
+import { IZoneContract } from 'src/app/core/models/catalogs/zone-contract.model';
+
 export const CONTRACTS_COLUMNS = {
-  contract: {
+  contractKey: {
     title: 'Contrato',
-    width: '10%',
+    type: 'string',
     sort: false,
   },
-  zones: {
-    title: 'Zonas',
-    width: '30%',
+  zoneContractKey: {
+    title: 'N°',
     sort: false,
+  },
+  zone: {
+    title: 'Zonas',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: IZoneContract) => {
+      return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   startDate: {
-    title: 'Fecha page',
-    width: '30%',
+    title: 'Fecha inicial',
     sort: false,
   },
-
-  finalDate: {
+  endDate: {
     title: 'Fecha final',
-    width: '30%',
     sort: false,
   },
-  // valid: {
-  //   title: 'Vigente',
-  //   width: '5%',
-  //   sort:false
-  // },
+  statusContract: {
+    title: 'Vigente',
+    sort: false,
+    valuePrepareFunction: (value: string | number) => {
+      if (value === '1') {
+        return 'Sí';
+      } else if (value === '0') {
+        return 'No';
+      } else {
+        return '';
+      }
+    },
+  },
 };

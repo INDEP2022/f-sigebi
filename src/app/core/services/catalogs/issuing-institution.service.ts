@@ -39,8 +39,18 @@ export class IssuingInstitutionService
     );
   }
 
+  getAllFiltered(
+    params?: string
+  ): Observable<IListResponse<IIssuingInstitution>> {
+    const segments = this.route.split('/');
+    return this.get<IListResponse<IIssuingInstitution>>(segments[1], params);
+  }
+
   getById(id: string | number): Observable<IIssuingInstitution> {
-    return this.issuingInstitutionRepository.getById(this.route, id);
+    const segments = this.route.split('/');
+    const route = `${segments[1]}/id/${id}`;
+    return this.get(route);
+    // return this.issuingInstitutionRepository.getById(this.route, id);
   }
 
   create(model: IIssuingInstitution): Observable<IIssuingInstitution> {

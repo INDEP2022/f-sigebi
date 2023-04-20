@@ -1,17 +1,15 @@
-import { PhotosActionComponent } from '../actions/see-action/photos-action.component';
-
 export const LIST_ASSETS_COLUMNS = {
-  noManagement: {
-    title: 'No. Gestion',
+  goodId: {
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  noRequest: {
+  requestId: {
     title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
-  typeAsset: {
+  goodTypeId: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
@@ -26,39 +24,31 @@ export const LIST_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  transferDescription: {
+
+  goodDescription: {
     title: 'Descripción del Bien Transferente',
     type: 'string',
     sort: false,
     width: '200px',
   },
-  destinityLigie: {
+  destiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  phisicState: {
+  physicalStatus: {
     title: 'Estado Fisico',
     type: 'string',
     sort: false,
   },
-  stateConsercation: {
+  stateConservation: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  fraction: {
+  fractionId: {
     title: 'Fracción',
     type: 'string',
-    sort: false,
-  },
-  actions: {
-    title: 'Acciones',
-    type: 'custom',
-    class: 'custom-field',
-    filter: false,
-    renderComponent: PhotosActionComponent,
-    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
 };

@@ -1,0 +1,115 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Escaneo y digitalizaci&oacute;n de documentos</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row" *ngIf="origin">
+        <div class="col-md-12">
+          <button class="btn btn-primary active btn-sm" (click)="goBack()">
+            Regresar
+          </button>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <form-field
+          label="Expediente"
+          [control]="form.get('expedient')"
+          class="col-md-2">
+          <input
+            type="number"
+            [max-length]="11"
+            (change)="expedientChange()"
+            formControlName="expedient"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          label="Folio"
+          [control]="form.get('folio')"
+          class="col-md-2">
+          <input
+            type="number"
+            [max-length]="15"
+            (change)="folioChange()"
+            formControlName="folio"
+            class="form-control" />
+        </form-field>
+        <div class="col">
+          <button
+            class="btn btn-primary btn-sm active"
+            type="button"
+            (click)="openFileUploader()">
+            Subir Archivos
+            <i class="fa fa-upload"></i>
+          </button>
+        </div>
+        <div class="col">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="confirmDelete()">
+            Borrar im&aacute;genes seleccionadas
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row pt-4">
+            <div class="col-md-12" [class.table-loading]="loading">
+              <ng2-smart-table
+                [settings]="settings"
+                [source]="documents"
+                (userRowSelect)="onSelectFolio($event.data)"></ng2-smart-table>
+            </div>
+
+            <div class="col-md-12">
+              <app-pagination
+                [filterParams]="documentsParams"
+                [totalItems]="totalDocuments"
+                [maxSize]="2"></app-pagination>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <small class="text-info"
+            >Da doble click al documento para visualizarlo</small
+          >
+          <div class="row docs-scroll">
+            <div class="col-md-12">
+              <h6 class="text-center" *ngIf="noDocumentsFound || noFoliosFound">
+                No hay documentos escaneados
+              </h6>
+              <div
+                class="col-md-4 grid-square"
+                *ngFor="let image of files; let i = index">
+                <div class="w-100 m-1 img-container">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <tiff-viewer
+                        [filename]="image"
+                        [folio]="folio"></tiff-viewer>
+                    </div>
+                  </div>
+                  <!-- <input
+                    type="checkbox"
+                    class="float-check checkbox-color checkbox-primary"
+                    id="check2" /> -->
+                  <form-check for="keep-{{ i }}" class="float-check">
+                    <input
+                      type="checkbox"
+                      id="keep-{{ i }}"
+                      (change)="selectFile(image, $event)"
+                      class="form-control" />
+                  </form-check>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

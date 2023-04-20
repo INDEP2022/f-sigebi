@@ -1,20 +1,41 @@
+// FIXME: 2
+
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DEPOSITARY_ROUTES_2 } from 'src/app/common/constants/juridical-processes/depositary-routes-2';
 import {
   baseMenu,
   baseMenuDepositaria,
 } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
+import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
+import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker-element';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { TempGood } from './dataTemp';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -34,20 +55,40 @@ export class JuridicalRulingGComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  params = new BehaviorSubject<ListParams>(new ListParams());
   selectedGooods: IGood[] = [];
   selectedGooodsValid: IGood[] = [];
   goods: IGood[] = TempGood;
   goodsValid: IGood[] = [];
   documents: IDocuments[] = [];
+  selectedDocuments: IDocuments[] = [];
+
+  idGoodSelected = 0;
+
+  //tipos
+  types = new DefaultSelect<Partial<IGoodType>>();
+  subtypes = new DefaultSelect();
+  ssubtypes = new DefaultSelect();
+  sssubtypes = new DefaultSelect();
+
+  typeField: string = 'type';
+  subtypeField: string = 'subtype';
+  ssubtypeField: string = 'ssubtype';
+  sssubtypeField: string = 'sssubtype';
+
+  goodTypeChange = new EventEmitter<IGoodType>();
+  goodSubtypeChange = new EventEmitter<IGoodSubType>();
+  goodSsubtypeChange = new EventEmitter<IGoodsSubtype>();
+  goodSssubtypeChange = new EventEmitter<IGoodSssubtype>();
 
   data3 = [
     { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
     { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
   ];
 
-  data4 = [
-    { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
-    { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
+  data4: IDocuments[] = [
+    // { id: 'DEST', documento: 'PRIMER DOCUMENTO', fecha: '' },
+    // { id: 'DEST', documento: 'SEGUNDO DOCUMENTO', fecha: '' },
   ];
 
   settings1 = {
@@ -59,6 +100,17 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
+      name: {
+        title: '',
+        sort: false,
+        type: 'custom',
+        showAlways: true,
+        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+          this.isGoodSelected(row),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onGoodSelect(instance),
+      },
       id: {
         title: 'No. Bien',
         type: 'number',
@@ -83,17 +135,6 @@ export class JuridicalRulingGComponent
         title: 'Proceso',
         type: 'string',
       },
-      name: {
-        title: 'Check',
-        sort: false,
-        type: 'custom',
-        showAlways: true,
-        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-          this.isGoodSelected(row),
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) =>
-          this.onGoodSelect(instance),
-      },
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -107,6 +148,17 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
+      name: {
+        title: '',
+        sort: false,
+        type: 'custom',
+        showAlways: true,
+        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+          this.isGoodSelectedValid(row),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onGoodSelectValid(instance),
+      },
       id: {
         title: 'No. Bien',
         type: 'number',
@@ -127,24 +179,13 @@ export class JuridicalRulingGComponent
         title: 'Est',
         type: 'string',
       },
-      proceso: {
+      processStatus: {
         title: 'Proceso',
         type: 'string',
       },
       idDestino: {
         title: 'ID Destino',
         type: 'string',
-      },
-      name: {
-        title: 'Check',
-        sort: false,
-        type: 'custom',
-        showAlways: true,
-        valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-          this.isGoodSelectedValid(row),
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) =>
-          this.onGoodSelectValid(instance),
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -163,7 +204,7 @@ export class JuridicalRulingGComponent
         title: '#',
         type: 'number',
       },
-      documento: {
+      descriptionDocument: {
         title: 'Documentos',
         type: 'string',
       },
@@ -184,17 +225,39 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
+      // checked: {
+      //   title: '',
+      //   sort: false,
+      //   type: 'custom',
+      //   showAlways: true,
+      //   valuePrepareFunction: (isSelected: boolean, row: IDocuments) =>
+      //     this.isDocumentSelectedValid(row),
+      //   renderComponent: CheckboxElementComponent,
+      //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
+      //     this.onDocsSelectValid(instance),
+      // },
       id: {
         title: '#',
         type: 'number',
       },
-      documento: {
+      descriptionDocument: {
         title: 'Documentos',
         type: 'string',
       },
+      // fecha: {
+      //   title: 'Fec. Recibido',
+      //   type: 'string',
+      // },
       fecha: {
-        title: 'Fec. Recibido',
-        type: 'string',
+        title: 'Fecha',
+        sort: false,
+        type: 'custom',
+        showAlways: true,
+        valuePrepareFunction: (bsValue: Date, row: IDocuments) =>
+          this.isDocumentSelectedValid(row),
+        renderComponent: DatePickerElementComponent,
+        onComponentInitFunction: (instance: DatePickerElementComponent) =>
+          this.onDocsSelectValid(instance),
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -207,13 +270,23 @@ export class JuridicalRulingGComponent
   public rutaAprobado: string =
     baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private service: GoodTypeService,
+    private goodSubtypesService: GoodSubtypeService,
+    private goodSsubtypeService: GoodSsubtypeService,
+    private goodSssubtypeService: GoodSssubtypeService,
+    private readonly goodServices: GoodService,
+    private readonly documentService: DocumentsService
+  ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+    this.onLoadGoodList();
+    this.onLoadDocumentsByGood();
   }
 
   prepareForm() {
@@ -236,7 +309,14 @@ export class JuridicalRulingGComponent
     });
     this.subtipoForm = this.fb.group({
       tipoDictaminacion: [null],
-      noExpediente: [null],
+      type: [null, [Validators.required]],
+      subtype: [null, [Validators.required]],
+      ssubtype: [null, [Validators.required]],
+      sssubtype: [null, [Validators.required]],
+      attrib: [
+        { value: null, disabled: true },
+        Validators.pattern(NUMBERS_PATTERN),
+      ],
     });
     this.gestionDestinoForm = this.fb.group({
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -271,6 +351,14 @@ export class JuridicalRulingGComponent
   btnSalir() {
     console.log('Salir');
     this.listadoDocumentos = false;
+    // --
+    // Sube documentos seleccionados
+    if (this.selectedDocuments.length > 0) {
+      this.documents = this.documents.concat(this.selectedDocuments);
+      this.selectedDocuments.forEach(doc => {
+        this.goods = this.goods.filter(_doc => _doc.id != doc.id);
+      });
+    }
   }
   onGoodSelect(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -312,6 +400,36 @@ export class JuridicalRulingGComponent
       );
     }
   }
+
+  /**
+   * Selected document methods
+   */
+  // onDocsSelectValid(instance: CheckboxElementComponent) {
+  //   instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+  //     next: data => this.documentSelectedChangeValid(data.row, data.toggle),
+  //   });
+  // }
+  onDocsSelectValid(instance: DatePickerElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: (data: any) =>
+        this.documentSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isDocumentSelectedValid(_doc: any) {
+    const exists = this.selectedDocuments.find(doc => doc.id == _doc.id);
+    return !exists ? false : true;
+  }
+  documentSelectedChangeValid(doc: any, selected?: string) {
+    console.log('fecha ', selected);
+    if (selected) {
+      this.selectedDocuments.push(doc);
+    } else {
+      this.selectedDocuments = this.selectedDocuments.filter(
+        _doc => _doc.id != doc.id
+      );
+    }
+  }
+
   addAll() {
     if (this.goods.length > 0) {
       this.goodsValid = this.goodsValid.concat(this.goods);
@@ -341,5 +459,192 @@ export class JuridicalRulingGComponent
       this.goods = this.goods.concat(this.goodsValid);
       this.goodsValid = [];
     }
+  }
+
+  onSelectedRow(event: any) {
+    let obj: IGood = this.goods.find(element => element.id === event.data.id);
+    let index: number = this.goods.findIndex(elm => elm === obj);
+    console.log(index);
+  }
+
+  get type() {
+    return this.subtipoForm.get(this.typeField);
+  }
+  get subtype() {
+    return this.subtipoForm.get(this.subtypeField);
+  }
+  get ssubtype() {
+    return this.subtipoForm.get(this.ssubtypeField);
+  }
+  get sssubtype() {
+    return this.subtipoForm.get(this.sssubtypeField);
+  }
+
+  onTypesChange(type: any) {
+    this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
+    this.subtypes = new DefaultSelect();
+    this.ssubtypes = new DefaultSelect();
+    this.sssubtypes = new DefaultSelect();
+    this.subtipoForm.updateValueAndValidity();
+    this.goodTypeChange.emit(type);
+  }
+
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field.setValue(null);
+    });
+    this.subtipoForm.updateValueAndValidity();
+  }
+
+  //Métodos para autocompletar los tipos
+  getTypes(params: ListParams) {
+    this.service.getAll(params).subscribe(
+      res => {
+        this.types = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      }
+    );
+    /* this.service.search(params).subscribe(
+      data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          //error = err.message;
+        }
+
+        //this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    ); */
+  }
+
+  getSubtypes(params: ListParams) {
+    this.goodSubtypesService
+      .getAll({ type: this.type.value, ...params })
+      .subscribe(data => {
+        console.log(data);
+        this.subtypes = new DefaultSelect(data.data, data.count);
+      });
+  }
+
+  onSubtypesChange(subtype: any) {
+    if (!this.type.value) {
+      this.types = new DefaultSelect([subtype.idTypeGood], 1);
+      this.type.setValue(subtype.idTypeGood.id);
+    }
+    this.resetFields([this.ssubtype, this.sssubtype]);
+    this.ssubtypes = new DefaultSelect();
+    this.sssubtypes = new DefaultSelect();
+    this.goodSubtypeChange.emit(subtype);
+  }
+
+  getSsubtypes(params: ListParams) {
+    this.goodSsubtypeService
+      .getAll({
+        type: this.type.value,
+        subtype: this.subtype.value,
+        ...params,
+      })
+      .subscribe(data => {
+        this.ssubtypes = new DefaultSelect(data.data, data.count);
+      });
+  }
+
+  onSsubtypesChange(ssubtype: any) {
+    if (!this.type.value || !this.subtype.value) {
+      this.types = new DefaultSelect([ssubtype.noType], 1);
+      this.subtypes = new DefaultSelect([ssubtype.noSubType], 1);
+      this.type.setValue(ssubtype.noType.id);
+      this.subtype.setValue(ssubtype.noSubType.id);
+    }
+    this.resetFields([this.sssubtype]);
+    this.goodSsubtypeChange.emit(ssubtype);
+  }
+  goodSssubType: IGoodSssubtype;
+  onValuesChange(goodSssubtypeChange: IGoodSssubtype): void {
+    console.log(goodSssubtypeChange);
+    this.goodSssubType = goodSssubtypeChange;
+    this.subtipoForm.controls['attrib'].setValue(
+      goodSssubtypeChange.numClasifGoods
+    );
+    this.subtipoForm.controls['id'].setValue(goodSssubtypeChange.id);
+    this.sssubtypes = new DefaultSelect();
+  }
+  getSssubtypes(params: ListParams) {
+    this.goodSssubtypeService
+      .getAll({
+        type: this.type.value,
+        subtype: this.subtype.value,
+        ssubtype: this.ssubtype.value,
+        ...params,
+      })
+      .subscribe(data => {
+        this.sssubtypes = new DefaultSelect(data.data, data.count);
+      });
+  }
+  onSssubtypesChange(sssubtype: any) {
+    if (!this.type.value || !this.subtype.value || !this.ssubtype.value) {
+      console.log(sssubtype);
+      this.types = new DefaultSelect([sssubtype.numType], 1);
+      this.subtypes = new DefaultSelect([sssubtype.numSubType], 1);
+      this.ssubtypes = new DefaultSelect([sssubtype.numSsubType], 1);
+      this.type.setValue(sssubtype.numType.id);
+      this.subtype.setValue(sssubtype.numSubType.id);
+      this.ssubtype.setValue(sssubtype.numSsubType.id);
+    }
+
+    this.goodSssubtypeChange.emit(sssubtype);
+  }
+
+  /**
+   * Listado de bienes según No. de expediente
+   */
+  onLoadGoodList() {
+    this.goodServices
+      .getByExpedient(
+        this.expedientesForm.get('noExpediente').value,
+        this.params.getValue()
+      )
+      .subscribe({
+        next: response => {
+          this.goods = response.data;
+        },
+        error: err => {
+          console.log(err);
+          this.goods = [];
+        },
+      });
+  }
+
+  rowSelected(e: any) {
+    if (e) {
+      this.idGoodSelected = e.data?.id;
+      this.onLoadDocumentsByGood();
+    }
+  }
+
+  onLoadDocumentsByGood() {
+    this.documentService.getByGood(this.idGoodSelected).subscribe({
+      next: response => {
+        this.data4 = response.data;
+      },
+      error: err => {
+        console.log(err);
+        this.goods = [];
+      },
+    });
   }
 }

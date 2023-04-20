@@ -7,6 +7,7 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import { CityService } from '../../../../core/services/catalogs/city.service';
 import {
   PHONE_PATTERN,
   STRING_PATTERN,
@@ -22,13 +23,16 @@ export class MinpubFormComponent extends BasePage implements OnInit {
   title: string = 'MinPub';
   edit: boolean = false;
   minpub: IMinpub;
+  minpubValue: ICity;
+  idCity: ICity;
   items = new DefaultSelect();
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private minpubService: MinPubService
+    private minpubService: MinPubService,
+    private cityService: CityService
   ) {
     super();
   }
@@ -39,41 +43,43 @@ export class MinpubFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.minpubForm = this.fb.group({
-      id: [null, [Validators.required]],
-      descripcion: [
+      id: [null, []],
+      description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      responsable: [
+      manager: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      no_ciudad: [null, [Validators.required]],
-      calle: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      no_interior: [null, [Validators.required]],
-      no_exterior: [null, [Validators.required]],
-      colonia: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      codigo_postal: [null, [Validators.required]],
-      deleg_munic: [null, [Validators.required]],
-      telefono: [
-        null,
-        [Validators.required, Validators.pattern(PHONE_PATTERN)],
-      ],
-      no_registro: [null, [Validators.required]],
+      cityNumber: [null, []],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      insideNumber: [null, [Validators.required]],
+      outNumber: [null, [Validators.required]],
+      colony: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      zipCode: [null, [Validators.required]],
+      delegNunic: [null, [Validators.required]],
+      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      registryNumber: [null, []],
+      city: [null, []],
+      nameCity: [null, []],
     });
     if (this.minpub != null) {
       this.edit = true;
-      let city: ICity = this.minpub.idCity as ICity;
-      this.minpubForm.patchValue({ ...this.minpub, no_ciudad: city?.idCity });
-      this.minpub.idCity
-        ? (this.items = new DefaultSelect([city], 1))
-        : this.getFromSelect({ page: 1, text: '' });
-    } else {
-      this.getFromSelect({ page: 1, text: '' });
+      //const idCity = this.minpub.idCity;
+      this.idCity = this.minpub.city as ICity;
+      console.log('Id Ciudad', this.idCity.idCity);
+      this.minpubForm.patchValue(this.minpub);
+      this.minpubForm.controls['city'].setValue(this.idCity.idCity);
     }
+  }
+
+  onValuesChange(minpubChange: ICity) {
+    console.log(minpubChange);
+    this.minpubValue = minpubChange;
+
+    this.minpubForm.controls['nameCity'].setValue(minpubChange.nameCity);
+    this.items = new DefaultSelect();
   }
 
   close() {
@@ -94,7 +100,7 @@ export class MinpubFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.minpubService.update(this.minpub.id, this.minpubForm.value).subscribe({
+    this.minpubService.update2(this.minpubForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -104,12 +110,13 @@ export class MinpubFormComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
+  //Trae lista de ciudades
   getFromSelect(params: ListParams) {
-    this.minpubService.getCities(params).subscribe((data: any) => {
+    this.cityService.getAll(params).subscribe((data: any) => {
       this.items = new DefaultSelect(data.data, data.count);
     });
   }

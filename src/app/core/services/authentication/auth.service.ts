@@ -1,7 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { map, Observable } from 'rxjs';
+import { BYPASS_JW_TOKEN } from 'src/app/common/interceptors/auth.interceptor';
 import { environment } from 'src/environments/environment';
 import { AuthModel } from '../../models/authentication/auth.model';
 import { RolesInfoModel } from '../../models/authentication/roles-info.model';
@@ -12,6 +13,7 @@ import { TokenInfoModel } from '../../models/authentication/token-info.model';
 })
 export class AuthService {
   private token: string;
+  private tokenR: string;
   private readonly url = environment.API_URL;
   private readonly tokenUrl = environment.api_external_token;
   private readonly userInfo = environment.api_external_userInfo;
@@ -37,6 +39,18 @@ export class AuthService {
     return this.http.post<AuthModel>(this.tokenUrl, params, { headers });
   }
 
+  refreshToken(token: string) {
+    let params = `client_id=indep-auth&grant_type=refresh_token&refresh_token=${token}&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs`;
+    let headers = new HttpHeaders().set(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
+    return this.http.post<AuthModel>(this.tokenUrl, params, {
+      headers,
+      context: new HttpContext().set(BYPASS_JW_TOKEN, true),
+    });
+  }
+
   existToken() {
     this.token = localStorage.getItem('token');
     return this.token ? true : false;
@@ -47,10 +61,22 @@ export class AuthService {
     return this.token;
   }
 
+  accessRefreshToken() {
+    this.tokenR = localStorage.getItem('r_token');
+    return this.tokenR;
+  }
+
   decodeToken(): TokenInfoModel {
     const decodedToken: TokenInfoModel = this.jwtService.decodeToken(
       this.token
     );
+    if (decodedToken.preferred_username != 'sigebiadmon') {
+      const tokenInfo = {
+        ...decodedToken,
+        preferred_username: decodedToken.preferred_username.toLocaleUpperCase(),
+      };
+      return tokenInfo;
+    }
     return decodedToken;
   }
 

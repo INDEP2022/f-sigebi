@@ -1,4 +1,9 @@
-<form [formGroup]="fileDataUpdateForm" class="container-fluid form-material">
+<form-loader *ngIf="formLoading"></form-loader>
+<form
+  [formGroup]="fileDataUpdateForm"
+  class="container-fluid form-material"
+  *ngIf="!formLoading"
+  @OnShow>
   <div class="row">
     <div class="col-md-5">
       <div class="row">
@@ -46,7 +51,8 @@
               <input
                 type="radio"
                 formControlName="wheelType"
-                [value]="option.value" />
+                [value]="option.value"
+                (change)="changeWheelType(option.value)" />
             </form-radio>
           </div>
         </div>
@@ -110,12 +116,13 @@
             (change)="changeDictum($event)"
             [searchOnInit]="true"
             termMaxLength="80"
-            [showTooltip]="true">
+            [showTooltip]="true"
+            [readonly]="layout == 'ABANDONMENT'">
           </ngx-select>
         </form-field>
       </div>
 
-      <div class="row pt-4">
+      <div class="row pt-4" *ngIf="layout == 'FILE-UPDATE'">
         <div>
           <button
             type="button"
@@ -235,7 +242,7 @@
           [control]="fileDataUpdateForm.get('officeExternalKey')"
           label="No. Oficio">
           <input
-            type="number"
+            type="text"
             formControlName="officeExternalKey"
             class="form-control" />
         </form-field>
@@ -263,7 +270,8 @@
           <textarea
             rows="4"
             formControlName="observations"
-            class="form-control"></textarea>
+            class="form-control"
+            [readonly]="searchMode"></textarea>
         </form-field>
       </div>
     </div>
@@ -490,14 +498,14 @@
             readonly />
         </form-field>
 
-        <div class="col-md-2">
+        <!-- <div class="col-md-2">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="openModalAreas()">
-            <i class="bx bx-list-plus bx-sm float-icon"></i>
+            <i class="bx bx-list-ul bx-sm float-icon"></i>
           </button>
-        </div>
+        </div> -->
       </div>
       <div class="row pt-5">
         <form-field
@@ -533,7 +541,8 @@
           <input
             type="text"
             formControlName="userRecipient"
-            class="form-control" />
+            class="form-control"
+            [readonly]="searchMode" />
         </form-field>
       </div>
 
@@ -549,29 +558,41 @@
       </div>
 
       <div class="row">
-        <div>
-          <button
-            outline
-            type="button"
-            class="mr-2 btn btn-sm active btn-primary"
-            (click)="sendToShiftChange()">
-            Reasignaci&oacute;n de Turno
-          </button>
-          <button
-            outline
-            type="button"
-            class="mr-2 btn-sm active btn-primary"
-            [disabled]="wheelNumber == null || dictum == ''"
-            (click)="sendToRelatedDocumentsManagement()">
-            Oficio Relacionado
-          </button>
-          <button
-            outline
-            type="button"
-            class="mr-2 btn-sm active btn-primary"
-            (click)="openFlyerCopies()">
-            Captura de copias
-          </button>
+        <div class="d-flex justify-content-center">
+          <div>
+            <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="wheelNumber == null || expedientNumber == null"
+              (click)="openToShiftChange()">
+              Reasignaci&oacute;n de Turno
+            </button>
+          </div>
+          <div *ngIf="layout == 'FILE-UPDATE'">
+            <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="wheelNumber == null || dictum == ''"
+              (click)="sendToRelatedDocumentsManagement()">
+              Oficio Relacionado
+            </button>
+          </div>
+          <div *ngIf="layout == 'FILE-UPDATE'">
+            <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="
+                userRecipient == null ||
+                delDestinyNumber == null ||
+                dictum != ''
+              "
+              (click)="openFlyerCopies()">
+              Captura de copias
+            </button>
+          </div>
         </div>
       </div>
     </div>

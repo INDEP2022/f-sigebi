@@ -1,5 +1,5 @@
 export const EXCHANGE_TYPES_COLUMNS = {
-  clave: {
+  id: {
     title: 'Clave',
     type: 'number',
     sort: false,
@@ -9,12 +9,12 @@ export const EXCHANGE_TYPES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  since: {
+  validityId: {
     title: 'Vigente desde',
-    type: 'string',
+    type: 'Date',
     sort: false,
   },
-  tc: {
+  costValue: {
     title: 'TC para costos',
     type: 'number',
     sort: false,

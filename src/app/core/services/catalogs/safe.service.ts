@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SafeEndpoints } from 'src/app/common/constants/endpoints/safe-endpoint';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -16,6 +16,14 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
   constructor(private safeRepository: Repository<ISafe>) {
     super();
     this.microservice = SafeEndpoints.BaseaPath;
+  }
+
+  getAllFilter(params: _Params) {
+    return this.get<IListResponse<ISafe>>('safe', params);
+  }
+
+  getAllFilterSelf(self?: SafeService, params?: _Params) {
+    return self.get<IListResponse<ISafe>>('safe', params);
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ISafe>> {
@@ -38,8 +46,8 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
     return this.safeRepository.remove(this.route, id);
   }
 
-  getAll2(params?: ListParams | string): Observable<IListResponse<ISafe2>> {
-    return this.get<IListResponse<ISafe2>>(SafeEndpoints.Safe, params);
+  getAll2(params?: ListParams | string): Observable<IListResponse<ISafe>> {
+    return this.get<IListResponse<ISafe>>(SafeEndpoints.Safe, params);
   }
 
   getById2(id: string | number) {
@@ -47,7 +55,7 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
     return this.get<ISafe2>(route);
   }
 
-  create2(model: ISafe2) {
+  create2(model: ISafe) {
     return this.post(SafeEndpoints.Safe, model);
   }
 

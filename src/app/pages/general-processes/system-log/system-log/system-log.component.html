@@ -1,0 +1,36 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Bitácora del sistema</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-8" [class.table-loading]="loading">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="tableLogs"
+          (userRowSelect)="onSelectTable($event.data)">
+        </ng2-smart-table>
+
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalLogs"></app-pagination>
+      </div>
+      <div class="col-md-4">
+        <system-log-form [fields]="filterFields" [form]="filterForm">
+          <confirm-button
+            [loading]="dynamicLoading"
+            (confirm)="getTableData()"
+            text="Generar"
+            loadingText="Cargando"></confirm-button>
+        </system-log-form>
+      </div>
+    </div>
+    <system-log-registers-table
+      [class.table-loading]="dynamicLoading"
+      [columns]="dynamicColumns"
+      [params]="dynamicParams"
+      [totalItems]="totalDynamic"
+      [registers]="dynamicRegisters"></system-log-registers-table>
+  </div>
+</app-card>

@@ -50,20 +50,6 @@
         <input
           type="file"
           name="file"
-          #fileVehiculo
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="onFileChange($event, 'vehiculo')" />
-        <input
-          type="file"
-          name="file"
-          #fileMercancia
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="onFileChange($event, 'mercancia')" />
-        <input
-          type="file"
-          name="file"
           #fileInmueble
           class="d-none"
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
@@ -95,52 +81,20 @@
                 <i class="bx bx-layer"></i> Menaje
               </a>
             </li>
-            <!-- sub menu de importacion -->
-            <li
-              role="menuitem"
-              dropdown
-              triggers="mouseover"
-              placement="left"
-              container="body">
-              <a
-                dropdownToggle
-                class="dropdown-item dropdown-toggle"
-                (click)="(false)"
-                ><i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
-                <span class="caret"></span
-              ></a>
-              <ul *dropdownMenu class="dropdown-menu" role="menu">
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    routerLink="."
-                    fragment="nested-dropdowns"
-                    (click)="fileVehiculo.click()"
-                    >Vehiculos</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    routerLink="."
-                    fragment="nested-dropdowns"
-                    (click)="fileMercancia.click()"
-                    >Mercancia</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item"
-                    routerLink="."
-                    fragment="nested-dropdowns"
-                    (click)="fileInmueble.click()"
-                    >Inmueble</a
-                  >
-                </li>
-              </ul>
+            <!-- *ngIf="typeRecord == 'PAMA' && transferente === 'SAT_SAE'" -->
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="masiveClasification()">
+                <i class="bx bx-layer"></i> Clasificaci&oacute;n Masiva
+              </a>
             </li>
-
-            <li class="divider dropdown-divider"></li>
+            <!-- sub menu de importacion -->
+            <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="fileInmueble.click()"
+                ><i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
+              </a>
+            </li>
+            <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
             <li role="menuitem">
               <a class="dropdown-item" style="color: red" (click)="delete()">
                 <i class="bx bx-trash"></i> Eliminar
@@ -149,25 +103,28 @@
           </ul>
         </div>
       </div>
-      <div class="" style="margin-left: 1%">
+      <div class="mr-4" style="margin-left: 1%">
         <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
           {{ btnCreate }}
         </button>
       </div>
+      <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
 
   <div class="row pt-4">
     <div class="col-md-12">
       <!--  <ng-scrollbar track="all" style="min-height: 200px; border: none"> -->
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive'"
-          [settings]="settings"
-          [source]="paragraphs"
-          (userRowSelect)="selectRows($event)"
-          ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
-        </ng2-smart-table>
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="selectRows($event)"
+            ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+          </ng2-smart-table>
+        </div>
       </div>
       <app-pagination
         [filterParams]="params"
@@ -181,6 +138,7 @@
         [typeDoc]="'assets'"
         [requestObject]="requestObject"
         [goodObject]="goodObject"
+        [process]="process"
         [domicilieObject]="domicilieObject"></app-classify-assets-tab>
     </div>
   </div>

@@ -65,6 +65,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getStateSelect(new ListParams());
     this.getTypeWarehouseSelect(new ListParams());
+    this.getResponsibleUserSelect(new ListParams());
     this.getTypeTerceroSelect(new ListParams());
   }
 
@@ -108,7 +109,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro de crear almacén?'
+      '¿Estás seguro de crear almacén?'
     ).then(question => {
       if (question.isConfirmed) {
         console.log(this.warehouseForm.value);
@@ -121,6 +122,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   getResponsibleUserSelect(params: ListParams) {
     this.userProcessService.getAll(params).subscribe(data => {
       console.log('usuarios responsables', data);
+      this.users = new DefaultSelect(data.data, data.count);
     });
   }
 

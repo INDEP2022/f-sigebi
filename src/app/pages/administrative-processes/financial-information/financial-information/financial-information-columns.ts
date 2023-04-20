@@ -1,35 +1,41 @@
+import { DatePipe } from '@angular/common';
+
 export const FINANCIAL_INFORMATION_COLUMNS1 = {
-  name: {
+  idGoodNumber: {
     title: 'Nombre',
-    type: 'string',
+    type: 'text',
     sort: false,
-  },
-  description: {
-    title: 'Descripción',
-    type: 'string',
-    sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
+    // },
   },
   value: {
     title: 'Valor',
-    type: 'string',
+    type: 'number',
     sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.quantity;
+    // },
   },
 };
 
 export const FINANCIAL_INFORMATION_COLUMNS2 = {
-  name: {
+  idGoodNumber: {
     title: 'Nombre',
-    type: 'number',
+    type: 'text',
     sort: false,
+    // valuePrepareFunction: (value: IGood) => {
+    //   return value?.description;
+    // },
   },
-  description: {
+  idInfoDate: {
     title: 'Descripción',
-    type: 'number',
+    type: 'text',
     sort: false,
-  },
-  check: {
-    title: 'Check',
-    type: 'number',
-    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
 };

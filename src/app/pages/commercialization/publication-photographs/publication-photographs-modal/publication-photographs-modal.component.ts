@@ -1,15 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import {
-  IComerLayouts,
-  IL,
-} from 'src/app/core/models/ms-parametercomer/parameter';
-import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
+import { IPhoto } from 'src/app/core/models/ms-parametercomer/parameter';
+import { PublicationPhotographsService } from 'src/app/core/services/ms-parametercomer/publication-photographs.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-publication-photographs-modal',
@@ -22,50 +20,40 @@ export class PublicationPhotographsModalComponent
 {
   title: string = 'Fotografías';
   provider: any;
+  imageSrc: any;
+  photo: IPhoto;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   edit: boolean = false;
-  structureLayoutSelected: any;
   providerForm: FormGroup = new FormGroup({});
   id: number = 0;
-  layoutsT: IComerLayouts;
-  layout: IL;
-  layoutList: IComerLayouts[] = [];
+  pdfurl: string;
+  file: any;
+  photoList: IPhoto[] = [];
+
   @Output() onConfirm = new EventEmitter<any>();
   @Input() structureLayout: any;
 
   constructor(
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private layoutsConfigService: LayoutsConfigService
+    private publicationPhotographsService: PublicationPhotographsService
   ) {
     super();
   }
   ngOnInit(): void {
     this.prepareForm();
-    this.structureLayoutSelected = this.structureLayout;
-    // this.inpuLayout = this.idLayout.toString().toUpperCase();
-    console.log(this.structureLayoutSelected);
+    // this.inpuPhoto = this.id.toString().toUpperCase();
   }
 
-  private prepareForm(): void {
+  private prepareForm() {
     this.providerForm = this.fb.group({
-      idLayout: [null],
-      idConsec: [null],
-      position: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      column: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      // mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      type: [null, [Validators.required]],
-      length: [new Date()],
-      constant: [null, [Validators.required]],
-      carFilling: [null, [Validators.required]],
-      justification: [null, [Validators.required]],
-      decimal: [null, [Validators.required]],
-      dateFormat: [null, [Validators.required]],
-      registryNumber: [null, [Validators.required]],
+      route: [null, [Validators.required]],
+      status: [null, [Validators.required]],
+      id: [null],
+      // noConsec: [null],
     });
     if (this.provider !== undefined) {
       this.edit = true;
@@ -79,44 +67,50 @@ export class PublicationPhotographsModalComponent
     this.modalRef.hide();
   }
 
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
+  // confirm() {
+  //   this.edit ? this.update() : this.create();
+  // }
 
-  create() {
-    try {
-      this.loading = false;
-      this.layoutsConfigService.create(this.structureLayout).subscribe({
-        next: data => this.handleSuccess(),
-        error: error => {
-          this.loading = false;
-          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
-          return;
-        },
-      });
-    } catch {
-      console.error('Layout no existe');
-    }
-  }
-  update() {
-    this.alertQuestion(
-      'warning',
-      'Actualizar',
-      'Desea actualizar este layout?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.layoutsConfigService
-          .update(this.provider.id, this.providerForm.value)
-          .subscribe({
-            next: data => this.handleSuccess(),
-            error: error => {
-              this.onLoadToast('error', 'layout', '');
-              this.loading = false;
-            },
-          });
-      }
-    });
-  }
+  // create() {
+  //   try {
+  //     this.loading = false;
+  //     this.publicationPhotographsService.create(this.photo).subscribe({
+  //       next: data => {
+  //         this.handleSuccess();
+  //       },
+  //       error: error => {
+  //         this.loading = false;
+  //         this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+  //         return;
+  //       },
+  //     });
+  //   } catch {
+  //     console.error('Layout no existe');
+  //   }
+  // }
+  // update() {
+  //   this.alertQuestion(
+  //     'warning',
+  //     'Actualizar',
+  //     'Desea actualizar este layout?'
+  //   ).then(question => {
+  //     if (question.isConfirmed) {
+  //       this.publicationPhotographsService
+  //         .update(this.provider.id, this.providerForm.value)
+  //         .subscribe({
+  //           next: data => this.handleSuccess(),
+  //           error: error => {
+  //             this.onLoadToast(
+  //               'error',
+  //               'No se puede adjuntar éste tipo de arhivos',
+  //               ''
+  //             );
+  //             this.loading = false;
+  //           },
+  //         });
+  //     }
+  //   });
+  // }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
@@ -127,5 +121,21 @@ export class PublicationPhotographsModalComponent
     this.onConfirm.emit(true);
     this.modalRef.content.callback(true);
     this.close();
+  }
+  preview() {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 }

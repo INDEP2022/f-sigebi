@@ -7,7 +7,9 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDepartment } from '../../models/catalogs/department.model';
+import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 import { ISegUsers } from '../../models/ms-users/seg-users-model';
+import { IUserAccess } from '../../models/ms-users/user-access';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +33,11 @@ export class UsersService extends HttpService {
 
   getAllSegXAreas(params: ListParams) {
     return this.get<IListResponse<any>>(UserEndpoints.SegAccessAreas, params);
+  }
+
+  //TODO: HOMOLOGAR SERVICIOS getAllSegXAreas()
+  getAllSegXAreasByParams(_params: _Params) {
+    return this.get<IListResponse<any>>(UserEndpoints.SegAccessAreas, _params);
   }
 
   getAllSegXAreasFind(params: ListParams) {
@@ -67,6 +74,23 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<ISegUsers>>(
       `${UserEndpoints.SegUsers}?filter.email=$ilike:@indep.gob.mx`,
       params
+    );
+  }
+
+  getInfoUserLogued(
+    params?: string
+  ): Observable<IListResponse<IUserAccessAreaRelational>> {
+    this.microservice = UserEndpoints.BasePath;
+    return this.get<IListResponse<IUserAccessAreaRelational>>(
+      UserEndpoints.SegAccessAreas,
+      params
+    );
+  }
+
+  getAccessUsers(_params: _Params) {
+    return this.get<IListResponse<IUserAccess>>(
+      UserEndpoints.VigSupervisionAccess,
+      _params
     );
   }
 }

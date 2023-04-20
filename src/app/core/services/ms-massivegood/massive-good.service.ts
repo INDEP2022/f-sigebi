@@ -62,4 +62,9 @@ export class MassiveGoodService extends HttpService {
   deleteMassiveGoodComer(good: number) {
     return this.delete(`${this.route.DeleteMassiveGood}/${good}`);
   }
+
+  getWheelNotificationsByExpedientNumber(goodNumber: string) {
+    const route = `${this.route.GetFlierNumberMassiveGood}/${goodNumber}`;
+    return this.get(route);
+  }
 }

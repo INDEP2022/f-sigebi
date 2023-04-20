@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TreeViewComponent } from 'src/app/@standalone/tree-view/tree-view.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PartializesGoodsRoutingModule } from './partializes-goods-routing.module';
 import { PartializesGoodsComponent } from './partializes-goods.component';
@@ -15,6 +16,7 @@ import { PartializesGoodsComponent } from './partializes-goods.component';
     SharedModule,
     ModalModule.forChild(),
     TabsModule,
+    TreeViewComponent,
   ],
 })
 export class PartializesGoodsModule {}

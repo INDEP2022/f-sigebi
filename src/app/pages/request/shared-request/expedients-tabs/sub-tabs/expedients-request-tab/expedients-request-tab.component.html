@@ -3,7 +3,7 @@
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
         <h5 class="title">
-          <strong>Verificaci&oacute;n de Cumplimiento</strong>
+          <strong>Solicitudes del expediente</strong>
         </h5>
       </div>
     </div>
@@ -13,30 +13,33 @@
       <app-columns-select
         class="float-right"
         [(settings)]="settings"></app-columns-select>
+      <button class="btn btn-primary btn-sm active mr-2 float-right">
+        Actualizar
+      </button>
     </div>
   </div>
   <div class="row pt-2">
-    <div class="col-md-12" style="overflow-x: scroll">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="paragraphs">
-        </ng2-smart-table>
-      </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="paragraphs">
+      </ng2-smart-table>
     </div>
   </div>
   <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
   <div class="row pt-3">
     <tabset class="md-tabs">
       <tab
-        heading="Documentos Solicitud"
+        heading="Búsqueda de Documentos Solicitud"
         id="tab1"
         (selectTab)="requestSelected(3)">
         <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
       </tab>
       <tab heading="Bienes de la Solicitud" (selectTab)="requestSelected(4)">
-        <app-request-of-assets [typeDoc]="typeDoc"></app-request-of-assets>
+        <app-good-doc-tab
+          [typeDoc]="typeDoc"
+          [screen]="screen"></app-good-doc-tab>
       </tab>
     </tabset>
   </div>

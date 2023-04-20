@@ -44,34 +44,30 @@ export class AttributesRegLogicalTablesModalComponent
 
   private prepareForom() {
     this.tdescAtribForm = this.fb.group({
-      keyAtrib: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      idNmTable: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      keyAtrib: [null, [Validators.required]],
+      idNmTable: [null, []],
       descriptionAtrib: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      swFormat: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      swFormat: [null, [Validators.pattern(STRING_PATTERN)]],
       longMax: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.max(80),
+          Validators.min(1),
+        ],
       ],
       longMin: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.max(80),
+          Validators.min(1),
+        ],
       ],
-      registerNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      registerNumber: [null, []],
     });
     if (this.tdescAtrib != null) {
       this.edit = true;
@@ -87,7 +83,21 @@ export class AttributesRegLogicalTablesModalComponent
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    if (
+      this.tdescAtribForm.controls['longMax'].value >
+      this.tdescAtribForm.controls['longMin'].value
+    ) {
+      this.edit ? this.update() : this.create();
+    } else {
+      this.alertQuestion(
+        'warning',
+        'La longitud máxima no puede ser menor a longitud mínima',
+        'Favor de corregir'
+      ).then(question => {
+        if (question.isConfirmed) {
+        }
+      });
+    }
   }
 
   create() {

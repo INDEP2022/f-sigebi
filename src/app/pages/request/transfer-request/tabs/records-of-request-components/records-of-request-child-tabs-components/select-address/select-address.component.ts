@@ -1,11 +1,14 @@
 import { Component, EventEmitter, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, from, takeUntil } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDomicile } from 'src/app/core/models/catalogs/domicile';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LocalityService } from '../../../../../../../core/services/catalogs/locality.service';
 import { MunicipalityService } from '../../../../../../../core/services/catalogs/municipality.service';
@@ -21,7 +24,7 @@ import { SELECT_ADDRESS_COLUMN } from './select-address-columns';
 })
 export class SelectAddressComponent extends BasePage implements OnInit {
   paragraphs: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   title: string = 'Domicilios de la Solicitud';
   totalItems: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
@@ -34,6 +37,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   stateOfRepublicService = inject(StateOfRepublicService);
   municipaliService = inject(MunicipalityService);
   localityService = inject(LocalityService);
+  goodsinvService = inject(GoodsInvService);
 
   constructor(
     private modelRef: BsModalRef,
@@ -43,8 +47,6 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.onlyOrigin);
-
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -52,149 +54,105 @@ export class SelectAddressComponent extends BasePage implements OnInit {
     };
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      var params = new ListParams();
-      params.page = data.inicio;
-      params.limit = data.pageSize;
-      this.getData(params);
+      //var params = new ListParams();
+      //params.page = data.inicio;
+      //params.limit = data.pageSize;
+      this.getData();
     });
   }
 
   //obtengo los nombres de los campos
-  getData(params: ListParams) {
-    var array: any = [];
-    this.loading = true;
-    params['filter.requestId'] = `$eq:${this.request.id}`;
-    this.goodDomiciliesService.getAll(params).subscribe({
-      next: resp => {
-        from(resp.data)
-          .pipe(
-            map((item: any) => {
-              if (item.statusKey) {
-                item['warehouseAlias'] = item.warehouseAlias.id;
-                this.stateOfRepublicService.getById(item.statusKey).subscribe({
-                  next: resp => {
-                    item['stateOfRepublicName'] = resp.descCondition;
-                  },
-                });
-              } else {
-                item['stateOfRepublicName'] = '';
-              }
+  getData() {
+    if (this.request.id) {
+      var array: any = [];
+      this.loading = true;
+      this.params.value.addFilter('requestId', this.request.id);
+      const filter = this.params.getValue().getParams();
+      this.goodDomiciliesService.getAll(filter).subscribe({
+        next: resp => {
+          const result = resp.data.map(async (item: any) => {
+            if (item.warehouseAlias) {
+              item['warehouseAlias'] = item.warehouseAlias.id;
+            } else {
+              item['warehouseAlias'] = '';
+            }
+            var stateOfRepublic = await this.getStateOfRepublic(item);
+            item['stateOfRepublicName'] = stateOfRepublic;
 
-              if (item.statusKey && item.municipalityKey) {
-                var param = new ListParams();
-                param['municipalityId'] = item.municipalityKey;
-                param['stateKey'] = item.statusKey;
-                this.municipaliService.getAll(param).subscribe({
-                  next: (data: any) => {
-                    item['municipalityName'] = data.data[0].nameMunicipality;
-                  },
-                });
-              } else {
-                item['municipalityName'] = '';
-              }
-
-              if (item.statusKey && item.municipalityKey && item.localityKey) {
-                var param = new ListParams();
-                param['municipalityId'] = item.municipalityKey;
-                param['stateKey'] = item.statusKey;
-                param['id'] = item.localityKey;
-                this.localityService.getAll(param).subscribe({
-                  next: (data: any) => {
-                    item['localityName'] = data.data[0].nameLocation;
-                  },
-                });
-              } else {
-                item['localityName'] = '';
-              }
-              return item;
-            })
-          )
-          .subscribe({
-            next: info => {
-              array.push(Object.assign(info));
-            },
-            complete: () => {
-              setTimeout(() => {
-                this.paragraphs = [...array];
-                this.loading = false;
-              }, 2000);
-            },
-          });
-      },
-    });
-
-    /*params['filter.requestId'] = `$eq:${this.request.id}`;
-    return new Promise((resolve, reject) => {
-      this.goodDomiciliesService.getAll(params).subscribe({
-        next: data => {
-          resolve(data.data);
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
-    }).then((data: any) => {
-      var valor: any[] = [];
-      new Promise((resolve, reject) => {
-        data.map((item: any) => {
-          if (item.statusKey) {
-            this.stateOfRepublicService.getById(item.statusKey).subscribe({
-              next: resp => {
-                item['stateOfRepublicName'] = resp.descCondition;
-                //valor.push(item);
-                resolve({ ...data, item });
-              },
-            });
-          } else {
-            item['stateOfRepublicName'] = '';
-            resolve(item);
-          }
-        });
-      }).then((item: any) => {
-        debugger;
-        new Promise((resolve, reject) => {
-
-          if (item.statusKey && item.municipalityKey) {
-            var params = new ListParams();
-            params['municipalityId'] = item.municipalityKey;
-            params['stateKey'] = item.statusKey;
-            this.municipaliService.getAll(params).subscribe({
-              next: (data: any) => {
-                item['municipalityName'] = data.data[0].nameMunicipality;
-                resolve(item);
-              },
-            });
-          } else {
-            item['municipalityName'] = '';
-            resolve(item);
-          }
-
-        }).then((item: any) => {
-          new Promise((resolve, reject) => {
+            if (item.statusKey && item.municipalityKey) {
+              const municipality = await this.getMunicipality(item);
+              item['municipalityName'] = municipality;
+            } else {
+              item['municipalityName'] = '';
+            }
 
             if (item.statusKey && item.municipalityKey && item.localityKey) {
-              var params = new ListParams();
-              params['municipalityId'] = item.municipalityKey;
-              params['stateKey'] = item.statusKey;
-              params['id'] = item.localityKey;
-              this.localityService.getAll(params).subscribe({
-                next: (data: any) => {
-                  item['localityName'] = data.data[0].nameLocation;
-                  resolve(item);
-                },
-              });
+              const location = await this.getLocation(item);
+              item['localityName'] = location;
             } else {
               item['localityName'] = '';
-              resolve(item);
             }
-          }).then((data: any) => {
-            newArray.push(data);
-            this.paragraphs = newArray;
+          });
+
+          Promise.all(result).then(x => {
+            this.paragraphs = resp.data;
+            this.totalItems = resp.count;
             this.loading = false;
           });
-        });
+        },
+        error: error => {
+          console.log('Domicillio de bienes ', error.error.message);
+          this.loading = false;
+        },
       });
-    });*/
+    }
+  }
+
+  getStateOfRepublic(item: any) {
+    return new Promise((resolve, reject) => {
+      if (item.statusKey) {
+        this.stateOfRepublicService.getById(item.statusKey).subscribe({
+          next: resp => {
+            resolve(resp.descCondition);
+          },
+        });
+      } else {
+        resolve('');
+      }
+    });
+  }
+
+  getMunicipality(item: any) {
+    return new Promise((resolve, reject) => {
+      var param = new ListParams();
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
+      param['filter.stateKey'] = `$eq:${item.statusKey}`;
+
+      this.goodsinvService.getAllMunipalitiesByFilter(param).subscribe({
+        next: resp => {
+          resolve(resp.data[0].municipality);
+        },
+      });
+      /* this.municipaliService.getAll(param).subscribe({
+        next: (data: any) => {
+          resolve(data.data[0].nameMunicipality);
+        },
+      }); */
+    });
+  }
+
+  getLocation(item: any) {
+    return new Promise((resolve, reject) => {
+      var param = new ListParams();
+      param['filter.municipalityKey'] = `$eq:${item.municipalityKey}`;
+      param['filter.stateKey'] = `$eq:${item.statusKey}`;
+      param['filter.townshipKey'] = `$eq:${item.localityKey}`;
+      this.goodsinvService.getAllTownshipByFilter(param).subscribe({
+        next: (data: any) => {
+          resolve(data.data[0].township);
+        },
+      });
+    });
   }
 
   newAddress() {
@@ -205,8 +163,7 @@ export class SelectAddressComponent extends BasePage implements OnInit {
         regDelegationId: this.request.regionalDelegationId,
         callback: (next: boolean) => {
           if (next) {
-            debugger;
-            this.getData(new ListParams());
+            this.getData();
           }
         },
       },
@@ -225,10 +182,17 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   selectAddress() {
+    if (!this.rowSelected) {
+      this.onLoadToast(
+        'error',
+        'No hay direccion',
+        'Seleccione una direccion previamente'
+      );
+      return;
+    }
     //delete this.rowSelected.stateOfRepublicName;
     delete this.rowSelected.municipalityName;
     delete this.rowSelected.localityName;
-
     this.event.emit(this.rowSelected as IDomicile);
     this.close();
   }

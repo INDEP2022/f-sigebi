@@ -13,6 +13,13 @@ import { ICatThirdView } from '../../models/ms-goods-inv/goods-inv.model';
 export class ProgrammingRequestService {
   constructor(private http: HttpClient) {}
 
+  deleteUserProgramming(formData: Object) {
+    const route = `programminggood/api/v1/programming-users`;
+    return this.http.delete(`${environment.API_URL}${route}`, {
+      body: formData,
+    });
+  }
+
   getUserInfo() {
     return this.http.get(`${environment.api_external_userInfo}`);
   }
@@ -31,9 +38,7 @@ export class ProgrammingRequestService {
     );
   }
 
-  getGoodsProgramming(
-    _params: ListParams
-  ): Observable<IListResponse<IGoodProgramming>> {
+  getGoodsProgramming(_params: ListParams) {
     const params = this.makeParams(_params);
     const route = `programminggood/api/v1/programming-goods`;
     return this.http.get<IListResponse<IGoodProgramming>>(
@@ -62,6 +67,11 @@ export class ProgrammingRequestService {
   createUsersProgramming(data: Object) {
     let route = `programminggood/api/v1/programming-users`;
     return this.http.post(`${environment.API_URL}/${route}`, data);
+  }
+
+  updateUserProgramming(formData: Object) {
+    let route = `programminggood/api/v1/programming-users`;
+    return this.http.put(`${environment.API_URL}/${route}`, formData);
   }
 
   updateProgramming(id: number, formData: Object) {

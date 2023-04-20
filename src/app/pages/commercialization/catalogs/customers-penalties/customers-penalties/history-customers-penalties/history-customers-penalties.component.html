@@ -1,0 +1,25 @@
+<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+<!--History Penalties Table-->
+<div class="row justify-content-end mr-1">
+  <div class="ch-content">
+    <h5 class="title">Hist&oacute;rico Penalizaciones</h5>
+  </div>
+</div>
+<div class="d-flex justify-content-end mr-1">
+  <app-columns-select
+    (settingsChange)="settingsChange($event)"
+    [settings]="settings">
+  </app-columns-select>
+</div>
+<div class="row pt-4">
+  <div class="col-md-12">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { DelegationsEndpoints } from 'src/app/common/constants/endpoints/delegation-endpoints';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -12,7 +14,10 @@ import { IZoneGeographic } from '../../models/catalogs/zone-geographic.model';
 @Injectable({
   providedIn: 'root',
 })
-export class DelegationService implements ICrudMethods<IDelegation> {
+export class DelegationService
+  extends HttpService
+  implements ICrudMethods<IDelegation>
+{
   private readonly route: string = ENDPOINT_LINKS.Delegation;
   private readonly statesRoute = ENDPOINT_LINKS.StateOfRepublic;
   private readonly zonesRoute = ENDPOINT_LINKS.ZoneGeographic;
@@ -21,7 +26,10 @@ export class DelegationService implements ICrudMethods<IDelegation> {
 
     private statesRepository: Repository<IStateOfRepublic>,
     private zonesRepository: Repository<IZoneGeographic>
-  ) {}
+  ) {
+    super();
+    this.microservice = DelegationsEndpoints.BasePage;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAllPaginated(this.route, params);
@@ -29,6 +37,10 @@ export class DelegationService implements ICrudMethods<IDelegation> {
 
   getAllModal(self?: DelegationService, params?: ListParams) {
     return self.getAll(params);
+  }
+
+  getAllFilterSelf(self?: DelegationService, params?: _Params) {
+    return self.get<IListResponse<IDelegation>>('delegation', params);
   }
 
   getById(id: string | number): Observable<IDelegation> {
@@ -53,5 +65,32 @@ export class DelegationService implements ICrudMethods<IDelegation> {
 
   getZones(params: ListParams) {
     return this.zonesRepository.getAllPaginated(this.zonesRoute, params);
+  }
+
+  getAllFiltered(params: _Params) {
+    return this.get<IListResponse<IDelegation>>('delegation', params);
+  }
+
+  getAll2(
+    params?: ListParams | string
+  ): Observable<IListResponse<IDelegation>> {
+    return this.get<IListResponse<IDelegation>>(
+      DelegationsEndpoints.Delegation,
+      params
+    );
+  }
+
+  create2(model: IDelegation) {
+    return this.post(DelegationsEndpoints.Delegation, model);
+  }
+
+  update2(model: IDelegation) {
+    const route = `${DelegationsEndpoints.Delegation}`;
+    return this.put(route, model);
+  }
+
+  remove2(id: string | number, etapaEdo: string | number) {
+    const route = `${DelegationsEndpoints.Delegation}/id/${id}/etapaEdo/${etapaEdo}`;
+    return this.delete(route);
   }
 }

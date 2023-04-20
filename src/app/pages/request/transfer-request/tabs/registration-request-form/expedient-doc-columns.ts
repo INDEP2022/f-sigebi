@@ -61,7 +61,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   regionalDelegationName: {
-    title: 'Delegación regional',
+    title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
@@ -253,7 +253,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   regionalDelegationName: {
-    title: 'Delegación regional',
+    title: 'Delegación Regional',
     type: 'string',
     sort: false,
   },
@@ -531,43 +531,43 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
 };
 
 export const EXPEDIENT_DOC_SEA_COLUMNS = {
-  noDocument: {
-    title: 'No°. documento',
+  dDocName: {
+    title: 'Nom. documento',
     type: 'string',
     sort: false,
   },
 
-  noExpedient: {
+  xidExpediente: {
     title: 'No°. expediente',
     type: 'string',
     sort: false,
   },
 
-  noRequest: {
+  xidSolicitud: {
     title: 'No°. solicitud',
     type: 'string',
     sort: false,
   },
 
-  titleDocument: {
-    title: 'Titulo del documento',
+  ddocTitle: {
+    title: 'Título del documento',
     type: 'string',
     sort: false,
   },
 
-  typeDocument: {
+  xtipoDocumentoNombre: {
     title: 'Tipo de documento',
     type: 'string',
     sort: false,
   },
 
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
 
-  createDate: {
+  dInDate: {
     title: 'Fecha de creación',
     type: 'string',
     sort: false,
