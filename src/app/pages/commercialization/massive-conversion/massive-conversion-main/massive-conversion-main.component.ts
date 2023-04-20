@@ -392,11 +392,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   loadChecks() {
-    loadCheckLc(this.form, this.capturelineService).then((res: any) => {
-      if (res.isConfirmed) {
-        this.openDialogCheckPortal();
-      }
-    });
+    loadCheckLc(this.form, this.capturelineService);
+    // .then((res: any) => {
+    //   if (res.isConfirmed) {
+    //     this.openDialogCheckPortal();
+    //   }
+    // });
     // if (this.form.invalid) {
     //   showToast({
     //     text: 'No se ha insertado ningún filtro de búsqueda.',
