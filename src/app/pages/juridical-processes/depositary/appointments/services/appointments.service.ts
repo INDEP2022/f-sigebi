@@ -54,16 +54,11 @@ export class AppointmentsService {
   getLocalityByFilter(params: string) {
     return this.msGoodsInvService.getAllTownshipByFilter(params);
   }
-  getStateOfRepublic(
-    params: ListParams,
-    stateId: boolean,
-    idState: number | string = ''
-  ) {
-    if (stateId) {
-      return this.msStateOfRepublicService.getById(idState);
-    } else {
-      return this.msStateOfRepublicService.getAll(params);
-    }
+  getStateOfRepublicByAll(params: ListParams) {
+    return this.msStateOfRepublicService.getAll(params);
+  }
+  getStateOfRepublicById(idState: number | string = '') {
+    return this.msStateOfRepublicService.getById(idState);
   }
   /**
    * HELP FUNCTIONS FOR COMPONENT
