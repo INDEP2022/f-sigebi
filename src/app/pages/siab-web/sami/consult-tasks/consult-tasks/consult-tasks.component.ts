@@ -90,6 +90,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   getTasks() {
+    let isfilterUsed = false;
     const params = this.params.getValue();
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
@@ -99,6 +100,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -108,6 +110,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoProgramacionEntrega) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -117,6 +120,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNombreActividad) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -126,6 +130,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoOrdenServicio) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -135,6 +140,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtAsignado || this.userName) {
+      // isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -144,6 +150,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoOrdenPago) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -153,6 +160,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtAprobador) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -162,6 +170,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoOrdenIngreso) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -171,6 +180,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNombreAplicacion) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -180,6 +190,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoMuestreo) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -192,6 +203,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.consultTasksForm.value.txtFecAsigDesde &&
       this.consultTasksForm.value.txtFecAsigHasta
     ) {
+      isfilterUsed = true;
       const fechaInicio = this.consultTasksForm.value.txtFecAsigDesde;
       const fechaFin = this.consultTasksForm.value.txtFecAsigHasta;
 
@@ -208,6 +220,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         .addFilter('assignedDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoMuestreoOrden) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -217,6 +230,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtFechaFinDesde) {
+      isfilterUsed = true;
       const fechaInicio = this.consultTasksForm.value.txtFechaFinDesde;
       const fechaFin = this.consultTasksForm.value.txtFechaFinHasta;
 
@@ -233,6 +247,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         .addFilter('endDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoDelegacionRegional) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -242,6 +257,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -251,6 +267,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoTransferente) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -260,6 +277,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoProgramacion) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -286,10 +304,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         next: response => {
           console.log('Response: ', response);
           this.loading = false;
-          this.tasks = response.data.filter(
-            (record: { State: string }) => record.State != 'FINALIZADA'
-          );
-          this.totalItems = this.tasks.length;
+          console.log('Hay un filtro activo? ', isfilterUsed);
+          if (!isfilterUsed) {
+            this.tasks = response.data.filter(
+              (record: { State: string }) => record.State != 'FINALIZADA'
+            );
+            this.totalItems = this.tasks.length;
+          } else {
+            this.tasks = response.data;
+            this.totalItems = response.count;
+          }
         },
         error: () => ((this.tasks = []), (this.loading = false)),
       });
