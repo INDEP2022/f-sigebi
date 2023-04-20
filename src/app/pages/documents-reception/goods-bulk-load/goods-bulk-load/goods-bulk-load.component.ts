@@ -219,6 +219,26 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.stopProcess = true;
   }
 
+  continuarProceso() {
+    if (this.procesandoPreload) {
+      // preload proccess
+      if (this.target.value == 'sat') {
+        // console.log('SAT');
+        this.validatorPreloadMassiveSat();
+      } else if (this.target.value == 'pgr') {
+        this.endProcess = false;
+        // console.log('PGR');
+        this.validatorPreloadMassivePgr(); // Iniciar proceso de validación
+      } else if (this.target.value == 'general') {
+        // console.log('GENERAL');
+        this.validatorPreloadMassiveGeneral();
+      }
+    }
+    if (this.procesandoUpload) {
+      // upload proccess
+    }
+  }
+
   reviewStopProcess() {
     if (this.procesandoPreload) {
       this.procesandoPreload = false;

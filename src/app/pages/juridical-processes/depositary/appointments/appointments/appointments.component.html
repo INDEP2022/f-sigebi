@@ -326,7 +326,8 @@
             bindLabel="coloniaName"
             label="Colonia"
             value="id"
-            (fetchItems)="getFromSelect($event)"
+            (fetchItems)="getLocalityByDetail($event)"
+            (change)="changeLocalityDetail($event)"
             [form]="form"
             [showTooltip]="true"
             control="colonia"></ngx-select>
@@ -338,17 +339,19 @@
             label="Delegaci&oacute;n&#47;Municipio"
             value="id"
             (fetchItems)="getDelegationByDetail($event)"
+            (change)="changeDelegationDetail($event)"
             [form]="form"
             [showTooltip]="true"
             control="delegacionMunicipio"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
-            [data]="items"
-            bindLabel="entidadFederativaName"
+            [data]="state"
+            bindLabel="descCondition"
             label="Entidad Federativa"
             value="id"
-            (fetchItems)="getFromSelect($event)"
+            (fetchItems)="getStateByDetail($event)"
+            (change)="changeStateDetail($event)"
             [form]="form"
             [showTooltip]="true"
             control="entidadFederativa"></ngx-select>
