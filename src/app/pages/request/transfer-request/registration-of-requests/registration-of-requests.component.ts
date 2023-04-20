@@ -652,8 +652,6 @@ export class RegistrationOfRequestsComponent
   /* Metodo para guardar la clasificacion de bienes */
   async classifyGoodMethod() {
     this.loader.load = true;
-    // oldTask: any = await this.getOldTask();
-    //if (oldTask.assignees != '') {
     const title = `Registro de solicitud (Destino Documental) con folio: ${this.requestData.id}`;
     const url = 'pages/request/transfer-request/validate-document';
     const from = 'CLASIFICAR_BIEN';
@@ -687,8 +685,6 @@ export class RegistrationOfRequestsComponent
   /* Metodo de destino documental */
   async destinyDocumental() {
     this.loader.load = true;
-    // const oldTask: any = await this.getOldTask();
-    //if (oldTask.assignees != '') {
     const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
     const url = 'pages/request/transfer-request/process-approval';
     const from = 'DESTINO_DOCUMENTAL';
@@ -715,7 +711,6 @@ export class RegistrationOfRequestsComponent
         `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
     }
-    //}
   }
   /* Fin metodo destino documental */
 

@@ -61,8 +61,9 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
       .subscribe({
         next: base64 => {
           this.loading = false;
-          this.base64Change(base64);
           this.error = false;
+          this.base64Change(base64);
+          console.log(this.error);
         },
         error: error => {
           this.onLoadToast(
@@ -72,6 +73,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
           );
           this.loading = false;
           this.error = true;
+          console.log(this.error);
           this.imgSrc = NO_IMAGE_FOUND;
         },
       });
@@ -89,17 +91,23 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     this.imgSrc = ext.toLowerCase().includes('tif')
       ? this.getUrlTiff(base64)
       : this.getUrlDocument(base64);
-    this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
+    // this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
   }
 
   getUrlTiff(base64: string) {
-    this.isDocument = false;
-    const buffer = Buffer.from(base64, 'base64');
-    const tiff = new Tiff({ buffer });
-    const canvas: HTMLCanvasElement = tiff.toCanvas();
-    canvas.style.width = '100%';
-
-    return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
+    try {
+      this.isDocument = false;
+      const buffer = Buffer.from(base64, 'base64');
+      const tiff = new Tiff({ buffer });
+      const canvas: HTMLCanvasElement = tiff.toCanvas();
+      canvas.style.width = '100%';
+      console.log('llego aca', this.filename);
+      return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
+    } catch (error) {
+      this.error = true;
+      console.log(this.error);
+      return this.sanitizer.bypassSecurityTrustResourceUrl(NO_IMAGE_FOUND);
+    }
   }
 
   getUrlDocument(base64: string) {
@@ -115,21 +123,15 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     } else {
       this.isDocument = false;
     }
-    console.log(this.isDocument);
+    this.mimeType = mimeType;
     return this.sanitizer.bypassSecurityTrustResourceUrl(
       `data:${mimeType};base64, ${base64}`
     );
   }
 
   openDocumentsViewer() {
+    console.log(this.error);
     if (this.loading || this.error) {
-      return;
-    }
-    if (this.documentLength > 1500) {
-      window.open(
-        (this.imgSrc as any).changingThisBreaksApplicationSecurity,
-        '_blank'
-      );
       return;
     }
     let config: ModalOptions = {
