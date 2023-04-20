@@ -22,6 +22,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
   styles: [],
 })
 export class GoodsSharedComponent extends BasePage implements OnInit {
+  @Input() label: string = 'Bienes';
   @Input() form: FormGroup;
   @Input() goodField: string = 'goodId';
 

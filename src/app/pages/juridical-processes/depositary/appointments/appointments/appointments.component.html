@@ -311,19 +311,20 @@
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
-            [data]="items"
+            [data]="postalCode"
             bindLabel="description"
             label="C&oacute;digo Postal"
-            value="id"
-            (fetchItems)="getFromSelect($event)"
+            value="postalCode"
+            (fetchItems)="getPostalCodeByDetail($event)"
+            (change)="changePostalCodeDetail($event)"
             [form]="form"
             [showTooltip]="true"
             control="codigoPostal"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
-            [data]="items"
-            bindLabel="coloniaName"
+            [data]="locality"
+            bindLabel="description"
             label="Colonia"
             value="id"
             (fetchItems)="getLocalityByDetail($event)"
@@ -335,9 +336,9 @@
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
             [data]="delegations"
-            bindLabel="description"
+            bindLabel="municipality"
             label="Delegaci&oacute;n&#47;Municipio"
-            value="id"
+            value="stateKey"
             (fetchItems)="getDelegationByDetail($event)"
             (change)="changeDelegationDetail($event)"
             [form]="form"
