@@ -179,6 +179,18 @@
                 class="ml-2 mb-0 m-4 btn btn-danger btn-sm active">
                 Limpiar Proceso
               </button>
+              <button
+                *ngIf="
+                  tipoCarga == 'pgr' && !DeclarationsUploadValidationMassive
+                "
+                [disabled]="
+                  procesandoUpload || procesandoPreload || cargandoPgr
+                "
+                (click)="goPageVolante()"
+                type="button"
+                class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                Regresar al proceso anterior
+              </button>
             </div>
           </div>
         </div>
