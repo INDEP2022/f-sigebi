@@ -774,6 +774,7 @@ export class RegistrationOfRequestsComponent
         'Error',
         'Es requerido tener dictamen previamente generado'
       );
+      this.loader.load = false;
       return;
     }
     const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
