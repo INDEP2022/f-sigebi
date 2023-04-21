@@ -81,7 +81,6 @@ export class TesofeMovementsModalComponent extends BasePage implements OnInit {
       : this.insertCuentas(this.form.value, this.objBank);
 
     this.modalClick.emit(this.form.value);
-    //this.insertCuentas(this.form.value,this.objBank);
   }
 
   insertCuentas(formulairo: ItipoCuentas, bankAccount: IBankAccount) {
@@ -126,7 +125,7 @@ export class TesofeMovementsModalComponent extends BasePage implements OnInit {
 
   addCuenta(cuenta: ICuentaInsert) {
     this.movementService.insert(cuenta).subscribe({
-      next: data => {
+      next: X => {
         this.handleSuccess(), Swal.fire('Nuevo Registro', '', 'success');
       },
       error: err => {
