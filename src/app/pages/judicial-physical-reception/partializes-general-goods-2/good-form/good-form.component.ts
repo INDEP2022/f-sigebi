@@ -104,10 +104,10 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       ? await firstValueFrom(this.statusService.getById(good.goodStatus))
       : null;
     debugger;
-    const sssubtype = good.goodCategory
+    const sssubtype = good.goodClassNumber
       ? await firstValueFrom(
           this.goodSssubtypeService.getAll2(
-            '?filter.numClasifGoods=' + good.goodCategory
+            '?filter.numClasifGoods=' + good.goodClassNumber
           )
         )
       : null;
@@ -115,19 +115,15 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.form.setValue({
       noBien: good.id,
       cantPadre: good.goodsPartializationFatherNumber,
-      descripcion: good.goodDescription,
+      descripcion: good.description,
       cantidad: good.quantity,
       avaluo: good.appraisedValue,
       estatus: good.goodStatus,
-      estatusDescripcion: statusGood
-        ? statusGood.data
-          ? statusGood.data.description
-          : ''
-        : '',
+      estatusDescripcion: statusGood ? statusGood.description : '',
       extDom: good.extDomProcess,
       moneda: good.val1,
-      expediente: good.no_expediente,
-      clasificador: good.goodCategory ? +good.goodCategory : null,
+      expediente: good.fileNumber,
+      clasificador: good.goodClassNumber ? +good.goodClassNumber : null,
       clasificadorDescripcion: sssubtype
         ? sssubtype.data
           ? sssubtype.data.length > 0
