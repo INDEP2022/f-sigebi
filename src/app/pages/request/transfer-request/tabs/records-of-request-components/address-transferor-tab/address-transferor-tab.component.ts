@@ -470,6 +470,7 @@ export class AddressTransferorTabComponent
     this.goodDomicileService.create(domicile).subscribe(
       (data: any) => {
         if (data.id != null) {
+          this.domicileForm.controls['id'].setValue(data.id);
           this.message(
             'success',
             'Guadado',
