@@ -120,7 +120,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
         this.alertQuestion(
           'info',
           'Aviso',
-          'El usuario se turnó correctamente. El reporte para los trámites con estatus diferente a "OPI", no está disponible'
+          'El usuario se turnó correctamente. El reporte solo esta disponible para los trámites con estatus "OPI"'
         );
         return;
       }
