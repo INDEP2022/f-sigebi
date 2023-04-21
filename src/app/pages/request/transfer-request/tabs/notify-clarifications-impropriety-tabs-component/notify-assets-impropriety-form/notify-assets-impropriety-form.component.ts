@@ -258,7 +258,7 @@ export class NotifyAssetsImproprietyFormComponent
               ''
             );
             console.log('id del documento', data.id);
-            this.chatClarifications(); //PARA FORMULARIO LARGO
+            this.chatClarifications(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
             this.openReport(data);
             this.loading = false;
             //this.modalRef.hide()
