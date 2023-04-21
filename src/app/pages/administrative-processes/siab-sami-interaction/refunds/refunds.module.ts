@@ -21,6 +21,7 @@ import { TaxpayersSharedComponent } from 'src/app/@standalone/shared-forms/taxpa
 import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 //Components
+import { CuentasSharedComponent } from 'src/app/@standalone/shared-forms/cuentas-shared/cuentas-shared.component';
 import { AddGoodsComponent } from './add-goods/add-goods.component';
 import { CheckDetailComponent } from './check-detail/check-detail.component';
 import { GoodsRelationshipComponent } from './goods-relationship/goods-relationship.component';
@@ -52,6 +53,8 @@ import { PaymentRequestComponent } from './payment-request/payment-request.compo
     TransferenteSharedComponent,
     BanksSharedComponent,
     DelegationSharedComponent,
+    //Oscar
+    CuentasSharedComponent,
   ],
 })
 export class PaRMRefundsModule {}
