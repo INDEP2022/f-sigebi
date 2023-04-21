@@ -135,6 +135,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       item.targetUserType = this.requestForm.controls['typeUser'].value;
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();
+      item.originInfo = 'SOL_TRANSFERENCIA';
       /* crea solicitud */
       const resposeRequest: any = await this.saveRequest(item);
 
