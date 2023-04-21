@@ -492,7 +492,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.receiptRoute = 'FISICA';
       form.affair = null;
       form.applicationDate = null;
-
+      debugger;
       this.requestService.create(form).subscribe({
         next: resp => {
           resolve(resp);
@@ -512,6 +512,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.receiptRoute = 'FISICA';
       form.affair = 37;
       form.typeOfTransfer = 'MANUAL';
+      //form.originInfo = 'SOL_TRANSFERENCIA'
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
 

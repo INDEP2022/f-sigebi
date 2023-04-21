@@ -209,9 +209,14 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           debugger;
           //TODO: Guardarlo en el content
           const addToContent = await this.addDocumentToContent(form, file);
+          console.log(addToContent);
+          const docName = addToContent;
+          console.log(docName);
           if (addToContent) {
+            console.log(addToContent);
             const docName = addToContent;
             console.log(docName);
+            this.loader.load = false;
             //const actualUser: any = this.authService.decodeToken();
             const title =
               'Registro de solicitud (Verificar Cumplimiento) con folio: ' +
@@ -219,7 +224,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
             const url = 'pages/request/transfer-request/verify-compliance';
             const from = 'REGISTRO_SOLICITUD';
             const to = 'VERIFICAR_CUMPLIMIENTO';
-            /* crea una nueva tarea */
+            // crea una nueva tarea
             const taskResponse = await this.createTaskOrderService(
               this.data,
               title,
@@ -234,10 +239,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               'TURNAR'
             );
             if (taskResponse) {
-              /* actualizar status del bien */
-              // const orderServResult = await this.createOrderService(from, to);
-
-              // if (orderServResult) {
+              // actualizar status del bien
               this.loader.load = false;
               Swal.fire({
                 title: 'Solicitud Turnada',
@@ -250,7 +252,6 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               }).then(result => {
                 this.closeAll();
               });
-              //}
             }
           }
         }

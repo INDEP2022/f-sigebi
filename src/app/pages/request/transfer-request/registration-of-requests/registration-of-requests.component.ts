@@ -774,34 +774,31 @@ export class RegistrationOfRequestsComponent
       );
       return;
     }
-    const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
-      const url = 'pages/request/programming-request/schedule-reception';
-      const from = 'SOLICITAR_APROBACION';
-      const to = 'APROBADO';
-      const user: any = this.authService.decodeToken();
-      const taskResult = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        true,
-        this.task.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Aprobar_Solicitud',
-        'TURNAR'
+    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+    const url = 'pages/request/programming-request/schedule-reception';
+    const from = 'SOLICITAR_APROBACION';
+    const to = 'APROBADO';
+    const user: any = this.authService.decodeToken();
+    const taskResult = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Aprobar_Solicitud',
+      'TURNAR'
+    );
+    if (taskResult === true) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
-      if (taskResult === true) {
-        this.loader.load = false;
-        this.msgGuardado(
-          'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
-        );
-      }
     }
   }
   /** fin de proceso */
@@ -880,12 +877,11 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      debugger;
+
       if (closetask) {
         body['idTask'] = taskId;
         body['userProcess'] = userProcess;
       }
-
       body['type'] = type;
       body['subtype'] = subtype;
       body['ssubtype'] = ssubtype;
@@ -1031,7 +1027,19 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
-          this.destinyDocumental();
+          this.question = true;
+          if (this.verifyResp === 'aclaracion') {
+            console.log('llamar metodo de aclaracion');
+          } else if (this.verifyResp === 'turnar') {
+            //this.destinyDocumental();
+            console.log('turnar solicitud');
+          } else {
+            this.onLoadToast(
+              'error',
+              'Error al turnar',
+              'No se pudo turnar la solicitud'
+            );
+          }
         }
 
         if (typeCommit === 'proceso-aprovacion') {

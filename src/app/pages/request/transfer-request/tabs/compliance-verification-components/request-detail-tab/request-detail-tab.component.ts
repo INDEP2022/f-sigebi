@@ -105,6 +105,7 @@ export class RequestDetailTabComponent
   prepareForm(): void {
     this.receptionForm = this.fb.group({
       priority: [null],
+      priorityDate: [null],
       infoProvenance: [null],
       receptDate: [null],
       officeDate: [null, Validators.required],
