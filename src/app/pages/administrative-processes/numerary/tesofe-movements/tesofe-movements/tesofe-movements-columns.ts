@@ -1,15 +1,15 @@
 export const TESOFE_MOVEMENTS_COLUMNS = {
-  date: {
+  dateMotion: {
     title: 'Fecha',
     type: 'string',
     sort: false,
   },
-  desposit: {
+  deposit: {
     title: 'Depósito',
     type: 'string',
     sort: false,
   },
-  retire: {
+  withdrawal: {
     title: 'Retiro',
     type: 'string',
     sort: false,

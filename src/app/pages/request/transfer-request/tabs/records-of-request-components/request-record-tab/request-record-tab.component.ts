@@ -184,7 +184,10 @@ export class RequestRecordTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
       ],
-      transferenceFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferenceFile: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
       previousInquiry: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

@@ -1,26 +1,73 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { CurrencyPipe } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  BehaviorSubject,
+  catchError,
+  forkJoin,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
+import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import {
+  generateUrlOrPath,
+  getUser,
+  readFile,
+  showAlert,
+  showQuestion,
+  showToast,
+} from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { HistoricalGoodSituationComponent } from 'src/app/pages/general-processes/historical-good-situation/historical-good-situation/historical-good-situation.component';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { TableSelectComponent } from '../components/table-select/table-select.component';
-import {
-  EXPENSE_COLUMNS,
-  NUMERAIRE_COLUMNS,
-} from './numeraire-exchange-columns';
+import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
+import { NUMERAIRE_COLUMNS } from './numeraire-exchange-columns';
 
+interface IFormNumeraire {
+  screenKey: FormControl<string>;
+  spentPlus: FormControl<string>;
+  description: FormControl<string>;
+  amountevta: FormControl<string>;
+  typeConv: FormControl<string>;
+  spentId: FormControl<string>;
+  // totalAmount: FormControl<number>;
+  status: FormControl<string>;
+  identificator: FormControl<string>;
+  processExt: FormControl<string>;
+  ivavta: FormControl<string>;
+  commission: FormControl<string>;
+  ivacom: FormControl<string>;
+  goodId: FormControl<string>;
+  delegationNumber: FormControl<string>;
+  subDelegationNumber: FormControl<string>;
+  flier: FormControl<string>;
+  fileNumber: FormControl<string>;
+  user: FormControl<string>;
+  bankNew: FormControl<string>;
+  moneyNew: FormControl<string>;
+  accountNew: FormControl<string>;
+  comment: FormControl<string>;
+  expAssociated: FormControl<string>;
+  dateNew: FormControl<string>;
+
+  invoiceFile: FormControl<string>;
+  deposit: FormControl<string>;
+  ivavtaPercent: FormControl<string>;
+  commissionPercent: FormControl<string>;
+  commissionTaxPercent: FormControl<string>;
+}
 @Component({
   selector: 'app-numeraire-exchange-form',
   templateUrl: './numeraire-exchange-form.component.html',
-  styles: [],
+  styles: ['::ng-deep .ws-pre{white-space: pre-wrap;}'],
+  providers: [CurrencyPipe],
   animations: [
     trigger('OnGoodSelected', [
       transition(':enter', [
@@ -32,410 +79,227 @@ import {
   ],
 })
 export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
-  numeraireExchangeForm: FormGroup = new FormGroup({});
-  fileForm: FormGroup = new FormGroup({});
-  good: any;
-  hasExpenses: boolean = false;
+  @ViewChild(TableExpensesComponent) tableExpense: TableExpensesComponent;
+  form: FormGroup = new FormGroup<IFormNumeraire>({
+    screenKey: new FormControl('FACTADBCAMBIONUME', [Validators.required]),
+    amountevta: new FormControl(null, [Validators.required]),
+    typeConv: new FormControl(null, [Validators.required]),
+    status: new FormControl(null, [Validators.required]),
+    identificator: new FormControl(null, [Validators.required]),
+    ivavta: new FormControl(null, [Validators.required]),
+    commission: new FormControl(null, [Validators.required]),
+    ivacom: new FormControl(null, [Validators.required]),
+    goodId: new FormControl(null, [Validators.required]),
+    user: new FormControl(getUser(), [Validators.required]),
+    bankNew: new FormControl(null, [Validators.required]),
+    moneyNew: new FormControl(null, [Validators.required]),
+    accountNew: new FormControl(null, [Validators.required]),
+    dateNew: new FormControl(null, [Validators.required]),
+    spentId: new FormControl(null, [Validators.required]), //TODO: por asignar
+    spentPlus: new FormControl(null, [Validators.required]),
+    description: new FormControl(null, [Validators.required]),
+    // totalAmount: new FormControl(0, [Validators.required]),
+    processExt: new FormControl(null, [Validators.required]),
+    delegationNumber: new FormControl(null, [Validators.required]),
+    subDelegationNumber: new FormControl(null, [Validators.required]),
+    flier: new FormControl(null, [Validators.required]),
+    fileNumber: new FormControl(null, [Validators.required]),
+    comment: new FormControl(null, [Validators.required]),
+    expAssociated: new FormControl(null, [Validators.required]),
+
+    invoiceFile: new FormControl(null, [Validators.required]),
+    deposit: new FormControl(null, [Validators.required]),
+    ivavtaPercent: new FormControl(null, [Validators.required]),
+    commissionPercent: new FormControl(null, [Validators.required]),
+    commissionTaxPercent: new FormControl(null, [Validators.required]),
+  });
+
+  fileForm: FormGroup = new FormGroup({
+    file: new FormArray([], [Validators.required]),
+  });
   toggleExpenses: boolean = true;
-  adding: boolean = false;
-  goodItems = new DefaultSelect();
-  accountItems = new DefaultSelect();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  selectedGood: any = null;
-  selectedAccount: any = null;
-  createButton: string =
-    '<span class="btn btn-success active font-size-12 me-2 mb-2 py-2 px-2">Agregar</span>';
-  saveButton: string =
-    '<span class="btn btn-info active font-size-12 me-2 mb-2 py-2 px-2">Actualizar</span>';
-  cancelButton: string =
-    '<span class="btn btn-warning active font-size-12 text-black me-2 mb-2 py-2 px-2 cancel">Cancelar</span>';
-  expenseSettings = {
-    ...TABLE_SETTINGS,
-    selectedRowIndex: -1,
-    mode: 'internal',
-    hideSubHeader: false,
-    filter: {
-      inputClass: 'd-none',
-    },
-    attr: {
-      class: 'table-bordered normal-hover',
-    },
-    add: {
-      createButtonContent: this.createButton,
-      cancelButtonContent: this.cancelButton,
-      confirmCreate: true,
-    },
-    edit: {
-      editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
-      saveButtonContent: this.saveButton,
-      cancelButtonContent: this.cancelButton,
-      confirmSave: true,
-    },
-  };
+  selectedGood: IGood = null;
+  selectedBank: any = null;
   numeraireSettings = {
-    ...TABLE_SETTINGS,
+    columns: NUMERAIRE_COLUMNS,
     selectedRowIndex: -1,
     actions: false,
+    editable: false,
   };
-  filterRow: any;
-  addOption: any;
-  addRowElement: any;
-  readOnlyInput: any;
-  cancelBtn: any;
-  cancelEvent: any;
-  expenseColumns: any[] = [];
-  numeraireColumns: any[] = [];
+
+  sourcesMassive = new LocalDataSource();
   fileName: string = 'Seleccionar archivo';
 
-  individualGoodTestData: any = [
+  // formHelpivavtaPercent = new FormControl(null);
+  // formHelpcommissionPercent = new FormControl(null);
+  // formHelpcommissionTaxPercent = new FormControl(null);
+
+  pathGoods = generateUrlOrPath(GoodEndpoints.Good, GoodEndpoints.Good, true);
+
+  conversionTypes = [
     {
-      id: 1,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$200.00',
-      appraisal: 200,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
+      value: 'CBD',
+      text: 'Bien decomisado cambiado a numerario por enajenación',
     },
     {
-      id: 2,
-      code: 'BIEN',
-      description: 'BIEN DE EJEMPLO POR LA CANTIDAD DE US$500.00',
-      appraisal: 500,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
+      text: 'Bien decomisado cambiado a numerario por siniestro',
+      value: 'CDS',
     },
     {
-      id: 3,
-      code: 'GOOD',
-      description: 'BIEN PARA PRUEBAS POR LA CANTIDAD DE US$100.00',
-      appraisal: 100,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
+      text: 'Bien asegurado cambiado a numerario por enajenación.',
+      value: 'CNE1',
     },
     {
-      id: 4,
-      code: 'ASEG',
-      description: 'NUMERARIO FÍSICO POR LA CANTIDAD DE US$700.00',
-      appraisal: 700,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
+      text: 'Bien asegurado cambiado a numerario por siniestro.',
+      value: 'CNS',
     },
     {
-      id: 5,
-      code: 'BIEN',
-      description: 'BIEN PARA PROBAR INTERFAZ POR LA CANTIDAD DE US$50.00',
-      appraisal: 50,
-      status: 'Bien entregado en Administración',
-      domain: 'ASEGURADO',
-      converted: false,
+      text: 'Bien generado por pago parcial por siniestro',
+      value: 'BBB',
     },
   ];
 
-  accountsTestData = [
-    {
-      id: 'BANAMEX1',
-      number: 7522422,
-      currency: 'M',
-      description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 1',
-    },
-    {
-      id: 'BANAMEX2',
-      number: 7522842,
-      currency: 'M',
-      description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 2',
-    },
-    {
-      id: 'BANAMEX3',
-      number: 7529231,
-      currency: 'M',
-      description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 3',
-    },
-    {
-      id: 'BANAMEX4',
-      number: 7249315,
-      currency: 'M',
-      description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 4',
-    },
-    {
-      id: 'BANAMEX5',
-      number: 7823647,
-      currency: 'M',
-      description: 'BANAMEX PARA DEPÓSITOS DE LA SUBASTA PÚBLICA No. 5',
-    },
-  ];
-
-  expenseTestData = [
-    {
-      id: 3000,
-      description: 'PASAJES NACIONALES',
-      amount: 12000,
-    },
-  ];
+  readonly NAME_CURRENT_FORM = 'FACTADBCAMBIONUME';
+  validNumerary: 'loading' | 'error' | 'valid' | 'notValid' = 'loading';
 
   constructor(
-    private modalRef: BsModalRef,
-    private modalService: BsModalService,
-    private fb: FormBuilder,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private numeraryService: NumeraryService,
+    private statusScreenService: ScreenStatusService,
+    private goodService: GoodService,
+    private currencyPipe: CurrencyPipe
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.getGoods({ page: 1, text: '' });
-    this.getAccounts({ page: 1, text: '' });
-    this.expenseSettings.columns = EXPENSE_COLUMNS;
-    this.expenseSettings.columns = {
-      ...this.expenseSettings.columns,
-      description: {
-        title: 'Descripción',
-        sort: false,
-        type: 'html',
-        width: '50%',
-        editor: {
-          type: 'custom',
-          component: TableSelectComponent,
-        },
-      },
+    this.onListenerAmountevta();
+  }
+
+  getDataForTableExpenses(): { spentId: any[]; spentImport: any[] } {
+    const expense = this.tableExpense.getExpense();
+    let convertExpense: { spentId: any[]; spentImport: any[] } = {
+      spentId: [],
+      spentImport: [],
     };
-    this.numeraireSettings.columns = NUMERAIRE_COLUMNS;
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSearch());
-  }
-
-  getSearch() {
-    this.loading = true;
-    console.log(this.params.getValue());
-    this.loading = false;
-  }
-
-  private prepareForm(): void {
-    this.numeraireExchangeForm = this.fb.group({
-      id: [null, [Validators.required]],
-      salePrice: [null, [Validators.required]],
-      saleTaxPercent: [null, [Validators.required]],
-      saleTax: [null, [Validators.required]],
-      commissionPercent: [null, [Validators.required]],
-      commission: [null, [Validators.required]],
-      commissionTaxPercent: [null, [Validators.required]],
-      commissionTax: [null, [Validators.required]],
-      account: [null, [Validators.required]],
-      depositDate: [null, [Validators.required]],
-      depositReferece: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      depositAmount: [null, [Validators.required]],
-      exchangeType: [null, [Validators.required]],
-      expenses: this.fb.array([null]),
+    expense.forEach(element => {
+      convertExpense.spentId.push({
+        element: element.id,
+      });
+      convertExpense.spentImport.push({
+        element: element.import,
+      });
     });
-    this.fileForm = this.fb.group({
-      file: this.fb.array([null]),
-    });
+    return convertExpense;
   }
 
-  getGoods(params: ListParams) {
-    if (params.text == '') {
-      this.goodItems = new DefaultSelect(this.individualGoodTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.individualGoodTestData.filter((i: any) => i.id == id)];
-      this.goodItems = new DefaultSelect(item[0], 1);
+  changeGood(event: any) {
+    if (!event?.goodId) {
+      showToast({
+        icon: 'warning',
+        text: 'Este bien no posee identificador (goodId)',
+      });
+      event = null;
     }
-  }
 
-  selectGood(event: any) {
+    this.form.patchValue({
+      status: event?.status || null,
+      identificator: event?.identifier || null,
+      processExt: event?.extDomProcess || null,
+      delegationNumber: event?.delegationNumber?.id || null,
+      subDelegationNumber: event?.subDelegationNumber?.id || null,
+      flier: event?.flyerNumber || null,
+      fileNumber: event?.expediente?.id || null,
+      expAssociated: event?.associatedFileNumber || null,
+    });
     this.selectedGood = event;
-    this.hideFilters();
+
+    if (event) this.validateGood(event.goodId);
   }
 
-  hideFilters() {
-    setTimeout(() => {
-      let filterArray = document.getElementsByClassName('ng2-smart-filters');
-      this.filterRow = filterArray.item(0);
-      this.filterRow.classList.add('d-none');
-      this.addOption = document
-        .getElementsByClassName('ng2-smart-action-add-add')
-        .item(0);
-    }, 200);
-  }
-
-  getAccounts(params: ListParams) {
-    if (params.text == '') {
-      this.accountItems = new DefaultSelect(this.accountsTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.accountsTestData.filter((i: any) => i.id == id)];
-      this.accountItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
-  selectAccount(event: any) {
-    this.selectedAccount = event;
-  }
-
-  formatCurrency(event: any) {
-    console.log(event.target.value);
-    event.preventDefault();
-    let number = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-    }).format(event.target.value);
-    event.target.value = number;
-  }
-
-  formatDecimals(event: any) {
-    event.preventDefault();
-    if (event.target.value > 999) return;
-    let number = new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-    }).format(event.target.value);
-    event.target.value = number;
-  }
-
-  validateCurrency(event: any) {
-    var regex = new RegExp('^[0-9,.]+$');
-    var key = String.fromCharCode(
-      !event.charCode ? event.which : event.charCode
-    );
-    if (!regex.test(key)) {
-      event.preventDefault();
-      return false;
-    }
-    return true;
-  }
-
-  calculateSaleTax() {
-    let salePrice = this.numeraireExchangeForm.controls['salePrice'].value;
-    let saleTaxPercent =
-      this.numeraireExchangeForm.controls['saleTaxPercent'].value;
-    if (
-      salePrice !== null &&
-      salePrice !== '' &&
-      saleTaxPercent !== null &&
-      saleTaxPercent !== 0 &&
-      saleTaxPercent !== ''
-    ) {
-      salePrice = parseFloat(salePrice);
-      saleTaxPercent = parseFloat(saleTaxPercent);
-      let saleTax = salePrice * (saleTaxPercent / 100);
-      let saleTaxFormat = new Intl.NumberFormat('es-MX', {
-        minimumFractionDigits: 2,
-      }).format(saleTax);
-      this.numeraireExchangeForm.controls['saleTax'].setValue(saleTaxFormat);
-    }
-  }
-
-  calculateCommission() {
-    let commissionPercent =
-      this.numeraireExchangeForm.controls['commissionPercent'].value;
-    let salePrice = this.numeraireExchangeForm.controls['salePrice'].value;
-    if (
-      commissionPercent !== null &&
-      commissionPercent !== 0 &&
-      commissionPercent !== '' &&
-      salePrice !== null &&
-      salePrice !== 0 &&
-      salePrice !== ''
-    ) {
-      commissionPercent = parseFloat(commissionPercent);
-      let commission = salePrice * (commissionPercent / 100);
-      let commissionFormat = new Intl.NumberFormat('es-MX', {
-        minimumFractionDigits: 2,
-      }).format(commission);
-      this.numeraireExchangeForm.controls['commission'].setValue(
-        commissionFormat
+  validateGood(good: number) {
+    const validate1 = this.statusScreenService
+      .getStatus({
+        whereIn: true,
+        screen: this.NAME_CURRENT_FORM,
+        count: true,
+        good,
+      })
+      .pipe(
+        map((res: any) => {
+          if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            try {
+              return { isAvailable: Boolean(parseInt(res.data[0].count)) };
+            } catch (error) {
+              return { isAvailable: false };
+            }
+          }
+          return { isAvailable: false };
+        }),
+        catchError(() => {
+          return of({ isAvailable: false });
+        })
       );
-    }
-  }
-
-  calculateCommissionTax() {
-    let commissionTaxPercent =
-      this.numeraireExchangeForm.controls['commissionTaxPercent'].value;
-    let commission = this.numeraireExchangeForm.controls['commission'].value;
-    if (
-      commissionTaxPercent !== null &&
-      commissionTaxPercent !== 0 &&
-      commissionTaxPercent !== '' &&
-      commission !== null &&
-      commission !== 0 &&
-      commission !== ''
-    ) {
-      commissionTaxPercent = parseFloat(commissionTaxPercent);
-      let commissionTax = commission * (commissionTaxPercent / 100);
-      let commissionTaxFormat = new Intl.NumberFormat('es-MX', {
-        minimumFractionDigits: 2,
-      }).format(commissionTax);
-      this.numeraireExchangeForm.controls['commissionTax'].setValue(
-        commissionTaxFormat
+    const validate2 = this.statusScreenService
+      .getStatus({
+        whereIn: true,
+        good,
+        count: false,
+        screen: this.NAME_CURRENT_FORM,
+      })
+      .pipe(
+        map((res: any) => {
+          if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            return { isValidNumerary: true };
+          }
+          return { isValidNumerary: false };
+        }),
+        catchError(() => {
+          return of({ isValidNumerary: false });
+        })
       );
-    }
-  }
 
-  addRow() {
-    this.adding = true;
-    this.addOption.click();
-    setTimeout(() => {
-      this.addRowElement = document
-        .querySelectorAll('tr[ng2-st-thead-form-row]')
-        .item(0);
-      this.addRowElement.classList.add('row-no-pad');
-      this.addRowElement.classList.add('add-row-height');
-      this.readOnlyInput = document
-        .querySelectorAll('input[ng-reflect-name="id"]')
-        .item(0);
-      this.readOnlyInput.setAttribute('readonly', '');
-      this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-      this.cancelEvent = this.handleCancel.bind(this);
-      this.cancelBtn.addEventListener('click', this.cancelEvent);
-    }, 300);
-  }
-
-  addEntry(event: any) {
-    if (!event.newData.description || event.newData.amount == '') {
-      this.alertTable();
-      return;
-    }
-    event.newData.id = event.newData.description.id;
-    event.newData.description = event.newData.description.description;
-    event.confirm.resolve(event.newData);
-    this.adding = false;
-  }
-
-  editEntry(event: any) {
-    if (!event.newData.description || event.newData.amount == '') {
-      this.alertTable();
-      return;
-    }
-    event.newData.id = event.newData.description.id;
-    event.newData.description = event.newData.description.description;
-    event.confirm.resolve(event.newData);
-  }
-
-  handleCancel() {
-    this.adding = false;
-    this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-    this.cancelBtn.removeEventListener('click', this.cancelEvent);
-  }
-
-  alertTable() {
-    this.onLoadToast(
-      'error',
-      'Campos incompletos',
-      'Complete todos los campos para agregar un registro'
-    );
+    forkJoin([validate1, validate2]).subscribe({
+      next: (res: any[]) => {
+        const isAvailable = res[0].isAvailable;
+        const isValidNumerary = res[1].isValidNumerary;
+        this.validNumerary = isValidNumerary ? 'valid' : 'notValid';
+        if (
+          (isValidNumerary && isAvailable) ||
+          (isValidNumerary && !isAvailable)
+        ) {
+          showAlert({
+            icon: 'info',
+            title: 'Advertencia',
+            text: 'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso',
+          });
+        }
+        if (!isValidNumerary && !isAvailable) {
+          showToast({
+            title: 'Advertencia',
+            text: 'Estatus, identificador o clasificador inválido para cambio a numerario/valores y divisas',
+            icon: 'warning',
+          });
+        }
+      },
+      error: error => {
+        this.validNumerary = 'error';
+        console.log(error);
+      },
+    });
   }
 
   getFile(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1)
       throw 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)';
+
+    readFile(files[0], 'BinaryString').then(data => {
+      this.readCsv(data.result);
+    });
+
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readCsv(fileReader.result);
@@ -444,42 +308,214 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   readCsv(binaryExcel: string | ArrayBuffer) {
     try {
       this.loading = true;
-      this.numeraireColumns = this.excelService.getData(binaryExcel);
-      this.totalItems = this.numeraireColumns.length;
+      const dataCvs = this.excelService.getData(binaryExcel);
+      this.sourcesMassive.load(dataCvs);
+      console.log(dataCvs);
+      this.totalItems = dataCvs.length;
       this.loading = false;
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.loading = false;
+      showToast({ icon: 'error', text: 'Ocurrió un error al leer el archivo' });
     }
   }
 
-  exchange() {
-    this.numeraireExchangeForm.controls['expenses'].setValue(
-      this.expenseTestData
-    );
-    console.log(this.numeraireExchangeForm.value);
-  }
-  getAttributes() {
-    this.loading = true;
-    // this.attributes
-    //   .getAll(this.params.getValue())
-    //   .subscribe({
-    //     next: response => {
-    //       this.attributes = response.data;
-    //       this.totalItems = response.count;
-    //       this.loading = false;
-    //     },
-    //     error: error => (this.loading = false),
-    //   });
+  validateCvs(data: any[]): Promise<any> {
+    const goodKey = 'goodId';
+    const goodIds = data.map((item: any) => item[goodKey]);
+    return new Promise((resolve, reject) => {
+      this.numeraryService
+        .validateCvs({
+          goodIds,
+          vcScreen: this.form.get('FACTADBCAMBIONUME').value,
+        })
+        .subscribe({
+          next: (res: any) => {
+            return resolve('error');
+          },
+          error: (error: any) => {
+            return reject(error);
+          },
+        });
+    });
   }
 
-  openForm(attributesFinancialInfo?: any) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      attributesFinancialInfo,
-      callback: (next: boolean) => {
-        if (next) this.getAttributes();
-      },
-    };
-    this.modalService.show(HistoricalGoodSituationComponent, modalConfig);
+  selectAccount(account: any) {
+    this.selectedBank = account;
+    this.form.get('moneyNew').setValue(account?.cveCurrency || null);
+    this.form.get('accountNew').setValue(account?.cveAccount || null);
+    this.form.get('bankNew').setValue(account?.cveBank || null);
+  }
+
+  saveInServer(): void {
+    this.validateForm().then(isValid => {
+      console.log(isValid);
+      console.log(this.form.value);
+      if (isValid) {
+        this.goodService.changeGoodToNumerary(this.form.value).subscribe({
+          next: (res: any) => {
+            console.log(res);
+          },
+          error: (error: any) => {},
+        });
+      }
+    });
+  }
+
+  saveInSerServerMassive(): void {}
+
+  checkedMovBan = false;
+  validateForm(): Promise<boolean> {
+    if (this.validNumerary === 'error') {
+      showToast({ icon: 'error', text: 'Ocurrió un error al validar el bien' });
+      return Promise.resolve(false);
+    }
+    if (this.validNumerary === 'loading') {
+      showToast({ icon: 'warning', text: 'Validando bien, espere un momento' });
+      return Promise.resolve(false);
+    }
+
+    const {
+      typeConv,
+      goodId,
+      bankNew,
+      amountevta,
+      moneyNew,
+      ivavta,
+      commission,
+      ivacom,
+    } = this.form.value;
+    const message: string[] = [];
+    if (!goodId) {
+      message.push(
+        'Debe especificar el bien que se quiere cambiar a numerario'
+      );
+    }
+
+    if (!ivavta) {
+      message.push('Debe especificar el IVA en los datos de venta');
+    }
+
+    if (!commission) {
+      message.push('Debe especificar la comisión en los datos de venta');
+    }
+
+    if (!ivacom) {
+      message.push(
+        'Debe especificar el IVA de la comisión en los datos de venta'
+      );
+    }
+
+    if (this.checkedMovBan && !bankNew) {
+      message.push('Debe especificar el banco');
+    }
+
+    if (!typeConv) {
+      message.push('No ha seleccionado el tipo de conversión');
+    }
+
+    if (!moneyNew && this.validNumerary === 'valid') {
+      message.push('Debe especificar el tipo de moneda');
+    }
+
+    if (
+      (this.validNumerary === 'valid' && ['CNE', 'BBB'].includes(typeConv)) ||
+      (this.validNumerary === 'notValid' && typeConv === 'CNE')
+    ) {
+      showToast({
+        icon: 'warning',
+        text: 'El tipo de conversión seleccionado no es permitido para este bien.',
+      });
+      return Promise.resolve(false);
+    }
+
+    if (message.length > 0) {
+      showToast({
+        html: message.join('\n'),
+        customClass: 'ws-pre',
+        icon: 'warning',
+        text: '',
+      });
+      return Promise.resolve(false);
+    }
+
+    if (!amountevta) {
+      return showQuestion({
+        title: 'Confirmación',
+        text: 'El nuevo bien se generara con un precio de venta de 1.\n ¿Seguro que desea cambiar el bien a numerario?',
+        confirmButtonText: 'Si, continuar',
+        cancelButtonText: 'No, cancelar',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.form.controls['amountevta'].setValue(1);
+          return Promise.resolve(true);
+        }
+        return Promise.resolve(false);
+      });
+    }
+
+    return showQuestion({
+      title: 'Confirmación',
+      text: '¿Seguro que desea cambiar el bien a numerario?',
+      confirmButtonText: 'Si, continuar',
+      cancelButtonText: 'No, cancelar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
+    });
+  }
+
+  changeDeposit(event: any): void {
+    this.form.controls['invoiceFile'].setValue(event?.InvoiceFile || null);
+    this.form.controls['deposit'].setValue(event?.deposit || null);
+  }
+
+  changeGenerateMvBan(event: any): void {
+    this.checkedMovBan = event.target.checked;
+  }
+
+  onListenerAmountevta(): void {
+    this.form.controls['amountevta'].valueChanges
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(_value => {
+        this.setIvaSell();
+        this.setCommission();
+        this.setIvaCommission();
+      });
+  }
+
+  setIvaSell(): void {
+    this.setCurrencies('amountevta', 'ivavtaPercent', 'ivavta');
+  }
+
+  setCommission(): void {
+    this.setCurrencies('amountevta', 'commissionPercent', 'commission');
+    this.setIvaCommission();
+  }
+
+  setIvaCommission(): void {
+    this.setCurrencies('commission', 'commissionTaxPercent', 'ivacom');
+  }
+
+  setCurrencies(ctrl1: string, ctrl2: string, ctrlAssign: string): void {
+    const value =
+      String(this.form.get(ctrl1)?.value).replace(/[^0-9.]+/g, '') || 0;
+    const value2 =
+      String(this.form.get(ctrl2)?.value).replace(/[^0-9.]+/g, '') || 0;
+    const value3 = +value * (+value2 / 100);
+    if (!value3) {
+      this.form.controls[ctrlAssign].setValue(null);
+      return;
+    }
+    const formattedCurrency = this.currencyPipe.transform(value3, 'USD');
+    this.form.controls[ctrlAssign].setValue(formattedCurrency);
+  }
+
+  convertNumberCurrencyForSave(value: string): number {
+    if (!value) {
+      return 0;
+    }
+    return +value.replace(/[^0-9.]+/g, '');
   }
 }

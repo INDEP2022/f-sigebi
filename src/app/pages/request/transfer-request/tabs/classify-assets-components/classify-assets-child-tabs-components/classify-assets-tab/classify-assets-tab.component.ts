@@ -14,6 +14,7 @@ import { showHideErrorInterceptorService } from 'src/app/common/services/show-hi
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IPostGoodResDev } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -62,6 +63,7 @@ export class ClassifyAssetsTabComponent
   formLoading: boolean = false;
   noItemsFoundMessage = 'No se encontraron elementos';
   fractionCode: string = null;
+  goodResDev: IPostGoodResDev = {};
 
   constructor(
     private fb: FormBuilder,
@@ -95,15 +97,10 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    /*console.log('df', this.assetsId);
-      if (changes['assetsId'].currentValue != '') {
-        //cargar la clasificacion de bienes segun el id que se envio
-      } */
     //bienes selecionados
-
+    console.log(this.requestObject);
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
-      //this.formLoading = true;
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
@@ -136,7 +133,7 @@ export class ClassifyAssetsTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       quantity: [
-        null,
+        1,
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
@@ -693,7 +690,7 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
   }
 
-  saveRequest(): void {
+  async saveRequest(): Promise<void> {
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
       this.message(
@@ -725,66 +722,86 @@ export class ClassifyAssetsTabComponent
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
-
     let goodAction: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      this.createGood(goods);
+      const newGood = await this.createGood(goods);
     } else {
-      this.updateGood(goods);
+      const updateGood = await this.updateGood(goods);
     }
   }
 
   createGood(good: any) {
-    this.goodService
-      .create(good)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.message(
-            'success',
-            'Guardado',
-            `¡El registro se guardó exitosamente!`
-          );
-          this.classiGoodsForm.controls['id'].setValue(data.id);
+    return new Promise((resolve, reject) => {
+      this.goodService
+        .create(good)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: data => {
+            this.message(
+              'success',
+              'Guardado',
+              `¡El registro se guardó exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-          this.refreshTable(true);
+            this.refreshTable(true);
 
-          setTimeout(() => {
-            this.refreshTable(false);
-          }, 5000);
-        },
-        error: error => {},
-      });
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+
+            resolve(data);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Bien no creado',
+              `Ocurrio un error al guardar el bien ${error.error.message}`
+            );
+            console.log(error);
+          },
+        });
+    });
   }
 
   updateGood(good: any) {
-    good.requestId = good.requestId.id;
-    if (good.addressId.id) {
-      good.addressId = Number(good.addressId.id);
-    }
-    good.quantity = Number(good.quantity);
-    this.goodService
-      .update(good)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.message(
-            'success',
-            'Guardado',
-            `El registro se actualizo exitosamente!`
-          );
-          this.classiGoodsForm.controls['id'].setValue(data.id);
+    return new Promise((resolve, reject) => {
+      good.requestId = good.requestId.id;
+      if (good.addressId.id) {
+        good.addressId = Number(good.addressId.id);
+      }
+      good.quantity = Number(good.quantity);
+      this.goodService
+        .update(good)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: data => {
+            this.message(
+              'success',
+              'Guardado',
+              `El registro se actualizo exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-          this.refreshTable(true);
+            this.refreshTable(true);
 
-          setTimeout(() => {
-            this.refreshTable(false);
-          }, 5000);
-        },
-        error: error => {},
-      });
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+            resolve(data);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Bien no creado',
+              `Ocurrio un error al guardar el bien ${error.error.message}`
+            );
+            console.log(error);
+          },
+        });
+    });
   }
 
   getReactiveFormActions() {

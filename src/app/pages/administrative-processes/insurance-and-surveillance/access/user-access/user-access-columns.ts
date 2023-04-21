@@ -1,15 +1,15 @@
 export const USER_ACCESS_COLUMNS = {
-  user: {
+  userKey: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-  role: {
+  userRole: {
     title: 'Rol',
     type: 'number',
     sort: false,
   },
-  status: {
+  estAccess: {
     title: 'Estatus',
     type: 'number',
     sort: false,
