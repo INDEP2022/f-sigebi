@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { Clarification2Srvice } from 'src/app/core/services/ms-rejected-good/clarification.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -30,7 +32,7 @@ export class NotifyAssetsImproprietyFormComponent
   procedenceForm: ModelForm<any>;
   inappropriatenessForm: ModelForm<Inappropriateness>;
   clarification: any;
-  dataClarifications: IChatClarifications;
+  dataClarifications: ClarificationGoodRejectNotification;
 
   //en el caso de que una aclaracion llege sin documentacion
   withDocumentation: boolean = false;
@@ -41,7 +43,14 @@ export class NotifyAssetsImproprietyFormComponent
   //Parámetro con el id del tipo de la aclaración
   idAclara: any;
 
-  idRequest: string = '';
+  idRequest: any;
+
+  //información de la notificación seleccionada del bien
+  dataNotification: IClarification;
+  goodValue: any;
+  rejectedID: any;
+
+  dataClarifications2: ClarificationGoodRejectNotification;
 
   constructor(
     private fb: FormBuilder,
@@ -49,15 +58,18 @@ export class NotifyAssetsImproprietyFormComponent
     private modalService: BsModalService,
     private documentService: DocumentsService,
     private chatService: ChatClarificationsService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private clarification2Srvice: Clarification2Srvice
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.withDocumentation = this.idAclara === '2' ? true : false;
+    this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
     this.initForm2();
+    console.log('información de la notificación', this.dataNotification);
+    console.log('información dl bien', this.goodValue);
   }
 
   initForm1(): void {
@@ -224,13 +236,13 @@ export class NotifyAssetsImproprietyFormComponent
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
       applicationId: [this.idRequest],
-      documentTypeId: [111],
+      documentTypeId: [104],
       clarificationStatus: 'EN_ACLARACION',
     });
   }
 
   confirm() {
-    if (this.withDocumentation) {
+    if (!this.withDocumentation) {
       this.loading = true;
       this.documentService
         .createClarDocImp(this.inappropriatenessForm.value)
@@ -241,8 +253,9 @@ export class NotifyAssetsImproprietyFormComponent
               'Aclaración guardada correctamente',
               ''
             );
+            console.log('id del documento', data.id);
             this.openReport(data);
-            this.updateNotificationImp(data);
+            this.updateChatClarifications();
             this.loading = false;
             //this.modalRef.hide()
           },
@@ -252,50 +265,63 @@ export class NotifyAssetsImproprietyFormComponent
           },
         });
     } else {
-      this.loading = true;
-      const info: IChatClarifications = {
-        requestId: this.idRequest,
-        goodId: this.dataClarifications.goodId,
-        senderName: this.clarificationForm.get('senderName').value,
-        jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
-          .value,
-        userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
-        webMail: this.clarificationForm.get('webMail').value,
-        clarifiNewsRejectId: Number(
-          this.dataClarifications.rejectNotificationId
-        ),
-        clarificationStatus: 'EN_ACLARACION',
-        idClarification: 24,
-      };
-
-      this.chatService.create(info).subscribe({
-        next: async data => {
-          this.onLoadToast('success', 'Creado', '');
-          this.updateNotificationAclaration(data.id);
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          console.log(error);
-        },
-      });
+      console.log('Formuario else');
     }
   }
 
-  updateNotificationAclaration(id: number) {
-    const idReject: any = this.dataClarifications.rejectNotificationId;
+  updateChatClarifications() {
+    this.loading = true;
+
+    const info: IChatClarifications = {
+      requestId: this.idRequest,
+      goodId: this.goodValue,
+      senderName: this.clarificationForm.get('senderName').value,
+      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
+        .value,
+      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
+      webMail: this.clarificationForm.get('webMail').value,
+      // clarifiNewsRejectId: Number(
+      //   this.dataClarifications.rejectNotificationId //Verifiicar si es necesario esta propiedad
+      // ),
+      clarificationStatus: 'EN_ACLARACION',
+      //id: this.idClarification, //Esta propiedad es importante, se le debe asignar a bienes_recha_notif_aclara
+    };
+
+    this.chatService.create(info).subscribe({
+      next: async data => {
+        console.log('SE CREO:', data);
+        //this.onLoadToast('success', 'Creado', '');
+        this.updateNotification(data);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        console.log('NO SE CREO:', error);
+      },
+    });
+  }
+
+  updateNotification(idClarification: IChatClarifications) {
+    //Actualiza la información de la tabla bienes_recha_notif_aclara - sae_nsbdb
+    const idReject: any = this.dataClarifications2.rejectNotificationId;
     console.log('id', idReject);
     const data: ClarificationGoodRejectNotification = {
-      rejectNotificationId: idReject,
+      rejectNotificationId: idReject, //
       answered: 'EN ACLARACIÓN',
-      clarificationId: id,
+      clarificationId: idClarification.id, //Cambiar id para que no se borre
       rejectionDate: new Date(),
+      goodId: this.dataClarifications2.goodId,
     };
 
     this.rejectedGoodService.update(idReject, data).subscribe({
       next: response => {
         console.log('modificado', response);
-        this.onLoadToast('success', 'Notificación aceptada correctamente', '');
+        this.onLoadToast(
+          'success',
+          'bienes_recha_notif_aclara Actualizada',
+          ''
+        );
+        this.updateClarifications(response);
         this.close();
       },
       error: error => {
@@ -305,19 +331,22 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
-  updateNotificationImp(data: Inappropriateness) {
-    const idReject: any = this.dataClarifications.rejectNotificationId;
-
-    const _data: ClarificationGoodRejectNotification = {
-      rejectNotificationId: idReject,
-      answered: 'EN ACLARACIÓN',
-      rejectionDate: new Date(),
-      clarificationId: data.id,
+  updateClarifications(clarification: ClarificationGoodRejectNotification) {
+    const data: IClarification = {
+      id: clarification.clarificationId, //
+      clarification: 'EN ACLARACIÓN',
+      type: this.dataNotification.type, //Cambiar id para que no se borre
+      creationUser: this.dataNotification.creationUser,
+      creationDate: this.dataNotification.creationDate,
+      editionUser: this.dataNotification.editionUser,
+      modificationDate: this.dataNotification.modificationDate,
+      version: this.dataNotification.version,
+      active: this.dataNotification.active,
     };
-
-    this.rejectedGoodService.update(idReject, _data).subscribe({
+    this.clarification2Srvice.create(data).subscribe({
       next: response => {
-        this.onLoadToast('success', 'Notificación aceptada correctamente', '');
+        console.log('Notificación actualizada', response);
+        //this.onLoadToast('success', 'Notificación actualizada', '');
         this.close();
       },
       error: error => {
@@ -331,7 +360,7 @@ export class NotifyAssetsImproprietyFormComponent
     const idReportAclara = data.id;
     const idDoc = data.id;
     const idTypeDoc = 111;
-    const dataClarifications = this.dataClarifications;
+    const dataClarifications = this.dataClarifications2;
 
     //Modal que genera el reporte
     let config: ModalOptions = {

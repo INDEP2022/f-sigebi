@@ -4,119 +4,93 @@
   </div>
   <div body>
     <div class="row">
-      <form class="form-material mb-0" [formGroup]="consultForm">
+      <form class="form-material mb-0" [formGroup]="form">
         <div class="row">
-          <div class="col-sm-12 col-md-4">
-            <form-field [control]="consultForm.get('id')">
-              <ngx-select
-                [form]="consultForm"
-                [data]="goodItems"
-                label="Referencia"
-                value="id"
-                bindLabel="id"
-                (fetchItems)="getGoods($event)"
-                control="id">
-              </ngx-select>
-            </form-field>
-          </div>
-          <div class="col-sm-12 col-md-5">
+          <div class="col-md-8">
             <div class="row">
-              <div class="col-6">
+              <div class="col-12 col-md-6">
                 <form-field
-                  [control]="consultForm.get('startDate')"
-                  label="Fecha page">
+                  [control]="form.get('reference')"
+                  label="Referencia">
+                  <input
+                    type="text"
+                    formControlName="reference"
+                    class="form-control" />
+                </form-field>
+              </div>
+              <div class="col-md-3 col-12">
+                <form-field
+                  [control]="form.get('startDate')"
+                  label="Fecha inicio">
                   <input
                     type="text"
                     formControlName="startDate"
                     class="form-control"
                     bsDatepicker
-                    [maxDate]="maxDate" />
+                    [maxDate]="form.get('endDate').value || maxDate" />
                 </form-field>
               </div>
-              <div class="col-6">
-                <form-field
-                  [control]="consultForm.get('endDate')"
-                  label="Fecha Fin">
+              <div class="col-md-3 col-12">
+                <form-field [control]="form.get('endDate')" label="Fecha Fin">
                   <input
                     type="text"
                     formControlName="endDate"
                     class="form-control"
                     bsDatepicker
-                    [maxDate]="maxDate" />
+                    [maxDate]="maxDate"
+                    [minDate]="form.get('startDate').value" />
+                </form-field>
+              </div>
+              <div class="col-12 col-md-6">
+                <form-field [control]="form.get('bank')" label="Banco">
+                  <ng-custom-select
+                    formControlName="bank"
+                    class="form-control"
+                    path="interfacesirsae/api/v1/banks-sirsae"
+                    paramSearch="name_bank"
+                    prefixSearch="$ilike"
+                    value="name_bank">
+                    <ng-template let-item>{{ item.name_bank }}</ng-template>
+                  </ng-custom-select>
+                </form-field>
+              </div>
+              <div class="col-12 col-md-6">
+                <form-field
+                  class="form-group"
+                  [control]="form.get('status')"
+                  label="Estatus Mov.">
+                  <ng-custom-select
+                    formControlName="status"
+                    class="form-control"
+                    path="interfacesirsae/api/v1/statusmov-sirsae"
+                    [isLoadInOnInit]="true"
+                    paramSearch="statusDescription"
+                    prefixSearch="$ilike"
+                    value="id">
+                    <ng-template let-item>{{
+                      item.statusDescription
+                    }}</ng-template>
+                  </ng-custom-select>
                 </form-field>
               </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-3 d-flex justify-content-center">
-            <div class="col-sm-12 col-lg-8">
+          <div class="col-12 col-md-4">
+            <div class="col-12">
               <button
                 class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
-                (click)="consult()"
-                [disabled]="!consultForm.valid">
+                (click)="search()"
+                [disabled]="!form.valid">
                 Consultar
               </button>
             </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="row mt-5">
-      <div
-        class="ms-n2 mb-2 pointer"
-        (click)="toggleFilter = !toggleFilter"
-        [attr.aria-expanded]="!toggleFilter"
-        aria-controls="collapseFilter">
-        <i
-          class="bx bx-chevron-down bx-md float-icon-md"
-          [ngClass]="{
-            'rotate-down': toggleFilter,
-            'rotate-up': !toggleFilter
-          }"></i>
-        <h6 class="d-inline">Filtros</h6>
-      </div>
-      <hr class="mw-98" />
-      <form class="form-material mb-0" [formGroup]="filterForm">
-        <div
-          class="row mt-5"
-          id="collapseFilter"
-          [isAnimated]="true"
-          [collapse]="!toggleFilter">
-          <div class="col-sm-12 col-md-4">
-            <form-field [control]="filterForm.get('bank')" label="Banco">
-              <ng-select
-                formControlName="bank"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false"
-                (change)="filterBank($event)">
-                <ng-option value="BANAMEX">BANAMEX</ng-option>
-                <ng-option value="BANCO SANTANDER">BANCO SANTANDER</ng-option>
-                <ng-option value="BANORTE">BANORTE</ng-option>
-                <ng-option value="BBVA BANCOMER">BBVA BANCOMER</ng-option>
-                <ng-option value="HSBC">HSBC</ng-option>
-              </ng-select>
-            </form-field>
-          </div>
-          <div class="col-sm-12 col-md-4">
-            <form-field
-              [control]="filterForm.get('status')"
-              label="Estatus Mov.">
-              <ng-select
-                formControlName="status"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false"
-                (change)="filterStatus($event)">
-                <ng-option value="0">Pagado</ng-option>
-                <ng-option value="1">Cheque salvo buen cobro</ng-option>
-                <ng-option value="2">Cheque devuelto</ng-option>
-              </ng-select>
-            </form-field>
-          </div>
-          <div class="col-sm-12 col-md-4">
-            <button class="btn btn-sm btn-info active" (click)="resetFilter()">
-              Resetear
-            </button>
+            <div class="col-12">
+              <button
+                class="active btn btn-block btn-info btn-sm mt-4"
+                (click)="resetFilter()">
+                Resetear
+              </button>
+            </div>
           </div>
         </div>
       </form>
