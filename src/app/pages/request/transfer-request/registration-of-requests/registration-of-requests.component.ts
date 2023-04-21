@@ -758,7 +758,7 @@ export class RegistrationOfRequestsComponent
   approveRequest() {
     this.msgSaveModal(
       'Aprobar',
-      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
+      '¿Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
