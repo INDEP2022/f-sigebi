@@ -103,7 +103,7 @@ export class TesofeMovementsModalComponent extends BasePage implements OnInit {
     ).toString();
     this.iInsertaCuenta.accountNumber.cveAccount = bankAccount.cveAccount;
 
-    // this.addCuenta(this.iInsertaCuenta);
+    this.addCuenta(this.iInsertaCuenta);
   }
 
   updateCuenta(
@@ -123,7 +123,7 @@ export class TesofeMovementsModalComponent extends BasePage implements OnInit {
     this.update(updateObj);
   }
 
-  /*addCuenta(cuenta: ICuentaInsert) {
+  addCuenta(cuenta: ICuentaInsert) {
     this.movementService.insert(cuenta).subscribe({
       next: X => {
         this.handleSuccess(), Swal.fire('Nuevo Registro', '', 'success');
@@ -139,7 +139,7 @@ export class TesofeMovementsModalComponent extends BasePage implements OnInit {
         }
       },
     });
-  }*/
+  }
 
   update(cuenta: any) {
     this.movementService.update(cuenta).subscribe({
