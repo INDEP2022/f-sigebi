@@ -192,6 +192,7 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.StatusAndDesc}/${idGood}`;
     return this.get<any>(route);
   }
+
   getBySafe(
     id: number | string,
     params?: ListParams
