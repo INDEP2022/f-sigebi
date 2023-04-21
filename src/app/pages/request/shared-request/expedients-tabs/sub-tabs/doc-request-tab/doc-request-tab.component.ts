@@ -158,7 +158,7 @@ export class DocRequestTabComponent
       docType: [null],
       docTitle: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(150)],
       ],
       dDocName: [
         null,
@@ -233,8 +233,8 @@ export class DocRequestTabComponent
             );
             items['transferentName'] = transferent;
           }
-          const state = await this.getStateDoc(items?.xestado);
-          items['stateName'] = state;
+          //const state = await this.getStateDoc(items?.xestado);
+          //items['stateName'] = state;
           items.xtipoDocumento = filter[0]?.ddescription;
           return items;
         });
