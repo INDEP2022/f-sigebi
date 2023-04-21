@@ -247,6 +247,7 @@ export class GoodsCaptureComponent
     this.assetsForm.markAllAsTouched();
     this.assetsForm.updateValueAndValidity();
     if (!this.assetsForm.valid) {
+      console.log(this.assetsForm);
       this.showError('El formulario no es válido!');
       return;
     }
@@ -276,7 +277,7 @@ export class GoodsCaptureComponent
     ) {
       this.onLoadToast(
         'success',
-        'Se agrego el bien al expediente correctamente',
+        'Se agregó el bien al expediente correctamente',
         ''
       );
       const _global = { ...this.globalNgrx, gCommit: 'S', gOFFCommit: 'N' };
