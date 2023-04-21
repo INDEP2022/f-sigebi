@@ -92,7 +92,7 @@ export class RejectedServiceProposalFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro que deseas eliminar el servicio?'
+      '¿Estás seguro que deseas eliminar el servicio?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
