@@ -94,7 +94,7 @@
                 <div class="col-md-4">
                   <div>
                     <label for="">Fecha de Solicitud&#58;</label>
-                    {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -208,7 +208,9 @@
                 <app-clarifications
                   [requestObject]="requestData"
                   *ngIf="validateDocument"
-                  [process]="process"></app-clarifications>
+                  [process]="process"
+                  [question]="question"
+                  (response)="getResponse($event)"></app-clarifications>
                 <!-- fin -->
                 <!-- notificar aclaraciones o improcedencias -->
                 <app-notification-assets-tab
