@@ -332,15 +332,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           console.log('Response: ', response);
           this.loading = false;
           console.log('Hay un filtro activo? ', isfilterUsed);
-          // if (!isfilterUsed) {
-          //   this.tasks = response.data.filter(
-          //     (record: { State: string }) => record.State != 'FINALIZADA'
-          //   );
-          //   this.totalItems = this.tasks.length;
-          // } else {
-          //   this.tasks = response.data;
-          //   this.totalItems = response.count;
-          // }
+          if (isfilterUsed) {
+            this.tasks = response.data.filter(
+              (record: { State: string }) => record.State != 'FINALIZADA'
+            );
+            this.totalItems = this.tasks.length;
+          } else {
+            this.tasks = response.data;
+            this.totalItems = response.count;
+          }
           this.tasks = response.data;
           this.totalItems = response.count;
         },
