@@ -1690,7 +1690,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.alert(
         'info',
         'Aviso',
-        'El Oficio no tiene volante relacionado, sólo se visualizaran los documentos'
+        'El Oficio no tiene volante relacionado, sólo se visualizarán los documentos'
       );
       let config = {
         class: 'modal-lg modal-dialog-centered',
