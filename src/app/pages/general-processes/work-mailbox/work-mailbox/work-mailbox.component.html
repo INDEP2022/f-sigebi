@@ -64,7 +64,6 @@
         <div class="card">
           <div class="card-body">
             <form [formGroup]="filterForm" class="form-material">
-              <!--<app-management-area-shared [form]="filterForm"></app-management-area-shared>-->
               <div class="row pt-4">
                 <div class="col-12 col-md-12 col-lg-12 col-xl-5">
                   <form-field
@@ -167,9 +166,9 @@
                     label="Desde">
                     <input
                       formControlName="startDate"
-                      (bsValueChange)="buildFilters()"
                       class="form-control"
                       bsDatepicker />
+                    <!-- (bsValueChange)="buildFilters()" -->
                   </form-field>
                 </div>
                 <div class="col-md-6">
@@ -178,9 +177,9 @@
                     label="Hasta">
                     <input
                       formControlName="endDate"
-                      (bsValueChange)="buildFilters()"
                       class="form-control"
                       bsDatepicker />
+                    <!-- (bsValueChange)="buildFilters()" -->
                   </form-field>
                 </div>
               </div>

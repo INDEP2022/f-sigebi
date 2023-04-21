@@ -913,7 +913,8 @@
                 type="text"
                 class="form-control"
                 formControlName="chassis"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                maxlength="40" />
             </form-field>
             <form-field
               [control]="detailAssets.get('chassis')"
@@ -923,7 +924,8 @@
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="chassis" />
+                formControlName="chassis"
+                maxlength="40" />
             </form-field>
           </div>
         </div>
@@ -939,7 +941,8 @@
                 class="form-control"
                 formControlName="model"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('model')"
@@ -949,7 +952,8 @@
                 type="number"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="model" />
+                formControlName="model"
+                oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -962,7 +966,8 @@
                 class="form-control"
                 formControlName="cabin"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('cabin')"
@@ -972,7 +977,8 @@
                 type="number"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="cabin" />
+                formControlName="cabin"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
           </div>
         </div>
@@ -988,7 +994,8 @@
                 class="form-control"
                 formControlName="doorsNumber"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('doorsNumber')"
@@ -998,7 +1005,8 @@
                 type="number"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="doorsNumber" />
+                formControlName="doorsNumber"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -1037,7 +1045,8 @@
                 class="form-control"
                 formControlName="axesNumber"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('axesNumber')"
@@ -1047,7 +1056,8 @@
                 type="number"
                 [readOnly]="true"
                 class="form-control"
-                formControlName="axesNumber" />
+                formControlName="axesNumber"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
           </div>
           <div class="col-md-4">

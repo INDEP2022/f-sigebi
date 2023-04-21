@@ -377,6 +377,7 @@
           <button
             type="button"
             class="mx-2 btn btn-secondary btn-sm active"
+            [disabled]="!act2Valid"
             (click)="pushData()">
             <i class="fa fa-angle-down"></i>
           </button>
