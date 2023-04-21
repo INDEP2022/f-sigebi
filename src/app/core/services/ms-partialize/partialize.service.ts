@@ -4,7 +4,10 @@ import { catchError, map } from 'rxjs/operators';
 import { PartializeGoodEndpoints } from 'src/app/common/constants/endpoints/ms-partialize-good-endpoint';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { HttpService } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import { ITreeItem } from '../../interfaces/menu.interface';
 import {
   IPartializedGoodList,
@@ -716,22 +719,20 @@ export class GoodPartializeService extends HttpService {
     );
   }
 
-  getAll(
-    params: _Params
-  ): Observable<{ count: number; data: IPartializedGoodList[] }> {
-    return this.get<IListResponse<IPartializedGoods>>(
+  getAll(params: _Params) {
+    return this.get<IListResponseMessage<IPartializedGoods>>(
       this.endpoint,
       params
     ).pipe(
       map(data => {
         return {
-          count: data.count,
+          ...data,
           data: data.data.map(item => {
             return {
               goodNumber: item.goodNumber.id,
               description: item.description,
               partializedId: item.partializedId,
-            };
+            } as IPartializedGoodList;
           }),
         };
       })

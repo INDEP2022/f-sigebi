@@ -15,6 +15,8 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
+import { IClarificationGoodsReject } from 'src/app/core/models/ms-chat-clarifications/clarification-goods-reject-notifi-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IGoodresdev } from 'src/app/core/models/ms-rejected-good/rejected-good.model';
@@ -72,6 +74,11 @@ export class NotificationAssetsTabComponent
   rowSelected: boolean = false;
   selectedRow: any = null;
   goodsReject: IGoodresdev[] = [];
+  valueClarification: IClarification;
+  valueGood: number;
+  valueRejectNotificationId: number;
+  dataNotificationSelected: IClarificationGoodsReject;
+
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -194,19 +201,25 @@ export class NotificationAssetsTabComponent
   }
 
   notifyAssetRowSelected(event: any) {
-    this.notificationsList = event.data;
+    this.valuesNotifications = event.data;
+    console.log(
+      'Información de la notificación seleccionada',
+      this.valuesNotifications
+    );
     const refuseObj = { ...this.valuesNotifications };
     //let idRefuse = refuseObj.rejectNotificationId;
     //console.log("ID del rechazo", idRefuse)
     //verificar cuantas aclaraciones se pueden seleccionar para aceptarlas
+    this.dataNotificationSelected = event.data as IClarificationGoodsReject;
     this.notifyAssetsSelected = event.selected;
+    this.valueGood = event.data.goodId;
+    this.valueRejectNotificationId = event.data.rejectNotificationId;
   }
 
   refuseClarification() {
     if (this.rowSelected == false) {
       this.message('Error', 'Seleccione notificación a rechazar');
     } else {
-      const idNotify = { ...this.notificationsGoods }; //Info de Good
       const refuseObj = { ...this.valuesNotifications }; //Info de sus notificaciones
 
       const modalConfig = MODAL_CONFIG;
@@ -214,7 +227,7 @@ export class NotificationAssetsTabComponent
         refuseObj,
         clarification: this.notifyAssetsSelected,
         callback: (next: boolean) => {
-          this.getClarificationsByGood(idNotify.goodId);
+          this.getClarificationsByGood(refuseObj.goodId);
         },
       };
       this.modalService.show(RefuseClarificationModalComponent, modalConfig);
@@ -317,6 +330,11 @@ export class NotificationAssetsTabComponent
     if (this.rowSelected == false) {
       this.message('Error', 'Seleccione notificación a aceptar');
     } else {
+      console.log(
+        'id tipo aclaración seleccionado',
+        this.selectedRow.clarification.type
+      );
+
       if (this.selectedRow.clarification.type < 1) {
         this.message('Error', 'Seleccione almenos un registro!');
         return;
@@ -342,12 +360,21 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  openModal(): void {
+  openModal(idClarification?: number): void {
+    const dataClarifications2 = this.dataNotificationSelected;
+    const rejectedID = this.valueRejectNotificationId;
+    const goodValue = this.valueGood;
+    const dataNotification = this.valueClarification;
     const idNotify = { ...this.notificationsGoods };
     const dataClarifications = { ...this.valuesNotifications };
     const idAclara = this.selectedRow.clarification.type; //Id del tipo de aclaración
     let config: ModalOptions = {
       initialState: {
+        dataClarifications2,
+        rejectedID,
+        goodValue,
+        dataNotification,
+        idClarification,
         dataClarifications,
         idAclara,
         clarification: this.notifyAssetsSelected,
