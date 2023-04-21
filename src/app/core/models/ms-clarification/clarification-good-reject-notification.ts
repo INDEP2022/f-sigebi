@@ -12,7 +12,9 @@ export interface ClarificationGoodRejectNotification {
   modificationUser?: string;
   creationDate?: any;
   modificationDate?: any;
+  statusProcess?: any;
   rejectNotificationId?: number;
+  statusGood?: string;
   clarificationId?: any;
   clarificationType?: string;
   reason?: string;

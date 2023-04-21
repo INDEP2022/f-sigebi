@@ -1,0 +1,9 @@
+<div>
+  <h6>&Aacute;rbol Bienes Parcializados</h6>
+  <div [class]="loading ? 'tree-loading' : 'scroll-tree'">
+    <app-tree-view [items]="items" label="noBien"></app-tree-view>
+  </div>
+  <div class="tree-description">
+    {{ descriptionSelectedTree }}
+  </div>
+</div>

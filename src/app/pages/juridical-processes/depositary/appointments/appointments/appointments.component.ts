@@ -552,10 +552,88 @@ export class AppointmentsComponent
    * DATA SELECT DEL COMPONENTE
    */
 
+  changePostalCodeDetail(event: any) {
+    if (event) {
+      if (event.postalCode) {
+        this.postalCodeSelectValue = event.postalCode;
+        if (event.stateKey) {
+          this.delegationSelectValue = event.stateKey;
+          // call function
+        }
+        if (event.municipalityKey) {
+          this.delegationSelectValue = event.municipalityKey;
+          // CALL FUNCTION
+        }
+        if (event.townshipKey) {
+          this.delegationSelectValue = event.townshipKey;
+          // call function
+        }
+      }
+    } else {
+      this.postalCodeSelectValue = '';
+    }
+  }
+  getPostalCodeByDetail(
+    paramsData: ListParams,
+    onlyPostalCode: boolean = false
+  ) {
+    console.log(
+      this.stateSelectValue,
+      paramsData,
+      this.delegationSelectValue,
+      onlyPostalCode
+    );
+    // if (
+    //   !this.stateSelectValue &&
+    //   !this.delegationSelectValue &&
+    //   !this.localitySelectValue
+    // ) {
+    //   return;
+    // }
+    const params: any = new FilterParams();
+    params.removeAllFilters();
+    // params['sortBy'] = 'township:DESC';
+    if (this.delegationSelectValue) {
+      params.addFilter('municipalityKey', this.delegationSelectValue);
+    }
+    if (this.stateSelectValue) {
+      params.addFilter('stateKey', this.stateSelectValue);
+    }
+    if (this.localitySelectValue) {
+      params.addFilter('township', this.localitySelectValue);
+    }
+    params.addFilter('postalCode', paramsData['search'], SearchFilter.LIKE);
+    console.log(params, paramsData, onlyPostalCode);
+    let subscription = this.appointmentsService
+      .getPostalCodeByFilter(params.getFilterParams())
+      .subscribe({
+        next: data => {
+          console.log(data.data);
+          this.postalCode = new DefaultSelect(
+            data.data.map((i: any) => {
+              i.description = '#' + i.postalCode + ' -- ' + i.township;
+              return i;
+            }),
+            data.count
+          );
+          if (this.postalCodeSelectValue) {
+            this.form.get('colonia').setValue(this.postalCodeSelectValue);
+            this.form.get('colonia').updateValueAndValidity();
+          }
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.postalCode = new DefaultSelect();
+          this.onLoadToast('error', 'Error', error.error.message);
+          subscription.unsubscribe();
+        },
+      });
+  }
+
   changeLocalityDetail(event: any) {
     if (event) {
-      if (event.id) {
-        this.localitySelectValue = event.id;
+      if (event.townshipKey) {
+        this.localitySelectValue = event.townshipKey;
       }
     } else {
       this.localitySelectValue = '';
@@ -563,17 +641,12 @@ export class AppointmentsComponent
   }
   getLocalityByDetail(paramsData: ListParams) {
     console.log(this.stateSelectValue, paramsData, this.delegationSelectValue);
-    if (
-      !this.stateSelectValue &&
-      this.stateSelectValue != '0' &&
-      !this.delegationSelectValue &&
-      this.delegationSelectValue != '0'
-    ) {
+    if (!this.stateSelectValue && !this.delegationSelectValue) {
       return;
     }
     const params: any = new FilterParams();
     params.removeAllFilters();
-    params['sortBy'] = 'township:ASC';
+    params['sortBy'] = 'township:DESC';
     params.addFilter('municipalityKey', this.delegationSelectValue);
     params.addFilter('stateKey', this.stateSelectValue);
     params.addFilter('township', paramsData['search'], SearchFilter.LIKE);
@@ -583,18 +656,21 @@ export class AppointmentsComponent
       .subscribe({
         next: data => {
           console.log(data.data);
-          this.delegations = new DefaultSelect(
-            data.data,
-            // data.data.map(i => {
-            //   i.description = '#' + i.id + ' -- ' + i.description;
-            //   return i;
-            // }),
+          this.locality = new DefaultSelect(
+            data.data.map((i: any) => {
+              i.description = '#' + i.townshipKey + ' -- ' + i.township;
+              return i;
+            }),
             data.count
           );
+          if (this.localitySelectValue) {
+            this.form.get('colonia').setValue(this.localitySelectValue);
+            this.form.get('colonia').updateValueAndValidity();
+          }
           subscription.unsubscribe();
         },
         error: error => {
-          this.delegations = new DefaultSelect();
+          this.locality = new DefaultSelect();
           this.onLoadToast('error', 'Error', error.error.message);
           subscription.unsubscribe();
         },
@@ -603,8 +679,8 @@ export class AppointmentsComponent
 
   changeDelegationDetail(event: any) {
     if (event) {
-      if (event.id) {
-        this.delegationSelectValue = event.id;
+      if (event.stateKey) {
+        this.delegationSelectValue = event.stateKey;
       }
     } else {
       this.delegationSelectValue = '';
@@ -612,12 +688,12 @@ export class AppointmentsComponent
   }
   getDelegationByDetail(paramsData: ListParams) {
     console.log(this.stateSelectValue, paramsData);
-    if (!this.stateSelectValue && this.stateSelectValue != '0') {
+    if (!this.stateSelectValue) {
       return;
     }
     const params: any = new FilterParams();
     params.removeAllFilters();
-    params['sortBy'] = 'municipality:ASC';
+    params['sortBy'] = 'municipality:DESC';
     params.addFilter('stateKey', this.stateSelectValue);
     params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
     console.log(params, paramsData);
@@ -634,6 +710,12 @@ export class AppointmentsComponent
             }),
             data.count
           );
+          if (this.delegationSelectValue) {
+            this.form
+              .get('delegacionMunicipio')
+              .setValue(this.delegationSelectValue);
+            this.form.get('delegacionMunicipio').updateValueAndValidity();
+          }
           subscription.unsubscribe();
         },
         error: error => {
@@ -680,7 +762,7 @@ export class AppointmentsComponent
           },
         });
     } else {
-      paramsData['sortBy'] = 'id:ASC';
+      paramsData['sortBy'] = 'id:DESC';
       let subscription = this.appointmentsService
         .getStateOfRepublicByAll(paramsData)
         .subscribe({

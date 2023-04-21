@@ -4,7 +4,7 @@
   </div>
   <div body class="body">
     <form [formGroup]="clarificationForm" class="form-material">
-      <div *ngIf="!withDocumentation">
+      <div *ngIf="withDocumentation">
         <div class="row">
           <div class="col-md-12">
             <form-field
@@ -82,7 +82,7 @@
       </div>
     </form>
     <form [formGroup]="inappropriatenessForm" class="form-material">
-      <div *ngIf="withDocumentation">
+      <div *ngIf="!withDocumentation">
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
@@ -249,14 +249,14 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3" *ngIf="withDocumentation">
+      <div class="m-3" *ngIf="!withDocumentation">
         <confirm-button
           [disabled]="inappropriatenessForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
       </div>
-      <div class="m-3" *ngIf="!withDocumentation">
+      <div class="m-3" *ngIf="withDocumentation">
         <confirm-button
           [disabled]="clarificationForm.invalid"
           [loading]="loading"

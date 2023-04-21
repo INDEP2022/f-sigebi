@@ -6,6 +6,7 @@ import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
+import { ToastrService } from 'ngx-toastr';
 import { filter, Subject, takeUntil, tap } from 'rxjs';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
@@ -17,6 +18,7 @@ import Swal, {
   SweetAlertResult,
 } from 'sweetalert2';
 import { AlertsQueueService } from '../services/alerts/alerts-queue.service';
+
 export class SweetalertModel implements SweetAlertOptions {
   title: string;
   text: string;
@@ -119,6 +121,7 @@ export abstract class BasePage implements OnDestroy {
   private _screenCode = inject(ScreenCodeService);
   private _alertsService = inject(AlertsQueueService);
   protected loader = inject(LoadingService);
+  private _toastrService = inject(ToastrService);
   constructor() {
     this.bsConfig = {
       minMode: this.minMode,
@@ -140,16 +143,19 @@ export abstract class BasePage implements OnDestroy {
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
-    let sweetalert = new SweetalertModel();
-    sweetalert.toast = true;
-    sweetalert.position = 'top-end';
-    sweetalert.timer = 6000;
-    sweetalert.title = title;
-    sweetalert.text = text;
-    sweetalert.icon = icon;
-    sweetalert.timerProgressBar = true;
-    this._alertsService.alerts.push(sweetalert);
-    this._alertsService.alertQueue.next(true);
+    const throwToast = {
+      success: (title: string, text: string) =>
+        this._toastrService.success(text, title),
+      info: (title: string, text: string) =>
+        this._toastrService.info(text, title),
+      warning: (title: string, text: string) =>
+        this._toastrService.warning(text, title),
+      error: (title: string, text: string) =>
+        this._toastrService.error(text, title),
+      question: (title: string, text: string) =>
+        this._toastrService.info(text, title),
+    };
+    return throwToast[icon](title, text);
   }
 
   protected alert(icon: SweetAlertIcon, title: string, text: string) {
