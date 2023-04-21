@@ -25,8 +25,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     private statusService: StatusGoodService
   ) {
     super();
-    // this.paramsGoods['filters.goodCategory'] ='$not:$null';
-    this.paramsGoods.addFilter2('filters.goodCategory=$not:$null');
   }
 
   ngOnInit(): void {
@@ -42,6 +40,20 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   get goodsList() {
+    this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
+    this.paramsGoods.addFilter2('filter.extDomProcess=$not:$null');
+    this.paramsGoods.addFilter2('filter.unit=$not:$null');
+    this.paramsGoods.addFilter2('filter.locationType=$not:$null');
+    this.paramsGoods.addFilter2('filter.originSignals=$not:$null');
+    this.paramsGoods.addFilter2('filter.registerInscrSol=$not:$null');
+    this.paramsGoods.addFilter2('filter.proficientOpinion=$not:$null');
+    this.paramsGoods.addFilter2('filter.valuerOpinion=$not:$null');
+    this.paramsGoods.addFilter2('filter.opinion=$not:$null');
+    this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
+    this.paramsGoods.addFilter2('filter.rackNumber=$not:$null');
+    this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
+    this.paramsGoods.addFilter2('filter.statusResourceRevision=$not:$null');
+    this.paramsGoods.addFilter2('filter.=$not:$null');
     return this.goodService.getAll(this.paramsGoods.getParams());
   }
 
@@ -102,7 +114,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   async selectGood(good: IGood) {
     let bandera;
     let clasif: number;
-    if ([1424, 1426].includes(+good.goodCategory)) {
+    if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
       bandera = 0;
       const validacion = await this.validateGood(good);
       bandera = validacion.bandera;
@@ -113,22 +125,36 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     } else {
       clasif = 1;
     }
-    if (!good.goodCategory) {
+    if (!good.goodClassNumber) {
       this.onLoadToast(
         'error',
         'Parcialización',
         'Bien ' + good.id + ' no cuenta con clasificador'
       );
+      return;
     }
     this.service.good = good;
+    if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodClassNumber)) {
+      this.service.setSettingsFirstCase();
+      if (+good.val14 <= 0) {
+        this.onLoadToast(
+          'error',
+          'Parcialización',
+          'Bien ' + good.id + ' no cuenta con importe'
+        );
+        return;
+      }
+    } else {
+      this.service.setSettingsSecondCase();
+    }
     const statusGood = good.status
-      ? await firstValueFrom(this.statusService.getById(good.goodStatus))
+      ? await firstValueFrom(this.statusService.getById(good.status))
       : null;
     debugger;
-    const sssubtype = good.goodCategory
+    const sssubtype = good.goodClassNumber
       ? await firstValueFrom(
           this.goodSssubtypeService.getAll2(
-            '?filter.numClasifGoods=' + good.goodCategory
+            '?filter.numClasifGoods=' + good.goodClassNumber
           )
         )
       : null;
@@ -136,19 +162,15 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.form.setValue({
       noBien: good.id,
       cantPadre: good.goodsPartializationFatherNumber,
-      descripcion: good.goodDescription,
+      descripcion: good.description,
       cantidad: good.quantity,
       avaluo: good.appraisedValue,
       estatus: good.goodStatus,
-      estatusDescripcion: statusGood
-        ? statusGood.data
-          ? statusGood.data.description
-          : ''
-        : '',
+      estatusDescripcion: statusGood ? statusGood.description : '',
       extDom: good.extDomProcess,
       moneda: good.val1,
-      expediente: good.no_expediente,
-      clasificador: good.goodCategory ? +good.goodCategory : null,
+      expediente: good.fileNumber,
+      clasificador: good.goodClassNumber ? +good.goodClassNumber : null,
       clasificadorDescripcion: sssubtype
         ? sssubtype.data
           ? sssubtype.data.length > 0
@@ -158,11 +180,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         : '',
       importe: +good.val14,
     });
-    if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodCategory)) {
-      this.service.setSettingsFirstCase();
-    } else {
-      this.service.setSettingsSecondCase();
-    }
+
     console.log(good);
   }
 

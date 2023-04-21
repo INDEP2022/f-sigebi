@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
@@ -51,6 +53,8 @@ export class NotifyAssetsImproprietyFormComponent
   rejectedID: any;
 
   dataClarifications2: ClarificationGoodRejectNotification;
+
+  paramsReload = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private fb: FormBuilder,
@@ -154,7 +158,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   initForm2(): void {
     this.inappropriatenessForm = this.fb.group({
-      managedTo: [
+      addresseeName: [
         null,
         [
           Validators.pattern(STRING_PATTERN),
@@ -187,7 +191,7 @@ export class NotifyAssetsImproprietyFormComponent
           Validators.maxLength(50),
         ],
       ],
-      sender: [
+      senderName: [
         null,
         [
           Validators.pattern(STRING_PATTERN),
@@ -226,12 +230,12 @@ export class NotifyAssetsImproprietyFormComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
-      areaUserCapture: [
+      userAreaCaptures: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
       transmitterId: [null, [Validators.maxLength(15)]], // request emisora?
-      mailNotification: [
+      webMail: [
         null,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
@@ -254,8 +258,8 @@ export class NotifyAssetsImproprietyFormComponent
               ''
             );
             console.log('id del documento', data.id);
-            this.openReport(data);
-            this.updateChatClarifications();
+            this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+            this.openReport(data); //Falta verificar información que se envia...
             this.loading = false;
             //this.modalRef.hide()
           },
@@ -265,97 +269,219 @@ export class NotifyAssetsImproprietyFormComponent
           },
         });
     } else {
-      console.log('Formuario else');
+      console.log('Formuario corto');
+      this.chatClarifications1(); //PARA FORMULARIO CORTO
     }
   }
 
-  updateChatClarifications() {
-    this.loading = true;
+  dataChatClarifications: IChatClarifications[];
 
-    const info: IChatClarifications = {
-      requestId: this.idRequest,
-      goodId: this.goodValue,
-      senderName: this.clarificationForm.get('senderName').value,
+  //------------------------------------ PARA FORMULARIO CORTO -----------------------------------
+  chatClarifications1() {
+    this.loading = true;
+    this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
+      this.dataClarifications2.rejectNotificationId;
+
+    //Trae lista de chat-clarifications con el filtrado, para verificar si ya existe un registro
+    this.chatService.getAll(this.paramsReload.getValue()).subscribe({
+      next: data => {
+        console.log('Registro de ChatClarifications, filtrado', data.data);
+        this.dataChatClarifications = data.data;
+        //Si ya existe un registro en chatClarificatios, entonces se va a actualizar ese mismo registro
+        this.chatClarificationUpdate1(this.dataChatClarifications[0]);
+      },
+      error: error => {
+        //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
+        console.log('no se encuentra', error);
+        this.chatClarificationCreate1();
+      },
+    });
+  }
+
+  //Método que Actualiza ChatClarifications PARA FORMULARIO CORTO
+  chatClarificationUpdate1(chatClarifications: IChatClarifications) {
+    console.log('Actualizando chatClarifications');
+    console.log('información de ChatClarificaions', chatClarifications);
+    console.log('chatClarifications.id', chatClarifications.id);
+    console.log('chatClarifications.requestId', chatClarifications.requestId);
+    console.log(
+      'id id_recha_noti',
+      this.dataClarifications2.rejectNotificationId
+    );
+
+    //Construyendo objeto/model para enviarle
+    const modelChatClarifications: IChatClarifications = {
+      id: chatClarifications.id, //ID primaria
+      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      requestId: chatClarifications.requestId,
+      goodId: chatClarifications.goodId,
+      senderName: this.clarificationForm.get('senderName').value, //Nueva información que se inserta por el formulario
       jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
-        .value,
-      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
-      webMail: this.clarificationForm.get('webMail').value,
-      // clarifiNewsRejectId: Number(
-      //   this.dataClarifications.rejectNotificationId //Verifiicar si es necesario esta propiedad
-      // ),
+        .value, //Nueva información que se inserta por el formulario
+      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value, //Nueva información que se inserta por el formulario
+      webMail: this.clarificationForm.get('webMail').value, //Nueva información que se inserta por el formulario
       clarificationStatus: 'EN_ACLARACION',
       //id: this.idClarification, //Esta propiedad es importante, se le debe asignar a bienes_recha_notif_aclara
     };
 
-    this.chatService.create(info).subscribe({
-      next: async data => {
-        console.log('SE CREO:', data);
-        //this.onLoadToast('success', 'Creado', '');
-        this.updateNotification(data);
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        console.log('NO SE CREO:', error);
-      },
-    });
+    //Servicio para actualizar registro de ChatClariffications
+    this.chatService
+      .update(chatClarifications.id, modelChatClarifications)
+      .subscribe({
+        next: async data => {
+          this.onLoadToast('success', 'Actualizado', '');
+          console.log('SE ACTUALIZÓ:', data);
+          this.loading = false;
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+          console.log('NO SE ACTUALIZÓ:', error);
+          this.modalRef.hide();
+        },
+      });
   }
 
-  updateNotification(idClarification: IChatClarifications) {
-    //Actualiza la información de la tabla bienes_recha_notif_aclara - sae_nsbdb
-    const idReject: any = this.dataClarifications2.rejectNotificationId;
-    console.log('id', idReject);
-    const data: ClarificationGoodRejectNotification = {
-      rejectNotificationId: idReject, //
-      answered: 'EN ACLARACIÓN',
-      clarificationId: idClarification.id, //Cambiar id para que no se borre
-      rejectionDate: new Date(),
+  //Método para crear un nuevo chatClarifications PARA FORMULARIO CORTO
+  chatClarificationCreate1() {
+    console.log('Creando chatClarifications');
+
+    //Creando objeto nuevo para ChatClarifications
+    const modelChatClarifications: IChatClarifications = {
+      //id: , //ID primaria
+      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      requestId: this.idRequest,
       goodId: this.dataClarifications2.goodId,
+      senderName: this.clarificationForm.get('senderName').value, //Nueva información que se inserta por el formulario
+      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
+        .value, //Nueva información que se inserta por el formulario
+      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value, //Nueva información que se inserta por el formulario
+      webMail: this.clarificationForm.get('webMail').value, //Nueva información que se inserta por el formulario
+      clarificationStatus: 'EN_ACLARACION',
     };
 
-    this.rejectedGoodService.update(idReject, data).subscribe({
-      next: response => {
-        console.log('modificado', response);
-        this.onLoadToast(
-          'success',
-          'bienes_recha_notif_aclara Actualizada',
-          ''
-        );
-        this.updateClarifications(response);
-        this.close();
+    //Servicio para crear registro de ChatClariffications
+    this.chatService.create(modelChatClarifications).subscribe({
+      next: async data => {
+        console.log('SE CREÓ:', data);
+        this.onLoadToast('success', 'Creado', '');
+        this.loading = false;
+        this.modalRef.hide();
       },
       error: error => {
         this.loading = false;
-        console.log(error);
+        this.onLoadToast('error', 'No se pudo crear', error.error);
+        console.log('NO SE CREÓ:', error);
+        this.modalRef.hide();
       },
     });
   }
 
-  updateClarifications(clarification: ClarificationGoodRejectNotification) {
-    const data: IClarification = {
-      id: clarification.clarificationId, //
-      clarification: 'EN ACLARACIÓN',
-      type: this.dataNotification.type, //Cambiar id para que no se borre
-      creationUser: this.dataNotification.creationUser,
-      creationDate: this.dataNotification.creationDate,
-      editionUser: this.dataNotification.editionUser,
-      modificationDate: this.dataNotification.modificationDate,
-      version: this.dataNotification.version,
-      active: this.dataNotification.active,
-    };
-    this.clarification2Srvice.create(data).subscribe({
-      next: response => {
-        console.log('Notificación actualizada', response);
-        //this.onLoadToast('success', 'Notificación actualizada', '');
-        this.close();
+  //------------------------------------ PARA FORMULARIO LARGO -----------------------------------
+  chatClarifications2() {
+    this.loading = true;
+    this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
+      this.dataClarifications2.rejectNotificationId;
+
+    //Trae lista de chat-clarifications con el filtrado, para verificar si ya existe un registro
+    this.chatService.getAll(this.paramsReload.getValue()).subscribe({
+      next: data => {
+        console.log('Registro de ChatClarifications, filtrado', data.data);
+        this.dataChatClarifications = data.data;
+        //Si ya existe un registro en chatClarificatios, entonces se va a actualizar ese mismo registro
+        this.chatClarificationUpdate2(this.dataChatClarifications[0]);
       },
       error: error => {
-        this.loading = false;
-        console.log(error);
+        //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
+        console.log('no se encuentra', error);
+        this.chatClarificationCreate2();
       },
     });
   }
 
+  //Método que Actualiza ChatClarifications PARA FORMULARIO LARGO
+  chatClarificationUpdate2(chatClarifications: IChatClarifications) {
+    console.log('Actualizando chatClarifications');
+    console.log('información de ChatClarificaions', chatClarifications);
+    console.log('chatClarifications.id', chatClarifications.id);
+    console.log('chatClarifications.requestId', chatClarifications.requestId);
+    console.log(
+      'id id_recha_noti',
+      this.dataClarifications2.rejectNotificationId
+    );
+
+    //Construyendo objeto/model para enviarle
+    const modelChatClarifications: IChatClarifications = {
+      id: chatClarifications.id, //ID primaria
+      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      requestId: this.idRequest,
+      goodId: this.dataClarifications2.goodId,
+      addresseeName: this.inappropriatenessForm.get('addresseeName').value,
+      jobClarificationKey: this.inappropriatenessForm.get('jobClarificationKey')
+        .value,
+      senderName: this.inappropriatenessForm.get('senderName').value,
+      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
+      webMail: this.clarificationForm.get('webMail').value,
+      clarificationStatus: 'EN_ACLARACION',
+    };
+
+    //Servicio para actualizar registro de ChatClariffications
+    this.chatService
+      .update(chatClarifications.id, modelChatClarifications)
+      .subscribe({
+        next: async data => {
+          this.onLoadToast('success', 'Actualizado', '');
+          console.log('SE ACTUALIZÓ:', data);
+          this.loading = false;
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+          console.log('NO SE ACTUALIZÓ:', error);
+          this.modalRef.hide();
+        },
+      });
+  }
+
+  //Método para crear un nuevo chatClarifications PARA FORMULARIO LARGO
+  chatClarificationCreate2() {
+    console.log('Creando chatClarifications');
+
+    //Creando objeto nuevo para ChatClarifications
+    const modelChatClarifications: IChatClarifications = {
+      //id: , //ID primaria
+      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      requestId: this.idRequest,
+      goodId: this.dataClarifications2.goodId,
+      addresseeName: this.inappropriatenessForm.get('addresseeName').value,
+      jobClarificationKey: this.inappropriatenessForm.get('jobClarificationKey')
+        .value,
+      senderName: this.inappropriatenessForm.get('senderName').value,
+      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
+      webMail: this.clarificationForm.get('webMail').value,
+      clarificationStatus: 'EN_ACLARACION',
+    };
+
+    //Servicio para crear registro de ChatClariffications
+    this.chatService.create(modelChatClarifications).subscribe({
+      next: async data => {
+        console.log('SE CREÓ:', data);
+        this.onLoadToast('success', 'Creado', '');
+        this.loading = false;
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No se pudo crear', error.error);
+        console.log('NO SE CREÓ:', error);
+        this.modalRef.hide();
+      },
+    });
+  }
+
+  //Método para generar reporte y posteriormente la firma
   openReport(data: Inappropriateness) {
     const idReportAclara = data.id;
     const idDoc = data.id;

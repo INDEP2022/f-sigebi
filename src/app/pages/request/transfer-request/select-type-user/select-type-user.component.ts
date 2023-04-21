@@ -241,7 +241,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
               this.loader.load = false;
               Swal.fire({
                 title: 'Solicitud Turnada',
-                text: 'La solicitud se turno correctamente',
+                text: 'La solicitud se turnó correctamente',
                 icon: 'success',
                 showCancelButton: false,
                 confirmButtonColor: '#9D2449',
