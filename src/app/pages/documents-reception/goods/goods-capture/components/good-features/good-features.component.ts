@@ -29,6 +29,7 @@ export class GoodFeaturesComponent
   @Input() override loading: boolean = false;
   @Input() good: any = {};
   @Output() onSave = new EventEmitter<void>();
+  @Input() clasifNumber: string | number = null;
   origin: string = null;
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {
     super();
@@ -37,9 +38,7 @@ export class GoodFeaturesComponent
     this.origin = paramsMap.get('origin');
   }
 
-  ngOnInit(): void {
-    // this.checkRequiredFields();
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges) {
     this.goodForm.reset();

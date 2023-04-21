@@ -52,6 +52,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       .uploadFileByFolio(this.folio, fileEvent.file)
       .subscribe({
         next: response => {
+          console.log(response);
           if (response.type === HttpEventType.UploadProgress) {
             fileEvent.progress = Math.round(
               (100 * response.loaded) / response.total
@@ -63,6 +64,10 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
+          console.log(error);
+          if (error.status == 413) {
+            this.onLoadToast('error', 'Error', 'El archivo es muy grande!');
+          }
           fileEvent.status = FILE_UPLOAD_STATUSES.FAILED;
         },
         complete: async () => {
