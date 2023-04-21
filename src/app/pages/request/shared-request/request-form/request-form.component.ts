@@ -312,6 +312,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getTransferent(params?: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.active'] = `1`;
     this.transferentService.getAll(params).subscribe({
       next: data => {
         const text = this.replaceAccents(params.text);
