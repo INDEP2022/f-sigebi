@@ -136,7 +136,7 @@ export class RequestDetailTabComponent
     this.requestService.getById(this.idRequest).subscribe((data: any) => {
       this.infoRequest = data;
       this.transferenceId = data.transferenceId;
-      this.setLabelNames(this.transferenceId);
+      this.setLabelNames(Number(this.transferenceId));
     });
   }
 
