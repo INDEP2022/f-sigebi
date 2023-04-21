@@ -1,3 +1,16 @@
+export interface IObjetoMovimiento {
+  withdrawal: number | null;
+  deposit: number | null;
+  numberMotion: number | null;
+  placeMotion: number | null;
+  pierced: string | null;
+  dateMotion: string | null;
+  numberProceedings: string | null;
+  date: string | null;
+  desposit: number | null;
+  retire: number | null;
+}
+
 export interface IAccountMovementCategory {
   category: string;
   description: string;
