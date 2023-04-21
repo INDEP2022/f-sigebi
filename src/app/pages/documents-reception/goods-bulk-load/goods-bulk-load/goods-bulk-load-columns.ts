@@ -114,7 +114,7 @@ const WHEEL_DATA_COLUMNS = [
   'identificador',
   'asunto',
   'exptrans',
-  'descripcion',
+  // 'descripcion',
   'ciudad',
   'entfed',
   'contribuyente',
