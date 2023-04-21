@@ -243,6 +243,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const params = new ListParams();
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'stationName:ASC';
     //delete params.limit;
     //delete params.page;
     delete params['search'];
@@ -265,6 +266,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    params['sortBy'] = 'authorityName:ASC';
     //delete params.limit;
     //delete params.page;
     delete params['search'];
@@ -309,7 +311,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   getTransferent(params?: ListParams) {
-    this.transferentService.getAll(new ListParams()).subscribe({
+    params['sortBy'] = 'nameTransferent:ASC';
+    this.transferentService.getAll(params).subscribe({
       next: data => {
         const text = this.replaceAccents(params.text);
         data.data.map(data => {
@@ -381,7 +384,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   save() {
     Swal.fire({
       title: 'Guardar Solicitud',
-      text: 'Quiere Guardar la solicitud',
+      text: '¿Desea Guardar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -467,7 +470,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
     Swal.fire({
       title: 'Turnar Solicitud',
-      text: 'Quiere Turnar la solicitud',
+      text: '¿Desea Turnar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
