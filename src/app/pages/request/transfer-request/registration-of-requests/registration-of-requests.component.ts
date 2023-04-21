@@ -246,7 +246,7 @@ export class RegistrationOfRequestsComponent
       ],
       transferenceFile: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(60))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
       previousInquiry: [
         null,

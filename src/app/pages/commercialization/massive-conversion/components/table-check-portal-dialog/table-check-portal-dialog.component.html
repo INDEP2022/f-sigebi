@@ -1,0 +1,23 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Portal de Cheques</h5>
+  </div>
+  <div body>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Regional</th>
+          <th scope="col">Cantidad</th>
+          <th scope="col">Importe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of list">
+          <td>{{ item.createdBy }}</td>
+          <td>{{ item.records }}</td>
+          <td>{{ item.amount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</app-modal>

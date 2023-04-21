@@ -1,0 +1,98 @@
+<div class="d-flex flex-row-reverse mb-4 mt-0">
+  <div class="">
+    <button
+      class="btn btn-sm btn-success active font-size-14"
+      (click)="openCreateOrEditExpense()">
+      Agregar Registro
+    </button>
+  </div>
+</div>
+<table class="table form-material">
+  <thead>
+    <tr>
+      <th>Registro</th>
+      <th class="w-50">Descripción</th>
+      <th>Importe</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let expense of expenses">
+      <td>
+        {{ expense.id }}
+      </td>
+      <td class="w-50">
+        {{ expense.descriptionName }}
+      </td>
+      <td>
+        {{ expense.import }}
+      </td>
+      <td>
+        <button
+          (click)="openCreateOrEditExpense(expense.id)"
+          class="btn-outline-info border-0 btn-sm">
+          <i class="fas fa-pen"></i>
+        </button>
+        <button
+          (click)="removeExpense(expense.register)"
+          class="btn-outline-danger border-0 btn-sm ml-2">
+          <i class="fas fa-times"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #dialogExpense>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left font-size-16">
+      {{ idExpense ? 'Editando Gasto' : 'Agregando Gasto' }}
+    </h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="closeDialogExpense()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body form-material" [formGroup]="form">
+    <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">
+      <input readonly type="text" formControlName="id" class="form-control" />
+    </form-field>
+    <form-field
+      class="form-group"
+      [control]="form.get('description')"
+      label="Descripción">
+      <ng-custom-select
+        class="form-control"
+        formControlName="description"
+        path="spent/api/v1/expense-concept"
+        value="id"
+        (valueChange)="selectedExpenseType($event)">
+        <ng-template let-item>
+          {{ item.description }}
+        </ng-template>
+      </ng-custom-select>
+    </form-field>
+    <form-field [control]="form.get('import')" label="Importe">
+      <input type="number" formControlName="import" class="form-control" />
+    </form-field>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
+      (click)="addExpense()">
+      Guardar
+      <i class="fas fa-paper-plane"></i>
+    </button>
+    <button
+      type="button"
+      class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
+      (click)="closeDialogExpense()">
+      Cerrar
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</ng-template>

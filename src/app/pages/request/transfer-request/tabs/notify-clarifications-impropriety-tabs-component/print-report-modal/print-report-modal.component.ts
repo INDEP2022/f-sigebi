@@ -123,7 +123,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.signParams();
 
     if (this.idReportAclara != null) {
-      let linkDoc2: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
+      let linkDoc2: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=OficioAclaracionTransferente.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
       this.src = linkDoc2;
       console.log('ID del reporte Oficio_Aclaracion', this.idReportAclara);
       console.log('url del reporte', linkDoc2);
