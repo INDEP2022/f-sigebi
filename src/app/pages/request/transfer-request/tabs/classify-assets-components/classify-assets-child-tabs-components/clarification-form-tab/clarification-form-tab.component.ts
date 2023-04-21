@@ -112,7 +112,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     let clarification = this.clarificationForm.getRawValue();
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
-    clarification['answered'] = 'NUEVA ACLARACIÓN';
+    clarification['answered'] = 'NUEVA';
     clarification.goodId = this.goodTransfer.id;
     //clarification.clarificationId = this.clarificationId;
     if (this.edit === true) {
