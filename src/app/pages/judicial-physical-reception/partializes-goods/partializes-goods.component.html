@@ -1,33 +1,22 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Bienes Parcializados</h5>
+    <div
+      style="margin-top: 12.5px"
+      [class]="loading || loadingExcel || items.length === 0 ? 'disabled' : ''"
+      (click)="exportExcel()">
+      <app-excel-report
+        [elementToExport]="elementToExport"
+        [externalClick]="flagDownload"
+        [nameExcel]="'Reporte Bienes Parcializados.xlsx'"></app-excel-report>
+    </div>
   </div>
+
   <div body>
     <form class="form-material" [formGroup]="form">
-      <!-- <div class="row justify-content-center">
-        <div class="col-md-4">
-          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noBien" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <div class="form-group">
-            <button class="mx-1" size="small">Indicador</button>
-            <button class="mx-1" size="small">Exportar Excel</button>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- <hr class="row" /> -->
-      <!-- <h5 class="row justify-content-center">Bienes Parcializados</h5> -->
-
-      <div class="col-md-7">
+      <div class="col-lg-7">
         <div class="row pt-4">
-          <div class="col-md-12 p-0">
+          <div class="col-lg-12 p-0">
             <div [class]="loading ? 'table-loading' : 'scroll-table'">
               <ng2-smart-table
                 [attr.class]="'table-bordered table-responsive'"
@@ -41,43 +30,10 @@
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
       </div>
-      <div class="col-md-5">
-        <h6>&Aacute;rbol Bienes Parcializados</h6>
-        <div [class]="loadingTree ? 'tree-loading' : 'scroll-tree'">
-          <app-tree-view [items]="items" label="noBien"></app-tree-view>
-        </div>
-        <div class="tree-description">
-          {{ descriptionSelectedTree }}
-        </div>
-
-        <!-- <ul
-            *ngIf="item"
-            class="metismenu list-unstyled"
-            id="side-menu"
-            #sideMenu>
-            <li>
-              <a
-                *ngIf="hasItems(item)"
-                href="javascript:void(0);"
-                class="is-parent has-arrow">
-                <span> {{ item.label }}</span>
-              </a>
-              <app-partializeds-tree
-                [hasChild]="hasItems(item)"
-                [menuChild]="item.subItems"></app-partializeds-tree>
-            </li>
-          </ul> -->
-
-        <!-- <div class="dropdown">
-            <button class="btn btn-info btn-sm active dropdown-toggle" type="button" id="dropdownMenuButton"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              HT PARCIALIZADOS
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item">Node 1</a>
-              <a class="dropdown-item">Node 2</a>
-            </div>
-          </div> -->
+      <div class="col-lg-5">
+        <app-partialized-tree-view
+          [items]="itemsTree"
+          [loading]="loadingTree"></app-partialized-tree-view>
       </div>
     </form>
   </div>
