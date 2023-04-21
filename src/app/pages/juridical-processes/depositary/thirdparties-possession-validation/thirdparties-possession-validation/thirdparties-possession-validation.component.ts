@@ -61,6 +61,14 @@ export class ThirdpartiesPossessionValidationComponent
 
   // Table settings
   tableSettingsBienes = {
+    rowClassFunction: (row: any) => {
+      console.log(row);
+      if (row.cells[1].value != 'ADM') {
+        return 'bg-dark';
+      } else {
+        return 'bg-primary';
+      }
+    },
     actions: {
       columnTitle: '',
       add: false,
@@ -207,11 +215,29 @@ export class ThirdpartiesPossessionValidationComponent
 
     if (numberExpedient) {
       data.addFilter('fileNumber', numberExpedient);
+      this.getGoodsByOffice(new ListParams(), numberExpedient);
     }
 
     this.goodService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableBienes = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  getGoodsByOffice(params: ListParams, numberExpedient: number) {
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    data.addFilter('status', 'STI');
+    data.addFilter('fileNumber', numberExpedient);
+    this.goodService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
         this.dataTableBienesOficio = data.data;
       },
       error: err => {
@@ -237,16 +263,13 @@ export class ThirdpartiesPossessionValidationComponent
       );
       return;
     }
-    const request: IGood = {
-      ...this.selectedRows,
-      delegationNumber: null,
-      subDelegationNumber: null,
-    };
 
-    this.goodService.create(request).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.goodService
+      .updateGoodStatus(this.selectedRows.goodId, 'STI')
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
@@ -269,10 +292,12 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
-    this.goodService.remove(this.selectedRows2.id).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.goodService
+      .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   mostrarInfo(form: any): any {
@@ -300,7 +325,7 @@ export class ThirdpartiesPossessionValidationComponent
     replaceText = replaceText.replaceAll(
       '<C>',
       this.dataTableBienes
-        ? `${this.dataTableBienes[0].goodId} ${this.dataTableBienes[0].description}`
+        ? `${this.dataTableBienes[0].goodId}  ${this.dataTableBienes[0].description}`
         : '<C>'
     );
 
@@ -308,6 +333,22 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   btnImprimir() {
-    console.log('btnImprimir');
+    this.loading = true;
+    const pdfurl = `http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
+    // console.log(this.flyersForm.value);
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
   }
 }

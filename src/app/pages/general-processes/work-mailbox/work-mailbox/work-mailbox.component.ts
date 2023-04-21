@@ -1645,8 +1645,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     if (this.selectedRow.areaATurn && this.selectedRow.userATurn) {
       const result = await this.alertQuestion(
         'question',
-        'Información',
-        `¿Deseas enviar el trámite al usuario ${this.selectedRow.userATurn}?`
+        'Utilizar datos predeterminados',
+        `¿Deseas enviar el trámite al usuario ${this.selectedRow.userATurn} 
+          y área ${this.selectedRow.areaATurn}?`,
+        `Enviar`,
+        `Buscar`
       );
 
       if (result.isConfirmed) {

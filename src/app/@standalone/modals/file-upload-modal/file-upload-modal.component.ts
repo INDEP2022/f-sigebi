@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -27,7 +28,8 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   totalDocs: number = 0;
   constructor(
     private fileBrowserService: FileBrowserService,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private _blockErrors: showHideErrorInterceptorService
   ) {
     super();
   }
@@ -48,6 +50,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
 
   uploadFile(fileEvent: FileUploadEvent, uploadEvent: IUploadEvent) {
     fileEvent.status = FILE_UPLOAD_STATUSES.LOADING;
+    this._blockErrors.blockAllErrors = true;
     this.fileBrowserService
       .uploadFileByFolio(this.folio, fileEvent.file)
       .subscribe({
@@ -64,10 +67,11 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
-          console.log(error);
-          if (error.status == 413) {
-            this.onLoadToast('error', 'Error', 'El archivo es muy grande!');
-          }
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al subir el documento'
+          );
           fileEvent.status = FILE_UPLOAD_STATUSES.FAILED;
         },
         complete: async () => {

@@ -120,21 +120,15 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
       this.loading = true;
       if (paramGood) {
         this.paramsSearch.getValue()['filter.goodId'] = paramGood;
-      } else {
-        this.getData();
       }
       if (paramGoodType) {
         this.paramsSearch.getValue()['filter.goodTypeId'] = paramGoodType;
-      } else {
-        this.getData();
       }
-
       if (goodDescription) {
         this.paramsSearch.getValue()['filter.goodDescription'] =
           goodDescription;
-      } else {
-        this.getData();
       }
+      this.getData();
     }
   }
 
@@ -156,8 +150,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
             item['stateConservation'] = 'MALO';
           if (item['destiny'] == 1) item['destiny'] = 'VENTA';
 
-          const fraction = item['fractionId'];
-          item['fractionId'] = fraction?.description;
+          const fraction = item['fraccion'];
+          item['fractionId'] = fraction?.code + ' ' + fraction?.description;
         });
 
         Promise.all(filterGoodType).then(x => {
