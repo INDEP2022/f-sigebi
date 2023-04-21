@@ -259,7 +259,7 @@ export class NotifyAssetsImproprietyFormComponent
             );
             console.log('id del documento', data.id);
             this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-            this.openReport(data);
+            this.openReport(data); //Falta verificar información que se envia...
             this.loading = false;
             //this.modalRef.hide()
           },
