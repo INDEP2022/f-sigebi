@@ -256,7 +256,7 @@ export class ClassificationAssetsTabComponent
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
-    this.assetsId = this.goodSelect[0].id;
+    this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
@@ -266,6 +266,11 @@ export class ClassificationAssetsTabComponent
       setTimeout(() => {
         this.formLoading = false;
       }, 4000);
+    } else {
+      // this.goodSelect[0].quantity = 0;
+      this.detailArray.patchValue(null);
+      this.domicilieObject = null;
+      this.formLoading = false;
     }
   }
 

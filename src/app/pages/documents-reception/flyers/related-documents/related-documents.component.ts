@@ -911,4 +911,32 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  public send(): void {
+    this.loading = true;
+    // const pdfurl =
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGENADBNUMEFISICO.pdf?PARAMFORM=NO&DESTYPE=` +
+    //   this.managementForm.controls['screenKey'].value +
+    //   `&NO_OF_GES=` +
+    //   this.managementForm.controls['numero'].value +
+    //   `&TIPO_OF=` +
+    //   this.managementForm.controls['tipoOficio'].value +
+    //   `&VOLANTE=` +
+    //   this.managementForm.controls['noVolante'].value +
+    //   `&EXP=` +
+    //   this.managementForm.controls['noExpediente'].value +
+    //   `&ESTAT_DIC=` +
+    //   this.oficioGestion.statusOf;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    let params = { ...this.managementForm.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
+  }
 }

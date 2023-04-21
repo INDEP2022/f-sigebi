@@ -1,5 +1,3 @@
-import { IClarificationGoodsReject } from './clarification-goods-reject-notifi-model';
-
 export interface IChatClarifications {
   requestId?: number;
   statusId?: number | null;
@@ -20,7 +18,7 @@ export interface IChatClarifications {
   jobClarificationKey?: string | null;
   id?: number;
   process?: string | null;
-  goodId?: number;
+  goodId?: string | number;
   jobType?: string | null;
   clarificationOrigin?: string | null;
   senderUser?: string | null;
@@ -38,10 +36,55 @@ export interface IChatClarifications {
   uniqueKey?: string | null;
   xmlClarificationJobResp?: string | null;
   interconnectionMessage?: string | null;
-  clarifiNewsRejectId?: number | IClarificationGoodsReject;
+  clarifiNewsRejectId?: number | null;
   respDocId?: string | null;
   jobDate?: Date | null;
   clarificationInvoice?: string | null;
   flowId?: number | null;
   nbOrigin?: string | null;
+}
+
+export interface IChatClarifications2 {
+  id: string | null;
+  idEstatus: string | null;
+  userCapture: string | null;
+  areaUserCapture: string | null;
+  satKeyPaper: string | null;
+  registryNumber: string | null;
+  idClarificationType: string | null;
+  saeRequest: string | null;
+  requestDate: string | null;
+  emailWeb: string | null;
+  satClarification: string | null;
+  clarificationDate: string | null;
+  satUniqueKey: string | null;
+  satTransfererEntity: string | null;
+  referralNoteNumber: string | null;
+  xmlPaper: string | null;
+  keyClarificationPaper: string | null;
+  idClarification: string | null;
+  process: string | null;
+  idProperty: string | null;
+  paperType: string | null;
+  clarificationOrigin: string | null;
+  senderUser: string | null;
+  senderName: string | null;
+  recipientName: string | null;
+  city: string | null;
+  creationUser: string | null;
+  creationDate: string | null;
+  editionUser: string | null;
+  editionDate: string | null;
+  version: string | null;
+  idRequestIner: string | null;
+  errorMessage: string | null;
+  clarificationStatus: string | null;
+  keyUnique: string | null;
+  xmlPaperReponse: string | null;
+  messageInterconnection: string | null;
+  idClarificationNotification: string | null;
+  idPaperResponse: string | null;
+  paperDate: string | null;
+  folioClarification: string | null;
+  flowId: string | null;
 }

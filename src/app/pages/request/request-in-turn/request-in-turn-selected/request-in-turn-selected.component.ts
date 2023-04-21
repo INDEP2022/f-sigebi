@@ -126,7 +126,6 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.onLoadToast('info', 'Informacion', `Seleccione un usuario!`);
       return;
     }
-    debugger;
     this.loading = true;
     this.requestToTurn.map(async (item: any, i: number) => {
       let index = i + 1;
@@ -136,6 +135,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       item.targetUserType = this.requestForm.controls['typeUser'].value;
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();
+      item.originInfo = 'SOL_TRANSFERENCIA';
       /* crea solicitud */
       const resposeRequest: any = await this.saveRequest(item);
 
@@ -143,10 +143,17 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
         /* crea tarea */
         const from = 'REGISTRO_SOLICITUD';
         const to = 'REGISTRO_SOLICITUD';
+        const user: any = this.authService.decodeToken();
         const taskResult = await this.createTaskOrderService(
           resposeRequest,
           from,
-          to
+          to,
+          false,
+          0,
+          user.username,
+          'SOLICITUD_TRANSFERENCIA',
+          'Nueva_Solicitud',
+          'TURNAR'
         );
 
         if (taskResult) {
@@ -172,6 +179,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.requestService.update(request.id, request as IRequest).subscribe({
         next: resp => {
           if (resp.id) {
+            console.log('solicitud', resp);
+            console.log('solicitud', resp.id);
             resolve(resp);
           } else {
             reject(false);
@@ -186,11 +195,29 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     });
   }
 
-  createTaskOrderService(request: any, from: string, to: string) {
+  createTaskOrderService(
+    request: any,
+    from: string,
+    to: string,
+    closetask: boolean,
+    taskId: string | number,
+    userProcess: string,
+    type: string,
+    subtype: string,
+    ssubtype: string
+  ) {
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-      body['type'] = 'SOLICITUD TRANSFERENCIA';
+      //body['type'] = 'SOLICITUD TRANSFERENCIA';
+      if (closetask) {
+        body['idTask'] = taskId;
+        body['userProcess'] = userProcess;
+      }
+
+      body['type'] = type;
+      body['subtype'] = subtype;
+      body['ssubtype'] = ssubtype;
 
       let task: any = {};
       task['id'] = 0;

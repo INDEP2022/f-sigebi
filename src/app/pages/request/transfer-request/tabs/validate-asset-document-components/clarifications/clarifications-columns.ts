@@ -1,6 +1,8 @@
+import { FulfillmentComponent } from '../../compliance-verification-components/verify-compliance-tab/fulfillment/fulfillment.component';
+
 export const CLARIFICATION_COLUMNS = {
   rejectionDate: {
-    title: 'Fecha de aclaración',
+    title: 'Fecha de Aclaración',
     type: 'string',
     sort: false,
   },
@@ -17,6 +19,10 @@ export const CLARIFICATION_COLUMNS = {
   reason: {
     title: 'Motivo',
     type: 'string',
+    class: 'custom-fulfill',
+    filter: false,
+    renderComponent: FulfillmentComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   answered: {

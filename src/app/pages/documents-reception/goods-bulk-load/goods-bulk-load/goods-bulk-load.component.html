@@ -40,19 +40,25 @@
                         <ul class="list-group list-group-flush">
                           <li class="list-group-item">
                             EXPEDIENTE:
-                            <div class="badge badge-pill bg-success text-wrap">
+                            <div class="badge badge-pill bg-primary text-wrap">
                               {{ paramsGeneral.p_no_expediente }}
                             </div>
                           </li>
                           <li class="list-group-item">
                             VOLANTE:
-                            <div class="badge badge-pill bg-success text-wrap">
+                            <div
+                              class="badge badge-pill {{
+                                WHEEL_COLOR_DATA_COLUMN
+                              }} text-wrap">
                               {{ paramsGeneral.p_no_volante }}
                             </div>
                           </li>
                           <li class="list-group-item">
-                            AVERIGUACIÓN PREVIA:
-                            <div class="badge badge-pill bg-success text-wrap">
+                            NÚMERO DE OFICIO:
+                            <div
+                              class="badge badge-pill {{
+                                OFFICE_COLOR_DATA_COLUMN
+                              }} text-wrap">
                               {{ paramsGeneral.p_av_previa }}
                             </div>
                           </li>
@@ -171,9 +177,25 @@
               <button
                 (click)="resetProcess()"
                 type="button"
-                [disabled]="procesandoUpload || procesandoPreload"
+                [disabled]="
+                  procesandoUpload ||
+                  procesandoPreload ||
+                  DeclarationsUploadValidationMassive
+                "
                 class="ml-2 mb-0 m-4 btn btn-danger btn-sm active">
                 Limpiar Proceso
+              </button>
+              <button
+                *ngIf="
+                  tipoCarga == 'pgr' && !DeclarationsUploadValidationMassive
+                "
+                [disabled]="
+                  procesandoUpload || procesandoPreload || cargandoPgr
+                "
+                (click)="goPageVolante()"
+                type="button"
+                class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                Regresar al proceso anterior
               </button>
             </div>
           </div>
@@ -195,11 +217,11 @@
         DeclarationsValidationMassive &&
         DeclarationsValidationMassive.message_progress != ''
       ">
-      <div
+      <!-- <div
         class="col-md-12 alert alert-warning"
         *ngIf="stopProcess && procesandoPreload">
         Deteniendo el proceso, Espere un momento...
-      </div>
+      </div> -->
       <div class="col-md-12"><h2>Proceso de validación de datos</h2></div>
       <div class="col-md-8">
         <div class="card">
@@ -271,7 +293,7 @@
       </div>
       <div class="col-md-4">
         <div class="card">
-          <div class="card-header text-center">
+          <!-- <div class="card-header text-center">
             <button
               (click)="detenerProceso()"
               type="button"
@@ -279,7 +301,7 @@
               class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
               Detener Proceso
             </button>
-          </div>
+          </div> -->
           <div class="card-body">
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
@@ -352,11 +374,11 @@
         DeclarationsUploadValidationMassive &&
         DeclarationsUploadValidationMassive.message_progress != ''
       ">
-      <div
+      <!-- <div
         class="col-md-12 alert alert-warning"
         *ngIf="stopProcess && procesandoUpload">
         Deteniendo el proceso, Espere un momento...
-      </div>
+      </div> -->
       <div class="col-md-12">
         <h2>Proceso de validación en la carga de datos</h2>
       </div>
@@ -433,7 +455,7 @@
                   </div>
                 </div>
               </div>
-              <div class="list-group-item">
+              <!-- <div class="list-group-item">
                 <div
                   class="col-md-6 fin-proceso"
                   *ngIf="
@@ -450,14 +472,54 @@
                     Regresar al proceso anterior
                   </button>
                 </div>
-              </div>
+              </div> -->
             </ul>
+            <div
+              class="row"
+              *ngIf="
+                tipoCarga == 'pgr' &&
+                ((DeclarationsUploadValidationMassive &&
+                  !procesandoUpload &&
+                  endProcess) ||
+                  (tableSource.length == 0 && !cargandoPgr))
+              ">
+              <div class="col-md-12">
+                <div class="card p-2">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      EXPEDIENTE:
+                      <div class="badge badge-pill bg-primary text-wrap">
+                        {{ paramsGeneral.p_no_expediente }}
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      VOLANTE:
+                      <div
+                        class="badge badge-pill {{
+                          WHEEL_COLOR_DATA_COLUMN
+                        }} text-wrap">
+                        {{ paramsGeneral.p_no_volante }}
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      NÚMERO DE OFICIO:
+                      <div
+                        class="badge badge-pill {{
+                          OFFICE_COLOR_DATA_COLUMN
+                        }} text-wrap">
+                        {{ paramsGeneral.p_av_previa }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card">
-          <div class="card-header text-center">
+          <!-- <div class="card-header text-center">
             <button
               (click)="detenerProceso()"
               type="button"
@@ -465,7 +527,7 @@
               class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
               Detener Proceso
             </button>
-          </div>
+          </div> -->
           <div class="card-body">
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
@@ -529,6 +591,24 @@
                   }}
                 </div>
               </li>
+              <li class="list-group-item">
+                <div
+                  class="col-md-6 fin-proceso"
+                  *ngIf="
+                    tipoCarga == 'pgr' &&
+                    ((DeclarationsUploadValidationMassive &&
+                      !procesandoUpload &&
+                      endProcess) ||
+                      (tableSource.length == 0 && !cargandoPgr))
+                  ">
+                  <button
+                    (click)="goPageVolante()"
+                    type="button"
+                    class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                    Terminar Proceso
+                  </button>
+                </div>
+              </li>
             </ul>
             <div
               class="alert alert-info"
@@ -563,7 +643,28 @@
         *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'; else otroData">
         Registros del Excel/CSV seleccionado
       </ng-container>
-      <ng-template #otroData> Listado de Registros </ng-template>
+
+      <ng-template #otroData>
+        <h2>Listado de Registros</h2>
+        <ng-container *ngIf="tipoCarga == 'pgr'">
+          <div
+            class="badge badge-pill {{
+              WHEEL_COLOR_DATA_COLUMN
+            }} text-wrap m-3">
+            Color para los datos del Volante
+          </div>
+          <div
+            class="badge badge-pill {{
+              OFFICE_COLOR_DATA_COLUMN
+            }} text-wrap m-3">
+            Color para los datos del Oficio
+          </div>
+          <div class="badge badge-pill bg-light text-dark text-wrap m-3">
+            Las columnas que no tienen color pertenecen a los datos de los
+            bienes que se van a procesar.
+          </div>
+        </ng-container>
+      </ng-template>
     </h4>
     <div class="row mt-3" style="max-height: 600px; overflow-y: scroll">
       <div

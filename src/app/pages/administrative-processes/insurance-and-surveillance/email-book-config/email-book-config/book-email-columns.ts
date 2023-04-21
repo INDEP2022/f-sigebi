@@ -4,29 +4,42 @@ export const BOOK_EMAIL_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  name: {
+  bookName: {
     title: 'Nombre',
     type: 'string',
     sort: false,
   },
-  email: {
-    title: 'Correo Electronico',
+  bookEmail: {
+    title: 'Correo Electrónico',
     type: 'number',
     sort: false,
   },
   to: {
     title: 'Para',
-    type: 'number',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return row.bookType == 'P'
+        ? '<div class="text-center text-success"><i class="fas fa-check"></i></div>'
+        : '';
+    },
   },
   cc: {
     title: 'CC',
-    type: 'number',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return row.bookType == 'C'
+        ? '<div class="text-center text-success"><i class="fas fa-check"></i></div>'
+        : '';
+    },
   },
-  status: {
+  bookStatus: {
     title: 'Estatus',
-    type: 'number',
+    type: 'text',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return row.bookStatus == '1' ? 'SI' : '';
+    },
   },
 };

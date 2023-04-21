@@ -1,6 +1,10 @@
 import { FormControl, Validators } from '@angular/forms';
 import { onlyNumbers } from 'src/app/common/validations/numeric.validators';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 export class GOOD_CAPTURE_FORM {
   noPartida = new FormControl<string>(null, [
@@ -34,7 +38,7 @@ export class GOOD_CAPTURE_FORM {
   valRef = new FormControl(null, [
     Validators.min(1),
     Validators.max(999999999999),
-    Validators.pattern(NUMBERS_PATTERN),
+    Validators.pattern(DOUBLE_PATTERN),
   ]);
   identifica = new FormControl(null, [Validators.required]);
   descripcion = new FormControl(null, [

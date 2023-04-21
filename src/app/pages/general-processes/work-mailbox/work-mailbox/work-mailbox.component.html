@@ -64,7 +64,6 @@
         <div class="card">
           <div class="card-body">
             <form [formGroup]="filterForm" class="form-material">
-              <!--<app-management-area-shared [form]="filterForm"></app-management-area-shared>-->
               <div class="row pt-4">
                 <div class="col-12 col-md-12 col-lg-12 col-xl-5">
                   <form-field
@@ -144,6 +143,7 @@
                       id="3"
                       type="checkbox"
                       class="form-control"
+                      (change)="buildFilters()"
                       formControlName="pendientes" />
                   </form-check>
                   <form-check label="Condiciones predeterminadas" for="4">
@@ -151,6 +151,7 @@
                       id="4"
                       type="checkbox"
                       class="form-control"
+                      (change)="buildFilters()"
                       formControlName="predetermined" />
                   </form-check>
                 </div>
@@ -167,6 +168,7 @@
                       formControlName="startDate"
                       class="form-control"
                       bsDatepicker />
+                    <!-- (bsValueChange)="buildFilters()" -->
                   </form-field>
                 </div>
                 <div class="col-md-6">
@@ -177,6 +179,7 @@
                       formControlName="endDate"
                       class="form-control"
                       bsDatepicker />
+                    <!-- (bsValueChange)="buildFilters()" -->
                   </form-field>
                 </div>
               </div>

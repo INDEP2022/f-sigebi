@@ -44,6 +44,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsValue = new Date();
   requestForm: ModelForm<any>;
   isReadOnly: boolean = true;
+  requestId: number = 0;
+  taskId: number = 0;
 
   loadingTurn = false;
   bsModalRef: BsModalRef;
@@ -92,6 +94,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.getIssue();
     this.getRegionalDeleg(new ListParams());
     this.getTransferent(new ListParams());
+
+    /* crear solicitud */
+    this.generateFirstTask();
 
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
@@ -145,6 +150,52 @@ export class RequestFormComponent extends BasePage implements OnInit {
     if (this.op == 2) this.complementaryDocumentationField(this.requestForm);
   }
 
+  async generateFirstTask() {
+    this.loadingTurn = true;
+    const form = this.requestForm.getRawValue();
+    const requestResult: any = await this.createRequest(form);
+    if (requestResult) {
+      this.requestId = requestResult.id;
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      //body['type'] = 'SOLICITUD TRANSFERENCIA';
+
+      body['type'] = 'SOLICITUD_TRANSFERENCIA';
+      body['subtype'] = 'Nueva_Solicitud';
+      body['ssubtype'] = 'TURNAR';
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.nickName;
+      task['assigneesDisplayname'] = this.userName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestId);
+      task['title'] = 'Registro de solicitud con folio: ' + this.requestId;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestId;
+      task['expedientId'] = 0;
+      task['urlNb'] = 'pages/request/list/new-transfer-request';
+      body['task'] = task;
+
+      let orderservice: any = {};
+      orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+      orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+      orderservice['pIdApplication'] = this.requestId;
+      orderservice['pCurrentDate'] = new Date().toISOString();
+      orderservice['pOrderServiceIn'] = '';
+
+      body['orderservice'] = orderservice;
+
+      //const actualUser: any = this.authService.decodeToken();
+      const taskResult: any = await this.createTaskOrderService(body);
+      if (taskResult) {
+        console.log(taskResult);
+        this.taskId = Number(taskResult.task.id);
+        this.loadingTurn = false;
+      }
+    }
+  }
+
   complementaryDocumentationField(form: ModelForm<IRequest>) {
     // agregar nuevos campos al formulario para solicitudes de documentacion complementaria
     form.addControl('keyStateOfRepublic', this.fb.control('', []));
@@ -192,6 +243,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const params = new ListParams();
     params['filter.idTransferent'] = `$eq:${this.idTransferer}`;
     params['filter.stationName'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'stationName:ASC';
     //delete params.limit;
     //delete params.page;
     delete params['search'];
@@ -214,6 +266,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.idStation}`;
     params['filter.idTransferer'] = `$eq:${this.idTransferer}`;
+    params['sortBy'] = 'authorityName:ASC';
     //delete params.limit;
     //delete params.page;
     delete params['search'];
@@ -232,20 +285,65 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
+  // getTransferent(params?: ListParams) {
+  //   params['filter.status'] = `$eq:${1}`;
+  //   params['filter.nameTransferent'] = `$ilike:${params.text}`;
+  //   // delete params.limit;
+  //   //delete params.page;
+  //   delete params['search'];
+  //   delete params.text;
+  //   this.transferentService.getAll(params).subscribe({
+  //     next: data => {
+  //       data.data.map(data => {
+  //         data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+  //         return data;
+  //       });
+  //       this.transferents$ = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.transferents$ = new DefaultSelect();
+  //     },
+  //   });
+  // }
+
+  replaceAccents(text: string) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   getTransferent(params?: ListParams) {
-    params['filter.status'] = `$eq:${1}`;
-    params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    // delete params.limit;
-    //delete params.page;
-    delete params['search'];
-    delete params.text;
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.active'] = `1`;
     this.transferentService.getAll(params).subscribe({
       next: data => {
+        const text = this.replaceAccents(params.text);
         data.data.map(data => {
           data.nameAndId = `${data.id} - ${data.nameTransferent}`;
           return data;
         });
         this.transferents$ = new DefaultSelect(data.data, data.count);
+
+        if (params.text) {
+          let copyData = [...data.data];
+          copyData.map(data => {
+            data.nameAndId = this.replaceAccents(data.nameAndId);
+            return data;
+          });
+
+          copyData = copyData.filter(item => {
+            return text.toUpperCase() === ''
+              ? item
+              : item.nameAndId.toUpperCase().includes(text.toUpperCase());
+          });
+
+          copyData.map(x => {
+            x.nameAndId = `${x.id} - ${x.nameTransferent}`;
+            return x;
+          });
+
+          if (copyData.length > 0) {
+            this.transferents$ = new DefaultSelect(copyData, copyData.length);
+          }
+        }
       },
       error: () => {
         this.transferents$ = new DefaultSelect();
@@ -287,7 +385,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   save() {
     Swal.fire({
       title: 'Guardar Solicitud',
-      text: 'Quiere Guardar la solicitud',
+      text: '¿Desea Guardar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -373,7 +471,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
     Swal.fire({
       title: 'Turnar Solicitud',
-      text: 'Quiere Turnar la solicitud',
+      text: '¿Desea Turnar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -383,13 +481,43 @@ export class RequestFormComponent extends BasePage implements OnInit {
       if (result.isConfirmed) {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
-        const requestResult: any = await this.createRequest(form);
+        form.id = this.requestId;
+        const requestResult: any = await this.updateRequest(form);
         if (requestResult) {
-          const form = requestResult;
-          const from = 'REGISTRO_SOLICITUD';
-          const to = 'REGISTRO_SOLICITUD';
-          const taskResult = await this.createTaskOrderService(form, from, to);
-          if (taskResult === true) {
+          const actualUser: any = this.authService.decodeToken();
+          let body: any = {};
+          body['idTask'] = this.taskId;
+          body['userProcess'] = actualUser.username;
+
+          body['type'] = 'SOLICITUD_TRANSFERENCIA';
+          body['subtype'] = 'Nueva_Solicitud';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = this.nickName;
+          task['assigneesDisplayname'] = this.userName;
+          task['creator'] = actualUser.username;
+          task['taskNumber'] = Number(requestResult.id);
+          task['title'] =
+            'Registro de solicitud (Captura de Solicitud) con folio: ' +
+            requestResult.id;
+          task['programmingId'] = 0;
+          task['requestId'] = requestResult.id;
+          task['expedientId'] = 0;
+          task['urlNb'] = 'pages/request/transfer-request/registration-request';
+          body['task'] = task;
+
+          let orderservice: any = {};
+          orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+          orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+          orderservice['pIdApplication'] = requestResult.id;
+          orderservice['pCurrentDate'] = new Date().toISOString();
+          orderservice['pOrderServiceIn'] = '';
+
+          body['orderservice'] = orderservice;
+          const taskResult = await this.createTaskOrderService(body);
+          if (taskResult) {
             this.loadingTurn = false;
             this.msgModal(
               'Se turnar la solicitud con el Folio Nº '
@@ -401,27 +529,41 @@ export class RequestFormComponent extends BasePage implements OnInit {
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
           }
         }
-
-        this.loadingTurn = false;
       }
     });
   }
 
   createRequest(form: any) {
     return new Promise((resolve, reject) => {
+      form.requestStatus = 'POR_TURNAR';
+      form.receiptRoute = 'FISICA';
+      form.affair = null;
+      form.applicationDate = null;
+      debugger;
+      this.requestService.create(form).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loadingTurn = false;
+          this.msgModal('error', 'Error', 'Error al crear la solicitud');
+          reject(error.error);
+        },
+      });
+    });
+  }
+
+  updateRequest(form: any) {
+    return new Promise((resolve, reject) => {
       form.requestStatus = 'A_TURNAR';
       form.receiptRoute = 'FISICA';
       form.affair = 37;
+      form.typeOfTransfer = 'MANUAL';
+      //form.originInfo = 'SOL_TRANSFERENCIA'
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
 
-      let action = null;
-      if (!form.id) {
-        action = this.requestService.create(form);
-      } else {
-        action = this.requestService.update(form.id, form);
-      }
-      action.subscribe({
+      this.requestService.update(form.id, form).subscribe({
         next: resp => {
           resolve(resp);
         },
@@ -434,37 +576,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createTaskOrderService(request: any, from: string, to: string) {
+  createTaskOrderService(body: any) {
     return new Promise((resolve, reject) => {
-      const user: any = this.authService.decodeToken();
-      let body: any = {};
-      body['type'] = 'SOLICITUD TRANSFERENCIA';
-
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = this.nickName;
-      task['assigneesDisplayname'] = this.userName;
-      task['creator'] = user.username;
-      task['taskNumber'] = Number(request.id);
-      task['title'] =
-        'Registro de solicitud (Captura de Solicitud) con folio: ' + request.id;
-      task['programmingId'] = 0;
-      task['requestId'] = request.id;
-      task['expedientId'] = 0;
-      task['urlNb'] = 'pages/request/transfer-request/registration-request';
-      body['task'] = task;
-
-      let orderservice: any = {};
-      orderservice['pActualStatus'] = from;
-      orderservice['pNewStatus'] = to;
-      orderservice['pIdApplication'] = request.id;
-      orderservice['pCurrentDate'] = new Date().toISOString();
-      orderservice['pOrderServiceIn'] = '';
-
-      body['orderservice'] = orderservice;
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
-          resolve(true);
+          resolve(resp);
         },
         error: error => {
           console.log(error.error.message);

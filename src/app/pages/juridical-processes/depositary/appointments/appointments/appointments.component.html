@@ -9,11 +9,8 @@
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-8 p-2">
-              <h6>DATOS DEL BIEN</h6>
-            </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
               <div class="row">
-                <div class="col-12 col-sm-8 col-md-8 p-2">
+                <div class="col-12 col-sm-6 col-md-6 p-2">
                   <form-field
                     [control]="form.get('noBien')"
                     label="No&#46; Bien">
@@ -36,33 +33,15 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-5 p-2">
-          <form-field
-            [control]="form.get('descriptionGood')"
-            label="Descripción del Bien">
-            <textarea
-              [readonly]="true"
-              class="form-control"
-              formControlName="descriptionGood"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('estatusBien')"
-            label="Estatus del Bien">
-            <textarea
-              [readonly]="true"
-              class="form-control"
-              formControlName="estatusBien"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input
-              [readonly]="true"
-              class="form-control"
-              formControlName="causaPenal" />
-          </form-field>
+        <div
+          class="col-sm-12 col-12 col-md-12 p-2"
+          *ngIf="loadingGood || loadingAppointment">
+          <div class="alert alert-info">
+            Cargando, Espere un momento...
+            <div class="spinner-border text-info" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
@@ -76,16 +55,6 @@
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
-            [control]="form.get('averiguacionPrevia')"
-            label="Averiguaci&oacute;n Previa">
-            <input
-              [readonly]="true"
-              class="form-control"
-              formControlName="averiguacionPrevia" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
             [control]="form.get('fechaAcuerdoAsegurado')"
             label="Fecha de Acuerdo Asegurado">
             <input
@@ -95,7 +64,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('fechaRecepcion')"
             label="Fecha de Recepci&oacute;n">
@@ -106,7 +75,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('fechaDecomiso')"
             label="Fecha de Decomiso">
@@ -115,6 +84,45 @@
               class="form-control"
               formControlName="fechaDecomiso"
               bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('estatusBien')"
+            label="Estatus del Bien">
+            <textarea
+              [readonly]="true"
+              class="form-control"
+              formControlName="estatusBien"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="causaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('averiguacionPrevia')"
+            label="Averiguaci&oacute;n Previa">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="averiguacionPrevia" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripción del Bien">
+            <textarea
+              [readonly]="true"
+              class="form-control"
+              rows="4"
+              formControlName="descriptionGood"></textarea>
           </form-field>
         </div>
         <hr class="row" />
@@ -202,9 +210,6 @@
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <h6>DATOS DE LA DIRECCIÓN</h6>
-            </div>
-            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
               <div class="form-group">
                 <button
                   type="button"
@@ -220,105 +225,152 @@
           <form-field
             [control]="form.get('depositaria')"
             label="Depositar&iacute;ia">
-            <input class="form-control" formControlName="depositaria" />
+            <input
+              class="form-control"
+              formControlName="depositaria"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('representante')"
             label="Representante">
-            <input class="form-control" formControlName="representante" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field [control]="form.get('calle')" label="Calle">
-            <input class="form-control" formControlName="calle" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noExterno')" label="No&#46; Externo">
-            <input class="form-control" formControlName="noExterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noInterno')" label="No&#46; Interno">
-            <input class="form-control" formControlName="noInterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="coloniaName"
-            label="Colonia"
-            value="id"
-            (fetchItems)="getFromSelect($event)"
-            [form]="form"
-            control="colonia"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="delegacionMunicipioName"
-            label="Delegaci&oacute;n&#47;Municipio"
-            value="id"
-            (fetchItems)="getFromSelect($event)"
-            [form]="form"
-            control="delegacionMunicipio"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('codigoPostal')"
-            label="C&oacute;digo Postal">
-            <input class="form-control" formControlName="codigoPostal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="entidadFederativaName"
-            label="Entidad Federativa"
-            value="id"
-            (fetchItems)="getFromSelect($event)"
-            [form]="form"
-            control="entidadFederativa"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('telefono')" label="Tel&eacute;fono">
-            <input class="form-control" formControlName="telefono" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('rfc')" label="RFC">
-            <input class="form-control" formControlName="rfc" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('curp')" label="CURP">
-            <input class="form-control" formControlName="curp" />
+            <input
+              class="form-control"
+              formControlName="representante"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoPersona')"
             label="Tipo Persona &#40;F&iacute;SICA&#47;MORAL&#41;">
-            <input class="form-control" formControlName="tipoPersona" />
+            <input
+              class="form-control"
+              formControlName="tipoPersona"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoPersona2')"
             label="Tipo Persona &#40;DEDICACI&Oacute;N&#41;">
-            <input class="form-control" formControlName="tipoPersona2" />
+            <input
+              class="form-control"
+              formControlName="tipoPersona2"
+              [readonly]="true" />
           </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-8 p-2">
+          <form-field [control]="form.get('calle')" label="Calle">
+            <input
+              class="form-control"
+              formControlName="calle"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noExterno')" label="No&#46; Externo">
+            <input
+              class="form-control"
+              formControlName="noExterno"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noInterno')" label="No&#46; Interno">
+            <input
+              class="form-control"
+              formControlName="noInterno"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('telefono')" label="Tel&eacute;fono">
+            <input
+              class="form-control"
+              formControlName="telefono"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input
+              class="form-control"
+              formControlName="rfc"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('curp')" label="CURP">
+            <input
+              class="form-control"
+              formControlName="curp"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="postalCode"
+            bindLabel="description"
+            label="C&oacute;digo Postal"
+            value="postalCode"
+            (fetchItems)="getPostalCodeByDetail($event)"
+            (change)="changePostalCodeDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="codigoPostal"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <ngx-select
+            [data]="locality"
+            bindLabel="description"
+            label="Colonia"
+            value="id"
+            (fetchItems)="getLocalityByDetail($event)"
+            (change)="changeLocalityDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="colonia"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <ngx-select
+            [data]="delegations"
+            bindLabel="municipality"
+            label="Delegaci&oacute;n&#47;Municipio"
+            value="stateKey"
+            (fetchItems)="getDelegationByDetail($event)"
+            (change)="changeDelegationDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="delegacionMunicipio"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <ngx-select
+            [data]="state"
+            bindLabel="descCondition"
+            label="Entidad Federativa"
+            value="id"
+            (fetchItems)="getStateByDetail($event)"
+            (change)="changeStateDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="entidadFederativa"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('referencia')" label="Referencia">
-            <input class="form-control" formControlName="referencia" />
+            <input
+              class="form-control"
+              formControlName="referencia"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('giro')" label="Giro">
-            <input class="form-control" formControlName="giro" />
+            <input
+              class="form-control"
+              formControlName="giro"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -332,16 +384,17 @@
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('fecha')" label="Fecha">
-            <input class="form-control" formControlName="fecha" bsDatepicker />
+            <input
+              class="form-control"
+              formControlName="fecha"
+              bsDatepicker
+              [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
-            <input class="form-control" placeholder="No. Oficio" />
+            <input class="form-control" [readonly]="true" />
           </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2">
-          <h6>Acuerdo Junta Gobierno</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
@@ -350,50 +403,69 @@
             <input
               class="form-control"
               formControlName="fechaAcuerdo"
-              bsDatapicker />
+              bsDatapicker
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 p-2">
           <form-field [control]="form.get('noAcuerdo')" label="No&#46; Acuerdo">
-            <input class="form-control" formControlName="noAcuerdo" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2">
-          <h6>Contrapresentaci&oacute;n/Nombramiento</h6>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <div class="form-group m-1">
             <input
               class="form-control"
-              placeholder="Contrapresentaci&oacute;n" />
-            <label class="label w-100">Contrapresentaci&oacute;n</label>
-          </div>
+              formControlName="noAcuerdo"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('contraprestacion')"
+            label="Contrapresentaci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="contraprestacion"
+              [readonly]="true" />
+          </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('honorarios')" label="Honorarios">
-            <input class="form-control" formControlName="honorarios" />
+            <input
+              class="form-control"
+              formControlName="honorarios"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('iva')" label="Iva">
-            <input class="form-control" formControlName="iva" />
+            <input
+              class="form-control"
+              formControlName="iva"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('fechapage')" label="Fecha page">
-            <input class="form-control" formControlName="fechapage" />
+            <input
+              class="form-control"
+              formControlName="fechapage"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('noNombramiento')"
             label="No&#46; Nombramiento">
-            <input class="form-control" formControlName="noNombramiento" />
+            <input
+              class="form-control"
+              formControlName="noNombramiento"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">
-            <textarea class="form-control" formControlName="anexo"></textarea>
+            <textarea
+              class="form-control"
+              formControlName="anexo"
+              rows="3"
+              [readonly]="true"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-9 p-2">
@@ -402,19 +474,21 @@
             label="Observaciones">
             <textarea
               class="form-control"
-              formControlName="observaciones"></textarea>
+              formControlName="observaciones"
+              rows="3"
+              [readonly]="true"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-12 p-2">
-              <h6>DATOS DE LA DIRECCI&Oacute;N</h6>
-            </div>
             <div class="col-sm-12 col-12 col-md-5 p-2">
               <form-field
                 [control]="form.get('folioRemocion')"
                 label="Folio de Remoci&oacute;n">
-                <input class="form-control" formControlName="folioRemocion" />
+                <input
+                  class="form-control"
+                  formControlName="folioRemocion"
+                  [readonly]="true" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-5 p-2">
@@ -423,7 +497,8 @@
                 label="Folio Acta Depositar&iacute;a">
                 <input
                   class="form-control"
-                  formControlName="folioActaDepositaria" />
+                  formControlName="folioActaDepositaria"
+                  [readonly]="true" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-2 p-4 text-center">

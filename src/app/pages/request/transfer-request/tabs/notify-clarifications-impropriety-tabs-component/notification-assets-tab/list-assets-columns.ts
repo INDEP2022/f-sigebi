@@ -1,30 +1,30 @@
 export const LIST_ASSETS_COLUMN = {
-  statusClarification: {
+  clarificationstatus: {
     title: 'Estatus Aclaración',
     type: 'string',
     sort: false,
   },
-  goodId: {
+  goodid: {
     title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  descriptionGood: {
+  goodDescription: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
-  unitExtent: {
+  measureunit: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
   },
-  statePhysical: {
+  phisicalstate: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  stateConservation: {
+  conservationstate: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,

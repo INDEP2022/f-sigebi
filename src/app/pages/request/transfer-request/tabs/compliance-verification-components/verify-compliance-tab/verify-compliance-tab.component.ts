@@ -8,7 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -24,6 +24,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestDocumentationService } from 'src/app/core/services/requests/request-documentation.service';
 import { VerificationComplianceService } from 'src/app/core/services/requests/verification-compliance.service';
@@ -53,8 +54,9 @@ export class VerifyComplianceTabComponent
   @Input() typeDoc: string = '';
   @Input() process: string = '';
   @Input() question: boolean = false;
-  @Output() response = new EventEmitter<boolean>();
+  @Output() response = new EventEmitter<string>();
 
+  bsModalRef: BsModalRef;
   verifComplianceForm: ModelForm<any>;
   domicilieObject: IDomicilies;
   transferenceId: number | string = null;
@@ -86,6 +88,7 @@ export class VerifyComplianceTabComponent
   clarifySetting = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   clarificationData: any = [];
   clarifyRowSelected: any = [];
+  confirmation: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -99,7 +102,8 @@ export class VerifyComplianceTabComponent
     private authService: AuthService,
     private clarificationService: ClarificationService,
     private rejectedGoodService: RejectedGoodService,
-    private requestHelperService: RequestHelperService
+    private requestHelperService: RequestHelperService,
+    private goodResDevService: GetGoodResVeService
   ) {
     super();
   }
@@ -162,13 +166,19 @@ export class VerifyComplianceTabComponent
     }
 
     if (changes['question'].currentValue === true) {
-      const article3 = this.article3array.length;
-      const article12 = this.article12and13array.length;
+      const article3 = this.article3array.filter(x => x.cumple === true);
+      const article12 = this.article12and13array.filter(x => x.cumple === true);
       console.log(article3, article12);
-      if (article3 >= 3 && article12 >= 3) {
-        this.response.emit(true);
+      /* verifica si tiene articulos seleccionados */
+      if (article3.length >= 3 && article12.length >= 3) {
+        /* verifica si ya el fomulario guardado */
+        if (this.confirmation === true) {
+          this.response.emit('turnar');
+        } else {
+          this.response.emit('sin guardar');
+        }
       } else {
-        this.response.emit(false);
+        this.response.emit('sin articulos');
       }
     }
   }
@@ -470,6 +480,7 @@ export class VerifyComplianceTabComponent
       initialState: {
         docClarification: docClarification,
         goodTransfer: this.goodsSelected[0],
+        request: this.requestObject,
         callback: (next: boolean) => {
           this.clarificationData = [];
           if (next) {
@@ -481,7 +492,10 @@ export class VerifyComplianceTabComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
+    //this.bsModalRef =
     this.bsModalservice.show(ClarificationFormTabComponent, config);
+    /* this.bsModalRef.content.event.subscribe((res: any) => {
+    }); */
   }
 
   setDescriptionGoodSae(data: any) {
@@ -587,7 +601,6 @@ export class VerifyComplianceTabComponent
 
     this.requestDocumentService.getAll(params).subscribe({
       next: resp => {
-        console.table(resp.data);
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
           if (item.cumpliance['cumple'] === true) {
@@ -597,6 +610,10 @@ export class VerifyComplianceTabComponent
         });
         this.paragraphsTable1 = cumpliance;
         this.article3array = this.paragraphsTable1;
+        const artLenth = this.article3array.filter(x => x.cumple === true);
+        if (artLenth.length) {
+          this.confirmation = true;
+        }
       },
     });
   }
@@ -622,6 +639,12 @@ export class VerifyComplianceTabComponent
         });
         this.paragraphsTable2 = cumpliance;
         this.article12and13array = this.paragraphsTable2;
+        const artLenth = this.article12and13array.filter(
+          x => x.cumple === true
+        );
+        if (artLenth.length) {
+          this.confirmation = true;
+        }
       },
     });
   }
@@ -691,11 +714,11 @@ export class VerifyComplianceTabComponent
       },
       error: error => {
         this.loadingClarification = false;
-        this.onLoadToast(
+        /*this.onLoadToast(
           'error',
           'error',
           'No se pudo cargar la clarificación'
-        );
+        );*/
       },
     });
   }
@@ -722,7 +745,7 @@ export class VerifyComplianceTabComponent
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
     }
-
+    const clarifycationLength = this.clarificationData.length;
     Swal.fire({
       title: 'Eliminar Aclaración?',
       text: '¿Desea eliminar la aclaración?',
@@ -736,11 +759,18 @@ export class VerifyComplianceTabComponent
         this.loader.load = true;
         const id = this.clarifyRowSelected[0].rejectNotificationId;
         this.rejectedGoodService.remove(id).subscribe({
-          next: resp => {
+          next: async resp => {
             this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
             this.clarificationData = [];
             this.getClarifications(this.goodsSelected[0].id);
             this.loader.load = false;
+            //actualizar el good-res-dev
+            if (clarifycationLength === 1) {
+              const goodResDev: any = await this.getGoodResDev(
+                this.goodsSelected[0].id
+              );
+              await this.removeDevGood(Number(goodResDev));
+            }
           },
           error: error => {
             this.loader.load = false;
@@ -758,8 +788,6 @@ export class VerifyComplianceTabComponent
 
   async confirm() {
     this.loader.load = false;
-    console.log(this.article3array);
-    console.log(this.article12and13array);
     const article3 = this.article3array.filter(x => x.cumple === true);
     const article12Y13 = this.article12and13array.filter(
       x => x.cumple === true
@@ -775,7 +803,6 @@ export class VerifyComplianceTabComponent
     }
 
     const articles = this.article12and13array.concat(this.article3array);
-    //console.table(articles);
 
     const id = this.requestObject.id;
     articles.map(async (item: any) => {
@@ -794,6 +821,7 @@ export class VerifyComplianceTabComponent
               'Verificación Guardada',
               'Los datos se guardaron correctamente'
             );
+            this.confirmation = true;
           }
         }
       });
@@ -844,6 +872,47 @@ export class VerifyComplianceTabComponent
             'error',
             'Error al guardar',
             'No se pudieron guardar los datos'
+          );
+        },
+      });
+    });
+  }
+
+  removeDevGood(id: number) {
+    return new Promise((resolve, reject) => {
+      this.goodResDevService.remove(id).subscribe({
+        next: resp => {
+          console.log('good-res-dev removed', resp);
+          resolve(true);
+        },
+        error: error => {
+          console.log('good-res-dev remove error', error);
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo eliminar el bien-res-deb'
+          );
+        },
+      });
+    });
+  }
+
+  getGoodResDev(goodId: number) {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('goodId', goodId);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            resolve(resp.data[0].goodresdevId);
+          }
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo obtener el bien-res-dev'
           );
         },
       });

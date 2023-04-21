@@ -13,7 +13,7 @@ export class FilterParams {
   page?: number = 1;
   limit?: number = 10;
   search?: string = '';
-  //sortBy?: string;
+  sortBy?: string = null;
   private filters: string[] = [];
 
   constructor(filter?: FilterParams) {
@@ -54,6 +54,9 @@ export class FilterParams {
     paginationParams.push(`page=${this.page}`);
     paginationParams.push(`limit=${this.limit}`);
     paginationParams.push(`search=${this.search ?? ''}`);
+    if (this.sortBy) {
+      paginationParams.push(`sortBy=${this.sortBy}`);
+    }
     return paginationParams;
   }
 }
@@ -80,6 +83,7 @@ export enum SearchFilter {
   IN = '$in',
   LIKE = '$ilike',
   NOT = '$not',
+  NEQ = '$neq',
   NULL = '$null',
   ILIKE = '$ilike',
   GT = '$gt',

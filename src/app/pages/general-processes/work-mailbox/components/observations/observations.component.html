@@ -6,12 +6,11 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="form.get('observationAdd')"
-            label="Observaciones">
+          <form-field [control]="form.get('observation')" label="Observaciones">
             <textarea
               class="form-control"
-              formControlName="observationAdd"></textarea>
+              formControlName="observation"
+              (ngModelChange)="limit(1000, 'observation', $event)"></textarea>
           </form-field>
         </div>
       </div>

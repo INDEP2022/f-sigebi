@@ -1,24 +1,21 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-/** LIBRERÍAS EXTERNAS IMPORTS */
-
-/** SERVICE IMPORTS */
-
-/** ROUTING MODULE */
-
-/** COMPONENTS IMPORTS */
 
 @Component({
   selector: 'app-mass-ruling',
@@ -29,6 +26,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   expedientNumber: number = null;
   wheelNumber: number = null;
+  data: LocalDataSource = new LocalDataSource();
 
   tableSettings = {
     actions: {
@@ -41,21 +39,19 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     mode: 'external', // ventana externa
 
     columns: {
-      noBien: {
+      id: {
         title: 'No. Bien',
       },
-      noExpediente: {
+      expediente: {
         title: 'No. Expediente',
+        valuePrepareFunction: (data: IExpedient) => {
+          return data ? data.id : '';
+        },
       },
     },
   };
   // Data table
-  dataTable = [
-    {
-      noBien: 'DATA',
-      noExpediente: 'DATA',
-    },
-  ];
+  dataTable: IGood[] = [];
 
   tableSettings1 = {
     actions: {
@@ -85,18 +81,42 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   public searchForm: FormGroup;
   constructor(
     private fb: FormBuilder,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private goodService: GoodService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        this.getGoods(new ListParams());
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoods(new ListParams()));
+
     this.prepareForm();
 
     this.form.get('noOficio').valueChanges.subscribe(data => {
       this.getDictations(new ListParams(), data);
     });
     this.loading = true;
+
+    this.getGoods(new ListParams());
+  }
+
+  getGoods(params: ListParams) {
+    this.goodService.getAll().subscribe({
+      next: data => {
+        this.dataTable = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
   }
 
   getDictations(
@@ -122,20 +142,12 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       data.addFilter('wheelNumber', wheelNumber);
     }
 
-    // this.dataTableNotifications = [];
-
-    this.dictationService.getAllWithFilters(data.getParams()).subscribe({
-      next: data => {
-        // this.dataTable = data.data;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
-
     this.dictationService.getAllWithFilters(data.getParams()).subscribe({
       next: data => {
         console.log(data);
+      },
+      error: err => {
+        this.loading = false;
       },
     });
   }
@@ -148,7 +160,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
 
   private prepareForm() {
     this.form = this.fb.group({
-      noOficio: '', //*
+      id: '', //*
       typeDict: '',
       dictDate: '',
       statusDict: ['', [Validators.pattern(STRING_PATTERN)]],

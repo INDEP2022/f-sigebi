@@ -7,11 +7,27 @@
         (fetchItems)="getDynamicData($event)"
         [data]="dynamicData"
         [form]="goodForm"
-        value="value"
-        bindLabel="value"
+        value="otvalor"
+        bindLabel="otvalor"
+        (change)="test()"
+        [addTag]="feature.cdTable == 'CUENTAS'"
         [label]="feature.dsAttribute"
         [control]="'val' + feature.columnNumber"
-        [searchOnInit]="true">
+        [searchOnInit]="true"
+        [labelTemplate]="label"
+        [optionTemplate]="option">
+        <ng-template #label let-item="item">
+          <span
+            ><b>{{ item.otclave }}</b> - {{ item.otvalor }}</span
+          >
+        </ng-template>
+        <ng-template #option let-item="item">
+          <div [title]="item.otvalor + '-' + item.otclave">
+            <span
+              ><b>{{ item.otclave }}</b> - {{ item.otvalor }}</span
+            >
+          </div>
+        </ng-template>
       </ngx-select>
     </form-field>
   </ng-template>
@@ -23,6 +39,7 @@
       [ngSwitch]="feature.dataType">
       <input
         type="number"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         min="0"
         class="form-control"
@@ -30,6 +47,7 @@
         *ngSwitchCase="'N'" />
       <input
         type="number"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         class="form-control"
         min="0"
@@ -37,6 +55,7 @@
         *ngSwitchCase="'F'" />
       <input
         type="text"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         class="form-control"
         [placeholder]="feature.dsAttribute"
@@ -44,6 +63,7 @@
         bsDatepicker />
       <input
         type="text"
+        [max-length]="feature.length > 0 ? feature.length : 250"
         [formControlName]="'val' + feature.columnNumber"
         class="form-control"
         [placeholder]="feature.dsAttribute"

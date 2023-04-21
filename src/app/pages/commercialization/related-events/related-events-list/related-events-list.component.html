@@ -14,7 +14,7 @@
               [data]="eventItems"
               value="id"
               bindLabel="id"
-              (fetchItems)="getEvents($event)"
+              (fetchItems)="getRelatedEvents($event)"
               (change)="selectEvent($event)"
               control="event">
             </ngx-select>
@@ -62,7 +62,7 @@
             </p>
           </div>
         </div>
-        <div class="row mt-3" *ngIf="selectedEvent != null" @OnEventSelected>
+        <div class="row mt-3">
           <div class="row pe-0">
             <div class="col-sm-12 col-md-6">
               <div class="form-material">
@@ -88,7 +88,7 @@
                 id="lcsTable"
                 [attr.class]="'table-bordered'"
                 [settings]="relatedEventsSettings"
-                [source]="relatedEventsColumns"
+                [source]="relatedEventsData"
                 (createConfirm)="addEntry($event)"
                 (editConfirm)="editEntry($event)"
                 (deleteConfirm)="deleteEntry($event)">

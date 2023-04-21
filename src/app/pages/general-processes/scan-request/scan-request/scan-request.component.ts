@@ -2,9 +2,9 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -44,6 +44,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   delegation: number;
   subDelegation: number;
   departament: number;
+  isParamFolio: boolean = false;
+  noVolante: number;
+  isParams: boolean = false;
+  origin: string = null;
+  today: Date = new Date();
+  loadingDoc: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -55,9 +61,15 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private authService: AuthService,
-    private receptionService: DocReceptionRegisterService
+    private receptionService: DocReceptionRegisterService,
+    private router: Router
   ) {
     super();
+    this.route.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'] ?? null;
+      });
     const params = new FilterParams();
     const token = this.authService.decodeToken();
     params.addFilter('user', token.preferred_username);
@@ -75,15 +87,31 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-    const param = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
-    if (param && param != 'null') {
+    const param1: any = this.route.snapshot.paramMap.get('P_NO_VOLANTE');
+    const param2: any = this.route.snapshot.paramMap.get('P_FOLIO');
+
+    if (param1 && param1 != 'null') {
+      this.isParams = true;
       this.filterParams
         .getValue()
-        .addFilter('wheelNumber', param, SearchFilter.EQ);
+        .addFilter('wheelNumber', param1, SearchFilter.EQ);
       this.getNotfications();
-    } else if (param === 'null') {
+    } else if (param1 === 'null') {
       this.onLoadToast('error', `Parámetro no_volante no es válido`, '');
     }
+
+    if (param2) {
+      this.isParams = true;
+      this.isParamFolio = true;
+      this.getDocumentByFolio(param2);
+    }
+  }
+  back() {
+    const location: any = {
+      FGESTBUZONTRAMITE: () =>
+        this.router.navigate(['/pages/general-processes/work-mailbox']),
+    };
+    location[this.origin]();
   }
 
   createFilter() {
@@ -167,6 +195,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.notify = resp;
+          this.noVolante = resp.data[0].wheelNumber;
           this.formNotification.patchValue(resp.data[0]);
           this.count = resp.count;
           this.searchDocuments(
@@ -191,6 +220,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           if (next) {
             this.form.reset();
             this.formNotification.patchValue(data);
+            this.noVolante = data.wheelNumber;
             this.searchDocuments(data.expedientNumber, data.wheelNumber);
           }
         },
@@ -234,13 +264,17 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         next: resp => {
           this.loading = false;
           this.docs = resp;
-          resp.data[0].keyTypeDocument = (
-            resp.data[0] as any
-          ).typeDocument.documentTypeKey;
-          this.form.patchValue(resp.data[0]);
           this.countDoc = resp.count;
-          this.idFolio = this.form.get('id').value;
-          this.form.get('id').disable();
+          if (!this.isParamFolio) {
+            resp.data[0].keyTypeDocument = (
+              resp.data[0] as any
+            ).typeDocument.documentTypeKey;
+            this.form.patchValue(resp.data[0]);
+            this.idFolio = this.form.get('id').value;
+            this.form.get('id').disable();
+          }
+
+          this.isParamFolio = false;
         },
         error: err => {
           if (err.status === 500) {
@@ -271,7 +305,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.form.get('numberProceedings').patchValue(expedientNumber);
       this.form.get('flyerNumber').patchValue(wheelNumber);
       this.form.get('userRequestsScan').patchValue(userId.toUpperCase());
-      this.form.get('scanRequestDate').patchValue(new Date());
+      this.form
+        .get('scanRequestDate')
+        .patchValue(this.parseDateNoOffset(new Date()));
       this.form.get('numberDelegationRequested').patchValue(this.delegation);
       this.form
         .get('numberSubdelegationRequests')
@@ -282,9 +318,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         next: resp => {
           this.onLoadToast(
             'success',
-            'Documento creado, procesando reporte',
+            'Solicitud generada, procesando reporte...',
             ''
           );
+          this.loadingDoc = false;
           this.form.patchValue(resp);
           this.idFolio = this.form.get('id').value;
           this.form.get('id').disable();
@@ -298,15 +335,17 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   }
 
   async validations(): Promise<boolean> {
+    this.loadingDoc = true;
     const { expedientNumber, wheelNumber } = this.formNotification.value;
     let { keyTypeDocument, keySeparator } = this.form.value;
 
     if (!expedientNumber && !wheelNumber) {
       this.onLoadToast(
         'error',
-        'Falta el número de expediente ó volante, favor de verificar.',
+        'Falta el número de expediente o volante, favor de verificar.',
         ''
       );
+      this.loadingDoc = false;
       return false;
     }
 
@@ -318,9 +357,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!keySeparator || !keyTypeDocument) {
       this.onLoadToast(
         'error',
-        'Falta el número de expediente ó separador ó tipo de documento, favor de verificar.',
+        'Falta el número de expediente o separador o tipo de documento, favor de verificar.',
         ''
       );
+      this.loadingDoc = false;
       return false;
     }
 
@@ -330,10 +370,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
     if (this.idFolio) {
       this.onLoadToast('error', 'Ya ha sido solicitado ese documento', '');
+      this.loadingDoc = false;
       return false;
     }
 
     return true;
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   createForm() {
@@ -352,12 +400,18 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       id: [{ value: null, disabled: true }],
       keyTypeDocument: [null, Validators.required],
       natureDocument: ['ORIGINAL', Validators.required],
-      significantDate: [null, Validators.maxLength(7)],
+      significantDate: [
+        null,
+        [
+          Validators.minLength(7),
+          Validators.pattern('^[0-9]{2}[-]{1}[0-9]{4}$'),
+        ],
+      ],
       descriptionDocument: [null, [Validators.maxLength(1000)]],
       scanStatus: ['SOLICITADO'],
       keySeparator: [null],
-      flyerNumber: [null, Validators.required],
-      numberProceedings: [null, Validators.required],
+      flyerNumber: [null],
+      numberProceedings: [null],
       scanRequestDate: [null],
       userRequestsScan: [null],
       numberDelegationRequested: [null],
@@ -388,6 +442,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.notificationServ.getAllFilter(filter.getParams()).subscribe({
         next: () => {
           check(true);
+          this.loadingDoc = false;
         },
         error: () => {
           this.onLoadToast(
@@ -396,6 +451,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
             ''
           );
           check(false);
+          this.loadingDoc = false;
         },
       });
     });
@@ -462,12 +518,59 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   callScan() {
     if (this.idFolio) {
-      window.open(
-        `./pages/general-processes/scan-documents?folio=${this.idFolio}`,
-        '_blank'
-      );
+      this.router.navigate(['pages/general-processes/scan-documents'], {
+        queryParams: {
+          folio: this.idFolio,
+          volante: this.noVolante,
+          origin: 'FACTGENSOLICDIGIT',
+          requestOrigin: this.origin ?? '',
+        },
+      });
     } else {
       this.onLoadToast('error', 'No existe un folio para escanear.', '');
+    }
+  }
+
+  getDocumentByFolio(folio: number) {
+    this.loading = true;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('id', folio, SearchFilter.EQ);
+    this.documentServ.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        this.loading = false;
+        resp.data[0].keyTypeDocument = (
+          resp.data[0] as any
+        ).typeDocument.documentTypeKey;
+        this.form.patchValue(resp.data[0]);
+        this.idFolio = this.form.get('id').value;
+        this.form.get('id').disable();
+      },
+    });
+  }
+
+  limit(limit: number, field: string, value: string) {
+    if (String(value).length > limit) {
+      this.formNotification
+        .get(field)
+        .patchValue(String(value).slice(0, limit));
+    }
+  }
+
+  limit2(limit: number, field: string, value: string) {
+    if (String(value).length > limit) {
+      this.form.get(field).patchValue(String(value).slice(0, limit));
+    }
+  }
+
+  validateDate(value: string) {
+    if (value) {
+      if (value.length >= 2) {
+        const month = Number(value.slice(0, 2));
+        if (month > 12 || month < 1) {
+          this.form.get('significantDate').setErrors({ incorrect: true });
+        }
+      }
     }
   }
 }

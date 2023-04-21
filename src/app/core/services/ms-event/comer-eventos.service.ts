@@ -16,6 +16,10 @@ export class ComerEventosService extends HttpService {
     this.microservice = EventEndpoints.BasePath;
   }
 
+  getAllEvents(params?: ListParams): Observable<IListResponse<IComerEvent>> {
+    return this.get<IListResponse<IComerEvent>>(EventEndpoints.ComerE, params);
+  }
+
   getAll(params?: ListParams): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(this.endpoint, params);
   }
@@ -53,5 +57,9 @@ export class ComerEventosService extends HttpService {
   getEventsByType(id: string | number, params?: ListParams) {
     const route = `${EventEndpoints.ComerEvents}?filter.address=${id}`;
     return this.get(route, params);
+  }
+
+  getComerEventById(id: string | number, params?: ListParams) {
+    return this.get(`${EventEndpoints.ComerE}/${id}`, params);
   }
 }

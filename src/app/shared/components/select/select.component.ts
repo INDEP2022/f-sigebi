@@ -44,6 +44,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() placeholder: string = '';
   @Input() data = new DefaultSelect<T>();
   @Input() multiple: boolean = false;
+  @Input() addTag: boolean = false;
   @Input() loading: boolean = false;
   @Input() closeOnSelect: boolean = true;
   @Input() maxSelectedItems: number;
@@ -209,7 +210,8 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
       if (this.form.get(this.control).value[this.bindLabel])
         this.title = this.form.get(this.control).value[this.bindLabel];
     } else {
-      this.title = this.form.get(this.control).value;
+      if (this.form.get(this.control).value != null)
+        this.title = this.form.get(this.control).value;
     }
   }
 
