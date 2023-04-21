@@ -202,6 +202,10 @@ export class NotificationAssetsTabComponent
 
   notifyAssetRowSelected(event: any) {
     this.valuesNotifications = event.data;
+    console.log(
+      'Información de la notificación seleccionada',
+      this.valuesNotifications
+    );
     const refuseObj = { ...this.valuesNotifications };
     //let idRefuse = refuseObj.rejectNotificationId;
     //console.log("ID del rechazo", idRefuse)
