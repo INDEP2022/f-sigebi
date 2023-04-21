@@ -148,12 +148,16 @@
           [control]="form.get('natureDocument')"
           class="col-md-4 mt-3"
           label="Naturaleza">
-          <select formControlName="natureDocument" class="form-control">
-            <option value="ORIGINAL">Original</option>
-            <option value="COPIA SIMPLE">Copia Simple</option>
-            <option value="MIXTO">Mixto</option>
-            <option value="COPIA CERTIFICADA">Copia Certificada</option>
-          </select>
+          <ng-select
+            #selected
+            class="form-control"
+            [items]="['ORIGINAL', 'COPIA SIMPLE', 'MIXTO', 'COPIA CERTIFICADA']"
+            [multiple]="false"
+            [closeOnSelect]="true"
+            [searchable]="false"
+            placeholder=""
+            formControlName="natureDocument">
+          </ng-select>
         </form-field>
 
         <form-field
@@ -202,18 +206,21 @@
       <div class="row align-items-baseline">
         <div class="col-auto">
           <button
-            class="btn btn-primary btn-sm active mr-2 mt-3"
+            class="btn btn-primary btn-sm active mr-2"
             (click)="clearDocument()">
             Nueva Solicitud
           </button>
         </div>
         <div class="col-auto">
-          <button
-            class="btn btn-secondary btn-sm active mt-3"
-            [disabled]="form.invalid"
-            (click)="generateDoc()">
-            Generar Solicitud
-          </button>
+          <confirm-button
+            text="Generar Solicitud"
+            className="btn-secondary"
+            [loadingText]="'Generando Solicitud'"
+            [loading]="loadingDoc"
+            [btnSmall]="true"
+            (click)="generateDoc()"
+            [disabled]="form.invalid">
+          </confirm-button>
         </div>
         <div class="col-md-auto">
           <p class="mt-3">Folio Universal:</p>
@@ -229,7 +236,7 @@
         </div>
         <div class="col-md-3">
           <button
-            class="btn btn-secondary btn-sm active mt-3"
+            class="btn btn-secondary btn-sm active"
             (click)="proccesReport()">
             <i class="fas fa-print"></i>
           </button>

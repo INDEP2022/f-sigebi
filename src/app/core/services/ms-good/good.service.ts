@@ -268,4 +268,8 @@ export class GoodService extends HttpService {
       body
     );
   }
+
+  changeGoodToNumerary(body: any) {
+    return this.post(GoodEndpoints.CreateGoodNumerary, body);
+  }
 }

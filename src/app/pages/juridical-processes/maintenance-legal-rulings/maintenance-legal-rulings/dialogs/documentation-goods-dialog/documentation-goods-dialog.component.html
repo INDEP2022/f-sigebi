@@ -1,0 +1,168 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="documentsDictumXStateMForm">
+      <div class="row">
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="No. Dictaminación"
+            [control]="documentsDictumXStateMForm.get('officialNumber')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="40"
+              formControlName="officialNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Tipo de Dictamen"
+            [control]="documentsDictumXStateMForm.get('typeDictum')">
+            <input
+              required
+              type="text"
+              class="form-control"
+              maxlength="15"
+              formControlName="typeDictum" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="No. Expediente"
+            [control]="documentsDictumXStateMForm.get('expedientNumber')">
+            <input
+              required
+              type="number"
+              class="form-control"
+              maxlength="11"
+              formControlName="expedientNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="No. Bien"
+            [control]="documentsDictumXStateMForm.get('stateNumber')">
+            <input
+              required
+              type="number"
+              class="form-control"
+              maxlength="11"
+              formControlName="stateNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Clave Documento"
+            [control]="documentsDictumXStateMForm.get('key')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="8"
+              formControlName="key" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Fecha Recibió"
+            [control]="documentsDictumXStateMForm.get('dateReceipt')">
+            <input
+              class="form-control"
+              formControlName="dateReceipt"
+              bsDatepicker
+              required
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Usuario Recibió"
+            [control]="documentsDictumXStateMForm.get('userReceipt')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="11"
+              formControlName="userReceipt" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Fecha Inserción"
+            [control]="documentsDictumXStateMForm.get('insertionDate')">
+            <input
+              class="form-control"
+              formControlName="insertionDate"
+              bsDatepicker
+              required
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Usuario Insertó"
+            [control]="documentsDictumXStateMForm.get('userInsertion')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="30"
+              formControlName="userInsertion" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Fecha Notificación"
+            [control]="documentsDictumXStateMForm.get('notificationDate')">
+            <input
+              class="form-control"
+              formControlName="notificationDate"
+              bsDatepicker
+              required
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Usuario Insertó"
+            [control]="documentsDictumXStateMForm.get('secureKey')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="3"
+              formControlName="secureKey" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

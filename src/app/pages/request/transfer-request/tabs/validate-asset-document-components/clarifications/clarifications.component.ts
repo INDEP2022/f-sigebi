@@ -57,6 +57,7 @@ export class ClarificationsComponent
   totalItems: number = 0;
 
   domicilieObject: any;
+  articleColumns = CLARIFICATION_COLUMNS;
 
   constructor(
     private modalService: BsModalService,
@@ -85,6 +86,16 @@ export class ClarificationsComponent
       selectMode: 'multi',
       columns: CLARIFICATION_COLUMNS,
     };
+    this.settings.columns = CLARIFICATION_COLUMNS;
+
+    this.articleColumns.reason = {
+      ...this.articleColumns.reason,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          console.log('data', data);
+        });
+      },
+    };
 
     this.goodSetting = {
       ...TABLE_SETTINGS,
@@ -92,6 +103,7 @@ export class ClarificationsComponent
       selectMode: 'multi',
       columns: ASSETS_COLUMNS,
     };
+
     this.prepareForm();
   }
   private prepareForm() {
@@ -484,6 +496,7 @@ export class ClarificationsComponent
 
   getClarifications() {
     this.paragraphs = [];
+    this.loading = true;
     const params = new ListParams();
     params['filter.goodId'] = `$eq:${this.good.id}`;
 
@@ -498,9 +511,12 @@ export class ClarificationsComponent
 
         Promise.all(clarification).then(data => {
           this.paragraphs = resp.data;
+          this.loading = false;
         });
       },
-      error: error => {},
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
@@ -582,7 +598,7 @@ export class ClarificationsComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar el registro?'
+      '¿Desea eliminar el registro?'
     ).then(val => {
       if (val.isConfirmed) {
         this.rejectGoodService.remove(data.rejectNotificationId).subscribe({

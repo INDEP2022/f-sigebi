@@ -8,36 +8,34 @@ export const NOTIFY_ASSETS_COLUMNS = {
     title: 'Estatus Aclaración ',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.chatClarification == null) return '';
+      if (row.chatClarification != null)
+        return row.chatClarification.clarificationStatus;
+    },
   },
-  satClarify: {
+  chatClarification2: {
     title: 'Aclaración SAT',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.chatClarification == null) return '';
+      if (row.chatClarification != null)
+        return row.chatClarification.satClarification;
+    },
   },
   clarificationType: {
     title: 'Tipo de Aclaración',
     type: 'string',
     sort: false,
-    /*valuePrepareFunction: (cell: any, row: any) => {
-      if (row.clarifiNewsRejectId.clarificationId == null) return 'ERORR';
-      if (row.clarifiNewsRejectId.clarificationId == 17)
-        return 'FALTA DOCUMENTACIÓN ANEXA';
-      if (row.clarifiNewsRejectId.clarificationId == 18)
-        return 'ERORR EN DOCUMENTACIÓN ANEXA';
-      if (row.clarifiNewsRejectId.clarificationId == 19)
-        return 'INDIVIDUALIZACIÓN DE BIENES';
-      if ((row.clarifiNewsRejectId.clarificationId != 17, 18, 19))
-        return 'ACLARACIÓN';
-
-      return row.clarifiNewsRejectId.clarificationId;
-    },*/
   },
   clarification: {
     title: 'Aclaración',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.clarification;
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.clarification == null) return '';
+      if (row.clarification != null) return row.clarification.clarification;
     },
   },
   clarification2: {
@@ -45,15 +43,9 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.clarification.type;
+      if (row.clarification == null) return '';
+      if (row.clarification != null) return row.clarification.type;
     },
-    /*valuePrepareFunction: (cell: any, row: any) => {
-      //return row.clarifiNewsRejectId.clarificationId;
-      if (row.clarifiNewsRejectId.clarificationId == 17) return '2';
-      if (row.clarifiNewsRejectId.clarificationId == 18) return '2';
-      if (row.clarifiNewsRejectId.clarificationId == 19) return '3';
-      return '1';
-    },*/
   },
   rejectionDate: {
     title: 'Fecha Aclaración',
@@ -71,3 +63,11 @@ export const NOTIFY_ASSETS_COLUMNS = {
     sort: false,
   },
 };
+
+/*valuePrepareFunction: (cell: any, row: any) => {
+      //return row.clarifiNewsRejectId.clarificationId;
+      if (row.clarifiNewsRejectId.clarificationId == 17) return '2';
+      if (row.clarifiNewsRejectId.clarificationId == 18) return '2';
+      if (row.clarifiNewsRejectId.clarificationId == 19) return '3';
+      return '1';
+    },*/

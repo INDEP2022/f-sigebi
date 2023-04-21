@@ -28,7 +28,7 @@ export class ChargeDocumentsFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro que quieres cargar el documento?'
+      '¿Estás seguro que quieres cargar el documento?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

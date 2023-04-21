@@ -237,10 +237,12 @@ export class DocRequestTabComponent
               );
               items['transferentName'] = transferent;
             }
-            const state = await this.getStateDoc(items?.xestado);
-            items['stateName'] = state;
-            items.xtipoDocumento = filter[0]?.ddescription;
-            return items;
+            if (items?.xestado) {
+              const state = await this.getStateDoc(items?.xestado);
+              items['stateName'] = state;
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
+            }
           });
 
           Promise.all(info).then(x => {
@@ -306,7 +308,9 @@ export class DocRequestTabComponent
           next: data => {
             resolve(data?.descCondition);
           },
-          error: error => {},
+          error: error => {
+            this.loading = false;
+          },
         });
     });
   }

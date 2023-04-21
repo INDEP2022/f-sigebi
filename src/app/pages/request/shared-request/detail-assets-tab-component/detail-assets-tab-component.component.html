@@ -97,7 +97,7 @@
                 label="Capacidad &#40;lts&#46;&#41;">
                 <input
                   type="text"
-                  maxlength="5"
+                  oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
                   minlength="0"
                   class="form-control"
                   formControlName="capacity"
@@ -153,8 +153,7 @@
                   maxlength="40"
                   class="form-control"
                   formControlName="useType"
-                  [readOnly]="isGoodInfReadOnly"
-                  maxlength="40" />
+                  [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
           </div>
@@ -193,7 +192,8 @@
                   type="text"
                   class="form-control"
                   formControlName="ligieUnit"
-                  [readOnly]="true" />
+                  [readOnly]="true"
+                  maxlength="30" />
               </form-field>
             </div>
             <div class="col-md-4">
@@ -618,7 +618,7 @@
               label="Latitud">
               <input
                 type="text"
-                maxlength="30"
+                maxlength="40"
                 class="form-control"
                 formControlName="latitude"
                 [readonly]="isDisabled" />
@@ -631,7 +631,7 @@
             <form-field [control]="domicileForm.get('length')" label="Longitud">
               <input
                 type="text"
-                maxlength="30"
+                maxlength="40"
                 class="form-control"
                 formControlName="length"
                 [readonly]="isDisabled" />
@@ -679,7 +679,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('wayref2Key')"
-              label="Referencia Via 2">
+              label="Referencia V&iacute;a 2">
               <input
                 type="text"
                 maxlength="30"
@@ -691,7 +691,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('wayref3Key')"
-              label="Referencia Via 3">
+              label="Referencia V&iacute;a 3">
               <input
                 type="text"
                 maxlength="30"
@@ -913,7 +913,8 @@
                 type="text"
                 class="form-control"
                 formControlName="chassis"
-                [readOnly]="isGoodTypeReadOnly" />
+                [readOnly]="isGoodTypeReadOnly"
+                maxlength="40" />
             </form-field>
             <form-field
               [control]="detailAssets.get('chassis')"
@@ -923,7 +924,8 @@
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="chassis" />
+                formControlName="chassis"
+                maxlength="40" />
             </form-field>
           </div>
         </div>
@@ -939,7 +941,8 @@
                 class="form-control"
                 formControlName="model"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('model')"
@@ -949,7 +952,8 @@
                 type="number"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="model" />
+                formControlName="model"
+                oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -962,7 +966,8 @@
                 class="form-control"
                 formControlName="cabin"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('cabin')"
@@ -972,7 +977,8 @@
                 type="number"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="cabin" />
+                formControlName="cabin"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
           </div>
         </div>
@@ -988,7 +994,8 @@
                 class="form-control"
                 formControlName="doorsNumber"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('doorsNumber')"
@@ -998,7 +1005,8 @@
                 type="number"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="doorsNumber" />
+                formControlName="doorsNumber"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -1037,7 +1045,8 @@
                 class="form-control"
                 formControlName="axesNumber"
                 [readOnly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('axesNumber')"
@@ -1047,7 +1056,8 @@
                 type="number"
                 [readOnly]="true"
                 class="form-control"
-                formControlName="axesNumber" />
+                formControlName="axesNumber"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -1561,7 +1571,8 @@
                 class="form-control"
                 formControlName="capacity"
                 [readonly]="isGoodTypeReadOnly"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
             <form-field
               [control]="detailAssets.get('capacity')"
@@ -1571,7 +1582,8 @@
                 type="number"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="capacity" />
+                formControlName="capacity"
+                oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
           </div>
           <div class="col-md-4">

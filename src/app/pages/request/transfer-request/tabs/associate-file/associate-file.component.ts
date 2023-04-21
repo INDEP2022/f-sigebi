@@ -217,12 +217,13 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                           .subscribe({
                             next: resp => {
                               const file: any = resp;
+                              const user: any = this.authService.decodeToken();
                               const docName = `Reporte_${94}${this.getDocNameDate()}`;
                               const body = {
                                 ddocTitle:
                                   'Carátula del Expediente ' +
                                   solicitud.recordId,
-                                ddocAuthor: '',
+                                dDocAuthor: user.username,
                                 ddocType: '',
                                 ddocCreator: '',
                                 ddocName: docName,

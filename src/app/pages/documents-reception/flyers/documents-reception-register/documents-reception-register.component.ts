@@ -355,6 +355,16 @@ export class DocumentsReceptionRegisterComponent
       } else if (Object.keys(this.pageParams).length == 0) {
         console.log('params empty');
         this.canViewDocuments = true;
+        const param = new FilterParams();
+        param.addFilter('flierNumber', this.formControls.wheelNumber.value);
+        this.procedureManageService
+          .getAllFiltered(param.getParams())
+          .subscribe({
+            next: data => {
+              this.procedureId = data.data[0].id;
+              console.log(this.procedureId);
+            },
+          });
       }
     } else if (
       this.pageParams.pNoTramite != null &&
@@ -393,6 +403,7 @@ export class DocumentsReceptionRegisterComponent
       param.addFilter('flierNumber', this.formControls.wheelNumber.value);
       this.procedureManageService.getAllFiltered(param.getParams()).subscribe({
         next: data => {
+          this.procedureId = data.data[0].id;
           this.checkPgrGoods(
             data.data[0].id,
             this.formControls.wheelNumber.value
@@ -483,6 +494,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   checkPgrGoods(processId?: number, flyerId?: number) {
+    let processData: IProceduremanagement;
     console.log('Check Pgr Goods');
     console.log(this.pageParams.pNoTramite);
     console.log(this.globals.noVolante);
@@ -503,6 +515,7 @@ export class DocumentsReceptionRegisterComponent
     this.procedureManageService.getById(process).subscribe({
       next: data => {
         console.log(data);
+        processData = data;
         const { status, typeManagement } = data;
         if (!['', null, undefined].includes(status) && status.includes('OP')) {
           params.removeAllFilters();
@@ -516,6 +529,19 @@ export class DocumentsReceptionRegisterComponent
                 }
                 if ([2, '2'].includes(typeManagement)) {
                   this.pgrGoodsProcessed = true;
+                } else if (typeManagement == null) {
+                  params.removeAllFilters();
+                  params.addFilter('pgrOffice', processData.officeNumber);
+                  this.interfacefgrService
+                    .getPgrTransferFiltered(params.getParams())
+                    .subscribe({
+                      next: data => {
+                        this.pgrGoodsProcessed = true;
+                      },
+                      error: err => {
+                        this.pgrGoodsProcessed = false;
+                      },
+                    });
                 } else {
                   this.pgrGoodsProcessed = false;
                 }
@@ -685,7 +711,7 @@ export class DocumentsReceptionRegisterComponent
       this.alert(
         'info',
         'Tipo de Trámite',
-        'Este registro es parte de la interfaz del SAT, en automático se mostrarán los datos correspondientes.'
+        'Este registro es parte de la interfaz de SAT, en automático se mostrarán los datos correspondientes.'
       );
       this.fillFormSatPgr(
         typeManagement,
@@ -702,7 +728,7 @@ export class DocumentsReceptionRegisterComponent
       this.alert(
         'info',
         'Tipo de Trámite',
-        'Este registro es parte de la interfaz del FGR, en automático se mostrarán los datos correspondientes.'
+        'Este registro es parte de la interfaz de FGR, en automático se mostrarán los datos correspondientes.'
       );
       this.fillFormSatPgr(
         typeManagement,
@@ -1661,6 +1687,22 @@ export class DocumentsReceptionRegisterComponent
                       } else if ([2, '2'].includes(typeManagement)) {
                         this.pgrGoodsProcessed = true;
                         console.log(typeManagement);
+                      } else if (typeManagement == null) {
+                        filterParams.removeAllFilters();
+                        filterParams.addFilter(
+                          'pgrOffice',
+                          notif.officeExternalKey
+                        );
+                        this.interfacefgrService
+                          .getPgrTransferFiltered(filterParams.getParams())
+                          .subscribe({
+                            next: data => {
+                              this.pgrGoodsProcessed = true;
+                            },
+                            error: err => {
+                              this.pgrGoodsProcessed = false;
+                            },
+                          });
                       } else {
                         this.pgrGoodsProcessed = false;
                       }
@@ -4249,7 +4291,7 @@ export class DocumentsReceptionRegisterComponent
           this.alert(
             'error',
             'Error al verificar los registros agregados',
-            `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+            `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. No se crearon correctamente debido a un error en la captura de bienes.`
           );
         }
       },
@@ -4259,23 +4301,10 @@ export class DocumentsReceptionRegisterComponent
         this.alert(
           'error',
           'Error al verificar los registros agregados',
-          `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. Puede deberse a un problema en la captura de bienes.`
+          `Hubo un error al buscar el volante ${this.formControls.wheelNumber.value} y/o el expediente ${this.formControls.expedientNumber.value}. No se crearon correctamente debido a un error en la captura de bienes.`
         );
       },
     });
-    // this.tmpExpedientService.getById(this.globals.gNoExpediente).subscribe({
-    //   next: data => {
-    //     if (data.affairSijNumber) {
-
-    //     } else {
-    //       console.log('No affairSijNumber');
-    //     }
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //   },
-    // });
-    // this.sendFlyerCopies();
   }
 
   updateProcedureManagement() {
@@ -4343,7 +4372,19 @@ export class DocumentsReceptionRegisterComponent
                 'success',
                 'Notificación agregada',
                 `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
-              ).then(() => this.endProcess());
+              ).then(() => {
+                try {
+                  navigator.clipboard.writeText(
+                    `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
+                  );
+                  this.onLoadToast(
+                    'info',
+                    'Datos copiados al portapapeles',
+                    'Se copió la información del volante y expediente.'
+                  );
+                } catch (err) {}
+                this.endProcess();
+              });
             },
             error: () => {
               this.sendFlyerCopies();
@@ -4353,7 +4394,19 @@ export class DocumentsReceptionRegisterComponent
                 'success',
                 'Notificación agregada',
                 `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
-              ).then(() => this.endProcess());
+              ).then(() => {
+                try {
+                  navigator.clipboard.writeText(
+                    `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
+                  );
+                  this.onLoadToast(
+                    'info',
+                    'Datos copiados al portapapeles',
+                    'Se copió la información del volante y expediente.'
+                  );
+                } catch (err) {}
+                this.endProcess();
+              });
             },
           });
       } else {
@@ -4388,7 +4441,19 @@ export class DocumentsReceptionRegisterComponent
                         'success',
                         'Notificación agregada',
                         `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.`
-                      ).then(() => this.endProcess());
+                      ).then(() => {
+                        try {
+                          navigator.clipboard.writeText(
+                            `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
+                          );
+                          this.onLoadToast(
+                            'info',
+                            'Datos copiados al portapapeles',
+                            'Se copió la información del volante y expediente.'
+                          );
+                        } catch (err) {}
+                        this.endProcess();
+                      });
                     },
                     error: () => {
                       this.sendFlyerCopies();
@@ -4410,7 +4475,19 @@ export class DocumentsReceptionRegisterComponent
                         'success',
                         'Notificación agregada',
                         `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
-                      ).then(() => this.endProcess());
+                      ).then(() => {
+                        try {
+                          navigator.clipboard.writeText(
+                            `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
+                          );
+                          this.onLoadToast(
+                            'info',
+                            'Datos copiados al portapapeles',
+                            'Se copió la información del volante y expediente.'
+                          );
+                        } catch (err) {}
+                        this.endProcess();
+                      });
                     },
                   });
               } else {
@@ -4431,7 +4508,19 @@ export class DocumentsReceptionRegisterComponent
                   'success',
                   'Notificación agregada',
                   `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
-                ).then(() => this.endProcess());
+                ).then(() => {
+                  try {
+                    navigator.clipboard.writeText(
+                      `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
+                    );
+                    this.onLoadToast(
+                      'info',
+                      'Datos copiados al portapapeles',
+                      'Se copió la información del volante y expediente.'
+                    );
+                  } catch (err) {}
+                  this.endProcess();
+                });
               }
             },
             error: () => {
@@ -4452,7 +4541,19 @@ export class DocumentsReceptionRegisterComponent
                 'success',
                 'Notificación agregada',
                 `Se agregó la notificación con número de volante ${this.formControls.wheelNumber.value} al expediente ${this.formControls.expedientNumber.value}.\n Sin embargo, hubo un problema al actualizar la información del trámite.`
-              ).then(() => this.endProcess());
+              ).then(() => {
+                try {
+                  navigator.clipboard.writeText(
+                    `Volante: ${this.formControls.wheelNumber.value}, Expediente: ${this.formControls.expedientNumber.value}`
+                  );
+                  this.onLoadToast(
+                    'info',
+                    'Datos copiados al portapapeles',
+                    'Se copió la información del volante y expediente.'
+                  );
+                } catch (err) {}
+                this.endProcess();
+              });
             },
           });
       }
