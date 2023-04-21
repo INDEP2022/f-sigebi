@@ -157,7 +157,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'success',
             `Aclaración actualizada`,
-            `Se actualizo la aclaración correctamente`
+            `Se actualizó la aclaración correctamente`
           );
         },
         complete: () => {
