@@ -13,6 +13,7 @@ export class AccountMovementService extends HttpService {
   }
 
   getAllFiltered(params: _Params) {
+    //
     return this.get<IListResponse<IAccountMovement>>(
       'account-movements',
       params
@@ -27,3 +28,5 @@ export class AccountMovementService extends HttpService {
     return this.post('account-movements', movement);
   }
 }
+
+//``

@@ -29,3 +29,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Librarys Documentation
 
 https://github.com/MurhafSousli/ngx-scrollbar/wiki/usage
+
+# Select
+
+https://stackblitz.com/edit/ngx-select-ex-example-formcontrol?file=app%2Fapp.component.ts

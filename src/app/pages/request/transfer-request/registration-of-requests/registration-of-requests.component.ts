@@ -14,6 +14,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
+import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -121,7 +122,8 @@ export class RegistrationOfRequestsComponent
     private taskService: TaskService,
     private authService: AuthService,
     private orderService: OrderServiceService,
-    private wcontentService: WContentService
+    private wcontentService: WContentService,
+    private readonly goodResDevService: GetGoodResVeService
   ) {
     super();
   }
@@ -246,7 +248,7 @@ export class RegistrationOfRequestsComponent
       ],
       transferenceFile: [
         null,
-        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(60))],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
       previousInquiry: [
         null,
@@ -979,7 +981,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
       confirmButtonText: btnTitle,
-    }).then(result => {
+    }).then(async result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
           this.finishMethod();
@@ -1027,12 +1029,11 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
-          this.question = true;
-          if (this.verifyResp === 'aclaracion') {
+          const goodResult = await this.haveNotificacions();
+          if (goodResult === true) {
             console.log('llamar metodo de aclaracion');
-          } else if (this.verifyResp === 'turnar') {
-            //this.destinyDocumental();
-            console.log('turnar solicitud');
+          } else if (goodResult === false) {
+            this.destinyDocumental();
           } else {
             this.onLoadToast(
               'error',
@@ -1041,7 +1042,6 @@ export class RegistrationOfRequestsComponent
             );
           }
         }
-
         if (typeCommit === 'proceso-aprovacion') {
           this.approveRequestMethod();
         }
@@ -1050,6 +1050,31 @@ export class RegistrationOfRequestsComponent
           this.refuseMethod();
         }
       }
+    });
+  }
+
+  haveNotificacions() {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('applicationId', this.requestData.id);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },
+        error: error => {
+          resolve(false);
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo obtener el bien-res-dev'
+          );
+        },
+      });
     });
   }
 

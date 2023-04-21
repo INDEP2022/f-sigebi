@@ -62,6 +62,7 @@ export class ClarificationsComponent
   totalItems: number = 0;
 
   domicilieObject: any;
+  articleColumns = CLARIFICATION_COLUMNS;
   haveNotification: boolean = false;
 
   constructor(
@@ -83,17 +84,6 @@ export class ClarificationsComponent
         this.getData();
       });
     }
-    //this.haveNotificacions()
-    if (this.question === true) {
-      const aclaration = await this.haveNotificacions();
-      if (aclaration === true) {
-        this.response.emit('aclaracion');
-      } else if (aclaration === false) {
-        this.response.emit('turnar');
-      } else {
-        this.response.emit('error');
-      }
-    }
   }
 
   ngOnInit(): void {
@@ -110,6 +100,7 @@ export class ClarificationsComponent
       selectMode: 'multi',
       columns: ASSETS_COLUMNS,
     };
+
     this.prepareForm();
   }
   private prepareForm() {
@@ -617,7 +608,7 @@ export class ClarificationsComponent
               'Eliminada con exito',
               'La aclaración fue eliminada con éxito.'
             );
-            debugger;
+
             if (clarifycationLength === 1) {
               const goodResDev: any = await this.getGoodResDev(this.good.id);
               await this.removeDevGood(Number(goodResDev));
@@ -697,19 +688,26 @@ export class ClarificationsComponent
     });
   }
 
-  haveNotificacions() {
-    return new Promise(async (resolve, reject) => {
-      for (let index = 0; index < this.assetsArray.length; index++) {
-        let item = this.assetsArray[index];
-        const goodResult = await this.getGoodResDev(item.goodId);
-        if (goodResult) {
-          this.haveNotification = true;
-          resolve(true);
-          break;
-        } else {
-          this.haveNotification = false;
-        }
-      }
+  getAllGoodResDev(goodId: number) {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('goodId', goodId);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            resolve(resp.data[0].goodresdevId);
+          }
+        },
+        error: error => {
+          resolve('');
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo obtener el bien-res-dev'
+          );
+        },
+      });
     });
   }
 }

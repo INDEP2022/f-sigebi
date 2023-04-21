@@ -13,3 +13,12 @@ export interface IDynamicStatusXScreen {
   action?: string;
   process?: string;
 }
+
+export interface IGoodStatusScreen {
+  screen: string;
+  goodArray?: number[];
+  action?: string;
+  good?: number;
+  count?: boolean;
+  whereIn?: boolean;
+}
