@@ -8,13 +8,11 @@
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-2 p-1">
           <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
-            <input class="form-control" formControlName="noVolante" />
+            <input class="form-control" formControlName="noVolante" (change)="onChangeVolante()" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-1">
-          <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
+          <form-field [control]="form.get('noExpediente')" label="No&#46; Expediente">
             <input class="form-control" formControlName="noExpediente" />
           </form-field>
         </div>
@@ -50,26 +48,17 @@
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-1">
           <form-field [control]="form.get('cveOficio')" label="Clave Oficio">
-            <textarea
-              class="form-control"
-              formControlName="cveOficio"></textarea>
+            <textarea class="form-control" formControlName="cveOficio"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-1">
-          <form-field
-            [control]="form.get('nomPerExt')"
-            label="Nombre Persona Extenso">
-            <textarea
-              class="form-control"
-              formControlName="nomPerExt"></textarea>
+          <form-field [control]="form.get('nomPerExt')" label="Nombre Persona Extenso">
+            <textarea class="form-control" formControlName="nomPerExt"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
           <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary active text-wrap btn-sm"
-              (click)="btnGenerarOficio()">
+            <button type="button" class="btn btn-primary active text-wrap btn-sm" (click)="btnGenerarOficio()">
               GENERAR ARCHIVO DE OFICIO
             </button>
           </div>
