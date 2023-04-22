@@ -829,37 +829,43 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     //   volanteData.entryProcedureDate,
     //   'dd/MM/yyyy'
     // );
-    let fechaParseOficio = dataPgr.saeInsertionDate
-      ? this.datePipe.transform(dataPgr.saeInsertionDate, 'dd/MM/yyyy')
+    let fechaParseOficio = volanteData.externalOfficeDate
+      ? this.datePipe.transform(volanteData.externalOfficeDate, 'dd/MM/yyyy')
       : '';
     let data: any = {
       tipovolante: volanteData.wheelType,
       remitente: volanteData.externalRemitter,
       identificador: volanteData.identifier,
       asunto: volanteData.affair.id,
-      nooficio: dataPgr.pgrOffice,
-      fecoficio: fechaParseOficio,
       exptrans: volanteData.expedientTransferenceNumber,
-      descripcion: volanteData.observations,
+      // descripcion: volanteData.observations,
       ciudad: volanteData.cityNumber,
       entfed: volanteData.entFedKey,
-      solicitante: '200',
       contribuyente: volanteData.indiciadoNumber,
       transferente: volanteData.endTransferNumber,
       viarecepcion: volanteData.viaKey,
       areadestino: volanteData.departamentDestinyNumber,
       gestiondestino: volanteData.departament.dsarea,
+      observaciones: volanteData.observations,
+      autoridad: volanteData.autorityNumber,
+      nooficio: dataPgr.pgrOffice,
+      fecoficio: fechaParseOficio,
+      // solicitante: '200',
+      solicitante:
+        typeof volanteData.institutionNumber == 'number'
+          ? volanteData.institutionNumber
+          : volanteData.institutionNumber
+          ? volanteData.institutionNumber.id
+          : '',
       // destinatario: copiasData ? copiasData.copyuser : null,
       destinatario: null,
-      descbien: '',
+      descripcion: '',
       cantidad: null,
       unidad: '',
       status: 'ROP',
       clasif: null,
       marca: '',
       serie: '',
-      observaciones: volanteData.observations,
-      autoridad: volanteData.autorityNumber,
     };
     for (let index = 10; index < 44; index++) {
       data['col' + index] = null;
@@ -868,7 +874,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (dataPgr.pgrTypeGoodVeh) {
       // CONDICION VEH
       data.clasif = dataPgr.pgrTypeGoodVeh;
-      data.descbien = dataPgr.pgrDescrGoodVeh;
+      data.descripcion = dataPgr.pgrDescrGoodVeh;
       data.cantidad = dataPgr.pgrAmountVeh;
       data.unidad =
         dataPgr.pgrUnitMeasureVeh == 'PZ' ? 'PIEZA' : dataPgr.pgrUnitMeasureVeh;
@@ -903,7 +909,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodAer) {
       // CONDICION AER
       data.clasif = dataPgr.pgrTypeGoodAer;
-      data.descbien = dataPgr.pgrDescrGoodAer;
+      data.descripcion = dataPgr.pgrDescrGoodAer;
       data.cantidad = dataPgr.pgrAmountAer;
       data.unidad =
         dataPgr.pgrUniMeasureAer == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureAer;
@@ -937,7 +943,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodEmb) {
       // CONDICION EMB
       data.clasif = dataPgr.pgrTypeGoodEmb;
-      data.descbien = dataPgr.pgrDescrGoodEmb;
+      data.descripcion = dataPgr.pgrDescrGoodEmb;
       data.cantidad = dataPgr.pgrAmountEmb;
       data.unidad =
         dataPgr.pgrUniMeasureEmb == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureEmb;
@@ -969,7 +975,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodInm) {
       // CONDICION INM
       data.clasif = dataPgr.pgrTypeGoodInm;
-      data.descbien = dataPgr.pgrDescrGoodInm;
+      data.descripcion = dataPgr.pgrDescrGoodInm;
       data.cantidad = dataPgr.pgrAmountInm;
       data.unidad =
         dataPgr.pgrUniMeasureInm == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureInm;
@@ -1001,7 +1007,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodNum) {
       // CONDICION NUM
       data.clasif = dataPgr.pgrTypeGoodNum;
-      data.descbien = dataPgr.pgrDescrGoodNum;
+      data.descripcion = dataPgr.pgrDescrGoodNum;
       data.cantidad = dataPgr.pgrAmountNum;
       data.unidad =
         dataPgr.pgrUniMeasureNum == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureNum;
@@ -1038,7 +1044,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodJoy) {
       // CONDICION JOY
       data.clasif = dataPgr.pgrTypeGoodJoy;
-      data.descbien = dataPgr.pgrDescrGoodJoy;
+      data.descripcion = dataPgr.pgrDescrGoodJoy;
       data.cantidad = dataPgr.pgrAmountJoy;
       data.unidad =
         dataPgr.pgrUniMeasureJoy == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureJoy;
@@ -1069,7 +1075,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodDiv) {
       // CONDICION DIV
       data.clasif = dataPgr.pgrTypeGoodDiv;
-      data.descbien = dataPgr.pgrDescrGoodDiv;
+      data.descripcion = dataPgr.pgrDescrGoodDiv;
       data.cantidad = dataPgr.pgrAmountDiv;
       data.unidad =
         dataPgr.pgrUniMeasureDiv == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureDiv;
@@ -1086,7 +1092,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodMen) {
       // CONDICION MEN
       data.clasif = dataPgr.pgrTypeGoodMen;
-      data.descbien = dataPgr.pgrDescrGoodMen;
+      data.descripcion = dataPgr.pgrDescrGoodMen;
       data.cantidad = dataPgr.pgrAmountMen;
       data.unidad =
         dataPgr.pgrUniMeasureMen == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureMen;

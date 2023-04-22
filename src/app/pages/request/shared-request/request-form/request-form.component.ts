@@ -312,6 +312,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getTransferent(params?: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
     this.transferentService.getAll(params).subscribe({
       next: data => {
         const text = this.replaceAccents(params.text);
@@ -538,7 +539,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.receiptRoute = 'FISICA';
       form.affair = null;
       form.applicationDate = null;
-
       this.requestService.create(form).subscribe({
         next: resp => {
           resolve(resp);
@@ -558,6 +558,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.receiptRoute = 'FISICA';
       form.affair = 37;
       form.typeOfTransfer = 'MANUAL';
+      //form.originInfo = 'SOL_TRANSFERENCIA'
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
 
