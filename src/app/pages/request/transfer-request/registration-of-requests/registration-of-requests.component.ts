@@ -720,6 +720,39 @@ export class RegistrationOfRequestsComponent
     this.saveClarifiObject = true;
   }
 
+  /* Metodo para notificacion de aclaraciones */
+  async notifyClarificationsMethod() {
+    this.loader.load = true;
+    const title = `Notificar Aclaración-Improcedencia, No. Solicitud: ${this.requestData.id}`;
+    const url =
+      'pages/request/transfer-request/notify-clarification-inadmissibility/';
+    const from = 'VERIFICAR_CUMPLIMIENTO';
+    const to = 'NOTIFICAR_ACLARACIONES';
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Verificar_Cumplimiento',
+      'NOTIFICAR_ACLARACIONES'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se guardÃ³ la solicitud con el folio: ${this.requestData.id}`
+      );
+    }
+  }
+  /* Fin Metodo para guardar verifucacion cumplimiento */
+
   close() {
     this.registRequestForm.reset();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
@@ -758,7 +791,7 @@ export class RegistrationOfRequestsComponent
   approveRequest() {
     this.msgSaveModal(
       'Aprobar',
-      '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
+      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -774,8 +807,8 @@ export class RegistrationOfRequestsComponent
         'Error',
         'Es requerido tener dictamen previamente generado'
       );
-      this.loader.load = false;
       return;
+      this.loader.load = true;
     }
     const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
     const url = 'pages/request/programming-request/schedule-reception';
@@ -993,7 +1026,6 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'captura-solicitud') {
           this.confirmMethod();
         }
-
         if (typeCommit === 'verificar-cumplimiento') {
           this.question = true;
           setTimeout(() => {
@@ -1032,7 +1064,7 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'validar-destino-bien') {
           const goodResult = await this.haveNotificacions();
           if (goodResult === true) {
-            console.log('llamar metodo de aclaracion');
+            this.notifyClarificationsMethod();
           } else if (goodResult === false) {
             this.destinyDocumental();
           } else {
@@ -1054,20 +1086,32 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  //revisar las pruebas
   haveNotificacions() {
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
+      //params.addFilter('processStatus', 'VERIFICAR_CUMPLIMIENTO');
+      let result: boolean = false;
       let filter = params.getParams();
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
-          if (resp.data) {
+          for (let i = 0; i < resp.data.length; i++) {
+            const element = resp.data[i];
+            if (element.processStatus === 'VERIFICAR_CUMPLIMIENTO') {
+              result = false;
+            } else {
+              result = true;
+            }
+          }
+          resolve(result);
+          /* if (resp.data) {
             resolve(true);
           } else {
             resolve(false);
-          }
+          } */
         },
-        error: error => {
+        error: (error: any) => {
           resolve(false);
           this.onLoadToast(
             'error',

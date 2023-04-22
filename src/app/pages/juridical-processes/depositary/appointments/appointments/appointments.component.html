@@ -312,7 +312,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
             [data]="postalCode"
-            bindLabel="description"
+            bindLabel="township"
             label="C&oacute;digo Postal"
             value="postalCode"
             (fetchItems)="getPostalCodeByDetail($event)"
@@ -324,9 +324,9 @@
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
             [data]="locality"
-            bindLabel="description"
+            bindLabel="township"
             label="Colonia"
-            value="id"
+            value="townshipKey"
             (fetchItems)="getLocalityByDetail($event)"
             (change)="changeLocalityDetail($event)"
             [form]="form"
@@ -338,7 +338,7 @@
             [data]="delegations"
             bindLabel="municipality"
             label="Delegaci&oacute;n&#47;Municipio"
-            value="stateKey"
+            value="municipalityKey"
             (fetchItems)="getDelegationByDetail($event)"
             (change)="changeDelegationDetail($event)"
             [form]="form"
