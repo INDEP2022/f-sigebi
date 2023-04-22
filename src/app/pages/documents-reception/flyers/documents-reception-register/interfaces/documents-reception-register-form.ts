@@ -84,7 +84,6 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   ]),
   officeExternalKey: new FormControl<string>(null, [
     Validators.required,
-    Validators.maxLength(35),
     Validators.pattern(STRING_PATTERN),
   ]),
   externalOfficeDate: new FormControl<string | Date>(null, Validators.required),
@@ -289,6 +288,15 @@ export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM = {
   flierNumber: new FormControl<string | number>(null),
 };
 
+export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_DEFAULT_VALUES = {
+  copyNumber: 1,
+  persontype: 'D',
+};
+
+export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_DEFAULT_VALUES = {
+  copyNumber: 2,
+  persontype: 'C',
+};
 export interface IDocumentsReceptionUserForm {
   copyNumber: string | number;
   copyuser: IUserAccessAreaRelational;
