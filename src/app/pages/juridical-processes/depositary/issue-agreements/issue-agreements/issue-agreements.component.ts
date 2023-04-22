@@ -14,7 +14,7 @@ import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
 import { addDays, format } from 'date-fns';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, from, map, takeUntil } from 'rxjs';
 import { DATE_FORMAT } from 'src/app/common/constants/data-formats/date.format';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -49,7 +49,7 @@ export class IssueAgreementsComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
-  noBien: string = '';
+  noBien: any;
   mostrarHistoricalSituationGoods: boolean = false;
   tableSettings = {
     actions: {
@@ -159,32 +159,39 @@ export class IssueAgreementsComponent
     this.goodService.getAllFilter(params).subscribe({
       next: val => {
         this.totalItems = val.count;
-        val.data.forEach(async value => {
-          if (value.status) {
-            await this.statusGoodService.getById(value.status).subscribe({
-              next: val => {
-                value.status = val['description'];
-              },
-              complete: () => {
-                this.setData(data);
-              },
-            });
-          }
-        });
-        data = [...val.data];
+        from(val.data)
+          .pipe(
+            map(value => {
+              if (value.status) {
+                this.statusGoodService.getById(value.status).subscribe({
+                  next: val => {
+                    value.status = val['description'];
+                  },
+                });
+              }
+              return value;
+            })
+          )
+          .subscribe({
+            next: value => {
+              data.push(value);
+              if (data.length == val.data.length) {
+                setTimeout(() => {
+                  console.log(data);
+                  this.dataTable = [...data];
+                  this.loading = false;
+                }, 500);
+              }
+            },
+          });
       },
-      complete: () => {
-        this.loading = false;
-      },
+      complete: () => {},
     });
-  }
-  private setData(data: any) {
-    this.dataTable = [...data];
   }
 
   public open(data: any) {
     if (data) {
-      this.noBien = data.noBien;
+      this.noBien = { noBien: data.goodId, descripcion: data.description };
       this.mostrarHistoricalSituationGoods = true;
     }
   }
