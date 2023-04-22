@@ -746,8 +746,8 @@ export class RegistrationOfRequestsComponent
       this.loader.load = false;
       this.msgGuardado(
         'success',
-        'Turnado Exitoso',
-        `Se guardÃ³ la solicitud con el folio: ${this.requestData.id}`
+        'Notificación Creada',
+        `Se genero una Notificación de Aclaración con el folio: ${this.requestData.id}`
       );
     }
   }
@@ -1065,8 +1065,10 @@ export class RegistrationOfRequestsComponent
           const goodResult = await this.haveNotificacions();
           if (goodResult === true) {
             this.notifyClarificationsMethod();
+            window.alert('notificar');
           } else if (goodResult === false) {
             this.destinyDocumental();
+            window.alert('turnar');
           } else {
             this.onLoadToast(
               'error',
@@ -1091,33 +1093,23 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      //params.addFilter('processStatus', 'VERIFICAR_CUMPLIMIENTO');
-      let result: boolean = false;
+      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO');
       let filter = params.getParams();
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
-          for (let i = 0; i < resp.data.length; i++) {
-            const element = resp.data[i];
-            if (element.processStatus === 'VERIFICAR_CUMPLIMIENTO') {
-              result = false;
-            } else {
-              result = true;
-            }
-          }
-          resolve(result);
-          /* if (resp.data) {
+          if (resp.data) {
             resolve(true);
           } else {
             resolve(false);
-          } */
+          }
         },
         error: (error: any) => {
           resolve(false);
-          this.onLoadToast(
+          /*this.onLoadToast(
             'error',
             'Error interno',
             'No se pudo obtener el bien-res-dev'
-          );
+          );*/
         },
       });
     });
