@@ -2424,7 +2424,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else {
       this.alertQuestion(
         'info',
-        'No ha seleccionao ningún registro',
+        'No ha seleccionado ningún registro',
         'Por favor seleccione un registro, para poder ejecutar la acción'
       );
     }
