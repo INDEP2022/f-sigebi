@@ -98,7 +98,7 @@ export class ClassifyAssetsTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     //bienes selecionados
-    console.log(this.requestObject);
+    //console.log(this.requestObject);
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
@@ -397,7 +397,11 @@ export class ClassifyAssetsTabComponent
     });
 
     if (this.goodObject != null) {
-      this.getSection(new ListParams(), this.good.ligieSection);
+      if (this.good.ligieSection) {
+        this.getSection(new ListParams(), this.good.ligieSection);
+      } else {
+        this.onLoadToast('info', '', 'El bien no cuenta con la Sección');
+      }
       this.classiGoodsForm.patchValue(this.good);
       this.classiGoodsForm.controls['quantity'].setValue(
         Number(this.good.quantity)
@@ -417,6 +421,12 @@ export class ClassifyAssetsTabComponent
       .subscribe((data: any) => {
         if (data === true) {
           this.formLoading = true;
+
+          if (!this.good.ligieSection) {
+            setTimeout(() => {
+              this.formLoading = false;
+            }, 500);
+          }
         }
       });
   }
