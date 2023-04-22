@@ -723,11 +723,11 @@ export class RegistrationOfRequestsComponent
   /* Metodo para notificacion de aclaraciones */
   async notifyClarificationsMethod() {
     this.loader.load = true;
-    const title = `Notificacion de aclaraciones con folio: ${this.requestData.id}`;
+    const title = `Notificar Aclaración-Improcedencia, No. Solicitud: ${this.requestData.id}`;
     const url =
       'pages/request/transfer-request/notify-clarification-inadmissibility/';
     const from = 'VERIFICAR_CUMPLIMIENTO';
-    const to = 'IMPROCEDENTE';
+    const to = 'NOTIFICAR_ACLARACIONES';
     const user: any = this.authService.decodeToken();
     const taskRes = await this.createTaskOrderService(
       this.requestData,
