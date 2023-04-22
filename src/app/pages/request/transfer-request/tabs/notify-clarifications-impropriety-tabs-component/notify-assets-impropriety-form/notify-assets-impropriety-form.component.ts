@@ -361,7 +361,7 @@ export class NotifyAssetsImproprietyFormComponent
         .value, //Nueva información que se inserta por el formulario
       userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value, //Nueva información que se inserta por el formulario
       webMail: this.clarificationForm.get('webMail').value, //Nueva información que se inserta por el formulario
-      clarificationStatus: 'A_ACLARACION',
+      clarificationStatus: 'A_ACLARACION', //Este estado cambia cuando se manda a guardar el formulario, tanto largo como corto
       //id: this.idClarification, //Esta propiedad es importante, se le debe asignar a bienes_recha_notif_aclara
     };
 
