@@ -437,7 +437,7 @@ export class NotificationAssetsTabComponent
           next: data => {
             if (item.clarificationstatus != 'ACLARADO') {
               data.data.map(notify => {
-                if (notify.clarificationType == 'SOLICITAR_ACLARACIÓN') {
+                if (notify.clarificationType == 'SOLICITAR_ACLARACION') {
                   if (notify.answered == 'EN ACLARACION') {
                     this.saveDocumentResponse(notify);
                     /*if (
@@ -611,7 +611,7 @@ export class NotificationAssetsTabComponent
             next: response => {
               console.log('Notificaciones', response);
               response.data.map(async notify => {
-                if (notify.clarificationType == 'SOLICITAR_ACLARACIÓN') {
+                if (notify.clarificationType == 'SOLICITAR_ACLARACION') {
                   //if (notify.answered != 'CONTESTADO') {
                   this.updateStatusGood(
                     'ACLARADO',
