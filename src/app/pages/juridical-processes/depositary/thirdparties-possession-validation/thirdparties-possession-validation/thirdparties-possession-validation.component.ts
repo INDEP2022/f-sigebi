@@ -20,15 +20,17 @@ import {
 
 /** SERVICE IMPORTS */
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
 
 const predifinedText =
-  'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: <B> <C> Con fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. El cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. No omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. Finalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. Quedo a sus órdenes para cualquier comentario.';
+  'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: \n\n<B> \n\n<C> \n\nCon fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. \n\nEl cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. \n\nNo omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. \n\nFinalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. \n\nQuedo a sus órdenes para cualquier comentario.';
 
 @Component({
   selector: 'app-thirdparties-possession-validation',
@@ -39,12 +41,13 @@ export class ThirdpartiesPossessionValidationComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  users: ISegUsers[] = [];
   dataTableNotifications: INotification[] = [];
   // Table settings
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   selectedRows: IGood = {};
   selectedRows2: IGood = {};
-  wheelNotifications: any[] = [];
+  wheelNotifications: INotification;
 
   tableSettingsNotificaciones = {
     actions: {
@@ -61,6 +64,13 @@ export class ThirdpartiesPossessionValidationComponent
 
   // Table settings
   tableSettingsBienes = {
+    rowClassFunction: (row: any) => {
+      if (row.cells[1].value != 'ADM') {
+        return 'bg-dark';
+      } else {
+        return 'bg-primary';
+      }
+    },
     actions: {
       columnTitle: '',
       add: false,
@@ -101,7 +111,8 @@ export class ThirdpartiesPossessionValidationComponent
   constructor(
     private fb: FormBuilder,
     private notificationService: NotificationService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private usersService: UsersService
   ) {
     super();
   }
@@ -121,7 +132,8 @@ export class ThirdpartiesPossessionValidationComponent
       .get('wheelNumber')
       .valueChanges.pipe(debounceTime(500))
       .subscribe(x => {
-        this.getNotifications(new ListParams(), x);
+        this.getNotificationByWheel(new ListParams(), x);
+        this.getGoodsPosessionThird(new ListParams(), x);
       });
   }
 
@@ -142,9 +154,35 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
+  getGoodsPosessionThird(params: ListParams, wheelNumber?: number) {
+    if (!wheelNumber) {
+      return;
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (wheelNumber) {
+      data.addFilter('wheelNumber', wheelNumber);
+    }
+
+    // this.goodService.getAll(data.getParams()).subscribe({
+    //   next: data => {
+    //     this.formCcpOficio.get('ccp1').patchValue(data.data[0].userReceipt);
+    //     this.formCcpOficio.get('ccp2').patchValue(data.data[0].user)
+    //     this.formCcpOficio.get('firma').patchValue(data.data[0].userResponsable)
+    //   },
+    //   error: err => {
+    //     this.loading = false;
+    //   },
+    // });
+  }
+
   getNotificationByWheel(params: ListParams, wheelNumber?: number) {
     if (!wheelNumber) {
-      this.wheelNotifications = [];
+      return;
     }
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -158,7 +196,7 @@ export class ThirdpartiesPossessionValidationComponent
 
     this.notificationService.getAllFilter(data.getParams()).subscribe({
       next: data => {
-        this.wheelNotifications = data.data;
+        this.wheelNotifications = data.data[0];
       },
       error: err => {
         this.loading = false;
@@ -207,11 +245,29 @@ export class ThirdpartiesPossessionValidationComponent
 
     if (numberExpedient) {
       data.addFilter('fileNumber', numberExpedient);
+      this.getGoodsByOffice(new ListParams(), numberExpedient);
     }
 
     this.goodService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableBienes = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  getGoodsByOffice(params: ListParams, numberExpedient: number) {
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    data.addFilter('status', 'STI');
+    data.addFilter('fileNumber', numberExpedient);
+    this.goodService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
         this.dataTableBienesOficio = data.data;
       },
       error: err => {
@@ -230,38 +286,40 @@ export class ThirdpartiesPossessionValidationComponent
 
   addGoodOffice() {
     if (Object.keys(this.selectedRows).length < 1) {
-      this.onLoadToast(
+      this.alert(
         'info',
         'Selecciona un bien',
         'Selecciona un bien para poder realizar esta acción.'
       );
       return;
     }
-    const request: IGood = {
-      ...this.selectedRows,
-      delegationNumber: null,
-      subDelegationNumber: null,
-    };
 
-    this.goodService.create(request).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.selectedRows.status === 'STI') {
+      this.alert(
+        'info',
+        'Selecciona un bien',
+        'Selecciona un bien que esté disponible.'
+      );
+      return;
+    }
+
+    this.goodService
+      .updateGoodStatus(this.selectedRows.goodId, 'STI')
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
     this.getGoods(new ListParams(), this.expedientNumber);
-    this.onLoadToast(
-      'success',
-      'Excelente',
-      'Se ha agregado el bien correctamente'
-    );
+    this.alert('success', 'Excelente', 'Se ha agregado el bien correctamente');
     this.loading = false;
   }
 
   deleteGoodOffice() {
     if (Object.keys(this.selectedRows2).length < 1) {
-      this.onLoadToast(
+      this.alert(
         'info',
         'Selecciona un bien',
         'Selecciona un bien para poder realizar esta acción.'
@@ -269,10 +327,12 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
-    this.goodService.remove(this.selectedRows2.id).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.goodService
+      .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   mostrarInfo(form: any): any {
@@ -284,7 +344,7 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   sendForm() {
-    console.log('Send form log');
+    this.alert('info', 'Nota', 'La clave ya ha sido enviada.');
   }
 
   btnInsertarTextoPredefinido() {
@@ -292,14 +352,38 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   btnReemplazarMarcadores() {
-    let replaceText = predifinedText.replaceAll('<A>', 'LST_AMPARO');
-    replaceText = replaceText.replaceAll('<B>', 'BIEN DESCRIPCIÓN');
-    replaceText = replaceText.replaceAll('<C>', 'T_BIENES');
+    let replaceText = predifinedText.replaceAll(
+      '<A>',
+      this.wheelNotifications ? this.wheelNotifications.protectionKey : '<A>'
+    );
+    replaceText = replaceText.replaceAll('<B>', 'BIEN  DESCRIPCIÓN');
+    replaceText = replaceText.replaceAll(
+      '<C>',
+      this.dataTableBienes
+        ? `${this.dataTableBienes[0].goodId}  ${this.dataTableBienes[0].description}`
+        : '<C>'
+    );
 
     this.form.get('texto').setValue(replaceText);
   }
 
   btnImprimir() {
-    console.log('btnImprimir');
+    this.loading = true;
+    const pdfurl = `http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
+    // console.log(this.flyersForm.value);
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.alert('success', '', 'Reporte generado');
+    this.loading = false;
   }
 }

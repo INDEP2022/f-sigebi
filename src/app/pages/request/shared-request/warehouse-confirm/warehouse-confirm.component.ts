@@ -38,7 +38,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro que desea confirmar el alta de almacén?'
+      '¿Estás seguro que desea confirmar el alta de almacén?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
