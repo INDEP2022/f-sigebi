@@ -130,8 +130,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.requestToTurn.map(async (item: any, i: number) => {
       let index = i + 1;
       item.requestStatus = 'A_TURNAR';
-      item.receiptRoute = 'FISICA';
-      item.affair = 37;
+      item.receiptRoute = 'ELECTRONICA';
+      item.affair = 39;
       item.targetUserType = this.requestForm.controls['typeUser'].value;
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();
@@ -178,8 +178,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.requestService.update(request.id, request as IRequest).subscribe({
         next: resp => {
           if (resp.id) {
-            console.log('solicitud', resp);
-            console.log('solicitud', resp.id);
+            /*console.log('solicitud', resp);
+            console.log('solicitud', resp.id);*/
             resolve(resp);
           } else {
             reject(false);
