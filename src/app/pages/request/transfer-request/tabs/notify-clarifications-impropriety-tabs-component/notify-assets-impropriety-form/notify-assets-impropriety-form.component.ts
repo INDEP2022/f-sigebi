@@ -373,6 +373,8 @@ export class NotifyAssetsImproprietyFormComponent
           this.onLoadToast('success', 'Actualizado', '');
           console.log('SE ACTUALIZÓ:', data);
           this.loading = false;
+          this.updateNotify(data.clarifiNewsRejectId);
+          this.modalRef.content.callback(true);
           this.modalRef.hide();
         },
         error: error => {
@@ -406,8 +408,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.chatService.create(modelChatClarifications).subscribe({
       next: async data => {
         console.log('SE CREÓ:', data);
-        this.onLoadToast('success', 'Creado', '');
+        this.onLoadToast(
+          'success',
+          'Notificación contestada correctamente',
+          ''
+        );
         this.loading = false;
+        this.modalRef.content.callback(true, data.rejectNotificationId);
         this.modalRef.hide();
       },
       error: error => {
@@ -475,6 +482,8 @@ export class NotifyAssetsImproprietyFormComponent
           this.onLoadToast('success', 'Actualizado', '');
           console.log('SE ACTUALIZÓ:', data);
           this.loading = false;
+          this.updateNotify(data.clarifiNewsRejectId);
+          this.modalRef.content.callback(true);
           this.modalRef.hide();
         },
         error: error => {
@@ -484,6 +493,19 @@ export class NotifyAssetsImproprietyFormComponent
           this.modalRef.hide();
         },
       });
+  }
+
+  updateNotify(id: number) {
+    console.log('notificación id', id);
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'EN ACLARACION',
+    };
+
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {},
+    });
   }
 
   //Método para crear un nuevo chatClarifications PARA FORMULARIO LARGO

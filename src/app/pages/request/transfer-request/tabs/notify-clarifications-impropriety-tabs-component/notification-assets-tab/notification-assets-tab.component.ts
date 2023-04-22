@@ -16,6 +16,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { IClarificationGoodsReject } from 'src/app/core/models/ms-chat-clarifications/clarification-goods-reject-notifi-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -49,6 +50,7 @@ export class NotificationAssetsTabComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsReject = new BehaviorSubject<ListParams>(new ListParams());
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
+  paramsSave = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columns: IGetGoodResVe[] = [];
   columnFilters: any = [];
@@ -194,6 +196,7 @@ export class NotificationAssetsTabComponent
     };
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
+        console.log('data res', response);
         this.notificationsList = response.data;
         this.totalItems2 = response.count;
         this.formLoading = false;
@@ -256,8 +259,19 @@ export class NotificationAssetsTabComponent
         ''
       );
     } else {
-      this.goodsReject.map(items => {
-        if (
+      let aclarados: boolean = true;
+      this.goodsReject.map(item => {
+        console.log(item);
+        if (item.clarificationstatus != 'ACLARADO') {
+          if (item.clarificationstatus != 'CANCELADO') {
+            aclarados = false;
+          }
+        }
+
+        if (aclarados) {
+          console.log('FALTAN');
+        }
+        /*if (
           items.clarificationstatus == 'ACLARADO' ||
           items.clarificationstatus == 'CANCELADO'
         ) {
@@ -277,7 +291,7 @@ export class NotificationAssetsTabComponent
             'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
             ''
           );
-        }
+        }  */
       });
     }
   }
@@ -285,7 +299,7 @@ export class NotificationAssetsTabComponent
   validateGoodStatus() {
     this.goodsReject.map(item => {
       if (
-        item.clarificationstatus == 'REGISTRO_SOLICITUD' ||
+        item.clarificationstatus == 'ACLARADO' ||
         item.clarificationstatus == 'CANCELADO'
       ) {
         this.updateStatusGood(
@@ -382,7 +396,7 @@ export class NotificationAssetsTabComponent
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         idRequest: this.idRequest,
-        callback: (next: boolean) => {
+        callback: (next: boolean, idNot: number) => {
           if (next) {
             this.getClarificationsByGood(idNotify.goodId);
           }
@@ -401,7 +415,6 @@ export class NotificationAssetsTabComponent
       this.requestForm.get('receiUser').patchValue(res.user);
     }); */
   }
-
   //Respuesta del SAT
   satAnswer() {
     if (this.rowSelected == false) {
@@ -428,6 +441,49 @@ export class NotificationAssetsTabComponent
     }
   }
 
+  saveData() {
+    if (this.columns) {
+      this.columns.map(item => {
+        this.paramsSave.getValue()['filter.goodId'] = item.goodid;
+        this.rejectedGoodService
+          .getAllFilter(this.paramsSave.getValue())
+          .subscribe({
+            next: data => {
+              data.data.map(item => {
+                if (
+                  item.chatClarification.clarificationStatus == 'A_ACLARACION'
+                ) {
+                  const updateInfo: IChatClarifications = {
+                    requestId: this.idRequest,
+                    goodId: item.goodId,
+                    clarificationStatus: 'EN_ACLARACION',
+                  };
+                  //console.log(item.chatClarification);
+                  this.chatClarificationsService
+                    .update(item.chatClarification.idClarification, updateInfo)
+                    .subscribe({
+                      next: data => {
+                        //console.log('data update', data);
+                        //this.getClarificationsByGood()
+                        this.onLoadToast(
+                          'success',
+                          'Bien guardado correctamente',
+                          ''
+                        );
+                      },
+                      error: error => {},
+                    });
+                }
+              });
+            },
+            error: error => {},
+          });
+      });
+    } else {
+      this.onLoadToast('warning', 'No se encontraron bienes para aclarar', '');
+    }
+  }
+
   reloadData() {
     console.log('Prueba');
     this.columns.map(item => {
@@ -439,10 +495,14 @@ export class NotificationAssetsTabComponent
           next: data => {
             if (item.clarificationstatus != 'ACLARADO') {
               data.data.map(notify => {
-                console.log('TODAS notify', notify);
-                if (notify.clarificationType == 'SOLICITAR_ACLARACIÓN') {
-                  console.log('notify', notify);
+                //console.log('TODAS notify', notify);
+                if (notify.clarificationType == 'SOLICITAR_ACLARACION') {
                   if (notify.answered == 'EN ACLARACION') {
+                    //Falta validación estatus aclaración
+                    //De donde saca el id de respuesta del sat
+                    if (notify.clarification.type == 2) {
+                      console.log('notify', notify);
+                    }
                   }
                 }
               });
@@ -466,7 +526,6 @@ export class NotificationAssetsTabComponent
                       notify?.chatClarification?.clarificationStatus ==
                       'A_ACLARACION'
                     ) {
-                      //sE ACTUALIZA EL ATRIBUTO ANSWERED A CONTESTADO Y DEBE DE ESTAR EN ACLARADO
                       if (notify.clarification.type == 1) {
                         if (notify.documentClarificationId == null) {
                           this.saveDocumentResponse(notify);
