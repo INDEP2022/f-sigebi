@@ -470,6 +470,7 @@ export interface IDomicilies {
   requestIdid?: number | null;
   warehouseAlias?: string;
   regionalDelegationId?: number | null;
+  goodResdevId?: number;
 }
 
 //Bien inmueble
