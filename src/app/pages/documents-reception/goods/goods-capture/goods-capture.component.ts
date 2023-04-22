@@ -8,10 +8,11 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, of, switchMap, tap, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
@@ -41,6 +42,7 @@ export class GoodsCaptureComponent
   extends GoodsCaptureMain
   implements OnInit, AfterViewInit
 {
+  numerary: string | number = null;
   @ViewChild('initPage', { static: true }) initPage: ElementRef<HTMLDivElement>;
   constructor(
     fb: FormBuilder,
@@ -53,7 +55,8 @@ export class GoodsCaptureComponent
     globalVarService: GlobalVarsService,
     private tmpExpedientService: TmpExpedientService,
     private _expedienService: ExpedientService,
-    private comerDetailsService: ComerDetailsService
+    private comerDetailsService: ComerDetailsService,
+    private accountMovementService: AccountMovementService
   ) {
     super(
       fb,
@@ -278,6 +281,7 @@ export class GoodsCaptureComponent
         next: async (res: any) => {
           console.log(res);
           const response = res.data[0].fa_concilia_bien;
+          this.numerary = response;
           if (response != 'N') {
             conciliate = true;
           }
@@ -326,8 +330,38 @@ export class GoodsCaptureComponent
     }
   }
 
+  getAccountMovement() {
+    const params = new FilterParams();
+    params.addFilter('numberMotion', this.numerary);
+    return this.accountMovementService.getAllFiltered(params.getParams());
+  }
+
   handleSuccesSave(good: any) {
     // this.alert('success', 'Se agrego el bien al expediente', '');
+    if (Number(this.numerary) > 0) {
+      this.getAccountMovement()
+        .pipe(
+          switchMap(response => {
+            console.log(response);
+            const body = {
+              numberGood: good.id,
+              numberProceedings: good.fileNumber,
+              numberMotion: this.numerary,
+              numberAccount: response.data[0].numberAccount,
+            };
+            return this.accountMovementService.update(body).pipe(
+              catchError(error => {
+                this.numerary = null;
+                return throwError(() => error);
+              }),
+              tap(() => {
+                this.numerary = null;
+              })
+            );
+          })
+        )
+        .subscribe();
+    }
     if (this.formControls.esEmpresa.value) {
       this.createMenage(good);
     } else {
@@ -458,11 +492,11 @@ export class GoodsCaptureComponent
             });
           },
           error: error => {
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Ocurrio un error al guardar el expediente'
-            );
+            // this.onLoadToast(
+            //   'error',
+            //   'Error',
+            //   'Ocurrio un error al guardar el expediente'
+            // );
           },
         });
       },

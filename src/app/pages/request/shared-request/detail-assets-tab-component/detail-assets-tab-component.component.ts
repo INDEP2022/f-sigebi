@@ -224,6 +224,7 @@ export class DetailAssetsTabComponentComponent
       }
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
+        this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
       this.isGoodTypeReadOnly = true;
@@ -232,6 +233,7 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
+        this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
     }
@@ -269,6 +271,7 @@ export class DetailAssetsTabComponentComponent
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
+        this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
     }
@@ -308,6 +311,7 @@ export class DetailAssetsTabComponentComponent
 
     if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
+      this.brandId = brand;
       this.getSubBrand(new ListParams(), brand);
     }
 
@@ -944,9 +948,16 @@ export class DetailAssetsTabComponentComponent
         },
       });
   }
-
+  onValuesChange(data: any) {
+    console.log(data);
+    // this.brandId = data.flexValue;
+    this.getSubBrand(new ListParams(), data.flexValue);
+    this.detailAssets.controls['subBrand'].setValue(null);
+  }
   getBrand(params: ListParams, brandId?: string) {
     const filter = new FilterParams();
+    filter.page = params.page;
+    filter.limit = params.limit;
     filter.addFilter('flexValueMeaning', params.text, SearchFilter.ILIKE);
     if (brandId) {
       filter.addFilter('flexValue', brandId);
@@ -957,15 +968,21 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
+          console.log(resp);
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
+        },
+        error: () => {
+          this.selectBrand = new DefaultSelect();
         },
       });
   }
 
   getSubBrand(params: ListParams, brandId?: string) {
+    console.log(brandId);
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
-
+    filter.page = params.page;
+    filter.limit = params.limit;
     filter['filter.carBrand'] = `$eq:${idBrand}`;
     filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
 
