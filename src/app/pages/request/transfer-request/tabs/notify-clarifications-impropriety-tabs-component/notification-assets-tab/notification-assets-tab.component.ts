@@ -429,7 +429,29 @@ export class NotificationAssetsTabComponent
   }
 
   reloadData() {
+    console.log('Prueba');
     this.columns.map(item => {
+      console.log('item', item);
+      this.paramsReload.getValue()['filter.goodId'] = item.goodid;
+      this.rejectedGoodService
+        .getAllFilter(this.paramsReload.getValue())
+        .subscribe({
+          next: data => {
+            if (item.clarificationstatus != 'ACLARADO') {
+              data.data.map(notify => {
+                console.log('TODAS notify', notify);
+                if (notify.clarificationType == 'SOLICITAR_ACLARACIÓN') {
+                  console.log('notify', notify);
+                  if (notify.answered == 'EN ACLARACION') {
+                  }
+                }
+              });
+            }
+          },
+          error: error => {},
+        });
+    });
+    /*this.columns.map(item => {
       this.paramsReload.getValue()['filter.goodId'] = item.goodid;
       this.rejectedGoodService
         .getAllFilter(this.paramsReload.getValue())
@@ -440,7 +462,7 @@ export class NotificationAssetsTabComponent
                 if (notify.clarificationType == 'SOLICITAR_ACLARACIÓN') {
                   if (notify.answered == 'EN ACLARACION') {
                     this.saveDocumentResponse(notify);
-                    /*if (
+                    if (
                       notify?.chatClarification?.clarificationStatus ==
                       'A_ACLARACION'
                     ) {
@@ -455,9 +477,9 @@ export class NotificationAssetsTabComponent
                       'RECHAZADO'
                     ) {
                       //SE ACTUALIZA ANSWERED A RECHAZADA
-                    } */
+                    } 
                   }
-                  /*if (notify.answered != 'RECHAZADA' && notify.clarificationId == 19)
+                  if (notify.answered != 'RECHAZADA' && notify.clarificationId == 19)
                   {
                     this.updateStatusGood("CANCELADO", "", notify.goodId, notify.goodResDevId, item.typeorigin);
                   } else{
@@ -468,11 +490,10 @@ export class NotificationAssetsTabComponent
                       notify.goodResDevId,
                       item.typeorigin
                     );
-                  } */
+                  } 
                 } else if (
                   notify.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
                 ) {
-                  /*
                   if (notify.answered == 'CONTESTADO') {
                     this.updateStatusGood(
                       'ACLARADO',
@@ -483,14 +504,14 @@ export class NotificationAssetsTabComponent
                     );
                   } else if (notify.answered == 'IMPROCEDENTE') {
                     this.updateStatusGood('IMPROCEDENTE', 'IMPROCEDENTE', notify.goodId, notify.goodResDevId, item.typeorigin);
-                  } */
+                  } 
                 }
               });
             }
           },
           error: error => {},
         });
-    });
+    });*/
   }
 
   saveDocumentResponse(notify: ClarificationGoodRejectNotification) {

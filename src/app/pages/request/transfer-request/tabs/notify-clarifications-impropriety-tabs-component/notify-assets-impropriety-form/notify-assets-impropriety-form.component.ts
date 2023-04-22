@@ -468,7 +468,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.chatService.create(modelChatClarifications).subscribe({
       next: async data => {
         console.log('SE CREÓ:', data);
-        this.onLoadToast('success', 'Creado', '');
         this.loading = false;
         this.modalRef.hide();
       },
