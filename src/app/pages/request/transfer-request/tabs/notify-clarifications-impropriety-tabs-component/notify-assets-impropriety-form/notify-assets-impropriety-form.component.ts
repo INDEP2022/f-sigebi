@@ -7,7 +7,9 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
+import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
 import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { Clarification2Srvice } from 'src/app/core/services/ms-rejected-good/clarification.service';
@@ -63,7 +65,8 @@ export class NotifyAssetsImproprietyFormComponent
     private documentService: DocumentsService,
     private chatService: ChatClarificationsService,
     private rejectedGoodService: RejectedGoodService,
-    private clarification2Srvice: Clarification2Srvice
+    private clarification2Srvice: Clarification2Srvice,
+    private authService: AuthService
   ) {
     super();
   }
@@ -247,27 +250,65 @@ export class NotifyAssetsImproprietyFormComponent
 
   confirm() {
     if (!this.withDocumentation) {
+      //Recupera información del usuario logeando para luego registrarlo como firmante
+      let token = this.authService.decodeToken();
+
+      //Crear objeto para generar el reporte
+      const modelReport: IClarificationDocumentsImpro = {
+        clarification: this.dataClarifications2.clarificationType,
+        sender: this.inappropriatenessForm.controls['senderName'].value,
+        //foundation: ",",
+        //id: 1, //ID primaria
+        version: 1,
+        //transmitterId: ",",
+        paragraphInitial:
+          this.inappropriatenessForm.controls['paragraphInitial'].value,
+        applicationId: this.idRequest,
+        positionSender:
+          this.inappropriatenessForm.controls['positionSender'].value,
+        paragraphFinal:
+          this.inappropriatenessForm.controls['paragraphFinal'].value,
+        consistentIn: this.inappropriatenessForm.controls['consistentIn'].value,
+        managedTo: this.inappropriatenessForm.controls['addresseeName'].value,
+        invoiceLearned: 'folio_docto sin armar ',
+        //invoiceNumber: 1,
+        positionAddressee:
+          this.inappropriatenessForm.controls['positionAddressee'].value,
+        modificationDate: new Date(),
+        creationUser: token.name,
+        documentTypeId: '211',
+        modificationUser: token.name,
+        //worthAppraisal: 1,
+        creationDate: new Date(),
+        //rejectNoticeId: 1,
+        assignmentInvoiceDate: new Date(),
+        mailNotification: this.inappropriatenessForm.controls['webMail'].value,
+        areaUserCapture:
+          this.inappropriatenessForm.controls['userAreaCaptures'].value,
+      };
+
       this.loading = true;
-      this.documentService
-        .createClarDocImp(this.inappropriatenessForm.value)
-        .subscribe({
-          next: data => {
-            this.onLoadToast(
-              'success',
-              'Aclaración guardada correctamente',
-              ''
-            );
-            console.log('id del documento', data.id);
-            this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-            this.openReport(data); //Falta verificar información que se envia...
-            this.loading = false;
-            //this.modalRef.hide()
-          },
-          error: error => {
-            this.loading = false;
-            this.onLoadToast('error', 'No se pudo guardar', '');
-          },
-        });
+      this.documentService.createClarDocImp(modelReport).subscribe({
+        next: data => {
+          //this.onLoadToast('success','Aclaración guardada correctamente','' );
+          console.log(
+            'Datos del formulario largo se han guardado en larification-documents-impro',
+            data
+          );
+          this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+          this.openReport(data); //Falta verificar información que se envia...
+          this.loading = false;
+          //this.modalRef.hide()
+        },
+        error: error => {
+          this.loading = false;
+          console.log(
+            'No se envió información del formulario largo en larification-documents-impro',
+            error.error
+          );
+          //this.onLoadToast('error', 'No se pudo guardar', '');
+        },
+      });
     } else {
       console.log('Formuario corto');
       this.chatClarifications1(); //PARA FORMULARIO CORTO
@@ -320,7 +361,7 @@ export class NotifyAssetsImproprietyFormComponent
         .value, //Nueva información que se inserta por el formulario
       userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value, //Nueva información que se inserta por el formulario
       webMail: this.clarificationForm.get('webMail').value, //Nueva información que se inserta por el formulario
-      clarificationStatus: 'EN_ACLARACION',
+      clarificationStatus: 'A_ACLARACION', //Este estado cambia cuando se manda a guardar el formulario, tanto largo como corto
       //id: this.idClarification, //Esta propiedad es importante, se le debe asignar a bienes_recha_notif_aclara
     };
 
@@ -358,7 +399,7 @@ export class NotifyAssetsImproprietyFormComponent
         .value, //Nueva información que se inserta por el formulario
       userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value, //Nueva información que se inserta por el formulario
       webMail: this.clarificationForm.get('webMail').value, //Nueva información que se inserta por el formulario
-      clarificationStatus: 'EN_ACLARACION',
+      clarificationStatus: 'A_ACLARACION',
     };
 
     //Servicio para crear registro de ChatClariffications
@@ -423,7 +464,7 @@ export class NotifyAssetsImproprietyFormComponent
       senderName: this.inappropriatenessForm.get('senderName').value,
       userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
       webMail: this.clarificationForm.get('webMail').value,
-      clarificationStatus: 'EN_ACLARACION',
+      clarificationStatus: 'A_ACLARACION',
     };
 
     //Servicio para actualizar registro de ChatClariffications
@@ -461,7 +502,7 @@ export class NotifyAssetsImproprietyFormComponent
       senderName: this.inappropriatenessForm.get('senderName').value,
       userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
       webMail: this.clarificationForm.get('webMail').value,
-      clarificationStatus: 'EN_ACLARACION',
+      clarificationStatus: 'A_ACLARACION',
     };
 
     //Servicio para crear registro de ChatClariffications
@@ -481,11 +522,11 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   //Método para generar reporte y posteriormente la firma
-  openReport(data: Inappropriateness) {
+  openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
     const idDoc = data.id;
-    const idTypeDoc = 111;
-    const dataClarifications = this.dataClarifications2;
+    const idTypeDoc = 211;
+    const dataClarifications = data;
 
     //Modal que genera el reporte
     let config: ModalOptions = {
