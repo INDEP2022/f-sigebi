@@ -249,6 +249,7 @@ export class AddressTransferorTabComponent
     }
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
+        console.log('s', resp);
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
 
         /*    if (this.municipalityId !== 0 && this.municipalityId !== null) {
@@ -583,6 +584,7 @@ export class AddressTransferorTabComponent
       idDelegation,
       callback: (data: any) => {
         if (data) {
+          console.log('dom', data);
           this.setInformation(data);
         }
       },
