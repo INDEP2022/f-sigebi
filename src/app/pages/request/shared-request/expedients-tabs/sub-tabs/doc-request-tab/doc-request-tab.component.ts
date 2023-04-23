@@ -221,10 +221,7 @@ export class DocRequestTabComponent
           let token = this.authService.decodeToken();
           console.log('dzz', token);
           const filterDoc = data.data.filter((items: any) => {
-            if (
-              items.dDocType == 'Document' &&
-              items.dDocAuthor == token.preferred_username
-            ) {
+            if (items.dDocType == 'Document' && items.xidTransferente != 1) {
               return items;
             }
           });
@@ -254,6 +251,7 @@ export class DocRequestTabComponent
 
           Promise.all(info).then(x => {
             this.allDataDocReq = x;
+            console.log('doc', x);
             this.paragraphs.load(x);
             this.totalItems = this.paragraphs.count();
             this.loading = false;
