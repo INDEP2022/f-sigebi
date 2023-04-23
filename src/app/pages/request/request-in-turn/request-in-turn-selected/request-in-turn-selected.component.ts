@@ -79,6 +79,10 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
+        const result = resp.data.map((item: any) => {
+          return (item['fullName'] = item.firstName + ' ' + item.lastName);
+        });
+        console.log(result);
         this.listUser = resp.data;
         this.paragraphs = this.listUser;
         this.totalItems = resp.count;
