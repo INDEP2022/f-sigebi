@@ -1,5 +1,5 @@
 export const TURN_SELECTED_COLUMNS = {
-  firstName: {
+  fullName: {
     title: 'Usuario',
     type: 'string',
     sort: false,

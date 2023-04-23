@@ -56,7 +56,7 @@ export class NotificationAssetsTabComponent
   columnFilters: any = [];
   totalItems: number = 0;
   notificationsGoods: IGood;
-  notificationsList: ClarificationGoodRejectNotification[] = [];
+  notificationsList: LocalDataSource = new LocalDataSource();
   valuesNotifications: ClarificationGoodRejectNotification;
   //prueba: IChatClarifications;
 
@@ -197,7 +197,7 @@ export class NotificationAssetsTabComponent
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
         console.log('data res', response);
-        this.notificationsList = response.data;
+        this.notificationsList.load(response.data);
         this.totalItems2 = response.count;
         this.formLoading = false;
       },
@@ -396,9 +396,21 @@ export class NotificationAssetsTabComponent
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         idRequest: this.idRequest,
-        callback: (next: boolean, idNot: number) => {
+        callback: (next: boolean) => {
           if (next) {
-            this.getClarificationsByGood(idNotify.goodId);
+            //this.selectedRow.answered = 'EN';
+            this.notificationsList.getElements().then(data => {
+              data.map((item: ClarificationGoodRejectNotification) => {
+                if (
+                  item.rejectNotificationId ==
+                  this.selectedRow.rejectNotificationId
+                ) {
+                  item.answered = 'EN ACLARACION';
+                  item.chatClarification.clarificationStatus = 'A_ACLARACION';
+                }
+              });
+              this.notificationsList.refresh();
+            });
           }
         },
       },
@@ -442,7 +454,39 @@ export class NotificationAssetsTabComponent
   }
 
   saveData() {
-    if (this.columns) {
+    if (this.selectedRow) {
+      if (
+        this.selectedRow.chatClarification.clarificationStatus == 'A_ACLARACION'
+      ) {
+        const updateInfo: IChatClarifications = {
+          requestId: this.idRequest,
+          goodId: this.selectedRow.goodId,
+          clarificationStatus: 'EN_ACLARACION',
+        };
+        this.chatClarificationsService
+          .update(
+            this.selectedRow.chatClarification.idClarification,
+            updateInfo
+          )
+          .subscribe({
+            next: data => {
+              //console.log('data update', data);
+              //this.getClarificationsByGood()
+              this.onLoadToast('success', 'Bien guardado correctamente', '');
+              this.getGoodsByRequest();
+              this.notificationsList = new LocalDataSource();
+            },
+            error: error => {},
+          });
+      }
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Para guardar información se necesita tener una aclaración o una notificación seleccionada',
+        ''
+      );
+    }
+    /*if (this.columns) {
       this.columns.map(item => {
         this.paramsSave.getValue()['filter.goodId'] = item.goodid;
         this.rejectedGoodService
@@ -481,7 +525,7 @@ export class NotificationAssetsTabComponent
       });
     } else {
       this.onLoadToast('warning', 'No se encontraron bienes para aclarar', '');
-    }
+    } */
   }
 
   reloadData() {

@@ -79,6 +79,10 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
+        const result = resp.data.map((item: any) => {
+          return (item['fullName'] = item.firstName + ' ' + item.lastName);
+        });
+        console.log(result);
         this.listUser = resp.data;
         this.paragraphs = this.listUser;
         this.totalItems = resp.count;
@@ -126,6 +130,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.onLoadToast('info', 'Informacion', `Seleccione un usuario!`);
       return;
     }
+    debugger;
     this.loading = true;
     this.requestToTurn.map(async (item: any, i: number) => {
       let index = i + 1;
@@ -177,13 +182,12 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.requestService.update(request.id, request as IRequest).subscribe({
         next: resp => {
-          if (resp.id) {
-            /*console.log('solicitud', resp);
-            console.log('solicitud', resp.id);*/
+          resolve(resp);
+          /*if (resp.id) {
             resolve(resp);
           } else {
             reject(false);
-          }
+          }*/
         },
         error: error => {
           this.loading = false;
@@ -206,6 +210,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     ssubtype: string
   ) {
     return new Promise((resolve, reject) => {
+      debugger;
       const user: any = this.authService.decodeToken();
       let body: any = {};
       //body['type'] = 'SOLICITUD TRANSFERENCIA';
