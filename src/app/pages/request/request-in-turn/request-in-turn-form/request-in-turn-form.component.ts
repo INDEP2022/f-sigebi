@@ -161,6 +161,7 @@ export class RequestInTurnFormComponent implements OnInit {
       next: resp => {
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
       },
+      error: error => (this.selectRegDele = new DefaultSelect()),
     });
   }
 
@@ -172,29 +173,37 @@ export class RequestInTurnFormComponent implements OnInit {
     delete params.page;
     delete params['search'];
     delete params.text;*/
-    this.transferenteSevice
-      .getByIdState(this.stateId)
-      .subscribe((data: any) => {
+    this.transferenteSevice.getByIdState(this.stateId).subscribe(
+      (data: any) => {
         data.data.map((data: any) => {
           data.nameAndId = `${data.id} - ${data.nametransferent}`;
           console.log(data.nameAndId);
           return data;
         });
         this.selectTransfer = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error => {
+        this.selectTransfer = new DefaultSelect();
+      }
+    );
   }
 
   getStateOfRepublic(params?: ListParams) {
     params['filter.regionalDelegation'] = `$eq:${this.deleRegionalId}`;
-    this.delegationStateService.getAll(params).subscribe((data: any) => {
-      let result = data.data
-        .map((x: any) => {
-          return x.stateCode;
-        })
-        .filter((x: any) => x != undefined);
+    this.delegationStateService.getAll(params).subscribe(
+      (data: any) => {
+        let result = data.data
+          .map((x: any) => {
+            return x.stateCode;
+          })
+          .filter((x: any) => x != undefined);
 
-      this.selectState = new DefaultSelect(result, result.length);
-    });
+        this.selectState = new DefaultSelect(result, result.length);
+      },
+      error => {
+        this.selectState = new DefaultSelect();
+      }
+    );
   }
 
   getStation(params?: ListParams) {
@@ -205,15 +214,18 @@ export class RequestInTurnFormComponent implements OnInit {
     delete params.page;
     delete params['search'];
     delete params.text;
-    this.stationService
-      .getAll(params)
-      .subscribe((data: IListResponse<IStation>) => {
+    this.stationService.getAll(params).subscribe(
+      (data: IListResponse<IStation>) => {
         data.data.map((data: any) => {
           data.nameAndId = `${data.id} - ${data.stationName}`;
           return data;
         });
         this.selectStation = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error => {
+        this.selectStation = new DefaultSelect();
+      }
+    );
   }
 
   getAuthority(params?: ListParams) {
@@ -225,24 +237,30 @@ export class RequestInTurnFormComponent implements OnInit {
     delete params['search'];
     delete params.text;
     this.stationService;
-    this.authorityService
-      .getAll(params)
-      .subscribe((data: IListResponse<IAuthority>) => {
+    this.authorityService.getAll(params).subscribe(
+      (data: IListResponse<IAuthority>) => {
         data.data.map((data: any) => {
           data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
         });
         this.selectAuthority = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error => {
+        this.selectAuthority = new DefaultSelect();
+      }
+    );
   }
 
   getAffair(params?: ListParams) {
     params['sortBy'] = 'description:ASC';
-    this.affairService
-      .getAll(params)
-      .subscribe((data: IListResponse<IAffair>) => {
+    this.affairService.getAll(params).subscribe(
+      (data: IListResponse<IAffair>) => {
         this.selectAffeir = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error => {
+        this.selectAffeir = new DefaultSelect();
+      }
+    );
   }
 
   search(): void {
