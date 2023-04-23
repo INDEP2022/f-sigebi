@@ -755,11 +755,11 @@ export class RegistrationOfRequestsComponent
       url,
       from,
       to,
-      true,
+      false,
       this.task.id,
       user.username,
       'SOLICITUD_TRANSFERENCIA',
-      'Verificar_Cumplimiento',
+      'Destino_Documental',
       'NOTIFICAR_ACLARACIONES'
     );
     if (taskRes) {
@@ -963,6 +963,7 @@ export class RegistrationOfRequestsComponent
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
+
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
