@@ -344,10 +344,11 @@ export class RequestRecordTabComponent
     return new Promise((resolve, reject) => {
       this.requestService.update(request.id, request).subscribe({
         next: (resp: any) => {
-          if (resp.id != null) {
+          if (resp.statusCode == 200) {
             resolve(true);
           }
-          if (resp.statusCode != null) {
+
+          if (resp.statusCode != 200) {
             resolve(false);
             this.message('error', 'Error', `¡No se guardó la solicitud!.`);
           }
