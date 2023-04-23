@@ -101,6 +101,8 @@ export class RegistrationOfRequestsComponent
   verifyResp: string = null;
   task: any = null;
 
+  pgr: boolean = false;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -338,10 +340,12 @@ export class RegistrationOfRequestsComponent
       this.registRequestForm.controls['circumstantialRecord'].setValidators([
         Validators.required,
       ]);
+      this.pgr = true;
     } else {
       this.registRequestForm.controls['paperDate'].setValidators([
         Validators.required,
       ]);
+      this.pgr = false;
     }
     this.registRequestForm.updateValueAndValidity();
   }
