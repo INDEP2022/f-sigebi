@@ -13,7 +13,7 @@ import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/consult-tasks/consult-tasks-columns';
 @Component({
   selector: 'app-consult-tasks',
@@ -52,19 +52,43 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     this.consultTasksForm = this.fb.group({
       cmbstate: ['0'],
-      txtSearch: [''],
-      txtTituloTarea: [''],
+      txtSearch: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      txtTituloTarea: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoProgramacionEntrega: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtNombreActividad: [''],
+      txtNombreActividad: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoOrdenServicio: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtAsignado: [''],
+      txtAsignado: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoOrdenPago: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtAprobador: [''],
+      txtAprobador: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoOrdenIngreso: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtNombreAplicacion: [''],
+      txtNombreAplicacion: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoMuestreo: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtFecAsigDesde: [''],
-      txtFecAsigHasta: [''],
+      txtFecAsigDesde: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      txtFecAsigHasta: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoMuestreoOrden: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtFechaFinDesde: [''],
       txtFechaFinHasta: [''],
@@ -92,6 +116,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   getTasks() {
+    let isfilterUsed = false;
     const params = this.params.getValue();
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
@@ -114,6 +139,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     }
 
     if (this.consultTasksForm.value.txtTituloTarea) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -123,6 +149,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoProgramacionEntrega) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -132,6 +159,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNombreActividad) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -141,6 +169,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoOrdenServicio) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -150,6 +179,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtAsignado || this.userName) {
+      // isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -159,6 +189,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoOrdenPago) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -168,6 +199,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtAprobador) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -177,6 +209,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoOrdenIngreso) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -186,6 +219,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNombreAplicacion) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -195,6 +229,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoMuestreo) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -207,6 +242,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.consultTasksForm.value.txtFecAsigDesde &&
       this.consultTasksForm.value.txtFecAsigHasta
     ) {
+      isfilterUsed = true;
       const fechaInicio = this.consultTasksForm.value.txtFecAsigDesde;
       const fechaFin = this.consultTasksForm.value.txtFecAsigHasta;
 
@@ -223,6 +259,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         .addFilter('assignedDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoMuestreoOrden) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -232,6 +269,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtFechaFinDesde) {
+      isfilterUsed = true;
       const fechaInicio = this.consultTasksForm.value.txtFechaFinDesde;
       const fechaFin = this.consultTasksForm.value.txtFechaFinHasta;
 
@@ -248,6 +286,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         .addFilter('endDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoDelegacionRegional) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -257,6 +296,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -266,6 +306,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoTransferente) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -275,6 +316,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
     if (this.consultTasksForm.value.txtNoProgramacion) {
+      isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
@@ -295,6 +337,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     params.text = this.consultTasksForm.value.txtSearch;
     params['others'] = this.userName;
 
+    this.tasks = [];
+    this.totalItems = 0;
+
     this.taskService
       .getTasksByUser(this.filterParams.getValue().getParams())
       .subscribe({
@@ -312,7 +357,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             this.totalItems = response.count;
           }
         },
-        error: () => (this.loading = false),
+        error: () => ((this.tasks = []), (this.loading = false)),
       });
   }
 
