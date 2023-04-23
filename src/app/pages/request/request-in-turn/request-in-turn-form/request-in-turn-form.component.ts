@@ -67,7 +67,7 @@ export class RequestInTurnFormComponent implements OnInit {
   ngOnInit(): void {
     this.initialForm();
     this.deleRegionalId = Number(this.authService.decodeToken().department);
-    //this.getTransferente(new ListParams());
+    this.getTransferente(new ListParams());
     this.getRegionalDelegationId(new ListParams());
     this.getStateOfRepublic(new ListParams());
     this.getAffair(new ListParams());
