@@ -711,10 +711,6 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    if (goods.subBrand === null) {
-      this.message('error', 'Sub Marca requerido', 'Es requerido Sub Marca');
-      return;
-    }
     if (this.fractionCode.length < 8) {
       this.message(
         'error',
