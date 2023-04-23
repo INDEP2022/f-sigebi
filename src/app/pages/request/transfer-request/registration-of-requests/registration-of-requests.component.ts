@@ -192,7 +192,7 @@ export class RegistrationOfRequestsComponent
       priorityDate: [null],
       originInfo: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       receptionDate: [null],
-      paperDate: [null, [Validators.required]],
+      paperDate: [null],
       typeRecord: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
@@ -291,6 +291,7 @@ export class RegistrationOfRequestsComponent
     this.requestService.getById(id).subscribe({
       next: async (data: any) => {
         this.infoRequest = data;
+        this.setRequiredFields(data);
         await this.getTransferent(data.transferenceId);
         await this.getRegionalDelegation(data.regionalDelegationId);
         await this.getStation(data.transferenceId, data.stationId);
@@ -324,6 +325,25 @@ export class RegistrationOfRequestsComponent
         console.log(error.error.message);
       },
     });
+  }
+
+  setRequiredFields(data: any) {
+    if (data.transferenceId == 1 || data.transferenceId == 120) {
+      this.registRequestForm.controls['paperDate'].setValidators([
+        Validators.required,
+      ]);
+      this.registRequestForm.controls['previousInquiry'].setValidators([
+        Validators.required,
+      ]);
+      this.registRequestForm.controls['circumstantialRecord'].setValidators([
+        Validators.required,
+      ]);
+    } else {
+      this.registRequestForm.controls['paperDate'].setValidators([
+        Validators.required,
+      ]);
+    }
+    this.registRequestForm.updateValueAndValidity();
   }
 
   getTransferent(idTransferent: number) {
