@@ -51,8 +51,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.userName = this.authService.decodeToken().preferred_username;
 
     this.consultTasksForm = this.fb.group({
-      unlinked: [null, Validators.required],
-      unlinked1: [null, Validators.required],
+      cmbstate: ['0'],
       txtSearch: [''],
       txtTituloTarea: [''],
       txtNoProgramacionEntrega: ['', Validators.pattern(NUMBERS_PATTERN)],
@@ -74,6 +73,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
     });
+    this.consultTasksForm.controls['cmbstate'].setValue('0', {
+      onlySelf: true,
+    });
 
     this.params
       .pipe(
@@ -94,9 +96,22 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
-    this.filterParams
-      .getValue()
-      .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
+
+    let state = this.consultTasksForm.value.cmbstate;
+
+    // console.log("Cual es el status: ", state)
+    if (state === '0') {
+      // console.log("Se Muestran solo las NO finalizadas");
+      this.filterParams
+        .getValue()
+        .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
+    }
+    if (state === '1') {
+      // console.log("Se Muestran solo las finalizadas");
+      this.filterParams
+        .getValue()
+        .addFilter('State', 'FINALIZADA', SearchFilter.EQ);
+    }
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       this.filterParams
@@ -286,10 +301,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         next: response => {
           console.log('Response: ', response);
           this.loading = false;
-          this.tasks = response.data.filter(
-            (record: { State: string }) => record.State != 'FINALIZADA'
-          );
-          this.totalItems = response.count;
+          if (state === '0') {
+            // console.log("Quitar las finalizadas")
+            this.tasks = response.data.filter(
+              (record: { State: string }) => record.State != 'FINALIZADA'
+            );
+            this.totalItems = this.tasks.length;
+          } else {
+            this.tasks = response.data;
+            this.totalItems = response.count;
+          }
         },
         error: () => (this.loading = false),
       });
