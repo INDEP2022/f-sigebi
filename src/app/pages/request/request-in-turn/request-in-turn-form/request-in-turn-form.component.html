@@ -73,7 +73,7 @@
             <ngx-select
               [form]="searchForm"
               control="station"
-              (fetchItems)="($event)"
+              (fetchItems)="getStation($event)"
               [data]="selectStation"
               label="Emisora"
               bindLabel="nameAndId"

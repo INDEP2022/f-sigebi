@@ -130,7 +130,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       this.onLoadToast('info', 'Informacion', `Seleccione un usuario!`);
       return;
     }
-    debugger;
+    // debugger;
     this.loading = true;
     this.requestToTurn.map(async (item: any, i: number) => {
       let index = i + 1;
@@ -190,7 +190,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   createTask(request: any) {
     return new Promise((resolve, reject) => {
-      debugger;
+      // debugger;
       const user: any = this.authService.decodeToken();
       let body: any = {};
       //body['type'] = 'SOLICITUD TRANSFERENCIA';
