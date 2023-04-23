@@ -64,15 +64,23 @@ export class RequestRecordTabComponent
     super();
   }
   ngOnChanges(changes: SimpleChanges): void {
-    this.requestForm.valueChanges.subscribe({
+    /*this.requestForm.valueChanges.subscribe({
       next: resp => {},
-    });
+    });*/
   }
 
   ngOnInit(): void {
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
+
+    //estable el campo para preguntar en la vista si es del tipo 1 o 3
+    if (this.requestForm.controls['transferenceId'].value != null) {
+      this.transferenceNumber = Number(
+        this.requestForm.controls['transferenceId'].value
+      );
+      this.getTrans(this.transferenceNumber);
+    }
 
     //this.prepareForm();
     if (this.requestForm.controls['paperDate'].value != null) {
@@ -99,14 +107,6 @@ export class RequestRecordTabComponent
           ? true
           : false;
       //this.requestForm.controls['urgentPriority'].setValue(this.priority);
-    }
-
-    //estable el campo para preguntar en la vista si es del tipo 1 o 3
-    if (this.requestForm.controls['transferenceId'].value != null) {
-      this.transferenceNumber = Number(
-        this.requestForm.controls['transferenceId'].value
-      );
-      this.getTrans(this.transferenceNumber);
     }
 
     if (this.requestForm.controls['urgentPriority'].value === 'Y') {
@@ -188,21 +188,14 @@ export class RequestRecordTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
-      previousInquiry: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       circumstantialRecord: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
       lawsuit: [
         null,
@@ -277,25 +270,22 @@ export class RequestRecordTabComponent
   }
 
   changeDateEvent(event: Date) {
-    this.bsPaperValue = event ? event : this.bsPaperValue;
-
+    this.bsPaperValue = event;
     if (this.bsPaperValue) {
-      //TODO: VERIFICAR LA FECHA
-      let date = new Date(this.bsPaperValue);
-      var dateIso = date.toISOString();
       const d1 = this.bsPaperValue.toISOString();
       this.requestForm.controls['paperDate'].setValue(d1);
+    } else {
+      this.requestForm.controls['paperDate'].setValue(null);
     }
   }
   changeVerEvent(event: Date) {
-    this.bsverifiyDate = event ? event : this.bsverifiyDate;
+    this.bsverifiyDate = event;
 
     if (this.bsverifiyDate) {
-      //TODO: VERIFICAR LA FECHA
-      let date = new Date(this.bsverifiyDate);
-      var dateIso = date.toISOString();
-      const ver = this.bsverifiyDate.toISOString();
-      this.requestForm.controls['verificationDateCump'].setValue(ver);
+      const date = this.bsverifiyDate.toISOString();
+      this.requestForm.controls['verificationDateCump'].setValue(date);
+    } else {
+      this.requestForm.controls['verificationDateCump'].setValue(null);
     }
   }
 
@@ -311,13 +301,13 @@ export class RequestRecordTabComponent
     }
   }
   changePriorityDateEvent(event: Date) {
-    this.bsPriorityDate = event ? event : this.bsPriorityDate;
+    this.bsPriorityDate = event;
 
     if (this.bsPriorityDate) {
-      let date = new Date(this.bsPriorityDate);
-      var dateIso = date.toISOString();
-      const f3 = this.bsPriorityDate.toISOString();
-      this.requestForm.controls['priorityDate'].setValue(f3);
+      const date = this.bsPriorityDate.toISOString();
+      this.requestForm.controls['priorityDate'].setValue(date);
+    } else {
+      this.requestForm.controls['priorityDate'].setValue(null);
     }
   }
 
@@ -328,6 +318,7 @@ export class RequestRecordTabComponent
     this.requestForm.controls['urgentPriority'].setValue(value);
     if (checked === false) {
       this.requestForm.controls['priorityDate'].setValue(null);
+      this.bsPriorityDate = null;
     }
   }
 
@@ -380,6 +371,7 @@ export class RequestRecordTabComponent
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
   }
+
   requiredFields(fields: AbstractControl[]) {
     fields.forEach(field => {
       field = null;

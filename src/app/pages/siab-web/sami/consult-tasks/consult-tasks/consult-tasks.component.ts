@@ -119,9 +119,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
-    this.filterParams
-      .getValue()
-      .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
+    this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
@@ -332,7 +330,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           console.log('Response: ', response);
           this.loading = false;
           console.log('Hay un filtro activo? ', isfilterUsed);
-          if (!isfilterUsed) {
+          if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
             );
@@ -341,6 +339,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             this.tasks = response.data;
             this.totalItems = response.count;
           }
+          this.tasks = response.data;
+          this.totalItems = response.count;
         },
         error: () => ((this.tasks = []), (this.loading = false)),
       });

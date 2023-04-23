@@ -208,7 +208,9 @@
                 <app-clarifications
                   [requestObject]="requestData"
                   *ngIf="validateDocument"
-                  [process]="process"></app-clarifications>
+                  [process]="process"
+                  [question]="question"
+                  (response)="getResponse($event)"></app-clarifications>
                 <!-- fin -->
                 <!-- notificar aclaraciones o improcedencias -->
                 <app-notification-assets-tab
