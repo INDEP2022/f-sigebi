@@ -79,10 +79,10 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
-        const result = resp.data.map((item: any) => {
-          return (item['fullName'] = item.firstName + ' ' + item.lastName);
+        resp.data.map((item: any) => {
+          item['fullName'] = item.firstName + ' ' + item.lastName;
         });
-        console.log(result);
+
         this.listUser = resp.data;
         this.paragraphs = this.listUser;
         this.totalItems = resp.count;
@@ -136,7 +136,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       let index = i + 1;
       item.requestStatus = 'A_TURNAR';
       item.receiptRoute = 'ELECTRONICA';
-      item.affair = 39;
+      item.affair = 37;
       item.targetUserType = this.requestForm.controls['typeUser'].value;
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();
@@ -148,17 +148,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
         const from = 'REGISTRO_SOLICITUD';
         const to = 'REGISTRO_SOLICITUD';
         const user: any = this.authService.decodeToken();
-        const taskResult = await this.createTaskOrderService(
-          resposeRequest,
-          from,
-          to,
-          false,
-          0,
-          user.username,
-          'SOLICITUD_TRANSFERENCIA',
-          'Nueva_Solicitud',
-          'TURNAR'
-        );
+        const taskResult = await this.createTask(item);
 
         if (taskResult) {
           if (this.requestToTurn.length === index) {
@@ -198,30 +188,12 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     });
   }
 
-  createTaskOrderService(
-    request: any,
-    from: string,
-    to: string,
-    closetask: boolean,
-    taskId: string | number,
-    userProcess: string,
-    type: string,
-    subtype: string,
-    ssubtype: string
-  ) {
+  createTask(request: any) {
     return new Promise((resolve, reject) => {
       debugger;
       const user: any = this.authService.decodeToken();
       let body: any = {};
       //body['type'] = 'SOLICITUD TRANSFERENCIA';
-      if (closetask) {
-        body['idTask'] = taskId;
-        body['userProcess'] = userProcess;
-      }
-
-      body['type'] = type;
-      body['subtype'] = subtype;
-      body['ssubtype'] = ssubtype;
 
       let task: any = {};
       task['id'] = 0;
@@ -235,18 +207,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       task['requestId'] = request.id;
       task['expedientId'] = 0;
       task['urlNb'] = 'pages/request/transfer-request/registration-request';
-      body['task'] = task;
 
-      let orderservice: any = {};
-      orderservice['pActualStatus'] = from;
-      orderservice['pNewStatus'] = to;
-      orderservice['pIdApplication'] = request.id;
-      orderservice['pCurrentDate'] = new Date().toISOString();
-      orderservice['pOrderServiceIn'] = '';
-
-      body['orderservice'] = orderservice;
-
-      this.taskService.createTaskWitOrderService(body).subscribe({
+      this.taskService.createTask(task).subscribe({
         next: resp => {
           resolve(true);
         },

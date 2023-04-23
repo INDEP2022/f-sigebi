@@ -173,6 +173,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       requestUpdate.targetUserType = this.userForm.controls['typeUser'].value;
       requestUpdate.targetUser = this.user.id;
       //Todo: enviar la solicitud
+
       const requestResult = await this.saveRequest(requestUpdate);
       if (requestResult === true) {
         //TODO: generar o recuperar el reporte
@@ -206,14 +207,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           }
           form['xdelegacionRegional'] = this.data.regionalDelegationId;
           const file: any = report;
-          debugger;
+
           //TODO: Guardarlo en el content
           const addToContent = await this.addDocumentToContent(form, file);
-          console.log(addToContent);
-          const docName = addToContent;
-          console.log(docName);
           if (addToContent) {
-            console.log(addToContent);
+            //console.log(addToContent);
             const docName = addToContent;
             console.log(docName);
             this.loader.load = false;
@@ -321,7 +319,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.requestService.update(request.id, request).subscribe({
         next: resp => {
-          if (resp.id) {
+          if (resp.statusCode == 200) {
             resolve(true);
           } else {
             this.message(
@@ -333,6 +331,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
+          console.log('update solicitud erro ', error);
           this.loader.load = false;
           this.message(
             'error',
@@ -419,7 +418,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-      debugger;
+
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
