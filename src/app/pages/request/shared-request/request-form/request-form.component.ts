@@ -100,13 +100,17 @@ export class RequestFormComponent extends BasePage implements OnInit {
     console.log(task);
 
     //comparo el id de la solicitud que esta en task con el id de la ruta
-    if (Number(task.taskId) != id) {
-      this.generateFirstTask();
+    if (task) {
+      if (Number(task.taskId) != id) {
+        this.generateFirstTask();
+      } else {
+        //copio la tarea
+        this.taskId = task.id;
+        //copio el id de la solicitud
+        this.requestId = id;
+      }
     } else {
-      //copio la tarea
-      this.taskId = task.id;
-      //copio el id de la solicitud
-      this.requestId = id;
+      this.generateFirstTask();
     }
 
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
@@ -461,7 +465,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
         'Información',
         `Seleccione un usuario para poder turnar la solicitud!`
       );
-
       return;
     }
 
@@ -478,6 +481,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
         form.id = this.requestId;
+        const idRequest = form.id;
         const requestResult: any = await this.updateRequest(form);
         if (requestResult) {
           const actualUser: any = this.authService.decodeToken();
@@ -494,12 +498,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
           task['assignees'] = this.nickName;
           task['assigneesDisplayname'] = this.userName;
           task['creator'] = actualUser.username;
-          task['taskNumber'] = Number(requestResult.id);
+          task['taskNumber'] = Number(idRequest);
           task['title'] =
             'Registro de solicitud (Captura de Solicitud) con folio: ' +
-            requestResult.id;
+            idRequest;
           task['programmingId'] = 0;
-          task['requestId'] = requestResult.id;
+          task['requestId'] = idRequest;
           task['expedientId'] = 0;
           task['urlNb'] = 'pages/request/transfer-request/registration-request';
           body['task'] = task;
@@ -507,7 +511,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           let orderservice: any = {};
           orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
           orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
-          orderservice['pIdApplication'] = requestResult.id;
+          orderservice['pIdApplication'] = idRequest;
           orderservice['pCurrentDate'] = new Date().toISOString();
           orderservice['pOrderServiceIn'] = '';
 
@@ -517,7 +521,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
             this.loadingTurn = false;
             this.msgModal(
               'Se turnar la solicitud con el Folio Nº '
-                .concat(`<strong>${requestResult.id}</strong>`)
+                .concat(`<strong>${idRequest}</strong>`)
                 .concat(` al usuario ${this.userName}`),
               'Solicitud Creada',
               'success'
