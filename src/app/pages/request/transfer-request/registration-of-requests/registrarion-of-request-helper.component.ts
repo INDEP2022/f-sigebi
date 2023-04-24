@@ -6,7 +6,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
 @Injectable()
 export class RegistrationHelper extends BasePage {
   requestData: IRequest = {};

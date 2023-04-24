@@ -1010,7 +1010,6 @@ export class ClassifyAssetsTabComponent
   //obtenien la unidad de medida
   getUnidMeasure(value: string) {
     if (value) {
-      debugger;
       if (value.length === 8) {
         const fractionCode = { fraction: value };
         this.goodsQueryService
@@ -1052,6 +1051,11 @@ export class ClassifyAssetsTabComponent
             },
             error: error => {
               console.log(error.error.message);
+              this.onLoadToast(
+                'info',
+                '',
+                'El bien no cuenta con su clasificacion del bien'
+              );
             },
           });
       } /*  else {
