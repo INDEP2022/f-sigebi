@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -42,8 +44,10 @@ export class ClarificationsComponent
 {
   @Input() requestObject: any;
   @Input() process: string = '';
+  @Input() question: boolean = false;
   goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
+  @Output() response = new EventEmitter<string>();
   paragraphs: any[] = [];
   goodSetting: any;
   assetsArray: any[] = [];
@@ -58,6 +62,8 @@ export class ClarificationsComponent
   totalItems: number = 0;
 
   domicilieObject: any;
+  articleColumns = CLARIFICATION_COLUMNS;
+  haveNotification: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -72,7 +78,7 @@ export class ClarificationsComponent
     super();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (this.requestObject) {
       this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         this.getData();
@@ -94,6 +100,7 @@ export class ClarificationsComponent
       selectMode: 'multi',
       columns: ASSETS_COLUMNS,
     };
+
     this.prepareForm();
   }
   private prepareForm() {
@@ -393,6 +400,7 @@ export class ClarificationsComponent
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
     const filter = this.params.getValue().getParams();
+
     this.goodService.getAll(filter).subscribe({
       next: resp => {
         console.log(resp.data);
@@ -585,6 +593,7 @@ export class ClarificationsComponent
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
       return;
     }
+
     const clarifycationLength = this.paragraphs.length;
     this.alertQuestion(
       'warning',

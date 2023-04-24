@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -26,6 +26,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class ClarificationFormTabComponent extends BasePage implements OnInit {
+  public event: EventEmitter<any> = new EventEmitter();
   clarificationForm: ModelForm<ClarificationGoodRejectNotification>;
   title: string = 'Aclaración';
   edit: boolean = false;
@@ -53,6 +54,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('good', this.goodTransfer);
+    this.getGoodResDev(Number(this.goodTransfer.id));
     this.initForm();
     this.clarificationForm.get('clarificationType').valueChanges.subscribe({
       next: val => {
@@ -119,7 +122,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     let clarification = this.clarificationForm.getRawValue();
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
-    clarification['answered'] = 'NUEVA ACLARACIÓN';
+    clarification['answered'] = 'NUEVA';
     clarification.goodId = this.goodTransfer.id;
     //clarification.clarificationId = this.clarificationId;
     if (this.edit === true) {
@@ -171,7 +174,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'success',
             `Aclaración actualizada`,
-            `Se actualizo la aclaración correctamente`
+            `Se actualizó la aclaración correctamente`
           );
         },
         complete: () => {

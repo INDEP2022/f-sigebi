@@ -197,6 +197,15 @@ export class DocumentFormComponent extends BasePage implements OnInit {
   }
 
   uploadFile(event: any) {
+    if (!event.target.files[0].name.endsWith('.pdf')) {
+      this.onLoadToast(
+        'error',
+        'Error al carga el archivo',
+        'Solo se permiten archivos en formato PDF'
+      );
+      this.documentForm.controls['document'].setValue(null);
+      return;
+    }
     if (event.target.files[0].size > 10485760) {
       this.onLoadToast(
         'error',
@@ -221,7 +230,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro que deseas crear un nuevo documento?'
+      '¿Estás seguro que deseas crear un nuevo documento?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

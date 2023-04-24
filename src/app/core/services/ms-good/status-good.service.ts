@@ -3,10 +3,7 @@ import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
-import {
-  IListResponse,
-  IResponse,
-} from '../../interfaces/list-response.interface';
+import { IListResponse } from '../../interfaces/list-response.interface';
 import { IStatusGood } from '../../models/ms-good/status-good';
 import { ILabelByClasif } from '../../models/ms-good/tags-by-good.model';
 
@@ -36,6 +33,6 @@ export class StatusGoodService extends HttpService {
   }
 
   getById(id: string) {
-    return this.get<IResponse<IStatusGood>>('status-good/' + id);
+    return this.get<IStatusGood>('status-good/' + id);
   }
 }

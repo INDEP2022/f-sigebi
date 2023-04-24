@@ -206,14 +206,12 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                   .update(requestUpdate.id, requestUpdate)
                   .subscribe({
                     next: (resp: any) => {
-                      const solicitud = resp as any;
-                      if (solicitud.id) {
+                      //const solicitud = resp as any;
+                      if (resp.statusCode == 200) {
+                        //console.log(request, expedient)
                         //llamar al reporte caratula inai
                         this.wcontetService
-                          .downloadCaratulaINAIFile(
-                            'Etiqueta_INAI',
-                            solicitud.id
-                          )
+                          .downloadCaratulaINAIFile('Etiqueta_INAI', request.id)
                           .subscribe({
                             next: resp => {
                               const file: any = resp;
@@ -221,8 +219,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                               const docName = `Reporte_${94}${this.getDocNameDate()}`;
                               const body = {
                                 ddocTitle:
-                                  'Carátula del Expediente ' +
-                                  solicitud.recordId,
+                                  'Carátula del Expediente ' + expedient.id,
                                 dDocAuthor: user.username,
                                 ddocType: '',
                                 ddocCreator: '',
@@ -236,23 +233,22 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 dRevLabel: '',
                                 xIdcProfile: '',
                                 xdelegacionRegional:
-                                  solicitud.regionalDelegationId,
-                                xidTransferente: solicitud.transferenceId ?? '',
+                                  request.regionalDelegationId,
+                                xidTransferente: request.transferenceId ?? '',
                                 xidBien: '',
-                                xidExpediente: solicitud.recordId,
-                                xidSolicitud: solicitud.id,
+                                xidExpediente: expedient.id,
+                                xidSolicitud: request.id,
                                 //xNombreProceso: 'Captura Solicitud',
                                 xnombreProceso: 'Captura Solicitud',
-                                xestado: solicitud.stationId ?? '',
-                                xnoOficio: solicitud.paperNumber ?? '',
-                                xremitente: solicitud.nameOfOwner ?? '',
+                                xestado: request.stationId ?? '',
+                                xnoOficio: request.paperNumber ?? '',
+                                xremitente: request.nameOfOwner ?? '',
                                 xnivelRegistroNSBDB: 'Expediente',
-                                xcargoRemitente: solicitud.holderCharge ?? '',
+                                xcargoRemitente: request.holderCharge ?? '',
                                 xtipoDocumento: '94',
                                 xcontribuyente:
-                                  solicitud.contribuyente_indiciado ?? '',
+                                  request.contribuyente_indiciado ?? '',
                               };
-                              debugger;
                               const form = JSON.stringify(body);
                               //se guarda el file y el documento
                               this.wcontetService

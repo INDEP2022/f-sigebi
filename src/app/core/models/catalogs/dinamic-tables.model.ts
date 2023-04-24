@@ -42,6 +42,10 @@ export interface TvalTable1Data {
   numRegister: string;
   abbreviation: null;
   otKeyAndValue?: string;
+  otKey1?: string;
+  otValue01?: string;
+  otValue02?: string;
+  otValue03?: string;
 }
 
 export interface ISingleTable {

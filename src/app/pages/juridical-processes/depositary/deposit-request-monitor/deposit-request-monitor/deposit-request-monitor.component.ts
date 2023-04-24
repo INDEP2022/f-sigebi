@@ -1,16 +1,18 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-export interface Example {
-  numberGood: number;
-  description: string;
-  dateRequest: string;
-  typeRequest: string;
-  areaAttendRequest: string;
-  daysDelay: string;
-}
+// export interface Example {
+//   numberGood: number;
+//   description: string;
+//   dateRequest: string;
+//   typeRequest: string;
+//   areaAttendRequest: string;
+//   daysDelay: string;
+// }
 @Component({
   selector: 'app-deposit-request-monitor',
   templateUrl: './deposit-request-monitor.component.html',
@@ -19,62 +21,62 @@ export interface Example {
 export class DepositRequestMonitorComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  request: any[] = [];
+  MILISENGUNDOS_POR_DIA: number = 1000 * 60 * 60 * 24;
   //Data Table
 
-  data: Example[] = [
-    {
-      numberGood: 1,
-      description: 'Descripción 1',
-      dateRequest: '11/03/2022',
-      typeRequest: 'Tipo de solicitud 1',
-      areaAttendRequest: 'Area de prueba',
-      daysDelay: '20 dias',
-    },
-    {
-      numberGood: 1,
-      description: 'Descripción 1',
-      dateRequest: '11/03/2022',
-      typeRequest: 'Tipo de solicitud 1',
-      areaAttendRequest: 'Area de prueba',
-      daysDelay: '20 dias',
-    },
-    {
-      numberGood: 1,
-      description: 'Descripción 1',
-      dateRequest: '11/03/2022',
-      typeRequest: 'Tipo de solicitud 1',
-      areaAttendRequest: 'Area de prueba',
-      daysDelay: '20 dias',
-    },
-  ];
+  // data: Example[] = [
+  //   {
+  //     numberGood: 1,
+  //     description: 'Descripción 1',
+  //     dateRequest: '11/03/2022',
+  //     typeRequest: 'Tipo de solicitud 1',
+  //     areaAttendRequest: 'Area de prueba',
+  //     daysDelay: '20 dias',
+  //   },
+  //   {
+  //     numberGood: 1,
+  //     description: 'Descripción 1',
+  //     dateRequest: '11/03/2022',
+  //     typeRequest: 'Tipo de solicitud 1',
+  //     areaAttendRequest: 'Area de prueba',
+  //     daysDelay: '20 dias',
+  //   },
+  //   {
+  //     numberGood: 1,
+  //     description: 'Descripción 1',
+  //     dateRequest: '11/03/2022',
+  //     typeRequest: 'Tipo de solicitud 1',
+  //     areaAttendRequest: 'Area de prueba',
+  //     daysDelay: '20 dias',
+  //   },
+  // ];
 
-  constructor() {
+  constructor(
+    private depositaryService: MsDepositaryService,
+    private datePipe: DatePipe
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
       columns: {
-        numberGood: {
+        propertyNumber: {
           title: 'No Bien',
           width: '10%',
-          sort: false,
+          sort: true,
         },
-        description: {
-          title: 'Descripcion',
-          width: '20%',
-          sort: false,
-        },
-        dateRequest: {
+        requestDate: {
           title: 'Fecha Solicitud',
           width: '10%',
           sort: false,
         },
-        typeRequest: {
+        requestType: {
           title: 'Tipo de Solicitud',
           width: '10%',
           sort: false,
         },
-        areaAttendRequest: {
+        attentionUser: {
           title: 'Área que atendera la petición',
           width: '10%',
           sort: false,
@@ -88,7 +90,43 @@ export class DepositRequestMonitorComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.Dias(new Date(), -3));
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRequestDepositaryInformation());
+  }
+
+  Dias(fecha: any, dias: any) {
+    fecha.setDate(fecha.getDate() - dias);
+    return fecha.getDay();
+  }
+
+  getRequestDepositaryInformation() {
+    var info: any[] = [];
+    this.loading = true;
+    this.depositaryService
+      .getRequestDepositary(this.params.getValue())
+      .subscribe({
+        next: data => {
+          data.data.forEach((element: any) => {
+            element['daysDelay'] = this.Dias(
+              new Date(element.requestDate),
+              new Date().getDay()
+            );
+            element['requestDate'] = this.datePipe.transform(
+              element.requestDate,
+              'dd-MM-yyyy'
+            );
+            info.push(element);
+          });
+          this.request = data.data;
+          this.totalItems = data.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
+  }
 
   select(event: any) {}
 }

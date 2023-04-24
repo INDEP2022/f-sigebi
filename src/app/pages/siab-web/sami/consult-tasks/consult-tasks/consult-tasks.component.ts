@@ -51,7 +51,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.userName = this.authService.decodeToken().preferred_username;
 
     this.consultTasksForm = this.fb.group({
-      cmbstate: ['0'],
+      unlinked: [null, Validators.required],
+      unlinked1: [null, Validators.required],
       txtSearch: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
@@ -97,9 +98,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
     });
-    this.consultTasksForm.controls['cmbstate'].setValue('0', {
-      onlySelf: true,
-    });
 
     this.params
       .pipe(
@@ -121,22 +119,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
-
-    let state = this.consultTasksForm.value.cmbstate;
-
-    // console.log("Cual es el status: ", state)
-    if (state === '0') {
-      // console.log("Se Muestran solo las NO finalizadas");
-      this.filterParams
-        .getValue()
-        .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
-    }
-    if (state === '1') {
-      // console.log("Se Muestran solo las finalizadas");
-      this.filterParams
-        .getValue()
-        .addFilter('State', 'FINALIZADA', SearchFilter.EQ);
-    }
+    this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
@@ -346,8 +329,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         next: response => {
           console.log('Response: ', response);
           this.loading = false;
-          if (state === '0') {
-            // console.log("Quitar las finalizadas")
+          console.log('Hay un filtro activo? ', isfilterUsed);
+          if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
             );
@@ -356,6 +339,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             this.tasks = response.data;
             this.totalItems = response.count;
           }
+          this.tasks = response.data;
+          this.totalItems = response.count;
         },
         error: () => ((this.tasks = []), (this.loading = false)),
       });
