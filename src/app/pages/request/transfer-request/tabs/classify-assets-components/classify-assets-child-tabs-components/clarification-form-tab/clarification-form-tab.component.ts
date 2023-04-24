@@ -13,7 +13,7 @@ import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clar
 import { IPostGoodResDev } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
-import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -125,6 +125,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification['answered'] = 'NUEVA';
     clarification.goodId = this.goodTransfer.id;
     //clarification.clarificationId = this.clarificationId;
+
     if (this.edit === true) {
       this.update(clarification);
     } else {
@@ -261,7 +262,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       //body.goodResdevId = Number(id);
       body.processStatus = 'SOLICITAR_ACLARACION';
       body.goodStatus = 'SOLICITUD DE ACLARACION';
-      this.goodService.update(good.id, body).subscribe({
+      this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
           resolve(true);

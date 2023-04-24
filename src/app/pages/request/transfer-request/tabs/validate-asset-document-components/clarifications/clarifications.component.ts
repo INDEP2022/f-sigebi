@@ -672,8 +672,8 @@ export class ClarificationsComponent
       body.id = this.good.id;
       body.goodId = this.good.goodId;
       //body.goodResdevId = Number(id);
-      body.processStatus = null;
-      body.goodStatus = null;
+      body.processStatus = 'REGISTRO_SOLICITUD';
+      body.goodStatus = 'REGISTRO_SOLICITUD';
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);

@@ -824,16 +824,18 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     this.loader.load = true;
+    debugger;
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
-        'Error',
-        'Es requerido tener dictamen previamente generado'
+        'No se puede aprobar',
+        'Es requerido previamente tener firmado el dictamen'
       );
+      this.loader.load = false;
       return;
-      this.loader.load = true;
     }
+
     const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
     const url = 'pages/request/programming-request/schedule-reception';
     const from = 'SOLICITAR_APROBACION';
@@ -867,7 +869,7 @@ export class RegistrationOfRequestsComponent
   refuseRequest() {
     this.msgSaveModal(
       'Rechazar',
-      'Deseas rechazar la solicitud con folio: ' + this.requestData.id + '?',
+      'Deseas rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       'refuse'

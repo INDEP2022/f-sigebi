@@ -770,6 +770,12 @@ export class VerifyComplianceTabComponent
                 this.goodsSelected[0].id
               );
               await this.removeDevGood(Number(goodResDev));
+              let body: any = {};
+              body['id'] = this.goodsSelected[0].id;
+              body['goodId'] = this.goodsSelected[0].goodId;
+              body.processStatus = 'REGISTRO_SOLICITUD';
+              body.goodStatus = 'REGISTRO_SOLICITUD';
+              await this.updateGoods(body);
             }
           },
           error: error => {
@@ -812,7 +818,12 @@ export class VerifyComplianceTabComponent
     setTimeout(() => {
       this.goodData.map(async (item: any, i: number) => {
         let index = i + 1;
-        const result = await this.updateGoods(item);
+
+        let body: any = {};
+        body['id'] = item.id;
+        body['goodId'] = item.goodId;
+        body['descriptionGoodSae'] = item.descriptionGoodSae;
+        const result = await this.updateGoods(body);
 
         if (result === true) {
           if (this.goodData.length === index) {
@@ -828,24 +839,16 @@ export class VerifyComplianceTabComponent
     }, 400);
   }
 
-  updateGoods(item: any) {
+  updateGoods(body: any) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
-      body['id'] = item.id;
-      body['goodId'] = item.goodId;
-      body['descriptionGoodSae'] = item.descriptionGoodSae;
-
+      debugger;
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
           console.log(error.error.message);
-          this.alert(
-            'error',
-            'Error al guardar',
-            'No se pudieron guardar los datos'
-          );
+          this.alert('error', 'Error al actualizar', 'No actualizar el bien');
           reject(false);
         },
       });
