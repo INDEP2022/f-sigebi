@@ -426,6 +426,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
             body['programmingId'] = 0;
             body['requestId'] = data.id;
             body['expedientId'] = 0;
+            body['processName'] = 'SolicitudTransferencia';
             body['urlNb'] = 'pages/request/list/new-transfer-request';
             if (haveId === false) {
               /* se crea una tarea */
@@ -506,6 +507,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           task['requestId'] = idRequest;
           task['expedientId'] = 0;
           task['urlNb'] = 'pages/request/transfer-request/registration-request';
+          task['processName'] = 'SolicitudTransferencia';
           body['task'] = task;
 
           let orderservice: any = {};
