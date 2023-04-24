@@ -324,7 +324,7 @@ export class PartializesGeneralGoodsComponent
     // debugger;
     this.form.get('ind').setValue('N');
     if (this.form.valid && this.formGood.valid) {
-      debugger;
+      // debugger;
       console.log(this.sumCant + '', this.sumVal14 + '');
       if (!this.validationImporte()) return;
       // this.vsum = 0;

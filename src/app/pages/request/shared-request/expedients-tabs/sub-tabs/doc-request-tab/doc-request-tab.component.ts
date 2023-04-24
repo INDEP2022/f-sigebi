@@ -20,12 +20,11 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -86,16 +85,14 @@ export class DocRequestTabComponent
     private wContentService: WContentService,
     private sanitizer: DomSanitizer,
     private regDelService: RegionalDelegationService,
-    private stateService: DelegationStateService,
     private transferentService: TransferenteService,
     private stateOfRepublicService: StateOfRepublicService,
-    private authService: AuthService
+    private requestService: RequestService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
-    //console.log(this.idRequest);
   }
 
   ngOnInit(): void {
@@ -209,6 +206,7 @@ export class DocRequestTabComponent
 
   getData(params: ListParams) {
     this.loading = true;
+    this.getInfoRequest();
     this.docRequestForm.get('noRequest').setValue(this.idRequest);
     const idSolicitud: Object = {
       xidSolicitud: this.idRequest,
@@ -217,51 +215,100 @@ export class DocRequestTabComponent
       .getDocumentos(idSolicitud, params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: data => {
-          let token = this.authService.decodeToken();
-          console.log('dzz', token);
-          const filterDoc = data.data.filter((items: any) => {
-            if (items.dDocType == 'Document' && items.xidTransferente != 1) {
-              return items;
-            }
-          });
-          const info = filterDoc.map(async (items: any) => {
-            const filter: any = await this.filterGoodDoc([
-              items.xtipoDocumento,
-            ]);
-            if (items?.xdelegacionRegional) {
-              const regionalDelegation = await this.getRegionalDelegation(
-                items?.xdelegacionRegional
-              );
-              items['delegationName'] = regionalDelegation;
-            }
-            if (items?.xidTransferente) {
-              const transferent = await this.getTransferent(
-                items?.xidTransferente
-              );
-              items['transferentName'] = transferent;
-            }
-            if (items?.xestado) {
-              const state = await this.getStateDoc(items?.xestado);
-              items['stateName'] = state;
-              items.xtipoDocumento = filter[0]?.ddescription;
-              return items;
-            }
-          });
+        next: async data => {
+          const transferent = await this.getInfoRequest();
+          if (transferent == 1) {
+            const filterDoc = data.data.filter((item: any) => {
+              if (item.dDocType == 'Document' && item.xidTransferente == 1) {
+                return item;
+              }
+            });
 
-          Promise.all(info).then(x => {
-            this.allDataDocReq = x;
-            console.log('doc', x);
-            this.paragraphs.load(x);
-            this.totalItems = this.paragraphs.count();
-            this.loading = false;
-          });
+            const info = filterDoc.map(async (items: any) => {
+              const filter: any = await this.filterGoodDoc([
+                items.xtipoDocumento,
+              ]);
+              if (items?.xdelegacionRegional) {
+                const regionalDelegation = await this.getRegionalDelegation(
+                  items?.xdelegacionRegional
+                );
+                items['delegationName'] = regionalDelegation;
+              }
+              if (items?.xidTransferente) {
+                const transferent = await this.getTransferent(
+                  items?.xidTransferente
+                );
+                items['transferentName'] = transferent;
+              }
+              if (items?.xestado) {
+                const state = await this.getStateDoc(items?.xestado);
+                items['stateName'] = state;
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
+              }
+            });
+
+            Promise.all(info).then(x => {
+              this.allDataDocReq = x;
+              this.paragraphs.load(x);
+              this.totalItems = this.paragraphs.count();
+              this.loading = false;
+            });
+          }
+
+          if (transferent != 1) {
+            const filterDoc = data.data.filter((item: any) => {
+              if (item.dDocType == 'Document' && item.xidTransferente != 1) {
+                return item;
+              }
+            });
+            const info = filterDoc.map(async (items: any) => {
+              const filter: any = await this.filterGoodDoc([
+                items.xtipoDocumento,
+              ]);
+              if (items?.xdelegacionRegional) {
+                const regionalDelegation = await this.getRegionalDelegation(
+                  items?.xdelegacionRegional
+                );
+                items['delegationName'] = regionalDelegation;
+              }
+              if (items?.xidTransferente) {
+                const transferent = await this.getTransferent(
+                  items?.xidTransferente
+                );
+                items['transferentName'] = transferent;
+              }
+              if (items?.xestado) {
+                const state = await this.getStateDoc(items?.xestado);
+                items['stateName'] = state;
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
+              }
+            });
+
+            Promise.all(info).then(x => {
+              this.allDataDocReq = x;
+              this.paragraphs.load(x);
+              this.totalItems = this.paragraphs.count();
+              this.loading = false;
+            });
+          }
         },
         error: error => {
-          console.log(error);
           this.loading = false;
         },
       });
+  }
+
+  getInfoRequest() {
+    return new Promise((resolve, reject) => {
+      this.requestService.getById(this.idRequest).subscribe({
+        next: response => {
+          resolve(response.transferenceId);
+        },
+        error: error => {},
+      });
+    });
   }
 
   filterGoodDoc(typeDocument: any[]) {
