@@ -330,7 +330,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           console.log('Response: ', response);
           this.loading = false;
           console.log('Hay un filtro activo? ', isfilterUsed);
-          if (isfilterUsed) {
+          /*  if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
             );
@@ -338,7 +338,11 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           } else {
             this.tasks = response.data;
             this.totalItems = response.count;
-          }
+          } */
+          response.data.map((item: any) => {
+            item.taskNumber = item.id;
+          });
+
           this.tasks = response.data;
           this.totalItems = response.count;
         },
