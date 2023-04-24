@@ -376,7 +376,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           //     }
           //   }
           // }
-
+          console.log(this.paramsGeneral);
           this.target.setValue(this.tipoCarga);
           this.target.updateValueAndValidity();
           this.targetChange();
@@ -810,7 +810,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     params.addFilter('expedientNumber', expedient);
     let volante = encodeURIComponent(this.paramsGeneral.p_no_volante);
     params.addFilter('wheelNumber', volante);
-    let oficio = encodeURIComponent(this.paramsGeneral.p_av_previa);
+    let off = this.paramsGeneral.p_av_previa.substring(0, 34);
+    console.log(off, off.length);
+    let oficio = encodeURIComponent(off);
     params.addFilter('officeExternalKey', oficio);
     this.goodsBulkService
       .getDataPgrNotificationByFilter(params.getFilterParams())
