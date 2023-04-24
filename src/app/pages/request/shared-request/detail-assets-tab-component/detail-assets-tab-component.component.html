@@ -793,7 +793,8 @@
               label="Marca"
               value="flexValue"
               bindLabel="flexValueMeaning"
-              [readonly]="isGoodTypeReadOnly"></ngx-select>
+              [readonly]="isGoodTypeReadOnly"
+              (change)="onValuesChange($event)"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -803,7 +804,8 @@
               label="Marca"
               value="flexValue"
               [readonly]="isDisabled"
-              bindLabel="flexValueMeaning"></ngx-select>
+              bindLabel="flexValueMeaning"
+              (change)="onValuesChange($event)"></ngx-select>
           </div>
           <div class="col-md-3">
             <form-field

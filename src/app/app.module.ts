@@ -70,6 +70,7 @@ export function tokenGetter() {
       closeButton: true,
       progressBar: true,
       timeOut: 6000,
+      preventDuplicates: true,
     }),
   ],
   providers: [

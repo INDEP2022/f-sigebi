@@ -7,6 +7,9 @@
     <div class="d-flex">
       <div class="mr-auto p-2"></div>
       <div class="p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div class="p-2">
         <button
           class="btn btn-primary btn-sm active"
           (click)="verifyClarification()">
@@ -15,12 +18,14 @@
       </div>
 
       <div class="p-2">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button (click)="reloadData()" class="btn btn-info btn-sm active">
+          <i class="fa-thin fa-repeat"></i> Actualizar
+        </button>
       </div>
 
       <div class="p-2">
-        <button (click)="reloadData()" class="btn btn-info btn-sm active">
-          <i class="fa-thin fa-repeat"></i> Actualizar
+        <button (click)="saveData()" class="btn btn-pink btn-sm active">
+          <i class="fa-thin fa-repeat"></i> Guardar
         </button>
       </div>
 

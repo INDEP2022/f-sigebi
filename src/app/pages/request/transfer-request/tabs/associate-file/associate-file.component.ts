@@ -15,7 +15,6 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
 import { OpenDescriptionComponent } from './open-description/open-description.component';
 
@@ -143,7 +142,16 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     } else if (!request.transferenceId) {
       this.onLoadToast('error', '', 'Se requiere tener una transferente');
     }
-    Swal.fire({
+    this.alertQuestion(
+      'warning',
+      'Generar Carátula',
+      '¿Estas seguro de querer generar la carátula?'
+    ).then(val => {
+      if (val.isConfirmed) {
+        this.generateCaratula();
+      }
+    });
+    /*Swal.fire({
       title: 'Generar Carátula',
       text: '¿Esta seguro de querer generar una carátula?',
       icon: 'question',
@@ -155,12 +163,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       if (result.isConfirmed) {
         this.generateCaratula();
       }
-    });
+    }); */
   }
 
   generateCaratula() {
     let request = this.parameter.getRawValue();
-    console.log('nueva caratula ', request);
     let expedient = this.associateFileForm.getRawValue();
     this.loader.load = true;
     //guardar expediente
@@ -206,14 +213,12 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                   .update(requestUpdate.id, requestUpdate)
                   .subscribe({
                     next: (resp: any) => {
-                      const solicitud = resp as any;
-                      if (solicitud.id) {
+                      //const solicitud = resp as any;
+                      if (resp.statusCode == 200) {
+                        //console.log(request, expedient)
                         //llamar al reporte caratula inai
                         this.wcontetService
-                          .downloadCaratulaINAIFile(
-                            'Etiqueta_INAI',
-                            solicitud.id
-                          )
+                          .downloadCaratulaINAIFile('Etiqueta_INAI', request.id)
                           .subscribe({
                             next: resp => {
                               const file: any = resp;
@@ -221,8 +226,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                               const docName = `Reporte_${94}${this.getDocNameDate()}`;
                               const body = {
                                 ddocTitle:
-                                  'Carátula del Expediente ' +
-                                  solicitud.recordId,
+                                  'Carátula del Expediente ' + expedient.id,
                                 dDocAuthor: user.username,
                                 ddocType: '',
                                 ddocCreator: '',
@@ -236,23 +240,22 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                 dRevLabel: '',
                                 xIdcProfile: '',
                                 xdelegacionRegional:
-                                  solicitud.regionalDelegationId,
-                                xidTransferente: solicitud.transferenceId ?? '',
+                                  request.regionalDelegationId,
+                                xidTransferente: request.transferenceId ?? '',
                                 xidBien: '',
-                                xidExpediente: solicitud.recordId,
-                                xidSolicitud: solicitud.id,
+                                xidExpediente: expedient.id,
+                                xidSolicitud: request.id,
                                 //xNombreProceso: 'Captura Solicitud',
                                 xnombreProceso: 'Captura Solicitud',
-                                xestado: solicitud.stationId ?? '',
-                                xnoOficio: solicitud.paperNumber ?? '',
-                                xremitente: solicitud.nameOfOwner ?? '',
+                                xestado: request.stationId ?? '',
+                                xnoOficio: request.paperNumber ?? '',
+                                xremitente: request.nameOfOwner ?? '',
                                 xnivelRegistroNSBDB: 'Expediente',
-                                xcargoRemitente: solicitud.holderCharge ?? '',
+                                xcargoRemitente: request.holderCharge ?? '',
                                 xtipoDocumento: '94',
                                 xcontribuyente:
-                                  solicitud.contribuyente_indiciado ?? '',
+                                  request.contribuyente_indiciado ?? '',
                               };
-                              debugger;
                               const form = JSON.stringify(body);
                               //se guarda el file y el documento
                               this.wcontetService
@@ -287,6 +290,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                       parameters
                                     );
                                     this.close();
+                                    this.onLoadToast(
+                                      'success',
+                                      'Caratula generada correctamente',
+                                      ''
+                                    );
                                   },
                                   error: error => {
                                     this.loader.load = false;

@@ -4,8 +4,8 @@ import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-docume
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { IDocuments } from '../../models/ms-documents/documents';
-import { Inappropriateness } from '../../models/notification-aclaration/notification-aclaration-model';
 
 @Injectable({
   providedIn: 'root',
@@ -79,9 +79,9 @@ export class DocumentsService extends HttpService {
     return this.put(route, body);
   }
 
-  createClarDocImp(data: Object) {
+  createClarDocImp(model: IClarificationDocumentsImpro) {
     const route = `clarification-documents-impro`;
-    return this.post<Inappropriateness>(route, data);
+    return this.post<IClarificationDocumentsImpro>(route, model);
   }
 
   // updateClarDocImp(id: string | number, data: Object) {

@@ -1,6 +1,6 @@
 export const TRANSPORTABLE_GOODS = {
   id: {
-    title: 'No° gestión',
+    title: 'No gestión',
     type: 'string',
     sort: false,
   },
@@ -79,7 +79,7 @@ export const TRANSPORTABLE_GOODS = {
 
 export const TRANSPORTABLE_GOODS_FORMALIZE = {
   gestionNumber: {
-    title: 'No° gestión',
+    title: 'No gestión',
     type: 'string',
     sort: false,
   },
