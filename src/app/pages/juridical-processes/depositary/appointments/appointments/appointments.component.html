@@ -125,7 +125,9 @@
               formControlName="descriptionGood"></textarea>
           </form-field>
         </div>
-        <hr class="row" />
+        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+          <hr class="row" />
+        </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
           <div class="form-group">
             <button
@@ -207,6 +209,9 @@
             </div>
           </div>
         </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+          <hr class="row" />
+        </div>
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -221,7 +226,7 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field
             [control]="form.get('depositaria')"
             label="Depositar&iacute;ia">
@@ -231,7 +236,7 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field
             [control]="form.get('representante')"
             label="Representante">
@@ -261,7 +266,31 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input
+              class="form-control"
+              formControlName="rfc"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('curp')" label="CURP">
+            <input
+              class="form-control"
+              formControlName="curp"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('telefono')" label="Tel&eacute;fono">
+            <input
+              class="form-control"
+              formControlName="telefono"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('calle')" label="Calle">
             <input
               class="form-control"
@@ -285,34 +314,10 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('telefono')" label="Tel&eacute;fono">
-            <input
-              class="form-control"
-              formControlName="telefono"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('rfc')" label="RFC">
-            <input
-              class="form-control"
-              formControlName="rfc"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('curp')" label="CURP">
-            <input
-              class="form-control"
-              formControlName="curp"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="postalCode"
-            bindLabel="description"
+            bindLabel="township"
             label="C&oacute;digo Postal"
             value="postalCode"
             (fetchItems)="getPostalCodeByDetail($event)"
@@ -321,31 +326,31 @@
             [showTooltip]="true"
             control="codigoPostal"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="locality"
-            bindLabel="description"
+            bindLabel="township"
             label="Colonia"
-            value="id"
+            value="townshipKey"
             (fetchItems)="getLocalityByDetail($event)"
             (change)="changeLocalityDetail($event)"
             [form]="form"
             [showTooltip]="true"
             control="colonia"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="delegations"
             bindLabel="municipality"
             label="Delegaci&oacute;n&#47;Municipio"
-            value="stateKey"
+            value="municipalityKey"
             (fetchItems)="getDelegationByDetail($event)"
             (change)="changeDelegationDetail($event)"
             [form]="form"
             [showTooltip]="true"
             control="delegacionMunicipio"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <ngx-select
             [data]="state"
             bindLabel="descCondition"
@@ -358,6 +363,14 @@
             control="entidadFederativa"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field [control]="form.get('giro')" label="Giro">
+            <input
+              class="form-control"
+              formControlName="giro"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('referencia')" label="Referencia">
             <input
               class="form-control"
@@ -365,13 +378,8 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('giro')" label="Giro">
-            <input
-              class="form-control"
-              formControlName="giro"
-              [readonly]="true" />
-          </form-field>
+        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+          <hr class="row" />
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-check label="Con Remoci&oacute;n" for="remocion">
@@ -391,15 +399,18 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
             <input class="form-control" [readonly]="true" />
           </form-field>
         </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <h5 class="text-center">Acuerdo Junta de Gobierno</h5>
+        </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('fechaAcuerdo')"
-            label="Fecha Acuerdo">
+            label="Fecha Acuerdo Junta de Gobierno">
             <input
               class="form-control"
               formControlName="fechaAcuerdo"
@@ -408,12 +419,17 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 p-2">
-          <form-field [control]="form.get('noAcuerdo')" label="No&#46; Acuerdo">
+          <form-field
+            [control]="form.get('noAcuerdo')"
+            label="No&#46; Acuerdo Junta de Gobierno">
             <input
               class="form-control"
               formControlName="noAcuerdo"
               [readonly]="true" />
           </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+          <hr class="row" />
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
@@ -442,7 +458,7 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('fechapage')" label="Fecha page">
+          <form-field [control]="form.get('fechapage')" label="Fecha Inicio">
             <input
               class="form-control"
               formControlName="fechapage"

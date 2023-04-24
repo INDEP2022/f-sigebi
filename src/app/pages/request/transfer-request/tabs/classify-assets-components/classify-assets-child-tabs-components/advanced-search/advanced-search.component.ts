@@ -132,6 +132,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
   clean(): void {
     this.searchForm.reset();
     this.paragraphs = [];
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.totalItems = 0;
   }
 

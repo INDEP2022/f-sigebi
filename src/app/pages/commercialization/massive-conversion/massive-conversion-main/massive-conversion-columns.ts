@@ -13,8 +13,11 @@ export const DATA_COLUMNS = {
     title: 'Lote',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (_cell: any, item: any) => {
+      return item?.comerLots?.lotPublic;
+    },
   },
-  clientId: {
+  customerId: {
     title: 'Id Cliente',
     type: 'number',
     sort: false,
@@ -23,6 +26,9 @@ export const DATA_COLUMNS = {
     title: 'R.F.C.',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (_cell: any, item: any) => {
+      return item?.comerClient?.rfc;
+    },
   },
   amount: {
     title: 'Monto $',
@@ -39,7 +45,7 @@ export const DATA_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  checkBank: {
+  bankExpCheck: {
     title: 'Banco Exp. Cheque',
     type: 'string',
     sort: false,
@@ -48,31 +54,68 @@ export const DATA_COLUMNS = {
     title: 'Estatus',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, _row: any) => {
+      if (cell == 1) return 'LC GENERADA';
+      if (cell == 0) return 'SOLICITADA';
+      return '';
+    },
   },
   observations: {
     title: 'Observaciones',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (_cell: any, item: any) => {
+      let observation = '';
+      if (!item.customerId) {
+        observation += 'No se ingreso el cliente. ';
+      }
+      if (!item.batchId) {
+        observation += 'No se ingreso el lote. ';
+      }
+      if (!item.comerClient == null) {
+        observation += 'El ID Cliente no Existe. ';
+      }
+
+      if (!item.comerLots == null) {
+        observation += 'El ID Lote no Existe. ';
+      }
+
+      if (!item.amount) {
+        observation += 'No se ingreso el monto. ';
+      }
+
+      if (!item.validityDate) {
+        observation += 'No se ingreso la fecha de vigencia. ';
+      }
+      if (!item.checkNumber) {
+        observation += 'No se ingreso el número de cheque. ';
+      }
+      if (!item.bankExpCheck) {
+        observation += 'No se ingreso el Expide. Cheque. ';
+      }
+      // console.log({ observation });
+      return observation;
+    },
   },
 };
 
 export const LCS_COLUMNS = {
-  id: {
+  idlcg: {
     title: 'Id Lcg',
     type: 'number',
     sort: false,
   },
-  eventId: {
+  idEvent: {
     title: 'Id Evento',
     type: 'number',
     sort: false,
   },
-  batchId: {
+  idBatch: {
     title: 'Id Lote',
     type: 'number',
     sort: false,
   },
-  clientId: {
+  idCustomer: {
     title: 'Id Cliente',
     type: 'number',
     sort: false,
@@ -82,17 +125,17 @@ export const LCS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  gsaeRef: {
+  refGsae: {
     title: 'Ref. Gsae',
     type: 'string',
     sort: false,
   },
-  gbankRef: {
+  refGbank: {
     title: 'Ref. Gbanco',
     type: 'number',
     sort: false,
   },
-  validityDate: {
+  dateValidity: {
     title: 'Fecha Videncia',
     type: 'string',
     sort: false,
@@ -102,17 +145,17 @@ export const LCS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registerDate: {
+  dateRecord: {
     title: 'Fecha Registro',
     type: 'string',
     sort: false,
   },
-  checkBank: {
+  bankExpCheck: {
     title: 'Banco Exp. Cheque',
     type: 'string',
     sort: false,
   },
-  checkNumber: {
+  numberCheck: {
     title: 'N° Cheque',
     type: 'number',
     sort: false,

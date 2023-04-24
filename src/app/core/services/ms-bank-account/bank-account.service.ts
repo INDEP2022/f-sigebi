@@ -3,7 +3,7 @@ import { Params } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { Repository } from 'src/app/common/repository/repository';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IBankAccount } from '../../models/catalogs/bank-account.model';
 
@@ -28,6 +28,10 @@ export class BankAccountService
     );
   }
 
+  getCveBank(_params: _Params): Observable<IListResponse<IBankAccount>> {
+    return this.get<IListResponse<IBankAccount>>(`${this.api}`, _params);
+  }
+
   getById(accountNumber: Object): Observable<IBankAccount> {
     return this.post<IBankAccount>(`${this.api}/find-by-ids`, accountNumber);
   }
@@ -47,4 +51,6 @@ export class BankAccountService
   remove(id: string | number): Observable<Object> {
     return this.repository.remove(`${this.microservice}/${this.api}`, id);
   }
+
+  //***** */
 }

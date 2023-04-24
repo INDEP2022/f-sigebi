@@ -44,6 +44,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() placeholder: string = '';
   @Input() data = new DefaultSelect<T>();
   @Input() multiple: boolean = false;
+  @Input() addTag: boolean = false;
   @Input() loading: boolean = false;
   @Input() closeOnSelect: boolean = true;
   @Input() maxSelectedItems: number;

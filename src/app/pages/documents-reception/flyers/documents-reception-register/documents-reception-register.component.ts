@@ -90,7 +90,9 @@ import {
 } from './interfaces/columns';
 import {
   DocuentsReceptionRegisterFormChanges,
+  DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_DEFAULT_VALUES,
   DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM,
+  DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_DEFAULT_VALUES,
   DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM,
   DOCUMENTS_RECEPTION_REGISTER_FORM,
   DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES,
@@ -170,6 +172,7 @@ export class DocumentsReceptionRegisterComponent
   loadingPostCapture: boolean = false;
   formLoading: boolean = false;
   captureAfterSave: boolean = false;
+  procedureOfficeKey: string = '';
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -340,7 +343,14 @@ export class DocumentsReceptionRegisterComponent
         this.documentsReceptionForm.patchValue(
           DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
         );
-        this.reprocessFlag = true;
+        this.flyerCopyRecipientForm.patchValue(
+          DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_DEFAULT_VALUES
+        );
+        this.flyerCopyCppForm.patchValue(
+          DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_DEFAULT_VALUES
+        );
+        this.formControls.externalOfficeDate.enable();
+        //this.reprocessFlag = true;
         this.setDefaultValues();
         this.setInitialConditions();
         this.checkPgrGoods();
@@ -350,6 +360,7 @@ export class DocumentsReceptionRegisterComponent
         this.documentsReceptionForm.patchValue(
           DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
         );
+        this.formControls.externalOfficeDate.enable();
         this.setDefaultValues();
         this.selectFlyer();
       } else if (Object.keys(this.pageParams).length == 0) {
@@ -379,6 +390,12 @@ export class DocumentsReceptionRegisterComponent
       // );
       this.documentsReceptionForm.patchValue(
         DOCUMENTS_RECEPTION_REGISTER_FORM_DEFAULT_VALUES
+      );
+      this.flyerCopyRecipientForm.patchValue(
+        DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_DEFAULT_VALUES
+      );
+      this.flyerCopyCppForm.patchValue(
+        DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_DEFAULT_VALUES
       );
       this.reprocessFlag = true;
       this.setDefaultValues();
@@ -663,6 +680,7 @@ export class DocumentsReceptionRegisterComponent
     } = procedure;
     affairType = Number(affairType);
     typeManagement = Number(typeManagement);
+    this.procedureOfficeKey = officeNumber;
     this.updateGlobalVars('vTipoTramite', typeManagement);
     if (affairType == 5) {
       this.initialCondition = 'T';
@@ -701,7 +719,11 @@ export class DocumentsReceptionRegisterComponent
       this.docRegisterService
         .getDynamicTables(1, { inicio: 1, text: descentfed })
         .subscribe({
-          next: data => this.formControls.entFedKey.setValue(data.data[0]),
+          next: data => {
+            this.formControls.entFedKey.setValue(data.data[0]);
+            console.log(this.formControls.entFedKey.value);
+            this.getCities({ page: 1, text: '' });
+          },
           error: () => {},
         });
     }
@@ -867,7 +889,7 @@ export class DocumentsReceptionRegisterComponent
         error: () => {},
       });
       this.destinationAreaChange();
-      this.formLoading = true;
+      this.formLoading = false;
     }
     if (typeManagement == 3) {
       this.formControls.wheelType.setValue('P');
@@ -1201,6 +1223,11 @@ export class DocumentsReceptionRegisterComponent
       // this.formControls.touchPenaltyKey.updateValueAndValidity();
       this.formControls.indiciadoNumber.addValidators(Validators.required);
       this.formControls.indiciadoNumber.updateValueAndValidity();
+      this.docRegisterService.getIdentifier('ASEG').subscribe({
+        next: data => {
+          this.formControls.identifier.setValue(data);
+        },
+      });
     } else {
       // this.formControls.circumstantialRecord.clearValidators();
       // this.formControls.circumstantialRecord.updateValueAndValidity();
@@ -2620,6 +2647,10 @@ export class DocumentsReceptionRegisterComponent
       transference: this.formControls.transference.value?.id,
       captureDate: format(new Date(), 'yyyy-MM-dd'),
       entryProcedureDate: format(new Date(), 'yyyy-MM-dd'),
+      officeExternalKey: this.formControls.officeExternalKey.value.substring(
+        0,
+        34
+      ),
     };
     if (typeof formData.receiptDate == 'string') {
       formData.receiptDate = format(
@@ -2679,6 +2710,7 @@ export class DocumentsReceptionRegisterComponent
       // delete formData.reserved;
     }
     this.formData = formData as IDocumentsReceptionData;
+    this.formControls.officeExternalKey.setValue(formData.officeExternalKey);
     console.log(this.formData);
   }
 
@@ -2705,7 +2737,9 @@ export class DocumentsReceptionRegisterComponent
       otherErrors,
       this.reprocessFlag,
       this.documentsReceptionForm.invalid,
-      this.documentsReceptionForm.value
+      this.flyerCopyRecipientForm.invalid,
+      this.documentsReceptionForm.value,
+      this.flyerCopyRecipientForm.value
     );
     let errorMsg: string = '';
     if (requiredErrors > 0) errorMsg = 'Complete todos los campos requeridos.';
@@ -4149,9 +4183,10 @@ export class DocumentsReceptionRegisterComponent
       pIndicadorSat: Number(this.globals.pIndicadorSat),
     };
     console.log(this.docDataService.goodsBulkLoadSatSaeParams);
-    const officeExternalKey = encodeURIComponent(
-      this.formData.officeExternalKey
-    );
+    let officeExternalKey = encodeURIComponent(this.formData.officeExternalKey);
+    if (this.procedureOfficeKey.length > 34) {
+      officeExternalKey = encodeURIComponent(this.procedureOfficeKey);
+    }
     const expedientTransferenceNumber = encodeURIComponent(
       this.formData.expedientTransferenceNumber
     );
@@ -4183,10 +4218,13 @@ export class DocumentsReceptionRegisterComponent
       pAvPrevia: this.formData.officeExternalKey,
     };
     console.log(this.docDataService.goodsBulkLoadPgrSaeParams);
-    const preliminaryInquiry = encodeURIComponent(
+    let preliminaryInquiry = encodeURIComponent(
       this.formData.officeExternalKey
     );
-    const route = `/pgr/${this.formControls.expedientNumber.value}/${this.formControls.wheelNumber.value}/${preliminaryInquiry}`;
+    if (this.procedureOfficeKey.length > 34) {
+      preliminaryInquiry = encodeURIComponent(this.procedureOfficeKey);
+    }
+    const route = `/fgr/${this.formControls.expedientNumber.value}/${this.formControls.wheelNumber.value}/${preliminaryInquiry}`;
     console.log(`pages/documents-reception/goods-bulk-load${route}`);
     this.alertInfo(
       'info',

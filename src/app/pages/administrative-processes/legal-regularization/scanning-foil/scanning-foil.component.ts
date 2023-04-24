@@ -101,7 +101,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'success',
           'Generado correctamente',
-          `Se genero el Folio No ${response.id}`
+          `Se generó el Folio No ${response.id}`
         );
         this.generateFo = false;
         this.generate();

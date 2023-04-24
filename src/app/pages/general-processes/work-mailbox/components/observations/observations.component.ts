@@ -39,6 +39,12 @@ export class ObservationsComponent implements OnInit {
       ],
     });
 
+    if (
+      this.process.observation == 'null' ||
+      this.process.observation == 'undefined'
+    )
+      this.process.observation = '';
+
     this.form.patchValue(this.process);
   }
 
@@ -68,5 +74,11 @@ export class ObservationsComponent implements OnInit {
         data => this.handleSuccess(),
         error => (this.loading = false)
       );
+  }
+
+  limit(limit: number, field: string, value: string) {
+    if (String(value).length > limit) {
+      this.form.get(field).patchValue(String(value).slice(0, limit));
+    }
   }
 }

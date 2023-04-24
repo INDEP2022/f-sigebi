@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -7,40 +7,31 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './delete-period.component.html',
   styles: [],
 })
-export class DeletePeriodComponent implements OnInit {
-  form: FormGroup;
+export class DeletePeriodComponent {
+  form = new FormGroup({
+    year: new FormControl(null, Validators.required),
+    period: new FormControl(null, Validators.required),
+    delegation: new FormControl(null, Validators.required),
+    process: new FormControl(null, Validators.required),
+  });
 
   public delegations = new DefaultSelect();
-  public procesess = new DefaultSelect();
+  // public procesess = new DefaultSelect();
+  processes = [
+    { id: 1, name: 'Supervisión' },
+    { id: 2, name: 'Validación' },
+  ];
 
-  constructor(private fb: FormBuilder) {}
+  isLoading = false;
+  @Output() eventDelete = new EventEmitter();
 
-  ngOnInit(): void {
-    this.prepareForm();
+  constructor() {}
+
+  onClickDeletePeriod() {
+    this.eventDelete.emit(this.form.value);
   }
 
-  prepareForm() {
-    this.form = this.fb.group({
-      year: [null, Validators.required],
-      period: [null, Validators.required],
-      delegation: [null, Validators.required],
-      process: [null, Validators.required],
-    });
-  }
-
-  save() {
-    console.log(this.form.value);
-  }
-
-  public getDelegations(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
-  }
-
-  public getProcesess(event: any) {
-    // this.bankService.getAll(params).subscribe(data => {
-    //   this.banks = new DefaultSelect(data.data, data.count);
-    // });
+  getFormDeletePeriod() {
+    return this.form;
   }
 }

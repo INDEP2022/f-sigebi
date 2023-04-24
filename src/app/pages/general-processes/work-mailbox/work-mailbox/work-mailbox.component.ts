@@ -549,6 +549,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               case 'folioRep':
                 // FOLIO REP.
+                searchFilter = SearchFilter.EQ;
                 let valueFolioRep = VALID_VALUE_REGEXP(
                   filter.search,
                   NUM_POSITIVE,
@@ -811,6 +812,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       }
     }
 
+    field = `filter.count`;
+    if (this.pendientesF.value) {
+      this.columnFilters[field] = `$eq:0`;
+    } else {
+      delete this.columnFilters[field];
+    }
+
     let isSegAreas = false;
     field = `filter.turnadoiUser`;
     if (this.verTramiteG.value && user !== null) {
@@ -864,11 +872,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.getData();
     }
 
-    //TODO:VALIDAR CAMPO ESCANEADO
-    field = `filter.count`;
-    if (this.pendientesF.value) {
-      this.columnFilters[field] = `$eq:0`;
-    }
     //Filtros por columna
     /**BLK_CTR_CRITERIOS.CHK_FILTROS_PREDEFINIDOS = 'S'**/
     /*:BLK_CTR_CRITERIOS.TIPO_ASUNTO IN (1,2,3,4,5)*/
@@ -940,12 +943,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const token = this.authService.decodeToken();
       let userId = token.preferred_username;
       this.columnFilters[field] = `$eq:${userId.toUpperCase()}`;
-      if (this.managementAreaF.value !== null) {
+
+      /*if (this.managementAreaF.value !== null) {
         let managementArea = this.managementAreaF.value;
         this.columnFilters[
           'filter.processStatus'
         ] = `$ilike:${managementArea.id}`;
-      }
+      }*/
+
       //this.columnFilters[field] = `${userId.toUpperCase()}`;
       //this.columnFilters[searchBy] = `turnadoiUser`;
     } /* else {
@@ -992,7 +997,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   selectEvent(e: any) {
-    this.showPGRDocs, this.showScan, (this.showValDoc = false);
+    this.showPGRDocs = false;
+    this.showScan = false;
+    this.showValDoc = false;
     //console.log(e);
     //console.log(e.data);
 
@@ -1243,21 +1250,45 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  setDefaultValuesByArea(area: IManagementArea, user: any) {
-    //console.log({ area, user });
+  setDefaultValuesByArea(
+    area: IManagementArea,
+    user: any,
+    haveAreas?: boolean
+  ) {
     //this.filterForm.controls['managementArea'].setValue(area);
     const params = new FilterParams();
-    params.addFilter('managementArea', area.id);
+
     params.addFilter('user', user.id);
+    if (!haveAreas) params.addFilter('managementArea', area.id);
+
     this.getAllManagementGroupAreas(params).subscribe(response => {
-      const group = response.data[0];
-      if (group) {
-        this.groupNumber = group.groupNumber;
-        this.managementArea = group.managementArea;
-        this.predetermined = group.predetermined;
-        this.send = group.send;
-        this.turnar = group.turnar;
-        this.watch = group.watch;
+      if (haveAreas) {
+        const groups = response.data;
+        let predeterminedA = groups.filter(area => area.predetermined == 'S');
+        if (predeterminedA.length > 0) {
+          let defaultArea = this.areas$.data.filter(
+            area => area.id == predeterminedA[0].managementArea
+          );
+          this.filterForm.controls['managementArea'].setValue(defaultArea[0]);
+          this.buildFilters();
+        } else {
+          this.buildFilters();
+          this.onLoadToast(
+            'info',
+            'Sin área predeterminada',
+            'Este usuario no cuenta con un área predeterminada'
+          );
+        }
+      } else {
+        const group = response.data[0];
+        if (group) {
+          this.groupNumber = group.groupNumber;
+          this.managementArea = group.managementArea;
+          this.predetermined = group.predetermined;
+          this.send = group.send;
+          this.turnar = group.turnar;
+          this.watch = group.watch;
+        }
       }
     });
   }
@@ -1271,7 +1302,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           return throwError(() => error);
         }),
         tap(resp => {
-          //console.log(resp);
           this.areas$ = new DefaultSelect(resp.data, resp.count);
           //if (resp.data.length > 0)
           //this.filterForm.controls['managementArea'].setValue(resp.data[0]);
@@ -1308,16 +1338,21 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             if (areas.length > 0) {
               params.addFilter('id', areas.join(','), SearchFilter.IN);
             }
-            this.buildFilters();
             return this.getAreas(params);
           })
         )
         .subscribe({
-          next: () => {},
+          next: () => {
+            this.setDefaultValuesByArea(null, user, true);
+          },
           error: error => {
             this.buildFilters();
             this.areas$ = new DefaultSelect();
             this.filterForm.controls['managementArea'].setValue(null);
+            /*this.onLoadToast(
+              'info',
+              'Sin áreas asignadas',
+              'Este usuario no cuenta con  áreas asignadas')*/
           },
         });
     } else {
@@ -1496,6 +1531,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   determinateDocuments() {
+    if (this.selectedRow.count > 0) {
+      this.showPGRDocs = false;
+      this.showValDoc = false;
+      this.showScan = true;
+      return;
+    }
     const typeManagement = this.selectedRow.typeManagement;
     if (typeManagement == 3) {
       this.type = 'PGR';
@@ -1506,7 +1547,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.satDocs();
     } else {
       this.showScan = true;
-      this.showPGRDocs, (this.showValDoc = false);
+      this.showPGRDocs = false;
+      this.showValDoc = false;
     }
   }
 
@@ -1524,7 +1566,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.satTransferService
       .getCountRegisters({ officeNumber, valid })
       .subscribe(res => {
-        //console.log(res);
+        if (res.count > 0) {
+          this.showValDoc = true;
+        } else {
+          this.showScan = true;
+        }
       });
   }
 
@@ -1590,7 +1636,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   async onCancelPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1605,27 +1651,65 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   async onSavePaperwork() {
+    console.log(this.selectedRow);
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
-    const config = {
-      ...MODAL_CONFIG,
-      initialState: {
-        callback: (refresh: boolean) => {
-          if (refresh) {
-            this.getData();
-          }
+    if (this.selectedRow.areaATurn && this.selectedRow.userATurn) {
+      const result = await this.alertQuestion(
+        'question',
+        'Utilizar datos predeterminados',
+        `¿Deseas enviar el trámite al usuario ${this.selectedRow.userATurn} 
+          y área ${this.selectedRow.areaATurn}?`,
+        `Enviar`,
+        `Buscar`
+      );
+
+      if (result.isConfirmed) {
+        const params = new FilterParams();
+        params.addFilter('managementArea', this.selectedRow.areaATurn);
+        params.addFilter('user', this.selectedRow.userATurn);
+        this.savePaperwork('2').subscribe();
+      } else {
+        const config = {
+          ...MODAL_CONFIG,
+          initialState: {
+            callback: (refresh: boolean) => {
+              if (refresh) {
+                this.getData();
+              }
+            },
+            selectedRow: this.selectedRow,
+          },
+        };
+        const modalRef = this.modalService.show(
+          SaveModalMailboxComponent,
+          config
+        );
+      }
+    } else {
+      const config = {
+        ...MODAL_CONFIG,
+        initialState: {
+          callback: (refresh: boolean) => {
+            if (refresh) {
+              this.getData();
+            }
+          },
+          selectedRow: this.selectedRow,
         },
-        selectedRow: this.selectedRow,
-      },
-    };
-    const modalRef = this.modalService.show(SaveModalMailboxComponent, config);
+      };
+      const modalRef = this.modalService.show(
+        SaveModalMailboxComponent,
+        config
+      );
+    }
   }
 
   async onFinishPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1639,38 +1723,38 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  // savePaperwork(option: string) {
-  //   const { processNumber, areaATurn, userATurn } = this.selectedRow;
-  //   let body;
-  //   if (option === '1') {
-  //     body = {
-  //       status: this.managementAreaF.value.id + 'I',
-  //       userTurned: this.user.value.id,
-  //       situation: 1,
-  //     };
-  //   } else {
-  //     body = {
-  //       status: areaATurn + 'I',
-  //       userTurned: userATurn,
-  //       situation: 1,
-  //     };
-  //   }
+  savePaperwork(option: string) {
+    const { processNumber, areaATurn, userATurn } = this.selectedRow;
+    let body;
+    if (option === '1') {
+      body = {
+        status: this.managementAreaF.value.id + 'I',
+        userTurned: this.user.value.id,
+        situation: 1,
+      };
+    } else {
+      body = {
+        status: areaATurn + 'I',
+        userTurned: userATurn,
+        situation: 1,
+      };
+    }
 
-  //   return this.procedureManagementService.update(processNumber, body).pipe(
-  //     catchError(error => {
-  //       this.onLoadToast(
-  //         'error',
-  //         'Error',
-  //         'Ocurrio un error al enviar el trámite'
-  //       );
-  //       return throwError(() => error);
-  //     }),
-  //     tap(() => {
-  //       this.onLoadToast('success', 'El trámite se envío correctamente', '');
-  //       this.getData();
-  //     })
-  //   );
-  // }
+    return this.procedureManagementService.update(processNumber, body).pipe(
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al enviar el trámite'
+        );
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.onLoadToast('success', 'El trámite se envío correctamente', '');
+        this.getData();
+      })
+    );
+  }
 
   cancelPaperwork() {
     const { processNumber, turnadoiUser } = this.selectedRow;
@@ -1725,7 +1809,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.alert(
         'info',
         'Aviso',
-        'El Oficio no tiene volante relacionado, sólo se visualizaran los documentos'
+        'El Oficio no tiene volante relacionado, sólo se visualizarán los documentos'
       );
       let config = {
         class: 'modal-lg modal-dialog-centered',
@@ -1879,10 +1963,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.alert(
         'info',
         'Aviso',
-        'El Oficio tiene No. Volante relacionado, se generarán los documentos.'
+        'El Oficio tiene No. Volante relacionado, se guardarán los documentos.'
       );
       this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
         next: () => {
+          this.getData();
           let config = {
             class: 'modal-lg modal-dialog-centered',
             initialState: {
@@ -1916,7 +2001,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   validDoc() {
-    this.getValidDocParamter().subscribe();
+    const { flierNumber, proceedingsNumber, officeNumber } = this.selectedRow;
+    let config = {
+      class: 'modal-lg modal-dialog-centered',
+      initialState: {
+        pgrOffice: officeNumber,
+      },
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PgrFilesComponent, config);
   }
 
   getValidDocParamter() {
@@ -2266,6 +2359,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       startDate: [null],
       endDate: [null],
     });
+    this.priority$ = null;
     this.filterForm.updateValueAndValidity();
     //console.log(this.filterForm.value);
     let field = `filter.processEntryDate`;
@@ -2353,7 +2447,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else {
       this.alertQuestion(
         'info',
-        'No ha seleccionao ningún registro',
+        'No ha seleccionado ningún registro',
         'Por favor seleccione un registro, para poder ejecutar la acción'
       );
     }

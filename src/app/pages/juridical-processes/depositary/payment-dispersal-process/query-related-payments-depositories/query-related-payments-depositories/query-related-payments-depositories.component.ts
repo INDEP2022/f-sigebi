@@ -2,7 +2,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ISendSirSaeBody } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { QueryRelatedPaymentsService } from '../services/query-related-payments.service';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -151,7 +153,13 @@ export class QueryRelatedPaymentsDepositoriesComponent
   public formDepositario: FormGroup;
   public noBienReadOnly: number = null;
 
-  constructor(private fb: FormBuilder, private activateRoute: ActivatedRoute) {
+  sendSirsae: ISendSirSaeBody;
+
+  constructor(
+    private fb: FormBuilder,
+    private activateRoute: ActivatedRoute,
+    private svQueryRelatedPaymentsService: QueryRelatedPaymentsService
+  ) {
     super();
   }
 
@@ -192,8 +200,10 @@ export class QueryRelatedPaymentsDepositoriesComponent
     console.log('Exportar Excel');
   }
 
+  // MS http://sigebimsqa.indep.gob.mx/depositarypayment/api/v1/application/sendSirsae
   btnEnviarSIRSAE(): any {
     console.log('Envíar a SIRSAE');
+    this.svQueryRelatedPaymentsService.sendSirsae(this.sendSirsae);
   }
 
   btnImprimir(): any {

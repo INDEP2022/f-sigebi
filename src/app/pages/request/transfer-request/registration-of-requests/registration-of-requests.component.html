@@ -47,7 +47,6 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          [disabled]="registRequestForm.invalid"
           (click)="confirm()">
           <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
         </button>
@@ -165,6 +164,7 @@
                 <!-- Registro de Solicitudes o bines -->
                 <app-request-record-tab
                   *ngIf="requestRegistration"
+                  [pgr]="pgr"
                   [requestForm]="registRequestForm"></app-request-record-tab>
                 <!-- Fin -->
                 <!-- cumplimiento de verificacion y clasificacion de bienes-->
@@ -208,7 +208,9 @@
                 <app-clarifications
                   [requestObject]="requestData"
                   *ngIf="validateDocument"
-                  [process]="process"></app-clarifications>
+                  [process]="process"
+                  [question]="question"
+                  (response)="getResponse($event)"></app-clarifications>
                 <!-- fin -->
                 <!-- notificar aclaraciones o improcedencias -->
                 <app-notification-assets-tab

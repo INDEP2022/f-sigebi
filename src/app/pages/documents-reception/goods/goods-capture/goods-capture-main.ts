@@ -199,6 +199,16 @@ export class GoodsCaptureMain extends BasePage {
   amountChange() {
     const amountControl = this.formControls.cantidad;
     const goodClasifNum = this.formControls.noClasifBien.value;
+    if (
+      amountControl.value != 1 &&
+      CASH_CODES.find(clasifNum => clasifNum === goodClasifNum)
+    ) {
+      this.onLoadToast(
+        'info',
+        'Aviso',
+        'Para este clasificador la cantidad permitida es 1'
+      );
+    }
     if (CASH_CODES.find(clasifNum => clasifNum === goodClasifNum)) {
       amountControl.setValue(1);
     }
@@ -734,14 +744,6 @@ export class GoodsCaptureMain extends BasePage {
       this.setFieldsNull(fieldsToNull);
     }
   }
-  goodSssubtypeChange(sssubtype: IGoodSssubtype) {
-    if (!this.formControls.noClasifBien.value) {
-      this.formControls.noClasifBien.setValue(sssubtype.numClasifGoods);
-      return;
-    }
-    this.formControls.noClasifBien.setValue(sssubtype.numClasifGoods);
-    this.getGoodFeaturesByClasif(sssubtype.numClasifGoods).subscribe();
-  }
 
   goodSubtypeChange() {
     if (!this.formControls.noClasifBien.value) {
@@ -836,6 +838,7 @@ export class GoodsCaptureMain extends BasePage {
   }
 
   getGoodFeaturesByClasif(clasifNum: number) {
+    console.log('llego');
     return this.goodsCaptureService.getGoodFeatures(clasifNum).pipe(
       tap(response => {
         this.goodFeatures = response.data.sort(

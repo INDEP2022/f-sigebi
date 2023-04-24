@@ -9,7 +9,8 @@
           <form-field [control]="form.get('observation')" label="Observaciones">
             <textarea
               class="form-control"
-              formControlName="observation"></textarea>
+              formControlName="observation"
+              (ngModelChange)="limit(1000, 'observation', $event)"></textarea>
           </form-field>
         </div>
       </div>

@@ -7,6 +7,7 @@ export interface IGoodStatusProcess {
 export interface IGoodScreenACtionStatusProcess extends IGoodStatusProcess {
   screenKey: string;
   action: string;
+  user: string;
 }
 
 export interface IGoodStatusFinalProcess {

@@ -6,7 +6,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
 @Injectable()
 export class RegistrationHelper extends BasePage {
   requestData: IRequest = {};
@@ -392,6 +391,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.model === null) {
+              //modelo
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -400,6 +400,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.axesNumber === null) {
+              //numero de ejes
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -408,6 +409,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.engineNumber === null) {
+              //numero de motor
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -424,6 +426,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } */ else if (good.theftReport === null) {
+              //reporte de robos
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -432,6 +435,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.serie === null) {
+              // serie
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -440,6 +444,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.subBrand === null) {
+              //sub marca
               tipoRelVehiculo = true;
               this.message(
                 'error',
