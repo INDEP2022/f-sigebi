@@ -117,6 +117,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   async confirm() {
+    //Crea la notificacion
     this.loader.load = true;
     const user: any = this.authService.decodeToken();
     let clarification = this.clarificationForm.getRawValue();

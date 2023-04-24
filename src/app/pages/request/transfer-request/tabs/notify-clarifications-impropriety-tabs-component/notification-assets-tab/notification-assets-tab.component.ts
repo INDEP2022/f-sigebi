@@ -992,11 +992,7 @@ export class NotificationAssetsTabComponent
         if (this.selectedRow.chatClarification == null) {
           this.message('Aviso', 'Aún no hay una respuesta del SAT');
         } else {
-          if (this.selectedRow.chatClarification.satClarification == null) {
-            this.message('Aviso', 'Aún no hay una respuesta del SAT');
-          } else {
-            this.updateChatClarificationsTmp();
-          }
+          this.updateChatClarificationsTmp();
         }
       }
     }
@@ -1004,11 +1000,14 @@ export class NotificationAssetsTabComponent
 
   updateChatClarificationsTmp() {
     //Cambiar estado a ChatClarifications
+
     const refuseObj = { ...this.valuesNotifications };
+    const respuesta = `RESPUESTA DEL SAT ${refuseObj.chatClarification.id}`;
     const modelChatClarifications: IChatClarifications = {
       id: Number(refuseObj.chatClarification.idClarification), //ID primaria /Esta propiedad es importante, se le debe asignar a bienes_recha_notif_aclara
       requestId: Number(refuseObj.chatClarification.id),
       goodId: refuseObj.chatClarification.idProperty,
+      satClarify: respuesta,
       //clarifiNewsRejectId: Number(this.refuseObj.chatClarification.clarificationDate), //Establecer ID de bienes_recha_notif_aclara
       clarificationStatus: 'ACLARADO', //Este estado cambia cuando se manda a guardar el formulario, tanto largo como corto
     };
