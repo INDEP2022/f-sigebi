@@ -266,7 +266,6 @@ export class GeneralDocumentsFormComponent
       },
       error: error => {
         this.loading = false;
-        console.log(error);
       },
     });
   }
@@ -341,7 +340,6 @@ export class GeneralDocumentsFormComponent
 
   associateRequestAndExpedient(expedient: any) {
     var request = { id: this.requestId, recordId: expedient.recordId };
-    this.updateStateRequestTab();
     if (this.requestId) {
       this.alertMessage(request);
     }
@@ -408,6 +406,12 @@ export class GeneralDocumentsFormComponent
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
+        this.onLoadToast(
+          'success',
+          'Expediente relacionado a la solicitud correctamente',
+          ''
+        );
+        this.updateStateRequestTab();
         this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             if (resp.stateCode != null) {
@@ -428,6 +432,11 @@ export class GeneralDocumentsFormComponent
                 confirmButtonColor: '#9D2449',
               }).then(result => {
                 if (result.isConfirmed) {
+                  this.onLoadToast(
+                    'success',
+                    'Expediente asociado a la solicitud correctamente',
+                    ''
+                  );
                   this.updateStateRequestTab();
                 }
               });

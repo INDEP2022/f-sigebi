@@ -196,7 +196,6 @@ export class NotificationAssetsTabComponent
     };
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
-        console.log('data res', response);
         this.notificationsList.load(response.data);
         this.totalItems2 = response.count;
         this.formLoading = false;
@@ -207,14 +206,7 @@ export class NotificationAssetsTabComponent
 
   notifyAssetRowSelected(event: any) {
     this.valuesNotifications = event.data;
-    console.log(
-      'Información de la notificación seleccionada',
-      this.valuesNotifications
-    );
     const refuseObj = { ...this.valuesNotifications };
-    //let idRefuse = refuseObj.rejectNotificationId;
-    //console.log("ID del rechazo", idRefuse)
-    //verificar cuantas aclaraciones se pueden seleccionar para aceptarlas
     this.dataNotificationSelected = event.data as IClarificationGoodsReject;
     this.notifyAssetsSelected = event.selected;
     this.valueGood = event.data.goodId;
@@ -259,21 +251,23 @@ export class NotificationAssetsTabComponent
         ''
       );
     } else {
-      let aclarados: boolean = true;
+      let aclarados: boolean = false;
       this.goodsReject.map(item => {
-        console.log(item);
-        if (item.clarificationstatus != 'ACLARADO') {
-          if (item.clarificationstatus != 'CANCELADO') {
-            aclarados = false;
-          }
+        if (
+          item.clarificationstatus == 'ACLARADO' ||
+          item.clarificationstatus == 'CANCELADO'
+        ) {
+          aclarados = true;
+        } else {
+          this.onLoadToast(
+            'info',
+            'Aun se tienen notificaciones pendientes por aclarar',
+            ''
+          );
         }
-
-        if (aclarados) {
-          console.log('FALTAN');
-        }
-        /*if (
-          items.clarificationstatus == 'ACLARADO' ||
-          items.clarificationstatus == 'CANCELADO'
+        if (
+          item.clarificationstatus == 'ACLARADO' ||
+          item.clarificationstatus == 'CANCELADO'
         ) {
           this.alertQuestion(
             'warning',
@@ -291,7 +285,7 @@ export class NotificationAssetsTabComponent
             'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
             ''
           );
-        }  */
+        }
       });
     }
   }
@@ -346,11 +340,6 @@ export class NotificationAssetsTabComponent
     if (this.rowSelected == false) {
       this.message('Error', 'Seleccione notificación a aceptar');
     } else {
-      console.log(
-        'id tipo aclaración seleccionado',
-        this.selectedRow.clarification.type
-      );
-
       if (this.selectedRow.clarification.type < 1) {
         this.message('Error', 'Seleccione almenos un registro!');
         return;
@@ -398,15 +387,14 @@ export class NotificationAssetsTabComponent
         idRequest: this.idRequest,
         callback: (next: boolean) => {
           if (next) {
-            //this.selectedRow.answered = 'EN';
             this.notificationsList.getElements().then(data => {
               data.map((item: ClarificationGoodRejectNotification) => {
                 if (
                   item.rejectNotificationId ==
                   this.selectedRow.rejectNotificationId
                 ) {
-                  item.answered = 'EN ACLARACION';
-                  item.chatClarification.clarificationStatus = 'A_ACLARACION';
+                  //item.answered = 'EN ACLARACION';
+                  //item.chatClarification.clarificationStatus = 'A_ACLARACION';
                 }
               });
               this.notificationsList.refresh();
@@ -421,11 +409,6 @@ export class NotificationAssetsTabComponent
       NotifyAssetsImproprietyFormComponent,
       config
     );
-
-    /*  this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
-      console.log(res);
-      this.requestForm.get('receiUser').patchValue(res.user);
-    }); */
   }
   //Respuesta del SAT
   satAnswer() {
@@ -529,9 +512,7 @@ export class NotificationAssetsTabComponent
   }
 
   reloadData() {
-    console.log('Prueba');
     this.columns.map(item => {
-      console.log('item', item);
       this.paramsReload.getValue()['filter.goodId'] = item.goodid;
       this.rejectedGoodService
         .getAllFilter(this.paramsReload.getValue())
@@ -618,10 +599,8 @@ export class NotificationAssetsTabComponent
   }
 
   saveDocumentResponse(notify: ClarificationGoodRejectNotification) {
-    console.log(notify);
     this.requestService.getById(this.idRequest).subscribe({
       next: data => {
-        console.log(data);
         const docInfo = {
           xdelegacionRegional: data?.regionalDelegationId,
           xcontribuyente: data?.indicatedTaxpayer,
@@ -636,8 +615,6 @@ export class NotificationAssetsTabComponent
           xnombreProceso: 'Notificar Aclaraciones',
           xtipoDocumento: 105,
         };
-
-        console.log('genera doc', docInfo);
       },
     });
     /*this.columns.map(item => {
@@ -727,13 +704,11 @@ export class NotificationAssetsTabComponent
   validateStatusAclaration() {
     this.data.getElements().then(data => {
       data.map((item: IGoodresdev) => {
-        console.log('aclaraciones', item);
         this.paramsReject.getValue()['filter.goodId'] = item.goodid;
         this.rejectedGoodService
           .getAllFilter(this.paramsReject.getValue())
           .subscribe({
             next: response => {
-              console.log('Notificaciones', response);
               response.data.map(async notify => {
                 if (notify.clarificationType == 'SOLICITAR_ACLARACION') {
                   //if (notify.answered != 'CONTESTADO') {
@@ -782,12 +757,6 @@ export class NotificationAssetsTabComponent
     typeOrigin?: string
   ) {
     if (typeOrigin == 'SOL_TRANSFERENCIA') {
-      console.log('bien', idGood);
-      console.log('status good', statusGood);
-      console.log('status process', statusProcess);
-      console.log('idGoodResDev', idGoodResDev);
-      console.log('fecha', new Date());
-
       if (statusGood) {
         const good: IGood = {
           id: idGood,
@@ -803,23 +772,26 @@ export class NotificationAssetsTabComponent
             console.log(error);
           },
         });
-      } else {
+      }
+
+      if (statusGood == null) {
         const good: IGood = {
           id: idGood,
           goodId: idGood,
           processStatus: statusProcess,
         };
-        this.goodService.update(good).subscribe({
+        console.log('actualizado', good);
+        /*this.goodService.update(good).subscribe({
           next: data => {
             console.log('Bien actualizado', data);
           },
           error: error => {
             console.log(error);
           },
-        });
+        }); */
       }
 
-      if (statusProcess) {
+      /*if (statusProcess) {
         const good: IGood = {
           id: idGood,
           goodId: idGood,
@@ -834,7 +806,9 @@ export class NotificationAssetsTabComponent
             console.log(error);
           },
         });
-      } else {
+      } 
+
+      if (statusProcess == null) {
         const good: IGood = {
           id: idGood,
           goodId: idGood,
@@ -849,7 +823,7 @@ export class NotificationAssetsTabComponent
             console.log(error);
           },
         });
-      }
+      } */
 
       /**/
     } else if (typeOrigin == 'DOC_COMPLEMENTARIA') {
