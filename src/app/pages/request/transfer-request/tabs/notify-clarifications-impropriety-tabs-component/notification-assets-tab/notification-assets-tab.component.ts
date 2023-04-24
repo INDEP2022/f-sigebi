@@ -387,6 +387,7 @@ export class NotificationAssetsTabComponent
         idRequest: this.idRequest,
         callback: (next: boolean) => {
           if (next) {
+            this.checkStatusAclaration();
             this.notificationsList.getElements().then(data => {
               data.map((item: ClarificationGoodRejectNotification) => {
                 if (
@@ -410,6 +411,17 @@ export class NotificationAssetsTabComponent
       config
     );
   }
+
+  checkStatusAclaration() {
+    this.notificationsList.getElements().then(item => {
+      item.map((data: ClarificationGoodRejectNotification) => {
+        if (data.answered == 'ACLARADA' || data.answered == 'RECHAZADA') {
+          console.log('nt', data);
+        }
+      });
+    });
+  }
+
   //Respuesta del SAT
   satAnswer() {
     if (this.rowSelected == false) {
@@ -421,7 +433,6 @@ export class NotificationAssetsTabComponent
         this.message('Aviso', 'Aún no hay una respuesta del SAT');
         return;
       }
-
       let config: ModalOptions = {
         initialState: {
           idAclaracion,
