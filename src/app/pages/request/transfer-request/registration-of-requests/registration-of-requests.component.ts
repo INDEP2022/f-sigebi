@@ -759,7 +759,7 @@ export class RegistrationOfRequestsComponent
       url,
       from,
       to,
-      false,
+      true,
       this.task.id,
       user.username,
       'SOLICITUD_TRANSFERENCIA',
