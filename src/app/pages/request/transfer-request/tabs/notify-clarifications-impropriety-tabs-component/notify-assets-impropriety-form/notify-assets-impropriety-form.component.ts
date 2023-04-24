@@ -297,6 +297,7 @@ export class NotifyAssetsImproprietyFormComponent
           );
           this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
           this.openReport(data); //Falta verificar información que se envia...
+          this.modalRef.content.callback(true);
           this.loading = false;
           //this.modalRef.hide()
         },
@@ -370,7 +371,11 @@ export class NotifyAssetsImproprietyFormComponent
       .update(chatClarifications.id, modelChatClarifications)
       .subscribe({
         next: async data => {
-          this.onLoadToast('success', 'Actualizado', '');
+          this.onLoadToast(
+            'success',
+            'Notificación actualizada correctamente',
+            ''
+          );
           console.log('SE ACTUALIZÓ:', data);
           this.loading = false;
           this.updateNotify(data.clarifiNewsRejectId);
@@ -415,6 +420,7 @@ export class NotifyAssetsImproprietyFormComponent
         );
         this.loading = false;
         this.modalRef.content.callback(true, data.rejectNotificationId);
+        this.updateNotify(data.clarifiNewsRejectId);
         this.modalRef.hide();
       },
       error: error => {
@@ -533,6 +539,7 @@ export class NotifyAssetsImproprietyFormComponent
         console.log('SE CREÓ:', data);
         this.loading = false;
         this.modalRef.hide();
+        this.updateNotify(data.clarifiNewsRejectId);
       },
       error: error => {
         this.loading = false;

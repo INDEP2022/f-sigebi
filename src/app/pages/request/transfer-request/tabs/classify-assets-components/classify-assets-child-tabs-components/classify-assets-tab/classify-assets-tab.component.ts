@@ -1051,6 +1051,11 @@ export class ClassifyAssetsTabComponent
             },
             error: error => {
               console.log(error.error.message);
+              this.onLoadToast(
+                'info',
+                '',
+                'El bien no cuenta con su clasificacion del bien'
+              );
             },
           });
       } /*  else {
