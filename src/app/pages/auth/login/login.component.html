@@ -8,7 +8,7 @@
               <div class="col-7">
                 <div class="text-primary p-4">
                   <h5 class="text-primary">Bienvenido a SIGEBI</h5>
-                  <p>Inicia sesion para continuar</p>
+                  <p>Inicia sesi&oacute;n para continuar</p>
                 </div>
               </div>
               <div class="col-5 align-self-end">
@@ -69,7 +69,11 @@
                     class="btn btn-primary"
                     type="submit"
                     [disabled]="loginForm.invalid">
-                    {{ loading ? 'Iniciando Sesión' : 'Iniciar Sesión' }}
+                    {{
+                      loading
+                        ? 'Iniciando Sesi&oacute;n'
+                        : 'Iniciar Sesi&oacute;n'
+                    }}
 
                     <img
                       width="20 px"
