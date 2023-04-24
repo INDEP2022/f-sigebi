@@ -744,14 +744,6 @@ export class GoodsCaptureMain extends BasePage {
       this.setFieldsNull(fieldsToNull);
     }
   }
-  goodSssubtypeChange(sssubtype: IGoodSssubtype) {
-    if (!this.formControls.noClasifBien.value) {
-      this.formControls.noClasifBien.setValue(sssubtype.numClasifGoods);
-      return;
-    }
-    this.formControls.noClasifBien.setValue(sssubtype.numClasifGoods);
-    this.getGoodFeaturesByClasif(sssubtype.numClasifGoods).subscribe();
-  }
 
   goodSubtypeChange() {
     if (!this.formControls.noClasifBien.value) {
@@ -846,6 +838,7 @@ export class GoodsCaptureMain extends BasePage {
   }
 
   getGoodFeaturesByClasif(clasifNum: number) {
+    console.log('llego');
     return this.goodsCaptureService.getGoodFeatures(clasifNum).pipe(
       tap(response => {
         this.goodFeatures = response.data.sort(
