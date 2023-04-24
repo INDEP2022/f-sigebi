@@ -81,10 +81,11 @@ export class AppointmentsComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+    this.validGoodNumberInDepositaryAppointment(); // Buscar Bien
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: ['', Validators.required], //*
+      noBien: ['3003674', Validators.required], //*
       descriptionGood: { value: '', disabled: true }, //*
       noExpedient: { value: '', disabled: true }, //*
       averiguacionPrevia: [{ value: '', disabled: true }], //*
@@ -94,77 +95,104 @@ export class AppointmentsComponent
       fechaRecepcion: { value: '', disabled: true }, //*
       fechaDecomiso: { value: '', disabled: true }, //*
 
-      tipoNombramiento: '', //*
+      tipoNombramiento: [{ value: '', disabled: true }], //*
       ///*"Administrador, Depositaría, Interventor, Comodatarío,Bien en uso del SAE"
-      tipoDepositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      estatus: '', //* Provisional, Definitiva
-      representanteSAE: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      nombre: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      bienesMenaje: '', //* Sin Menaje, Con Menaje
+      tipoDepositaria: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      estatus: [{ value: '', disabled: true }], //* Provisional, Definitiva
+      representanteSAE: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      nombre: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      bienesMenaje: { value: '', disabled: true }, //* Sin Menaje, Con Menaje
 
-      depositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      representante: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      depositaria: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      representante: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
       calle: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       noExterno: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       noInterno: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
-      colonia: { value: null, disabled: false }, //*
-      delegacionMunicipio: { value: null, disabled: false }, //*
-      codigoPostal: { value: null, disabled: false }, //*
-      entidadFederativa: { value: null, disabled: false }, //*
+      colonia: { value: null, disabled: true }, //*
+      delegacionMunicipio: { value: null, disabled: true }, //*
+      codigoPostal: { value: null, disabled: true }, //*
+      entidadFederativa: { value: null, disabled: true }, //*
       telefono: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(PHONE_PATTERN)],
       ], //*
-      rfc: [{ value: '', disabled: false }, [Validators.pattern(RFC_PATTERN)]], //*
-      curp: [
-        { value: '', disabled: false },
-        [Validators.pattern(CURP_PATTERN)],
-      ], //*
+      rfc: [{ value: '', disabled: true }, [Validators.pattern(RFC_PATTERN)]], //*
+      curp: [{ value: '', disabled: true }, [Validators.pattern(CURP_PATTERN)]], //*
       tipoPersona: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       tipoPersona2: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       giro: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
       referencia: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
 
-      remocion: '',
-      fecha: '',
-      noOficio: '',
+      remocion: [{ value: '', disabled: true }],
+      fecha: [{ value: '', disabled: true }],
+      noOficio: [{ value: '', disabled: true }],
 
       // Acuerdo Junta de Gobierno
-      fechaAcuerdo: '',
-      noAcuerdo: '',
+      fechaAcuerdo: [{ value: '', disabled: true }],
+      noAcuerdo: [{ value: '', disabled: true }],
 
-      contraprestacion: '',
-      honorarios: ['', [Validators.pattern(STRING_PATTERN)]],
-      iva: '',
-      noNombramiento: '',
-      fechapage: '',
+      contraprestacion: [{ value: '', disabled: true }],
+      honorarios: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      iva: [{ value: '', disabled: true }],
+      noNombramiento: [{ value: '', disabled: true }],
+      fechapage: [{ value: '', disabled: true }],
 
-      anexo: ['', [Validators.pattern(STRING_PATTERN)]],
-      observaciones: ['', [Validators.pattern(STRING_PATTERN)]],
+      anexo: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observaciones: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
 
-      folioRemocion: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      folioActaDepositaria: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      folioRemocion: [
+        { value: '', disabled: true },
+        [Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      folioActaDepositaria: [
+        { value: '', disabled: true },
+        [Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
   }
 
@@ -381,9 +409,6 @@ export class AppointmentsComponent
 
   setDataDepositary() {
     this.form
-      .get('depositaria')
-      .setValue(this.depositaryAppointment.responsible);
-    this.form
       .get('representanteSAE')
       .setValue(this.depositaryAppointment.seraRepresentative);
     this.form.get('referencia').setValue(this.depositaryAppointment.reference);
@@ -397,6 +422,26 @@ export class AppointmentsComponent
 
   setDataPerson() {
     this.form
+      .get('depositaria')
+      .setValue(
+        this.depositaryAppointment.personNumber.nom_persona
+          ? this.depositaryAppointment.personNumber.nom_persona +
+            ' --- ' +
+            this.depositaryAppointment.personNumber.nombre
+            ? this.depositaryAppointment.personNumber.nombre
+            : ''
+          : '' + ' --- ' + this.depositaryAppointment.personNumber.nombre
+          ? this.depositaryAppointment.personNumber.nombre
+          : ''
+      );
+    this.form
+      .get('representante')
+      .setValue(
+        this.depositaryAppointment.personNumber.representante
+          ? this.depositaryAppointment.personNumber.representante
+          : ''
+      );
+    this.form
       .get('calle')
       .setValue(this.depositaryAppointment.personNumber.calle);
     this.form
@@ -405,18 +450,38 @@ export class AppointmentsComponent
     this.form
       .get('noInterno')
       .setValue(this.depositaryAppointment.personNumber.no_interior);
-    // this.form
-    //   .get('colonia')
-    //   .setValue(this.depositaryAppointment.personNumber.colonia);
-    // this.form
-    //   .get('delegacion_municipio')
-    //   .setValue(this.depositaryAppointment.personNumber.deleg_munic);
-    this.form
-      .get('codigoPostal')
-      .setValue(this.depositaryAppointment.personNumber.codigo_postal);
-    // this.form
-    //   .get('entidadFederativa')
-    //   .setValue(this.depositaryAppointment.personNumber.cve_entfed);
+    if (
+      this.depositaryAppointment.personNumber.codigo_postal ||
+      this.depositaryAppointment.personNumber.codigo_postal == '0'
+    ) {
+      this.postalCodeSelectValue =
+        this.depositaryAppointment.personNumber.codigo_postal;
+      this.getPostalCodeByDetail(new ListParams(), true);
+    }
+    // if (
+    //   this.depositaryAppointment.personNumber.cve_entfed ||
+    //   this.depositaryAppointment.personNumber.cve_entfed == '0'
+    // ) {
+    //   this.stateSelectValue =
+    //     this.depositaryAppointment.personNumber.cve_entfed;
+    //   this.getStateByDetail(new ListParams());
+    // }
+    // if (this.depositaryAppointment.personNumber.deleg_munic) {
+    //   this.delegationSelectValue =
+    //     this.depositaryAppointment.personNumber.deleg_munic;
+    //   let deleg = new ListParams();
+    //   deleg['search'] = this.depositaryAppointment.personNumber.deleg_munic;
+    //   deleg['text'] = this.depositaryAppointment.personNumber.deleg_munic;
+    //   this.getDelegationByDetail(deleg);
+    // }
+    // if (this.depositaryAppointment.personNumber.colonia) {
+    //   this.localitySelectValue =
+    //     this.depositaryAppointment.personNumber.colonia;
+    //   let colonia = new ListParams();
+    //   colonia['search'] = this.depositaryAppointment.personNumber.colonia;
+    //   colonia['text'] = this.depositaryAppointment.personNumber.colonia;
+    //   this.getLocalityByDetail(colonia);
+    // }
     this.form
       .get('telefono')
       .setValue(this.depositaryAppointment.personNumber.telefono);
@@ -477,6 +542,12 @@ export class AppointmentsComponent
         this.form.get('fechaDecomiso').setValue(dateConfiscate);
       }
     }
+  }
+
+  setOthers() {
+    this.form
+      .get('remocion')
+      .setValue(this.depositaryAppointment.revocation == 'S' ? true : false);
   }
 
   /**
@@ -584,6 +655,7 @@ export class AppointmentsComponent
       this.postalCodeSelectValue;
     }
   }
+
   getPostalCodeByDetail(
     paramsData: ListParams,
     setPostalCode: boolean = false
@@ -617,24 +689,6 @@ export class AppointmentsComponent
         next: data => {
           if (this.postalCodeSelectValue && !paramsData['search']) {
             this.setPostalCode(data, setPostalCode);
-            // let dataSet = data.data.find((item: any) => {
-            //   return (
-            //     Number(item.postalCode) == Number(this.postalCodeSelectValue)
-            //   );
-            // });
-            // if (dataSet) {
-            //   this.postalCodeSelectValue = dataSet.postalCode.toString();
-            //   this.postalCode = new DefaultSelect(
-            //     [dataSet].map((i: any) => {
-            //       i.township = '#' + i.postalCode + ' -- ' + i.township;
-            //       return i;
-            //     }),
-            //     1
-            //   );
-            //   this.form
-            //     .get('codigoPostal')
-            //     .setValue(Number(this.postalCodeSelectValue));
-            // }
           } else {
             if (setPostalCode) {
               this.setPostalCode(data, setPostalCode);
@@ -677,6 +731,7 @@ export class AppointmentsComponent
       );
       if (setPostalCode) {
         this.form.get('codigoPostal').setValue(this.postalCodeSelectValue);
+        this.changePostalCodeDetail(dataSet);
       }
     }
   }
