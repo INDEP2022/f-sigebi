@@ -94,7 +94,7 @@
                 <div class="col-md-4">
                   <div>
                     <label for="">Fecha de Solicitud&#58;</label>
-                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
+                    {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -165,6 +165,7 @@
                 <!-- Registro de Solicitudes o bines -->
                 <app-request-record-tab
                   *ngIf="requestRegistration"
+                  [pgr]="pgr"
                   [requestForm]="registRequestForm"></app-request-record-tab>
                 <!-- Fin -->
                 <!-- cumplimiento de verificacion y clasificacion de bienes-->

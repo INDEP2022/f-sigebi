@@ -101,6 +101,8 @@ export class RegistrationOfRequestsComponent
   verifyResp: string = null;
   task: any = null;
 
+  pgr: boolean = false;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -338,10 +340,12 @@ export class RegistrationOfRequestsComponent
       this.registRequestForm.controls['circumstantialRecord'].setValidators([
         Validators.required,
       ]);
+      this.pgr = true;
     } else {
       this.registRequestForm.controls['paperDate'].setValidators([
         Validators.required,
       ]);
+      this.pgr = false;
     }
     this.registRequestForm.updateValueAndValidity();
   }
@@ -755,11 +759,11 @@ export class RegistrationOfRequestsComponent
       url,
       from,
       to,
-      true,
+      false,
       this.task.id,
       user.username,
       'SOLICITUD_TRANSFERENCIA',
-      'Verificar_Cumplimiento',
+      'Destino_Documental',
       'NOTIFICAR_ACLARACIONES'
     );
     if (taskRes) {
@@ -963,6 +967,7 @@ export class RegistrationOfRequestsComponent
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
+
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
