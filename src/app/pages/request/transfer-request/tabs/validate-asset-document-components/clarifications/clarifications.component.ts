@@ -19,6 +19,7 @@ import { ClarificationService } from 'src/app/core/services/catalogs/clarificati
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -65,7 +66,8 @@ export class ClarificationsComponent
     private readonly clarificationService: ClarificationService,
     private readonly rejectGoodService: RejectedGoodService,
     private readonly typeRelevantService: TypeRelevantService,
-    private readonly genericService: GenericService
+    private readonly genericService: GenericService,
+    private readonly goodResDevService: GetGoodResVeService
   ) {
     super();
   }
@@ -583,6 +585,7 @@ export class ClarificationsComponent
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
       return;
     }
+    const clarifycationLength = this.paragraphs.length;
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -590,12 +593,18 @@ export class ClarificationsComponent
     ).then(val => {
       if (val.isConfirmed) {
         this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
-          next: val => {
+          next: async val => {
             this.onLoadToast(
               'success',
               'Eliminada con exito',
               'La aclaración fue eliminada con éxito.'
             );
+
+            if (clarifycationLength === 1) {
+              const goodResDev: any = await this.getGoodResDev(this.good.id);
+              await this.removeDevGood(Number(goodResDev));
+              await this.updateGood(this.good.id);
+            }
           },
           complete: () => {
             this.getClarifications();
@@ -627,5 +636,94 @@ export class ClarificationsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(ClarificationFormTabComponent, config);
+  }
+
+  removeDevGood(id: number) {
+    return new Promise((resolve, reject) => {
+      this.goodResDevService.remove(id).subscribe({
+        next: resp => {
+          console.log('good-res-dev removed', resp);
+          resolve(true);
+        },
+        error: error => {
+          console.log('good-res-dev remove error', error);
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo eliminar el bien-res-deb'
+          );
+        },
+      });
+    });
+  }
+
+  updateGood(id: number) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body.id = this.good.id;
+      body.goodId = this.good.goodId;
+      //body.goodResdevId = Number(id);
+      body.processStatus = null;
+      body.goodStatus = null;
+      this.goodService.update(body).subscribe({
+        next: resp => {
+          console.log('good updated', resp);
+        },
+        error: error => {
+          console.log('good updated', error);
+          this.onLoadToast(
+            'error',
+            'Erro Interno',
+            'No se actualizo el campo bien-res-dev en bien'
+          );
+        },
+      });
+    });
+  }
+
+  getGoodResDev(goodId: number) {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('goodId', goodId);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            resolve(resp.data[0].goodresdevId);
+          }
+        },
+        error: error => {
+          resolve('');
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo obtener el bien-res-dev'
+          );
+        },
+      });
+    });
+  }
+
+  getAllGoodResDev(goodId: number) {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('goodId', goodId);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            resolve(resp.data[0].goodresdevId);
+          }
+        },
+        error: error => {
+          resolve('');
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo obtener el bien-res-dev'
+          );
+        },
+      });
+    });
   }
 }
