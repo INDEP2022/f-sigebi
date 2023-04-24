@@ -392,6 +392,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.model === null) {
+              //modelo
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -400,6 +401,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.axesNumber === null) {
+              //numero de ejes
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -408,6 +410,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.engineNumber === null) {
+              //numero de motor
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -424,6 +427,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } */ else if (good.theftReport === null) {
+              //reporte de robos
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -432,6 +436,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.serie === null) {
+              // serie
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -440,6 +445,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.subBrand === null) {
+              //sub marca
               tipoRelVehiculo = true;
               this.message(
                 'error',

@@ -120,7 +120,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
         this.alertQuestion(
           'info',
           'Aviso',
-          'El usuario se turnó correctamente. El reporte para los trámites con estatus diferente a "OPI", no está disponible'
+          'El usuario se turnó correctamente. El reporte solo esta disponible para los trámites con estatus "OPI"'
         );
         return;
       }
@@ -173,7 +173,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se turno correctamente', '');
+        this.onLoadToast('success', 'El trámite se turnó correctamente', '');
         this.modalRef.content.callback(true);
         this.close();
       })

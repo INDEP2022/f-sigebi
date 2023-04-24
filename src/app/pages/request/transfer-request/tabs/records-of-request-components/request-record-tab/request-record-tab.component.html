@@ -7,10 +7,7 @@
         </h5>
       </div>
       <div class="p-2 bd-highlight buttons">
-        <button
-          class="btn btn-primary btn-sm active"
-          [disabled]="requestForm.invalid"
-          (click)="confirm()">
+        <button class="btn btn-primary btn-sm active" (click)="confirm()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
@@ -62,7 +59,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('paperDate')"
-            label="Fecha de Ofici&oacute;">
+            label="Fecha de Oficio">
             <input
               type="text"
               class="form-control"
@@ -245,25 +242,23 @@
           <!-- <div class="col-md-4" *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('previousInquiry')"
-            label="Averiguacion Previa *">
+            label="Averiguacion Previa">
             <input
               type="text"
               class="form-control"
-              formControlName="previousInquiry"
-              required />
+              formControlName="previousInquiry" />
           </form-field>
         </div>
         <div class="col-md-4">
           <!-- *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('circumstantialRecord')"
-            label="Acta Circunstanciada *">
+            label="Acta Circunstanciada">
             <input
               type="text"
               class="form-control"
               formControlName="circumstantialRecord"
-              maxlength="100"
-              required />
+              maxlength="100" />
           </form-field>
         </div>
       </div>

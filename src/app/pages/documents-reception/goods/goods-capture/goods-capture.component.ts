@@ -8,10 +8,12 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, of, switchMap, tap, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
@@ -21,6 +23,7 @@ import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
 import { SearchFractionComponent } from './components/search-fraction/search-fraction.component';
 import { GoodsCaptureMain } from './goods-capture-main';
 import {
+  CASH_CODES,
   COMPENSATION_GOOD_CLASIF_NUMBER,
   FLYERS_REGISTRATION_CODE,
 } from './utils/good-capture-constants';
@@ -39,6 +42,7 @@ export class GoodsCaptureComponent
   extends GoodsCaptureMain
   implements OnInit, AfterViewInit
 {
+  numerary: string | number = null;
   @ViewChild('initPage', { static: true }) initPage: ElementRef<HTMLDivElement>;
   constructor(
     fb: FormBuilder,
@@ -50,7 +54,9 @@ export class GoodsCaptureComponent
     drDataService: DocumentsReceptionDataService,
     globalVarService: GlobalVarsService,
     private tmpExpedientService: TmpExpedientService,
-    private _expedienService: ExpedientService
+    private _expedienService: ExpedientService,
+    private comerDetailsService: ComerDetailsService,
+    private accountMovementService: AccountMovementService
   ) {
     super(
       fb,
@@ -204,8 +210,13 @@ export class GoodsCaptureComponent
 
   goodClasifNumberChange() {
     const clasifNum = this.formControls.noClasifBien.value;
+    this.formControls.unidadMedida.reset();
+    this.formControls.destino.reset();
     if (!clasifNum) {
       return;
+    }
+    if (CASH_CODES.find(_clasifNum => _clasifNum === clasifNum)) {
+      this.formControls.cantidad.setValue(1);
     }
     if (this.formControls.satIndicator.value == 0) {
       this.getFractionsByClasifNum(clasifNum).subscribe({
@@ -243,24 +254,114 @@ export class GoodsCaptureComponent
   }
 
   save() {
-    console.log(this.assetsForm.controls.cantidad);
+    const goodClasifNum = this.formControls.noClasifBien.value;
+
+    let conciliate = true;
     this.assetsForm.markAllAsTouched();
     this.assetsForm.updateValueAndValidity();
     if (!this.assetsForm.valid) {
       this.showError('El formulario no es válido!');
       return;
     }
-    this.copyFeatures();
-    const goodId = this.formControls.noBien.value;
-    if (!goodId) {
-      this.createGood();
+
+    if (CASH_CODES.find(clasifNum => clasifNum === goodClasifNum)) {
+      conciliate = false;
+      const body: any = {
+        goodNumber: null,
+        expedientNumber: null,
+        coinKey: this.goodForm.controls.val1.value,
+        bankKey: this.goodForm.controls.val4.value,
+        accountKey: this.goodForm.controls.val6.value,
+        deposit: this.goodForm.controls.val2.value,
+        movementDate: this.goodForm.controls.val5.value,
+        update: 'N',
+      };
+
+      this.comerDetailsService.faCoinciliationGood(body).subscribe({
+        next: async (res: any) => {
+          console.log(res);
+          const response = res.data[0].fa_concilia_bien;
+          this.numerary = response;
+          if (response != 'N') {
+            conciliate = true;
+          }
+          if (!conciliate) {
+            const alert = await this.alertQuestion(
+              'info',
+              'Aviso',
+              'No existe ningún depósito para conciliar el numerario capturado,¿Desea capturarlo de todas maneras? '
+            );
+
+            if (alert.isConfirmed) {
+              this.copyFeatures();
+              const goodId = this.formControls.noBien.value;
+              if (!goodId) {
+                this.createGood();
+              } else {
+                this.updateGood(goodId);
+              }
+            }
+          } else {
+            this.copyFeatures();
+            const goodId = this.formControls.noBien.value;
+            if (!goodId) {
+              this.createGood();
+            } else {
+              this.updateGood(goodId);
+            }
+          }
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al buscar los movimientos de cuentas'
+          );
+        },
+      });
     } else {
-      this.updateGood(goodId);
+      this.copyFeatures();
+      const goodId = this.formControls.noBien.value;
+      if (!goodId) {
+        this.createGood();
+      } else {
+        this.updateGood(goodId);
+      }
     }
+  }
+
+  getAccountMovement() {
+    const params = new FilterParams();
+    params.addFilter('numberMotion', this.numerary);
+    return this.accountMovementService.getAllFiltered(params.getParams());
   }
 
   handleSuccesSave(good: any) {
     // this.alert('success', 'Se agrego el bien al expediente', '');
+    if (Number(this.numerary) > 0) {
+      this.getAccountMovement()
+        .pipe(
+          switchMap(response => {
+            console.log(response);
+            const body = {
+              numberGood: good.id,
+              numberProceedings: good.fileNumber,
+              numberMotion: this.numerary,
+              numberAccount: response.data[0].numberAccount,
+            };
+            return this.accountMovementService.update(body).pipe(
+              catchError(error => {
+                this.numerary = null;
+                return throwError(() => error);
+              }),
+              tap(() => {
+                this.numerary = null;
+              })
+            );
+          })
+        )
+        .subscribe();
+    }
     if (this.formControls.esEmpresa.value) {
       this.createMenage(good);
     } else {
@@ -276,7 +377,7 @@ export class GoodsCaptureComponent
     ) {
       this.onLoadToast(
         'success',
-        'Se agrego el bien al expediente correctamente',
+        'Se agregó el bien al expediente correctamente',
         ''
       );
       const _global = { ...this.globalNgrx, gCommit: 'S', gOFFCommit: 'N' };
@@ -391,11 +492,11 @@ export class GoodsCaptureComponent
             });
           },
           error: error => {
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Ocurrio un error al guardar el expediente'
-            );
+            // this.onLoadToast(
+            //   'error',
+            //   'Error',
+            //   'Ocurrio un error al guardar el expediente'
+            // );
           },
         });
       },

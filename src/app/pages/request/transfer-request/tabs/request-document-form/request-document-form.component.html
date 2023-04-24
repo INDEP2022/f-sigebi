@@ -103,12 +103,14 @@
   </div>
 
   <div class="row pt-4">
-    <ng2-smart-table
-      (rowSelect)="selectRow($event)"
-      [attr.class]="'table-bordered table-responsive'"
-      [settings]="settings"
-      [source]="documentsReqData">
-    </ng2-smart-table>
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        (rowSelect)="selectRow($event)"
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="documentsReqData">
+      </ng2-smart-table>
+    </div>
   </div>
   <app-pagination
     [filterParams]="params"

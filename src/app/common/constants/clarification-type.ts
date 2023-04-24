@@ -12,6 +12,6 @@ export const ClarificationTypes: IClarificationType[] = [
   {
     id: '1',
     description: 'Aclaración',
-    value: 'SOLICITAR_ACLARACIÓN',
+    value: 'SOLICITAR_ACLARACION',
   },
 ];
