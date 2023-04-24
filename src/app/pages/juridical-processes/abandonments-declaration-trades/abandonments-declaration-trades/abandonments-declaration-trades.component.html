@@ -207,11 +207,16 @@
                 <form-field
                   [control]="formDeclaratoriaTabla.get('noExpediente')"
                   label="No&#46; Expediente">
-                  <select class="form-control" formControlName="noExpediente">
+                  <input
+                    type="text"
+                    formControlName="noExpediente"
+                    (blur)="onLoadGoodList()"
+                    class="form-control" />
+                  <!-- <select class="form-control" formControlName="noExpediente">
                     <option [value]="null">Seleccione un valor</option>
                     <option [value]="'3767'">3767</option>
                     <option [value]="'3921'">3921</option>
-                  </select>
+                  </select> -->
                 </form-field>
               </div>
 
@@ -232,11 +237,12 @@
           </form>
 
           <div class="row pt-2 mb-2">
-            <div class="col-sm-12 col-12 col-md-6 pr-3">
+            <div class="col-sm-12 col-12 col-md-12 pr-3">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings1"
-                [source]="data1"></ng2-smart-table>
+                [source]="data1">
+              </ng2-smart-table>
             </div>
           </div>
           <div class="row">
