@@ -29,6 +29,13 @@ export class TransferentesSaeService extends HttpService {
     const route = `${TransferentesSaeEndpoints.EntityTransferring}?filter.idTransferee=${id}`;
     return this.get(route, params);
   }
+  getStateByTransferentKey(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IState>> {
+    const route = `${TransferentesSaeEndpoints.EntityTransferring}?filter.stateKey=${id}`;
+    return this.get(route, params);
+  }
 
   createStateForTransferent(model: IStateByTransferent) {
     return this.post(TransferentesSaeEndpoints.EntityTransferring, model);

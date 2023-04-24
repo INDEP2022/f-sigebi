@@ -172,6 +172,7 @@ export class DocumentsReceptionRegisterComponent
   loadingPostCapture: boolean = false;
   formLoading: boolean = false;
   captureAfterSave: boolean = false;
+  procedureOfficeKey: string = '';
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -679,6 +680,7 @@ export class DocumentsReceptionRegisterComponent
     } = procedure;
     affairType = Number(affairType);
     typeManagement = Number(typeManagement);
+    this.procedureOfficeKey = officeNumber;
     this.updateGlobalVars('vTipoTramite', typeManagement);
     if (affairType == 5) {
       this.initialCondition = 'T';
@@ -4181,9 +4183,10 @@ export class DocumentsReceptionRegisterComponent
       pIndicadorSat: Number(this.globals.pIndicadorSat),
     };
     console.log(this.docDataService.goodsBulkLoadSatSaeParams);
-    const officeExternalKey = encodeURIComponent(
-      this.formData.officeExternalKey
-    );
+    let officeExternalKey = encodeURIComponent(this.formData.officeExternalKey);
+    if (this.procedureOfficeKey.length > 34) {
+      officeExternalKey = encodeURIComponent(this.procedureOfficeKey);
+    }
     const expedientTransferenceNumber = encodeURIComponent(
       this.formData.expedientTransferenceNumber
     );
@@ -4215,10 +4218,13 @@ export class DocumentsReceptionRegisterComponent
       pAvPrevia: this.formData.officeExternalKey,
     };
     console.log(this.docDataService.goodsBulkLoadPgrSaeParams);
-    const preliminaryInquiry = encodeURIComponent(
+    let preliminaryInquiry = encodeURIComponent(
       this.formData.officeExternalKey
     );
-    const route = `/pgr/${this.formControls.expedientNumber.value}/${this.formControls.wheelNumber.value}/${preliminaryInquiry}`;
+    if (this.procedureOfficeKey.length > 34) {
+      preliminaryInquiry = encodeURIComponent(this.procedureOfficeKey);
+    }
+    const route = `/fgr/${this.formControls.expedientNumber.value}/${this.formControls.wheelNumber.value}/${preliminaryInquiry}`;
     console.log(`pages/documents-reception/goods-bulk-load${route}`);
     this.alertInfo(
       'info',

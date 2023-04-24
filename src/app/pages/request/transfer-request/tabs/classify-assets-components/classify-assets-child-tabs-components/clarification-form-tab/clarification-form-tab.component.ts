@@ -39,18 +39,16 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   goodTransfer: IGood;
   //clarificationId: number = 0; ya no
   //idGood: number = 0;
-  //se pasa la solicitud
   request: any;
   haveGoodResDevRegister: boolean = false;
-
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private readonly clarificationService: ClarificationService,
     private readonly rejectedGoodService: RejectedGoodService,
     private readonly authService: AuthService,
-    private readonly goodResDevService: GetGoodResVeService,
-    private readonly goodService: GoodService
+    private readonly goodService: GoodService,
+    private readonly goodResDevService: GetGoodResVeService
   ) {
     super();
   }
@@ -118,7 +116,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm(): void {
+  async confirm() {
+    //Crea la notificacion
     this.loader.load = true;
     const user: any = this.authService.decodeToken();
     let clarification = this.clarificationForm.getRawValue();
@@ -127,39 +126,44 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification['answered'] = 'NUEVA';
     clarification.goodId = this.goodTransfer.id;
     //clarification.clarificationId = this.clarificationId;
+
     if (this.edit === true) {
       this.update(clarification);
     } else {
-      this.save(clarification);
+      await this.save(clarification);
       if (this.haveGoodResDevRegister === false) {
-        this.createGoodResDev();
+        await this.createGoodResDev();
+        await this.updateGood();
       }
     }
   }
 
   private save(clarification: ClarificationGoodRejectNotification) {
-    this.rejectedGoodService.create(clarification).subscribe({
-      next: val => {
-        this.loader.load = false;
-        this.onLoadToast(
-          'success',
-          `Aclaración guardada`,
-          `Se guardó la aclaración correctamente`
-        );
-      },
-      complete: () => {
-        this.modalRef.hide();
-        this.modalRef.content.callback(true);
-      },
-      error: error => {
-        this.loader.load = false;
-        console.log(error);
-        this.onLoadToast(
-          'error',
-          'Error',
-          `Error al guardar la aclaracion ${error.error.message}`
-        );
-      },
+    return new Promise((resolve, reject) => {
+      this.rejectedGoodService.create(clarification).subscribe({
+        next: val => {
+          this.loader.load = false;
+          this.onLoadToast(
+            'success',
+            `Aclaración guardada`,
+            `Se guardó la aclaración correctamente`
+          );
+        },
+        complete: () => {
+          resolve(true);
+          this.modalRef.hide();
+          this.modalRef.content.callback(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `Error al guardar la aclaracion ${error.error.message}`
+          );
+        },
+      });
     });
   }
 
@@ -192,36 +196,45 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   createGoodResDev() {
-    let good = this.goodTransfer;
-    let goodResDev: IPostGoodResDev = {};
-    goodResDev.goodId = Number(good.id);
-    goodResDev.unitExtent = good.ligieUnit;
-    goodResDev.statePhysical = good.physicalStatus.toString();
-    goodResDev.stateConservation = good.stateConservation;
-    goodResDev.descriptionGood = good.descriptionGoodSae
-      ? good.descriptionGoodSae
-      : good.goodDescription;
-    goodResDev.statusProcess = '9'; //SOLICITAR_ACLARACION
-    goodResDev.applicationId = good.requestId;
-    goodResDev.amount = good.quantity;
-    goodResDev.fractionId = good.fractionId.toString();
-    goodResDev.delegationRegionalId = Number(this.request.regionalDelegationId);
-    goodResDev.transfereeId = this.request.transferenceId;
-    goodResDev.stationId = this.request.stationId;
-    goodResDev.authorityId = this.request.authorityId;
-    goodResDev.cveState = this.request.keyStateOfRepublic;
-    goodResDev.meetsArticle28 = 'N';
-    goodResDev.inventoryNumber = null;
-    goodResDev.uniqueKey = null;
-    goodResDev.destination = null;
-    goodResDev.proceedingsType = null;
-    goodResDev.origin = null;
+    return new Promise((resolve, reject) => {
+      let good = this.goodTransfer;
+      let goodResDev: IPostGoodResDev = {};
+      goodResDev.goodId = Number(good.id);
+      goodResDev.unitExtent = good.ligieUnit;
+      goodResDev.statePhysical = good.physicalStatus.toString();
+      goodResDev.stateConservation = good.stateConservation;
+      goodResDev.descriptionGood = good.descriptionGoodSae
+        ? good.descriptionGoodSae
+        : good.goodDescription;
+      goodResDev.statusProcess = '9'; //SOLICITAR_ACLARACION
+      goodResDev.applicationId = good.requestId;
+      goodResDev.amount = good.quantity;
+      goodResDev.fractionId = good.fractionId.toString();
+      goodResDev.delegationRegionalId = Number(
+        this.request.regionalDelegationId
+      );
+      goodResDev.transfereeId = this.request.transferenceId;
+      goodResDev.stationId = this.request.stationId;
+      goodResDev.authorityId = this.request.authorityId;
+      goodResDev.cveState = this.request.keyStateOfRepublic;
+      goodResDev.meetsArticle28 = 'N';
+      goodResDev.inventoryNumber = null;
+      goodResDev.uniqueKey = null;
+      goodResDev.destination = null;
+      goodResDev.proceedingsType = null;
+      goodResDev.origin = null;
 
-    this.goodResDevService.create(goodResDev).subscribe({
-      next: resp => {
-        console.log('good-res-dev', resp);
-        //this.updateGood(resp.goodresdevId)
-      },
+      this.goodResDevService.create(goodResDev).subscribe({
+        next: resp => {
+          console.log('good-res-dev', resp);
+          resolve(true);
+          //this.updateGood(resp.goodresdevId)
+        },
+        error: error => {
+          console.log('good-res-dec no creado', error);
+          reject(true);
+        },
+      });
     });
   }
 
@@ -241,23 +254,30 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     }
   }
 
-  updateGood(id: number) {
-    let body: any = {};
-    body.id = this.goodTransfer.id;
-    body.goodId = this.goodTransfer.goodId;
-    body.goodResdevId = Number(id);
-    this.goodService.update(body).subscribe({
-      next: resp => {
-        console.log('good updated', resp);
-      },
-      error: error => {
-        console.log('good updated', error);
-        this.onLoadToast(
-          'error',
-          'Erro Interno',
-          'No se actualizo el campo bien-res-dev en bien'
-        );
-      },
+  updateGood() {
+    return new Promise((resolve, reject) => {
+      let good = this.goodTransfer;
+      let body: any = {};
+      body.id = good.id;
+      body.goodId = good.goodId;
+      //body.goodResdevId = Number(id);
+      body.processStatus = 'SOLICITAR_ACLARACION';
+      body.goodStatus = 'SOLICITUD DE ACLARACION';
+      this.goodService.update(body).subscribe({
+        next: resp => {
+          console.log('good updated', resp);
+          resolve(true);
+        },
+        error: error => {
+          console.log('good updated', error);
+          reject(true);
+          this.onLoadToast(
+            'error',
+            'Erro Interno',
+            'No se actualizo el campo bien-res-dev en bien'
+          );
+        },
+      });
     });
   }
 
