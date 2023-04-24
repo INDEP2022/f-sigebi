@@ -749,7 +749,7 @@ export class RegistrationOfRequestsComponent
     this.loader.load = true;
     const title = `Notificar Aclaración-Improcedencia, No. Solicitud: ${this.requestData.id}`;
     const url =
-      'pages/request/transfer-request/notify-clarification-inadmissibility/';
+      'pages/request/transfer-request/notify-clarification-inadmissibility';
     const from = 'VERIFICAR_CUMPLIMIENTO';
     const to = 'NOTIFICAR_ACLARACIONES';
     const user: any = this.authService.decodeToken();
@@ -759,7 +759,7 @@ export class RegistrationOfRequestsComponent
       url,
       from,
       to,
-      false,
+      true,
       this.task.id,
       user.username,
       'SOLICITUD_TRANSFERENCIA',
