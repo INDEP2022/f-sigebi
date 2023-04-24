@@ -10,6 +10,7 @@ import { EventEmitter, Output } from '@angular/core';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
@@ -61,7 +62,8 @@ export class RequestInTurnFormComponent implements OnInit {
 
   constructor(
     public modalRef: BsModalRef,
-    public fb: FormBuilder //public requestService: ResquestService
+    public fb: FormBuilder,
+    private transferentesSaeService: TransferentesSaeService //public requestService: ResquestService
   ) {}
 
   ngOnInit(): void {
@@ -164,28 +166,33 @@ export class RequestInTurnFormComponent implements OnInit {
       error: error => (this.selectRegDele = new DefaultSelect()),
     });
   }
-
-  getTransferente(params?: ListParams) {
-    /*params['filter.status'] = `$eq:${1}`;
-    params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    params['sortBy'] = 'nameTransferent:ASC';
-    delete params.limit;
-    delete params.page;
-    delete params['search'];
-    delete params.text;*/
-    this.transferenteSevice.getByIdState(this.stateId).subscribe(
-      (data: any) => {
-        data.data.map((data: any) => {
-          data.nameAndId = `${data.id} - ${data.nametransferent}`;
-          console.log(data.nameAndId);
-          return data;
-        });
-        this.selectTransfer = new DefaultSelect(data.data, data.count);
+  getAffair(params?: ListParams) {
+    params['sortBy'] = 'description:ASC';
+    this.affairService.getAll(params).subscribe(
+      (data: IListResponse<IAffair>) => {
+        this.selectAffeir = new DefaultSelect(data.data, data.count);
       },
       error => {
-        this.selectTransfer = new DefaultSelect();
+        this.selectAffeir = new DefaultSelect();
       }
     );
+  }
+  getTransferente(params?: ListParams) {
+    params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
+    this.transferentesSaeService
+      .getStateByTransferentKey(this.stateId, params)
+      .subscribe(
+        (data: any) => {
+          data.data.map((data: any) => {
+            data.nameAndId = `${data.idTransferee} - ${data.transferent.nameTransferent}`;
+            return data;
+          });
+          this.selectTransfer = new DefaultSelect(data.data, data.count);
+        },
+        error => {
+          this.selectTransfer = new DefaultSelect();
+        }
+      );
   }
 
   getStateOfRepublic(params?: ListParams) {
@@ -247,18 +254,6 @@ export class RequestInTurnFormComponent implements OnInit {
       },
       error => {
         this.selectAuthority = new DefaultSelect();
-      }
-    );
-  }
-
-  getAffair(params?: ListParams) {
-    params['sortBy'] = 'description:ASC';
-    this.affairService.getAll(params).subscribe(
-      (data: IListResponse<IAffair>) => {
-        this.selectAffeir = new DefaultSelect(data.data, data.count);
-      },
-      error => {
-        this.selectAffeir = new DefaultSelect();
       }
     );
   }

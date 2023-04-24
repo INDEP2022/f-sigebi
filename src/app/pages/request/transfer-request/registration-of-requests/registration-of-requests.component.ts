@@ -771,7 +771,7 @@ export class RegistrationOfRequestsComponent
       this.msgGuardado(
         'success',
         'Notificación Creada',
-        `Se genero una Notificación de Aclaración con el folio: ${this.requestData.id}`
+        `Se generó una Notificación de Aclaración con el folio: ${this.requestData.id}`
       );
     }
   }
@@ -1039,6 +1039,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
       confirmButtonText: btnTitle,
+      cancelButtonText: 'Cancelar',
     }).then(async result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
