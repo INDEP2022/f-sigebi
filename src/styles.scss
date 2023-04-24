@@ -2,7 +2,7 @@
 @import 'simple-keyboard/build/css/index.css';
 @import 'ngx-toastr/toastr';
 
-/*.toast-title {
+.toast-title {
   color: #808b96 !important;
 }
 
@@ -15,19 +15,16 @@
   background-image: url('./assets/images/toastr-icons/success.png');
   background-size: 100%;
 }
-
 .toast-error {
   background-color: white;
   background-image: url('./assets/images/toastr-icons/error.png');
   background-size: 100%;
 }
-
 .toast-info {
   background-color: white;
   background-image: url('./assets/images/toastr-icons/info.png');
   background-size: 100%;
 }
-
 .toast-warning {
   background-color: white;
   background-image: url('./assets/images/toastr-icons/warning.png');
@@ -36,7 +33,7 @@
 
 .toast-close-button {
   display: block;
-}*/
+}
 * {
   font-size: 14px;
 }
