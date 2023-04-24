@@ -8,7 +8,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
   template: `
     <app-card [header]="true" [footer]="true">
       <div class="ch-content" header>
-        <h5 class="title">Monitor de abandono por devolución</h5>
+        <h5 class="title">Monitor de abandono por aseguramiento</h5>
       </div>
       <div body>
         <form [formGroup]="form" class="form-material">
