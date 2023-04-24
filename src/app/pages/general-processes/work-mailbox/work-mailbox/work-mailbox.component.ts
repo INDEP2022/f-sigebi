@@ -348,7 +348,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.onLoadToast('success', 'Test', 'Test');
     this.resetDataFilter = false;
     this.dataTable
       .onChanged()
