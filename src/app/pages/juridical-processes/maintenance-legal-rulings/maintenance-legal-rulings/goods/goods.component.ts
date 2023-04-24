@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -15,8 +15,7 @@ import { DICTAMINATION_X_GOOD_COLUMNS } from './goods.columns';
   templateUrl: './goods.component.html',
 })
 export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems: number = 0;
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   data: LocalDataSource = new LocalDataSource();
   tableSettings = {
     actions: {
@@ -57,7 +56,6 @@ export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
       next: data => {
         this.dataTable = data.data;
         this.data.load(this.dataTable);
-        this.totalItems = data.count || 0;
         this.data.refresh();
         this.loading = false;
       },

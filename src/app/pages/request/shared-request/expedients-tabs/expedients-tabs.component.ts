@@ -49,5 +49,7 @@ export class ExpedientsTabsComponent implements OnInit {
     }
   }
 
-  selectTabData() {}
+  selectTabData() {
+    alert('Actualiza');
+  }
 }

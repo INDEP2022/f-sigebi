@@ -51,7 +51,6 @@ export class GoodService extends HttpService {
       model
     ).pipe(
       map(x => {
-        console.log(x);
         return { status: x.data.statusFinal, process: x.data.process };
       })
     );
@@ -65,10 +64,7 @@ export class GoodService extends HttpService {
 
   getValigFlag(goodId: number) {
     return this.get<IResponse>(GoodEndpoints.GoodValidFlag + '/' + goodId).pipe(
-      map(x => {
-        console.log(x);
-        return x.message[0];
-      })
+      map(x => x.message[0])
     );
   }
 
@@ -79,12 +75,9 @@ export class GoodService extends HttpService {
   }
 
   getValidSeq() {
-    return this.post<{ max: string }>(GoodEndpoints.GoodValidSeq, {}).pipe(
-      map(x => {
-        console.log(x);
-        return +x.max;
-      })
-    );
+    return this.get<IResponse<{ max: string }>>(
+      GoodEndpoints.GoodValidSeq
+    ).pipe(map(x => x.data.max));
   }
 
   getForParcBien(params?: string): Observable<IListResponse<IGood>> {
@@ -199,7 +192,6 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.StatusAndDesc}/${idGood}`;
     return this.get<any>(route);
   }
-
   getBySafe(
     id: number | string,
     params?: ListParams
@@ -268,9 +260,5 @@ export class GoodService extends HttpService {
       GoodEndpoints.SearchGoodByClasif,
       body
     );
-  }
-
-  changeGoodToNumerary(body: any) {
-    return this.post(GoodEndpoints.CreateGoodNumerary, body);
   }
 }

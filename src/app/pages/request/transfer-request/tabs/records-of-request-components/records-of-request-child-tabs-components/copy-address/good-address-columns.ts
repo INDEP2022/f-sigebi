@@ -1,6 +1,6 @@
 export const GOOD_ADDRESS_COLUMNS = {
   wayOrigin: {
-    title: 'Tipo Dirección',
+    title: 'Tipo dirección',
     type: 'string',
     sort: false,
   },
@@ -30,19 +30,19 @@ export const GOOD_ADDRESS_COLUMNS = {
   },
 
   code: {
-    title: 'Código Postal',
+    title: 'Código postal',
     type: 'string',
     sort: false,
   },
 
   exteriorNumber: {
-    title: 'No. Exterior',
+    title: 'No. exterior',
     type: 'string',
     sort: false,
   },
 
   interiorNumber: {
-    title: 'No. Interior',
+    title: 'No. interior',
     type: 'string',
     sort: false,
   },

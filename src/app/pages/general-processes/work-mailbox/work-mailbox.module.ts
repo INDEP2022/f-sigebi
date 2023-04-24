@@ -10,7 +10,6 @@ import { ScanDocumentsModalComponent } from 'src/app/@standalone/modals/scan-doc
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MailboxModalTableComponent } from './components/mailbox-modal-table/mailbox-modal-table.component';
 import { ObservationsComponent } from './components/observations/observations.component';
-import { SaveModalMailboxComponent } from './components/save-modal-mailbox/save-modal-mailbox.component';
 import { TurnPaperworkComponent } from './components/turn-paperwork/turn-paperwork.component';
 import { WorkMailboxRoutingModule } from './work-mailbox-routing.module';
 import { WorkMailboxComponent } from './work-mailbox/work-mailbox.component';
@@ -21,7 +20,6 @@ import { WorkMailboxComponent } from './work-mailbox/work-mailbox.component';
     MailboxModalTableComponent,
     TurnPaperworkComponent,
     ObservationsComponent,
-    SaveModalMailboxComponent,
   ],
   imports: [
     CommonModule,

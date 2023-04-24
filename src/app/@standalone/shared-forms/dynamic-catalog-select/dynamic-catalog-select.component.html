@@ -7,27 +7,11 @@
         (fetchItems)="getDynamicData($event)"
         [data]="dynamicData"
         [form]="goodForm"
-        value="otvalor"
-        bindLabel="otvalor"
-        (change)="test()"
-        [addTag]="feature.cdTable == 'CUENTAS'"
+        value="value"
+        bindLabel="value"
         [label]="feature.dsAttribute"
         [control]="'val' + feature.columnNumber"
-        [searchOnInit]="true"
-        [labelTemplate]="label"
-        [optionTemplate]="option">
-        <ng-template #label let-item="item">
-          <span
-            ><b>{{ item.otclave }}</b> - {{ item.otvalor }}</span
-          >
-        </ng-template>
-        <ng-template #option let-item="item">
-          <div [title]="item.otvalor + '-' + item.otclave">
-            <span
-              ><b>{{ item.otclave }}</b> - {{ item.otvalor }}</span
-            >
-          </div>
-        </ng-template>
+        [searchOnInit]="true">
       </ngx-select>
     </form-field>
   </ng-template>

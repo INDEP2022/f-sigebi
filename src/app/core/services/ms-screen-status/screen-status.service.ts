@@ -3,7 +3,6 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDynamicStatusXScreen,
-  IGoodStatusScreen,
   IStatus,
   IStatusXScreen,
 } from '../../models/ms-screen-status/status.model';
@@ -19,7 +18,7 @@ export class ScreenStatusService extends HttpService {
     this.microservice = ScreenStatusEndpoints.BasePath;
   }
 
-  getStatus(filters: IGoodStatusScreen) {
+  getStatus(filters: { screen: string; goodArray: number[]; action: string }) {
     return this.post<IListResponse<IStatus>>(
       `${this.endpoint.StatusXScreenAndGoods}`,
       filters

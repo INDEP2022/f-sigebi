@@ -1,30 +1,26 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs';
+import { TreeViewService } from 'src/app/@standalone/tree-view/tree-view.service';
 import { ITreeItem } from 'src/app/core/interfaces/menu.interface';
-import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
-import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
-
+import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 @Component({
   selector: 'app-partializes-goods',
   templateUrl: './partializes-goods.component.html',
   styleUrls: ['partializes-goods.component.scss'],
 })
 export class PartializesGoodsComponent
-  extends BasePageWidhtDinamicFiltersExtra<IPartializedGoodList>
+  extends BasePageWidhtDinamicFilters
   implements OnInit
 {
-  elementToExport: any[];
   form: FormGroup;
-  itemsTree: ITreeItem[] = [];
+  items: ITreeItem[] = [];
   loadingTree = false;
-  loadingExcel = false;
-  flagDownload = false;
   @ViewChild('sideMenu') sideMenu: ElementRef;
   constructor(
     private fb: FormBuilder,
-
+    private treeViewService: TreeViewService,
     private goodPartializeService: GoodPartializeService
   ) {
     super();
@@ -46,29 +42,7 @@ export class PartializesGoodsComponent
         },
       },
     };
-    this.ilikeFilters.push('goodNumber');
     this.prepareForm();
-  }
-
-  exportExcel() {
-    this.loadingExcel = true;
-    this.elementToExport = [];
-    const arrayDetails: any[] = [];
-    this.items.forEach(item => {
-      arrayDetails.push({
-        PARCIALIZACION: item.partializedId,
-        BIEN: item.goodNumber,
-        DESCRIPCION: item.description,
-      });
-    });
-    this.elementToExport = [...arrayDetails];
-    this.flagDownload = !this.flagDownload;
-    // console.log(x);
-    this.loadingExcel = false;
-    // this.service.getExcel(this.filterParams).subscribe(x => {
-
-    // });
-    // console.log(this.table);
   }
 
   override getData() {
@@ -89,7 +63,6 @@ export class PartializesGoodsComponent
               this.select(response.data[0].goodNumber);
             }
             this.totalItems = response.count || 0;
-            this.items = response.data;
             this.data.load(response.data);
             this.data.refresh();
             this.loading = false;
@@ -119,13 +92,19 @@ export class PartializesGoodsComponent
       .subscribe({
         next: response => {
           console.log(response);
-          this.itemsTree = response;
+          this.items = response;
           this.loadingTree = false;
         },
         error: err => {
           console.log(err);
         },
       });
+  }
+
+  get descriptionSelectedTree() {
+    return this.treeViewService.selected
+      ? this.treeViewService.selected.description
+      : '';
   }
 
   prepareForm() {

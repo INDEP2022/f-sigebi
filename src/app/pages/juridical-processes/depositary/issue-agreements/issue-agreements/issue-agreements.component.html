@@ -6,22 +6,12 @@
   <div body>
     <!-- tabla Emisión Acuerdos -->
     <div class="row w-100">
-      <app-columns-select [(settings)]="tableSettings"></app-columns-select>
-      <br />
-      <ng-scrollbar
-        [track]="'all'"
-        style="min-height: 300px"
-        [class]="loading ? 'table-loading' : ''">
-        <div class="col-sm-12 col-12 col-md-12 p-2">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="tableSettings"
-            [source]="dataTable"></ng2-smart-table>
-        </div>
-      </ng-scrollbar>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
     </div>
     <!-- tabla Emisión Acuerdos -->
   </div>

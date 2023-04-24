@@ -21,7 +21,7 @@ export class ShowSignatureProgrammingComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas adjuntar el documento?'
+      '¿Estas seguro que deseas adjuntar el documento?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

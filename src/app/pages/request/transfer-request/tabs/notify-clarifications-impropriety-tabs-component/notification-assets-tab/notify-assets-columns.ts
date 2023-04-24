@@ -34,8 +34,8 @@ export const NOTIFY_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      if (row.clarification == null) return '';
-      if (row.clarification != null) return row.clarification.clarification;
+      if (row.chatClarification == null) return '';
+      if (row.chatClarification != null) return row.clarification.clarification;
     },
   },
   clarification2: {

@@ -6,7 +6,7 @@
     <div>
       <form [formGroup]="searchForm" class="form-material">
         <div class="row pt-2">
-          <div class="col-md-4">
+          <div class="col-md-2">
             <form-field
               [control]="searchForm.get('code')"
               label="C&oacute;digo">
@@ -14,7 +14,7 @@
             </form-field>
           </div>
 
-          <div class="col-md-8">
+          <div class="col-md-5">
             <ngx-select
               [form]="searchForm"
               control="typeRelevant"
@@ -25,15 +25,14 @@
               value="id"></ngx-select>
           </div>
 
-          <div class="col-md-12 mt-4">
+          <div class="col-md-5">
             <form-field
               [control]="searchForm.get('description')"
               label="Descripci&oacute;n">
-              <textarea
-                maxlength="500"
-                rows="5"
+              <input
+                type="text"
                 class="form-control"
-                formControlName="description"></textarea>
+                formControlName="description" />
             </form-field>
           </div>
         </div>

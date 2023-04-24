@@ -36,7 +36,7 @@ export class WitnessFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas crear un nuevo testigo?'
+      '¿Estas seguro que deseas crear un nuevo testigo?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

@@ -322,7 +322,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       .deleteByFolioAndFilename(this.folio, name)
       .pipe(
         catchError(error => {
-          this.alert(
+          this.alertQuestion(
             'error',
             'Error',
             'Ocurrió un error al eliminar la imagen'

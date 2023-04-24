@@ -1,10 +1,8 @@
 import {
   Component,
-  EventEmitter,
   Input,
   OnChanges,
   OnInit,
-  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -21,7 +19,6 @@ import { ClarificationService } from 'src/app/core/services/catalogs/clarificati
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -44,10 +41,8 @@ export class ClarificationsComponent
 {
   @Input() requestObject: any;
   @Input() process: string = '';
-  @Input() question: boolean = false;
   goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
-  @Output() response = new EventEmitter<string>();
   paragraphs: any[] = [];
   goodSetting: any;
   assetsArray: any[] = [];
@@ -62,8 +57,6 @@ export class ClarificationsComponent
   totalItems: number = 0;
 
   domicilieObject: any;
-  articleColumns = CLARIFICATION_COLUMNS;
-  haveNotification: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -72,13 +65,12 @@ export class ClarificationsComponent
     private readonly clarificationService: ClarificationService,
     private readonly rejectGoodService: RejectedGoodService,
     private readonly typeRelevantService: TypeRelevantService,
-    private readonly genericService: GenericService,
-    private readonly goodResDevService: GetGoodResVeService
+    private readonly genericService: GenericService
   ) {
     super();
   }
 
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
+  ngOnChanges(changes: SimpleChanges): void {
     if (this.requestObject) {
       this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         this.getData();
@@ -100,7 +92,6 @@ export class ClarificationsComponent
       selectMode: 'multi',
       columns: ASSETS_COLUMNS,
     };
-
     this.prepareForm();
   }
   private prepareForm() {
@@ -400,7 +391,6 @@ export class ClarificationsComponent
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
     const filter = this.params.getValue().getParams();
-
     this.goodService.getAll(filter).subscribe({
       next: resp => {
         console.log(resp.data);
@@ -593,8 +583,6 @@ export class ClarificationsComponent
       this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
       return;
     }
-
-    const clarifycationLength = this.paragraphs.length;
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -602,17 +590,12 @@ export class ClarificationsComponent
     ).then(val => {
       if (val.isConfirmed) {
         this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
-          next: async val => {
+          next: val => {
             this.onLoadToast(
               'success',
               'Eliminada con exito',
               'La aclaración fue eliminada con éxito.'
             );
-
-            if (clarifycationLength === 1) {
-              const goodResDev: any = await this.getGoodResDev(this.good.id);
-              await this.removeDevGood(Number(goodResDev));
-            }
           },
           complete: () => {
             this.getClarifications();
@@ -644,70 +627,5 @@ export class ClarificationsComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(ClarificationFormTabComponent, config);
-  }
-
-  removeDevGood(id: number) {
-    return new Promise((resolve, reject) => {
-      this.goodResDevService.remove(id).subscribe({
-        next: resp => {
-          console.log('good-res-dev removed', resp);
-          resolve(true);
-        },
-        error: error => {
-          console.log('good-res-dev remove error', error);
-          this.onLoadToast(
-            'error',
-            'Error interno',
-            'No se pudo eliminar el bien-res-deb'
-          );
-        },
-      });
-    });
-  }
-
-  getGoodResDev(goodId: number) {
-    return new Promise((resolve, reject) => {
-      let params = new FilterParams();
-      params.addFilter('goodId', goodId);
-      let filter = params.getParams();
-      this.goodResDevService.getAllGoodResDev(filter).subscribe({
-        next: (resp: any) => {
-          if (resp.data) {
-            resolve(resp.data[0].goodresdevId);
-          }
-        },
-        error: error => {
-          resolve('');
-          this.onLoadToast(
-            'error',
-            'Error interno',
-            'No se pudo obtener el bien-res-dev'
-          );
-        },
-      });
-    });
-  }
-
-  getAllGoodResDev(goodId: number) {
-    return new Promise((resolve, reject) => {
-      let params = new FilterParams();
-      params.addFilter('goodId', goodId);
-      let filter = params.getParams();
-      this.goodResDevService.getAllGoodResDev(filter).subscribe({
-        next: (resp: any) => {
-          if (resp.data) {
-            resolve(resp.data[0].goodresdevId);
-          }
-        },
-        error: error => {
-          resolve('');
-          this.onLoadToast(
-            'error',
-            'Error interno',
-            'No se pudo obtener el bien-res-dev'
-          );
-        },
-      });
-    });
   }
 }

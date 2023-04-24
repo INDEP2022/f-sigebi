@@ -13,13 +13,13 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   id: {
-    title: 'No. solicitud',
+    title: 'No°. solicitud',
     type: 'text',
     sort: false,
   },
 
   recordId: {
-    title: 'No. expediente',
+    title: 'No°. expediente',
     type: 'text',
     sort: false,
   },
@@ -133,7 +133,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   protectNumber: {
-    title: 'No amparo',
+    title: 'No° amparo',
     type: 'string',
     sort: false,
   },
@@ -145,7 +145,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   paperNumber: {
-    title: 'No oficio',
+    title: 'No° oficio',
     type: 'string',
     sort: false,
   },
@@ -205,13 +205,13 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
   id: {
-    title: 'No. solicitud',
+    title: 'No°. solicitud',
     type: 'text',
     sort: false,
   },
 
   recordId: {
-    title: 'No. expediente',
+    title: 'No°. expediente',
     type: 'text',
     sort: false,
   },
@@ -349,7 +349,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   protectNumber: {
-    title: 'No amparo',
+    title: 'No° amparo',
     type: 'string',
     sort: false,
   },
@@ -361,7 +361,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   paperNumber: {
-    title: 'No oficio',
+    title: 'No° oficio',
     type: 'string',
     sort: false,
   },
@@ -476,13 +476,13 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
   },
 
   fileNumber: {
-    title: 'No. expediente de la transferente',
+    title: 'No°. expediente de la transferente',
     type: 'string',
     sort: false,
   },
 
   requestId: {
-    title: 'No. solicitud',
+    title: 'No°. solicitud',
     type: 'number',
     sort: false,
   },
@@ -538,13 +538,13 @@ export const EXPEDIENT_DOC_SEA_COLUMNS = {
   },
 
   xidExpediente: {
-    title: 'No. expediente',
+    title: 'No°. expediente',
     type: 'string',
     sort: false,
   },
 
   xidSolicitud: {
-    title: 'No. solicitud',
+    title: 'No°. solicitud',
     type: 'string',
     sort: false,
   },

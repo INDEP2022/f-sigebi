@@ -138,7 +138,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       noOfice: [null, [Validators.maxLength(60)]],
       senderCharge: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
       ],
       comment: [
         null,

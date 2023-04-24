@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -7,31 +7,40 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './delete-period.component.html',
   styles: [],
 })
-export class DeletePeriodComponent {
-  form = new FormGroup({
-    year: new FormControl(null, Validators.required),
-    period: new FormControl(null, Validators.required),
-    delegation: new FormControl(null, Validators.required),
-    process: new FormControl(null, Validators.required),
-  });
+export class DeletePeriodComponent implements OnInit {
+  form: FormGroup;
 
   public delegations = new DefaultSelect();
-  // public procesess = new DefaultSelect();
-  processes = [
-    { id: 1, name: 'Supervisión' },
-    { id: 2, name: 'Validación' },
-  ];
+  public procesess = new DefaultSelect();
 
-  isLoading = false;
-  @Output() eventDelete = new EventEmitter();
+  constructor(private fb: FormBuilder) {}
 
-  constructor() {}
-
-  onClickDeletePeriod() {
-    this.eventDelete.emit(this.form.value);
+  ngOnInit(): void {
+    this.prepareForm();
   }
 
-  getFormDeletePeriod() {
-    return this.form;
+  prepareForm() {
+    this.form = this.fb.group({
+      year: [null, Validators.required],
+      period: [null, Validators.required],
+      delegation: [null, Validators.required],
+      process: [null, Validators.required],
+    });
+  }
+
+  save() {
+    console.log(this.form.value);
+  }
+
+  public getDelegations(event: any) {
+    // this.bankService.getAll(params).subscribe(data => {
+    //   this.banks = new DefaultSelect(data.data, data.count);
+    // });
+  }
+
+  public getProcesess(event: any) {
+    // this.bankService.getAll(params).subscribe(data => {
+    //   this.banks = new DefaultSelect(data.data, data.count);
+    // });
   }
 }

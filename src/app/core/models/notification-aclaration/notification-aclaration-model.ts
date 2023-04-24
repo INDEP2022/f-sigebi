@@ -1,16 +1,15 @@
 export interface Inappropriateness {
   id?: string;
-  addresseeName?: string; //Nombre destinatario
+  managedTo?: string;
   positionSender?: string;
   positionAddressee?: string;
-  senderName?: string; //Nombre del remitente
+  sender?: string;
   clarification?: string;
   consistentIn?: string;
   paragraphInitial?: string;
   paragraphFinal?: string;
-  userAreaCaptures?: string; //Área usuario captura
+  areaUserCapture?: string;
   transmitterId?: string;
-  webMail?: string; //Correo web
+  mailNotification?: string;
   applicationId?: string;
-  jobClarificationKey?: string; //Clave oficio aclaración
 }

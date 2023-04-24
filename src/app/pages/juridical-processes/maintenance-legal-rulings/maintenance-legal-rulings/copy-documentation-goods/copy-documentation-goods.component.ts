@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -18,8 +18,7 @@ export class CopyDocumentationGoodsComponent
   implements OnInit, OnDestroy
 {
   data: LocalDataSource = new LocalDataSource();
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems: number = 0;
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -59,10 +58,6 @@ export class CopyDocumentationGoodsComponent
     this.copiesOfficialOpinionService.getAll().subscribe({
       next: data => {
         this.dataTable = data.data;
-        this.data.load(this.dataTable);
-        this.totalItems = data.count || 0;
-        this.data.refresh();
-        this.loading = false;
       },
       error: err => {
         this.loading = false;

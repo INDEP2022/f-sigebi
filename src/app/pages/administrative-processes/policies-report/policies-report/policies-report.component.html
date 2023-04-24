@@ -4,9 +4,9 @@
   </div>
 
   <div body>
-    <div class="form-material">
-      <div class="row justify-content-center">
-        <div class="col-auto">
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
           <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
             PÓLIZAS VIGENTES
           </h5>
@@ -17,11 +17,11 @@
           </button>
         </div>
       </div>
-      <hr />
-      <div class="row justify-content-center">
+
+      <div class="row">
         <div class="col-md-4">
           <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
-            BIENES PENDIENTES DE INGRESO A PÓLIZAS
+            BINES PENDIENTES DE INGRESO A PÓLIZAS
           </h5>
         </div>
         <div class="col-md-3 col-lg-3">
@@ -30,17 +30,17 @@
           </button>
         </div>
       </div>
-      <hr />
-      <div [formGroup]="formPoliceStartDate" class="row justify-content-center">
-        <div class="col-auto">
+
+      <div class="row">
+        <div class="col-md-4">
           <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
             BIENES EN PÓLIZAS
           </h5>
         </div>
+      </div>
+      <div class="row">
         <div class="col-md-2">
-          <form-field
-            [control]="formPoliceStartDate.get('policy')"
-            label="Póliza">
+          <form-field [control]="form.get('policy')" label="Póliza">
             <input
               type="number"
               class="form-control"
@@ -50,9 +50,7 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="formPoliceStartDate.get('startDate')"
-            label="Fecha de inicio">
+          <form-field [control]="form.get('startDate')" label="Fecha de page">
             <input
               type="text"
               formControlName="startDate"
@@ -66,11 +64,9 @@
           </button>
         </div>
       </div>
-      <!-- <div class="row">
-      </div> -->
-      <hr />
-      <div class="row justify-content-center">
-        <div class="col-auto">
+
+      <div class="row">
+        <div class="col-md-4">
           <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
             BAJA EN PÓLIZAS
           </h5>
@@ -81,15 +77,17 @@
           </button>
         </div>
       </div>
-      <hr />
-      <div [formGroup]="formFromTo" class="row justify-content-center">
+
+      <div class="row">
         <div class="col-md-4">
           <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
             MOVIMIENTOS DE BIENES EN PÓLIZAS
           </h5>
         </div>
+      </div>
+      <div class="row">
         <div class="col-md-2">
-          <form-field [control]="formFromTo.get('from')" label="Del">
+          <form-field [control]="form.get('from')" label="Del">
             <input
               type="text"
               formControlName="from"
@@ -98,7 +96,7 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="formFromTo.get('to')" label="Al">
+          <form-field [control]="form.get('to')" label="Al">
             <input
               type="text"
               formControlName="to"
@@ -112,17 +110,17 @@
           </button>
         </div>
       </div>
-      <hr />
-      <div [formGroup]="formSinister" class="row justify-content-center">
+
+      <div class="row">
         <div class="col-md-4">
           <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
             BIENES EN PÓLIZAS SINIESTRADAS
           </h5>
         </div>
+      </div>
+      <div class="row">
         <div class="col-md-2">
-          <form-field
-            [control]="formSinister.get('policySinister')"
-            label="Póliza">
+          <form-field [control]="form.get('policySinister')" label="Póliza">
             <input
               type="text"
               formControlName="policySinister"
@@ -131,8 +129,8 @@
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="formSinister.get('startDateSinister')"
-            label="Fecha inicio">
+            [control]="form.get('startDateSinister')"
+            label="Fecha page">
             <input
               type="text"
               formControlName="startDateSinister"
@@ -146,6 +144,6 @@
           </button>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </app-card>

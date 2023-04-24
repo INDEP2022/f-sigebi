@@ -46,9 +46,7 @@
                   class="mx-1"
                   size="small"
                   (click)="partialize()"
-                  [disabled]="
-                    form.invalid || formGood.invalid || vsum >= vimporte
-                  ">
+                  [disabled]="form.invalid || formGood.invalid">
                   Parcializa
                 </button>
                 <button class="mx-1" size="small" (click)="cleanBlock()">
@@ -57,7 +55,6 @@
                 <button
                   class="mx-1 my-1"
                   size="small"
-                  (click)="apply()"
                   [disabled]="form.invalid || formGood.invalid">
                   Aplica
                 </button>

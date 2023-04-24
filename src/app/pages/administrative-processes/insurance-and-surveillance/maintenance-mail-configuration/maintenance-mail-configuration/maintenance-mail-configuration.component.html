@@ -14,7 +14,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="emailsSend">
+              [source]="emailConfig">
             </ng2-smart-table>
           </div>
         </div>
@@ -34,7 +34,6 @@
             <input
               type="number"
               class="form-control"
-              readonly="true"
               formControlName="identifier"
               min="1"
               pattern="^[0-9]+" />

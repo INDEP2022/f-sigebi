@@ -249,7 +249,6 @@ export class AddressTransferorTabComponent
     }
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        console.log('s', resp);
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
 
         /*    if (this.municipalityId !== 0 && this.municipalityId !== null) {
@@ -322,6 +321,7 @@ export class AddressTransferorTabComponent
     params['filter.municipalityKey'] = `$eq:${Number(this.municipalityId)}`;
     params['filter.stateKey'] = `$eq:${Number(this.keyStateOfRepublic)}`;
     params['filter.township'] = `$ilike:${params.text}`;
+
     this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: resp => {
         // debugger;
@@ -333,7 +333,6 @@ export class AddressTransferorTabComponent
             };
             this.goodsinvService.getAllTownshipByFilter(newParams).subscribe({
               next: response => {
-                console.log(response);
                 // debugger;
                 const newData = resp.data.filter(
                   (item: any) => item.townshipKey + '' !== this.localityId + ''
@@ -357,7 +356,7 @@ export class AddressTransferorTabComponent
             );
           }
         } else {
-          this.selectLocality = new DefaultSelect(resp.data, resp.count);
+          this.selectLocality = new DefaultSelect(resp.data);
         }
         // console.log(this.localityId);
         if (this.isAddress === true && this.localityId) {
@@ -471,11 +470,10 @@ export class AddressTransferorTabComponent
     this.goodDomicileService.create(domicile).subscribe(
       (data: any) => {
         if (data.id != null) {
-          this.domicileForm.controls['id'].setValue(data.id);
           this.message(
             'success',
             'Guadado',
-            'El domicilio se guardó correctamente'
+            'El domicio se guardó correctamente'
           );
 
           if (this.isNewAddress === true) {
@@ -505,7 +503,7 @@ export class AddressTransferorTabComponent
           this.message(
             'success',
             'Guadado',
-            'El domicilio se actualizó correctamente'
+            'El domicio se actualizó correctamente'
           );
 
           if (this.isNewAddress === true) {
@@ -584,7 +582,6 @@ export class AddressTransferorTabComponent
       idDelegation,
       callback: (data: any) => {
         if (data) {
-          console.log('dom', data);
           this.setInformation(data);
         }
       },

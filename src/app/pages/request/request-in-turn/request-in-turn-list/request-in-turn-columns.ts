@@ -5,27 +5,27 @@ export const REQUEST_IN_TURN_COLUMNS = {
     sort: false,
   },
   dateApplication: {
-    title: 'Fecha Solicitud',
+    title: 'Fecha solicitud',
     type: 'string',
     sort: false,
   },
   nameOfOwner: {
-    title: 'Nombre Titular',
+    title: 'Nombre titular',
     type: 'string',
     sort: false,
   },
   holderCharge: {
-    title: 'Cargo del Remitente',
+    title: 'Cargo del remitente',
     type: 'string',
     sort: false,
   },
   paperNumber: {
-    title: 'No. Oficio',
+    title: 'No. oficio',
     type: 'string',
     sort: false,
   },
   datePaper: {
-    title: 'Fecha de Oficio',
+    title: 'Fecha de oficio',
     type: 'string',
     sort: false,
   },
@@ -55,12 +55,12 @@ export const REQUEST_IN_TURN_COLUMNS = {
     sort: false,
   },
   transferenceFile: {
-    title: 'Expediente Transferente',
+    title: 'Expediente transferente',
     type: 'number',
     sort: false,
   },
   receiptRoute: {
-    title: 'Via Recepción',
+    title: 'Via recepción',
     type: 'string',
     sort: false,
   },
@@ -75,7 +75,7 @@ export const REQUEST_IN_TURN_COLUMNS = {
     sort: false,
   },
   requestStatus: {
-    title: 'Estado Solicitud',
+    title: 'Estado solicitud',
     type: 'string',
     sort: false,
   },
@@ -85,17 +85,17 @@ export const REQUEST_IN_TURN_COLUMNS = {
     sort: false,
   },
   circumstantialRecord: {
-    title: 'Acta Circunstanciada',
+    title: 'Acta circunstanciada',
     type: 'string',
     sort: false,
   },
   previousInquiry: {
-    title: 'Averiguación Previa',
+    title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
   tocaPenal: {
-    title: 'Causa Penal',
+    title: 'Causa penal',
     type: 'string',
     sort: false,
   },

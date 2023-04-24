@@ -40,7 +40,7 @@ export const NUMERAIRE_COLUMNS = {
     sort: false,
   },
   commission: {
-    title: 'Comisión',
+    title: 'Comsión',
     type: 'number',
     sort: false,
   },
@@ -50,7 +50,7 @@ export const NUMERAIRE_COLUMNS = {
     sort: false,
   },
   totalExpenses: {
-    title: 'Gasto Total',
+    title: 'Iva Comisión',
     type: 'number',
     sort: false,
   },

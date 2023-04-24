@@ -1,69 +1,42 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { downloadReport, showToast } from 'src/app/common/helpers/helpers';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-accounts-insured-by-file',
   templateUrl: './accounts-insured-by-file.component.html',
   styles: [],
 })
-export class AccountsInsuredByFileComponent {
-  form = new FormGroup({
-    delegation: new FormControl(null, [Validators.required]),
-    subdelegation: new FormControl(null, [Validators.required]),
-    currency: new FormControl(null, [Validators.required]),
-    bank: new FormControl(null, [
-      Validators.required,
-      // Validators.pattern(STRING_PATTERN),
-    ]),
-    depositFrom: new FormControl(null, Validators.required),
-    depositTo: new FormControl(null, Validators.required),
-    fileFrom: new FormControl(null, Validators.required),
-    fileTo: new FormControl(null, Validators.required),
-  });
-  isLoading = false;
-  maxDate = new Date();
-  constructor() {}
+export class AccountsInsuredByFileComponent implements OnInit {
+  form: FormGroup;
+  constructor(private fb: FormBuilder) {}
 
-  print(): void {
-    if (this.form.invalid) {
-      showToast({
-        icon: 'error',
-        title: 'Error de validación',
-        text: 'Favor de llenar los campos requeridos',
-      });
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    if (!this.isValidDates()) {
-      return;
-    }
-    this.isLoading = true;
-    downloadReport('SIAB/RCONCOGVOLANTESRE', this.form.value);
-    this.isLoading = false;
+  ngOnInit(): void {
+    this.prepareForm();
   }
 
-  validateDateRange(from: Date, to: Date): boolean {
-    if (from && to) {
-      return from <= to;
-    }
-    return true;
-  }
+  prepareForm() {
+    this.form = this.fb.group({
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subdelegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
-  isValidDates(): boolean {
-    const { fileFrom, fileTo, depositFrom, depositTo } = this.form.value;
-    if (
-      !this.validateDateRange(fileFrom, fileTo) ||
-      !this.validateDateRange(depositFrom, depositTo)
-    ) {
-      showToast({
-        icon: 'error',
-        title: 'Error de fechas',
-        text: 'Rango de fechas no válido',
-      });
-      return false;
-    }
-    return true;
+      currency: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      bank: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+
+      depositFrom: [null, Validators.required],
+      depositTo: [null, Validators.required],
+
+      fileFrom: [null, Validators.required],
+      fileTo: [null, Validators.required],
+    });
   }
 }

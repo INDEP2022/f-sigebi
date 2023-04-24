@@ -49,7 +49,6 @@ export class DocumentationGoodsDialogComponent
     });
 
     if (this.documentsDictumXStateM != null) {
-      console.log(this.documentsDictumXStateM);
       this.edit = true;
       this.documentsDictumXStateMForm.patchValue(this.documentsDictumXStateM);
       this.documentsDictumXStateMForm

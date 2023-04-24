@@ -199,16 +199,6 @@ export class GoodsCaptureMain extends BasePage {
   amountChange() {
     const amountControl = this.formControls.cantidad;
     const goodClasifNum = this.formControls.noClasifBien.value;
-    if (
-      amountControl.value != 1 &&
-      CASH_CODES.find(clasifNum => clasifNum === goodClasifNum)
-    ) {
-      this.onLoadToast(
-        'info',
-        'Aviso',
-        'Para este clasificador la cantidad permitida es 1'
-      );
-    }
     if (CASH_CODES.find(clasifNum => clasifNum === goodClasifNum)) {
       amountControl.setValue(1);
     }

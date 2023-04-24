@@ -12,10 +12,6 @@ const routes: Routes = [
     path: 'new-transfer-request',
     component: NewTransferRequestComponent,
   },
-  {
-    path: 'new-transfer-request/:id',
-    component: NewTransferRequestComponent,
-  },
 ];
 
 @NgModule({

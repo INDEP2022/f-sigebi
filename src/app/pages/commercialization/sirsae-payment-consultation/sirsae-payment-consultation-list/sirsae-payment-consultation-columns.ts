@@ -1,13 +1,10 @@
 export const CONSULT_SIRSAE_COLUMNS = {
-  accountbank: {
+  account: {
     title: 'Cuenta Bancaria',
-    type: 'string',
+    type: 'number',
     sort: false,
-    valuePrepareFunction: (_cell: any, row: any) => {
-      return row.accountbank?.name_bank;
-    },
   },
-  ifdsc: {
+  bank: {
     title: 'Banco',
     type: 'string',
     sort: false,
@@ -17,46 +14,29 @@ export const CONSULT_SIRSAE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  movDate: {
+  moveDate: {
     title: 'Fecha Mov.',
     type: 'number',
     sort: false,
   },
-  importdep: {
+  amount: {
     title: 'Importe Depósito',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
-  keycheck: {
+  cve: {
     title: 'Cve. Cheque',
     type: 'number',
     sort: false,
   },
-  statusMov: {
+  status: {
     title: 'Estatus Mov.',
     type: 'number',
     sort: false,
-    valuePrepareFunction: (_cell: any, row: any) => {
-      return row.statusMov?.id;
-    },
   },
-  statusMovDescription: {
+  description: {
     title: 'Descripción Movimiento',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (_cell: any, row: any) => {
-      const status = row.statusMov?.id;
-      if (status == 0) {
-        return 'Pagado';
-      }
-      if (status == 1) {
-        return 'Cheque salvo buen cobro';
-      }
-      if (status == 2) {
-        return 'Cheque Devuelto';
-      }
-
-      return '';
-    },
   },
 };

@@ -136,8 +136,6 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
 
   resetForm() {
     this.searchForm.reset();
-    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    this.search();
     this.documentsReqData = [];
   }
 
@@ -153,12 +151,6 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
   builtFilter(formFilter: any) {
     //this.params.value.addFilter('requestStatus', 'A_TURNAR');
     this.params.value.addFilter('id', 0, SearchFilter.GT);
-    this.params.value.addFilter(
-      'requestStatus',
-      'A_TURNAR',
-      SearchFilter.ILIKE
-    );
-
     for (const key in formFilter) {
       if (formFilter[key] !== null) {
         this.params.value.addFilter(key, formFilter[key]);
@@ -171,8 +163,7 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
     var filter = this.params.getValue().getParams();
     this.requestService.getAll(filter).subscribe({
       next: (resp: any) => {
-        console.log(resp);
-
+        this.totalItems = resp.count;
         const result = resp.data.map(async (item: any) => {
           item['applicationDate'] = new Date(
             item.applicationDate
@@ -204,7 +195,6 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
 
         Promise.all(result).then(data => {
           this.documentsReqData = resp.data;
-          this.totalItems = resp.count;
           this.loading = false;
         });
       },

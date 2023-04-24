@@ -14,7 +14,6 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
-import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -101,8 +100,6 @@ export class RegistrationOfRequestsComponent
   verifyResp: string = null;
   task: any = null;
 
-  pgr: boolean = false;
-
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -124,8 +121,7 @@ export class RegistrationOfRequestsComponent
     private taskService: TaskService,
     private authService: AuthService,
     private orderService: OrderServiceService,
-    private wcontentService: WContentService,
-    private readonly goodResDevService: GetGoodResVeService
+    private wcontentService: WContentService
   ) {
     super();
   }
@@ -194,7 +190,7 @@ export class RegistrationOfRequestsComponent
       priorityDate: [null],
       originInfo: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       receptionDate: [null],
-      paperDate: [null],
+      paperDate: [null, [Validators.required]],
       typeRecord: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
@@ -250,7 +246,7 @@ export class RegistrationOfRequestsComponent
       ],
       transferenceFile: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+        [(Validators.pattern(STRING_PATTERN), Validators.maxLength(60))],
       ],
       previousInquiry: [
         null,
@@ -293,7 +289,6 @@ export class RegistrationOfRequestsComponent
     this.requestService.getById(id).subscribe({
       next: async (data: any) => {
         this.infoRequest = data;
-        this.setRequiredFields(data);
         await this.getTransferent(data.transferenceId);
         await this.getRegionalDelegation(data.regionalDelegationId);
         await this.getStation(data.transferenceId, data.stationId);
@@ -327,27 +322,6 @@ export class RegistrationOfRequestsComponent
         console.log(error.error.message);
       },
     });
-  }
-
-  setRequiredFields(data: any) {
-    if (data.transferenceId == 1 || data.transferenceId == 120) {
-      this.registRequestForm.controls['paperDate'].setValidators([
-        Validators.required,
-      ]);
-      this.registRequestForm.controls['previousInquiry'].setValidators([
-        Validators.required,
-      ]);
-      this.registRequestForm.controls['circumstantialRecord'].setValidators([
-        Validators.required,
-      ]);
-      this.pgr = true;
-    } else {
-      this.registRequestForm.controls['paperDate'].setValidators([
-        Validators.required,
-      ]);
-      this.pgr = false;
-    }
-    this.registRequestForm.updateValueAndValidity();
   }
 
   getTransferent(idTransferent: number) {
@@ -744,39 +718,6 @@ export class RegistrationOfRequestsComponent
     this.saveClarifiObject = true;
   }
 
-  /* Metodo para notificacion de aclaraciones */
-  async notifyClarificationsMethod() {
-    this.loader.load = true;
-    const title = `Notificar Aclaración-Improcedencia, No. Solicitud: ${this.requestData.id}`;
-    const url =
-      'pages/request/transfer-request/notify-clarification-inadmissibility/';
-    const from = 'VERIFICAR_CUMPLIMIENTO';
-    const to = 'NOTIFICAR_ACLARACIONES';
-    const user: any = this.authService.decodeToken();
-    const taskRes = await this.createTaskOrderService(
-      this.requestData,
-      title,
-      url,
-      from,
-      to,
-      false,
-      this.task.id,
-      user.username,
-      'SOLICITUD_TRANSFERENCIA',
-      'Destino_Documental',
-      'NOTIFICAR_ACLARACIONES'
-    );
-    if (taskRes) {
-      this.loader.load = false;
-      this.msgGuardado(
-        'success',
-        'Notificación Creada',
-        `Se genero una Notificación de Aclaración con el folio: ${this.requestData.id}`
-      );
-    }
-  }
-  /* Fin Metodo para guardar verifucacion cumplimiento */
-
   close() {
     this.registRequestForm.reset();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
@@ -832,33 +773,35 @@ export class RegistrationOfRequestsComponent
         'Es requerido tener dictamen previamente generado'
       );
       return;
-      this.loader.load = true;
     }
-    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
-    const url = 'pages/request/programming-request/schedule-reception';
-    const from = 'SOLICITAR_APROBACION';
-    const to = 'APROBADO';
-    const user: any = this.authService.decodeToken();
-    const taskResult = await this.createTaskOrderService(
-      this.requestData,
-      title,
-      url,
-      from,
-      to,
-      true,
-      this.task.id,
-      user.username,
-      'SOLICITUD_TRANSFERENCIA',
-      'Aprobar_Solicitud',
-      'TURNAR'
-    );
-    if (taskResult === true) {
-      this.loader.load = false;
-      this.msgGuardado(
-        'success',
-        'Turnado Exitoso',
-        `Se guardó la solicitud con el folio: ${this.requestData.id}`
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+      const url = 'pages/request/programming-request/schedule-reception';
+      const from = 'SOLICITAR_APROBACION';
+      const to = 'APROBADO';
+      const user: any = this.authService.decodeToken();
+      const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        true,
+        this.task.id,
+        user.username,
+        'SOLICITUD_TRANSFERENCIA',
+        'Aprobar_Solicitud',
+        'TURNAR'
       );
+      if (taskResult === true) {
+        this.loader.load = false;
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        );
+      }
     }
   }
   /** fin de proceso */
@@ -937,11 +880,12 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
-
+      debugger;
       if (closetask) {
         body['idTask'] = taskId;
         body['userProcess'] = userProcess;
       }
+
       body['type'] = type;
       body['subtype'] = subtype;
       body['ssubtype'] = ssubtype;
@@ -967,7 +911,6 @@ export class RegistrationOfRequestsComponent
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
@@ -1040,7 +983,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
       confirmButtonText: btnTitle,
-    }).then(async result => {
+    }).then(result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
           this.finishMethod();
@@ -1051,6 +994,7 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'captura-solicitud') {
           this.confirmMethod();
         }
+
         if (typeCommit === 'verificar-cumplimiento') {
           this.question = true;
           setTimeout(() => {
@@ -1087,21 +1031,9 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
-          const goodResult = await this.haveNotificacions();
-          if (goodResult === true) {
-            this.notifyClarificationsMethod();
-            window.alert('notificar');
-          } else if (goodResult === false) {
-            this.destinyDocumental();
-            window.alert('turnar');
-          } else {
-            this.onLoadToast(
-              'error',
-              'Error al turnar',
-              'No se pudo turnar la solicitud'
-            );
-          }
+          this.destinyDocumental();
         }
+
         if (typeCommit === 'proceso-aprovacion') {
           this.approveRequestMethod();
         }
@@ -1110,33 +1042,6 @@ export class RegistrationOfRequestsComponent
           this.refuseMethod();
         }
       }
-    });
-  }
-
-  //revisar las pruebas
-  haveNotificacions() {
-    return new Promise((resolve, reject) => {
-      let params = new FilterParams();
-      params.addFilter('applicationId', this.requestData.id);
-      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO');
-      let filter = params.getParams();
-      this.goodResDevService.getAllGoodResDev(filter).subscribe({
-        next: (resp: any) => {
-          if (resp.data) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        },
-        error: (error: any) => {
-          resolve(false);
-          /*this.onLoadToast(
-            'error',
-            'Error interno',
-            'No se pudo obtener el bien-res-dev'
-          );*/
-        },
-      });
     });
   }
 
