@@ -33,6 +33,7 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
   transferents = new DefaultSelect();
   showSearchForm: boolean = false;
   documentsSeaData: any[] = [];
+  private data: any[][] = [];
   rowSelected: any = null;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -183,27 +184,50 @@ export class SearchDocumentFormComponent extends BasePage implements OnInit {
   }
 
   search() {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getData();
-    });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
   }
 
   getData() {
-    //siab 3785794
-    this.loading = true;
-    const form = this.searchForm.getRawValue();
-    this.wcontentService.getDocumentos(form, new ListParams()).subscribe({
-      next: (resp: any) => {
-        const result = resp.data.map(async (item: any) => {
-          const typeDocument = await this.getTypeDocument(item.xtipoDocumento);
-          item['xtipoDocumentoNombre'] = typeDocument;
-        });
-        Promise.all(result).then(data => {
-          this.documentsSeaData = resp.data;
-          this.loading = false;
-        });
-      },
+    if (this.data.length == 0) {
+      //siab 3785794
+      this.loading = true;
+      const form = this.searchForm.getRawValue();
+      this.wcontentService.getDocumentos(form, new ListParams()).subscribe({
+        next: (resp: any) => {
+          const result = resp.data.map(async (item: any) => {
+            const typeDocument = await this.getTypeDocument(
+              item.xtipoDocumento
+            );
+            item['xtipoDocumentoNombre'] = typeDocument;
+          });
+          Promise.all(result).then(data => {
+            this.documentsSeaData = this.setPaginate([...resp.data]);
+            this.totalItems = resp.data.length;
+            this.loading = false;
+          });
+        },
+      });
+    } else {
+      this.selectPage();
+    }
+  }
+  private selectPage() {
+    this.documentsSeaData = [...this.data[this.params.value.page - 1]];
+  }
+  private setPaginate(value: any[]): any[] {
+    let data: any[] = [];
+    let dataActual: any = [];
+    value.forEach((val, i) => {
+      dataActual.push(val);
+      if ((i + 1) % this.params.value.limit === 0) {
+        this.data.push(dataActual);
+        dataActual = [];
+      }
     });
+    data = this.data[this.params.value.page - 1];
+    return data;
   }
 
   getTypeDocument(id: number) {
