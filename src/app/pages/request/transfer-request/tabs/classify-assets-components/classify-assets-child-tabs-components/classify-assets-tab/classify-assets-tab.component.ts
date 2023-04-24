@@ -720,6 +720,14 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
+    if (Number(this.classiGoodsForm.get('quantity').value) === 0) {
+      this.message(
+        'error',
+        'Cantidad de la Transferente requerido',
+        'La Cantidad de la Transferente debe ser mínimo 1'
+      );
+      return;
+    }
     if (!goods.idGoodProperty) {
       goods.idGoodProperty =
         Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
