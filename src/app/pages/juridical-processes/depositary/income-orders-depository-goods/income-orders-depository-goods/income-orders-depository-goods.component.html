@@ -9,13 +9,10 @@
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberGood')" label="No Bien">
-            <ng-select
-              [items]="itemsJsonInterfaz"
-              bindLabel="goodNumber"
-              bindValue="appointmentNumber"
-              formControlName="numberGood"
-              class="form-control">
-            </ng-select>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -35,7 +32,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('description')"
@@ -75,32 +72,30 @@
       <div class="row pl-3">Firmante</div>
 
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('user')" label="Usuario">
-            <ng-select
-              [items]="itemsJsonInterfazUser"
-              bindLabel="usuario.user"
-              bindValue="id"
-              formControlName="user"
-              class="form-control">
-            </ng-select>
+            <input type="text" class="form-control" formControlName="user" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('username')" label="Nombre">
             <input
               type="text"
               class="form-control"
-              formControlName="username" />
+              formControlName="username"
+              bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('charge')" label="Puesto">
-            <input type="text" class="form-control" formControlName="charge" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="charge"
+              bsDatepicker />
           </form-field>
         </div>
       </div>
     </form>
   </div>
 </app-card>
-<!--{{itemsJsonInterfaz | json}}-->

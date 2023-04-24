@@ -311,24 +311,22 @@
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
-            [data]="postalCode"
-            bindLabel="township"
+            [data]="items"
+            bindLabel="description"
             label="C&oacute;digo Postal"
-            value="postalCode"
-            (fetchItems)="getPostalCodeByDetail($event)"
-            (change)="changePostalCodeDetail($event)"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
             [form]="form"
             [showTooltip]="true"
             control="codigoPostal"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
-            [data]="locality"
-            bindLabel="township"
+            [data]="items"
+            bindLabel="coloniaName"
             label="Colonia"
-            value="townshipKey"
-            (fetchItems)="getLocalityByDetail($event)"
-            (change)="changeLocalityDetail($event)"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
             [form]="form"
             [showTooltip]="true"
             control="colonia"></ngx-select>
@@ -336,23 +334,21 @@
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
             [data]="delegations"
-            bindLabel="municipality"
+            bindLabel="description"
             label="Delegaci&oacute;n&#47;Municipio"
-            value="municipalityKey"
+            value="id"
             (fetchItems)="getDelegationByDetail($event)"
-            (change)="changeDelegationDetail($event)"
             [form]="form"
             [showTooltip]="true"
             control="delegacionMunicipio"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <ngx-select
-            [data]="state"
-            bindLabel="descCondition"
+            [data]="items"
+            bindLabel="entidadFederativaName"
             label="Entidad Federativa"
             value="id"
-            (fetchItems)="getStateByDetail($event)"
-            (change)="changeStateDetail($event)"
+            (fetchItems)="getFromSelect($event)"
             [form]="form"
             [showTooltip]="true"
             control="entidadFederativa"></ngx-select>

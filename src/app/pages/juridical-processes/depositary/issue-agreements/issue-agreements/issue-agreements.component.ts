@@ -13,12 +13,6 @@ import { ViewCell } from 'ng2-smart-table';
 import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
-import { addDays, format } from 'date-fns';
-import { BehaviorSubject, from, map, takeUntil } from 'rxjs';
-import { DATE_FORMAT } from 'src/app/common/constants/data-formats/date.format';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { EventEmitterService } from './eventEmitter.service';
 
 /** ROUTING MODULE */
@@ -49,7 +43,7 @@ export class IssueAgreementsComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
-  noBien: any;
+  noBien: string = '';
   mostrarHistoricalSituationGoods: boolean = false;
   tableSettings = {
     actions: {
@@ -59,78 +53,67 @@ export class IssueAgreementsComponent
       delete: false,
     },
     hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa prueba
+    mode: 'external', // ventana externa
 
     columns: {
-      goodId: {
+      noBien: {
         title: 'No. Bien',
-        sort: false,
       }, //*
-      description: {
+      descripcion: {
         title: 'Descripción',
-        sort: false,
       },
-      quantity: {
+      cantidad: {
         title: 'Cantidad',
-        sort: false,
       },
-      status: {
+      estatus: {
         title: 'Estatus',
         type: 'custom',
         renderComponent: CustomRender,
-        sort: false,
       },
-      physicalReceptionDate: {
+      fechaRecepcion: {
         title: 'Fecha de Recepción',
-        valuePrepareFunction: (cell: any, row: any) => {
-          return format(new Date(row.physicalReceptionDate), DATE_FORMAT);
-        },
-        sort: false,
       },
-      initialAgreementDate: {
+      fechaAcuerdoInicial: {
         title: 'Fecha de Acuerdo Inicial',
-        valuePrepareFunction: (cell: any, row: any) => {
-          return row.expediente?.initialAgreementDate;
-        },
-        sort: false,
       },
       diasEmitirResolucion: {
         title: 'Días para Emitir Resolución',
-        valuePrepareFunction: (cell: any, row: any) => {
-          return format(
-            addDays(new Date(row.physicalReceptionDate), 90),
-            DATE_FORMAT
-          );
-        },
-        sort: false,
       },
-      audienceRevRecDate: {
+      fechaAudiencia: {
         title: 'Fecha de Audiencia',
-        sort: false,
       },
-      revRecObservations: {
+      observacionesAcuerdoInicial: {
         title: 'Observaciones Acuerdo Inicial',
-        sort: false,
       },
       aceptaSuspencion: {
         title: 'Acepta Suspención',
-        sort: false,
       }, //*
     },
   };
   // Data table
-  dataTable: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  dataTable = [
+    {
+      noBien: 'No. Bien',
+      descripcion: 'Descripción',
+      cantidad: 'Cantidad',
+      estatus: 'Estatus',
+      fechaRecepcion: 'Fecha de Recepción',
+      fechaAcuerdoInicial: 'Fecha de Acuerdo Inicial',
+      diasEmitirResolucion: 'Días para Emitir Resolución',
+      fechaAudiencia: 'Fecha de Audiencia',
+      observacionesAcuerdoInicial: 'Observaciones Acuerdo Inicial',
+      aceptaSuspencion: 'Acepta Suspención',
+    },
+  ];
+
   paragraphs: Example[] = [];
-  totalItems = 0;
+
   public form: FormGroup;
   public formDepositario: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private eventEmitterService: EventEmitterService,
-    private goodService: GoodService,
-    private statusGoodService: StatusGoodService
+    private fb?: FormBuilder,
+    private eventEmitterService?: EventEmitterService
   ) {
     super();
   }
@@ -145,53 +128,12 @@ export class IssueAgreementsComponent
         );
     }
     this.prepareForm();
-    this.getData();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
     this.loading = true;
-  }
-
-  private getData() {
-    let data: any[] = [];
-    this.loading = true;
-    let params = `limit=${this.params.value.limit}&page=${this.params.value.page}`;
-    this.goodService.getAllFilter(params).subscribe({
-      next: val => {
-        this.totalItems = val.count;
-        from(val.data)
-          .pipe(
-            map(value => {
-              if (value.status) {
-                this.statusGoodService.getById(value.status).subscribe({
-                  next: val => {
-                    value.status = val['description'];
-                  },
-                });
-              }
-              return value;
-            })
-          )
-          .subscribe({
-            next: value => {
-              data.push(value);
-              if (data.length == val.data.length) {
-                setTimeout(() => {
-                  console.log(data);
-                  this.dataTable = [...data];
-                  this.loading = false;
-                }, 500);
-              }
-            },
-          });
-      },
-      complete: () => {},
-    });
   }
 
   public open(data: any) {
     if (data) {
-      this.noBien = { noBien: data.goodId, descripcion: data.description };
+      this.noBien = data.noBien;
       this.mostrarHistoricalSituationGoods = true;
     }
   }

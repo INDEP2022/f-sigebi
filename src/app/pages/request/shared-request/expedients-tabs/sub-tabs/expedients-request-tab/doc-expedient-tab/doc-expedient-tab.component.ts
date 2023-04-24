@@ -191,8 +191,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       this.wContentService.getDocumentos(body).subscribe({
         next: async (data: any) => {
           const filterTypeDoc = data.data.filter((items: any) => {
-            if (items.dDocType == 'Document' && items.xidTransferente)
-              return items;
+            if (items.dDocType == 'Document') return items;
           });
 
           const info = filterTypeDoc.map(async (items: any) => {
@@ -321,7 +320,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (typeTrasf) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.xtipoTransferencia == typeTrasf) return item;
       });
 
@@ -338,7 +337,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (titleDoc) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.ddocTitle == titleDoc) return item;
       });
 
@@ -355,7 +354,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (sender) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.xremitente == sender) return item;
       });
 
@@ -372,7 +371,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (author) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.dDocAuthor == author) return item;
       });
 
@@ -389,7 +388,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (contributor) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.xcontribuyente == contributor) return item;
       });
 
@@ -406,7 +405,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (noOfice) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.xnoOficio == noOfice) return item;
       });
 
@@ -423,7 +422,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (senderCharge) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.xcargoRemitente == senderCharge) return item;
       });
 
@@ -440,7 +439,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (comment) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.xcomments == comment) return item;
       });
 
@@ -457,7 +456,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
 
     if (responsible) {
       this.loading = true;
-      const filter = this.allDocumentExpedient.filter(item => {
+      const filter = this.paragraphs.filter(item => {
         if (item.xresponsable == responsible) return item;
       });
 

@@ -220,8 +220,6 @@ export class GeneralDocumentsFormComponent
   resetForm() {
     this.searchForm.reset();
     this.documentsGenData = [];
-    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    this.search();
   }
 
   search() {

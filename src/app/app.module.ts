@@ -6,12 +6,10 @@ import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { DateFnsModule } from 'ngx-date-fns';
-import { ToastrModule } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ROOT_REDUCERS } from './app.reducers';
-import { ToastrComponent } from './common/components/toastr/toastr.component';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
@@ -34,7 +32,6 @@ export function tokenGetter() {
     ContentComponent,
     InputFormDirective,
     LoadingComponent,
-    ToastrComponent,
   ],
   imports: [
     BrowserModule,
@@ -65,13 +62,6 @@ export function tokenGetter() {
     AffairModule,
     LegalAffairModule,
     TransferorsModule,
-    ToastrModule.forRoot({
-      tapToDismiss: true,
-      closeButton: true,
-      progressBar: true,
-      timeOut: 6000,
-      preventDuplicates: true,
-    }),
   ],
   providers: [
     {

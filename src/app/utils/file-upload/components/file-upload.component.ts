@@ -27,7 +27,7 @@ export class FileUploadComponent implements OnInit {
   async onSelect(event: NgxDropzoneChangeEvent) {
     const fileEvents = event.addedFiles.map(async file => {
       const ext = file.name.substring(file.name.lastIndexOf('.') + 1) ?? '';
-      if (ext?.toLowerCase().includes('tif')) {
+      if (ext.includes('tif')) {
         return new FileUploadEvent(file);
       }
       return file.type.includes('image')

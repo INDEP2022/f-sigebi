@@ -42,7 +42,7 @@ export class CreateManualServiceFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas crear el servicio manual?'
+      '¿Estas seguro que deseas crear el servicio manual?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

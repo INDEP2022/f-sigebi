@@ -72,14 +72,13 @@
         <div class="row pt-4">
           <div class="col-md-4">
             <ngx-select
+              [form]="domicileForm"
+              control="localityKey"
               (fetchItems)="getLocality($event)"
               [data]="selectLocality"
-              [form]="domicileForm"
-              value="townshipKey"
-              bindLabel="township"
               label="Colonia"
-              control="localityKey">
-            </ngx-select>
+              bindLabel="township"
+              value="townshipKey"></ngx-select>
           </div>
           <div class="col-md-4">
             <ngx-select

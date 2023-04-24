@@ -57,7 +57,7 @@ export class SignReportComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas mandar el documento a firmar?'
+      '¿Estas seguro que deseas mandar el documento a firmar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

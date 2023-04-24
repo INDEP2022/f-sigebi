@@ -1,53 +1,47 @@
-export const SURVEILLANCE_LOG_COLUMNS: any = {
-  binnacleId: {
+export const SURVEILLANCE_LOG_COLUMNS = {
+  id: {
     title: 'Id',
     type: 'number',
     sort: false,
   },
-  requestDate: {
+  request: {
     title: 'Fecha Solicitud',
+    type: 'string',
     sort: false,
   },
-  attentionDate: {
-    title: 'Fecha Atención',
+  attention: {
+    title: 'Fecha Atencíon',
     type: 'number',
     sort: false,
   },
-  processMnto: {
+  maintenanceType: {
     title: 'Tipo de Mantenimiento',
     type: 'number',
     sort: false,
   },
-  reasonMnto: {
+  changeMotiv: {
     title: 'Motivo de Cambio',
     type: 'number',
     sort: false,
   },
-  usrRequest: {
+  solicita: {
     title: 'Solicita',
     type: 'number',
     sort: false,
   },
-  usrRun: {
+  ejecuta: {
     title: 'Ejecuta',
     type: 'number',
     sort: false,
   },
-  usrAuthorize: {
+  autoriza: {
     title: 'Autoriza',
     type: 'number',
     sort: false,
   },
-  delegationNumber: {
+  delegation: {
     title: 'Delegación',
     type: 'number',
     sort: false,
-    filter: {
-      type: 'text',
-      config: {},
-    },
-    valuePrepareFunction: (cell: any, row: any) => {
-      return `${row.delegationNumber} - ${row.delegation.description}`;
-    },
   },
 };

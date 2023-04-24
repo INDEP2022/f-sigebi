@@ -51,7 +51,7 @@ export class UploadFilesFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro de guardar los archivos?'
+      '¿Estas seguro de guardar los archivos?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

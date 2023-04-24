@@ -68,7 +68,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       ],
       description: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       typeRelevant: [null],
     });
@@ -132,7 +132,6 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
   clean(): void {
     this.searchForm.reset();
     this.paragraphs = [];
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.totalItems = 0;
   }
 

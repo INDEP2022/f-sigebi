@@ -1,43 +1,22 @@
-<!-- <app-card [header]="true" [footer]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">MOVIMIENTOS TESOFE</h5>
-    <div class="col-md-5 buttons">
-      <div *ngIf="showBtnAdd">
-        <button
-          class="btn btn-primary active btn-sm ml-3"
-          (click)="loadModal()">
-          Nuevo
-        </button>
-      </div>
-    </div>
   </div>
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-6">
-            <app-banks-shared
-              [labelName]="'Clave Banco'"
-              [form]="form"
-              [bankField]="'cveBank'"
-              (stringBank)="getBankCode()">
-            </app-banks-shared>
+          <div class="col-md-4">
+            <form-field [control]="form.get('bank')" label="Banco">
+              <input type="text" class="form-control" formControlName="bank" />
+            </form-field>
           </div>
-          <div class="col-md-6" style="margin-top: 4px">
-            <ng-select
-              [items]="listaDatos"
-              bindLabel="accountNumber"
-              bindValue="cveAccount"
-              placeholder="Seleccione una cuenta..."
-              (change)="loadInfo($event)">
-            </ng-select>
-          </div>
-          <div class="col-md-9">
+          <div class="col-md-4">
             <form-field [control]="form.get('account')" label="Cuenta">
               <input formControlName="account" class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input formControlName="currency" class="form-control" />
             </form-field>
@@ -50,18 +29,14 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
-                [source]="ArregloDatosTabla"
-                (edit)="edit($event.data)"
-                (delete)="deleteQuestion($event.data)">
+                [source]="data1">
               </ng2-smart-table>
             </div>
           </div>
-          <app-pagination
-            [filterParams]="filterParams"
-            [totalItems]="totalItems">
+          <app-pagination [params]="params" [totalItems]="totalItems">
           </app-pagination>
         </div>
       </form>
     </div>
   </div>
-</app-card> -->
+</app-card>

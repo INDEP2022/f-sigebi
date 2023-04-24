@@ -109,7 +109,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro de crear almacén?'
+      '¿Estas seguro de crear almacén?'
     ).then(question => {
       if (question.isConfirmed) {
         console.log(this.warehouseForm.value);

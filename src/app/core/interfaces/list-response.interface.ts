@@ -15,11 +15,3 @@ export interface IResponse<T = any> {
   message: string[];
   statusCode: number;
 }
-
-export interface IListResponseMessage<T = any> {
-  [x: string]: any;
-  data: T[];
-  count: number;
-  message: string[];
-  statusCode?: number;
-}

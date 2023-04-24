@@ -137,7 +137,6 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   update() {
-    console.log(this.dictumForm.value);
     const idDoc = this.idDoc;
     this.requestService.update(idDoc, this.dictumForm.value).subscribe({
       next: data => {

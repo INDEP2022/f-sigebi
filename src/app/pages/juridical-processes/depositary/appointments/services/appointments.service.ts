@@ -48,20 +48,22 @@ export class AppointmentsService {
   /**
    * DATA SELECTS
    */
-  getPostalCodeByFilter(params: string) {
-    return this.msGoodsInvService.getAllCodePostalByFilter(params);
+  getDelegationsByFilter(params: string) {
+    return this.msGoodsInvService.getAllMunipalitiesByFilter(params);
   }
   getLocalityByFilter(params: string) {
     return this.msGoodsInvService.getAllTownshipByFilter(params);
   }
-  getDelegationsByFilter(params: string) {
-    return this.msGoodsInvService.getAllMunipalitiesByFilter(params);
-  }
-  getStateOfRepublicByAll(params: ListParams) {
-    return this.msStateOfRepublicService.getAll(params);
-  }
-  getStateOfRepublicById(idState: number | string = '') {
-    return this.msStateOfRepublicService.getById(idState);
+  getStateOfRepublic(
+    params: ListParams,
+    stateId: boolean,
+    idState: number | string = ''
+  ) {
+    if (stateId) {
+      return this.msStateOfRepublicService.getById(idState);
+    } else {
+      return this.msStateOfRepublicService.getAll(params);
+    }
   }
   /**
    * HELP FUNCTIONS FOR COMPONENT

@@ -59,7 +59,7 @@ export class RequestSiabFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas mandar busqueda a SIAB?'
+      '¿Estas seguro que deseas mandar busqueda a SIAB?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

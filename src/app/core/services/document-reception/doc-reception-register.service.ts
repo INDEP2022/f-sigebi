@@ -269,25 +269,9 @@ export class DocReceptionRegisterService extends HttpService {
     let partials = ENDPOINT_LINKS.Transferente.split('/');
     self.microservice = partials[0];
     const route = `${partials[1]}/transferring-levels-view`;
-    return self.get<IListResponse<ITransferingLevelView>>(route, params).pipe(
-      map(data => {
-        data = {
-          ...data,
-          data: data.data.map(e => {
-            return {
-              ...e,
-              cityDesc: `${e.cityNum} - ${e.cityDesc}`,
-              federalEntityDesc: `${e.federalEntityCve} - ${e.federalEntityDesc}`,
-              transfereeDesc: `${e.transfereeNum} - ${e.transfereeDesc}`,
-              stationDesc: `${e.stationNum} - ${e.stationDesc}`,
-              authorityDesc: `${e.authorityNum} - ${e.authorityDesc}`,
-            };
-          }),
-        };
-        return data;
-      }),
-      tap(() => (self.microservice = ''))
-    );
+    return self
+      .get<IListResponse<ITransferingLevelView>>(route, params)
+      .pipe(tap(() => (self.microservice = '')));
   }
 
   getGoods(params?: string): Observable<IListResponse<IGood>> {

@@ -1,6 +1,5 @@
 import { HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { v4 as uuidv4 } from 'uuid';
@@ -40,12 +39,7 @@ export class FileBrowserService extends HttpService {
       formData,
       { reportProgress: true, responseType: 'json' }
     );
-    return this.httpClient.request(request).pipe(
-      catchError(error => {
-        console.log(error);
-        return throwError(() => error);
-      })
-    );
+    return this.httpClient.request(request);
   }
 
   deleteByFolioAndFilename(invoiceNumber: string | number, name: string) {

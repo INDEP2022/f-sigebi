@@ -12,7 +12,6 @@ import {
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
 import { GoodGetData } from 'src/app/core/models/ms-good/good';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
-import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -133,7 +132,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   labelActa = 'Abrir acta';
   btnCSSAct = 'btn-info';
   scanStatus = false;
-  act2Valid = false;
 
   constructor(
     private fb: FormBuilder,
@@ -144,8 +142,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceDocuments: DocumentsService,
     private serviceNoty: NotificationService,
     private serviceExpedient: ExpedientService,
-    private serviceRNomencla: ParametersService,
-    private serviceSssubtypeGood: GoodSssubtypeService
+    private serviceRNomencla: ParametersService
   ) {
     super();
   }
@@ -225,6 +222,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.render.removeClass(btn, 'enabled');
       this.render.addClass(btn, 'disabled');
     }
+  }
+
+  disabledElement(elmt: string) {
+    const element = document.getElementById(elmt);
+    this.render.addClass(element, 'disabled');
   }
 
   enableElement(elmt: string) {
@@ -424,7 +426,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   } else {
                     this.records = ['A', 'NA', 'D', 'NS'];
                   }
-                  console.log(model);
+
                   this.serviceProcVal.getTransfer(model).subscribe(res => {
                     this.transferSelect = new DefaultSelect(
                       res.data,
@@ -492,18 +494,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //"Acta 2"
 
   fillActTwo() {
-    let countAct: Number =
-      0 +
-      (this.form.get('acta').value != null ? 1 : 0) +
-      (this.form.get('transfer').value != null ? 1 : 0) +
-      (this.form.get('ident').value != null ? 1 : 0) +
-      (this.form.get('recibe').value != null ? 1 : 0) +
-      (this.form.get('admin').value != null ? 1 : 0) +
-      (this.form.get('folio').value != null ? 1 : 0) +
-      (this.form.get('year').value != null ? 1 : 0) +
-      (this.form.get('mes').value != null ? 1 : 0);
-    console.log(countAct);
-
+    /*     console.log(this.form.get('admin').value.delegation); */
     const nameAct =
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
@@ -535,8 +526,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         ? this.zeroAdd(this.form.get('mes').value, 2)
         : '');
     this.form.get('acta2').setValue(nameAct);
-    //Validar Acta 2
-    countAct == 8 ? (this.act2Valid = true) : (this.act2Valid = false);
   }
 
   searchKeyProceeding() {
@@ -573,104 +562,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.selectData = data;
   }
 
-  //Add good to Act
-
-  subtypeGood(params: ListParams) {
-    let resp = {
-      no_type: '',
-      no_subtype: '',
-    };
-    console.log(params);
-    const newParams = `filter.numClasifGoods=$eq:${params}`;
-    this.serviceSssubtypeGood.getFilter(newParams).subscribe(
-      res => {
-        const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
-        const subtype = JSON.parse(JSON.stringify(res.data[0]['numSubType']));
-        resp.no_type = type.id;
-        resp.no_subtype = subtype.id;
-        return resp;
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-
   pushData() {
-    const valAct = this.form.get('acta').value;
-    const admin = this.form.get('admin').value;
-    if (this.selectData) {
-      const goodClass = this.selectData.goodClassNumber;
-      const available = this.selectData.avalaible;
-      console.log(this.subtypeGood(goodClass));
-
-      if (!available) {
-        this.alert(
-          'error',
-          'Estatus no disponible',
-          'El bien tiene un estatus invalido para ser asignado a alguna acta'
-        );
-      }
-
-      if (!this.act2Valid) {
-        this.alert(
-          'error',
-          'Error en el número de acta',
-          'Debe registrar un Acta antes de poder mover el bien'
-        );
-      }
-
-      if (valAct != 'RT') {
-        if (
-          (goodClass == 1424 || goodClass == 1426 || goodClass == 1590) &&
-          valAct[0] != 'N'
-        ) {
-          this.alert(
-            'error',
-            'Problema con el tipo de acta',
-            'Para este bien la Clave de Acta debe iniciar con " N "'
-          );
-        }
-        if (
-          (goodClass == 1424 || goodClass == 1426 || goodClass == 1590) &&
-          admin != 'CCB'
-        ) {
-          this.alert(
-            'error',
-            'Problema con quien administra en la clave',
-            'En la parte de Quien Administra en la clave de acta debe ser para este bien " CCB "'
-          );
-        }
-        if (
-          (goodClass != 1424 || goodClass != 1426 || goodClass != 1590) &&
-          valAct[0] == 'N'
-        ) {
-          this.alert(
-            'error',
-            'Problema con el tipo de acta',
-            'Las actas con esta nomenclatura solo deben contener bienes de numerario efectivo'
-          );
-        }
-      }
+    if (this.selectData.avalaible) {
+      this.goodData.push(this.selectData);
+      this.dataGoodApraiser.load(this.goodData);
+      console.log(this.dataGoodApraiser);
     } else {
       this.alert(
         'warning',
-        'Bien no seleccionado',
-        'No seleccionó un bien para asignar en el acta'
+        'El bien esta no disponible',
+        'El bien seleccionado tiene un estatus de no disponible, puede que se encuentre fuera de la fecha de recepción'
       );
     }
-
-    /* if (this.selectData.avalaible) {
-        this.goodData.push(this.selectData);
-        this.dataGoodApraiser.load(this.goodData);
-        console.log(this.dataGoodApraiser);
-      } else {
-        this.alert(
-          'warning',
-          'El bien esta no disponible',
-          'El bien seleccionado tiene un estatus de no disponible, puede que se encuentre fuera de la fecha de recepción'
-        );
-      } */
   }
 }
 

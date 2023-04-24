@@ -20,7 +20,6 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -88,8 +87,7 @@ export class DocRequestTabComponent
     private regDelService: RegionalDelegationService,
     private stateService: DelegationStateService,
     private transferentService: TransferenteService,
-    private stateOfRepublicService: StateOfRepublicService,
-    private authService: AuthService
+    private stateOfRepublicService: StateOfRepublicService
   ) {
     super();
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
@@ -218,10 +216,8 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: data => {
-          let token = this.authService.decodeToken();
-          console.log('dzz', token);
           const filterDoc = data.data.filter((items: any) => {
-            if (items.dDocType == 'Document' && items.xidTransferente != 1) {
+            if (items.dDocType == 'Document') {
               return items;
             }
           });
@@ -251,7 +247,6 @@ export class DocRequestTabComponent
 
           Promise.all(info).then(x => {
             this.allDataDocReq = x;
-            console.log('doc', x);
             this.paragraphs.load(x);
             this.totalItems = this.paragraphs.count();
             this.loading = false;

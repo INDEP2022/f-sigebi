@@ -109,7 +109,6 @@ export enum ENDPOINT_LINKS {
   Subdelegation = 'catalog/subdelegation',
   ThirdParty = 'catalog/third-party-company',
   Transferente = 'catalog/transferent',
-  EntityTransference = 'catalog/entity-transferring',
   TypeDocto = 'catalog/type-docto',
   TypeGoods = 'catalog/type-state',
   TypeRelevant = 'catalog/type-relevant',

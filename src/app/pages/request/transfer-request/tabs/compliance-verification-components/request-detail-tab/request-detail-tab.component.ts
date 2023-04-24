@@ -105,7 +105,6 @@ export class RequestDetailTabComponent
   prepareForm(): void {
     this.receptionForm = this.fb.group({
       priority: [null],
-      priorityDate: [null],
       infoProvenance: [null],
       receptDate: [null],
       officeDate: [null, Validators.required],
@@ -136,7 +135,7 @@ export class RequestDetailTabComponent
     this.requestService.getById(this.idRequest).subscribe((data: any) => {
       this.infoRequest = data;
       this.transferenceId = data.transferenceId;
-      this.setLabelNames(Number(this.transferenceId));
+      this.setLabelNames(this.transferenceId);
     });
   }
 

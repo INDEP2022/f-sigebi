@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -9,23 +9,15 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class ChangeGoodsRandomComponent implements OnInit {
-  constructor(private fb: FormBuilder) {}
-
   form: FormGroup;
+
   public delegations = new DefaultSelect();
   public procesess = new DefaultSelect();
-  @Output() eventChangeGoodsRandom = new EventEmitter();
+
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
-  }
-
-  getFormChangeGoodsRandom() {
-    return this.form;
-  }
-
-  onClickChangeGoodRandom() {
-    this.eventChangeGoodsRandom.emit(this.form.value);
   }
 
   prepareForm() {
@@ -35,7 +27,7 @@ export class ChangeGoodsRandomComponent implements OnInit {
       delegation: [null, Validators.required],
       process: [null, Validators.required],
       random: [null, Validators.required],
-      goodNumber: [null, Validators.required],
+      noBien: [null, Validators.required],
       description: [
         null,
         Validators.required,
@@ -47,5 +39,21 @@ export class ChangeGoodsRandomComponent implements OnInit {
         Validators.pattern(STRING_PATTERN),
       ],
     });
+  }
+
+  save() {
+    console.log(this.form.value);
+  }
+
+  public getDelegations(event: any) {
+    // this.bankService.getAll(params).subscribe(data => {
+    //   this.banks = new DefaultSelect(data.data, data.count);
+    // });
+  }
+
+  public getProcesess(event: any) {
+    // this.bankService.getAll(params).subscribe(data => {
+    //   this.banks = new DefaultSelect(data.data, data.count);
+    // });
   }
 }

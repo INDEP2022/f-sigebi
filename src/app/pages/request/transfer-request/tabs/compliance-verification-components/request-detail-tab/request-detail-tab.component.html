@@ -1,6 +1,6 @@
-<!-- <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+<div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
   <form-loader *ngIf="formLoading"></form-loader>
-</div> -->
+</div>
 <div
   *ngIf="
     process == 'registration-request' ||
@@ -8,7 +8,8 @@
     process == 'validate-document' ||
     process == 'process-approval' ||
     process == 'notify-clarification-inadmissibility' ||
-    process == 'classify-assets'
+    process == 'classify-assets' ||
+    formLoading == false
   ">
   <div class="row">
     <div class="d-flex bd-highlight">
@@ -44,19 +45,20 @@
               [disabled]="true" />
           </div>
         </div>
+
         <div class="col-md-4">
-          <label class="label">{{ fechaRecepcionLabel }}</label>
-          {{ infoRequest?.priorityDate | date : 'dd/MM/yyyy' }}
+          <label class="label">{{ procedenciaLabel }}</label>
+          {{ ofiginName || '' }}
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <label class="label">{{ fechaRecepcionLabel }}</label>
-          {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+          {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
         </div>
         <div class="col-md-4">
-          <label class="label">{{ procedenciaLabel }}</label>
-          {{ ofiginName || '' }}
+          <label class="label">{{ fechaOficioLabel }}</label>
+          {{ infoRequest?.paperDate | date: 'dd/MM/yyyy' }}
         </div>
       </div>
       <div class="row pt-4">
@@ -65,25 +67,14 @@
           {{ infoRequest?.typeRecord }}
         </div>
         <div class="col-md-4">
-          <label class="label">{{ fechaOficioLabel }}</label>
-          {{ infoRequest?.paperDate | date : 'dd/MM/yyyy' }}
+          <label class="label">{{ misterioPublicLabel }}</label>
+          {{ infoRequest?.publicMinistry }}
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
           <label class="label">{{ nombreLabel }}</label>
           {{ infoRequest?.nameOfOwner }}
-        </div>
-        <div class="col-md-4">
-          <label class="label">{{ misterioPublicLabel }}</label>
-          {{ infoRequest?.publicMinistry }}
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <label class="label">{{ cargoLabel }}</label>
-          {{ infoRequest?.holderCharge }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ jusgadoLabel }}</label>
@@ -93,8 +84,8 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ telefonoLabel }}</label>
-          {{ infoRequest?.phoneOfOwner }}
+          <label class="label">{{ cargoLabel }}</label>
+          {{ infoRequest?.holderCharge }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ delitoLabel }}</label>
@@ -104,8 +95,8 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ correoLable }}</label>
-          {{ infoRequest?.emailOfOwner }}
+          <label class="label">{{ telefonoLabel }}</label>
+          {{ infoRequest?.phoneOfOwner }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ viaRecepcionLabel }}</label
@@ -115,8 +106,8 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ contribuyenteLabel }}</label>
-          {{ infoRequest?.indicatedTaxpayer }}
+          <label class="label">{{ correoLable }}</label>
+          {{ infoRequest?.emailOfOwner }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ gestionDestino }}</label>
@@ -126,18 +117,19 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ expedienteTransLabel }}</label>
-          {{ infoRequest?.transferenceFile }}
+          <label class="label">{{ contribuyenteLabel }}</label>
+          {{ infoRequest?.indicatedTaxpayer }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ asuntoLabel }}</label>
           {{ affairName }}
         </div>
       </div>
+
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">Notas Entidad Transferente&#58;</label>
-          {{ infoRequest?.transferEntNotes }}
+          <label class="label">{{ expedienteTransLabel }}</label>
+          {{ infoRequest?.transferenceFile }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ tipoTransferenteLabel }}</label>
@@ -146,12 +138,24 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ noAmparoLabel }}</label>
-          {{ infoRequest?.protectNumber }}
+          <label class="label">Notas Entidad Transferente&#58;</label>
+          {{ infoRequest?.transferEntNotes }}
         </div>
         <div class="col-md-8">
           <label class="label">{{ observaciones }}</label>
           {{ infoRequest?.observations }}
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <label class="label">{{ noAmparoLabel }}</label>
+          {{ infoRequest?.protectNumber }}
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="transferenceId === 1 || transferenceId === 3">
+          <label class="label">{{ causaPenal }}</label>
+          {{ infoRequest?.lawsuit }}
         </div>
       </div>
       <div
@@ -176,14 +180,6 @@
         <div class="col-md-4">
           <label class="label">{{ averiguacionPreviaLabel }}</label>
           {{ infoRequest?.previousInquiry }}
-        </div>
-      </div>
-      <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceId === 1 || transferenceId === 3">
-          <label class="label">{{ causaPenal }}</label>
-          {{ infoRequest?.lawsuit }}
         </div>
       </div>
     </form>

@@ -23,8 +23,6 @@ export const NOTIFICATIONS_COLUMNS = {
 
 export const GOODS_COLUMNS = {
   id: { title: 'No. Bien' },
-  status: {
-    title: 'Estatus',
-  },
+  status: { title: 'Estatus' },
   description: { title: 'Descripción' },
 };

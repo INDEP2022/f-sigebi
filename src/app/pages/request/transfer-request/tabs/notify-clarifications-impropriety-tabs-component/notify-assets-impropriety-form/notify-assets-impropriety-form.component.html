@@ -4,7 +4,7 @@
   </div>
   <div body class="body">
     <form [formGroup]="clarificationForm" class="form-material">
-      <div *ngIf="withDocumentation">
+      <div *ngIf="!withDocumentation">
         <div class="row">
           <div class="col-md-12">
             <form-field
@@ -82,17 +82,17 @@
       </div>
     </form>
     <form [formGroup]="inappropriatenessForm" class="form-material">
-      <div *ngIf="!withDocumentation">
+      <div *ngIf="withDocumentation">
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="inappropriatenessForm.get('addresseeName')"
+              [control]="inappropriatenessForm.get('managedTo')"
               label="Destinatario">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="addresseeName" />
+                formControlName="managedTo" />
             </form-field>
           </div>
           <div class="col-md-6">
@@ -136,13 +136,13 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="inappropriatenessForm.get('senderName')"
+              [control]="inappropriatenessForm.get('sender')"
               label="Nombre Remitente">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="senderName" />
+                formControlName="sender" />
             </form-field>
           </div>
 
@@ -210,13 +210,13 @@
         <div class="row pt-3">
           <div class="col-md-4">
             <form-field
-              [control]="inappropriatenessForm.get('userAreaCaptures')"
+              [control]="inappropriatenessForm.get('areaUserCapture')"
               label="&Aacute;rea del Usuario Captura">
               <input
                 type="text"
                 class="form-control"
                 maxlength="60"
-                formControlName="userAreaCaptures" />
+                formControlName="areaUserCapture" />
             </form-field>
           </div>
 
@@ -234,13 +234,13 @@
 
           <div class="col-md-4">
             <form-field
-              [control]="inappropriatenessForm.get('webMail')"
+              [control]="inappropriatenessForm.get('mailNotification')"
               label="Correo Notificaci&oacute;n SAT">
               <input
                 type="text"
                 class="form-control"
                 maxlength="30"
-                formControlName="webMail" />
+                formControlName="mailNotification" />
             </form-field>
           </div>
         </div>
@@ -249,14 +249,14 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3" *ngIf="!withDocumentation">
+      <div class="m-3" *ngIf="withDocumentation">
         <confirm-button
           [disabled]="inappropriatenessForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
       </div>
-      <div class="m-3" *ngIf="withDocumentation">
+      <div class="m-3" *ngIf="!withDocumentation">
         <confirm-button
           [disabled]="clarificationForm.invalid"
           [loading]="loading"
