@@ -749,7 +749,7 @@ export class RegistrationOfRequestsComponent
     this.loader.load = true;
     const title = `Notificar Aclaración-Improcedencia, No. Solicitud: ${this.requestData.id}`;
     const url =
-      'pages/request/transfer-request/notify-clarification-inadmissibility/';
+      'pages/request/transfer-request/notify-clarification-inadmissibility';
     const from = 'VERIFICAR_CUMPLIMIENTO';
     const to = 'NOTIFICAR_ACLARACIONES';
     const user: any = this.authService.decodeToken();
@@ -759,7 +759,7 @@ export class RegistrationOfRequestsComponent
       url,
       from,
       to,
-      false,
+      true,
       this.task.id,
       user.username,
       'SOLICITUD_TRANSFERENCIA',
@@ -771,7 +771,7 @@ export class RegistrationOfRequestsComponent
       this.msgGuardado(
         'success',
         'Notificación Creada',
-        `Se genero una Notificación de Aclaración con el folio: ${this.requestData.id}`
+        `Se generó una Notificación de Aclaración con el folio: ${this.requestData.id}`
       );
     }
   }
@@ -1042,6 +1042,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
       confirmButtonText: btnTitle,
+      cancelButtonText: 'Cancelar',
     }).then(async result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {

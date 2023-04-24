@@ -49,11 +49,13 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       next: response =>
         (this.users = new DefaultSelect(response.data, response.count)),
       error: error => {
-        this.onLoadToast(
-          'error',
-          'Error',
-          'Ocurrio un error al obtener los usuarios'
-        );
+        if (error.status >= 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al obtener los usuarios'
+          );
+        }
       },
     });
   }
@@ -67,6 +69,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.modalRef.content.callback();
     this.modalRef.hide();
   }
 

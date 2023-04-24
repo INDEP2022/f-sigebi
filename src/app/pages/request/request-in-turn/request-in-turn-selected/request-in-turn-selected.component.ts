@@ -205,6 +205,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       task['requestId'] = request.id;
       task['expedientId'] = 0;
       task['urlNb'] = 'pages/request/transfer-request/registration-request';
+      task['processName'] = 'SolicitudTransferencia';
 
       this.taskService.createTask(task).subscribe({
         next: resp => {

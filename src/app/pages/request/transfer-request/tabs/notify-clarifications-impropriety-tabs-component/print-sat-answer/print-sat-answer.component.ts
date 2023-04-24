@@ -26,6 +26,12 @@ export class PrintSatAnswerComponent implements OnInit {
   ngOnInit(): void {
     let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion_Respuesta.jasper&ID_ACLARACION=${this.idAclaracion}`;
     this.src = linkDoc1;
+    this.updateStatus();
+  }
+
+  updateStatus() {
+    //Actualizar status bien
+    //Actualizar status de notificaciones
   }
 
   onLoaded(pdf: PDFDocumentProxy) {
