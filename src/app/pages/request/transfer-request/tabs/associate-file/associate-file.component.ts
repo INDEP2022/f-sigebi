@@ -15,7 +15,6 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
 import { OpenDescriptionComponent } from './open-description/open-description.component';
 
@@ -143,7 +142,16 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     } else if (!request.transferenceId) {
       this.onLoadToast('error', '', 'Se requiere tener una transferente');
     }
-    Swal.fire({
+    this.alertQuestion(
+      'warning',
+      'Generar Carátula',
+      '¿Estas seguro de querer generar la carátula?'
+    ).then(val => {
+      if (val.isConfirmed) {
+        this.generateCaratula();
+      }
+    });
+    /*Swal.fire({
       title: 'Generar Carátula',
       text: '¿Esta seguro de querer generar una carátula?',
       icon: 'question',
@@ -155,12 +163,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       if (result.isConfirmed) {
         this.generateCaratula();
       }
-    });
+    }); */
   }
 
   generateCaratula() {
     let request = this.parameter.getRawValue();
-    console.log('nueva caratula ', request);
     let expedient = this.associateFileForm.getRawValue();
     this.loader.load = true;
     //guardar expediente
@@ -283,6 +290,11 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                                       parameters
                                     );
                                     this.close();
+                                    this.onLoadToast(
+                                      'success',
+                                      'Caratula generada correctamente',
+                                      ''
+                                    );
                                   },
                                   error: error => {
                                     this.loader.load = false;
