@@ -392,7 +392,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   loadChecks() {
-    loadCheckLc(this.form, this.capturelineService);
+    // this.openDialogCheckPortal();
+    loadCheckLc(
+      this.form,
+      this.capturelineService,
+      this.openDialogCheckPortal.bind(this)
+    );
     // .then((res: any) => {
     //   if (res.isConfirmed) {
     //     this.openDialogCheckPortal();
@@ -534,7 +539,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   openDialogCheckPortal(context?: Partial<TableCheckPortalDialogComponent>) {
     this.modalService.show(TableCheckPortalDialogComponent, {
-      // initialState: { ...context },
+      initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });

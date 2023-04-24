@@ -8,7 +8,8 @@ import { type CapturelineService } from 'src/app/core/services/ms-captureline/ca
 
 export function loadCheckLc(
   form: FormGroup,
-  capturelineService: CapturelineService
+  capturelineService: CapturelineService,
+  cbOpenCheckPortal: (item: any) => void
 ) {
   if (form.invalid) {
     showToast({
@@ -42,6 +43,8 @@ export function loadCheckLc(
               text: 'Se cargaron los checks correctamente',
               icon: 'success',
             });
+            console.log(res);
+            cbOpenCheckPortal(res.data);
           },
           error: () => {
             showToast({

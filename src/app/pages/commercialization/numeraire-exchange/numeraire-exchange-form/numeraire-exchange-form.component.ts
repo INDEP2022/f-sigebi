@@ -519,3 +519,124 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     return +value.replace(/[^0-9.]+/g, '');
   }
 }
+
+interface ParamsChargeCvs {
+  goodId: number;
+  sellPrice: number;
+  sellTax: number;
+  commission: number;
+  commissionTax: number;
+  import: number;
+  comment: string;
+
+  description: string;
+  appraisalValue: number;
+  status: string;
+  identifier: string;
+  processExtDom: string;
+  available: 'no' | 'si' | 'error';
+}
+
+async function pupChargeCsv({
+  massiveData,
+  screenKey,
+}: {
+  massiveData: Omit<
+    ParamsChargeCvs,
+    | 'description'
+    | 'appraisalValue'
+    | 'status'
+    | 'identifier'
+    | 'processExtDom'
+    | 'available'
+  >[];
+  screenKey: string;
+}) {
+  let available, goodNumber, availableNumber, workSheet, workBook;
+  let data;
+  let message = [];
+  const dataResponse: ParamsChargeCvs[] = [];
+
+  for (const item of massiveData) {
+    goodNumber = item.goodId;
+    let status = await this.repository.query(`SELECT COUNT(0)
+                        FROM sera.bien bie, sera.estatus_x_pantalla EXP
+                        WHERE bie.estatus = EXP.estatus
+                        AND EXP.cve_pantalla = '${screenKey}'
+                        AND EXP.proceso_ext_dom = bie.proceso_ext_dom
+                        AND bie.no_bien = ${goodNumber}
+                        AND bie.no_clasif_bien NOT IN (SELECT NO_CLASIF_BIEN
+                            FROM sera.CAT_SSSUBTIPO_BIEN
+                            WHERE NO_TIPO = 7 AND NO_SUBTIPO = 1);`);
+    if (!status) status = 0;
+    status > 0 ? (available = 'S') : (available = 'N');
+    availableNumber = await this.validNum(screenKey, goodNumber);
+
+    if (
+      (availableNumber == 'S' && available == 'S') ||
+      (availableNumber == 'S' && available == 'N')
+    ) {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: [
+          'El bien consultado tambien puede ser convertido a numerario por valores y divisas. Verifique su tipo de conversión antes de continuar con el proceso.',
+          '',
+        ],
+      };
+    }
+
+    let dataSet = await this.repository.query(`
+                        SELECT DESCRIPCION,VALOR_AVALUO,ESTATUS,IDENTIFICADOR,PROCESO_EXT_DOM
+                        FROM sera.BIEN
+                        WHERE NO_BIEN = ${goodNumber};`);
+
+    const dataMore = {
+      description: '',
+      appraisalValue: null,
+      status: '',
+      identifier: '',
+      processExtDom: '',
+      commissionTaxPercent: 0,
+      sellTaxPercent: 0,
+      amount: 0,
+    };
+    if (dataSet.length > 0) {
+      dataMore.description = dataSet[0].DESCRIPCION;
+      dataMore.appraisalValue = dataSet[0].VALOR_AVALUO;
+      dataMore.status = dataSet[0].ESTATUS;
+      dataMore.identifier = dataSet[0].IDENTIFICADOR;
+      dataMore.processExtDom = dataSet[0].PROCESO_EXT_DOM;
+    }
+    const itemResponse: ParamsChargeCvs = {
+      ...item,
+      ...dataMore,
+      available: 'si',
+    };
+
+    // const goodNumberCSV = itemResponse.goodId;
+    const sellPrice = itemResponse.sellPrice;
+    const ivavta = sellPrice * (item.sellTax / 100);
+    const commission = sellPrice * (item.commission / 100);
+    const ivacom = commission * (item.commissionTax / 100);
+
+    const amount = commission * (item.import / 100);
+    // const comment = item.comment;
+
+    let availableCSV;
+    if (available === 'N' && availableNumber === 'N') {
+      availableCSV = 'N';
+      itemResponse.available = 'no';
+    } else {
+      availableCSV = 'S';
+      message.push(
+        'Estatus, identificador o clasificador del bien: ' +
+          item.goodId +
+          ' válido para cambio a numerario/valores y divisas'
+      );
+    }
+    dataResponse.push(itemResponse);
+  }
+  return {
+    data: dataResponse,
+  };
+}
