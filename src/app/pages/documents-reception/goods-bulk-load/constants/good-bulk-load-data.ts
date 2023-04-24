@@ -1,3 +1,5 @@
+export const FGR_OPCION: string = 'fgr';
+
 export const COMMON_ACTIONS = [
   {
     value: 'Inserción de menaje',
@@ -36,7 +38,7 @@ const GOODS_BULK_LOAD_PGR_ACTIONS = [
   // ...COMMON_ACTIONS,
 ];
 
-export const GOODS_BULK_LOAD_ACTIONS = {
+export const GOODS_BULK_LOAD_ACTIONS: any = {
   general: GOODS_BULK_LOAD_GENERAL_ACTIONS,
   sat: GOODS_BULK_LOAD_SAT_ACTIONS,
   pgr: GOODS_BULK_LOAD_PGR_ACTIONS,
@@ -53,7 +55,7 @@ export const GOODS_BULK_LOAD_TARGETS = [
   },
   {
     label: 'FGR',
-    value: 'pgr',
+    value: FGR_OPCION,
   },
 ];
 export const SAT_SAE_MUEBLES_PROCESO_4: any = {
