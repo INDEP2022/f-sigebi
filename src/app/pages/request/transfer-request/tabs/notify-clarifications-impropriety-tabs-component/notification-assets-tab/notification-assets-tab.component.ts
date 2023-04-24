@@ -628,7 +628,7 @@ export class NotificationAssetsTabComponent
   }
 
   reloadData() {
-    console.log('Prueba');
+    console.log('Prueba de que se esta recargando la información');
     this.columns.map(item => {
       console.log('item', item);
       this.paramsReload.getValue()['filter.goodId'] = item.goodid;
