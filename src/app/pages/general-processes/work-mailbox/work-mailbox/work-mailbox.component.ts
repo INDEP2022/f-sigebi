@@ -549,6 +549,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               case 'folioRep':
                 // FOLIO REP.
+                searchFilter = SearchFilter.EQ;
                 let valueFolioRep = VALID_VALUE_REGEXP(
                   filter.search,
                   NUM_POSITIVE,
