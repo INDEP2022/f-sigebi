@@ -1,50 +1,50 @@
 export const COLUMNS_TABLE_2 = {
-  proposedKey: {
+  cve_propuesta: {
     title: 'Clave Propuesta',
     type: 'string',
     sort: false,
   },
-  idRequest: {
+  id_solicitud: {
     title: 'Id. Solicitud',
     type: 'string',
     sort: false,
   },
-  numberGood: {
+  no_bien: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  proceedingsNumber: {
+  no_expediente: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
-  quantityInStock: {
+  cantidad_asig: {
     title: 'Cantidad en Almacén',
     type: 'number',
     sort: false,
   },
-  amountToDonate: {
+  cantidad: {
     title: 'Cantidad a Donar',
     type: 'number',
     sort: false,
   },
-  classificationNumberGood: {
+  no_clasif_bien: {
     title: 'No. Clasificación Bien',
     type: 'number',
     sort: false,
   },
-  subtypeOfGood: {
+  sol_cantidad: {
     title: 'SSSubtipo de Bien',
     type: 'string',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  delAdmin: {
+  del_admin: {
     title: 'Del. Admin',
     type: 'string',
     sort: false,
