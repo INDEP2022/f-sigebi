@@ -552,9 +552,9 @@ async function pupChargeCsv({
   >[];
   screenKey: string;
 }) {
-  let available, goodNumber, availableNumber, workSheet, workBook;
-  let data;
-  let message = [];
+  let available, goodNumber, availableNumber;
+  // let data;
+  // let message = [];
   const dataResponse: ParamsChargeCvs[] = [];
 
   for (const item of massiveData) {
@@ -613,26 +613,10 @@ async function pupChargeCsv({
       available: 'si',
     };
 
-    // const goodNumberCSV = itemResponse.goodId;
-    const sellPrice = itemResponse.sellPrice;
-    const ivavta = sellPrice * (item.sellTax / 100);
-    const commission = sellPrice * (item.commission / 100);
-    const ivacom = commission * (item.commissionTax / 100);
-
-    const amount = commission * (item.import / 100);
-    // const comment = item.comment;
-
     let availableCSV;
     if (available === 'N' && availableNumber === 'N') {
       availableCSV = 'N';
       itemResponse.available = 'no';
-    } else {
-      availableCSV = 'S';
-      message.push(
-        'Estatus, identificador o clasificador del bien: ' +
-          item.goodId +
-          ' válido para cambio a numerario/valores y divisas'
-      );
     }
     dataResponse.push(itemResponse);
   }
