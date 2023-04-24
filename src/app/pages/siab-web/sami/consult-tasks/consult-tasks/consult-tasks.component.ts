@@ -370,6 +370,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     if (selected.requestId !== null || selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
+      console.log(url);
       this.router.navigateByUrl(url);
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');

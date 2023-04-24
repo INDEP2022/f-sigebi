@@ -4,7 +4,7 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noRequest: {
+  requestId: {
     title: 'No. Solicitud',
     type: 'number',
     sort: false,
@@ -17,11 +17,6 @@ export const REQUEST_LIST_COLUMNS = {
   instanceId: {
     title: 'No. Instancia',
     type: 'number',
-    sort: false,
-  },
-  State: {
-    title: 'Estatus',
-    type: 'string',
     sort: false,
   },
   creator: {
