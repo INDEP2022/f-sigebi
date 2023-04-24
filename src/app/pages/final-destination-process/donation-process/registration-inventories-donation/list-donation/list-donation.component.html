@@ -1,0 +1,32 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div>
+      <h5 class="modal-title">Lista Donaciones Directas</h5>
+    </div>
+    <div class="buttons">
+      <button (click)="close()" type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar [track]="'all'" style="min-height: 400px">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data"
+              (edit)="setDataDonation($event.data)"></ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-modal>
