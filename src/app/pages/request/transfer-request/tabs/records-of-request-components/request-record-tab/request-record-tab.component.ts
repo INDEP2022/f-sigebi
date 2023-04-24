@@ -32,6 +32,7 @@ export class RequestRecordTabComponent
   extends BasePage
   implements OnInit, OnChanges
 {
+  @Input() pgr: boolean;
   @Input() requestForm: ModelForm<IRequest>;
   requiredFieldText: 'Campo requerido';
   submitted = false;
@@ -323,6 +324,37 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
+    if (this.pgr) {
+      if (
+        this.requestForm.get('paperDate').value === null ||
+        this.requestForm.get('paperDate').value === '' ||
+        this.requestForm.get('previousInquiry').value === null ||
+        this.requestForm.get('previousInquiry').value === '' ||
+        this.requestForm.get('circumstantialRecord').value === null ||
+        this.requestForm.get('circumstantialRecord').value === ''
+      ) {
+        this.message(
+          'info',
+          'Campos requeridos',
+          'Recuerde llenar los campos obligatorios'
+        );
+        this.requestForm.markAllAsTouched();
+        return;
+      }
+    } else {
+      if (
+        this.requestForm.get('paperDate').value === null ||
+        this.requestForm.get('paperDate').value === ''
+      ) {
+        this.message(
+          'info',
+          'Campos requeridos',
+          'Recuerde llenar los campos obligatorios'
+        );
+        this.requestForm.markAllAsTouched();
+        return;
+      }
+    }
     this.loading = true;
     this.submitted = true;
     // if (this.requestForm.invalid || this.requestForm.value.paperDate.length == 0 || this.requestForm.value.previousInquiry.length == 0 || this.requestForm.value.circumstantialRecord.length == 0) { this.formLoading = false; return }
@@ -344,10 +376,11 @@ export class RequestRecordTabComponent
     return new Promise((resolve, reject) => {
       this.requestService.update(request.id, request).subscribe({
         next: (resp: any) => {
-          if (resp.id != null) {
+          if (resp.statusCode == 200) {
             resolve(true);
           }
-          if (resp.statusCode != null) {
+
+          if (resp.statusCode != 200) {
             resolve(false);
             this.message('error', 'Error', `¡No se guardó la solicitud!.`);
           }

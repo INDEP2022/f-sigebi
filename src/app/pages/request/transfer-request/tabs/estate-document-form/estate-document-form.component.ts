@@ -138,11 +138,23 @@ export class EstateDocumentFormComponent
   clean() {
     this.documentsEstData = [];
     this.searchForm.reset();
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     this.requestId = null;
   }
 
   search() {
-    this.paginator();
+    // validar requestId
+    console.log(this.searchForm.controls['goodDescription'].value);
+    if (
+      this.searchForm.controls['goodDescription'].value != null ||
+      this.searchForm.controls['requestId'].value != null ||
+      this.searchForm.controls['goodTypeId'].value != null ||
+      this.searchForm.controls['goodId'].value != null
+    ) {
+      this.paginator();
+    } else {
+      this.message('info', 'Error', 'Debe llenar algun filtro.');
+    }
   }
 
   buildFilters() {
@@ -173,7 +185,7 @@ export class EstateDocumentFormComponent
           const physicalStatus = await this.getPhysicalStatus(
             item.physicalStatus
           );
-          item['requestId'] = item.requestId.id;
+          item['requestId'] = item.requestId;
           item['physicalStatusName'] = physicalStatus;
           const destiny = await this.getDestiny(item.physicalStatus);
           item['destinyName'] = destiny;
@@ -187,6 +199,7 @@ export class EstateDocumentFormComponent
 
         Promise.all(result).then(data => {
           this.documentsEstData = resp.data;
+          this.totalItems = resp.count;
           this.loading = false;
         });
       },
