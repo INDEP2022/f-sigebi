@@ -101,6 +101,8 @@ export class RegistrationOfRequestsComponent
   verifyResp: string = null;
   task: any = null;
 
+  pgr: boolean = false;
+
   constructor(
     public fb: FormBuilder,
     private bsModalRef: BsModalRef,
@@ -192,7 +194,7 @@ export class RegistrationOfRequestsComponent
       priorityDate: [null],
       originInfo: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       receptionDate: [null],
-      paperDate: [null, [Validators.required]],
+      paperDate: [null],
       typeRecord: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
@@ -291,6 +293,7 @@ export class RegistrationOfRequestsComponent
     this.requestService.getById(id).subscribe({
       next: async (data: any) => {
         this.infoRequest = data;
+        this.setRequiredFields(data);
         await this.getTransferent(data.transferenceId);
         await this.getRegionalDelegation(data.regionalDelegationId);
         await this.getStation(data.transferenceId, data.stationId);
@@ -324,6 +327,27 @@ export class RegistrationOfRequestsComponent
         console.log(error.error.message);
       },
     });
+  }
+
+  setRequiredFields(data: any) {
+    if (data.transferenceId == 1 || data.transferenceId == 120) {
+      this.registRequestForm.controls['paperDate'].setValidators([
+        Validators.required,
+      ]);
+      this.registRequestForm.controls['previousInquiry'].setValidators([
+        Validators.required,
+      ]);
+      this.registRequestForm.controls['circumstantialRecord'].setValidators([
+        Validators.required,
+      ]);
+      this.pgr = true;
+    } else {
+      this.registRequestForm.controls['paperDate'].setValidators([
+        Validators.required,
+      ]);
+      this.pgr = false;
+    }
+    this.registRequestForm.updateValueAndValidity();
   }
 
   getTransferent(idTransferent: number) {
@@ -735,11 +759,11 @@ export class RegistrationOfRequestsComponent
       url,
       from,
       to,
-      true,
+      false,
       this.task.id,
       user.username,
       'SOLICITUD_TRANSFERENCIA',
-      'Verificar_Cumplimiento',
+      'Destino_Documental',
       'NOTIFICAR_ACLARACIONES'
     );
     if (taskRes) {
@@ -943,6 +967,7 @@ export class RegistrationOfRequestsComponent
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
+
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);

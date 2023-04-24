@@ -76,13 +76,13 @@ export const DOCUMENTS_LIST_REQ_COLUMNS = {
 
 export const DOCUMENTS_LIST_EST_COLUMNS = {
   ddocName: {
-    title: 'No° documento',
+    title: 'No documento',
     type: 'number',
     sort: false,
   },
 
   xidBien: {
-    title: 'No° bien',
+    title: 'No bien',
     type: 'number',
     sort: false,
   },

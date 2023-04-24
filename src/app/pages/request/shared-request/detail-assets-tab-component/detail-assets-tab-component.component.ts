@@ -192,17 +192,16 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    console.log({ process: this.process });
+    //console.log({ process: this.process });
     if (this.process == 'validate-document') {
-      console.log(address);
       this.getDomicilieGood(
         parseInt(this.detailAssets.controls['addressId'].value)
       );
     }
     if (this.process == 'classify-assets') {
       if (this.domicilieObject) {
-        console.log(this.domicilieObject.warehouseAlias);
-        console.log({ alias: this.domicilieObject.warehouseAlias });
+        // console.log(this.domicilieObject.warehouseAlias);
+        //console.log({ alias: this.domicilieObject.warehouseAlias });
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
 
@@ -949,7 +948,6 @@ export class DetailAssetsTabComponentComponent
       });
   }
   onValuesChange(data: any) {
-    console.log(data);
     // this.brandId = data.flexValue;
     this.getSubBrand(new ListParams(), data.flexValue);
     this.detailAssets.controls['subBrand'].setValue(null);
@@ -968,7 +966,6 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log(resp);
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
         },
         error: () => {
@@ -978,7 +975,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string) {
-    console.log(brandId);
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
