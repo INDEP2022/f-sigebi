@@ -1966,6 +1966,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       );
       this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
         next: () => {
+          this.getData();
           let config = {
             class: 'modal-lg modal-dialog-centered',
             initialState: {
