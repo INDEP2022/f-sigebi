@@ -130,8 +130,6 @@ export class VerifyComplianceTabComponent
       ...this.articleColumns.cumple,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log('data', data);
-
           this.articlesSelected(data);
         });
       },
@@ -141,7 +139,7 @@ export class VerifyComplianceTabComponent
       ...this.articleColumns.fulfill,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log('data', data);
+          //console.log('data', data);
         });
       },
     };
