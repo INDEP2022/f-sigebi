@@ -45,10 +45,14 @@ export class TransferenteService extends HttpService {
     return this.transferenteRepository.getAllPaginated(route, params);
   }
 
-  getByIdState(id: string | number): Observable<IListResponse<ITransferente>> {
+  getByIdState(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<ITransferente>> {
     const route = `catalog/api/v1/transferent/get-entity-transferent-by-state/${id}`;
     return this.http.get<IListResponse<ITransferente>>(
-      `${environment.API_URL}/${route}`
+      `${environment.API_URL}/${route}`,
+      { params }
     );
     //return this.httpService.get<IListResponse<T>>(``);
   }

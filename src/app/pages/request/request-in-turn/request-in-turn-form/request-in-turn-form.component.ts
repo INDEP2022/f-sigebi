@@ -9,6 +9,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EventEmitter, Output } from '@angular/core';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { EntityTransferringService } from 'src/app/core/services/catalogs/entity-transferring.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
@@ -56,6 +57,7 @@ export class RequestInTurnFormComponent implements OnInit {
   authorityService = inject(AuthorityService);
   authService = inject(AuthService);
   regDelegationService = inject(RegionalDelegationService);
+  entityTransferringService = inject(EntityTransferringService);
 
   filters: any = [];
 
@@ -167,16 +169,19 @@ export class RequestInTurnFormComponent implements OnInit {
 
   getTransferente(params?: ListParams) {
     /*params['filter.status'] = `$eq:${1}`;
-    params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    params['sortBy'] = 'nameTransferent:ASC';
     delete params.limit;
     delete params.page;
     delete params['search'];
     delete params.text;*/
-    this.transferenteSevice.getByIdState(this.stateId).subscribe(
+    params['filter.transferent.status'] = `$eq:${1}`;
+    params['sortBy'] = `transferent.nameTransferent:ASC`;
+    params['filter.stateKey'] = `$eq:${this.stateId}`;
+    params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
+    this.entityTransferringService.getAll(params).subscribe(
       (data: any) => {
+        console.log(data.data);
         data.data.map((data: any) => {
-          data.nameAndId = `${data.id} - ${data.nametransferent}`;
+          data.nameAndId = `${data.transferent.id} - ${data.transferent.nameTransferent}`;
           console.log(data.nameAndId);
           return data;
         });
