@@ -90,7 +90,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       entryOrderId: 11387,
       satDescription: 'TRANSFERENCIA ELECTRÓNICA',
       type: 'L',
-      inconsistencies: '19 La referncia de carga CSV genero un conflicto',
+      inconsistencies: '19 La referncia de carga CSV generó un conflicto',
     },
     {
       movement: 41876,
@@ -109,7 +109,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       entryOrderId: 11387,
       satDescription: 'TRANSFERENCIA ELECTRÓNICA',
       type: 'L',
-      inconsistencies: '19 La referncia de carga CSV genero un conflicto',
+      inconsistencies: '19 La referncia de carga CSV generó un conflicto',
     },
     {
       movement: 41937,

@@ -62,6 +62,7 @@ export class SelectListFilteredModalComponent
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
   selectOnClick: boolean = false; //Input opcional para seleccionar registro al dar click en la tabla
+  placeholder: string = 'Buscar...'; //Input opcional para establecer el mensaje del input de busqueda
   @Output() onSelect = new EventEmitter<any>();
 
   constructor(private modalRef: BsModalRef) {

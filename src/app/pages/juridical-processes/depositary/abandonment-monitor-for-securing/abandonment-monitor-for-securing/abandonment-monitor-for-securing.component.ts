@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalReasonComponent } from './modal-reason.component';
@@ -56,7 +58,12 @@ export class AbandonmentMonitorForSecuringComponent
   get definitiveSuspension() {
     return this.form.get('definitiveSuspension');
   }
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private notificationService: NotificationService,
+    private goodService: GoodService
+  ) {
     super();
   }
 
