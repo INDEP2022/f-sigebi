@@ -81,7 +81,7 @@ export class NotifyAssetsImproprietyFormComponent
     console.log('información dl bien', this.goodValue);
   }
 
-  infoRequest: IRequest;
+  infoRequest: IRequest; //Queda pendiente meter información a los inputs de los formularios
   initForm1(): void {
     //Trae información de la solicitud para precargar información en los formularios
     this.requestService.getById(this.idRequest).subscribe({
