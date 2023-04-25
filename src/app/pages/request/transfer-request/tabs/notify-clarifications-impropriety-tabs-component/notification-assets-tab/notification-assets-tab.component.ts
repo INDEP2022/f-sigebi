@@ -406,16 +406,15 @@ export class NotificationAssetsTabComponent
     const goodValue = this.valueGood;
     const dataNotification = this.valueClarification;
     const idNotify = { ...this.notificationsGoods };
-    const dataClarifications = { ...this.valuesNotifications };
     const idAclara = this.selectedRow.clarification.type; //Id del tipo de aclaración
     let config: ModalOptions = {
       initialState: {
+        //Quitar algunas variable que se pueden remplazar por los objetos que se estan enviado
         dataClarifications2,
         rejectedID,
         goodValue,
         dataNotification,
         idClarification,
-        dataClarifications,
         idAclara,
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
