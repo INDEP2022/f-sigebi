@@ -119,7 +119,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
-    this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
@@ -322,6 +321,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     this.tasks = [];
     this.totalItems = 0;
+    if (!isfilterUsed) {
+      this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+    }
 
     this.taskService
       .getTasksByUser(this.filterParams.getValue().getParams())

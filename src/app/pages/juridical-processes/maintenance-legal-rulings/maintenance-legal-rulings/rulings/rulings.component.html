@@ -8,15 +8,20 @@
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field [control]="form.get('wheelNumber')" label="No&#46; Volante">
-        <input class="form-control" formControlName="wheelNumber" />
-      </form-field>
-    </div>
-    <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
         [control]="form.get('expedientNumber')"
         label="No&#46; Expediente">
         <input class="form-control" formControlName="expedientNumber" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-8 p-2">
+      <button class="btn btn-sm btn-primary active" (click)="emitChange()">
+        Buscar
+      </button>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('wheelNumber')" label="No&#46; Volante">
+        <input class="form-control" formControlName="wheelNumber" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -72,6 +77,7 @@
     <div class="col-sm-12 col-12 col-md-12 p-2">
       <form-field [control]="form.get('observations')" label="Observaciones">
         <textarea
+          rows="4"
           class="form-control"
           formControlName="observations"></textarea>
       </form-field>
