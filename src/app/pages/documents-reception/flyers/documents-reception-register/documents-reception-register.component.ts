@@ -173,6 +173,7 @@ export class DocumentsReceptionRegisterComponent
   formLoading: boolean = false;
   captureAfterSave: boolean = false;
   procedureOfficeKey: string = '';
+  enableSaveFlyer: boolean = false;
   procedureStatus: ProcedureStatus = ProcedureStatus.pending;
   initialDate: Date = new Date();
   maxDate: Date = new Date();
@@ -427,6 +428,27 @@ export class DocumentsReceptionRegisterComponent
           );
         },
       });
+      if (this.docDataService.documentsReceptionRegisterForm != null) {
+        if (this.formControls.affair.value == null) {
+          this.formControls.affair.setValue(
+            this.docDataService.documentsReceptionRegisterForm.affair
+          );
+          this.formControls.affairKey.setValue(
+            this.docDataService.documentsReceptionRegisterForm.affairKey
+          );
+        }
+        if (this.formControls.endTransferNumber.value == null) {
+          this.formControls.endTransferNumber.setValue(
+            this.docDataService.documentsReceptionRegisterForm.endTransferNumber
+          );
+        }
+        if (this.formControls.identifier.value == null) {
+          this.formControls.identifier.setValue(
+            this.docDataService.documentsReceptionRegisterForm.identifier
+          );
+        }
+        console.log(this.documentsReceptionForm.value);
+      }
     }
     console.log(this.docDataService.documentsReceptionRegisterForm);
     console.log(
@@ -1381,7 +1403,6 @@ export class DocumentsReceptionRegisterComponent
       wheelNumber: notif.wheelNumber,
       consecutiveNumber: notif.consecutiveNumber,
       expedientNumber: notif.expedientNumber,
-      addressGeneral: notif.addressGeneral,
       circumstantialRecord: notif.circumstantialRecord,
       preliminaryInquiry: notif.preliminaryInquiry,
       criminalCase: notif.criminalCase,
@@ -1408,6 +1429,11 @@ export class DocumentsReceptionRegisterComponent
       this.formControls.dailyEviction.setValue(false);
     } else if (notif.dailyEviction == 1) {
       this.formControls.dailyEviction.setValue(true);
+    }
+    if (notif.addressGeneral == 0 || notif.addressGeneral == null) {
+      this.formControls.addressGeneral.setValue(false);
+    } else if (notif.addressGeneral == 1) {
+      this.formControls.addressGeneral.setValue(true);
     }
     this.formControls.receiptDate.setValue(
       format(this.parseDateNoOffset(notif.receiptDate), 'dd/MM/yyyy')
@@ -1831,16 +1857,21 @@ export class DocumentsReceptionRegisterComponent
     this.formControls.receiptDate.disable();
     this.checkDailyEviction();
     this.destinationAreaChange();
+    console.log(Object.keys(this.pageParams).length);
+    if (Object.keys(this.pageParams).length == 0) {
+      this.enableSaveFlyer = true;
+    } else {
+      this.enableSaveFlyer = false;
+    }
     this.populatingForm = false;
     console.log(this.documentsReceptionForm.value);
     this.blockErrors(false);
   }
 
   selectFlyer() {
-    // this.alert('info', 'Ejemplo', 'Ejemplo alerta');
-    // this.onLoadToast('info', 'Ejemplo', 'Ejemplo Toast');
-    // this.onLoadToast('info', 'Ejemplo', 'Ejemplo Toast');
     this.changeFlyerOption = true;
+    this.docDataService.flyersRegistrationParams = null;
+    console.log(this.docDataService.flyersRegistrationParams);
     const modalConfig = {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
@@ -2455,6 +2486,7 @@ export class DocumentsReceptionRegisterComponent
         searchFilter: { field: 'description', operator: SearchFilter.LIKE },
         selectOnClick: true,
         type: 'text',
+        placeholder: 'Buscar por Nombre Área...',
       },
       this.selectArea
     );
@@ -2478,6 +2510,7 @@ export class DocumentsReceptionRegisterComponent
         ],
         searchFilterCompatible: false,
         selectOnClick: true,
+        placeholder: 'Buscar por Número de Asunto...',
       },
       this.selectAffair
     );
@@ -2493,6 +2526,7 @@ export class DocumentsReceptionRegisterComponent
         searchFilter: { field: 'uniqueCve' },
         searchFilterCompatible: false,
         selectOnClick: true,
+        placeholder: 'Buscar por Clave Única...',
       },
       this.selectUniqueKey
     );

@@ -9,10 +9,15 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IRejectGood } from 'src/app/core/models/good-reject/good-reject.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ClarificationFormTabComponent } from '../clarification-form-tab/clarification-form-tab.component';
@@ -28,14 +33,18 @@ export class ClarificationListTabComponent
   implements OnInit, OnChanges
 {
   @Input() good: IGood;
+  @Input() request: any;
   paragraphs: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   idClarification: number = 0;
+  clarificationsLength: any;
   constructor(
     private modalService: BsModalService,
     private rejectedGoodService: RejectedGoodService,
-    private clarificationService: ClarificationService
+    private clarificationService: ClarificationService,
+    private goodResDevService: GetGoodResVeService,
+    private goodServices: GoodService
   ) {
     super();
   }
@@ -54,6 +63,7 @@ export class ClarificationListTabComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
+    console.log(this.request);
   }
 
   getData(): void {
@@ -61,8 +71,11 @@ export class ClarificationListTabComponent
       this.loading = true;
       this.params.getValue()['filter.goodId'] = this.good.id;
       this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
-        next: async data => {
-          const info = data.data.map(async item => {
+        next: async (data: any) => {
+          const length = data.count;
+          this.clarificationsLength = length;
+          console.log(this.clarificationsLength, length);
+          const info = data.data.map(async (item: any) => {
             this.idClarification = item.clarificationId;
             const clarification: any = await this.getClarification(
               item.clarificationId
@@ -108,6 +121,7 @@ export class ClarificationListTabComponent
         initialState: {
           docClarification: clarification,
           goodTransfer: this.good,
+          request: this.request,
           callback: (next: boolean) => {
             if (next) this.getData();
           },
@@ -130,15 +144,87 @@ export class ClarificationListTabComponent
       this.rejectedGoodService
         .remove(clarification.rejectNotificationId)
         .subscribe({
-          next: response => {
+          next: async response => {
             this.onLoadToast(
               'success',
               `Aclaración eliminada correctamente`,
               ``
             );
-            this.getData();
+
+            if (this.clarificationsLength === 1) {
+              console.log('entro');
+              const goodResDev: any = await this.getGoodResDev(
+                Number(this.good.id)
+              );
+              await this.removeDevGood(Number(goodResDev));
+              let body: any = {};
+              body['id'] = this.good.id;
+              body['goodId'] = this.good.goodId;
+              body.processStatus = 'REGISTRO_SOLICITUD';
+              body.goodStatus = 'REGISTRO_SOLICITUD';
+              await this.updateGoods(body);
+            }
+            setTimeout(() => {
+              this.getData();
+            }, 400);
           },
         });
     }
+  }
+
+  updateGoods(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodServices.update(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.alert('error', 'Error al actualizar', 'No actualizar el bien');
+          reject(false);
+        },
+      });
+    });
+  }
+
+  removeDevGood(id: number) {
+    return new Promise((resolve, reject) => {
+      this.goodResDevService.remove(id).subscribe({
+        next: resp => {
+          console.log('good-res-dev removed', resp);
+          resolve(true);
+        },
+        error: error => {
+          console.log('good-res-dev remove error', error);
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo eliminar el bien-res-deb'
+          );
+        },
+      });
+    });
+  }
+
+  getGoodResDev(goodId: number) {
+    return new Promise((resolve, reject) => {
+      let params = new FilterParams();
+      params.addFilter('goodId', goodId);
+      let filter = params.getParams();
+      this.goodResDevService.getAllGoodResDev(filter).subscribe({
+        next: (resp: any) => {
+          if (resp.data) {
+            resolve(resp.data[0].goodresdevId);
+          }
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error interno',
+            'No se pudo obtener el bien-res-dev'
+          );
+        },
+      });
+    });
   }
 }

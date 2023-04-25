@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { EntityTransferringService } from 'src/app/core/services/catalogs/entity-transferring.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
@@ -63,7 +64,8 @@ export class RequestInTurnFormComponent implements OnInit {
 
   constructor(
     public modalRef: BsModalRef,
-    public fb: FormBuilder //public requestService: ResquestService
+    public fb: FormBuilder,
+    private transferentesSaeService: TransferentesSaeService //public requestService: ResquestService
   ) {}
 
   ngOnInit(): void {
@@ -168,11 +170,6 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getTransferente(params?: ListParams) {
-    /*params['filter.status'] = `$eq:${1}`;
-    delete params.limit;
-    delete params.page;
-    delete params['search'];
-    delete params.text;*/
     params['filter.transferent.status'] = `$eq:${1}`;
     params['sortBy'] = `transferent.nameTransferent:ASC`;
     params['filter.stateKey'] = `$eq:${this.stateId}`;
@@ -189,6 +186,18 @@ export class RequestInTurnFormComponent implements OnInit {
       },
       error => {
         this.selectTransfer = new DefaultSelect();
+      }
+    );
+  }
+
+  getAffair(params?: ListParams) {
+    params['sortBy'] = 'description:ASC';
+    this.affairService.getAll(params).subscribe(
+      (data: IListResponse<IAffair>) => {
+        this.selectAffeir = new DefaultSelect(data.data, data.count);
+      },
+      error => {
+        this.selectAffeir = new DefaultSelect();
       }
     );
   }
@@ -252,18 +261,6 @@ export class RequestInTurnFormComponent implements OnInit {
       },
       error => {
         this.selectAuthority = new DefaultSelect();
-      }
-    );
-  }
-
-  getAffair(params?: ListParams) {
-    params['sortBy'] = 'description:ASC';
-    this.affairService.getAll(params).subscribe(
-      (data: IListResponse<IAffair>) => {
-        this.selectAffeir = new DefaultSelect(data.data, data.count);
-      },
-      error => {
-        this.selectAffeir = new DefaultSelect();
       }
     );
   }

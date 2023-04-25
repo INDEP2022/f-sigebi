@@ -83,22 +83,21 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     _params['filter.nameGoodType'] = `$ilike:${params.text}`;
     delete _params.search;
     delete _params.text;
-    this.service.search(_params).subscribe(
-      data => {
+    this.service.search(_params).subscribe({
+      next: data => {
         this.types = new DefaultSelect(data.data, data.count);
       },
-      err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
+      error: err => {
+        this.types = new DefaultSelect();
+        if (err.status >= 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al obtener los tipos de bien'
+          );
         }
-
-        this.onLoadToast('error', 'Error', error);
       },
-      () => {}
-    );
+    });
   }
 
   getSubtypes(params: ListParams) {
@@ -109,8 +108,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     if (this.type.value) {
       _params['type'] = this.type.value;
     }
-    this.goodSubtypesService.getAll(_params).subscribe(data => {
-      this.subtypes = new DefaultSelect(data.data, data.count);
+    this.goodSubtypesService.getAll(_params).subscribe({
+      next: data => {
+        this.subtypes = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.subtypes = new DefaultSelect();
+      },
     });
   }
 
@@ -125,8 +129,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     if (this.type.value) {
       _params['subtype'] = this.subtype.value;
     }
-    this.goodSsubtypeService.getAll(_params).subscribe(data => {
-      this.ssubtypes = new DefaultSelect(data.data, data.count);
+    this.goodSsubtypeService.getAll(_params).subscribe({
+      next: data => {
+        this.ssubtypes = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.ssubtypes = new DefaultSelect();
+      },
     });
   }
 
@@ -144,8 +153,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     if (this.ssubtype.value) {
       _params['ssubtype'] = this.ssubtype.value;
     }
-    this.goodSssubtypeService.getAll(_params).subscribe(data => {
-      this.sssubtypes = new DefaultSelect(data.data, data.count);
+    this.goodSssubtypeService.getAll(_params).subscribe({
+      next: data => {
+        this.sssubtypes = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.ssubtypes = new DefaultSelect();
+      },
     });
   }
 
