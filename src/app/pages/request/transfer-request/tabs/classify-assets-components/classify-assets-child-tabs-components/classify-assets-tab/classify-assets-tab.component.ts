@@ -400,7 +400,11 @@ export class ClassifyAssetsTabComponent
       if (this.good.ligieSection) {
         this.getSection(new ListParams(), this.good.ligieSection);
       } else {
-        this.onLoadToast('info', '', 'El bien no cuenta con la Sección');
+        this.onLoadToast(
+          'info',
+          'Clasificación del bien',
+          'El bien no cuenta con la fracción arancelaria'
+        );
       }
       this.classiGoodsForm.patchValue(this.good);
       this.classiGoodsForm.controls['quantity'].setValue(
@@ -423,6 +427,7 @@ export class ClassifyAssetsTabComponent
           this.formLoading = true;
 
           if (!this.good.ligieSection) {
+            this.getSection(new ListParams());
             setTimeout(() => {
               this.formLoading = false;
             }, 500);
@@ -690,7 +695,17 @@ export class ClassifyAssetsTabComponent
     }
   }
 
-  clean() {
+  cleanLvl(lvl?: number) {
+    /*debugger
+    const clasificactionsLvls = ['ligieSection','ligieChapter','ligieLevel1','ligieLevel2','ligieLevel3','ligieLevel4'];
+    if(lvl){
+      this.classiGoodsForm.controls[clasificactionsLvls[lvl]].setValue(null);
+    }else{
+      //this.classiGoodsForm.controls['ligieSection'].setValue(null);
+      this.getSection(new ListParams());
+      this.classiGoodsForm.controls['goodTypeId'].setValue(null);
+
+    }*/
     this.classiGoodsForm.controls['ligieSection'].setValue(null);
     this.classiGoodsForm.controls['ligieChapter'].setValue(null);
     this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
@@ -881,11 +896,9 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
-            /* this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
+        } else {
+          this.cleanLvl(3);
         }
       }
     );
@@ -912,8 +925,6 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
-            /* this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
         }
       }
@@ -942,8 +953,9 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel4(new ListParams(), dataLevel3);
-            /* this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
+        } else {
+          this.cleanLvl(5);
         }
       }
     );
