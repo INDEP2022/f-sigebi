@@ -9,11 +9,13 @@ import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
 import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { Clarification2Srvice } from 'src/app/core/services/ms-rejected-good/clarification.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
@@ -36,7 +38,6 @@ export class NotifyAssetsImproprietyFormComponent
   procedenceForm: ModelForm<any>;
   inappropriatenessForm: ModelForm<Inappropriateness>;
   clarification: any;
-  dataClarifications: ClarificationGoodRejectNotification;
 
   //en el caso de que una aclaracion llege sin documentacion
   withDocumentation: boolean = false;
@@ -66,7 +67,8 @@ export class NotifyAssetsImproprietyFormComponent
     private chatService: ChatClarificationsService,
     private rejectedGoodService: RejectedGoodService,
     private clarification2Srvice: Clarification2Srvice,
-    private authService: AuthService
+    private authService: AuthService,
+    private requestService: RequestService
   ) {
     super();
   }
@@ -79,7 +81,15 @@ export class NotifyAssetsImproprietyFormComponent
     console.log('información dl bien', this.goodValue);
   }
 
+  infoRequest: IRequest; //Queda pendiente meter información a los inputs de los formularios
   initForm1(): void {
+    //Trae información de la solicitud para precargar información en los formularios
+    this.requestService.getById(this.idRequest).subscribe({
+      next: response => {
+        this.infoRequest = response;
+      },
+    });
+
     this.clarificationForm = this.fb.group({
       observations: [
         null,
