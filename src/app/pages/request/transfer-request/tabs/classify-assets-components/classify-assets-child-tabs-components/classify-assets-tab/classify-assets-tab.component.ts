@@ -505,7 +505,7 @@ export class ClassifyAssetsTabComponent
             this.getSection(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject) {
+          if (this.goodObject && this.good.ligieChapter) {
             this.classiGoodsForm.controls['ligieChapter'].setValue(
               this.good.ligieChapter
             );
@@ -696,23 +696,14 @@ export class ClassifyAssetsTabComponent
   }
 
   cleanLvl(lvl?: number) {
-    /*debugger
-    const clasificactionsLvls = ['ligieSection','ligieChapter','ligieLevel1','ligieLevel2','ligieLevel3','ligieLevel4'];
-    if(lvl){
-      this.classiGoodsForm.controls[clasificactionsLvls[lvl]].setValue(null);
-    }else{
-      //this.classiGoodsForm.controls['ligieSection'].setValue(null);
-      this.getSection(new ListParams());
-      this.classiGoodsForm.controls['goodTypeId'].setValue(null);
-
-    }*/
-    this.classiGoodsForm.controls['ligieSection'].setValue(null);
-    this.classiGoodsForm.controls['ligieChapter'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+    this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+    this.classiGoodsForm.controls['ligieSection'].setValue(null);
+    this.getSection(new ListParams());
   }
 
   async saveRequest(): Promise<void> {
@@ -743,6 +734,7 @@ export class ClassifyAssetsTabComponent
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
+
     let goodAction: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
@@ -831,13 +823,8 @@ export class ClassifyAssetsTabComponent
         //this.classiGoodsForm.controls['ligieChapter'].setValue(null);
         if (data != null) {
           if (this.advSearch === false) {
+            // this.classiGoodsForm.controls['ligieChapter'].setValue(null);
             this.getChapter(new ListParams(), data);
-            /* this.classiGoodsForm.controls['ligieChapter'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
@@ -867,11 +854,6 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel1(new ListParams(), dataChapter);
-            /* this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
@@ -879,13 +861,13 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
         if (dataLevel1 != null) {
-          let fractionCode =
+          let fractionCodes =
             this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
 
-          this.fractionCode = fractionCode;
-          this.getUnidMeasure(fractionCode);
-          this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
+          this.fractionCode = fractionCodes;
+          this.getUnidMeasure(fractionCodes);
+          this.setFractionId(dataLevel1, fractionCodes, 'Nivel 1');
 
           const relativeTypeId = this.getRelevantTypeId(
             this.selectLevel1,
@@ -897,9 +879,12 @@ export class ClassifyAssetsTabComponent
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
           }
-        } else {
-          this.cleanLvl(3);
-        }
+        } /* else {
+          const lvl2 = this.classiGoodsForm.controls['ligieLevel2'].value;
+          if(lvl2){
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+          }
+        } */
       }
     );
     this.classiGoodsForm.controls['ligieLevel2'].valueChanges.subscribe(
@@ -926,7 +911,12 @@ export class ClassifyAssetsTabComponent
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
           }
-        }
+        } /* else {
+          const lvl3 = this.classiGoodsForm.controls['ligieLevel3'].value;
+          if(lvl3){
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+          }
+        } */
       }
     );
     this.classiGoodsForm.controls['ligieLevel3'].valueChanges.subscribe(
@@ -954,9 +944,12 @@ export class ClassifyAssetsTabComponent
           if (this.advSearch === false) {
             this.getLevel4(new ListParams(), dataLevel3);
           }
-        } else {
-          this.cleanLvl(5);
-        }
+        } /* else {
+          const lvl4 = this.classiGoodsForm.controls['ligieLevel4'].value;
+          if(lvl4){
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+          }
+        } */
       }
     );
 
@@ -1062,9 +1055,10 @@ export class ClassifyAssetsTabComponent
                 });
             },
             error: error => {
+              console.log('codigo de graccion', value);
               console.log(error.error.message);
               this.onLoadToast(
-                'info',
+                'error',
                 '',
                 'El bien no cuenta con su clasificacion del bien'
               );
