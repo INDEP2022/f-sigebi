@@ -298,6 +298,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       requestId: this.request.id,
       goodId: good.goodId,
       senderName: this.request.nameOfOwner,
+      clarificationStatus: 'ACLARADO',
     };
 
     //Servicio para crear registro de ChatClariffications
