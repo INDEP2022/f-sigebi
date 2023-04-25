@@ -324,6 +324,7 @@ export class RequestInTurnFormComponent implements OnInit {
 
     if (this.searchForm.controls['transfer'].value != null) {
       const transfer = this.searchForm.controls['transfer'].value;
+      console.log(transfer);
       params['filter.transferenceId'] = `$eq:${transfer}`;
     }
 
