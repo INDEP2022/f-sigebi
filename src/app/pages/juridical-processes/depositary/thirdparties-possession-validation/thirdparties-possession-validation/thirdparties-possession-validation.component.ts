@@ -20,9 +20,11 @@ import {
 
 /** SERVICE IMPORTS */
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 /** ROUTING MODULE */
@@ -48,6 +50,7 @@ export class ThirdpartiesPossessionValidationComponent
   selectedRows: IGood = {};
   selectedRows2: IGood = {};
   wheelNotifications: INotification;
+  goodsPosessionThirdParty: IGoodPossessionThirdParty[] = [];
 
   tableSettingsNotificaciones = {
     actions: {
@@ -107,12 +110,14 @@ export class ThirdpartiesPossessionValidationComponent
   public form: FormGroup;
   public formCcpOficio: FormGroup;
   public noExpediente: FormGroup;
+  public formGood: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private goodService: GoodService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
   ) {
     super();
   }
@@ -152,6 +157,11 @@ export class ThirdpartiesPossessionValidationComponent
       ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
       firma: ['', [Validators.pattern(STRING_PATTERN)]],
     });
+    this.formGood = this.fb.group({
+      delegationCloseNumber: [''],
+      numClueNavy: [''],
+      closingDate: [''],
+    });
   }
 
   getGoodsPosessionThird(params: ListParams, wheelNumber?: number) {
@@ -168,16 +178,17 @@ export class ThirdpartiesPossessionValidationComponent
       data.addFilter('wheelNumber', wheelNumber);
     }
 
-    // this.goodService.getAll(data.getParams()).subscribe({
-    //   next: data => {
-    //     this.formCcpOficio.get('ccp1').patchValue(data.data[0].userReceipt);
-    //     this.formCcpOficio.get('ccp2').patchValue(data.data[0].user)
-    //     this.formCcpOficio.get('firma').patchValue(data.data[0].userResponsable)
-    //   },
-    //   error: err => {
-    //     this.loading = false;
-    //   },
-    // });
+    this.goodPosessionThirdpartyService.getAll(data.getParams()).subscribe({
+      next: data => {
+        this.formCcpOficio.get('ccp1').patchValue(data.data[0].usrCcp1);
+        this.formCcpOficio.get('ccp2').patchValue(data.data[0].usrCcp2);
+        this.formCcpOficio.get('firma').patchValue(data.data[0].usrResponsible);
+        this.goodsPosessionThirdParty = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
   }
 
   getNotificationByWheel(params: ListParams, wheelNumber?: number) {
@@ -344,6 +355,31 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   sendForm() {
+    if (!this.form.get('officeExternalKey').value) {
+      this.alert(
+        'info',
+        '',
+        'No puede cerrar el Acta si no se han incorporado bienes y generado la clave armada.'
+      );
+      return;
+    }
+
+    const maxNumClaveArmada = this.goodsPosessionThirdParty.reduce(
+      (max, obj) => {
+        return Math.max(max, obj.numClueNavy || 0);
+      },
+      0
+    );
+
+    let oficio = maxNumClaveArmada + 1;
+
+    this.formGood.get('closingDate').patchValue(new Date());
+    this.formGood.get('numClueNavy').patchValue(
+      this.formGood
+        .get('numClueNavy')
+        .value.replace('?', ('00000' + oficio).slice(-5))
+        .replace(' ', '')
+    );
     this.alert('info', 'Nota', 'La clave ya ha sido enviada.');
   }
 
