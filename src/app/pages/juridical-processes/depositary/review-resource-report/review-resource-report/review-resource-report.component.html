@@ -40,22 +40,22 @@
           [control]="form.get('delBien')">
           <ngx-select
             (fetchItems)="getGoodIdDescription($event)"
-            [data]="sssubtypes"
+            [data]="good"
             [form]="form"
             value="id"
             label="Desde el No&#46; Bien&#58;"
             bindLabel="description"
             [control]="'delBien'"
             (change)="onGoodIdDescription($event)"
-            [labelTemplate]="sssubtypeLabel"
-            [optionTemplate]="sssubtypeOption">
+            [labelTemplate]="GoodLabel"
+            [optionTemplate]="GoodOption">
           </ngx-select>
         </form-field>
 
-        <ng-template #sssubtypeLabel let-item="item"
+        <ng-template #GoodLabel let-item="item"
           >{{ item.id }} - {{ item.description }}</ng-template
         >
-        <ng-template #sssubtypeOption let-item="item"
+        <ng-template #GoodOption let-item="item"
           >{{ item.id }} - {{ item.description }}</ng-template
         >
         </div>
@@ -64,22 +64,22 @@
           [control]="form.get('alBien')">
           <ngx-select
             (fetchItems)="getGoodAlIdDescription($event)"
-            [data]="sssubtypesAl"
+            [data]="goodAl"
             [form]="form"
             value="id"
             label="Al No&#46; Bien&#58;"
             bindLabel="description"
             [control]="'alBien'"
             (change)="onGoodAlIdDescription($event)"
-            [labelTemplate]="sssubtypeLabelAl"
-            [optionTemplate]="sssubtypeOptionAl">
+            [labelTemplate]="GoodAlLabe"
+            [optionTemplate]="GoodAlOption">
           </ngx-select>
         </form-field>
 
-        <ng-template #sssubtypeLabelAl let-item="item"
+        <ng-template #GoodAlLabe let-item="item"
           >{{ item.id }} - {{ item.description }}</ng-template
         >
-        <ng-template #sssubtypeOptionAl let-item="item"
+        <ng-template #GoodAlOption let-item="item"
           >{{ item.id }} - {{ item.description }}</ng-template
         >
         </div>

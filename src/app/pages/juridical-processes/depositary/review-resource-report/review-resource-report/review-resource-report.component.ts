@@ -36,8 +36,8 @@ export class ReviewResourceReportComponent
   subdelegations = new DefaultSelect<ISubdelegation>();
   params = new BehaviorSubject<ListParams>(new ListParams());
   goods = new DefaultSelect<IGood>();
-  sssubtypes = new DefaultSelect<IGood>();
-  sssubtypesAl = new DefaultSelect<IGood>();
+  good = new DefaultSelect<IGood>();
+  goodAl = new DefaultSelect<IGood>();
 
   phaseEdo: number;
   patchValue: boolean = false;
@@ -110,8 +110,8 @@ export class ReviewResourceReportComponent
   onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
     this.subdelegations = new DefaultSelect();
-    this.sssubtypes = new DefaultSelect();
-    this.sssubtypesAl = new DefaultSelect();
+    this.good = new DefaultSelect();
+    this.goodAl = new DefaultSelect();
 
     // console.log(this.PN_NODELEGACION.value);
     if (this.delegation.value)
@@ -164,7 +164,7 @@ export class ReviewResourceReportComponent
 
     this.goodServices.getAll(params.getParams()).subscribe({
       next: data => {
-      this.sssubtypes = new DefaultSelect(data.data, data.count);
+      this.good = new DefaultSelect(data.data, data.count);
 
       },
       error: err => {
@@ -190,7 +190,7 @@ export class ReviewResourceReportComponent
     }
 
     this.goodServices.getAll(params.getParams()).subscribe(data => {
-      this.sssubtypesAl = new DefaultSelect(data.data, data.count);
+      this.goodAl = new DefaultSelect(data.data, data.count);
     });
   }
   onGoodIdDescription(sssubtype: any) {
