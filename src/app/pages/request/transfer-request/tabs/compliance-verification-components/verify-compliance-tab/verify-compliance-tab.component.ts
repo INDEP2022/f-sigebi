@@ -475,6 +475,7 @@ export class VerifyComplianceTabComponent
   }
 
   openForm(event?: any): void {
+    //Modal para abrir formulario para crear Clarifications
     let docClarification = event;
     let config: ModalOptions = {
       initialState: {
@@ -841,7 +842,6 @@ export class VerifyComplianceTabComponent
 
   updateGoods(body: any) {
     return new Promise((resolve, reject) => {
-      debugger;
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);

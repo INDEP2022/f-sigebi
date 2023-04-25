@@ -4,7 +4,7 @@
   </div>
 
   <div body>
-    <app-rulings></app-rulings>
+    <app-rulings (formValues)="rulingsData($event)"></app-rulings>
   </div>
 </app-card>
 
@@ -44,7 +44,8 @@
   </div>
 
   <div body>
-    <app-more-information></app-more-information>
+    <app-more-information
+      (formValues)="moreInformationData($event)"></app-more-information>
   </div>
 </app-card>
 

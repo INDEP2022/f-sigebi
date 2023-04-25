@@ -22,7 +22,13 @@
           <i class="bx bxs-pencil"></i> Firmar Dictamen
         </button>
       </div>
-      <div class="p-2" *ngIf="requestRegistration">
+      <div
+        class="p-2"
+        *ngIf="
+          requestRegistration === true &&
+          (requestData?.typeOfTransfer === 'SAT_SAE' ||
+            requestData?.typeOfTransfer === 'PGR_SAE')
+        ">
         <button
           type="button"
           class="btn btn-secondary btn-sm active"
@@ -33,8 +39,9 @@
       <div
         class="p-2"
         *ngIf="
-          requestData?.typeOfTransfer === 'SAT_SAE' ||
-          requestData?.typeOfTransfer === 'PGR_SAE'
+          requestRegistration === true &&
+          (requestData?.typeOfTransfer === 'SAT_SAE' ||
+            requestData?.typeOfTransfer === 'PGR_SAE')
         ">
         <button
           type="button"
@@ -93,7 +100,7 @@
                 <div class="col-md-4">
                   <div>
                     <label for="">Fecha de Solicitud&#58;</label>
-                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
+                    {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
                   </div>
                 </div>
                 <div class="col-md-4">
