@@ -11,30 +11,24 @@ export function loadCheckLc(
   capturelineService: CapturelineService,
   cbOpenCheckPortal: (item: any) => void
 ) {
-  if (form.invalid) {
-    showToast({
-      text: 'No se ha insertado ningún filtro de búsqueda.',
-      title: 'Advertencia',
-      icon: 'warning',
-    });
-    form.markAllAsTouched();
-    return;
-  }
   const { validityDate, eventId } = form.getRawValue();
   let p_FLAG = Boolean(validityDate);
-
+  console.log(form.getRawValue());
   showQuestion({
     text: validityDate
       ? `La fecha de vigencia será ${convertFormatDate(
           validityDate
         )}. ¿Desea continuar?`
       : 'La Fecha de vigencia se tomará de la tabla. ¿Desea continuar?',
+    title: 'Confirmación',
+    confirmButtonText: 'Aceptar',
+    cancelButtonText: 'Cancelar',
   }).then((res: any) => {
     if (res.isConfirmed) {
       capturelineService
         .postLoadCheckPortal({
           event: eventId,
-          validation: convertFormatDate(validityDate),
+          validation: validityDate ? convertFormatDate(validityDate) : '',
           p_FLAG,
         })
         .subscribe({
@@ -44,7 +38,15 @@ export function loadCheckLc(
               icon: 'success',
             });
             console.log(res);
-            cbOpenCheckPortal(res.data);
+            if (res.data.length === 0) {
+              showToast({
+                text: 'No se encontraron checks',
+                title: 'Advertencia',
+                icon: 'warning',
+              });
+              return;
+            }
+            cbOpenCheckPortal({ list: res.data });
           },
           error: () => {
             showToast({
