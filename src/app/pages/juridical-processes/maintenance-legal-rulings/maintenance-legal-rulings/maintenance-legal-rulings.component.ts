@@ -35,4 +35,12 @@ export class MaintenanceLegalRulingComponent
       justificacion: '',
     });
   }
+
+  rulingsData(value: any) {
+    console.log(value);
+  }
+
+  moreInformationData(value: any) {
+    console.log(value);
+  }
 }

@@ -842,7 +842,6 @@ export class VerifyComplianceTabComponent
 
   updateGoods(body: any) {
     return new Promise((resolve, reject) => {
-      debugger;
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);

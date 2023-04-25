@@ -242,6 +242,7 @@ export class RequestRecordTabComponent
   getAffair(id: number) {
     let params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
+    params['filter.nbOrigen'] = `$eq:SIAB`;
     this.affairService.getAll(params).subscribe({
       next: ({ data }) => {
         this.affairName = data[0].description;

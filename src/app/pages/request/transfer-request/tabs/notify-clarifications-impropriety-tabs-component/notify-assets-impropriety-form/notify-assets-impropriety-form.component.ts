@@ -389,7 +389,7 @@ export class NotifyAssetsImproprietyFormComponent
           console.log('SE ACTUALIZÓ:', data);
           this.loading = false;
           this.updateNotify(data.clarifiNewsRejectId);
-          this.modalRef.content.callback(true);
+          this.modalRef.content.callback(true, data.goodId);
           this.modalRef.hide();
         },
         error: error => {
@@ -429,7 +429,7 @@ export class NotifyAssetsImproprietyFormComponent
           ''
         );
         this.loading = false;
-        this.modalRef.content.callback(true, data.rejectNotificationId);
+        this.modalRef.content.callback(true, data.goodId);
         this.updateNotify(data.clarifiNewsRejectId);
         this.modalRef.hide();
       },
@@ -499,7 +499,7 @@ export class NotifyAssetsImproprietyFormComponent
           console.log('SE ACTUALIZÓ:', data);
           this.loading = false;
           this.updateNotify(data.clarifiNewsRejectId);
-          this.modalRef.content.callback(true);
+          this.modalRef.content.callback(true, data.goodId);
           this.modalRef.hide();
         },
         error: error => {
@@ -548,6 +548,7 @@ export class NotifyAssetsImproprietyFormComponent
       next: async data => {
         console.log('SE CREÓ:', data);
         this.loading = false;
+        this.modalRef.content.callback(true, data.goodId);
         this.modalRef.hide();
         this.updateNotify(data.clarifiNewsRejectId);
       },

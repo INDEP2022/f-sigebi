@@ -11,6 +11,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of, switchMap, tap, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
@@ -206,6 +207,19 @@ export class GoodsCaptureComponent
         this.focusInput('cantidad');
       },
     });
+  }
+
+  goodSssubtypeChange(sssubtype: IGoodSssubtype) {
+    if (!this.formControls.sssubtype.value) {
+      return;
+    }
+    if (!this.formControls.noClasifBien.value) {
+      this.formControls.noClasifBien.setValue(sssubtype.numClasifGoods);
+      this.goodClasifNumberChange();
+      return;
+    }
+    this.formControls.noClasifBien.setValue(sssubtype.numClasifGoods);
+    this.goodClasifNumberChange();
   }
 
   goodClasifNumberChange() {
