@@ -65,9 +65,7 @@ export class DocumentsTypeSharedComponent extends BasePage implements OnInit {
   getDocuments(params: ListParams) {
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
-    this.filterParams
-      .getValue()
-      .addFilter('description', params.text, SearchFilter.ILIKE);
+    this.filterParams.getValue().search = params.text;
 
     this.documentServ
       .getAllWidthFilters(
