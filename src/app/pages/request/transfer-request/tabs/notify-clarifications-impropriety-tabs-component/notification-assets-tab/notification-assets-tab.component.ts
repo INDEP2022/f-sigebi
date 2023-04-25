@@ -22,6 +22,7 @@ import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clar
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IGoodresdev } from 'src/app/core/models/ms-rejected-good/rejected-good.model';
 import { IGetGoodResVe } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
@@ -51,6 +52,8 @@ export class NotificationAssetsTabComponent
   paramsReject = new BehaviorSubject<ListParams>(new ListParams());
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
   paramsSave = new BehaviorSubject<ListParams>(new ListParams());
+  paramsCheckInfo = new BehaviorSubject<ListParams>(new ListParams());
+  paramsCheckAclaration = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columns: IGetGoodResVe[] = [];
   columnFilters: any = [];
@@ -265,6 +268,7 @@ export class NotificationAssetsTabComponent
   }
 
   selectRow(row?: any) {
+    console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
   }
@@ -376,7 +380,7 @@ export class NotificationAssetsTabComponent
         this.message('Error', 'Seleccione almenos un registro!');
         return;
       }
-      this.openModal();
+      this.getRequest();
     }
   }
 
@@ -397,40 +401,39 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  openModal(idClarification?: number): void {
+  getRequest() {
+    this.requestService.getById(this.idRequest).subscribe({
+      next: response => {
+        const infoRequest = response;
+        this.openModal(infoRequest);
+      },
+    });
+  }
+
+  openModal(infoRequest?: IRequest, idClarification?: number): void {
     const dataClarifications2 = this.dataNotificationSelected;
     const rejectedID = this.valueRejectNotificationId;
     const goodValue = this.valueGood;
     const dataNotification = this.valueClarification;
     const idNotify = { ...this.notificationsGoods };
-    const dataClarifications = { ...this.valuesNotifications };
     const idAclara = this.selectedRow.clarification.type; //Id del tipo de aclaración
     let config: ModalOptions = {
       initialState: {
+        //Quitar algunas variable que se pueden remplazar por los objetos que se estan enviado
         dataClarifications2,
         rejectedID,
         goodValue,
         dataNotification,
         idClarification,
-        dataClarifications,
         idAclara,
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         idRequest: this.idRequest,
-        callback: (next: boolean) => {
+        infoRequest,
+        callback: (next: boolean, idGood: number) => {
           if (next) {
-            this.notificationsList.getElements().then(data => {
-              data.map((item: ClarificationGoodRejectNotification) => {
-                if (
-                  item.rejectNotificationId ==
-                  this.selectedRow.rejectNotificationId
-                ) {
-                  //item.answered = 'EN ACLARACION';
-                  //item.chatClarification.clarificationStatus = 'A_ACLARACION';
-                }
-              });
-              this.notificationsList.refresh();
-            });
+            console.log('good', idGood);
+            this.checkInfoNotification(idGood);
           }
         },
       },
@@ -442,6 +445,20 @@ export class NotificationAssetsTabComponent
       config
     );
   }
+
+  checkInfoNotification(idGood: number) {
+    this.paramsCheckInfo.getValue()['filter.goodId'] = `$eq:${idGood}`;
+    this.rejectedGoodService
+      .getAllFilter(this.paramsCheckInfo.getValue())
+      .subscribe({
+        next: data => {
+          console.log('data actualizada', data);
+          this.notificationsList.load(data.data);
+        },
+        error: error => {},
+      });
+  }
+
   //Respuesta del SAT
   satAnswer() {
     if (this.rowSelected == false) {
@@ -1021,9 +1038,8 @@ export class NotificationAssetsTabComponent
       )
       .subscribe({
         next: async data => {
-          this.updateStatusClarificationsTmp();
-
           console.log('SE ACTUALIZÓ:', data);
+          this.updateStatusClarificationsTmp(data.goodId);
         },
         error: error => {
           this.loading = false;
@@ -1032,7 +1048,7 @@ export class NotificationAssetsTabComponent
       });
   }
 
-  updateStatusClarificationsTmp() {
+  updateStatusClarificationsTmp(goodId: number) {
     const refuseObj = { ...this.valuesNotifications };
     //Cambiar estado a clarifications
     const modelClarifications: ClarificationGoodRejectNotification = {
@@ -1046,8 +1062,8 @@ export class NotificationAssetsTabComponent
       .update(refuseObj.rejectNotificationId, modelClarifications)
       .subscribe({
         next: data => {
-          this.updateStatusGoodTmp();
-          console.log('actualizando Rechazo');
+          console.log('actualizando Rechazo', data);
+          this.updateStatusGoodTmp(goodId);
           //this.updateChatClarifications();
           //this.updateClarifications(); Actualizar Objeto de Clarifications/notificaciones, pasar clarification a nulo y type a nul
         },
@@ -1055,22 +1071,46 @@ export class NotificationAssetsTabComponent
       });
   }
 
-  updateStatusGoodTmp() {
-    const valuesClarifications = { ...this.valuesNotifications };
-    const good: IGood = {
-      id: valuesClarifications.goodId,
-      goodId: valuesClarifications.goodId,
-      goodStatus: 'ACLARADO',
-    };
-    this.goodService.update(good).subscribe({
-      next: data => {
-        this.getGoodsByRequest();
-        this.getClarificationsByGood(valuesClarifications.goodId);
-        console.log('Bien actualizado', data);
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
+  updateStatusGoodTmp(idGood: number) {
+    console.log('Bien que se esta actualizando', idGood);
+    this.paramsCheckAclaration.getValue()['filter.goodId'] = `$eq:${idGood}`;
+
+    this.rejectedGoodService
+      .getAllFilter(this.paramsCheckAclaration.getValue())
+      .subscribe({
+        next: data => {
+          console.log('actualizado info', data);
+          this.notificationsList.load(data.data);
+          const filterAclaration = data.data.filter((item: any) => {
+            if (item.answered == 'ACLARADA' || item.answered == 'RECHAZADA') {
+              return item;
+            }
+          });
+
+          console.log('Aclaradas', filterAclaration.length);
+          console.log(
+            'Todas las notificaciones',
+            this.notificationsList.count()
+          );
+          if (filterAclaration.length == this.notificationsList.count()) {
+            const valuesClarifications = { ...this.valuesNotifications };
+            const good: IGood = {
+              id: valuesClarifications.goodId,
+              goodId: valuesClarifications.goodId,
+              goodStatus: 'ACLARADO',
+            };
+            this.goodService.update(good).subscribe({
+              next: data => {
+                this.getGoodsByRequest();
+                this.notificationsList = new LocalDataSource();
+                console.log('Bien actualizado', data);
+              },
+              error: error => {
+                console.log(error);
+              },
+            });
+          }
+        },
+      });
   }
 }

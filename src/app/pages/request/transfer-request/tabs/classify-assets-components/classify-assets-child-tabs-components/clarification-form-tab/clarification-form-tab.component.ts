@@ -9,13 +9,16 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IPostGoodResDev } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -41,6 +44,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   //idGood: number = 0;
   request: any;
   haveGoodResDevRegister: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -48,7 +52,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     private readonly rejectedGoodService: RejectedGoodService,
     private readonly authService: AuthService,
     private readonly goodService: GoodService,
-    private readonly goodResDevService: GetGoodResVeService
+    private readonly goodResDevService: GetGoodResVeService,
+    private chatService: ChatClarificationsService,
+    private requestService: RequestService
   ) {
     super();
   }
@@ -143,6 +149,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       this.rejectedGoodService.create(clarification).subscribe({
         next: val => {
           this.loader.load = false;
+          this.createChatClarifications(val);
           this.onLoadToast(
             'success',
             `Aclaración guardada`,
@@ -278,6 +285,48 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           );
         },
       });
+    });
+  }
+
+  createChatClarifications(val: ClarificationGoodRejectNotification) {
+    console.log('info de request', this.request);
+    let good = this.goodTransfer;
+    //Creando objeto nuevo para ChatClarifications
+    const modelChatClarifications: IChatClarifications = {
+      //id: , //ID primaria
+      clarifiNewsRejectId: val.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      requestId: this.request.id,
+      goodId: good.goodId,
+      senderName: this.request.nameOfOwner,
+    };
+
+    //Servicio para crear registro de ChatClariffications
+    this.chatService.create(modelChatClarifications).subscribe({
+      next: async data => {
+        console.log('SE CREÓ:', data);
+        this.loading = false;
+        this.modalRef.hide();
+        this.updateNotify(data.clarifiNewsRejectId);
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No se pudo crear', error.error);
+        console.log('NO SE CREÓ:', error);
+        this.modalRef.hide();
+      },
+    });
+  }
+
+  updateNotify(id: number) {
+    console.log('notificación id', id);
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'EN ACLARACION',
+    };
+
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {},
     });
   }
 

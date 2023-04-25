@@ -473,6 +473,7 @@ export class VerifyComplianceTabComponent
   }
 
   openForm(event?: any): void {
+    //Modal para abrir formulario para crear Clarifications
     let docClarification = event;
     let config: ModalOptions = {
       initialState: {
