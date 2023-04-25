@@ -47,6 +47,7 @@ export class ClassificationAssetsTabComponent
   @Input() process: string = '';
 
   idRequest: number = 0;
+  request: any;
   title: string = 'Bienes de la Solicitud';
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsFraction = new BehaviorSubject<ListParams>(new ListParams());
@@ -100,6 +101,7 @@ export class ClassificationAssetsTabComponent
       columns: REQUEST_OF_ASSETS_COLUMNS,
     };
     this.initForm();
+    this.request = this.requestObject.getRawValue();
   }
 
   prepareForm() {

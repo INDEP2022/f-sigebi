@@ -97,7 +97,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.getTransferent(new ListParams());
     const task: any = JSON.parse(window.localStorage.getItem('Task'));
     const id = Number(this.activateRouter.snapshot.paramMap.get('id'));
-    console.log(task);
+    console.log('taskId', task);
 
     //comparo el id de la solicitud que esta en task con el id de la ruta
     if (task) {
@@ -116,7 +116,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
-          console.log('tranference');
           this.idTransferer = data;
           this.getStation(data);
         } else {
@@ -129,7 +128,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
-          console.log('emisora');
           this.idStation = data;
           this.getAuthority(new ListParams());
         }
@@ -172,7 +170,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
     if (requestResult) {
       this.requestId = requestResult.id;
       const user: any = this.authService.decodeToken();
-      console.log(user);
 
       let task: any = {};
       task['id'] = 0;
@@ -188,8 +185,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
       const taskResult: any = await this.createOnlyTask(task);
       if (taskResult) {
-        console.log(taskResult);
         this.taskId = Number(taskResult.data[0].id);
+        console.log('task Id', this.taskId);
         this.loadingTurn = false;
       }
     }
@@ -518,6 +515,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           orderservice['pOrderServiceIn'] = '';
 
           body['orderservice'] = orderservice;
+
           const taskResult = await this.createTaskOrderService(body);
           if (taskResult) {
             this.loadingTurn = false;
