@@ -935,6 +935,7 @@ export class DetailAssetsTabComponentComponent
 
   getTransferentUnit(params: ListParams) {
     params['filter.measureTlUnit'] = `$ilike:${params.text}`;
+    params.limit = 20;
     this.goodsQueryService
       .getCatMeasureUnitView(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -950,6 +951,8 @@ export class DetailAssetsTabComponentComponent
 
   getLigieUnit(params: ListParams, id?: string) {
     params['filter.uomCode'] = `$eq:${id}`;
+    params.limit = 20;
+
     this.goodsQueryService
       .getCatMeasureUnitView(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -1376,7 +1379,10 @@ export class DetailAssetsTabComponentComponent
   getReactiveFormCall() {
     this.detailAssets.controls['ligieUnit'].valueChanges.subscribe(
       (data: any) => {
-        this.getLigieUnit(new ListParams(), data);
+        //debugger
+        if (data) {
+          this.getLigieUnit(new ListParams(), data);
+        }
       }
     );
 

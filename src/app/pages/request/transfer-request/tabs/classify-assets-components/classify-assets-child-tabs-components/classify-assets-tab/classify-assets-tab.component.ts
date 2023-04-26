@@ -1019,18 +1019,23 @@ export class ClassifyAssetsTabComponent
 
   //guarda el no_clasify_good numero clasificacion del bien
   setNoClasifyGood(fraction: any) {
-    if (fraction.fractionCode.length === 8) {
-      if (fraction.clasificationId) {
-        this.classiGoodsForm.controls['goodClassNumber'].setValue(
-          fraction.clasificationId
-        );
-      } else {
-        this.message(
-          'info',
-          'clasificación de bien nula',
-          'El bien seleccionado no tiene numero de clasificación de bien'
-        );
+    if (fraction.fractionCode != null) {
+      if (fraction.fractionCode.length === 8) {
+        if (fraction.clasificationId) {
+          this.classiGoodsForm.controls['goodClassNumber'].setValue(
+            fraction.clasificationId
+          );
+        } else {
+          this.classiGoodsForm.controls['goodClassNumber'].setValue(null);
+          this.message(
+            'info',
+            'clasificación de bien nula',
+            'El bien seleccionado no tiene numero de clasificación de bien'
+          );
+        }
       }
+    } else {
+      this.classiGoodsForm.controls['goodClassNumber'].setValue(null);
     }
   }
 
@@ -1041,6 +1046,8 @@ export class ClassifyAssetsTabComponent
       if (this.classiGoodsForm.controls['unitMeasure'].value === null) {
         this.classiGoodsForm.controls['unitMeasure'].setValue(fraction.unit);
       }
+    } else {
+      this.classiGoodsForm.controls['ligieUnit'].setValue(null);
     }
   }
   //obtenien la unidad de medida
