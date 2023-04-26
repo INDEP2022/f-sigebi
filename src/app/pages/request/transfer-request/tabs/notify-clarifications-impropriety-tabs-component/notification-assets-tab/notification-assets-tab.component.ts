@@ -22,6 +22,7 @@ import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clar
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IGoodresdev } from 'src/app/core/models/ms-rejected-good/rejected-good.model';
 import { IGetGoodResVe } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
@@ -379,7 +380,7 @@ export class NotificationAssetsTabComponent
         this.message('Error', 'Seleccione almenos un registro!');
         return;
       }
-      this.openModal();
+      this.getRequest();
     }
   }
 
@@ -400,7 +401,16 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  openModal(idClarification?: number): void {
+  getRequest() {
+    this.requestService.getById(this.idRequest).subscribe({
+      next: response => {
+        const infoRequest = response;
+        this.openModal(infoRequest);
+      },
+    });
+  }
+
+  openModal(infoRequest?: IRequest, idClarification?: number): void {
     const dataClarifications2 = this.dataNotificationSelected;
     const rejectedID = this.valueRejectNotificationId;
     const goodValue = this.valueGood;
@@ -419,6 +429,7 @@ export class NotificationAssetsTabComponent
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         idRequest: this.idRequest,
+        infoRequest,
         callback: (next: boolean, idGood: number) => {
           if (next) {
             console.log('good', idGood);
@@ -1006,7 +1017,6 @@ export class NotificationAssetsTabComponent
 
   updateChatClarificationsTmp() {
     //Cambiar estado a ChatClarifications
-
     const refuseObj = { ...this.valuesNotifications };
     const respuesta = `RESPUESTA DEL SAT ${refuseObj.chatClarification.id}`;
     const modelChatClarifications: IChatClarifications = {
@@ -1028,7 +1038,9 @@ export class NotificationAssetsTabComponent
       .subscribe({
         next: async data => {
           console.log('SE ACTUALIZÓ:', data);
-          this.updateStatusClarificationsTmp(data.goodId);
+          const idGood = Number(modelChatClarifications.goodId);
+          this.getClarificationsByGood(idGood);
+          //this.updateStatusClarificationsTmp(data.goodId);
         },
         error: error => {
           this.loading = false;

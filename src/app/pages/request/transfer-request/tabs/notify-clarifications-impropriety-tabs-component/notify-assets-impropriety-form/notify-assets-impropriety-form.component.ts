@@ -4,7 +4,6 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
@@ -13,7 +12,6 @@ import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
-import { Clarification2Srvice } from 'src/app/core/services/ms-rejected-good/clarification.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -47,17 +45,15 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Parámetro con el id del tipo de la aclaración
   idAclara: any;
-
   idRequest: any;
 
-  //información de la notificación seleccionada del bien
-  dataNotification: IClarification;
   goodValue: any;
   rejectedID: any;
 
   dataClarifications2: ClarificationGoodRejectNotification;
 
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
+  infoRequest: IRequest;
 
   constructor(
     private fb: FormBuilder,
@@ -66,7 +62,6 @@ export class NotifyAssetsImproprietyFormComponent
     private documentService: DocumentsService,
     private chatService: ChatClarificationsService,
     private rejectedGoodService: RejectedGoodService,
-    private clarification2Srvice: Clarification2Srvice,
     private authService: AuthService,
     private requestService: RequestService
   ) {
@@ -74,14 +69,16 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   ngOnInit(): void {
+    console.log('Información de la solicitud', this.infoRequest);
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
     this.initForm2();
-    console.log('información de la notificación', this.dataNotification);
     console.log('información dl bien', this.goodValue);
+    const token = this.authService.decodeToken();
+    let userId = token.preferred_username;
+    console.log('userId', token);
   }
 
-  infoRequest: IRequest; //Queda pendiente meter información a los inputs de los formularios
   initForm1(): void {
     //Trae información de la solicitud para precargar información en los formularios
     this.requestService.getById(this.idRequest).subscribe({
@@ -96,7 +93,7 @@ export class NotifyAssetsImproprietyFormComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
       senderName: [
-        null,
+        this.infoRequest.nameOfOwner,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -108,7 +105,7 @@ export class NotifyAssetsImproprietyFormComponent
         [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
       ],
       senderCharge: [
-        null,
+        this.infoRequest.holderCharge,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -205,7 +202,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       senderName: [
-        null,
+        this.infoRequest.nameOfOwner,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -252,6 +249,7 @@ export class NotifyAssetsImproprietyFormComponent
         null,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
+      senderCharge: [this.infoRequest.holderCharge, []],
       applicationId: [this.idRequest],
       documentTypeId: [104],
       clarificationStatus: 'EN_ACLARACION',

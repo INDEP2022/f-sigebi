@@ -5,7 +5,9 @@
 
   <div body>
     <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
+      <div
+        class="col-sm-12 col-12 col-md-12 p-2"
+        [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
           [attr.class]="'my-table table-bordered'"
           [settings]="settings"
@@ -34,7 +36,10 @@
           <form-field
             [control]="form.get('diEstatusBien')"
             label="Estatus Bien">
-            <input class="form-control" formControlName="diEstatusBien" />
+            <input
+              class="form-control"
+              formControlName="diEstatusBien"
+              readonly />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
