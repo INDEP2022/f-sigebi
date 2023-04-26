@@ -1041,6 +1041,7 @@ export class NotificationAssetsTabComponent
           const idGood = Number(modelChatClarifications.goodId);
           this.getClarificationsByGood(idGood);
           //this.updateStatusClarificationsTmp(data.goodId);
+          //Método nuevo de Carlos para cambiar un estatus de ChatClarifications
         },
         error: error => {
           this.loading = false;

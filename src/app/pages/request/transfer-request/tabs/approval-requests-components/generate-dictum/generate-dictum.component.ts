@@ -1,7 +1,10 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { IGenerateClave } from 'src/app/core/models/ms-security/generate-clave-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModelForm } from '../../../../../../core/interfaces/model-form';
@@ -24,18 +27,39 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   pdfurl: string = '';
   public event: EventEmitter<any> = new EventEmitter();
   dictumForm: ModelForm<IRequest>;
+  folio: IGenerateClave;
 
   constructor(
     private bsModelRef: BsModalRef,
     private fb: FormBuilder,
     private modalService: BsModalService,
     private modalRef: BsModalRef,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private authService: AuthService,
+    private generateCveService: GenerateCveService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    //Construir objeto para enviarlo por el body al servicio
+    const user = this.authService.decodeToken();
+    let userId = user.preferred_username;
+    const model: IGenerateClave = {
+      sender: userId,
+    };
+
+    //Crea la clave armada o el folio
+    this.generateCveService.generateCve(model).subscribe({
+      next: response => {
+        this.folio = response.data;
+        console.log('Se creado clave armada', response.data);
+      },
+      error: error => {
+        console.log('Error al crear clave armada', error.message);
+      },
+    });
+
     this.initForm();
   }
 
@@ -101,8 +125,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       searchSiab: [null],
       priorityDate: [null],
       rejectionNumber: [null],
-      rulingDocumentId: [null],
-      reportSheet: [null],*/
+      rulingDocumentId: [null],*/
+      rejectionNumber: [null],
+      reportSheet: [], //Se agrega información del que elabora
       nameRecipientRuling: [null, [Validators.maxLength(100)]],
       postRecipientRuling: [null, [Validators.maxLength(100)]],
       paragraphOneRuling: [null, [Validators.maxLength(4000)]],
