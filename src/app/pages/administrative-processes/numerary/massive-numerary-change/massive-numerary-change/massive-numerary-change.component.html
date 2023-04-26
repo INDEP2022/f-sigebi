@@ -66,13 +66,28 @@
             </form-field>
           </div>
         </div>
-        <div class="row mt-4">
+        <div class="row mt-4 m-0">
           <h5 class="title">Origen de Datos</h5>
-          <div class="col-md-3 pt-4">
+          <div class="d-flex overflow-auto">
+            <div
+              class="selects-origin-data"
+              *ngFor="let item of columns | keyvalue">
+              <label>{{ item.key }}</label>
+              <select>
+                <option disabled selected>Opción {{ item.key }}</option>
+                <option value="0">Otro</option>
+                <option value="B">No. Bien</option>
+                <option value="G">Gasto</option>
+                <option value="I">Ingreso neto</option>
+                <option value="V">Iva</option>
+              </select>
+            </div>
+          </div>
+          <!-- <div class="col-md-3 pt-4">
             <form-field [control]="form.get('data')" label="Datos">
               <input type="text" class="form-control" formControlName="data" />
             </form-field>
-          </div>
+          </div> -->
         </div>
         <div class="row mt-4">
           <h5 class="title">Gastos</h5>
@@ -110,7 +125,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="dataPrevious">
           </ng2-smart-table>
         </div>
       </div>

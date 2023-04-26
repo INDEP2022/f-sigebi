@@ -62,7 +62,6 @@ import {
   ],
 })
 export class MassiveConversionMainComponent extends BasePage implements OnInit {
-  // form: FormGroup = new FormGroup({});
   selectedEvent: any = null;
   operationItems = new DefaultSelect();
   toggleFilter: boolean = true;
@@ -185,16 +184,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     }
   }
 
-  // getOperations(params: ListParams) {
-  //   if (params.text == '') {
-  //     this.operationItems = new DefaultSelect(this.operationTestData, 5);
-  //   } else {
-  //     const id = parseInt(params.text);
-  //     const item = [this.operationTestData.filter((i: any) => i.id == id)];
-  //     this.operationItems = new DefaultSelect(item[0], 1);
-  //   }
-  // }
-
   resetFilter() {
     this.form.controls['batchId'].setValue(null);
     this.form.controls['status'].setValue(null);
@@ -236,25 +225,26 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   searchLcs(listParams?: ListParams) {
     this.isLoadingLcs = true;
-    const params = this.makeFiltersParams(listParams, {
-      eventId: 'idEvent',
-      batchId: 'idBatch',
-      validityDate: 'dateValidity',
-      // insertDate: 'dateInsert',
-    }).getParams();
-    this.guarantyService.getComerRefGuarantees(params).subscribe({
-      next: res => {
-        this.isLoadingLcs = false;
-        this.lcsSource.load(res.data);
-        this.lcsTotalItems = res.count;
+    //TODO: decirle a Eduardo que haga opcional el campo de validityDate
+    const paramsPaginate = {
+      page: listParams?.page || 1,
+      limit: listParams?.limit || 10,
+    };
+    this.capturelineService
+      .postComerRefGuaranteesSearch({ ...this.form.value, ...paramsPaginate })
+      .subscribe({
+        next: res => {
+          this.isLoadingLcs = false;
+          this.lcsSource.load(res.data);
+          this.lcsTotalItems = res.count;
 
-        this.isLoadingLcs = false;
-      },
-      error: () => {
-        this.lcsSource.load([]);
-        this.isLoadingLcs = false;
-      },
-    });
+          this.isLoadingLcs = false;
+        },
+        error: () => {
+          this.lcsSource.load([]);
+          this.isLoadingLcs = false;
+        },
+      });
   }
 
   makeFiltersParams(

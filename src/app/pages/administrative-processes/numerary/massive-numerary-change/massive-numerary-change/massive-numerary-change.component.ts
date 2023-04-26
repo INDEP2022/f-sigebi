@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -11,13 +12,25 @@ import { MASSIVE_NUMERARY_CHANGE_COLUMNS } from './massive-numerary-change-colum
 @Component({
   selector: 'app-massive-numerary-change',
   templateUrl: './massive-numerary-change.component.html',
-  styles: [],
+  styles: [
+    `
+      .selects-origin-data select {
+        border: none;
+        border-bottom: 1px solid black;
+        margin-left: 5px;
+        margin-right: 5px;
+        padding: 3px;
+      }
+    `,
+  ],
 })
 export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   form: FormGroup;
-  data1: any[] = [];
+  dataPrevious = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+
+  columns = MASSIVE_NUMERARY_CHANGE_COLUMNS;
 
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
