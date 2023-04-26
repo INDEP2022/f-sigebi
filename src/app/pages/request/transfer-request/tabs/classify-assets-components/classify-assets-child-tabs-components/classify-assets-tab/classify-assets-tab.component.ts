@@ -182,7 +182,10 @@ export class ClassifyAssetsTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
       ],
       destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
-      transferentDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      transferentDestiny: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       compliesNorm: [
         'N',
         [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
@@ -671,6 +674,7 @@ export class ClassifyAssetsTabComponent
 
   matchLevelFraction(res: any) {
     this.advSearch = true;
+    this.listAdvancedFractions = [];
     switch (Number(res.level)) {
       case 5:
         this.getLevel4(new ListParams(), res.id);
@@ -1041,6 +1045,7 @@ export class ClassifyAssetsTabComponent
 
   setUnidLigieMeasure(fraction: any) {
     if (fraction.unit) {
+      //this.classiGoodsForm.controls['ligieUnit'].setValue(fraction.unit);
       this.classiGoodsForm.controls['ligieUnit'].setValue(fraction.unit);
 
       if (this.classiGoodsForm.controls['unitMeasure'].value === null) {
