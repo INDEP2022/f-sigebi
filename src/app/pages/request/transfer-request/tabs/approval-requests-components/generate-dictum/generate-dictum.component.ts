@@ -126,6 +126,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       priorityDate: [null],
       rejectionNumber: [null],
       rulingDocumentId: [null],*/
+      rejectionNumber: [null],
       reportSheet: [], //Se agrega información del que elabora
       nameRecipientRuling: [null, [Validators.maxLength(100)]],
       postRecipientRuling: [null, [Validators.maxLength(100)]],
