@@ -334,7 +334,10 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
-    if (this.pgr) {
+    if (
+      this.typeOfTransfer === 'PGR_SAE' ||
+      this.typeOfTransfer === 'FGR_SAE'
+    ) {
       if (
         this.requestForm.get('paperDate').value === null ||
         this.requestForm.get('paperDate').value === '' ||
