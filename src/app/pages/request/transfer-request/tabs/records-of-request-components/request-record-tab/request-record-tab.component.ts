@@ -50,6 +50,7 @@ export class RequestRecordTabComponent
   priority: boolean = false;
   priorityString: string = 'N';
   transferenceNumber: number = 0;
+  typeOfTransfer: string;
   formLoading: boolean = false;
   transfe: string = '';
   paperDateLabel: any = '';
@@ -74,15 +75,18 @@ export class RequestRecordTabComponent
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
-
+    console.log(this.requestForm.value);
     //estable el campo para preguntar en la vista si es del tipo 1 o 3
     if (this.requestForm.controls['transferenceId'].value != null) {
       this.transferenceNumber = Number(
         this.requestForm.controls['transferenceId'].value
       );
-      this.getTrans(this.transferenceNumber);
+      // this.getTrans(this.transferenceNumber);
     }
-
+    if (this.requestForm.controls['typeOfTransfer'].value != null) {
+      this.typeOfTransfer = this.requestForm.controls['typeOfTransfer'].value;
+      this.getTrans(this.typeOfTransfer);
+    }
     //this.prepareForm();
     if (this.requestForm.controls['paperDate'].value != null) {
       const paperDate = this.requestForm.controls['paperDate'].value;
@@ -242,7 +246,7 @@ export class RequestRecordTabComponent
   getAffair(id: number) {
     let params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
-    params['filter.nbOrigen'] = `$eq:SIAB`;
+    params['filter.nbOrigen'] = `$eq:SAMI`;
     this.affairService.getAll(params).subscribe({
       next: ({ data }) => {
         this.affairName = data[0].description;
@@ -253,22 +257,27 @@ export class RequestRecordTabComponent
     });
   }
 
-  getTrans(transferenceNumber: number) {
-    let params = new ListParams();
-    params['filter.id'] = `$eq:${transferenceNumber}`;
-    this.transferenteService.getAll(params).subscribe({
-      next: ({ data }) => {
-        console.log(this.transfe);
-        if (transferenceNumber === 1 || transferenceNumber === 120) {
-          this.transfe = 'MP';
-        } else {
-          this.transfe = this.rem;
-        }
-      },
-      error: error => {
-        this.transfe = '';
-      },
-    });
+  getTrans(transference: string) {
+    if (transference === 'MANUAL' || transference === 'SAT_SAE') {
+      this.transfe = this.rem;
+    } else {
+      this.transfe = 'MP';
+    }
+    // let params = new ListParams();
+    // params['filter.id'] = `$eq:${transferenceNumber}`;
+    // this.transferenteService.getAll(params).subscribe({
+    //   next: ({ data }) => {
+    //     console.log(this.transfe);
+    //     if (transferenceNumber === 1 || transferenceNumber === 120) {
+    //       this.transfe = 'MP';
+    //     } else {
+    //       this.transfe = this.rem;
+    //     }
+    //   },
+    //   error: error => {
+    //     this.transfe = '';
+    //   },
+    // });
   }
 
   changeDateEvent(event: Date) {
@@ -325,7 +334,10 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
-    if (this.pgr) {
+    if (
+      this.typeOfTransfer === 'PGR_SAE' ||
+      this.typeOfTransfer === 'FGR_SAE'
+    ) {
       if (
         this.requestForm.get('paperDate').value === null ||
         this.requestForm.get('paperDate').value === '' ||

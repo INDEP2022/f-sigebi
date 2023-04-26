@@ -1017,7 +1017,6 @@ export class NotificationAssetsTabComponent
 
   updateChatClarificationsTmp() {
     //Cambiar estado a ChatClarifications
-
     const refuseObj = { ...this.valuesNotifications };
     const respuesta = `RESPUESTA DEL SAT ${refuseObj.chatClarification.id}`;
     const modelChatClarifications: IChatClarifications = {
@@ -1039,7 +1038,10 @@ export class NotificationAssetsTabComponent
       .subscribe({
         next: async data => {
           console.log('SE ACTUALIZÓ:', data);
-          this.updateStatusClarificationsTmp(data.goodId);
+          const idGood = Number(modelChatClarifications.goodId);
+          this.getClarificationsByGood(idGood);
+          //this.updateStatusClarificationsTmp(data.goodId);
+          //Método nuevo de Carlos para cambiar un estatus de ChatClarifications
         },
         error: error => {
           this.loading = false;
