@@ -194,6 +194,7 @@ export class DetailAssetsTabComponentComponent
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
     //console.log({ process: this.process });
+    console.log('goods ', this.detailAssets);
     if (this.process == 'validate-document') {
       this.getDomicilieGood(
         parseInt(this.detailAssets.controls['addressId'].value)
@@ -1377,11 +1378,16 @@ export class DetailAssetsTabComponentComponent
   }
 
   getReactiveFormCall() {
+    if (this.detailAssets.controls['ligieUnit'].value) {
+      const ligieUnit = this.detailAssets.controls['ligieUnit'].value;
+      this.getLigieUnit(new ListParams(), ligieUnit);
+    }
+
     this.detailAssets.controls['ligieUnit'].valueChanges.subscribe(
       (data: any) => {
-        //debugger
         if (data) {
-          this.getLigieUnit(new ListParams(), data);
+          const ligieUnit = this.detailAssets.controls['ligieUnit'].value;
+          this.getLigieUnit(new ListParams(), ligieUnit);
         }
       }
     );
@@ -1515,7 +1521,7 @@ export class DetailAssetsTabComponentComponent
           next: resp => {
             this.goodDomicilieForm.patchValue(resp);
             /* establece las fechas  */
-            debugger;
+            //debugger;
             const dateEvaluo =
               this.goodDomicilieForm.controls['appraisalDate'].value;
             this.bsEvaluoDate = dateEvaluo ? new Date(dateEvaluo) : null;
