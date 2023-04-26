@@ -46,20 +46,20 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     const user = this.authService.decodeToken();
     let userId = user.preferred_username;
     const model: IGenerateClave = {
-      sender: userId,
+      // sender: userId,
+      sender: 'MAPEREZ',
     };
 
     //Crea la clave armada o el folio
     this.generateCveService.generateCve(model).subscribe({
       next: response => {
-        this.folio = response.data;
-        console.log('Se creado clave armada', response.data);
+        this.folio = response;
+        console.log('Se creado clave armada', response);
       },
       error: error => {
         console.log('Error al crear clave armada', error.message);
       },
     });
-
     this.initForm();
   }
 
@@ -127,7 +127,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       rejectionNumber: [null],
       rulingDocumentId: [null],*/
       rejectionNumber: [null],
-      reportSheet: [], //Se agrega información del que elabora
+      reportSheet: [null], //Se agrega información del que elabora
       nameRecipientRuling: [null, [Validators.maxLength(100)]],
       postRecipientRuling: [null, [Validators.maxLength(100)]],
       paragraphOneRuling: [null, [Validators.maxLength(4000)]],
@@ -162,6 +162,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   update() {
+    if (this.folio != null) {
+      this.dictumForm.controls['reportSheet'].setValue(this.folio);
+    }
     console.log(this.dictumForm.value);
     const idDoc = this.idDoc;
     this.requestService.update(idDoc, this.dictumForm.value).subscribe({
