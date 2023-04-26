@@ -69,9 +69,7 @@ export class RequestInTurnFormComponent implements OnInit {
   ngOnInit(): void {
     this.initialForm();
     this.deleRegionalId = Number(this.authService.decodeToken().department);
-    this.getTransferente(new ListParams());
     this.getRegionalDelegationId(new ListParams());
-    this.getStateOfRepublic(new ListParams());
     this.getAffair(new ListParams());
   }
 
@@ -113,12 +111,17 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          this.deleRegionalId = data;
-          this.getStateOfRepublic(new ListParams());
+          this.selectTransfer = new DefaultSelect();
+
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+
           this.searchForm.controls['stateOfRepublic'].reset();
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
+          this.deleRegionalId = data;
+          this.getStateOfRepublic(new ListParams());
         }
       }
     );
@@ -126,12 +129,19 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['stateOfRepublic'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          this.stateId = data;
-          this.getTransferente(new ListParams());
+          console.log('rest2323232');
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+          this.selectTransfer = new DefaultSelect();
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
+          this.stateId = data;
+          this.getTransferente(new ListParams());
         } else {
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+          this.selectTransfer = new DefaultSelect();
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
@@ -140,15 +150,23 @@ export class RequestInTurnFormComponent implements OnInit {
     );
     this.searchForm.controls['transfer'].valueChanges.subscribe((data: any) => {
       if (data) {
+        this.selectStation = new DefaultSelect();
+        this.selectAuthority = new DefaultSelect();
+
+        this.searchForm.controls['station'].reset();
+        this.searchForm.controls['authority'].reset();
         this.transferenceId = data;
         this.getStation(new ListParams());
       } else {
+        this.selectStation = new DefaultSelect();
+        this.selectAuthority = new DefaultSelect();
         this.searchForm.controls['station'].reset();
         this.searchForm.controls['authority'].reset();
       }
     });
     this.searchForm.controls['station'].valueChanges.subscribe((data: any) => {
       if (data) {
+        this.selectAuthority = new DefaultSelect();
         this.stationId = data;
         this.getAuthority(new ListParams());
       }
@@ -181,18 +199,16 @@ export class RequestInTurnFormComponent implements OnInit {
     params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
     this.transferentesSaeService
       .getStateByTransferentKey(this.stateId, params)
-      .subscribe(
-        (data: any) => {
+      .subscribe({
+        next: data => {
           data.data.map((data: any) => {
             data.nameAndId = `${data.idTransferee} - ${data.transferent.nameTransferent}`;
             return data;
           });
           this.selectTransfer = new DefaultSelect(data.data, data.count);
         },
-        error => {
-          this.selectTransfer = new DefaultSelect();
-        }
-      );
+        error: error => (this.selectTransfer = new DefaultSelect()),
+      });
   }
 
   getStateOfRepublic(params?: ListParams) {
@@ -236,6 +252,7 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getAuthority(params?: ListParams) {
+    this.selectAuthority = new DefaultSelect();
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.stationId}`;
     params['filter.idTransferer'] = `$eq:${this.transferenceId}`;
@@ -246,6 +263,7 @@ export class RequestInTurnFormComponent implements OnInit {
     this.stationService;
     this.authorityService.getAll(params).subscribe(
       (data: IListResponse<IAuthority>) => {
+        console.log(data);
         data.data.map((data: any) => {
           data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
@@ -273,6 +291,13 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   reset(): void {
+    this.selectTransfer = new DefaultSelect();
+    // this.selectStation = new DefaultSelect();
+    // // this.selectAuthority = new DefaultSelect();
+    this.selectState = new DefaultSelect();
+    // // this.selectAffeir = new DefaultSelect();
+    // // this.selectRegDele = new DefaultSelect();
+    // console.log('rest');
     this.searchForm.reset();
     this.resetForm.emit(true);
     this.deleRegionalId = Number(this.authService.decodeToken().department);
