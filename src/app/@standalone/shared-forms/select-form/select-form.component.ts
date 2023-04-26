@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -58,6 +58,7 @@ export class SelectFormComponent extends BasePage implements OnInit {
   _params: ListParams = new ListParams();
   data: DefaultSelect = new DefaultSelect();
   otherData: any[];
+  subscription: Subscription;
   get select() {
     return this.form.get(this.formField);
   }
@@ -104,7 +105,10 @@ export class SelectFormComponent extends BasePage implements OnInit {
   }
 
   private getDataObservable() {
-    this.getListObservable.subscribe({
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    this.subscription = this.getListObservable.subscribe({
       next: data => {
         console.log(data);
         this.otherData = data.data;
@@ -136,6 +140,7 @@ export class SelectFormComponent extends BasePage implements OnInit {
   }
 
   onChange(event: any) {
+    console.log(event);
     if (this.otherData) {
       this.selectEvent.emit(event);
       // console.log(event);
