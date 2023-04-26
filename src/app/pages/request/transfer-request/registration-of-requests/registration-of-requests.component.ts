@@ -1093,7 +1093,7 @@ export class RegistrationOfRequestsComponent
           const clarification = await this.haveNotificacions();
           console.log(clarification);
           console.log(this.requestData.typeOfTransfer);
-          debugger;
+          //debugger;
           if (
             clarification === true &&
             this.requestData.typeOfTransfer !== 'MANUAL'
@@ -1126,7 +1126,7 @@ export class RegistrationOfRequestsComponent
       params.addFilter('applicationId', this.requestData.id);
       params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
-      debugger;
+      //debugger;
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
           if (resp.data) {
