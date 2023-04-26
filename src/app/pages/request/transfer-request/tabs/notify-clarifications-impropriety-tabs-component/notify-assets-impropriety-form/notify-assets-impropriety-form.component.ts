@@ -74,6 +74,9 @@ export class NotifyAssetsImproprietyFormComponent
     this.initForm1();
     this.initForm2();
     console.log('información dl bien', this.goodValue);
+    const token = this.authService.decodeToken();
+    let userId = token.preferred_username;
+    console.log('userId', token);
   }
 
   initForm1(): void {
@@ -182,7 +185,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       positionAddressee: [
-        this.infoRequest.holderCharge,
+        null,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -246,6 +249,7 @@ export class NotifyAssetsImproprietyFormComponent
         null,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
+      senderCharge: [this.infoRequest.holderCharge, []],
       applicationId: [this.idRequest],
       documentTypeId: [104],
       clarificationStatus: 'EN_ACLARACION',
