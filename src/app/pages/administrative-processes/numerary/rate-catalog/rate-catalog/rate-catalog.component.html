@@ -4,35 +4,33 @@
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
+      <form class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('month')" label="Mes">
-              <select class="form-control" formControlName="month">
-                <option [value]="null">Seleccione un mes</option>
-                <option [value]="1">Enero</option>
-                <option [value]="2">Febrero</option>
-                <option [value]="2">Marzo</option>
-                <option [value]="2">Abril</option>
-                <option [value]="2">Mayo</option>
-                <option [value]="2">Junio</option>
-                <option [value]="2">Julio</option>
-                <option [value]="2">Agosto</option>
-                <option [value]="2">Septiembre</option>
-                <option [value]="2">Octubre</option>
-                <option [value]="2">Noviembre</option>
-                <option [value]="2">Diciembre</option>
-              </select>
+              <ng-select
+                #selected
+                class="form-control"
+                [items]="months"
+                bindLabel="mes"
+                bindValue="value"
+                [multiple]="false"
+                [closeOnSelect]="true"
+                [searchable]="false"
+                formControlName="month">
+              </ng-select>
             </form-field>
           </div>
           <div class="col-md-2">
             <form-field [control]="form.get('year')" label="Año">
               <input
-                type="number"
+                type="text"
                 class="form-control"
-                formControlName="year"
-                min="1"
-                pattern="^[0-9]+" />
+                [bsConfig]="bsConfigFromYear"
+                #dp="bsDatepicker"
+                bsDatepicker
+                formControlName="year" />
+              <!-- <input type="number" class="form-control" formControlName="year" min="1" pattern="^[0-9]+" /> -->
             </form-field>
           </div>
           <div class="col-md-2">
@@ -40,9 +38,9 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="ratePesos"
-                min="1"
-                pattern="^[0-9]+" />
+                [min]="0"
+                [max-length]="21"
+                formControlName="ratePesos" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -50,9 +48,9 @@
               <input
                 type="number"
                 class="form-control"
+                [min]="0"
                 formControlName="dollarRate"
-                min="1"
-                pattern="^[0-9]+" />
+                [max-length]="21" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -60,9 +58,9 @@
               <input
                 type="number"
                 class="form-control"
+                [min]="0"
                 formControlName="uroRate"
-                min="1"
-                pattern="^[0-9]+" />
+                [max-length]="21" />
             </form-field>
           </div>
         </div>
@@ -70,10 +68,16 @@
       <div class="row mt-4">
         <div class="col-md-3"></div>
         <div class="col-md-3">
-          <button class="btn btn-success btn-sm active">Aceptar</button>
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="numeraryCreate()">
+            Aceptar
+          </button>
         </div>
         <div class="col-md-3">
-          <button class="btn btn-secondary btn-sm active">Cancelar</button>
+          <button class="btn btn-secondary btn-sm active" (click)="clear()">
+            Cancelar
+          </button>
         </div>
       </div>
       <div class="row pt-4">
@@ -82,11 +86,11 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data1">
+              [source]="data1.data">
             </ng2-smart-table>
           </div>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
+        <app-pagination [params]="params" [totalItems]="data1.count">
         </app-pagination>
       </div>
     </div>
