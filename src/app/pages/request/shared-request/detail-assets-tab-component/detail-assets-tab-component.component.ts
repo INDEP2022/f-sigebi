@@ -169,6 +169,7 @@ export class DetailAssetsTabComponentComponent
   disableDuplicity: boolean = false; //para verificar cumplimientos = false
   isGoodInfReadOnly: boolean = false;
   isGoodTypeReadOnly: boolean = false;
+  ligieUnit: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -933,17 +934,32 @@ export class DetailAssetsTabComponentComponent
   // }
 
   getTransferentUnit(params: ListParams) {
-    params['filter.description'] = `$ilike:${params.text}`;
-    this.goodsInvService
-      .getCatUnitMeasureView(params)
+    params['filter.measureTlUnit'] = `$ilike:${params.text}`;
+    params.limit = 20;
+    this.goodsQueryService
+      .getCatMeasureUnitView(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          //console.log('medida transferente', resp.data);
           this.selectTansferUnitMeasure = new DefaultSelect(
             resp.data,
             resp.count
           );
+        },
+      });
+  }
+
+  getLigieUnit(params: ListParams, id?: string) {
+    params['filter.uomCode'] = `$eq:${id}`;
+    params.limit = 20;
+
+    this.goodsQueryService
+      .getCatMeasureUnitView(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          const result = resp.data.filter((x: any) => x.uomCode === id);
+          this.ligieUnit = result[0].measureTlUnit;
         },
       });
   }
@@ -1361,6 +1377,15 @@ export class DetailAssetsTabComponentComponent
   }
 
   getReactiveFormCall() {
+    this.detailAssets.controls['ligieUnit'].valueChanges.subscribe(
+      (data: any) => {
+        //debugger
+        if (data) {
+          this.getLigieUnit(new ListParams(), data);
+        }
+      }
+    );
+
     this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
@@ -1490,14 +1515,15 @@ export class DetailAssetsTabComponentComponent
           next: resp => {
             this.goodDomicilieForm.patchValue(resp);
             /* establece las fechas  */
+            debugger;
             const dateEvaluo =
               this.goodDomicilieForm.controls['appraisalDate'].value;
-            this.bsEvaluoDate = new Date(dateEvaluo);
+            this.bsEvaluoDate = dateEvaluo ? new Date(dateEvaluo) : null;
             const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
-            this.bsPffDate = new Date(datePFF);
+            this.bsPffDate = datePFF ? new Date(datePFF) : null;
             const dateCerti =
               this.goodDomicilieForm.controls['certLibLienDate'].value;
-            this.bsCertifiDate = new Date(dateCerti);
+            this.bsCertifiDate = dateCerti ? new Date(dateCerti) : null;
           },
         });
     }

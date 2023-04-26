@@ -314,7 +314,6 @@ export class RegistrationOfRequestsComponent
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
         this.requestData = data as IRequest;
-        console.log(this.requestData.typeOfTransfer);
         this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
         this.object = request as IRequest;
@@ -352,10 +351,14 @@ export class RegistrationOfRequestsComponent
 
   getTransferent(idTransferent: number) {
     return new Promise((resolve, reject) => {
-      this.transferentService.getById(idTransferent).subscribe(data => {
-        this.transferentName = data.nameTransferent;
-        resolve(true);
-      });
+      if (idTransferent) {
+        this.transferentService.getById(idTransferent).subscribe(data => {
+          this.transferentName = data.nameTransferent;
+          resolve(true);
+        });
+      } else {
+        this.transferentName = '';
+      }
     });
   }
 
@@ -1089,17 +1092,15 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
-          const goodResult = await this.haveNotificacions();
-          if (goodResult === true) {
+          const clarification = await this.haveNotificacions();
+
+          if (
+            clarification === true &&
+            this.requestData.typeOfTransfer !== 'MANUAL'
+          ) {
             this.notifyClarificationsMethod();
-          } else if (goodResult === false) {
-            this.destinyDocumental();
           } else {
-            this.onLoadToast(
-              'error',
-              'Error al turnar',
-              'No se pudo turnar la solicitud'
-            );
+            this.destinyDocumental();
           }
         }
         if (typeCommit === 'proceso-aprovacion') {

@@ -471,7 +471,7 @@ export class NotificationAssetsTabComponent
         this.message('Error', 'Seleccione almenos un registro!');
         return;
       }
-      this.openModal();
+      this.getRequest();
     }
   }
 
@@ -492,7 +492,16 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  openModal(idClarification?: number): void {
+  getRequest() {
+    this.requestService.getById(this.idRequest).subscribe({
+      next: response => {
+        const infoRequest = response;
+        this.openModal(infoRequest);
+      },
+    });
+  }
+
+  openModal(infoRequest?: IRequest, idClarification?: number): void {
     const dataClarifications2 = this.dataNotificationSelected;
     const rejectedID = this.valueRejectNotificationId;
     const goodValue = this.valueGood;
@@ -511,6 +520,7 @@ export class NotificationAssetsTabComponent
         clarification: this.notifyAssetsSelected,
         isInterconnection: this.byInterconnection,
         idRequest: this.idRequest,
+        infoRequest,
         callback: (next: boolean, idGood: number) => {
           if (next) {
             this.checkInfoNotification(idGood);
@@ -1175,7 +1185,6 @@ export class NotificationAssetsTabComponent
 
   updateChatClarificationsTmp() {
     //Cambiar estado a ChatClarifications
-
     const refuseObj = { ...this.valuesNotifications };
     const respuesta = `RESPUESTA DEL SAT ${refuseObj.chatClarification.id}`;
     const modelChatClarifications: IChatClarifications = {
@@ -1194,7 +1203,10 @@ export class NotificationAssetsTabComponent
       )
       .subscribe({
         next: async data => {
-          this.updateStatusClarificationsTmp(data.goodId);
+          console.log('SE ACTUALIZÓ:', data);
+          const idGood = Number(modelChatClarifications.goodId);
+          this.getClarificationsByGood(idGood);
+          //this.updateStatusClarificationsTmp(data.goodId);
         },
         error: error => {
           this.loading = false;

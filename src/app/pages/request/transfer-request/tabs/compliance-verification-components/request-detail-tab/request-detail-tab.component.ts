@@ -41,8 +41,10 @@ export class RequestDetailTabComponent
   formLoading: boolean = false;
 
   transferenceId: number = 0;
+  tyepOfTransferent: string = '';
 
   prioridadLabel: string = 'Prioridad';
+  prioridadDateLabel: string = 'Fecha Prioridad';
   procedenciaLabel: string = 'Procedencia Información';
   fechaRecepcionLabel: string = 'Fecha de Recepción';
   fechaOficioLabel: string = 'Fecha de Oficio';
@@ -82,6 +84,7 @@ export class RequestDetailTabComponent
 
   ngOnInit(): void {
     this.formLoading = true;
+    this.tyepOfTransferent = this.requestForm.controls['typeOfTransfer'].value;
     this.reactiveFormCalls();
     this.showDataProg();
   }
@@ -135,8 +138,8 @@ export class RequestDetailTabComponent
   showDataProg() {
     this.requestService.getById(this.idRequest).subscribe((data: any) => {
       this.infoRequest = data;
-      this.transferenceId = data.transferenceId;
-      this.setLabelNames(Number(this.transferenceId));
+
+      this.setLabelNames(this.tyepOfTransferent);
     });
   }
 
@@ -149,7 +152,7 @@ export class RequestDetailTabComponent
   getAffair(id: number) {
     let params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
-    params['filter.nbOrigen'] = `$eq:SIAB`;
+    params['filter.nbOrigen'] = `$eq:SAMI`;
     this.affairService.getAll(params).subscribe({
       next: ({ data }) => {
         this.affairName = data[0].description;
@@ -171,8 +174,8 @@ export class RequestDetailTabComponent
     });
   }
 
-  setLabelNames(transference: number) {
-    if (transference === 1 || transference === 3) {
+  setLabelNames(typeTransferent: string) {
+    if (typeTransferent === 'PGR_SAE' || typeTransferent === 'FGR_SAE') {
       this.nombreLabel = 'Nombre MP';
       this.cargoLabel = 'Cargo y/o Adscripción';
       this.telefonoLabel = 'Teléfono MP';
@@ -183,7 +186,7 @@ export class RequestDetailTabComponent
   reactiveFormCalls() {
     if (this.requestForm.controls['urgentPriority'].value) {
       this.priority =
-        this.requestForm.controls['urgentPriority'].value === '0'
+        this.requestForm.controls['urgentPriority'].value === 'N'
           ? false
           : true;
     }
