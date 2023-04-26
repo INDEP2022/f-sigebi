@@ -12,6 +12,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -28,6 +29,7 @@ import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifi
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
@@ -89,6 +91,7 @@ export class NotificationAssetsTabComponent
   clar: boolean = false;
   imp: boolean = false;
   today: Date;
+  task: any = null;
 
   constructor(
     private modalService: BsModalService,
@@ -98,7 +101,8 @@ export class NotificationAssetsTabComponent
     private goodService: GoodService,
     private getGoodResVeService: GetGoodResVeService,
     private requestService: RequestService,
-    private authService: AuthService
+    private authService: AuthService,
+    private taskService: TaskService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -162,6 +166,9 @@ export class NotificationAssetsTabComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsByRequest());
+
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    console.log('task', this.task);
   }
 
   dataRequest() {
@@ -311,50 +318,72 @@ export class NotificationAssetsTabComponent
             //Se actualiza el orden de servicio
           }
 
-          //this.createTaskVerifyCompliance();
+          this.createTaskVerifyCompliance();
         } else {
-          this.onLoadToast(
-            'info',
-            'Aun se tiene aclaraciones sin ser aclaradas',
-            ''
-          );
+          this.onLoadToast('info', 'Aun se tiene bienes sin ser aclarados', '');
         }
       });
     }
   }
 
-  /* Metodo para notificacion de aclaraciones */
-  /*async createTaskVerifyCompliance() {
-    this.loader.load = true;
-    const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
-    const url = 'pages/request/transfer-request/verify-compliance';
-    const from = 'NOTIFICAR_ACLARACIONES';
-    const to = 'VERIFICAR_CUMPLIMIENTO';
-    const user: any = this.authService.decodeToken();
-    const taskRes = await this.createTaskOrderService(
-      this.requestData,
-      title,
-      url,
-      from,
-      to,
-      true,
-      this.task.id,
-      user.username,
-      'SOLICITUD_TRANSFERENCIA',
-      'Destino_Documental',
-      'NOTIFICAR_ACLARACIONES'
-    );
-    if (taskRes) {
-      this.loader.load = false;
-      this.msgGuardado(
-        'success',
-        'Verificación de Cumplimiento',
-        `Se generó una Verificación de Cumplimiento con el folio: ${this.requestData.id}`
-      );
-    }
-  } */
+  /* Metodo para la creación de tarea */
+  async createTaskVerifyCompliance() {
+    const oldTask: any = await this.getOldTask();
+    if (oldTask.assignees != '') {
+      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+      const url = 'pages/request/transfer-request/verify-compliance';
+      const from = 'NOTIFICAR_ACLARACIONES';
+      const to = 'VERIFICAR_CUMPLIMIENTO';
+      const user: any = this.authService.decodeToken();
+      console.log('requestData', this.requestData);
+      console.log('tarea anterior', this.task.id);
+      console.log('usuario', user.username);
 
-  /*createTaskOrderService(
+      /*const taskResult = await this.createTaskOrderService(
+        this.requestData,
+        title,
+        url,
+        from,
+        to,
+        false,
+        this.task.id,
+        user.username,
+        'NOTIFICAR_ACLARACIONES',
+        'Aprobar_Solicitud',
+        'RECHAZAR'
+      );
+      if (taskResult === true) {
+        this.msgGuardado(
+          'success',
+          'Turnado Exitoso',
+          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        );
+      } */
+    }
+  }
+
+  getOldTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          const task = {
+            assignees: resp.data[0].assignees,
+            assigneesDisplayname: resp.data[0].assigneesDisplayname,
+          };
+          resolve(task);
+        },
+        error: error => {
+          this.message('error', 'Error al obtener la tarea antigua');
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
+  createTaskOrderService(
     request: any,
     title: string,
     url: string,
@@ -411,7 +440,7 @@ export class NotificationAssetsTabComponent
         },
       });
     });
-  } */
+  }
 
   validateGoodStatus() {
     this.goodsReject.map(item => {
@@ -791,7 +820,10 @@ export class NotificationAssetsTabComponent
                         }
                       }
 
-                      //this.checkStatusNotifications(notification.goodId);
+                      this.checkStatusNotifications(
+                        notification.goodId,
+                        bien.typeorigin
+                      );
                     } else if (
                       notification.clarificationType ==
                       'SOLICITAR_IMPROCEDENCIA'
@@ -1206,7 +1238,7 @@ export class NotificationAssetsTabComponent
           console.log('SE ACTUALIZÓ:', data);
           const idGood = Number(modelChatClarifications.goodId);
           this.getClarificationsByGood(idGood);
-          //this.updateStatusClarificationsTmp(data.goodId);
+          this.updateStatusClarificationsTmp(data.goodId);
         },
         error: error => {
           this.loading = false;
