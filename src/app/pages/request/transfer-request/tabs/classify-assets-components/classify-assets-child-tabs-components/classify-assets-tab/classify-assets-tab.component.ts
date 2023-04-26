@@ -832,18 +832,15 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
         if (dataChapter != null) {
-          let fractionCode = this.selectChapter.filter(
+          let fraction = this.selectChapter.filter(
             (x: any) => x.id === dataChapter
           )[0];
 
-          if (fractionCode) {
-            this.fractionCode = fractionCode.fractionCode;
-            this.getUnidMeasure(fractionCode.fractionCode);
-            this.setFractionId(
-              dataChapter,
-              fractionCode.fractionCode,
-              'Capítulo'
-            );
+          if (fraction) {
+            this.fractionCode = fraction.fractionCode;
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
+            this.setFractionId(dataChapter, fraction.fractionCode, 'Capítulo');
 
             const relativeTypeId = this.getRelevantTypeId(
               this.selectChapter,
@@ -865,9 +862,14 @@ export class ClassifyAssetsTabComponent
             this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
 
+          let fraction = this.selectLevel1.filter(
+            (x: any) => x.id === dataLevel1
+          )[0];
+
           this.fractionCode = fractionCodes;
-          this.getUnidMeasure(fractionCodes);
-          this.setFractionId(dataLevel1, fractionCodes, 'Nivel 1');
+          this.setNoClasifyGood(fraction);
+          this.setUnidLigieMeasure(fraction);
+          this.setFractionId(dataLevel1, fraction.fractionCode, 'Nivel 1');
 
           const relativeTypeId = this.getRelevantTypeId(
             this.selectLevel1,
@@ -897,7 +899,8 @@ export class ClassifyAssetsTabComponent
 
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
-            this.getUnidMeasure(fraction.fractionCode);
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
 
             const relativeTypeId = this.getRelevantTypeId(
               this.selectLevel2,
@@ -930,7 +933,8 @@ export class ClassifyAssetsTabComponent
 
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
-            this.getUnidMeasure(fraction.fractionCode);
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
             this.setFractionId(dataLevel3, fraction.fractionCode, 'Nivel 3');
 
             const relevantTypeId = this.getRelevantTypeId(
@@ -969,7 +973,8 @@ export class ClassifyAssetsTabComponent
 
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
-            this.getUnidMeasure(fraction.fractionCode);
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
             this.setFractionId(dataLevel4, fraction.fractionCode, 'Nivel 4');
             this.getNorma(fraction);
           }
@@ -1012,8 +1017,34 @@ export class ClassifyAssetsTabComponent
     }
   }
 
+  //guarda el no_clasify_good numero clasificacion del bien
+  setNoClasifyGood(fraction: any) {
+    if (fraction.fractionCode.length === 8) {
+      if (fraction.clasificationId) {
+        this.classiGoodsForm.controls['goodClassNumber'].setValue(
+          fraction.clasificationId
+        );
+      } else {
+        this.message(
+          'info',
+          'clasificación de bien nula',
+          'El bien seleccionado no tiene numero de clasificación de bien'
+        );
+      }
+    }
+  }
+
+  setUnidLigieMeasure(fraction: any) {
+    if (fraction.unit) {
+      this.classiGoodsForm.controls['ligieUnit'].setValue(fraction.unit);
+
+      if (this.classiGoodsForm.controls['unitMeasure'].value === null) {
+        this.classiGoodsForm.controls['unitMeasure'].setValue(fraction.unit);
+      }
+    }
+  }
   //obtenien la unidad de medida
-  getUnidMeasure(value: string) {
+  /*getUnidMeasure(value: string) {
     if (value) {
       if (value.length === 8) {
         const fractionCode = { fraction: value };
@@ -1064,12 +1095,9 @@ export class ClassifyAssetsTabComponent
               );
             },
           });
-      } /*  else {
-        this.classiGoodsForm.controls['goodClassNumber'].setValue(0);
-        this.classiGoodsForm.controls['ligieUnit'].setValue('');
-      } */
+      } 
     }
-  }
+  }*/
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);

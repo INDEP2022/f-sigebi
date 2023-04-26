@@ -191,7 +191,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="ligieUnit"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="ligieUnit"
                   [readOnly]="true"
                   maxlength="30" />
               </form-field>
@@ -217,8 +218,8 @@
                 [data]="selectTansferUnitMeasure"
                 label="Unid&#46; Medida Transferente"
                 [searchable]="true"
-                bindLabel="unitMeasureTl"
-                value="unitMeasureTl"
+                bindLabel="measureTlUnit"
+                value="uomCode"
                 [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
             <div
