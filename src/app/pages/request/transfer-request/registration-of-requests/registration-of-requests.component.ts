@@ -914,9 +914,7 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       this.requestService.update(request.id, request).subscribe({
         next: resp => {
-          if (resp.id !== null) {
-            resolve(true);
-          }
+          resolve(true);
         },
         error: error => {
           reject(true);
@@ -1093,12 +1091,19 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'validar-destino-bien') {
           const clarification = await this.haveNotificacions();
-
+          console.log(clarification);
+          console.log(this.requestData.typeOfTransfer);
+          //debugger;
           if (
             clarification === true &&
             this.requestData.typeOfTransfer !== 'MANUAL'
           ) {
-            this.notifyClarificationsMethod();
+            const user: any = this.authService.decodeToken();
+            const body: any = {};
+            body.id = this.requestData.id;
+            body.rulingCreatorName = user.username;
+            await this.updateRequest(body);
+            await this.notifyClarificationsMethod();
           } else {
             this.destinyDocumental();
           }
@@ -1119,8 +1124,9 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO');
+      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
+      //debugger;
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
           if (resp.data) {
