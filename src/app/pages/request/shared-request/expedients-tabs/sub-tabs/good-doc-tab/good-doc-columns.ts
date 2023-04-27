@@ -45,7 +45,7 @@ export const GOOD_DOCUMENTES_COLUMNS = {
     width: '200px',
   },
   physicalStatus: {
-    title: 'Estado Fisico',
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },

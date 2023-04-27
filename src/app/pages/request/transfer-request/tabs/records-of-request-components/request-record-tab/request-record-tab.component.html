@@ -144,7 +144,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('holderCharge')"
-            label="Cargo {{ transfe }}">
+            label="Cargo {{ transfe === 'MP' ? 'y/o Adscripción' : transfe }}">
             <input
               type="text"
               maxlength="100"
@@ -184,7 +184,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('holderCharge')"
-            label="Cargo {{ transfe }}">
+            label="Cargo {{ transfe === 'MP' ? 'y/o Adscripción' : transfe }}">
             <input
               type="text"
               maxlength="100"
@@ -329,7 +329,7 @@
 
       <div class="row pt-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
         <!-- FIN TRANSFERENTES 1 Y 3 -->
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field
             [control]="requestForm.get('trialType')"
             label="Tipo de Juicio">
@@ -339,7 +339,7 @@
               formControlName="trialType"
               maxlength="100" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-4">
           <ngx-select
             [form]="requestForm"

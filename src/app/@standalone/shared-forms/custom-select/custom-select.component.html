@@ -1,4 +1,6 @@
 <ng-select
+  [clearable]="true"
+  [hideSelected]="true"
   #select
   [virtualScroll]="true"
   [searchable]="true"
@@ -10,8 +12,7 @@
   [typeahead]="input$"
   [placeholder]="placeholder"
   [closeOnSelect]="true"
-  [(ngModel)]="selectedItem"
-  [hideSelected]="true">
+  [(ngModel)]="selectedItem">
   <ng-option *ngFor="let item of items; let i = index" [value]="item[value]">
     <ng-container
       [ngTemplateOutlet]="template"

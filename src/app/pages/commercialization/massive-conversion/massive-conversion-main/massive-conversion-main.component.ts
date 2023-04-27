@@ -5,16 +5,17 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, skip } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { convertFormatDate, showToast } from 'src/app/common/helpers/helpers';
+import {
+  convertFormatDate,
+  generateUrlOrPath,
+  showToast,
+} from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ITmpLcComer } from 'src/app/core/models/ms-captureline/captureline';
-import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { CapturelineService } from 'src/app/core/services/ms-captureline/captureline.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
@@ -23,15 +24,15 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
 import { TableCheckPortalDialogComponent } from '../components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
+import { insertFile } from '../tools/insert-file';
 import { loadCheckLc } from '../tools/load-check';
-import { readFileClientIdOrRfc } from '../tools/read-file-client-id-or-rfc';
 import {
-  BATCH_REWORK_COLUMNS,
-  CLIENTID_LAYOUT_COLUMNS,
-  DATA_COLUMNS,
-  LCS_COLUMNS,
-  RFC_LAYOUT_COLUMNS,
-  RFC_REWORK_COLUMNS,
+  SETTING_BATCH_REWORK,
+  SETTING_CLIENT_ID,
+  SETTING_DATA,
+  SETTING_LCS,
+  SETTING_RFC,
+  SETTING_RFC_REWORK,
 } from './massive-conversion-columns';
 
 @Component({
@@ -61,7 +62,6 @@ import {
   ],
 })
 export class MassiveConversionMainComponent extends BasePage implements OnInit {
-  // form: FormGroup = new FormGroup({});
   selectedEvent: any = null;
   operationItems = new DefaultSelect();
   toggleFilter: boolean = true;
@@ -84,9 +84,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   clientIdTotalItems: number = 0;
   batchReworkTotalItems: number = 0;
   rfcReworkTotalItems: number = 0;
-  // lcsColumns: any[] = [];
-  rfcColumns: any[] = [];
-  clientIdColumns: any[] = [];
+  // rfcColumns: any[] = [];
+  // clientIdColumns: any[] = [];
   batchReworkColumns: any[] = [];
   rfcReworkColumns: any[] = [];
   dataParams = new BehaviorSubject<ListParams>(new ListParams());
@@ -96,67 +95,12 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   rfcReworkParams = new BehaviorSubject<ListParams>(new ListParams());
   clientIdParams = new BehaviorSubject<ListParams>(new ListParams());
   @ViewChild('lcsTabs', { static: false }) lcsTabs?: TabsetComponent;
-  dataSettings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
-  lcsSettings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
-  rfcSettings = {
-    ...TABLE_SETTINGS,
-    actions: {
-      columnTitle: 'Acciones',
-      position: 'left',
-      add: true,
-      edit: true,
-      delete: true,
-    },
-  };
-  clientIdSettings = {
-    ...TABLE_SETTINGS,
-    actions: {
-      columnTitle: 'Acciones',
-      position: 'left',
-      add: true,
-      edit: true,
-      delete: true,
-    },
-  };
-  batchReworkSettings = {
-    ...TABLE_SETTINGS,
-    selectMode: 'multi',
-    attr: {
-      class: 'table-bordered center-checkbox',
-    },
-  };
-  rfcReworkSettings = {
-    ...TABLE_SETTINGS,
-    selectMode: 'multi',
-    attr: {
-      class: 'table-bordered center-checkbox',
-    },
-  };
-  events = new DefaultSelect<IComerEvent>();
-
-  operationTestData: any[] = [
-    {
-      id: 101,
-    },
-    {
-      id: 102,
-    },
-    {
-      id: 103,
-    },
-    {
-      id: 104,
-    },
-    {
-      id: 105,
-    },
-  ];
+  dataSettings = SETTING_DATA;
+  lcsSettings = SETTING_LCS;
+  rfcSettings = SETTING_RFC;
+  clientIdSettings = SETTING_CLIENT_ID;
+  batchReworkSettings = SETTING_BATCH_REWORK;
+  rfcReworkSettings = SETTING_RFC_REWORK;
 
   form = new FormGroup({
     eventId: new FormControl(null),
@@ -172,6 +116,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   clientSource = new LocalDataSource();
   lcsSource = new LocalDataSource();
   isLoadingLcs = false;
+  pathGetBath = generateUrlOrPath('catalog', 'batch', true);
 
   constructor(
     private excelService: ExcelService,
@@ -181,12 +126,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private comerEventService: ComerEventosService
   ) {
     super();
-    this.dataSettings.columns = DATA_COLUMNS;
-    this.lcsSettings.columns = LCS_COLUMNS;
-    this.rfcSettings.columns = RFC_LAYOUT_COLUMNS;
-    this.clientIdSettings.columns = CLIENTID_LAYOUT_COLUMNS;
-    this.batchReworkSettings.columns = BATCH_REWORK_COLUMNS;
-    this.rfcReworkSettings.columns = RFC_REWORK_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -245,16 +184,6 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     }
   }
 
-  getOperations(params: ListParams) {
-    if (params.text == '') {
-      this.operationItems = new DefaultSelect(this.operationTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.operationTestData.filter((i: any) => i.id == id)];
-      this.operationItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
   resetFilter() {
     this.form.controls['batchId'].setValue(null);
     this.form.controls['status'].setValue(null);
@@ -268,6 +197,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
       showToast({
         text: 'No se ha insertado ningún filtro de búsqueda.',
         icon: 'warning',
+        title: 'Atención',
       });
       this.form.markAllAsTouched();
       return;
@@ -295,33 +225,46 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   searchLcs(listParams?: ListParams) {
     this.isLoadingLcs = true;
-    const params = this.makeFiltersParams(listParams).getParams();
-    this.guarantyService.getComerRefGuarantees(params).subscribe({
-      next: res => {
-        this.isLoadingLcs = false;
-        this.lcsSource.load(res.data);
-        this.lcsTotalItems = res.count;
+    //TODO: decirle a Eduardo que haga opcional el campo de validityDate
+    const paramsPaginate = {
+      page: listParams?.page || 1,
+      limit: listParams?.limit || 10,
+    };
+    this.capturelineService
+      .postComerRefGuaranteesSearch({ ...this.form.value, ...paramsPaginate })
+      .subscribe({
+        next: res => {
+          this.isLoadingLcs = false;
+          this.lcsSource.load(res.data);
+          this.lcsTotalItems = res.count;
 
-        this.isLoadingLcs = false;
-      },
-      error: () => {
-        this.lcsSource.load([]);
-        this.isLoadingLcs = false;
-      },
-    });
+          this.isLoadingLcs = false;
+        },
+        error: () => {
+          this.lcsSource.load([]);
+          this.isLoadingLcs = false;
+        },
+      });
   }
 
-  makeFiltersParams(list?: ListParams): FilterParams {
+  makeFiltersParams(
+    list?: ListParams,
+    keyOthers: { [key: string]: string } | null = null
+  ): FilterParams {
     const params = new FilterParams();
     params.page = list?.page || 1;
     params.limit = list?.limit || 10;
-    const filters: any = this.form.value;
+    const filters: any = this.form.getRawValue();
     if (filters.insertDate) {
       filters.insertDate = convertFormatDate(filters.insertDate);
     }
+    if (filters.validityDate) {
+      filters.validityDate = convertFormatDate(filters.validityDate);
+    }
     Object.keys(filters).forEach((key: string) => {
       if (filters[key]) {
-        params.addFilter(key, filters[key]);
+        const _key = keyOthers ? keyOthers?.[key] || key : key;
+        params.addFilter(_key, filters[key]);
       }
     });
     return params;
@@ -342,8 +285,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   readFile(event: Event, type: 'rfc' | 'client_id') {
     /* TODO: insertar en la temporal por que tiene que se masivamente */
-    readFileClientIdOrRfc(
-      this.form.get('eventId').value,
+    insertFile(
+      // this.form.get('eventId').value,
       event,
       type,
       this.excelService
@@ -392,7 +335,22 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   }
 
   loadChecks() {
-    loadCheckLc(this.form, this.capturelineService);
+    if (!this.selectedEvent) {
+      showToast({
+        text: this.form.get('eventId').value
+          ? 'El evento seleccionado no existe, por favor ingrese uno correcto'
+          : ' No se ha seleccionado un evento',
+        icon: 'warning',
+        title: 'Advertencia',
+      });
+      return;
+    }
+
+    loadCheckLc(
+      this.form,
+      this.capturelineService,
+      this.openDialogCheckPortal.bind(this)
+    );
     // .then((res: any) => {
     //   if (res.isConfirmed) {
     //     this.openDialogCheckPortal();
@@ -534,7 +492,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   openDialogCheckPortal(context?: Partial<TableCheckPortalDialogComponent>) {
     this.modalService.show(TableCheckPortalDialogComponent, {
-      // initialState: { ...context },
+      initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -665,27 +623,20 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
   //   });
   // }
 
-  makeParams(): FilterParams {
-    const params = new FilterParams();
-    const values = this.form.value as any;
-    params.addFilter('eventId', values.eventId);
-    if (values.batchId) params.addFilter('batchId', values.batchId);
-    if (values.status) params.addFilter('status', values.status);
-    if (values.operationId) params.addFilter('operationId', values.operationId);
-    if (values.insertDate)
-      params.addFilter('insertDate', convertFormatDate(values.insertDate));
-    if (values.validityDate)
-      params.addFilter('validityDate', convertFormatDate(values.validityDate));
-    if (values.rfc) params.addFilter('rfc', values.rfc, SearchFilter.IN);
-    if (values.clientId)
-      params.addFilter('clientId', values.clientId, SearchFilter.IN);
-
-    // if (moreParams) {
-    //   Object.keys(moreParams).forEach(key => {
-    //     const param = moreParams[key];
-    //     params.addFilter(param.name, param.value, param.type);
-    //   });
-    // }
-    return params;
-  }
+  // makeParams(): FilterParams {
+  //   const params = new FilterParams();
+  //   const values = this.form.value as any;
+  //   params.addFilter('eventId', values.eventId);
+  //   if (values.batchId) params.addFilter('batchId', values.batchId);
+  //   if (values.status) params.addFilter('status', values.status);
+  //   if (values.operationId) params.addFilter('operationId', values.operationId);
+  //   if (values.insertDate)
+  //     params.addFilter('insertDate', convertFormatDate(values.insertDate));
+  //   if (values.validityDate)
+  //     params.addFilter('validityDate', convertFormatDate(values.validityDate));
+  //   if (values.rfc) params.addFilter('rfc', values.rfc, SearchFilter.IN);
+  //   if (values.clientId)
+  //     params.addFilter('clientId', values.clientId, SearchFilter.IN);
+  //   return params;
+  // }
 }
