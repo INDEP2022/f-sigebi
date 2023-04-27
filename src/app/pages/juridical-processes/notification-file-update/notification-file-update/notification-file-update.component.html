@@ -14,14 +14,18 @@
               <form-field
                 [control]="form.get('noExpediente')"
                 label="No&#46; Expediente">
-                <input class="form-control" formControlName="noExpediente" />
+                <input
+                  class="form-control"
+                  formControlName="noExpediente"
+                  (keydown)="onKeyPress($event)"
+                  (blur)="onLoadListNotifications()" />
               </form-field>
             </div>
           </div>
         </div>
       </div>
     </form>
-    <div class="row w-100">
+    <div class="row w-100 overflow-auto">
       <div class="col-sm-12 col-12 col-md-12 p-2">
         <ng2-smart-table
           [attr.class]="'table-bordered'"
