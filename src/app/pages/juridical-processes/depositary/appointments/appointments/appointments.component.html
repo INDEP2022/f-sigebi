@@ -192,7 +192,7 @@
                   id="sinMenaje"
                   type="radio"
                   formControlName="bienesMenaje"
-                  value="0" />
+                  value="N" />
               </form-radio>
             </div>
             <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
@@ -204,7 +204,7 @@
                   id="conMenaje"
                   type="radio"
                   formControlName="bienesMenaje"
-                  value="1" />
+                  value="S" />
               </form-radio>
             </div>
           </div>
@@ -378,31 +378,100 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
           <hr class="row" />
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-check label="Con Remoci&oacute;n" for="remocion">
-            <input
-              id="remocion"
-              type="checkbox"
-              formControlName="remocion"
-              (click)="toggleRemocion($event)" />
-          </form-check>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('fecha')" label="Fecha">
-            <input
-              class="form-control"
-              formControlName="fecha"
-              bsDatepicker
-              [readonly]="true" />
-          </form-field>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <div class="card p-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <form-check label="Con Remoci&oacute;n" for="remocion">
+                    <input
+                      id="remocion"
+                      type="checkbox"
+                      formControlName="remocion"
+                      (click)="toggleRemocion($event)" />
+                  </form-check>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <form-field [control]="form.get('fecha')" label="Fecha">
+                    <input
+                      class="form-control"
+                      formControlName="fecha"
+                      bsDatepicker
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-2">
+                  <form-field
+                    [control]="form.get('noOficio')"
+                    label="No&#46; Oficio">
+                    <input class="form-control" [readonly]="true" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
-            <input class="form-control" [readonly]="true" />
-          </form-field>
+          <div class="card p-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('contraprestacion')"
+                    label="Contrapresentaci&oacute;n">
+                    <input
+                      class="form-control"
+                      formControlName="contraprestacion"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('honorarios')"
+                    label="Honorarios">
+                    <input
+                      class="form-control"
+                      formControlName="honorarios"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field [control]="form.get('iva')" label="Iva">
+                    <input
+                      class="form-control"
+                      formControlName="iva"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('fechaInicio')"
+                    label="Fecha Inicio">
+                    <input
+                      class="form-control"
+                      formControlName="fechaInicio"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-8 p-2">
+                  <form-field
+                    [control]="form.get('noNombramiento')"
+                    label="No&#46; Nombramiento">
+                    <input
+                      class="form-control"
+                      formControlName="noNombramiento"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <hr class="row" />
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
           <h5 class="text-center">Acuerdo Junta de Gobierno</h5>
@@ -430,50 +499,6 @@
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
           <hr class="row" />
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('contraprestacion')"
-            label="Contrapresentaci&oacute;n">
-            <input
-              class="form-control"
-              formControlName="contraprestacion"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('honorarios')" label="Honorarios">
-            <input
-              class="form-control"
-              formControlName="honorarios"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('iva')" label="Iva">
-            <input
-              class="form-control"
-              formControlName="iva"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('fechapage')" label="Fecha Inicio">
-            <input
-              class="form-control"
-              formControlName="fechapage"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('noNombramiento')"
-            label="No&#46; Nombramiento">
-            <input
-              class="form-control"
-              formControlName="noNombramiento"
-              [readonly]="true" />
-          </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">

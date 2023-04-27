@@ -64,6 +64,7 @@ export class ClarificationsComponent
   domicilieObject: any;
   articleColumns = CLARIFICATION_COLUMNS;
   haveNotification: boolean = false;
+  isLoadingTable2 = false;
 
   constructor(
     private modalService: BsModalService,

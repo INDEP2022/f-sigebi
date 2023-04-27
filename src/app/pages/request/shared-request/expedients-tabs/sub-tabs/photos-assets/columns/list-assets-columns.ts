@@ -37,7 +37,7 @@ export const LIST_ASSETS_COLUMNS = {
     sort: false,
   },
   physicalStatus: {
-    title: 'Estado Fisico',
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },

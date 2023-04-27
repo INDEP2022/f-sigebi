@@ -310,7 +310,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       requestId: this.request.id,
       goodId: good.goodId,
       senderName: this.request.nameOfOwner,
-      clarificationStatus: 'ACLARADO',
+      clarificationStatus: null,
     };
 
     //Servicio para crear registro de ChatClariffications
@@ -335,7 +335,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'EN ACLARACION',
+      answered: 'NUEVA',
     };
 
     this.rejectedGoodService.update(id, data).subscribe({
