@@ -23,6 +23,7 @@ import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clar
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IGoodresdev } from 'src/app/core/models/ms-rejected-good/rejected-good.model';
 import { IGetGoodResVe } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
@@ -92,6 +93,8 @@ export class NotificationAssetsTabComponent
   imp: boolean = false;
   today: Date;
   task: any = null;
+  dataTask: ITask;
+  buttonsFinish: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -170,6 +173,20 @@ export class NotificationAssetsTabComponent
 
     this.task = JSON.parse(localStorage.getItem('Task'));
     console.log('task', this.task);
+
+    //Verifica que la tarea esta FINALIZADA, para ocultar botones
+    this.paramsReject.getValue()['filter.id'] = this.task.id;
+    this.taskService.getAll(this.paramsReject.getValue()).subscribe({
+      next: response => {
+        this.dataTask = response.data[0];
+        if (this.dataTask.State == 'FINALIZADA') {
+          console.log('LA TAREA YA ESTA FINALIZADA');
+          this.hideButtons();
+        } else {
+          console.log('LA TAREA NO ESTA FINLAIZADA');
+        }
+      },
+    });
   }
 
   dataRequest() {
@@ -1005,7 +1022,8 @@ export class NotificationAssetsTabComponent
               if (question.isConfirmed) {
                 const result: string = '';
                 const status: number = 0;
-                this.endProcess();
+                this.changeStatusTask();
+                //this.endProcess();
                 //this.validateGoodStatus();
               }
             });
@@ -1019,7 +1037,9 @@ export class NotificationAssetsTabComponent
                 const result: string = '';
                 const status: number = 0;
                 //this.validateGoodStatus();
-                this.endProcess();
+                //Cambiar estado de la tarea
+                this.changeStatusTask();
+                //this.endProcess();
               }
             });
           }
@@ -1032,6 +1052,68 @@ export class NotificationAssetsTabComponent
         }
       });
     });
+  }
+
+  //Cambia el State a FINALIZADA
+  changeStatusTask() {
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    this.paramsReject.getValue()['filter.id'] = this.task.id;
+    this.taskService.getAll(this.paramsReject.getValue()).subscribe({
+      next: response => {
+        console.log('información de task', response.data[0]);
+        this.dataTask = response.data[0];
+        this.updateStatusTask(this.dataTask);
+      },
+      error: error => {},
+    });
+  }
+
+  updateStatusTask(dataTask: ITask) {
+    //Contruir objeto con valores para Task
+    const model: ITask = {
+      id: dataTask.id,
+      taskNumber: dataTask.taskNumber,
+      assignees: dataTask.assignees,
+      assigneesDisplayname: dataTask.assigneesDisplayname,
+      State: 'FINALIZADA', //Valor a cambiar
+      urlNb: dataTask.urlNb,
+      programmingId: dataTask.programmingId,
+      requestId: dataTask.requestId,
+      expedientId: dataTask.expedientId,
+    };
+
+    //Actualizar State a FINALIZADA
+    this.taskService.update(dataTask.id, model).subscribe({
+      next: response => {
+        console.log('Información actualizada', response.data);
+        //Desahabilita los botones
+        this.hideButtons();
+
+        //Salir del flujo y a las tareas
+        this.endProcess();
+      },
+      error: error => {
+        console.log('No se actualizó', error.error);
+        this.buttonsFinish = true;
+      },
+    });
+  }
+
+  hideButtons() {
+    const btn1 = document.getElementById('btn1') as HTMLButtonElement | null;
+    btn1?.setAttribute('disabled', '');
+    const btn2 = document.getElementById('btn2') as HTMLButtonElement | null;
+    btn2?.setAttribute('disabled', '');
+    const btn3 = document.getElementById('btn3') as HTMLButtonElement | null;
+    btn3?.setAttribute('disabled', '');
+    const btn4 = document.getElementById('btn4') as HTMLButtonElement | null;
+    btn4?.setAttribute('disabled', '');
+    const btn5 = document.getElementById('btn5') as HTMLButtonElement | null;
+    btn5?.setAttribute('disabled', '');
+    const btn6 = document.getElementById('btn6') as HTMLButtonElement | null;
+    btn6?.setAttribute('disabled', '');
+    const btn7 = document.getElementById('btn7') as HTMLButtonElement | null;
+    btn7?.setAttribute('disabled', '');
   }
 
   endProcess() {
