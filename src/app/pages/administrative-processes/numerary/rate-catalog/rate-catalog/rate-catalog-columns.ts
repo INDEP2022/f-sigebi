@@ -18,7 +18,6 @@ export const RATE_CATALOG_COLUMNS = {
         11: () => ' Noviembre',
         12: () => ' Diciembre',
       };
-      console.log(monthName[month]());
 
       return monthName[month]();
     },
@@ -29,17 +28,17 @@ export const RATE_CATALOG_COLUMNS = {
     sort: false,
   },
   pesos: {
-    title: 'Tasa pesos',
+    title: 'Tasa Pesos',
     type: 'number',
     sort: false,
   },
   dollars: {
-    title: 'Tasa dólares',
+    title: 'Tasa Dólares',
     type: 'number',
     sort: false,
   },
   euro: {
-    title: 'Tasa euros',
+    title: 'Tasa Euros',
     type: 'number',
     sort: false,
   },

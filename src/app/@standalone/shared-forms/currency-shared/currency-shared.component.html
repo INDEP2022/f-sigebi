@@ -10,7 +10,10 @@
           bindLabel="otValue01"
           label="Moneda"
           [control]="currencyField"
-          (change)="onCurrencyChange($event)">
+          (change)="onCurrencyChange($event)"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30">
         </ngx-select>
       </form-field>
     </div>

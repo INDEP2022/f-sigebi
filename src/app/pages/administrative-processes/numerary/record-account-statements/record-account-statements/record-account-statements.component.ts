@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { RecordAccountStatementsModalComponent } from '../record-account-statements-modal/record-account-statements-modal.component';
 import { RECORDS_ACCOUNT_STATEMENTS_COLUMNS } from './record-account-statements-columns';
 
@@ -36,17 +37,22 @@ export class RecordAccountStatementsComponent
   }
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null, Validators.required],
+      bank: [null],
       account: [null, Validators.required],
-      square: [null, Validators.nullValidator],
-      branch: [null, Validators.nullValidator],
-      accountType: [null, Validators.nullValidator],
+      square: [null],
+      branch: [null, Validators.pattern(STRING_PATTERN)],
+      accountType: [null, Validators.pattern(STRING_PATTERN)],
       currency: [null, Validators.nullValidator],
       description: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
     });
   }
+
+  getAccountMovements() {
+    console.log(this.form.value);
+  }
+
   getAttributes() {
     this.loading = true;
     // this.attributesInfoFinancialService

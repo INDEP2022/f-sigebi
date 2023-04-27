@@ -136,10 +136,13 @@ export class RateCatalogComponent extends BasePage implements OnInit {
                 const token = this.authService.decodeToken();
                 let userId = token.preferred_username;
                 const data: INumerary = {
-                  tasintId: null,
                   month: month,
                   year: this.getYear(year),
-                  lastDayMonth: 28,
+                  lastDayMonth: new Date(
+                    this.getYear(year),
+                    month,
+                    0
+                  ).getDate(),
                   captureDate: this.parseDateNoOffset(new Date()),
                   user: userId.toUpperCase(),
                   dollars: dollarRate,

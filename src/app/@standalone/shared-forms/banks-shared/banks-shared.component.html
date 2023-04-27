@@ -10,7 +10,10 @@
           bindLabel="name"
           [label]="labelName"
           [control]="bankField"
-          (change)="onBanksChange($event)">
+          (change)="onBanksChange($event)"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30">
         </ngx-select>
       </form-field>
     </div>

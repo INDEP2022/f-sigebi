@@ -1,5 +1,5 @@
 export interface INumerary {
-  tasintId: number;
+  tasintId?: number;
   month: number;
   year: number;
   lastDayMonth: number;

@@ -10,8 +10,21 @@
           bindLabel="cveAccount"
           [label]="labelName"
           [control]="bankField"
-          (change)="onBanksChange($event)">
+          (change)="onBanksChange($event)"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="documentTypeLabel"
+          [optionTemplate]="documentTypeOption">
         </ngx-select>
+        <ng-template #documentTypeLabel let-item="item">
+          {{ item.cveAccount }} - {{ item.cveBank }}
+        </ng-template>
+        <ng-template #documentTypeOption let-item="item">
+          <div [title]="item.cveAccount + '-' + item.cveBank">
+            {{ item.cveAccount }} - {{ item.cveBank }}
+          </div>
+        </ng-template>
       </form-field>
     </div>
   </div>

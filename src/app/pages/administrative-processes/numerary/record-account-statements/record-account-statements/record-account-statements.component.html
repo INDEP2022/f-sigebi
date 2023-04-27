@@ -7,25 +7,24 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('bank')" label="Banco">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="bank"
-                (click)="openForm()" />
-            </form-field>
+            <app-banks-shared
+              [form]="form"
+              [bankField]="'bank'"
+              [labelName]="'Banco'"></app-banks-shared>
+            <!-- <form-field [control]="form.get('account')" label="Cuenta">
+                          <input type="number" class="form-control" formControlName="account" min="1" pattern="^[0-9]+" />
+                        </form-field> -->
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('account')" label="Cuenta">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="account"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+            <app-account-banks-shared
+              [form]="form"
+              [bankField]="'account'"
+              [labelName]="'Cuenta'"></app-account-banks-shared>
+            <!-- <form-field [control]="form.get('account')" label="Cuenta">
+              <input type="number" class="form-control" formControlName="account" min="1" pattern="^[0-9]+" />
+            </form-field> -->
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 pt-3">
             <form-field [control]="form.get('square')" label="Plaza">
               <input
                 type="text"
@@ -33,7 +32,7 @@
                 formControlName="square" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 pt-3">
             <form-field [control]="form.get('branch')" label="Sucursal">
               <input
                 type="number"
@@ -45,25 +44,34 @@
           </div>
         </div>
         <div class="row mt-4">
-          <div class="col-md-3">
+          <div class="col-md-3 pt-3">
             <form-field
               [control]="form.get('accountType')"
               label="Tipo de cuenta">
-              <input
-                type="text"
+              <ng-select
+                #selected
                 class="form-control"
-                formControlName="accountType" />
+                [items]="['CONCENTRADORA', 'ASEGURADA', 'DEVOLUCIONES']"
+                [multiple]="false"
+                [closeOnSelect]="true"
+                [searchable]="false"
+                placeholder=""
+                formControlName="accountType">
+              </ng-select>
             </form-field>
+            <!-- <form-field [control]="form.get('accountType')" label="Tipo de cuenta">
+              <input type="text" class="form-control" formControlName="accountType" [max-length]="13" />
+            </form-field> -->
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('currency')" label="Moneda">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="currency" />
-            </form-field>
+            <app-currency-shared
+              [form]="form"
+              [currencyField]="'currency'"></app-currency-shared>
+            <!-- <form-field [control]="form.get('currency')" label="Moneda">
+              <input type="text" class="form-control" formControlName="currency" />
+            </form-field> -->
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 pt-3">
             <form-field [control]="form.get('description')" label="Descripción">
               <input
                 type="text"
@@ -71,7 +79,7 @@
                 formControlName="description" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 pt-3">
             <form-field [control]="form.get('balanceOf')" label="Saldo de">
               <input
                 type="text"
@@ -88,6 +96,15 @@
                 class="form-control"
                 formControlName="balanceAt" />
             </form-field>
+          </div>
+          <div class="col pt-2">
+            <confirm-button
+              [loading]="loading"
+              [btnSmall]="true"
+              [loadingText]="'Buscando'"
+              [className]="'btn-danger'"
+              text="Buscar"
+              (confirm)="getAccountMovements()"></confirm-button>
           </div>
         </div>
       </form>
@@ -109,14 +126,13 @@
         <div class="col-md-2"></div>
         <div class="col-md-10">
           <p>
-            .
             <span class="text-success mr-5"
               ><i class="fa fa-square"></i> Movimiento de transferencia(Padre)
             </span>
-            <span class="text-yellow mr-5"
+            <span class="text-warning mr-5"
               ><i class="fa fa-square"></i> Movimiento de transferencia(Hijo)
             </span>
-            <span class="text-blue"
+            <span class="text-info"
               ><i class="fa fa-square"></i> Cobro de Cheque x Dev
             </span>
           </p>
