@@ -2,7 +2,7 @@ import { SaeInputComponent } from './sae-input/sae-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
   id: {
-    title: 'Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -56,7 +56,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     sort: false,
   },
   ligieUnit: {
-    title: 'Uni. de Medida Ligie',
+    title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },

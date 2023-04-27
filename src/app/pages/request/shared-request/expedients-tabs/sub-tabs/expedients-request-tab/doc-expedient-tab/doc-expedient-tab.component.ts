@@ -191,7 +191,8 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       this.wContentService.getDocumentos(body).subscribe({
         next: async (data: any) => {
           const filterTypeDoc = data.data.filter((items: any) => {
-            if (items.dDocType == 'Document') return items;
+            if (items.dDocType == 'Document' && items.xidTransferente)
+              return items;
           });
 
           const info = filterTypeDoc.map(async (items: any) => {

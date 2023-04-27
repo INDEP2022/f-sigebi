@@ -191,7 +191,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="ligieUnit"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="ligieUnit"
                   [readOnly]="true"
                   maxlength="30" />
               </form-field>
@@ -217,8 +218,8 @@
                 [data]="selectTansferUnitMeasure"
                 label="Unid&#46; Medida Transferente"
                 [searchable]="true"
-                bindLabel="unitMeasureTl"
-                value="unitMeasureTl"
+                bindLabel="measureTlUnit"
+                value="uomCode"
                 [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
             <div
@@ -793,7 +794,8 @@
               label="Marca"
               value="flexValue"
               bindLabel="flexValueMeaning"
-              [readonly]="isGoodTypeReadOnly"></ngx-select>
+              [readonly]="isGoodTypeReadOnly"
+              (change)="onValuesChange($event)"></ngx-select>
             <ngx-select
               *ngIf="process == 'classify-assets'"
               [form]="detailAssets"
@@ -803,7 +805,8 @@
               label="Marca"
               value="flexValue"
               [readonly]="isDisabled"
-              bindLabel="flexValueMeaning"></ngx-select>
+              bindLabel="flexValueMeaning"
+              (change)="onValuesChange($event)"></ngx-select>
           </div>
           <div class="col-md-3">
             <form-field

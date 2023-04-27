@@ -63,6 +63,11 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  affair: {
+    title: 'Asunto',
+    type: 'string',
+    sort: false,
+  },
 
   /*receiptRoute: {
     title: 'Via de recepción',

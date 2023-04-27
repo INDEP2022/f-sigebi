@@ -119,9 +119,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
-    this.filterParams
-      .getValue()
-      .addFilter('State', 'FINALIZADA', SearchFilter.NEQ);
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
@@ -324,7 +321,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     this.tasks = [];
     this.totalItems = 0;
-
+    if (!isfilterUsed) {
+      this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+    }
     this.taskService
       .getTasksByUser(this.filterParams.getValue().getParams())
       .subscribe({
@@ -332,7 +331,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           console.log('Response: ', response);
           this.loading = false;
           console.log('Hay un filtro activo? ', isfilterUsed);
-          if (!isfilterUsed) {
+          /*  if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
             );
@@ -340,7 +339,13 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           } else {
             this.tasks = response.data;
             this.totalItems = response.count;
-          }
+          } */
+          response.data.map((item: any) => {
+            item.taskNumber = item.id;
+          });
+
+          this.tasks = response.data;
+          this.totalItems = response.count;
         },
         error: () => ((this.tasks = []), (this.loading = false)),
       });
@@ -370,6 +375,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     if (selected.requestId !== null || selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
+      console.log(url);
       this.router.navigateByUrl(url);
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');

@@ -20,8 +20,12 @@ import {
 
 /** SERVICE IMPORTS */
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 /** ROUTING MODULE */
 
@@ -39,12 +43,14 @@ export class ThirdpartiesPossessionValidationComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  users: ISegUsers[] = [];
   dataTableNotifications: INotification[] = [];
   // Table settings
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   selectedRows: IGood = {};
   selectedRows2: IGood = {};
   wheelNotifications: INotification;
+  goodsPosessionThirdParty: IGoodPossessionThirdParty[] = [];
 
   tableSettingsNotificaciones = {
     actions: {
@@ -62,7 +68,6 @@ export class ThirdpartiesPossessionValidationComponent
   // Table settings
   tableSettingsBienes = {
     rowClassFunction: (row: any) => {
-      console.log(row);
       if (row.cells[1].value != 'ADM') {
         return 'bg-dark';
       } else {
@@ -105,11 +110,14 @@ export class ThirdpartiesPossessionValidationComponent
   public form: FormGroup;
   public formCcpOficio: FormGroup;
   public noExpediente: FormGroup;
+  public formGood: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private notificationService: NotificationService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private usersService: UsersService,
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
   ) {
     super();
   }
@@ -130,6 +138,7 @@ export class ThirdpartiesPossessionValidationComponent
       .valueChanges.pipe(debounceTime(500))
       .subscribe(x => {
         this.getNotificationByWheel(new ListParams(), x);
+        this.getGoodsPosessionThird(new ListParams(), x);
       });
   }
 
@@ -147,6 +156,38 @@ export class ThirdpartiesPossessionValidationComponent
       ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
       ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
       firma: ['', [Validators.pattern(STRING_PATTERN)]],
+    });
+    this.formGood = this.fb.group({
+      delegationCloseNumber: [''],
+      numClueNavy: [''],
+      closingDate: [''],
+    });
+  }
+
+  getGoodsPosessionThird(params: ListParams, wheelNumber?: number) {
+    if (!wheelNumber) {
+      return;
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (wheelNumber) {
+      data.addFilter('wheelNumber', wheelNumber);
+    }
+
+    this.goodPosessionThirdpartyService.getAll(data.getParams()).subscribe({
+      next: data => {
+        this.formCcpOficio.get('ccp1').patchValue(data.data[0].usrCcp1);
+        this.formCcpOficio.get('ccp2').patchValue(data.data[0].usrCcp2);
+        this.formCcpOficio.get('firma').patchValue(data.data[0].usrResponsible);
+        this.goodsPosessionThirdParty = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
     });
   }
 
@@ -256,10 +297,19 @@ export class ThirdpartiesPossessionValidationComponent
 
   addGoodOffice() {
     if (Object.keys(this.selectedRows).length < 1) {
-      this.onLoadToast(
+      this.alert(
         'info',
         'Selecciona un bien',
         'Selecciona un bien para poder realizar esta acción.'
+      );
+      return;
+    }
+
+    if (this.selectedRows.status === 'STI') {
+      this.alert(
+        'info',
+        'Selecciona un bien',
+        'Selecciona un bien que esté disponible.'
       );
       return;
     }
@@ -274,17 +324,13 @@ export class ThirdpartiesPossessionValidationComponent
 
   handleSuccess() {
     this.getGoods(new ListParams(), this.expedientNumber);
-    this.onLoadToast(
-      'success',
-      'Excelente',
-      'Se ha agregado el bien correctamente'
-    );
+    this.alert('success', 'Excelente', 'Se ha agregado el bien correctamente');
     this.loading = false;
   }
 
   deleteGoodOffice() {
     if (Object.keys(this.selectedRows2).length < 1) {
-      this.onLoadToast(
+      this.alert(
         'info',
         'Selecciona un bien',
         'Selecciona un bien para poder realizar esta acción.'
@@ -309,7 +355,32 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   sendForm() {
-    console.log('Send form log');
+    if (!this.form.get('officeExternalKey').value) {
+      this.alert(
+        'info',
+        '',
+        'No puede cerrar el Acta si no se han incorporado bienes y generado la clave armada.'
+      );
+      return;
+    }
+
+    const maxNumClaveArmada = this.goodsPosessionThirdParty.reduce(
+      (max, obj) => {
+        return Math.max(max, obj.numClueNavy || 0);
+      },
+      0
+    );
+
+    let oficio = maxNumClaveArmada + 1;
+
+    this.formGood.get('closingDate').patchValue(new Date());
+    this.formGood.get('numClueNavy').patchValue(
+      this.formGood
+        .get('numClueNavy')
+        .value.replace('?', ('00000' + oficio).slice(-5))
+        .replace(' ', '')
+    );
+    this.alert('info', 'Nota', 'La clave ya ha sido enviada.');
   }
 
   btnInsertarTextoPredefinido() {
@@ -348,7 +419,7 @@ export class ThirdpartiesPossessionValidationComponent
       if (params[key] === null) delete params[key];
     }
     //let newWin = window.open(pdfurl, 'test.pdf');
-    this.onLoadToast('success', '', 'Reporte generado');
+    this.alert('success', '', 'Reporte generado');
     this.loading = false;
   }
 }

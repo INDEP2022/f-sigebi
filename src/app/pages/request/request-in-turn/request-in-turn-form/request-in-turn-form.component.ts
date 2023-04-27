@@ -10,6 +10,7 @@ import { EventEmitter, Output } from '@angular/core';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
@@ -61,15 +62,14 @@ export class RequestInTurnFormComponent implements OnInit {
 
   constructor(
     public modalRef: BsModalRef,
-    public fb: FormBuilder //public requestService: ResquestService
+    public fb: FormBuilder,
+    private transferentesSaeService: TransferentesSaeService //public requestService: ResquestService
   ) {}
 
   ngOnInit(): void {
     this.initialForm();
     this.deleRegionalId = Number(this.authService.decodeToken().department);
-    this.getTransferente(new ListParams());
     this.getRegionalDelegationId(new ListParams());
-    this.getStateOfRepublic(new ListParams());
     this.getAffair(new ListParams());
   }
 
@@ -111,6 +111,15 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
+          this.selectTransfer = new DefaultSelect();
+
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+
+          this.searchForm.controls['stateOfRepublic'].reset();
+          this.searchForm.controls['transfer'].reset();
+          this.searchForm.controls['station'].reset();
+          this.searchForm.controls['authority'].reset();
           this.deleRegionalId = data;
           this.getStateOfRepublic(new ListParams());
         }
@@ -120,18 +129,44 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['stateOfRepublic'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
+          console.log('rest2323232');
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+          this.selectTransfer = new DefaultSelect();
+          this.searchForm.controls['transfer'].reset();
+          this.searchForm.controls['station'].reset();
+          this.searchForm.controls['authority'].reset();
           this.stateId = data;
+          this.getTransferente(new ListParams());
+        } else {
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+          this.selectTransfer = new DefaultSelect();
+          this.searchForm.controls['transfer'].reset();
+          this.searchForm.controls['station'].reset();
+          this.searchForm.controls['authority'].reset();
         }
       }
     );
     this.searchForm.controls['transfer'].valueChanges.subscribe((data: any) => {
       if (data) {
+        this.selectStation = new DefaultSelect();
+        this.selectAuthority = new DefaultSelect();
+
+        this.searchForm.controls['station'].reset();
+        this.searchForm.controls['authority'].reset();
         this.transferenceId = data;
         this.getStation(new ListParams());
+      } else {
+        this.selectStation = new DefaultSelect();
+        this.selectAuthority = new DefaultSelect();
+        this.searchForm.controls['station'].reset();
+        this.searchForm.controls['authority'].reset();
       }
     });
     this.searchForm.controls['station'].valueChanges.subscribe((data: any) => {
       if (data) {
+        this.selectAuthority = new DefaultSelect();
         this.stationId = data;
         this.getAuthority(new ListParams());
       }
@@ -142,86 +177,107 @@ export class RequestInTurnFormComponent implements OnInit {
     //const id = this.authService.decodeToken().department;
     //return id;
     params['filter.description'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'description:ASC';
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
       },
+      error: error => (this.selectRegDele = new DefaultSelect()),
     });
   }
-
+  getAffair(params?: ListParams) {
+    params['sortBy'] = 'description:ASC';
+    this.affairService.getAll(params).subscribe(
+      (data: IListResponse<IAffair>) => {
+        this.selectAffeir = new DefaultSelect(data.data, data.count);
+      },
+      error => {
+        this.selectAffeir = new DefaultSelect();
+      }
+    );
+  }
   getTransferente(params?: ListParams) {
-    params['filter.status'] = `$eq:${1}`;
-    params['filter.nameTransferent'] = `$ilike:${params.text}`;
-    delete params.limit;
-    delete params.page;
-    delete params['search'];
-    delete params.text;
-    this.transferenteSevice.getAll(params).subscribe((data: any) => {
-      data.data.map((data: any) => {
-        data.nameAndId = `${data.id} - ${data.nameTransferent}`;
-        return data;
+    params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'nameTransferent:ASC';
+    this.transferentesSaeService
+      .getStateByTransferentKey(this.stateId, params)
+      .subscribe({
+        next: data => {
+          data.data.map((data: any) => {
+            data.nameAndId = `${data.idTransferee} - ${data.transferent.nameTransferent}`;
+            return data;
+          });
+          this.selectTransfer = new DefaultSelect(data.data, data.count);
+        },
+        error: error => (this.selectTransfer = new DefaultSelect()),
       });
-      this.selectTransfer = new DefaultSelect(data.data, data.count);
-    });
   }
 
   getStateOfRepublic(params?: ListParams) {
     params['filter.regionalDelegation'] = `$eq:${this.deleRegionalId}`;
-    this.delegationStateService.getAll(params).subscribe((data: any) => {
-      let result = data.data
-        .map((x: any) => {
-          return x.stateCode;
-        })
-        .filter((x: any) => x != undefined);
+    params['sortBy'] = 'keyState:ASC';
+    this.delegationStateService.getAll(params).subscribe(
+      (data: any) => {
+        let result = data.data
+          .map((x: any) => {
+            return x.stateCode;
+          })
+          .filter((x: any) => x != undefined);
 
-      this.selectState = new DefaultSelect(result, result.length);
-    });
+        this.selectState = new DefaultSelect(result, result.length);
+      },
+      error => {
+        this.selectState = new DefaultSelect();
+      }
+    );
   }
 
   getStation(params?: ListParams) {
     params['filter.stationName'] = `$ilike:${params.text}`;
     params['filter.idTransferent'] = `$eq:${this.transferenceId}`;
+    params['sortBy'] = 'stationName:ASC';
     delete params.limit;
     delete params.page;
     delete params['search'];
     delete params.text;
-    this.stationService
-      .getAll(params)
-      .subscribe((data: IListResponse<IStation>) => {
+    this.stationService.getAll(params).subscribe(
+      (data: IListResponse<IStation>) => {
         data.data.map((data: any) => {
           data.nameAndId = `${data.id} - ${data.stationName}`;
           return data;
         });
         this.selectStation = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error => {
+        this.selectStation = new DefaultSelect();
+      }
+    );
   }
 
   getAuthority(params?: ListParams) {
+    this.selectAuthority = new DefaultSelect();
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.stationId}`;
     params['filter.idTransferer'] = `$eq:${this.transferenceId}`;
+    params['sortBy'] = 'authorityName:ASC';
     delete params.limit;
     delete params.page;
     delete params['search'];
     delete params.text;
     this.stationService;
-    this.authorityService
-      .getAll(params)
-      .subscribe((data: IListResponse<IAuthority>) => {
+    this.authorityService.getAll(params).subscribe(
+      (data: IListResponse<IAuthority>) => {
+        console.log(data);
         data.data.map((data: any) => {
           data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
         });
         this.selectAuthority = new DefaultSelect(data.data, data.count);
-      });
-  }
-
-  getAffair(params?: ListParams) {
-    this.affairService
-      .getAll(params)
-      .subscribe((data: IListResponse<IAffair>) => {
-        this.selectAffeir = new DefaultSelect(data.data, data.count);
-      });
+      },
+      error => {
+        this.selectAuthority = new DefaultSelect();
+      }
+    );
   }
 
   search(): void {
@@ -239,6 +295,13 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   reset(): void {
+    this.selectTransfer = new DefaultSelect();
+    // this.selectStation = new DefaultSelect();
+    this.selectAuthority = new DefaultSelect();
+    this.selectState = new DefaultSelect();
+    // // this.selectAffeir = new DefaultSelect();
+    // // this.selectRegDele = new DefaultSelect();
+    // console.log('rest');
     this.searchForm.reset();
     this.resetForm.emit(true);
     this.deleRegionalId = Number(this.authService.decodeToken().department);
@@ -290,6 +353,7 @@ export class RequestInTurnFormComponent implements OnInit {
 
     if (this.searchForm.controls['transfer'].value != null) {
       const transfer = this.searchForm.controls['transfer'].value;
+      console.log(transfer);
       params['filter.transferenceId'] = `$eq:${transfer}`;
     }
 

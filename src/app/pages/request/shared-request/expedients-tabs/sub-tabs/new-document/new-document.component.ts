@@ -83,13 +83,35 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       id: [null],
       docType: [null, [Validators.required]],
       docFile: [null, [Validators.required]],
-      docTit: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      noOfi: [null],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      docTit: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
+      ],
+      contributor: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      noOfi: [null, [Validators.maxLength(60)]],
+      sender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
+      senderCharge: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      responsible: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      observations: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
+      ],
       returnOpinionFolio: [null, [Validators.pattern(STRING_PATTERN)]],
 
       //Information adiotional

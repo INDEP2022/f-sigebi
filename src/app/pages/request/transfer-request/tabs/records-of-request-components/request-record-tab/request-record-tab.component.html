@@ -7,10 +7,7 @@
         </h5>
       </div>
       <div class="p-2 bd-highlight buttons">
-        <button
-          class="btn btn-primary btn-sm active"
-          [disabled]="requestForm.invalid"
-          (click)="confirm()">
+        <button class="btn btn-primary btn-sm active" (click)="confirm()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
@@ -105,7 +102,9 @@
             value="description">
           </ngx-select>
         </div>
-        <div class="col-md-4">
+        <div
+          class="col-md-4"
+          *ngIf="typeOfTransfer === 'SAT_SAE' || typeOfTransfer === 'PGR_SAE'">
           <ngx-select
             [form]="requestForm"
             control="originInfo"
@@ -117,9 +116,46 @@
             value="keyId">
           </ngx-select>
         </div>
+        <div class="col-md-4" *ngIf="typeOfTransfer === 'MANUAL'">
+          <ngx-select
+            [form]="requestForm"
+            control="publicMinistry"
+            (fetchItems)="getPublicMinister($event)"
+            [data]="selectMinPub"
+            [searchable]="true"
+            label="Ministerio P&uacute;blico"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
+        </div>
       </div>
-
-      <div class="row pt-4">
+      <div class="row pt-4" *ngIf="typeOfTransfer === 'SAT_SAE'">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('nameOfOwner')"
+            label="Nombre {{ transfe }}">
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="nameOfOwner" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('holderCharge')"
+            label="Cargo {{ transfe === 'MP' ? 'y/o Adscripción' : transfe }}">
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="holderCharge" />
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="typeOfTransfer === 'MANUAL' || typeOfTransfer === 'PGR_SAE'">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('nameOfOwner')"
@@ -142,11 +178,13 @@
         </div>
       </div>
 
-      <div class="row pt-4">
+      <div
+        class="row pt-4"
+        *ngIf="typeOfTransfer === 'MANUAL' || typeOfTransfer === 'PGR_SAE'">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('holderCharge')"
-            label="Cargo y/o Adscripción">
+            label="Cargo {{ transfe === 'MP' ? 'y/o Adscripción' : transfe }}">
             <input
               type="text"
               maxlength="100"
@@ -167,15 +205,16 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('emailOfOwner')"
-            label="Correo {{ transfe }}">
+            [control]="requestForm.get('phoneOfOwner')"
+            label="Tel&eacute;fono {{ transfe }}">
             <input
               type="text"
-              maxlength="100"
+              maxlength="13"
               class="form-control"
-              formControlName="emailOfOwner" />
+              formControlName="phoneOfOwner" />
           </form-field>
         </div>
+
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('receiptRoute')"
@@ -191,16 +230,28 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field
-            [control]="requestForm.get('phoneOfOwner')"
-            label="Tel&eacute;fono {{ transfe }}">
+            [control]="requestForm.get('emailOfOwner')"
+            label="Correo {{ transfe }}">
             <input
               type="text"
-              maxlength="13"
+              maxlength="100"
               class="form-control"
-              formControlName="phoneOfOwner" />
+              formControlName="emailOfOwner" />
           </form-field>
         </div>
-
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('destinationManagement')"
+            label="Gesti&oacute;n de Destino">
+            <input
+              type="text"
+              maxlength="100"
+              class="form-control"
+              formControlName="destinationManagement" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('indicatedTaxpayer')"
@@ -212,19 +263,7 @@
               formControlName="indicatedTaxpayer" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('transferenceFile')"
-            label="Expediente Transferente/PAMA">
-            <input
-              type="text"
-              maxlength="1000"
-              class="form-control"
-              formControlName="transferenceFile" />
-          </form-field>
-        </div>
+
         <div class="col-md-4">
           <form-field [control]="requestForm.get('affair')" label="Asunto">
             <input
@@ -238,38 +277,32 @@
       </div>
 
       <!-- INICIO TRANSFERENTES 1 Y/O 3 -->
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div class="row pt-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
         <div class="col-md-4">
           <!-- <div class="col-md-4" *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('previousInquiry')"
-            label="Averiguacion Previa *">
+            label="Averiguacion Previa">
             <input
               type="text"
               class="form-control"
-              formControlName="previousInquiry"
-              required />
+              formControlName="previousInquiry" />
           </form-field>
         </div>
         <div class="col-md-4">
           <!-- *ngIf="transferenceNumber === 1 || transferenceNumber === 3"> -->
           <form-field
             [control]="requestForm.get('circumstantialRecord')"
-            label="Acta Circunstanciada *">
+            label="Acta Circunstanciada">
             <input
               type="text"
               class="form-control"
               formControlName="circumstantialRecord"
-              maxlength="100"
-              required />
+              maxlength="100" />
           </form-field>
         </div>
       </div>
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div class="row pt-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('tocaPenal')"
@@ -294,11 +327,9 @@
         </div>
       </div>
 
-      <div
-        class="row pt-4"
-        *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+      <div class="row pt-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
         <!-- FIN TRANSFERENTES 1 Y 3 -->
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field
             [control]="requestForm.get('trialType')"
             label="Tipo de Juicio">
@@ -308,7 +339,7 @@
               formControlName="trialType"
               maxlength="100" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-4">
           <ngx-select
             [form]="requestForm"
@@ -337,6 +368,7 @@
             </textarea>
           </form-field>
         </div>
+
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('observations')"
@@ -352,7 +384,19 @@
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-4">
+        <div class="col-md-4" *ngIf="typeOfTransfer === 'MANUAL'">
+          <ngx-select
+            [form]="requestForm"
+            control="originInfo"
+            (fetchItems)="getOriginInfo($event)"
+            [data]="selectOriginInfo"
+            [searchable]="false"
+            label="Procedencia Informaci&oacute;n"
+            bindLabel="description"
+            value="keyId">
+          </ngx-select>
+        </div>
+        <div class="col-md-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
           <form-field
             [control]="requestForm.get('protectNumber')"
             label="N&uacute;mero Amparo">
@@ -364,9 +408,18 @@
               min="0" />
           </form-field>
         </div>
-        <div
-          class="col-md-4"
-          *ngIf="transferenceNumber === 1 || transferenceNumber === 120">
+        <div class="col-md-4" *ngIf="typeOfTransfer === 'SAT_SAE'">
+          <form-field
+            [control]="requestForm.get('transferenceFile')"
+            label="Expediente Transferente/PAMA">
+            <input
+              type="text"
+              maxlength="1000"
+              class="form-control"
+              formControlName="transferenceFile" />
+          </form-field>
+        </div>
+        <div class="col-md-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
           <form-field
             [control]="requestForm.get('domainExtinction')"
             label="Extinci&oacute;n Dominio">
@@ -374,6 +427,19 @@
               type="text"
               class="form-control"
               formControlName="domainExtinction" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
+          <form-field
+            [control]="requestForm.get('transferenceFile')"
+            label="Expediente Transferente/PAMA">
+            <input
+              type="text"
+              maxlength="1000"
+              class="form-control"
+              formControlName="transferenceFile" />
           </form-field>
         </div>
       </div>

@@ -216,9 +216,7 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async data => {
-          console.log('data', data);
           const transferent = await this.getInfoRequest();
-          console.log(transferent);
           if (transferent == 1) {
             const filterDoc = data.data.filter((item: any) => {
               if (item.dDocType == 'Document' && item.xidTransferente == 1) {
@@ -245,14 +243,13 @@ export class DocRequestTabComponent
               if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
               }
-              items.xtipoDocumento = filter[0]?.ddescription;
-              return items;
             });
 
             Promise.all(info).then(x => {
               this.allDataDocReq = x;
-              console.log('doc', this.allDataDocReq);
               this.paragraphs.load(x);
               this.totalItems = this.paragraphs.count();
               this.loading = false;
@@ -284,14 +281,13 @@ export class DocRequestTabComponent
               if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
+                items.xtipoDocumento = filter[0]?.ddescription;
+                return items;
               }
-              items.xtipoDocumento = filter[0]?.ddescription;
-              return items;
             });
 
             Promise.all(info).then(x => {
               this.allDataDocReq = x;
-              console.log('doc', this.allDataDocReq);
               this.paragraphs.load(x);
               this.totalItems = this.paragraphs.count();
               this.loading = false;
@@ -640,6 +636,7 @@ export class DocRequestTabComponent
 
   cleanForm(): void {
     this.docRequestForm.reset();
+    this.docRequestForm.get('noRequest').patchValue(this.idRequest);
     this.allDataDocReq = [];
     this.paragraphs.load([]);
     this.totalItems = 0;

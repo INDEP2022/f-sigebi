@@ -20,7 +20,7 @@ export const MONITOR_RETUR_ABANDONMENT = {
     sort: false,
   },
   complianceLeaveDate: {
-    title: 'Fecha Ultima Notificación',
+    title: 'Fecha Última Notificación',
     type: 'string',
     sort: false,
   },
@@ -39,4 +39,9 @@ export const MONITOR_RETUR_ABANDONMENT = {
     type: 'string',
     sort: false,
   },
+  // goodStatus: {
+  //   title: 'Status',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };

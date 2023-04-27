@@ -549,6 +549,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               case 'folioRep':
                 // FOLIO REP.
+                searchFilter = SearchFilter.EQ;
                 let valueFolioRep = VALID_VALUE_REGEXP(
                   filter.search,
                   NUM_POSITIVE,
@@ -996,7 +997,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   selectEvent(e: any) {
-    this.showPGRDocs, this.showScan, (this.showValDoc = false);
+    this.showPGRDocs = false;
+    this.showScan = false;
+    this.showValDoc = false;
     //console.log(e);
     //console.log(e.data);
 
@@ -1528,6 +1531,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   determinateDocuments() {
+    if (this.selectedRow.count > 0) {
+      this.showPGRDocs = false;
+      this.showValDoc = false;
+      this.showScan = true;
+      return;
+    }
     const typeManagement = this.selectedRow.typeManagement;
     if (typeManagement == 3) {
       this.type = 'PGR';
@@ -1538,7 +1547,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.satDocs();
     } else {
       this.showScan = true;
-      this.showPGRDocs, (this.showValDoc = false);
+      this.showPGRDocs = false;
+      this.showValDoc = false;
     }
   }
 
@@ -1556,7 +1566,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.satTransferService
       .getCountRegisters({ officeNumber, valid })
       .subscribe(res => {
-        //console.log(res);
+        if (res.count > 0) {
+          this.showValDoc = true;
+        } else {
+          this.showScan = true;
+        }
       });
   }
 
@@ -1949,10 +1963,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.alert(
         'info',
         'Aviso',
-        'El Oficio tiene No. Volante relacionado, se generarán los documentos.'
+        'El Oficio tiene No. Volante relacionado, se guardarán los documentos.'
       );
       this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
         next: () => {
+          this.getData();
           let config = {
             class: 'modal-lg modal-dialog-centered',
             initialState: {
@@ -1986,7 +2001,15 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   validDoc() {
-    this.getValidDocParamter().subscribe();
+    const { flierNumber, proceedingsNumber, officeNumber } = this.selectedRow;
+    let config = {
+      class: 'modal-lg modal-dialog-centered',
+      initialState: {
+        pgrOffice: officeNumber,
+      },
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PgrFilesComponent, config);
   }
 
   getValidDocParamter() {
@@ -2424,7 +2447,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else {
       this.alertQuestion(
         'info',
-        'No ha seleccionao ningún registro',
+        'No ha seleccionado ningún registro',
         'Por favor seleccione un registro, para poder ejecutar la acción'
       );
     }

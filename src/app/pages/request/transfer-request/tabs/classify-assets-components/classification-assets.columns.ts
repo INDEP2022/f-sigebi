@@ -35,7 +35,7 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     sort: false,
   },
   physicstateName: {
-    title: 'Estado Fisico',
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
