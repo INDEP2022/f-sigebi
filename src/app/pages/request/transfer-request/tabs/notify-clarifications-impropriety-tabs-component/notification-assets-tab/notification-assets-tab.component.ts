@@ -396,7 +396,7 @@ export class NotificationAssetsTabComponent
         this.msgGuardado(
           'success',
           'Creación de tarea exitosa',
-          `Se creo la tarea verificar cumplimiento con el id: ${this.requestData.id}`
+          `Se creó la tarea verificar cumplimiento con el id: ${this.requestData.id}`
         );
       }
     }
@@ -1017,7 +1017,7 @@ export class NotificationAssetsTabComponent
             this.alertQuestion(
               'question',
               'Finalizar',
-              'Desea finalizar el proceso de aclaraciones'
+              '¿Desea finalizar el proceso de aclaraciones?'
             ).then(question => {
               if (question.isConfirmed) {
                 const result: string = '';
@@ -1031,7 +1031,7 @@ export class NotificationAssetsTabComponent
             this.alertQuestion(
               'question',
               'Finalizar',
-              'Desea finalizar el proceso de aclaraciones'
+              '¿Desea finalizar el proceso de aclaraciones?'
             ).then(question => {
               if (question.isConfirmed) {
                 const result: string = '';
