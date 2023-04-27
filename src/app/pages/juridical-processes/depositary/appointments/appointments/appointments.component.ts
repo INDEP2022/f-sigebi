@@ -174,7 +174,7 @@ export class AppointmentsComponent
       ],
       iva: [{ value: '', disabled: true }],
       noNombramiento: [{ value: '', disabled: true }],
-      fechapage: [{ value: '', disabled: true }],
+      fechaInicio: [{ value: '', disabled: true }],
 
       anexo: [
         { value: '', disabled: true },
@@ -384,6 +384,7 @@ export class AppointmentsComponent
               }
             }
             this.getFromGoodsAndExpedients(true); // Get data good
+            this.setOthers();
           },
           error: err => {
             this.loadingAppointment = false;
@@ -545,9 +546,36 @@ export class AppointmentsComponent
   }
 
   setOthers() {
+    // Revocation
+    this.form.get('remocion').setValue(this.depositaryAppointment.revocation);
+    this.form.get('fecha').setValue(this.depositaryAppointment.revocationDate);
     this.form
-      .get('remocion')
-      .setValue(this.depositaryAppointment.revocation == 'S' ? true : false);
+      .get('noOficio')
+      .setValue(this.depositaryAppointment.officialRevocationNumber);
+    // Junta de gobierno
+    this.form
+      .get('fechaAcuerdo')
+      .setValue(this.depositaryAppointment.governmentMeetingOfficialDate);
+    this.form
+      .get('noAcuerdo')
+      .setValue(this.depositaryAppointment.governmentMeetingOfficialDate);
+    // Honorarios y Contraprestaciones
+    this.form
+      .get('contraprestacion')
+      .setValue(this.depositaryAppointment.importConsideration);
+    this.form.get('honorarios').setValue(this.depositaryAppointment.feeAmount);
+    this.form.get('iva').setValue(this.depositaryAppointment.iva);
+    this.form
+      .get('fechaInicio')
+      .setValue(this.depositaryAppointment.contractStartDate);
+    this.form
+      .get('noNombramiento')
+      .setValue(this.depositaryAppointment.appointmentNumber);
+    // Anexo y Observaciones
+    this.form.get('anexo').setValue(this.depositaryAppointment.annexed);
+    this.form
+      .get('observaciones')
+      .setValue(this.depositaryAppointment.observation);
   }
 
   /**

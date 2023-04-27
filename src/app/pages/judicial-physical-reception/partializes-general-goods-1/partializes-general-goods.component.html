@@ -47,7 +47,10 @@
                   size="small"
                   (click)="partialize()"
                   [disabled]="
-                    form.invalid || formGood.invalid || vsum >= vimporte
+                    form.invalid ||
+                    formGood.invalid ||
+                    vsum >= vimporte ||
+                    loading
                   ">
                   Parcializa
                 </button>
@@ -58,7 +61,7 @@
                   class="mx-1 my-1"
                   size="small"
                   (click)="apply()"
-                  [disabled]="form.invalid || formGood.invalid">
+                  [disabled]="form.invalid || formGood.invalid || loading">
                   Aplica
                 </button>
               </div>
@@ -67,11 +70,12 @@
         </div>
       </div>
     </form>
-    <div class="row pt-2 scroll-table">
+    <div class="row pt-2 scroll-table" [class]="loading ? 'table-loading' : ''">
       <ng2-smart-table
         class="col-md-12"
         [settings]="settingsGoods"
-        [source]="bienesPar"></ng2-smart-table>
+        [source]="bienesPar"
+        (delete)="deleteRow($event)"></ng2-smart-table>
     </div>
   </div>
 </app-card>

@@ -33,7 +33,8 @@ export function showToast(
   data: SwalOptions | string
 ): Promise<SweetAlertResult<any>> {
   if (typeof data === 'string') data = { text: data } as SwalOptions;
-  return Swal.fire({
+
+  const toast = Swal.mixin({
     icon: 'success',
     toast: true,
     position: 'top-end',
@@ -41,8 +42,14 @@ export function showToast(
     showCloseButton: true,
     buttonsStyling: false,
     showConfirmButton: false,
+    timerProgressBar: true,
     ...data,
+    didOpen: toast => {
+      toast.addEventListener('mouseenter', Swal.stopTimer);
+      toast.addEventListener('mouseleave', Swal.resumeTimer);
+    },
   });
+  return toast.fire();
 }
 
 export function showAlert<T = any>({

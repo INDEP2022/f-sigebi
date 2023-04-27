@@ -5,7 +5,7 @@
     </tab> -->
     <tab
       *ngIf="docRequest"
-      heading="Búsqueda de Documentos Solicitud"
+      heading="Documentos Solicitud"
       id="tab1"
       (selectTab)="requestSelected(1)">
       <app-doc-request-tab
@@ -29,7 +29,7 @@
     </ng-container>
     <ng-template #elseBlock>
       <tab
-        heading="Documentos generales"
+        heading="Documentos Generales"
         (selectTab)="requestSelected(2)"
         *ngIf="generalDocs">
         <tabset class="md-tabs">

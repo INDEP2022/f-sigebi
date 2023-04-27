@@ -636,6 +636,7 @@ export class DocRequestTabComponent
 
   cleanForm(): void {
     this.docRequestForm.reset();
+    this.docRequestForm.get('noRequest').patchValue(this.idRequest);
     this.allDataDocReq = [];
     this.paragraphs.load([]);
     this.totalItems = 0;

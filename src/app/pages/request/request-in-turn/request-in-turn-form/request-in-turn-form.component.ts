@@ -177,6 +177,7 @@ export class RequestInTurnFormComponent implements OnInit {
     //const id = this.authService.decodeToken().department;
     //return id;
     params['filter.description'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'description:ASC';
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
@@ -197,6 +198,7 @@ export class RequestInTurnFormComponent implements OnInit {
   }
   getTransferente(params?: ListParams) {
     params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'nameTransferent:ASC';
     this.transferentesSaeService
       .getStateByTransferentKey(this.stateId, params)
       .subscribe({
@@ -213,6 +215,7 @@ export class RequestInTurnFormComponent implements OnInit {
 
   getStateOfRepublic(params?: ListParams) {
     params['filter.regionalDelegation'] = `$eq:${this.deleRegionalId}`;
+    params['sortBy'] = 'keyState:ASC';
     this.delegationStateService.getAll(params).subscribe(
       (data: any) => {
         let result = data.data
@@ -256,6 +259,7 @@ export class RequestInTurnFormComponent implements OnInit {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.stationId}`;
     params['filter.idTransferer'] = `$eq:${this.transferenceId}`;
+    params['sortBy'] = 'authorityName:ASC';
     delete params.limit;
     delete params.page;
     delete params['search'];
