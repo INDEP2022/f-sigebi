@@ -130,7 +130,7 @@ export class CustomSelectComponent
       .get(`${this.url}${this.path}`, {
         params,
       })
-      .pipe(catchError(() => of(null)));
+      .pipe(catchError(() => of(this.items)));
   }
 
   getDataForPath(data: any): any[] {
@@ -167,8 +167,9 @@ export class CustomSelectComponent
         debounceTime(this.delay),
         distinctUntilChanged(),
         switchMap((text: string) => {
+          // console.log(this.items);
           if (text === null) {
-            return of(this.items);
+            return of(null);
           }
           this.page = 1;
           this.isLoading = true;
@@ -182,9 +183,12 @@ export class CustomSelectComponent
         })
       )
       .subscribe({
-        next: resp => {
+        next: (resp: any[]) => {
+          console.log(resp);
           this.isLoading = false;
-          this.items = resp;
+          if (resp) {
+            this.items = resp;
+          }
         },
         error: err => {
           this.isLoading = false;

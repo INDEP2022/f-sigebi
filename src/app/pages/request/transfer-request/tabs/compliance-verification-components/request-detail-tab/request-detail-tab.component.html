@@ -29,6 +29,7 @@
     </div>
   </div>
   <!-- TIPO TRANSFERENCIA MANUAL -->
+  <p>{{ tyepOfTransferent }}</p>
   <div class="row" *ngIf="tyepOfTransferent === 'MANUAL'">
     <form [formGroup]="requestForm" class="form-material">
       <div class="row pt-4">
@@ -251,7 +252,7 @@
           <label class="label">{{ expedienteTransLabel }}</label>
           {{ infoRequest?.transferenceFile }}
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <label class="label">{{ observaciones }}</label>
           {{ infoRequest?.observations }}
         </div>
@@ -413,7 +414,7 @@
           <label class="label">{{ expedienteTransLabel }}</label>
           {{ infoRequest?.transferenceFile }}
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <label class="label">{{ observaciones }}</label>
           {{ infoRequest?.observations }}
         </div>

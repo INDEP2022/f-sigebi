@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { PartializeGeneralGoodService } from '../../partializes-general-goods-1/services/partialize-general-good.service';
 import { AlertButton } from '../../scheduled-maintenance-1/models/alert-button';
-import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
-
 @Component({
   selector: 'app-good-form',
   templateUrl: './good-form.component.html',
@@ -19,7 +18,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   // operator = SearchFilter.LIKE;
   constructor(
     private service: PartializeGeneralGoodService,
-    private fb: FormBuilder,
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
     private statusService: StatusGoodService
@@ -40,6 +38,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   get goodsList() {
+    this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
     return this.goodService.getAll(this.paramsGoods.getParams());
   }
 
@@ -101,7 +100,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // }
     this.service.good = good;
     const statusGood = good.status
-      ? await firstValueFrom(this.statusService.getById(good.goodStatus))
+      ? await firstValueFrom(this.statusService.getById(good.status))
       : null;
     // debugger;
     const sssubtype = good.goodClassNumber

@@ -71,3 +71,10 @@ export const NOTIFY_ASSETS_COLUMNS = {
       if (row.clarifiNewsRejectId.clarificationId == 19) return '3';
       return '1';
     },*/
+/*valuePrepareFunction: (cell: any, row: any) => {
+  //return row.clarifiNewsRejectId.clarificationId;
+  if (row.clarifiNewsRejectId.clarificationId == 17) return '2';
+  if (row.clarifiNewsRejectId.clarificationId == 18) return '2';
+  if (row.clarifiNewsRejectId.clarificationId == 19) return '3';
+  return '1';
+},*/
