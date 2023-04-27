@@ -1,0 +1,39 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccione la Unidad de Transferencia</h5>
+  </div>
+
+  <div body>
+    <form class="form-material">
+      <ngx-select
+        [form]="detailAssets"
+        control="unitLigie"
+        (fetchItems)="getTransferentUnit($event)"
+        [data]="selectTansferUnitMeasure"
+        label=""
+        [searchable]="false"
+        bindLabel="measureTlUnit"
+        value="uomCode"
+        [readonly]="false"></ngx-select>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [btnSmall]="true"
+          (click)="select()"
+          [text]="'Seleccional'"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

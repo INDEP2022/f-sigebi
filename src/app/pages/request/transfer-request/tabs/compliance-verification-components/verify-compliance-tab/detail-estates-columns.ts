@@ -1,4 +1,5 @@
 import { SaeInputComponent } from './sae-input/sae-input.component';
+import { SelectInputComponent } from './select-input/select-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
   id: {
@@ -30,9 +31,16 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
-    title: 'Unidad de Medida Transferente',
+  unitMeasureName: {
+    /* title: 'Unidad de Medida Transferente',
     type: 'string',
+    sort: false, */
+    title: 'Unidad de Medida Transferente',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: SelectInputComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   uniqueKey: {
@@ -56,7 +64,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     sort: false,
   },
   ligieUnit: {
-    title: 'Uni. de Medida Ligie',
+    title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },
