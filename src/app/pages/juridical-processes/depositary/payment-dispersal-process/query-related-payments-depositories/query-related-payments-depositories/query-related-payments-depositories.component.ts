@@ -295,14 +295,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
           },
           error: err => {
             this.loadingAppointment = false;
-            if (err.status == 400) {
-            } else {
-              this.alert(
-                'warning',
-                'Número de Bien',
-                NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
-              );
-            }
+            this.alert(
+              'warning',
+              'Número de Bien',
+              NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
+            );
           },
         });
     } else {
