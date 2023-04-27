@@ -10,7 +10,7 @@ export const LIST_BIENES_COLUMN = {
     sort: false,
   },
   numTask: {
-    title: 'Número de Tarea',
+    title: 'No. de Tarea',
     type: 'string',
     sort: false,
   },
@@ -20,7 +20,7 @@ export const LIST_BIENES_COLUMN = {
     sort: false,
   },
   created: {
-    title: 'Creador',
+    title: 'Autor',
     type: 'string',
     sort: false,
   },
