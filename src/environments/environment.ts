@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  // API_URL: 'http://sigebimsdev.indep.gob.mx/', //'http://localhost:3000/api/v1/',
-  // API_URL2: 'http://sigebimsdev.indep.gob/',
+
   API_URL: 'http://sigebimsqa.indep.gob.mx/', //'http://localhost:3000/api/v1/',
   API_URL2: 'http://sigebimsqa.indep.gob.mx/',
 
