@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -102,7 +102,8 @@ export class NotificationAssetsTabComponent
     private getGoodResVeService: GetGoodResVeService,
     private requestService: RequestService,
     private authService: AuthService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private router: Router
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -306,24 +307,46 @@ export class NotificationAssetsTabComponent
           bien.clarificationstatus == 'ACLARADO' ||
           bien.clarificationstatus == 'CANCELADO'
         ) {
-          /*this.updateStatusGood(
-            null,
-            'VERIFICAR_CUMPLIMIENTO',
-            bien.goodid,
-            bien.goodresdev,
-            bien.typeorigin
-          ); */
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              const updateData = await this.verifyGoodCompliance();
+              console.log('respuesta', updateData);
+              if (updateData == true) {
+                this.createTaskVerifyCompliance();
+              }
+            }
+          });
+
           let user = this.authService.decodeToken();
           if (user.employeetype == 'TE') {
             //Se actualiza el orden de servicio
           }
-
-          this.createTaskVerifyCompliance();
         } else {
           this.onLoadToast('info', 'Aun se tiene bienes sin ser aclarados', '');
         }
       });
     }
+  }
+
+  verifyGoodCompliance() {
+    return new Promise((resolve, reject) => {
+      this.goodsReject.map(bien => {
+        /*this.updateStatusGood(
+              null,
+              'VERIFICAR_CUMPLIMIENTO',
+              bien.goodid,
+              bien.goodresdev,
+              bien.typeorigin
+        ); */
+        console.log('actualiza');
+      });
+
+      resolve(true);
+    });
   }
 
   /* Metodo para la creación de tarea */
@@ -332,33 +355,33 @@ export class NotificationAssetsTabComponent
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/verify-compliance';
-      const from = 'NOTIFICAR_ACLARACIONES';
+      const from = 'SOLICITAR_ACLARACION';
       const to = 'VERIFICAR_CUMPLIMIENTO';
       const user: any = this.authService.decodeToken();
       console.log('requestData', this.requestData);
       console.log('tarea anterior', this.task.id);
       console.log('usuario', user.username);
 
-      /*const taskResult = await this.createTaskOrderService(
+      const taskResult = await this.createTaskOrderService(
         this.requestData,
         title,
         url,
         from,
         to,
-        false,
+        true,
         this.task.id,
         user.username,
-        'NOTIFICAR_ACLARACIONES',
-        'Aprobar_Solicitud',
-        'RECHAZAR'
+        'SOLICITUD_TRANSFERENCIA',
+        'NotificarAclaracion_Improcedencia',
+        'VERIFICAR_CUMPLIMIENTO'
       );
       if (taskResult === true) {
         this.msgGuardado(
           'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
+          'Creación de tarea exitosa',
+          `Se creo la tarea verificar cumplimiento con el id: ${this.requestData.id}`
         );
-      } */
+      }
     }
   }
 
@@ -635,6 +658,12 @@ export class NotificationAssetsTabComponent
             },
             error: error => {},
           });
+      } else {
+        this.onLoadToast(
+          'info',
+          'La notificación se debe de encontrar en status para a aclaración',
+          ''
+        );
       }
       //Valida que tenga observaciones que solo se llena si es rechazada la notificación
       if (this.selectedRow.observations != null) {
@@ -964,51 +993,44 @@ export class NotificationAssetsTabComponent
   }
 
   endClarification() {
-    this.validateStatusAclaration();
     this.data.getElements().then(data => {
-      if (data.length > 0) {
-        data.map((item: IGoodresdev) => {
-          if (item.clarificationstatus == 'REGISTRO_SOLICITUD') {
-            if (item.typeorigin == 'DOC_COMPLEMENTARIA') {
-              this.alertQuestion(
-                'question',
-                'Finalizar',
-                'Desea finalizar el proceso de aclaraciones'
-              ).then(question => {
-                if (question.isConfirmed) {
-                  const result: string = '';
-                  const status: number = 0;
-                  this.endProcess();
-                  //this.validateGoodStatus();
-                }
-                //this.redirectGoodTracker(question);
-              });
-            } else if (item.typeorigin == 'SOL_TRANSFERENCIA') {
-              this.alertQuestion(
-                'question',
-                'Finalizar',
-                'Desea finalizar el proceso de aclaraciones'
-              ).then(question => {
-                if (question.isConfirmed) {
-                  const result: string = '';
-                  const status: number = 0;
-                  this.endProcess();
-                  //this.validateGoodStatus();
-                }
-                //this.redirectGoodTracker(question);
-              });
-            }
-          } else {
-            this.onLoadToast(
-              'warning',
-              'Es necesario que tenga aclaradas todas las solicitudes de aclaración',
-              ''
-            );
+      data.map((good: IGoodresdev) => {
+        if (good.clarificationstatus == 'ACLARADO') {
+          if (good.typeorigin == 'DOC_COMPLEMENTARIA') {
+            this.alertQuestion(
+              'question',
+              'Finalizar',
+              'Desea finalizar el proceso de aclaraciones'
+            ).then(question => {
+              if (question.isConfirmed) {
+                const result: string = '';
+                const status: number = 0;
+                this.endProcess();
+                //this.validateGoodStatus();
+              }
+            });
+          } else if (good.typeorigin == 'SOL_TRANSFERENCIA') {
+            this.alertQuestion(
+              'question',
+              'Finalizar',
+              'Desea finalizar el proceso de aclaraciones'
+            ).then(question => {
+              if (question.isConfirmed) {
+                const result: string = '';
+                const status: number = 0;
+                //this.validateGoodStatus();
+                this.endProcess();
+              }
+            });
           }
-        });
-      } else {
-        this.onLoadToast('warning', 'No se tienen bienes con aclaraciones', '');
-      }
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Se necesita tener todos los bienes aclarados',
+            ''
+          );
+        }
+      });
     });
   }
 
@@ -1026,56 +1048,62 @@ export class NotificationAssetsTabComponent
             error: error => {},
           });
         } else if (data.typeorigin == 'SOL_TRANSFERENCIA') {
-          //No se tiene codigo//
+          this.router.navigate(['pages/siab-web/sami/consult-tasks']);
         }
       });
     });
   }
 
   validateStatusAclaration() {
-    this.data.getElements().then(data => {
-      data.map((item: IGoodresdev) => {
-        this.paramsReject.getValue()['filter.goodId'] = item.goodid;
-        this.rejectedGoodService
-          .getAllFilter(this.paramsReject.getValue())
-          .subscribe({
-            next: response => {
-              response.data.map(async notify => {
-                if (notify.clarificationType == 'SOLICITAR_ACLARACION') {
-                  //if (notify.answered != 'ACLARADA') {
-                  this.updateStatusGood(
-                    'ACLARADO',
-                    '',
-                    notify.goodId,
-                    notify.goodResDevId,
-                    item.typeorigin
-                  );
-                  //}
-                }
-                if (notify.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
-                  //if (notify.answered != 'ACLARADA') {
-                  this.updateStatusGood(
-                    'ACLARADO',
-                    '',
-                    notify.goodId,
-                    notify.goodResDevId,
-                    item.typeorigin
-                  );
-                  //}
-                  if (notify.answered == 'IMPROCEDENTE') {
-                    this.updateStatusGood(
-                      'IMPROCEDENTE',
-                      'IMPROCEDENTE',
-                      notify.goodId,
-                      notify.goodResDevId,
-                      item.typeorigin
-                    );
+    return new Promise((resolve, reject) => {
+      this.data.getElements().then(data => {
+        data.map((item: IGoodresdev) => {
+          this.paramsReject.getValue()['filter.goodId'] = item.goodid;
+          this.rejectedGoodService
+            .getAllFilter(this.paramsReject.getValue())
+            .subscribe({
+              next: response => {
+                response.data.map(async notify => {
+                  if (notify.clarificationType == 'SOLICITAR_ACLARACION') {
+                    if (notify.answered != 'ACLARADA') {
+                      this.updateStatusGood(
+                        'ACLARADO',
+                        '',
+                        notify.goodId,
+                        notify.goodResDevId,
+                        item.typeorigin
+                      );
+
+                      resolve(true);
+                    }
                   }
-                }
-              });
-            },
-            error: error => {},
-          });
+                  if (notify.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
+                    if (notify.answered != 'ACLARADA') {
+                      this.updateStatusGood(
+                        'ACLARADO',
+                        '',
+                        notify.goodId,
+                        notify.goodResDevId,
+                        item.typeorigin
+                      );
+                      resolve(true);
+                    }
+                    if (notify.answered == 'IMPROCEDENTE') {
+                      this.updateStatusGood(
+                        'IMPROCEDENTE',
+                        'IMPROCEDENTE',
+                        notify.goodId,
+                        notify.goodResDevId,
+                        item.typeorigin
+                      );
+                      resolve(true);
+                    }
+                  }
+                });
+              },
+              error: error => {},
+            });
+        });
       });
     });
   }
