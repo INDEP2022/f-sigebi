@@ -10,12 +10,15 @@ import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repositor
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { IGood } from 'src/app/core/models/good/good.model';
 import { BehaviorSubject } from 'rxjs';
+import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
 
 /** SERVICE IMPORTS */
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 import { dateRangeValidator } from 'src/app/common/validations/date.validators';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DatePipe } from '@angular/common';
 
 /** ROUTING MODULE */
 
@@ -66,7 +69,10 @@ export class ReviewResourceReportComponent
     private fb?: FormBuilder,
     private printFlyersService?: PrintFlyersService,
     private serviceDeleg?: DelegationService,
-    private goodServices?: GoodService
+    private goodServices?: GoodService,
+    private siabService?: SiabService,
+    private datePipe?: DatePipe
+
     ) {
     super();
   }
@@ -113,7 +119,6 @@ export class ReviewResourceReportComponent
     this.good = new DefaultSelect();
     this.goodAl = new DefaultSelect();
 
-    // console.log(this.PN_NODELEGACION.value);
     if (this.delegation.value)
     console.log('change delegacion' , this.delegation.value)
       this.getSubDelegations({ page: 1, limit: 10, text: '' });
@@ -122,7 +127,6 @@ export class ReviewResourceReportComponent
   }
 
   getSubDelegations(lparams: ListParams) {
-    // console.log(lparams);
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
@@ -132,7 +136,6 @@ export class ReviewResourceReportComponent
       params.addFilter('delegationNumber', this.delegation.value);
     }
     if (this.phaseEdo) params.addFilter('phaseEdo', this.phaseEdo);
-    console.log('sub delegaciones ' , params.getParams());
     this.printFlyersService.getSubdelegations(params.getParams()).subscribe({
       next: data => {
         this.subdelegations = new DefaultSelect(data.data, data.count);
@@ -144,7 +147,6 @@ export class ReviewResourceReportComponent
         } else {
           error = err.message;
         }
-
         this.onLoadToast('error', 'Error', error);
       },
     });
@@ -215,21 +217,39 @@ export class ReviewResourceReportComponent
     return '';
   }
 
-  onStartDateChange(event:any) {
-  }
-
-  onEndDateChange(event: any) {
-
-  }
   btnGenerarReporte() {
-    console.log('GenerarReporte' ,
-     {
-       dele: this.delegation.value ,
-       endate: this.endDate.value ,
-       start:this.startDate.value,
-       subDe:this.subdelegation.value,
-       del :this.delBien.value,
-       al: this.alBien.value
-      });
+
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2FSIGEBI%2FReportes%2FSIAB&reportUnit=%2FSIGEBI%2FReportes%2FSIAB%2FRGERJURRECDEREV&standAlone=true`; //window.URL.createObjectURL(blob);
+
+    // Crea enlace de etiqueta anchor con js
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+      if(key ==='endDate' || key ==='startDate'){
+        params[key] = this.datePipe.transform(params[key], 'dd-MM-yyyy');
+      }
+    }
+    console.log( 'params' , params);
+
+    setTimeout(() => {
+      this.siabService
+        .getReport(SiabReportEndpoints.FGERJURRECDEREV, params)
+        .subscribe({
+          next: response => {
+            console.log('response' ,response);
+            window.open(pdfurl, 'DOCUMENT');
+          },
+          error: () => {
+            console.log('error');
+
+            window.open(pdfurl, 'DOCUMENT');
+          },
+        });
+    }, 4000);
   }
+
 }
