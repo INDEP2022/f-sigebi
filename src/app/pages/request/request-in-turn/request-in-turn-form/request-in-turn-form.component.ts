@@ -297,7 +297,7 @@ export class RequestInTurnFormComponent implements OnInit {
   reset(): void {
     this.selectTransfer = new DefaultSelect();
     // this.selectStation = new DefaultSelect();
-    // // this.selectAuthority = new DefaultSelect();
+    this.selectAuthority = new DefaultSelect();
     this.selectState = new DefaultSelect();
     // // this.selectAffeir = new DefaultSelect();
     // // this.selectRegDele = new DefaultSelect();
