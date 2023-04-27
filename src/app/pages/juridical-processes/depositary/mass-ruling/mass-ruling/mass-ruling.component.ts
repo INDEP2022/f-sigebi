@@ -2,15 +2,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
-import { IGood } from 'src/app/core/models/ms-good/good';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -51,7 +52,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     },
   };
   // Data table
-  dataTable: IGood[] = [];
+  dataTable: any[] = [];
 
   tableSettings1 = {
     actions: {
@@ -82,41 +83,16 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private dictationService: DictationService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private massiveGoodService: MassiveGoodService,
+    private modalService: BsModalService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.data
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        this.getGoods(new ListParams());
-      });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods(new ListParams()));
-
     this.prepareForm();
-
-    this.form.get('noOficio').valueChanges.subscribe(data => {
-      this.getDictations(new ListParams(), data);
-    });
     this.loading = true;
-
-    this.getGoods(new ListParams());
-  }
-
-  getGoods(params: ListParams) {
-    this.goodService.getAll().subscribe({
-      next: data => {
-        this.dataTable = data.data;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
   }
 
   getDictations(
@@ -125,7 +101,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     wheelNumber?: number
   ) {
     this.expedientNumber = expedientNumber;
-    if (!expedientNumber) {
+    if (!expedientNumber && !wheelNumber) {
       return;
     }
 
@@ -145,9 +121,15 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     this.dictationService.getAllWithFilters(data.getParams()).subscribe({
       next: data => {
         console.log(data);
+        this.form.patchValue(data.data[0]);
+        this.form
+          .get('instructorDate')
+          .patchValue(new Date(data.data[0].instructorDate));
+        this.form.get('dictDate').patchValue(new Date(data.data[0].dictDate));
       },
       error: err => {
         this.loading = false;
+        this.form.reset();
       },
     });
   }
@@ -192,15 +174,33 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   btnCargarIdentificador() {
-    console.log('Identificador');
+    const identificador = this.formCargaMasiva.get(
+      'identificadorCargaMasiva'
+    ).value;
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+
+    if (identificador) {
+      data.addFilter('id', identificador);
+    }
+    this.massiveGoodService.getAll().subscribe({
+      next: data => {
+        this.dataTable = data.data;
+      },
+      error: err => {
+        this.loading = false;
+        this.dataTable = [];
+      },
+    });
   }
 
-  btnExpedientesCsv() {
-    console.log('Expedientes csv');
-  }
+  btnExpedientesCsv(value: any) {}
 
   btnExpedientesXls() {
-    console.log('Expedientes xls');
+    if (!this.form.get('id').value && !this.form.get('typeDict').value) {
+      this.alert('info', 'Se debe ingresar un dictamen', '');
+    }
   }
 
   btnCrearDictamenes() {
