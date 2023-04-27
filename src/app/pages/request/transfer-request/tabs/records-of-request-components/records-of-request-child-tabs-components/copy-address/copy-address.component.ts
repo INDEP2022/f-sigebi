@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -27,6 +28,11 @@ export class CopyAddressComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsTown = new BehaviorSubject<ListParams>(new ListParams());
   paramsMun = new BehaviorSubject<ListParams>(new ListParams());
+
+  formFilter = new FormGroup({
+    warehouseAlias: new FormControl(''),
+    requestId: new FormControl(''),
+  });
   constructor(
     private modalRef: BsModalRef,
     private goodService: GoodService,
@@ -48,13 +54,28 @@ export class CopyAddressComponent extends BasePage implements OnInit {
       .subscribe(() => this.getAddress());
   }
 
+  getFilter(params: ListParams): ListParams {
+    const formValues: any = this.formFilter.value;
+    if (Object.values(formValues).some(x => Boolean(x))) {
+      Object.keys(formValues).forEach(key => {
+        if (formValues[key]) {
+          params[`filter.${key}`] = formValues[key];
+        }
+      });
+    }
+
+    return params;
+  }
+
   getAddress() {
     this.loading = true;
     this.params.getValue()['filter.regionalDelegationId'] = this.idDelegation;
     this.params.getValue()['filter.municipalityKey'] = '$not:$null';
     this.params.getValue()['filter.localityKey'] = '$not:$null';
     this.params.getValue()['filter.code'] = '$not:$null';
-    this.goodService.getGoodsDomicilies(this.params.getValue()).subscribe({
+    const params = this.getFilter(this.params.getValue());
+    console.log({ params });
+    this.goodService.getGoodsDomicilies(params).subscribe({
       next: async (data: any) => {
         const info = data.data.map(async (item: any) => {
           this.idState = item.statusKey;

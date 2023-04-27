@@ -3,7 +3,64 @@
     <h5 class="modal-title">Domicilios</h5>
   </div>
   <div body>
-    <div [class]="loading ? 'table-loading' : ''">
+    <form
+      (ngSubmit)="getAddress()"
+      class="form-material"
+      [formGroup]="formFilter">
+      <div class="m-0 my-3 row">
+        <div class="col-md-3">
+          <form-field
+            class="form-group"
+            [control]="formFilter.get('warehouseAlias')"
+            label="Alias">
+            <input
+              class="form-control"
+              formControlName="warehouseAlias"
+              type="Alias" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            class="form-group"
+            type="number"
+            [control]="formFilter.get('requestId')"
+            label="No. Solicitud">
+            <input
+              class="form-control"
+              formControlName="requestId"
+              type="Alias" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            class="form-group"
+            type="number"
+            [control]="formFilter.get('requestId')"
+            label="No. Solicitud">
+            <input
+              class="form-control"
+              formControlName="requestId"
+              type="Alias" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            class="form-group"
+            type="number"
+            [control]="formFilter.get('requestId')"
+            label="No. Solicitud">
+            <input
+              class="form-control"
+              formControlName="requestId"
+              type="Alias" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-sm btn-primary">Aplicar</button>
+        </div>
+      </div>
+    </form>
+    <div [class]="loading ? 'table-loading' : ''" class="position-relative">
       <ng2-smart-table
         id="tableGoods"
         [attr.class]="'table-bordered table-responsive'"
