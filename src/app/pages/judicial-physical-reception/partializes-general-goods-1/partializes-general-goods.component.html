@@ -74,7 +74,8 @@
       <ng2-smart-table
         class="col-md-12"
         [settings]="settingsGoods"
-        [source]="bienesPar"></ng2-smart-table>
+        [source]="bienesPar"
+        (delete)="deleteRow($event)"></ng2-smart-table>
     </div>
   </div>
 </app-card>

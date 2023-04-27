@@ -7,7 +7,7 @@ import { HistoryGoodService } from 'src/app/core/services/ms-history-good/histor
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IBienesPar } from '../partializes-general-goods-1/models/bienesPar.model';
-import { PartializeGeneralGoodService } from './services/partialize-general-good.service';
+import { PartializeGeneralGoodService } from '../partializes-general-goods-1/services/partialize-general-good.service';
 
 @Component({
   selector: 'app-partializes-general-goods',
@@ -35,27 +35,21 @@ export class PartializesGeneralGoodsComponent
 
   ngOnInit(): void {
     this.service.initFormControl();
-    // const total: number = this.data
-    //   .map(element => element.cantidad)
-    //   .reduce((prev, curr) => prev + curr, 0);
-    // this.data.push({
-    //   id: null,
-    //   noBien: null,
-    //   descripcion: null,
-    //   cantidad: total,
-    //   avaluo: null,
-    //   importe: null,
-    // });
+  }
+
+  cleanBlock() {
+    this.form.get('veces').setValue(null);
+    this.form.get('cantidad').setValue(null);
+    this.form.get('saldo').setValue(null);
+    this.bienesPar = [];
   }
 
   get form() {
     return this.service.formControl;
   }
-
   get formGood() {
     return this.service.formGood;
   }
-
   get cantPar() {
     return this.form.get('cantPar');
   }
@@ -65,28 +59,24 @@ export class PartializesGeneralGoodsComponent
   get saldo() {
     return this.form.get('saldo');
   }
-
   get ind() {
     return this.form.get('ind');
   }
-
   get sumCant() {
     return this.service.sumCant;
   }
-
   get sumVal14() {
     return this.service.sumVal14;
   }
-
   get good() {
     return this.service.good;
   }
-
   get isFirstCase() {
     return this.service.isFirstCase;
   }
 
-  checkSum(pindica: string) {
+  checkSum(pindica: string): boolean {
+    // debugger;
     let vsum: number;
     let vban: boolean;
     if (this.bienesPar.length === 0) {
@@ -103,7 +93,7 @@ export class PartializesGeneralGoodsComponent
           'No se tiene registros a aplicar'
         );
       }
-      return;
+      return false;
     }
     vsum = 0;
     this.bienesPar.forEach(item => {
@@ -125,6 +115,7 @@ export class PartializesGeneralGoodsComponent
         'Parcialización',
         'La sumatoria excede del importe total (' + vsum + ')'
       );
+      return false;
     } else if (pindica === 'V') {
       this.onLoadToast(
         'success',
@@ -132,13 +123,7 @@ export class PartializesGeneralGoodsComponent
         'La sumatoria es correcta (' + vsum + ')'
       );
     }
-  }
-
-  cleanBlock() {
-    this.form.get('veces').setValue(null);
-    this.form.get('cantidad2').setValue(null);
-    this.form.get('saldo').setValue(null);
-    this.bienesPar = [];
+    return true;
   }
 
   private validationClasif() {
@@ -250,45 +235,49 @@ export class PartializesGeneralGoodsComponent
     return true;
   }
 
-  private fillDescription(
-    v_cantidad: string,
-    v_unidad: string,
-    v_avaluo: string
-  ) {
-    if (this.v_numerario === 0) {
-      return (
-        'Bien por ' +
-        this.cantidad.value +
-        ' ' +
-        v_unidad +
-        ', (Producto de la Parcialización de Bien No.' +
-        this.formGood.get('noBien').value +
-        ' (' +
-        v_cantidad +
-        ' ' +
-        v_unidad +
-        '), ' +
-        this.formGood.get('descripcion').value +
-        ' )'
-      );
-    } else {
-      return (
-        'Numerario por $' +
-        (this.cantidad.value + '').trim() +
-        ' ' +
-        v_avaluo +
-        ' (Producto de la Parcialización de Bien No.' +
-        this.formGood.get('noBien').value +
-        ', ' +
-        this.formGood.get('descripcion').value +
-        ' )'
-      );
-    }
+  private fillDescription() {
+    let descripcion =
+      'Parcialización de Bien No.' +
+      this.good.id +
+      ', ' +
+      this.good.description;
+    return descripcion.length > 1250
+      ? descripcion.substring(0, 1250)
+      : descripcion;
+    // if (this.v_numerario === 0) {
+    //   return (
+    //     'Bien por ' +
+    //     this.cantidad.value +
+    //     ' ' +
+    //     v_unidad +
+    //     ', (Producto de la Parcialización de Bien No.' +
+    //     this.formGood.get('noBien').value +
+    //     ' (' +
+    //     v_cantidad +
+    //     ' ' +
+    //     v_unidad +
+    //     '), ' +
+    //     this.formGood.get('descripcion').value +
+    //     ' )'
+    //   );
+    // } else {
+    //   return (
+    //     'Numerario por $' +
+    //     (this.cantidad.value + '').trim() +
+    //     ' ' +
+    //     v_avaluo +
+    //     ' (Producto de la Parcialización de Bien No.' +
+    //     this.formGood.get('noBien').value +
+    //     ', ' +
+    //     this.formGood.get('descripcion').value +
+    //     ' )'
+    //   );
+    // }
   }
 
   private fillAvaluo() {
     if (this.good.appraisedValue) {
-      return Math.round(this.good.appraisedValue * this.vfactor);
+      return +(+(this.good.appraisedValue + '') * this.vfactor).toFixed(2);
     } else {
       return null;
     }
@@ -312,7 +301,67 @@ export class PartializesGeneralGoodsComponent
     return { importe, cantidad };
   }
 
+  deleteRow(row: { data: IBienesPar; index: number }) {
+    console.log(row);
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast(
+          'info',
+          'Parcialización',
+          'Eliminada la parcialización ' + row.data.id
+        );
+        if (row.index === 0) {
+          this.bienesPar.shift();
+        } else {
+          this.bienesPar = this.bienesPar
+            .slice(0, row.index)
+            .concat(this.bienesPar[this.bienesPar.length - 1]);
+        }
+        this.bienesPar = [...this.bienesPar];
+      }
+    });
+  }
+
+  private fillRow(newImporte: number) {
+    this.vfactor = this.cantidad.value / this.vimporte;
+    console.log(this.cantidad.value, this.vimporte);
+    this.vres = this.vimporte - newImporte;
+    this.vident = 0;
+    if (this.bienesPar[this.bienesPar.length - 2]) {
+      this.vident = this.bienesPar[this.bienesPar.length - 1].id;
+    }
+    this.vident++;
+    const descripcion = this.fillDescription();
+    const proceso = this.good.extDomProcess;
+    const avaluo = this.fillAvaluo();
+    console.log(avaluo);
+    const { importe, cantidad } = this.fillImporteCant();
+    const noBien = this.good.goodId;
+    this.service.sumCant += cantidad;
+    this.service.sumVal14 += importe;
+    // this.vident++;
+    this.bienesPar.push({
+      id: this.vident,
+      noBien,
+      descripcion,
+      proceso,
+      cantidad,
+      avaluo,
+      importe,
+      val10: 0,
+      val11: 0,
+      val12: 0,
+      val13: 0,
+    });
+  }
+
   async partialize() {
+    this.loading = true;
     // debugger;
     let vind;
     this.form.get('ind').setValue('N');
@@ -346,89 +395,19 @@ export class PartializesGeneralGoodsComponent
         this.form.get('ind').setValue('S');
         return;
       }
-      this.vfactor = this.cantidad.value / this.vimporte;
-      this.vres = this.vimporte - newImporte;
-      vind = true;
-
-      // if (this.bienesPar[this.bienesPar.length - 2]) {
-      //   this.vident = this.bienesPar[this.bienesPar.length - 1].id;
-      // }
-      this.vident++;
-      let item;
-      for (let index = 0; index < this.form.get('cantPar').value; index++) {
-        if (vind) {
-          vind = false;
-        } else {
-          this.bienesPar.push(item);
-        }
-        item = {
-          id: null,
-          noBien: null,
-          descripcion: null,
-          proceso: null,
-          cantidad: null,
-          avaluo: null,
-          importe: 0,
-          val10: 0,
-          val11: 0,
-          val12: 0,
-          val13: 0,
-        };
-        let descripcion =
-          'Parcialización de Bien No.' +
-          this.good.id +
-          ', ' +
-          this.good.description;
-        item.id = this.vident;
-        item.noBien = this.good.id;
-        item.descripcion =
-          descripcion.length > 1250
-            ? descripcion.substring(0, 1250)
-            : descripcion;
-        item.proceso = this.good.extDomProcess;
-        const avaluo = this.fillAvaluo();
-        const { importe, cantidad } = this.fillImporteCant();
-        item.cantidad = cantidad;
-        item.avaluo = avaluo;
-        item.importe = importe;
-        // this.service.sumCant += cantidad;
-        // this.service.sumVal14 += importe;
-        // this.vident++;
-        // if (this.isFirstCase) this.bienesPar.pop();
-        // this.bienesPar.push({
-        //   id: this.vident,
-        //   noBien,
-        //   descripcion,
-        //   proceso,
-        //   cantidad,
-        //   avaluo,
-        //   importe,
-        //   val10: 0,
-        //   val11: 0,
-        //   val12: 0,
-        //   val13: 0
-        // })
-        // if (this.isFirstCase) this.bienesPar.push({
-        //   id: null,
-        //   noBien: null,
-        //   descripcion: null,
-        //   proceso: null,
-        //   cantidad: this.service.sumCant,
-        //   avaluo: null,
-        //   importe: this.service.sumVal14,
-        //   val10: 0,
-        //   val11: 0,
-        //   val12: 0,
-        //   val13: 0
-        // })
+      for (let index = 0; index < this.cantPar.value; index++) {
+        this.fillRow(newImporte);
       }
       this.saldo.setValue(this.vres);
       this.ind.setValue('S');
+      this.bienesPar = [...this.bienesPar];
+      this.loading = false;
     } else {
       this.form.markAllAsTouched();
       setTimeout(() => {
         this.form.markAsUntouched();
       }, 1000);
+      this.loading = false;
     }
   }
 
@@ -542,31 +521,12 @@ export class PartializesGeneralGoodsComponent
     return null;
   }
 
-  async apply() {
-    this.loading = true;
-    let v_importe: number,
-      v_estatus: string,
+  private async applyContinue(v_importe: number) {
+    let v_estatus: string,
       vaccion: string,
       vproextdom: string,
       vno_acta: number,
       v_verif_des: string;
-    // let vb_estatus_valido = false;
-    // if (this.bienesPar.length === 0) {
-    //   this.onLoadToast('error', 'Error', 'No se tienen cantidades a parcializar...')
-    //   return;
-    // }
-    if (this.validationClasif()) {
-      v_importe = +(this.good.appraisedValue
-        ? this.good.appraisedValue
-        : this.good.val14
-        ? this.good.val14
-        : '0');
-    } else {
-      v_importe = this.good.quantity;
-    }
-    this.checkSum('O');
-
-    // this.form.get('ind').setValue('N');
     v_estatus = this.good.status;
     vaccion = 'FINAL';
     // vproextdom = this.good.extDomProcess;
@@ -677,6 +637,7 @@ export class PartializesGeneralGoodsComponent
       0,
       observations.length > 600 ? 600 : observations.length
     );
+    this.loading = false;
     // const description = vdesc_padre + this.good.description;
     // this.good.description = description.substring(0, observations.length > 1250 ? 1250 : observations.length);
     // this.formGood.get('descripcion').setValue(this.good.description);
@@ -685,6 +646,41 @@ export class PartializesGeneralGoodsComponent
     // }
     // this.saldo.setValue(0);
     // this.onLoadToast('success', 'Parcialización', 'La parcialización de bienes se realizo con éxito');
+  }
+
+  async apply() {
+    this.loading = true;
+    let v_importe: number;
+    // let vb_estatus_valido = false;
+    // if (this.bienesPar.length === 0) {
+    //   this.onLoadToast('error', 'Error', 'No se tienen cantidades a parcializar...')
+    //   return;
+    // }
+    // debugger;
+    if (this.validationClasif()) {
+      v_importe = +(this.good.appraisedValue
+        ? this.good.appraisedValue
+        : this.good.val14
+        ? this.good.val14
+        : '0');
+    } else {
+      v_importe = this.good.quantity;
+    }
+    const checkSum = this.checkSum('O');
+    if (!checkSum) {
+      this.loading = false;
+      return;
+    }
+    this.alertQuestion(
+      'question',
+      'Parcialización',
+      'Quiere continuar con la aplicación?'
+    ).then(question => {
+      console.log(question);
+      if (question.isConfirmed) {
+        this.applyContinue(v_importe);
+      }
+    });
   }
 
   async insertaBien(

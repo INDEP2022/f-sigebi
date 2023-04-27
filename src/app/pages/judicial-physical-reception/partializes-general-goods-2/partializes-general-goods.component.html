@@ -46,19 +46,24 @@
                   class="mx-1"
                   size="small"
                   (click)="partialize()"
-                  [disabled]="form.invalid || formGood.invalid">
+                  [disabled]="form.invalid || formGood.invalid || loading">
                   Parcializa
                 </button>
                 <button class="mx-1" size="small" (click)="cleanBlock()">
                   Limpia Bloque
                 </button>
-                <button class="mx-1" size="small" (click)="checkSum('V')">
+                <button
+                  class="mx-1"
+                  size="small"
+                  (click)="checkSum('V')"
+                  [disabled]="form.invalid || formGood.invalid || loading">
                   Verifica Suma
                 </button>
                 <button
                   class="mx-1 my-1"
                   size="small"
-                  [disabled]="form.invalid || formGood.invalid">
+                  (click)="apply()"
+                  [disabled]="form.invalid || formGood.invalid || loading">
                   Aplica
                 </button>
               </div>
@@ -67,7 +72,7 @@
         </div>
       </div>
     </form>
-    <div class="row pt-2 scroll-table">
+    <div class="row pt-2 scroll-table" [class]="loading ? 'table-loading' : ''">
       <ng2-smart-table
         class="col-md-12"
         [settings]="settingsGoods"

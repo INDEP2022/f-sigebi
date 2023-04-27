@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import {
   FilterParams,
@@ -23,7 +23,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   // operator = SearchFilter.LIKE;
   constructor(
     private service: PartializeGeneralGoodService,
-    private fb: FormBuilder,
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
     private statusService: StatusGoodService

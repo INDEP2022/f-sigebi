@@ -78,7 +78,17 @@ export class PartializeGeneralGoodService {
       sort: false,
     },
   };
-  settingsGoods = { ...TABLE_SETTINGS, actions: false, columns: this.columns2 };
+  settingsGoods = {
+    ...TABLE_SETTINGS,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      add: false,
+      edit: false,
+      delete: true,
+    },
+    columns: this.columns2,
+  };
   sumCant = 0;
   sumVal14 = 0;
   constructor(private fb: FormBuilder) {}
@@ -113,7 +123,13 @@ export class PartializeGeneralGoodService {
   setSettingsFirstCase() {
     this.settingsGoods = {
       ...TABLE_SETTINGS,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: false,
+        delete: true,
+      },
       columns: this.columns1,
     };
     this.isFirstCase = true;
@@ -127,7 +143,13 @@ export class PartializeGeneralGoodService {
   setSettingsSecondCase() {
     this.settingsGoods = {
       ...TABLE_SETTINGS,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: false,
+        delete: true,
+      },
       columns: this.columns2,
     };
     this.isFirstCase = false;
