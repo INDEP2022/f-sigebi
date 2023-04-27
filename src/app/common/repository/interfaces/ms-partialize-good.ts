@@ -157,9 +157,10 @@ export interface IGoodP extends IGood {
 }
 export interface GoodDTO {
   screenKey: string;
-  pno_acta: number;
+  pno_acta?: number;
   changeUser: string;
   good: IGoodP;
-  pEviction: number;
+  pEviction?: number;
   statusNew: string;
+  pFactorNumber?: number;
 }

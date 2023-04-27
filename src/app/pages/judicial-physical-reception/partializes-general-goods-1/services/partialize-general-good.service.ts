@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IBienesPar } from '../models/bienesPar.model';
 
 @Injectable()
 export class PartializeGeneralGoodService {
@@ -9,6 +10,7 @@ export class PartializeGeneralGoodService {
   good: IGood;
   formControl: FormGroup;
   isFirstCase: boolean = false;
+  bienesPar: IBienesPar[] = [];
   private columns1: any = {
     id: {
       title: 'Id.',

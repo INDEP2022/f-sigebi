@@ -76,7 +76,7 @@ export class MonitorReturnAbandonmentComponent
       const route = `pages/juridical/return-abandonment-monitor/${this.id}`;
       this.route.navigate([route]);
     } else {
-      this.alert('info', 'Este bien no se puede ratificar', '');
+      this.alert('info', 'Por favor seleccione un bien.', '');
     }
   }
 
@@ -89,10 +89,12 @@ export class MonitorReturnAbandonmentComponent
   }
 
   getGoods(): void {
+    this.loading = true;
+
     this.goodService.getAll(this.params.getValue()).subscribe(
       response => {
         this.goods = response.data;
-        console.log(this.goods);
+        console.log('Datos regresados: ', this.goods);
         this.totalItems = response.count;
         this.loading = false;
       },

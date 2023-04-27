@@ -206,9 +206,12 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       let good = this.goodTransfer;
       let goodResDev: IPostGoodResDev = {};
+      debugger;
       goodResDev.goodId = Number(good.id);
       goodResDev.unitExtent = good.ligieUnit;
-      goodResDev.statePhysical = good.physicalStatus.toString();
+      goodResDev.statePhysical = good.physicalStatus
+        ? good.physicalStatus.toString()
+        : 'BUENO';
       goodResDev.stateConservation = good.stateConservation;
       goodResDev.descriptionGood = good.descriptionGoodSae
         ? good.descriptionGoodSae
@@ -220,17 +223,25 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       goodResDev.delegationRegionalId = Number(
         this.request.regionalDelegationId
       );
-      goodResDev.transfereeId = this.request.transferenceId;
-      goodResDev.stationId = this.request.stationId;
-      goodResDev.authorityId = this.request.authorityId;
-      goodResDev.cveState = this.request.keyStateOfRepublic;
+      goodResDev.transfereeId = this.request.transferenceId
+        ? this.request.transferenceId
+        : '';
+      goodResDev.stationId = this.request.stationId
+        ? this.request.stationId
+        : '';
+      goodResDev.authorityId = this.request.authorityId
+        ? this.request.authorityId
+        : '';
+      goodResDev.cveState = this.request.keyStateOfRepublic
+        ? this.request.keyStateOfRepublic
+        : '';
       goodResDev.meetsArticle28 = 'N';
       goodResDev.inventoryNumber = null;
       goodResDev.uniqueKey = null;
       goodResDev.destination = null;
       goodResDev.proceedingsType = null;
       goodResDev.origin = null;
-
+      debugger;
       this.goodResDevService.create(goodResDev).subscribe({
         next: resp => {
           console.log('good-res-dev', resp);
@@ -270,6 +281,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       //body.goodResdevId = Number(id);
       body.processStatus = 'SOLICITAR_ACLARACION';
       body.goodStatus = 'SOLICITUD DE ACLARACION';
+      debugger;
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
@@ -298,6 +310,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       requestId: this.request.id,
       goodId: good.goodId,
       senderName: this.request.nameOfOwner,
+      clarificationStatus: null,
     };
 
     //Servicio para crear registro de ChatClariffications
@@ -322,7 +335,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'EN ACLARACION',
+      answered: 'NUEVA',
     };
 
     this.rejectedGoodService.update(id, data).subscribe({

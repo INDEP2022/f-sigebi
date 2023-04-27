@@ -15,20 +15,20 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IBienesPar } from './models/bienesPar.model';
 import { PartializeGeneralGoodService } from './services/partialize-general-good.service';
 
-export interface IPupBien {
-  description: string;
-  amount: string;
-  worthappraisal: number;
-  goodReferenceNumber: string;
-  status: string;
-  processExtSun: string;
-  pval2: number;
-  observations: string;
-  pfactornum: number;
-  pEviction: string;
-  certificateNumber: number;
-  good: IGood;
-}
+// export interface IPupBien {
+//   description: string;
+//   amount: string;
+//   worthappraisal: number;
+//   goodReferenceNumber: string;
+//   status: string;
+//   processExtSun: string;
+//   pval2: number;
+//   observations: string;
+//   pfactornum: number;
+//   pEviction: string;
+//   certificateNumber: number;
+//   good: IGood;
+// }
 @Component({
   selector: 'app-partializes-general-goods',
   templateUrl: './partializes-general-goods.component.html',
