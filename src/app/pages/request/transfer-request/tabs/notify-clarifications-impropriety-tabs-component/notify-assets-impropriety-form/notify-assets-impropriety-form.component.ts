@@ -69,14 +69,12 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   ngOnInit(): void {
-    console.log('Información de la solicitud', this.infoRequest);
+    console.log('data', this.dataClarifications2);
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
     this.initForm2();
-    console.log('información dl bien', this.goodValue);
     const token = this.authService.decodeToken();
     let userId = token.preferred_username;
-    console.log('userId', token);
   }
 
   initForm1(): void {
@@ -228,11 +226,11 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       paragraphInitial: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       paragraphFinal: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       //Aclaración
       observations: [
