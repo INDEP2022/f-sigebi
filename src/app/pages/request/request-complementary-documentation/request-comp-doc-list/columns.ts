@@ -10,7 +10,7 @@ export const COLUMNS = {
     sort: false,
   },
   taskNumber: {
-    title: 'Número de Tarea',
+    title: 'No. de Tarea',
     type: 'string',
     sort: false,
   },
@@ -20,7 +20,7 @@ export const COLUMNS = {
     sort: false,
   },
   created: {
-    title: 'Creador',
+    title: 'Autor',
     type: 'string',
     sort: false,
   },
