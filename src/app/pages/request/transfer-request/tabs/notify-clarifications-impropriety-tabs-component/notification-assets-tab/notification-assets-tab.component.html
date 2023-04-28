@@ -1,28 +1,6 @@
 <div>
   <div class="row">
-    <h5><strong>Lista de Bienes</strong></h5>
-  </div>
-
-  <div class="row">
-    <div class="d-flex">
-      <div class="mr-auto p-2"></div>
-      <div class="p-2">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
-      <div class="p-2">
-        <button
-          class="btn btn-primary btn-sm active"
-          (click)="verifyClarification()">
-          <i class="bx bx-check"></i>Verificar Cumplimiento
-        </button>
-      </div>
-
-      <div class="p-2">
-        <button (click)="reloadData()" class="btn btn-info btn-sm active">
-          <i class="fa-thin fa-repeat"></i> Actualizar
-        </button>
-      </div>
-
+    <div class="d-flex justify-content-end">
       <div class="p-2">
         <button (click)="saveData()" class="btn btn-pink btn-sm active">
           <i class="fa-thin fa-repeat"></i> Guardar
@@ -31,6 +9,52 @@
 
       <div class="p-2">
         <button
+          (click)="endClarification()"
+          class="btn btn-primary btn-sm active">
+          <i class="fa-thin fa-repeat"></i> Terminar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <h5><strong>Lista de Bienes</strong></h5>
+  </div>
+  <div class="row">
+    <div class="d-flex">
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div class="p-2">
+        <button
+          id="btn1"
+          class="btn btn-primary btn-sm active"
+          (click)="verifyClarification()">
+          <i class="bx bx-check"></i>Verificar Cumplimiento
+        </button>
+      </div>
+
+      <div class="p-2">
+        <button
+          id="btn2"
+          (click)="reloadData()"
+          class="btn btn-info btn-sm active">
+          <i class="fa-thin fa-repeat"></i> Actualizar
+        </button>
+      </div>
+
+      <div class="p-2">
+        <button
+          id="btn3"
+          (click)="saveData()"
+          class="btn btn-primary btn-sm active">
+          <i class="fa-thin fa-repeat"></i> Guardar
+        </button>
+      </div>
+
+      <div class="p-2">
+        <button
+          id="btn4"
           (click)="endClarification()"
           class="btn btn-primary btn-sm active">
           <i class="fa-thin fa-repeat"></i> Terminar
@@ -63,6 +87,7 @@
       <div class="mr-auto p-2"></div>
       <div class="p-2">
         <button
+          id="btn5"
           class="btn btn-success btn-sm active"
           (click)="changeStatuesTmp()">
           Simular respuesta
@@ -70,6 +95,7 @@
       </div>
       <div class="p-2">
         <button
+          id="btn6"
           class="btn btn-success btn-sm active"
           (click)="acceptClariImpro()">
           Aceptar Aclaraci&oacute;n&#47;Improcedencia
@@ -82,6 +108,7 @@
       </div>
       <div class="p-2">
         <button
+          id="btn7"
           class="btn btn-danger btn-sm active"
           (click)="refuseClarification()">
           Rechazar

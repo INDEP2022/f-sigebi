@@ -29,6 +29,7 @@
     </div>
   </div>
   <!-- TIPO TRANSFERENCIA MANUAL -->
+  <p>{{ tyepOfTransferent }}</p>
   <div class="row" *ngIf="tyepOfTransferent === 'MANUAL'">
     <form [formGroup]="requestForm" class="form-material">
       <div class="row pt-4">
@@ -127,7 +128,7 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ expedienteTransLabel }}</label>
+          <label class="label">{{ extincionDomicile }}</label>
           {{ infoRequest?.transferenceFile }}
         </div>
         <div class="col-md-4">
@@ -251,7 +252,7 @@
           <label class="label">{{ expedienteTransLabel }}</label>
           {{ infoRequest?.transferenceFile }}
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <label class="label">{{ observaciones }}</label>
           {{ infoRequest?.observations }}
         </div>
@@ -262,49 +263,6 @@
           {{ infoRequest?.transferEntNotes }}
         </div>
       </div>
-
-      <!--       <div class="row pt-4" *ngIf="transferenceId === 1">
-        <div class="col-md-4">
-          <label class="label">{{ tipoTransferenteLabel }}</label>
-          {{ infoRequest?.typeRecord }}
-        </div>
-        <div class="col-md-4">
-          <label class="label">{{ noAmparoLabel }}</label>
-          {{ infoRequest?.protectNumber }}
-        </div>
-      </div>
-      <div
-        class="row pt-4"
-        *ngIf="transferenceId === 1 || transferenceId === 3">
-        <div class="col-md-4">
-          <label class="label">{{ tocaPenal }}</label>
-          {{ infoRequest?.tocaPenal }}
-        </div>
-        <div class="col-md-4">
-          <label class="label">{{ gestionDestinoLabel }}</label>
-          {{ infoRequest?.destinationManagement }}
-        </div>
-      </div>
-      <div
-        class="row pt-4"
-        *ngIf="transferenceId === 1 || transferenceId === 3">
-        <div class="col-md-4">
-          <label class="label">{{ actaCircunstacial }}</label>
-          {{ infoRequest?.circumstantialRecord }}
-        </div>
-        <div class="col-md-4">
-          <label class="label">{{ averiguacionPreviaLabel }}</label>
-          {{ infoRequest?.previousInquiry }}
-        </div>
-      </div>
-      <div class="row pt-4">
-        <div
-          class="col-md-4"
-          *ngIf="transferenceId === 1 || transferenceId === 3">
-          <label class="label">{{ causaPenal }}</label>
-          {{ infoRequest?.lawsuit }}
-        </div>
-      </div> -->
     </form>
   </div>
   <!-- FIN TIPO TRANSFERENTE SAT -->
@@ -410,18 +368,19 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ expedienteTransLabel }}</label>
-          {{ infoRequest?.transferenceFile }}
+          <label class="label">{{ notasLabel }}</label>
+          {{ infoRequest?.transferEntNotes }}
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <label class="label">{{ observaciones }}</label>
           {{ infoRequest?.observations }}
         </div>
       </div>
+
       <div class="row pt-4">
         <div class="col-md-4">
-          <label class="label">{{ notasLabel }}</label>
-          {{ infoRequest?.transferEntNotes }}
+          <label class="label">{{ tocaPenal }}</label>
+          {{ infoRequest?.tocaPenal }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ misterioPublicLabel }}</label>
@@ -430,29 +389,16 @@
       </div>
 
       <div class="row pt-4">
-        <!-- <div class="col-md-4">
-          <label class="label">{{ tipoTransferenteLabel }}</label>
-          {{ infoRequest?.typeRecord }}
-        </div> -->
         <div class="col-md-4">
-          <label class="label">{{ tocaPenal }}</label>
-          {{ infoRequest?.tocaPenal }}
+          <label class="label">{{ actaCircunstacial }}</label>
+          {{ infoRequest?.circumstantialRecord }}
         </div>
         <div class="col-md-4">
           <label class="label">{{ noAmparoLabel }}</label>
           {{ infoRequest?.protectNumber }}
         </div>
       </div>
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <label class="label">{{ actaCircunstacial }}</label>
-          {{ infoRequest?.circumstantialRecord }}
-        </div>
-        <div class="col-md-4">
-          <label class="label">{{ gestionDestinoLabel }}</label>
-          {{ infoRequest?.destinationManagement }}
-        </div>
-      </div>
+
       <div class="row pt-4">
         <div class="col-md-4">
           <label class="label">{{ causaPenal }}</label>
@@ -463,7 +409,12 @@
           {{ infoRequest?.previousInquiry }}
         </div>
       </div>
-      <div class="row pt-4"></div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <label class="label">{{ extincionDomicile }}</label>
+          {{ infoRequest?.transferenceFile }}
+        </div>
+      </div>
     </form>
   </div>
 </div>

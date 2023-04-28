@@ -22,7 +22,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     sort: false,
   },
   dDocAuthor: {
-    title: 'No. Autor',
+    title: 'Autor',
     type: 'string',
     sort: false,
   },
@@ -118,7 +118,7 @@ export const DOC_GOODS_COLUMNS = {
     sort: false,
   },
   dDocAuthor: {
-    title: 'No. Autor',
+    title: 'Autor',
     type: 'string',
     sort: false,
   },

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -16,10 +19,10 @@ import { PartializeGeneralGoodService } from '../services/partialize-general-goo
 })
 export class GoodFormComponent extends AlertButton implements OnInit {
   paramsGoods = new FilterParams();
+  goodFilter = SearchFilter.LIKE;
   // operator = SearchFilter.LIKE;
   constructor(
     private service: PartializeGeneralGoodService,
-    private fb: FormBuilder,
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
     private statusService: StatusGoodService
@@ -40,20 +43,23 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   get goodsList() {
+    // this.paramsGoods = new FilterParams();
     this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
     this.paramsGoods.addFilter2('filter.extDomProcess=$not:$null');
     this.paramsGoods.addFilter2('filter.unit=$not:$null');
-    this.paramsGoods.addFilter2('filter.locationType=$not:$null');
-    this.paramsGoods.addFilter2('filter.originSignals=$not:$null');
-    this.paramsGoods.addFilter2('filter.registerInscrSol=$not:$null');
-    this.paramsGoods.addFilter2('filter.proficientOpinion=$not:$null');
-    this.paramsGoods.addFilter2('filter.valuerOpinion=$not:$null');
-    this.paramsGoods.addFilter2('filter.opinion=$not:$null');
+    this.paramsGoods.addFilter2('filter.appraisalCurrencyKey=$not:$null');
+    // this.paramsGoods.addFilter2('filter.locationType=$not:$null');
+    // this.paramsGoods.addFilter2('filter.originSignals=$not:$null');
+    // this.paramsGoods.addFilter2('filter.registerInscrSol=$not:$null');
+    // this.paramsGoods.addFilter2('filter.proficientOpinion=$not:$null');
+    // this.paramsGoods.addFilter2('filter.valuerOpinion=$not:$null');
+    // this.paramsGoods.addFilter2('filter.opinion=$not:$null');
     this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
-    this.paramsGoods.addFilter2('filter.rackNumber=$not:$null');
-    this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
-    this.paramsGoods.addFilter2('filter.statusResourceRevision=$not:$null');
-    this.paramsGoods.addFilter2('filter.=$not:$null');
+    // this.paramsGoods.addFilter2('filter.rackNumber=$not:$null');
+    // this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
+    // this.paramsGoods.addFilter2('filter.statusResourceRevision=$not:$null');
+    this.paramsGoods.addFilter2('filter.fractionId=$not:$null');
+    // this.paramsGoods.addFilter2('filter.=$not:$null')
     return this.goodService.getAll(this.paramsGoods.getParams());
   }
 
@@ -96,11 +102,13 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   private async validateGood(good: IGood) {
-    let mensaje = await firstValueFrom(this.goodService.getValigFlag(good.id));
+    let mensaje = await firstValueFrom(
+      this.goodService.getValigFlag(good.goodId)
+    );
     if (mensaje.includes('no esta Conciliado')) {
       return { bandera: 0, mensaje };
     }
-    mensaje = await firstValueFrom(this.goodService.getValigSat(good.id));
+    mensaje = await firstValueFrom(this.goodService.getValigSat(good.goodId));
     if (
       mensaje.includes(
         'no cuenta con un estatus correcto para poder parcializar'
@@ -114,6 +122,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   async selectGood(good: IGood) {
     let bandera;
     let clasif: number;
+    console.log(good.goodClassNumber);
     if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
       bandera = 0;
       const validacion = await this.validateGood(good);
@@ -129,7 +138,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       this.onLoadToast(
         'error',
         'Parcialización',
-        'Bien ' + good.id + ' no cuenta con clasificador'
+        'Bien ' + good.goodId + ' no cuenta con clasificador'
       );
       return;
     }
@@ -140,7 +149,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         this.onLoadToast(
           'error',
           'Parcialización',
-          'Bien ' + good.id + ' no cuenta con importe'
+          'Bien ' + good.goodId + ' no cuenta con importe'
         );
         return;
       }
@@ -160,7 +169,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       : null;
     // console.log(estatusGood);
     this.form.setValue({
-      noBien: good.id,
+      noBien: good.goodId,
       cantPadre: good.goodsPartializationFatherNumber,
       descripcion: good.description,
       cantidad: good.quantity,
