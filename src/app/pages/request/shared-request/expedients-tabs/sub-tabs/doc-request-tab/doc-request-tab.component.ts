@@ -258,7 +258,7 @@ export class DocRequestTabComponent
 
           if (transferent != 1) {
             const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document' && item.xidTransferente != 1) {
+              if (item.dDocType == 'Document') {
                 return item;
               }
             });
