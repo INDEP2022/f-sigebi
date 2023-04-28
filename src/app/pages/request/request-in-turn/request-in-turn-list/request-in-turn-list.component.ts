@@ -4,7 +4,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
@@ -27,7 +27,7 @@ import { REQUEST_IN_TURN_COLUMNS } from './request-in-turn-columns';
 export class RequestInTurnListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   paragraphs = new LocalDataSource(); //: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
 
   requestSelected: IRequestInTurn[] = [];
 
@@ -38,7 +38,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   stationService = inject(StationService);
   authorityService = inject(AuthorityService);
   affairService = inject(AffairService);
-
+  active: boolean = false;
   listRequest: any;
   listTable: any[] = [];
 
@@ -53,6 +53,12 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       columns: REQUEST_IN_TURN_COLUMNS,
     };
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      if (this.active) this.getRequest();
+      // params.page = data.page;
+      // params.limit = data.limit;
+    });
   }
 
   openTurnRequests() {
@@ -80,34 +86,30 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     this.modalService.show(RequestInTurnSelectedComponent, config);
   }
 
-  searchForm(params: any) {
-    console.log(params);
-    this.params.value.page = params.page;
-    this.params.value.limit = params.limit;
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      console.log(data);
-      params.page = data.page;
-      params.limit = data.limit;
-      this.getRequest(params);
-    });
+  searchForm(params: FilterParams) {
+    this.active = true;
+    this.params.next(params);
+    // this.params.value.page = params.page;
+    // this.params.value.limit = params.limit;
   }
 
-  getRequest(params?: any): any {
+  getRequest(): any {
     this.loading = true;
-    this.requestService.getAll(params).subscribe(
-      (data: IListResponse<IRequest>) => {
+    this.requestService.getAll(this.params.getValue().getParams()).subscribe({
+      next: (data: IListResponse<IRequest>) => {
         console.log(data);
+
         this.totalItems = Number(data.count);
         this.getresponse(data.data);
       },
-      error => {
+      error: error => {
         this.loading = false;
         this.totalItems = 0;
         this.paragraphs.load([]);
         this.onLoadToast('error', '', `${error.error.message}`);
         console.log(error);
-      }
-    );
+      },
+    });
   }
 
   getresponse(data: any) {
@@ -121,18 +123,29 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
           item['datePaper'] = new Date(item.paperDate)
             .toLocaleDateString()
             .toString();
-          item['authorityName'] = item.authority.authorityName;
+          item['authorityName'] = item.authority
+            ? item.authority.authorityName
+            : '';
 
-          item['delegationName'] = item.regionalDelegation.description;
+          item['delegationName'] = item.regionalDelegation
+            ? item.regionalDelegation.description
+            : '';
 
-          item['stateOfRepublicName'] = item.state.descCondition;
+          item['stateOfRepublicName'] = item.state
+            ? item.state.descCondition
+            : '';
 
-          item['transferentName'] = item.transferent.name;
+          item['transferentName'] = item.transferent
+            ? item.transferent.name
+            : '';
 
-          item['stationName'] = item.emisora.stationName;
+          item['stationName'] = item.emisora ? item.emisora.stationName : '';
 
           if (item.affair) {
-            const affairService = this.affairService.getById(item.affair);
+            const affairService = this.affairService.getByIdAndOrigin(
+              item.affair,
+              'SAMI'
+            );
 
             this.listTable = [];
             forkJoin([affairService]).subscribe(
@@ -153,6 +166,8 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
       Promise.all(promises)
         .then(result => {
+          console.log(data);
+
           this.paragraphs.load(data);
           this.loading = false;
           resolve(data);
