@@ -30,6 +30,13 @@ import {
         margin-right: 5px;
         padding: 3px;
       }
+      .spent-inputs input {
+        border: none;
+        border-bottom: 1px solid black;
+        padding: 3px;
+        margin: 5px;
+        outline: none;
+      }
     `,
   ],
 })
@@ -97,14 +104,32 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   formGad = new FormGroup({});
   onInit(): void {
     this.columns.forEach((column, index) => {
-      this.formTips.addControl(`TIP${index}`, new FormControl(''));
-      this.formGas.addControl(`GAS${index}`, new FormControl(''));
-      this.formGas.addControl(`GAD${index}`, new FormControl(''));
+      this.formTips.addControl(`TIP${index + 1}`, new FormControl(''));
+      this.formGas.addControl(`GAS${index + 1}`, new FormControl(''));
+      this.formGad.addControl(`GAD${index + 1}`, new FormControl(''));
     });
+  }
+
+  onClickBtnProcessExtraction() {
+    _onClickBtnProcessExtraction(this.columns, this.formTips, this.formGas);
+  }
+
+  onClickBtnFileExcel() {
+    _onClickBtnFileExcel();
   }
 }
 
-function onClickBtnProcessExtraction(
+function _onClickBtnFileExcel() {
+  const newWindow = window.open('file:///C:/siabexcelpath.pth');
+  console.log({ newWindow });
+  if (newWindow) {
+    newWindow.opener = null;
+    newWindow.close();
+  }
+  // if (newWindow.opener)
+}
+
+function _onClickBtnProcessExtraction(
   columns: string[],
   formTips: FormGroup,
   formGas: FormGroup
@@ -120,6 +145,8 @@ function onClickBtnProcessExtraction(
   let colV = 0;
   let banV = 0;
   columns.forEach((column, index) => {
+    index++;
+    console.log(`TIP${index}`);
     const control = formTips.get(`TIP${index}`);
     const controlValue = control?.value;
     switch (controlValue) {
@@ -141,13 +168,6 @@ function onClickBtnProcessExtraction(
     }
   });
   const messages = [];
-  // if (banB == 0) {
-  //   messages.push('Se debe especificar la columna del No. de Bien');
-  //   // showToast({
-  //   //   icon: 'warning',
-  //   //   text: 'Se debe especificar la columna del No. de Bien'
-  //   // })
-  // }
   let ban = false;
   if (banB === 0 || banB > 1) {
     messages.push(
@@ -182,9 +202,15 @@ function onClickBtnProcessExtraction(
     );
     ban = true;
   }
-  showToast({
-    icon: 'warning',
-    text: messages.join('<br>'),
-  });
+  if (messages.length > 0) {
+    showToast({
+      icon: 'warning',
+      title: 'Advertencia',
+      text: messages.join('\n'),
+    });
+  }
+  console.log(colB);
   if (ban) return;
+
+  //TODO: CONTINUAR CON EL PROCESO DEL LOOP
 }

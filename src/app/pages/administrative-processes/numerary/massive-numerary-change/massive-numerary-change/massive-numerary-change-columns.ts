@@ -39,6 +39,11 @@ export const MASSIVE_NUMERARY_CHANGE_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  i: {
+    title: 'I',
+    type: 'string',
+    sort: false,
+  },
   j: {
     title: 'J',
     type: 'string',

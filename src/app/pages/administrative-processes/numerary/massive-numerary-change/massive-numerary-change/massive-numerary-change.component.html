@@ -5,17 +5,23 @@
   <div body>
     <div class="row mt-4">
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active" (click)="openForm()">
+        <button
+          class="btn btn-secondary btn-sm active"
+          (click)="onClickBtnFileExcel()">
           Abrir archivo de MS Excel 4.0
         </button>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active">
+        <button
+          class="btn btn-secondary btn-sm active"
+          (click)="onClickBtnFileExcel()">
           Abrir archivo de Texto CSV
         </button>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active">
+        <button
+          (click)="onClickBtnProcessExtraction()"
+          class="btn btn-secondary btn-sm active">
           Proceso de extracción
         </button>
       </div>
@@ -73,9 +79,9 @@
               class="selects-origin-data"
               *ngFor="let item of columns; let i = index">
               <label>{{ item }}:</label>
-              <select formControlName="TIP{{ i }}">
+              <select formControlName="TIP{{ i + 1 }}">
                 <option selected>Opción {{ item }}</option>
-                <option value="0">Otro</option>
+                <option value="O">Otro</option>
                 <option value="B">No. Bien</option>
                 <option value="G">Gasto</option>
                 <option value="I">Ingreso neto</option>
@@ -91,25 +97,22 @@
         </div>
         <div class="row mt-4 mx-0">
           <h5 class="title">Gastos</h5>
-          <div [formGroup]="formGas" class="d-flex">
-            <div *ngFor="let item of columns; let i = index">
-              <label>Concepto {{ item }}:</label>
-              <!-- <form-field [control]="form.get('concept')" label="Concepto"> -->
-              <input
-                formControlName="GADS{{ i }}"
-                type="text"
-                class="form-control" />
-              <!-- </form-field> -->
+          <div class="overflow-auto">
+            <div [formGroup]="formGas" class="d-flex spent-inputs">
+              <div *ngFor="let item of columns; let i = index">
+                <label>Concepto {{ item }}:</label>
+                <!-- <form-field [control]="form.get('concept')" label="Concepto"> -->
+                <input formControlName="GAS{{ i + 1 }}" type="text" class="" />
+                <!-- </form-field> -->
+              </div>
             </div>
-          </div>
-          <div class="d-flex">
-            <div *ngFor="let item of columns; let i = index">
-              <!-- <form-field [control]="form.get('description')" label="Descripción"> -->
-              <input
-                type="text"
-                class="form-control"
-                formControlName="GAD{{ i }}" />
-              <!-- </form-field> -->
+            <div [formGroup]="formGad" class="d-flex spent-inputs">
+              <div *ngFor="let item of columns; let i = index">
+                <!-- <form-field [control]="form.get('description')" label="Descripción"> -->
+                <label>Descripción {{ item }}:</label>
+                <input type="text" class="" formControlName="GAD{{ i + 1 }}" />
+                <!-- </form-field> -->
+              </div>
             </div>
           </div>
         </div>
