@@ -313,6 +313,10 @@ export class RegistrationOfRequestsComponent
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
+        console.log({ data });
+        if (!data?.typeOfTransfer) {
+          data.typeOfTransfer = 'MANUAL';
+        }
         this.requestData = data as IRequest;
         this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();

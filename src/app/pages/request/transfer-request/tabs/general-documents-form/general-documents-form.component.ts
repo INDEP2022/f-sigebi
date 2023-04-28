@@ -397,8 +397,9 @@ export class GeneralDocumentsFormComponent
     Swal.fire({
       title: 'Asociar Solicitud',
       text:
-        'Esta seguro de querer asociar la solicitud actual con el expediente Nº ' +
-        request.recordId,
+        '¿Está seguro de querer asociar la solicitud actual con el expediente Nº ' +
+        request.recordId +
+        '?',
       icon: 'info',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
