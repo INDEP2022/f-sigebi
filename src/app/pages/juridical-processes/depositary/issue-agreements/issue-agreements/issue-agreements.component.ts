@@ -16,7 +16,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 /** SERVICE IMPORTS */
 import { addDays, format } from 'date-fns';
 import { BehaviorSubject, from, map, takeUntil } from 'rxjs';
-import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { DATE_FORMAT } from 'src/app/common/constants/data-formats/date.format';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
@@ -25,6 +25,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DatePipe } from '@angular/common';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { getUser } from 'src/app/common/helpers/helpers';
 
 /** ROUTING MODULE */
 
@@ -161,6 +163,7 @@ export class IssueAgreementsComponent
     private goodService: GoodService,
     private statusGoodService: StatusGoodService,
     private typeRelevantService: TypeRelevantService,
+    private historyGoodService: HistoryGoodService,
 
   ) {
     super();
@@ -185,9 +188,34 @@ export class IssueAgreementsComponent
   }
   onSelectDelegation(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => console.log(data.row, data.toggle),
+      next: data => {
+        this.goodService.update({
+          id: parseInt(data.row.id),
+          goodId: parseInt(data.row.goodId),
+          statusResourceReview: "ACEPTADO RECURSO DE REVISION"
+        }).subscribe({
+          next: datagod => {
+            this.createLogs(data.row);
+          }
+        })
+      },
     });
   }
+  public createLogs(dataLog:any ){
+    console.log(dataLog);
+
+    const params = {
+        propertyNum:parseInt(dataLog.id),
+        status: dataLog.status ? dataLog.status :'' ,
+        changeDate:new Date() ,
+        userChange: getUser(),
+        statusChangeProgram:'FACTJUREMISIONACU' ,
+        reasonForChange: 'Automatico',
+    };
+  this.historyGoodService.create(params).subscribe(data => {
+
+  })
+  };
   private prepareForm() {
     this.form = this.fb.group({
       noBien: ['', [Validators.required]], //*
@@ -210,8 +238,13 @@ export class IssueAgreementsComponent
   private getData() {
     let data: any[] = [];
     this.loading = true;
+    // this.params.value.addFilter('statusResourceReview',"DICTAMINADO RECURSO DE REVISION",SearchFilter.ILIKE);
+
     const filter = this.params.getValue().getParams();
-    this.goodService.getAllFilter(filter).subscribe({
+    const filterdefault = `${filter}&filter.statusResourceReview=$ilike:DICTAMINADO RECURSO DE REVISION`
+    console.log(filterdefault);
+
+    this.goodService.getAllFilter(filterdefault).subscribe({
       next: val => {
         this.totalItems = val.count;
         from(val.data)
@@ -233,6 +266,7 @@ export class IssueAgreementsComponent
               if (data.length == val.data.length) {
                 setTimeout(() => {
                   this.dataTable = [...data];
+                  console.log(this.dataTable);
                   this.loading = false;
                 }, 500);
               }
@@ -280,7 +314,6 @@ export class IssueAgreementsComponent
 
       this.paginator();
     } else {
-      console.log('entre aelse ');
       this.message('info', 'Error', 'Debe llenar algun filtro.');
     }
   }
@@ -292,11 +325,11 @@ export class IssueAgreementsComponent
   }
   buildFilters() {
     var form = this.searchForm.getRawValue();
+    this.params.getValue().removeAllFilters()
     for (const key in form) {
       if (form[key] !== null) {
 
         if(key === 'physicalReceptionDate'){
-          // form[key] = format(form[key],DATE_FORMAT);
           form[key] = new DatePipe('en-EN').transform( form[key], 'dd/MM/yyyy')
         }
         this.params.value.addFilter(key, form[key]);
