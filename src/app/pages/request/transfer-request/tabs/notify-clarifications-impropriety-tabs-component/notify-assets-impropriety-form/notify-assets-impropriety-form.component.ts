@@ -99,7 +99,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       jobClarificationKey: [
-        null,
+        this.dataClarifications2.chatClarification.keyClarificationPaper,
         [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
       ],
       senderCharge: [
@@ -111,12 +111,12 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       userAreaCaptures: [
-        null,
+        this.dataClarifications2?.chatClarification?.areaUserCapture,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
 
       webMail: [
-        null,
+        this.dataClarifications2?.chatClarification?.emailWeb,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
       /*
