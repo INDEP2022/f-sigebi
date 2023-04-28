@@ -128,7 +128,7 @@ export class NotificationAssetsTabComponent
     this.settings2 = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
+
       columns: { ...NOTIFY_ASSETS_COLUMNS },
     };
 
