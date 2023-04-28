@@ -9,10 +9,7 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import {
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 
 import { maxDate } from 'src/app/common/validations/date.validators';
@@ -71,9 +68,6 @@ export class TotaldocReceivedDestinationareaComponent
   }
 
   getAreas(params: ListParams) {
-    //Todo:add filter by description
-    params['filter.dsarea'] = `${SearchFilter.ILIKE}:${params.text}`;
-
     this.departamentService.getAll(params).subscribe(
       data => {
         this.areas = new DefaultSelect(data.data, data.count);
