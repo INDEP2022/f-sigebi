@@ -83,6 +83,14 @@
           Aceptar Aclaraci&oacute;n&#47;Improcedencia
         </button>
       </div>
+      <div class="p-2" *ngIf="showButton">
+        <button
+          id="btn8"
+          class="btn btn-success btn-sm active"
+          (click)="FinishClariImpro()">
+          Finalizar Aclaraci&oacute;n&#47;improcedencia
+        </button>
+      </div>
       <div class="p-2">
         <button class="btn btn-info btn-sm active" (click)="satAnswer()">
           Ver Respuesta Aclaraci&oacute;n
