@@ -643,6 +643,14 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
+      lien: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      gravPleaseTrans: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
     });
   }
 
@@ -1542,15 +1550,13 @@ export class DetailAssetsTabComponentComponent
   }
 
   isSavingData() {
-    this.requestHelperService.currentRefresh
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          if (data) {
-            this.save();
-          }
-        },
-      });
+    this.requestHelperService.currentRefresh.subscribe({
+      next: data => {
+        if (data) {
+          this.save();
+        }
+      },
+    });
   }
 
   setGoodDomicilieSelected(domicilie: any) {
