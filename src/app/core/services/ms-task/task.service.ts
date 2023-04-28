@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { TaskEndpoints } from 'src/app/common/constants/endpoints/ms-task-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { ITask } from '../../models/ms-task/task-model';
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +57,7 @@ export class TaskService extends HttpService {
     return this.get<any>(TaskEndpoints.FindAll, params);
   }
 
-  update(id: number | string, body: Object): Observable<any> {
+  update(id: number | string, body: ITask): Observable<any> {
     return this.put<any>(`${TaskEndpoints.Update}/${id}`, body);
   }
 }

@@ -26,6 +26,8 @@ export class GoodsQueryService extends HttpService {
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
   private routeGoodsProg = GoodsQueryEndpoints.ProgrammingGood;
   private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
+  private catMeasureUnitsView: GoodsQueryEndpoints.MeasureUnitsView;
+
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
@@ -165,6 +167,10 @@ export class GoodsQueryService extends HttpService {
 
   getHistoryIndicatorsView(params: _Params) {
     return this.get('views/history-indicator-view', params);
+  }
+
+  getCatMeasureUnitView(param: ListParams | string) {
+    return this.get(`views/catMeasureUnitsView`, param);
   }
 
   private makeParams(params: ListParams): HttpParams {

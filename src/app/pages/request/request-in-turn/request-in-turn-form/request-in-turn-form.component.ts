@@ -1,7 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -69,9 +73,7 @@ export class RequestInTurnFormComponent implements OnInit {
   ngOnInit(): void {
     this.initialForm();
     this.deleRegionalId = Number(this.authService.decodeToken().department);
-    this.getTransferente(new ListParams());
     this.getRegionalDelegationId(new ListParams());
-    this.getStateOfRepublic(new ListParams());
     this.getAffair(new ListParams());
   }
 
@@ -113,12 +115,17 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          this.deleRegionalId = data;
-          this.getStateOfRepublic(new ListParams());
+          this.selectTransfer = new DefaultSelect();
+
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+
           this.searchForm.controls['stateOfRepublic'].reset();
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
+          this.deleRegionalId = data;
+          this.getStateOfRepublic(new ListParams());
         }
       }
     );
@@ -126,12 +133,19 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['stateOfRepublic'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          this.stateId = data;
-          this.getTransferente(new ListParams());
+          console.log('rest2323232');
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+          this.selectTransfer = new DefaultSelect();
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
+          this.stateId = data;
+          this.getTransferente(new ListParams());
         } else {
+          this.selectStation = new DefaultSelect();
+          this.selectAuthority = new DefaultSelect();
+          this.selectTransfer = new DefaultSelect();
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
@@ -140,15 +154,23 @@ export class RequestInTurnFormComponent implements OnInit {
     );
     this.searchForm.controls['transfer'].valueChanges.subscribe((data: any) => {
       if (data) {
+        this.selectStation = new DefaultSelect();
+        this.selectAuthority = new DefaultSelect();
+
+        this.searchForm.controls['station'].reset();
+        this.searchForm.controls['authority'].reset();
         this.transferenceId = data;
         this.getStation(new ListParams());
       } else {
+        this.selectStation = new DefaultSelect();
+        this.selectAuthority = new DefaultSelect();
         this.searchForm.controls['station'].reset();
         this.searchForm.controls['authority'].reset();
       }
     });
     this.searchForm.controls['station'].valueChanges.subscribe((data: any) => {
       if (data) {
+        this.selectAuthority = new DefaultSelect();
         this.stationId = data;
         this.getAuthority(new ListParams());
       }
@@ -159,6 +181,7 @@ export class RequestInTurnFormComponent implements OnInit {
     //const id = this.authService.decodeToken().department;
     //return id;
     params['filter.description'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'description:ASC';
     this.regDelegationService.getAll(params).subscribe({
       next: resp => {
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
@@ -179,24 +202,24 @@ export class RequestInTurnFormComponent implements OnInit {
   }
   getTransferente(params?: ListParams) {
     params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'nameTransferent:ASC';
     this.transferentesSaeService
       .getStateByTransferentKey(this.stateId, params)
-      .subscribe(
-        (data: any) => {
+      .subscribe({
+        next: data => {
           data.data.map((data: any) => {
             data.nameAndId = `${data.idTransferee} - ${data.transferent.nameTransferent}`;
             return data;
           });
           this.selectTransfer = new DefaultSelect(data.data, data.count);
         },
-        error => {
-          this.selectTransfer = new DefaultSelect();
-        }
-      );
+        error: error => (this.selectTransfer = new DefaultSelect()),
+      });
   }
 
   getStateOfRepublic(params?: ListParams) {
     params['filter.regionalDelegation'] = `$eq:${this.deleRegionalId}`;
+    params['sortBy'] = 'keyState:ASC';
     this.delegationStateService.getAll(params).subscribe(
       (data: any) => {
         let result = data.data
@@ -236,9 +259,11 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getAuthority(params?: ListParams) {
+    this.selectAuthority = new DefaultSelect();
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idStation'] = `$eq:${this.stationId}`;
     params['filter.idTransferer'] = `$eq:${this.transferenceId}`;
+    params['sortBy'] = 'authorityName:ASC';
     delete params.limit;
     delete params.page;
     delete params['search'];
@@ -246,6 +271,7 @@ export class RequestInTurnFormComponent implements OnInit {
     this.stationService;
     this.authorityService.getAll(params).subscribe(
       (data: IListResponse<IAuthority>) => {
+        console.log(data);
         data.data.map((data: any) => {
           data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
@@ -264,91 +290,122 @@ export class RequestInTurnFormComponent implements OnInit {
 
     params.page = 1;
     params.limit = 10;
-    delete params.inicio;
-    delete params.pageSize;
-    delete params.take;
-    delete params.text;
+    // delete params.inicio;
+    // delete params.pageSize;
+    // delete params.take;
+    // delete params.text;
     console.log(params);
     this.sendSearchForm.emit(params);
   }
 
   reset(): void {
+    this.selectTransfer = new DefaultSelect();
+    // this.selectStation = new DefaultSelect();
+    this.selectAuthority = new DefaultSelect();
+    this.selectState = new DefaultSelect();
+    // // this.selectAffeir = new DefaultSelect();
+    // // this.selectRegDele = new DefaultSelect();
+    // console.log('rest');
     this.searchForm.reset();
     this.resetForm.emit(true);
     this.deleRegionalId = Number(this.authService.decodeToken().department);
   }
 
   getFormChanges() {
-    var params = new ListParams();
-
+    var params = new FilterParams();
+    params.removeAllFilters();
     //filtro de la delegacion regional
-    const delegationId = this.deleRegionalId;
-    params['filter.regionalDelegationId'] = `$eq:${delegationId}`;
+    this.deleRegionalId
+      ? params.addFilter(
+          'regionalDelegationId',
+          this.deleRegionalId,
+          SearchFilter.EQ
+        )
+      : null;
 
     //filtro estado solicitudes por tunar
-    params['filter.requestStatus'] = '$eq:POR_TURNAR';
+    params.addFilter('requestStatus', 'POR_TURNAR', SearchFilter.EQ);
 
-    //filtro ordenar desc
-    params['sortBy'] = 'applicationDate:DESC';
+    params.sortBy = 'applicationDate:DESC';
+    // //filtro ordenar desc
+    // params.addFilter('sortBy', 'applicationDate:DESC',);
+    // params.getParams().concat('&sortBy=applicationDate:DESC')
+    // params['sortBy'] = 'applicationDate:DESC';
 
     if (this.searchForm.controls['dateRequest'].value != null) {
       let date = this.searchForm.controls['dateRequest'].value;
       let date1 = this.getDateFormat(date[0]);
       let date2 = this.getDateFormat(date[1]);
-
-      params['filter.applicationDate'] = `$btw:${date1},${date2}`;
+      params.addFilter(
+        'applicationDate',
+        `${date1},${date2}`,
+        SearchFilter.BTW
+      );
+      // params['filter.applicationDate'] = `$btw:${date1},${date2}`;
     }
     if (this.searchForm.controls['authority'].value != null) {
       const authority = this.searchForm.controls['authority'].value;
-      params['filter.authorityId'] = `$eq:${authority}`;
+      params.addFilter('authorityId', authority, SearchFilter.EQ);
+      // params['filter.authorityId'] = `$eq:${authority}`;
     }
     if (this.searchForm.controls['ascertainment'].value != null) {
       const ascertainment = this.searchForm.controls['ascertainment'].value;
-      params['filter.previousInquiry'] = `$eq:${ascertainment}`;
+      params.addFilter('previousInquiry', ascertainment, SearchFilter.ILIKE);
+      // params['filter.previousInquiry'] = `$eq:${ascertainment}`;
     }
 
     if (this.searchForm.controls['stateOfRepublic'].value != null) {
       const stateOfRepublic = this.searchForm.controls['stateOfRepublic'].value;
-      params['filter.keyStateOfRepublic'] = `$eq:${stateOfRepublic}`;
+      params.addFilter('keyStateOfRepublic', stateOfRepublic, SearchFilter.EQ);
+      // params['filter.keyStateOfRepublic'] = `$eq:${stateOfRepublic}`;
     }
 
     if (this.searchForm.controls['contributor'].value != null) {
       const contributor = this.searchForm.controls['contributor'].value;
-      params['filter.indicatedTaxpayer'] = `$eq:${contributor}`;
+      params.addFilter('indicatedTaxpayer', contributor, SearchFilter.ILIKE);
+      // params['filter.indicatedTaxpayer'] = `$eq:${contributor}`;
     }
 
     if (this.searchForm.controls['cause'].value != null) {
       const cause = this.searchForm.controls['cause'].value;
-      params['filter.lawsuit'] = `$eq:${cause}`;
+      // params['filter.lawsuit'] = `$eq:${cause}`;
+      params.addFilter('lawsuit', cause, SearchFilter.ILIKE);
     }
 
     if (this.searchForm.controls['transfer'].value != null) {
       const transfer = this.searchForm.controls['transfer'].value;
-      params['filter.transferenceId'] = `$eq:${transfer}`;
+      console.log(transfer);
+      // params['filter.transferenceId'] = `$eq:${transfer}`;
+      params.addFilter('transferenceId', transfer, SearchFilter.EQ);
     }
 
     if (this.searchForm.controls['dateJob'].value != null) {
       const dateJob = this.searchForm.controls['dateJob'].value;
       const date1 = this.getDateFormat(dateJob[0]);
       const date2 = this.getDateFormat(dateJob[1]);
-      params['filter.paperDate'] = `$btw:${date1},${date2}`;
+      // params['filter.paperDate'] = `$btw:${date1},${date2}`;
+      params.addFilter('paperDate', `$btw:${date1},${date2}`, SearchFilter.BTW);
     }
     if (this.searchForm.controls['expedient'].value != null) {
       const expedient = this.searchForm.controls['expedient'].value;
-      params['filter.transferenceFile'] = `$eq:${expedient}`;
+      params.addFilter('transferenceFile', expedient, SearchFilter.ILIKE);
+      // params['filter.transferenceFile'] = `$eq:${expedient}`;
     }
 
     if (this.searchForm.controls['station'].value != null) {
       const station = this.searchForm.controls['station'].value;
-      params['filter.stationId'] = `$eq:${station}`;
+      // params['filter.stationId'] = `$eq:${station}`;
+      params.addFilter('stationId', station, SearchFilter.EQ);
     }
     if (this.searchForm.controls['acta'].value != null) {
       const acta = this.searchForm.controls['acta'].value;
-      params['filter.circumstantialRecord'] = `$eq:${acta}`;
+      params.addFilter('circumstantialRecord', acta, SearchFilter.ILIKE);
+      // params['filter.circumstantialRecord'] = `$eq:${acta}`;
     }
     if (this.searchForm.controls['affair'].value != null) {
       const affair = this.searchForm.controls['affair'].value;
-      params['filter.affair'] = `$eq:${affair}`;
+      params.addFilter('affair', affair, SearchFilter.EQ);
+      // params['filter.affair'] = `$eq:${affair}`;
     }
 
     return params;

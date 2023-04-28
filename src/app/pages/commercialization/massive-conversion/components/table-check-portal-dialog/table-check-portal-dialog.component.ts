@@ -15,7 +15,9 @@ export class TableCheckPortalDialogComponent implements OnInit {
     createdBy: string;
   }[] = [];
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.list);
+  }
 
   close() {
     this.modalRef.hide();

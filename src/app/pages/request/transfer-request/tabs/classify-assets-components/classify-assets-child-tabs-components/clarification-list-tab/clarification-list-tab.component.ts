@@ -74,13 +74,12 @@ export class ClarificationListTabComponent
         next: async (data: any) => {
           const length = data.count;
           this.clarificationsLength = length;
-          console.log(this.clarificationsLength, length);
           const info = data.data.map(async (item: any) => {
             this.idClarification = item.clarificationId;
             const clarification: any = await this.getClarification(
               item.clarificationId
             );
-            item.clarificationId = clarification;
+            item['clarificationName'] = clarification;
           });
 
           Promise.all(info).then(() => {
@@ -98,9 +97,15 @@ export class ClarificationListTabComponent
 
   getClarification(id: number) {
     return new Promise((resolve, reject) => {
-      this.clarificationService.getById(id).subscribe({
-        next: response => {
-          resolve(response.clarification);
+      let params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.clarificationService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0].clarification);
+        },
+        error: error => {
+          console.log(error.error.message);
+          resolve('');
         },
       });
     });

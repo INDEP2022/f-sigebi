@@ -123,7 +123,7 @@
         </form>
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-        <h6>Cargar de Archivos</h6>
+        <h6>Carga de Archivos</h6>
       </div>
       <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
         <div class="form-group m-1 ml-2 mr-2">
@@ -138,10 +138,10 @@
       <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
         <div class="form-group m-1 ml-2 mr-2">
           <button
+            (click)="btnExpedientesCsv($event)"
             type="button"
-            (click)="btnExpedientesCsv()"
             class="btn btn-primary active btn-sm text-wrap">
-            Carga Expedientes csv
+            Cargar Expedientes csv
           </button>
         </div>
       </div>
@@ -202,16 +202,20 @@
     <!-- TABLAS  -->
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"></ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettings"
+            [source]="dataTable"></ng2-smart-table>
+        </div>
       </div>
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings1"
-          [source]="dataTable1"></ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettings1"
+            [source]="dataTable1"></ng2-smart-table>
+        </div>
       </div>
     </div>
     <!-- TABLAS  -->

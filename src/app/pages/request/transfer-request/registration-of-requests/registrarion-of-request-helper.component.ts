@@ -113,7 +113,7 @@ export class RegistrationHelper extends BasePage {
 
     const lisDocument: any = await this.getDocument(idRequest);
     //Todo: verificar y obtener documentos de la solicitud
-    if (request.recordId === null) {
+    /*if (request.recordId === null) {
       //Verifica si hay expediente
       this.message(
         'error',
@@ -121,7 +121,7 @@ export class RegistrationHelper extends BasePage {
         'La solicitud no tiene expediente asociado'
       );
       validoOk = false;
-    } else if (lisDocument && lisDocument < 1) {
+    } else*/ if (lisDocument && lisDocument < 1) {
       this.message(
         'error',
         'Error sin archivos',
@@ -235,6 +235,7 @@ export class RegistrationHelper extends BasePage {
 
         for (let i = 0; i < goods.data.length; i++) {
           const good = goods.data[i];
+
           if (good.addressId == null && good.idGoodProperty == null) {
             sinDireccion = true;
             this.message(
