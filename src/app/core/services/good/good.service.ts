@@ -101,6 +101,6 @@ export class GoodService implements ICrudMethods<IGood> {
   }
   getByIdNew(id: string | number, goodId: number | string): Observable<any> {
     const route = `good/api/v1/good/getGoodbyId`;
-    return this.http.get(`${environment.API_URL}/${route}/${id}/${goodId}`);
+    return this.http.get(`${environment.API_URL}${route}/${id}/${goodId}`);
   }
 }
