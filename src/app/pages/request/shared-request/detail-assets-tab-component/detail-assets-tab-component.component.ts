@@ -959,8 +959,8 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          const result = resp.data.filter((x: any) => x.uomCode === id);
-          this.ligieUnit = result[0].measureTlUnit;
+          //const result = resp.data.filter((x: any) => x.uomCode === id);
+          this.ligieUnit = resp.data[0].measureTlUnit;
         },
       });
   }
