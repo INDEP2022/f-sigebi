@@ -134,18 +134,14 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   confirm() {
     let request = this.parameter.getRawValue() as IRequest;
     if (!request.regionalDelegationId) {
-      this.onLoadToast(
-        'error',
-        '',
-        'Se requiere tener una Delegación Regional'
-      );
+      this.onLoadToast('error', '', 'No cuenta con una Delegación Regional');
     } else if (!request.transferenceId) {
-      this.onLoadToast('error', '', 'Se requiere tener una transferente');
+      this.onLoadToast('error', '', 'No cuenta con una transferente');
     }
     this.alertQuestion(
       'warning',
       'Generar Carátula',
-      '¿Estas seguro de querer generar la carátula?'
+      '¿Está seguro de querer generar la carátula?'
     ).then(val => {
       if (val.isConfirmed) {
         this.generateCaratula();

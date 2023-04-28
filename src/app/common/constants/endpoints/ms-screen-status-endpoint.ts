@@ -4,4 +4,5 @@ export enum ScreenStatusEndpoints {
   StatusXScreen = 'seg-app-screen/get-dynamic-for-status-x-screen',
   SegAppScreen = 'seg-app-screen',
   ScreenTable = 'screen-table',
+  StatusXScreenList = 'status-x-screen',
 }

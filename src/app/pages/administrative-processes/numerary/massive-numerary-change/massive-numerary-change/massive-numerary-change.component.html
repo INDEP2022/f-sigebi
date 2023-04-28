@@ -66,31 +66,51 @@
             </form-field>
           </div>
         </div>
-        <div class="row mt-4">
+        <div class="row mt-4 m-0">
           <h5 class="title">Origen de Datos</h5>
-          <div class="col-md-3 pt-4">
+          <div [formGroup]="formTips" class="d-flex overflow-auto mb-3">
+            <div
+              class="selects-origin-data"
+              *ngFor="let item of columns; let i = index">
+              <label>{{ item }}:</label>
+              <select formControlName="TIP{{ i }}">
+                <option selected>Opción {{ item }}</option>
+                <option value="0">Otro</option>
+                <option value="B">No. Bien</option>
+                <option value="G">Gasto</option>
+                <option value="I">Ingreso neto</option>
+                <option value="V">Iva</option>
+              </select>
+            </div>
+          </div>
+          <!-- <div class="col-md-3 pt-4">
             <form-field [control]="form.get('data')" label="Datos">
               <input type="text" class="form-control" formControlName="data" />
             </form-field>
-          </div>
+          </div> -->
         </div>
-        <div class="row mt-4">
+        <div class="row mt-4 mx-0">
           <h5 class="title">Gastos</h5>
-          <div class="col-md-3 pt-4">
-            <form-field [control]="form.get('concept')" label="Concepto">
+          <div [formGroup]="formGas" class="d-flex">
+            <div *ngFor="let item of columns; let i = index">
+              <label>Concepto {{ item }}:</label>
+              <!-- <form-field [control]="form.get('concept')" label="Concepto"> -->
               <input
+                formControlName="GADS{{ i }}"
                 type="text"
-                class="form-control"
-                formControlName="concept" />
-            </form-field>
+                class="form-control" />
+              <!-- </form-field> -->
+            </div>
           </div>
-          <div class="col-md-3 pt-4">
-            <form-field [control]="form.get('description')" label="Descripción">
+          <div class="d-flex">
+            <div *ngFor="let item of columns; let i = index">
+              <!-- <form-field [control]="form.get('description')" label="Descripción"> -->
               <input
                 type="text"
                 class="form-control"
-                formControlName="description" />
-            </form-field>
+                formControlName="GAD{{ i }}" />
+              <!-- </form-field> -->
+            </div>
           </div>
         </div>
       </form>
@@ -110,7 +130,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="dataPrevious">
           </ng2-smart-table>
         </div>
       </div>
