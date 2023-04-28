@@ -125,6 +125,11 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.log(error);
+        this.onLoadToast(
+          'info',
+          'Búsqueda Avanzada',
+          'No se encontraron registros'
+        );
       },
     });
   }

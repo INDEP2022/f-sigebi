@@ -206,7 +206,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       let good = this.goodTransfer;
       let goodResDev: IPostGoodResDev = {};
-      debugger;
+
       goodResDev.goodId = Number(good.id);
       goodResDev.unitExtent = good.ligieUnit;
       goodResDev.statePhysical = good.physicalStatus
