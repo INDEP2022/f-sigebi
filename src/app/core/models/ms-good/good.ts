@@ -362,6 +362,17 @@ export interface Estatus {
   destiny: string;
 }
 
+export interface IVban {
+  array: [
+    {
+      screenKey: string;
+      goodNumber: number;
+      identificador: string;
+      typeAct: string;
+    }
+  ];
+}
+
 export interface GoodGetData {
   goodNumber: number;
   subDelegationNumber: number;
