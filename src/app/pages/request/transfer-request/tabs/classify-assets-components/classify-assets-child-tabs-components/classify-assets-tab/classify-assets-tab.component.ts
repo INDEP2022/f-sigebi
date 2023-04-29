@@ -739,7 +739,11 @@ export class ClassifyAssetsTabComponent
       goods.fractionId = Number(goods.fractionId.id);
     }
 
-    let goodAction: any = null;
+    //se modifica el estadus del bien
+    if (goods.transferType === 'PGR_SAE' || goods.transferType === 'PGR_SAE') {
+      goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+    }
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);

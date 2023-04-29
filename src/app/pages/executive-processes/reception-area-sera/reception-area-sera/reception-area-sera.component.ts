@@ -185,7 +185,33 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    this.siabService.fetchReportBlank('blank').subscribe({
+    this.loading = true;
+
+    const { rangeDate, delegation, subdelegation } = this.form.value;
+
+    const startTemp = `${rangeDate[0].getFullYear()}-${
+      rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[0].getUTCMonth() + 1}-${
+      rangeDate[0].getDate() <= 9 ? 0 : ''
+    }${rangeDate[0].getDate()}`;
+
+    const endTemp = `${rangeDate[1].getFullYear()}-${
+      rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[1].getUTCMonth() + 1}-${
+      rangeDate[1].getDate() <= 9 ? 0 : ''
+    }${rangeDate[1].getDate()}`;
+
+    const reportParams = {
+      PF_FECINI: startTemp,
+      PF_FECFIN: endTemp,
+      PARAM_DELEGACION: delegation,
+      PARAM_SUBDELEGACION: subdelegation,
+    };
+    console.log(reportParams);
+    //Todo: Get Real Report
+    /*this.getReport('RCONDIRREPORBIERE', reportParams);*/
+    this.getReportBlank('blank');
+    /*this.siabService.fetchReportBlank('blank').subscribe({
       next: response => {
         console.log('información del blob', response);
         const blob = new Blob([response], { type: 'application/pdf' });
@@ -211,6 +237,58 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
+      },
+    });*/
+  }
+
+  getReport(report: string, params: any): void {
+    this.siabService.fetchReport(report, params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
+  }
+
+  getReportBlank(report: string): void {
+    this.siabService.fetchReportBlank(report).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
       },
     });
   }

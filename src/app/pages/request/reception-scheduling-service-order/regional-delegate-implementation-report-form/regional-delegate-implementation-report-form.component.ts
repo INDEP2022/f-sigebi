@@ -77,7 +77,7 @@ export class RegionalDelegateImplementationReportFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      '¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -94,7 +94,7 @@ export class RegionalDelegateImplementationReportFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas aprobar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      '¿Desea aprobar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

@@ -7,23 +7,29 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-read-info-good',
   templateUrl: './read-info-good.component.html',
   styleUrls: ['./read-info-good.component.scss'],
 })
-export class ReadInfoGoodComponent implements OnInit, OnChanges {
+export class ReadInfoGoodComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() goodData: IGood;
   relevantTypeName: string = 'buscar';
-  $unSubscribe = new Subject<void>();
   goodForm: ModelForm<any>;
   destiniSaeSelected = new DefaultSelect();
   selectPhysicalState = new DefaultSelect();
@@ -33,8 +39,12 @@ export class ReadInfoGoodComponent implements OnInit, OnChanges {
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);
+  private readonly goodService = inject(GoodService);
+  private readonly authService = inject(AuthService);
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    super();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.goodData.id) {
@@ -126,5 +136,44 @@ export class ReadInfoGoodComponent implements OnInit, OnChanges {
 
   getDuplicity() {
     this.duplicity = this.goodData.duplicity === 'Y' ? 'Si' : 'No';
+  }
+
+  save() {
+    Swal.fire({
+      title: 'Actualizando',
+      text: 'Esta seguro de querer actualizar el formulario',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9d2449',
+      cancelButtonColor: '#a78457',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        const user: any = this.authService.decodeToken();
+        const good = this.goodForm.getRawValue();
+        good.id = this.goodData.id;
+        good.goodId = this.goodData.goodId;
+        good.userModification = user.username;
+        good.modificationDate = new Date().toISOString();
+        console.log(good);
+
+        this.goodService.update(good).subscribe({
+          next: resp => {
+            this.onLoadToast(
+              'success',
+              'Actualizado',
+              'Formulario actualizado'
+            );
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              `El formulario no se puedo actualizar ${error.error.message}`
+            );
+          },
+        });
+      }
+    });
   }
 }

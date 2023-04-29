@@ -260,41 +260,70 @@
               <div class="d-flex">
                 <div class="mr-auto p-2"></div>
                 <div class="p-2">
+                  <button
+                    id="btn5"
+                    class="btn btn-success btn-sm active"
+                    (click)="changeStatuesTmp()">
+                    Simular respuesta
+                  </button>
+                </div>
+                <div class="p-2">
+                  <button
+                    id="btn6"
+                    class="btn btn-success btn-sm active"
+                    (click)="acceptClariImpro()">
+                    Aceptar Aclaraci&oacute;n&#47;Improcedencia
+                  </button>
+                </div>
+                <div class="p-2" *ngIf="showButton">
+                  <button
+                    id="btn8"
+                    class="btn btn-success btn-sm active"
+                    (click)="FinishClariImpro()">
+                    Finalizar Aclaraci&oacute;n&#47;improcedencia
+                  </button>
+                </div>
+                <div class="p-2">
+                  <button
+                    class="btn btn-info btn-sm active"
+                    (click)="satAnswer()">
+                    Ver Respuesta Aclaraci&oacute;n
+                  </button>
+                </div>
+                <div class="p-2">
+                  <button
+                    id="btn7"
+                    class="btn btn-danger btn-sm active"
+                    (click)="refuseClarification()">
+                    Rechazar
+                  </button>
+                </div>
+                <div class="p-2">
                   <app-columns-select
-                    [(settings)]="settings"></app-columns-select>
-                </div>
-                <div class="p-2">
-                  <button
-                    id="btn1"
-                    class="btn btn-primary btn-sm active"
-                    (click)="verifyClarification()">
-                    <i class="bx bx-check"></i>Verificar Cumplimiento
-                  </button>
-                </div>
-
-                <div class="p-2">
-                  <button
-                    id="btn2"
-                    (click)="reloadData()"
-                    class="btn btn-info btn-sm active">
-                    <i class="fa-thin fa-repeat"></i> Actualizar
-                  </button>
+                    [(settings)]="settings2"></app-columns-select>
                 </div>
               </div>
             </div>
             <div class="row pt-1">
               <div class="col-md-12">
-                <div class="table-responsive">
-                  <div [class]="loadingGoods ? 'table-loading' : ''">
+                <div
+                  class="row"
+                  *ngIf="formLoading"
+                  style="margin-bottom: 5rem">
+                  <form-loader *ngIf="formLoading"></form-loader>
+                </div>
+                <div class="table-responsive" *ngIf="!formLoading">
+                  <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table
                       [attr.class]="'table-bordered'"
-                      [settings]="settings"
-                      [source]="data"
-                      (userRowSelect)="goodSelect($event.selected)">
+                      [settings]="settings2"
+                      [source]="notificationsList"
+                      (userRowSelect)="notifyAssetRowSelected($event)"
+                      (rowSelect)="selectRow($event.data)">
                     </ng2-smart-table>
                     <app-pagination
-                      [params]="params"
-                      [totalItems]="totalItems"></app-pagination>
+                      [params]="params2"
+                      [totalItems]="totalItems2"></app-pagination>
                   </div>
                 </div>
               </div>

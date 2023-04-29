@@ -643,6 +643,14 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
+      lien: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      gravPleaseTrans: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
     });
   }
 
@@ -959,8 +967,8 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          const result = resp.data.filter((x: any) => x.uomCode === id);
-          this.ligieUnit = result[0].measureTlUnit;
+          //const result = resp.data.filter((x: any) => x.uomCode === id);
+          this.ligieUnit = resp.data[0].measureTlUnit;
         },
       });
   }
@@ -1542,15 +1550,13 @@ export class DetailAssetsTabComponentComponent
   }
 
   isSavingData() {
-    this.requestHelperService.currentRefresh
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          if (data) {
-            this.save();
-          }
-        },
-      });
+    this.requestHelperService.currentRefresh.subscribe({
+      next: data => {
+        if (data) {
+          this.save();
+        }
+      },
+    });
   }
 
   setGoodDomicilieSelected(domicilie: any) {
