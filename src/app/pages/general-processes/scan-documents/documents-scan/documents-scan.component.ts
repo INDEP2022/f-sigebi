@@ -278,7 +278,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que deseas eliminar las imágenes seleccionadas?'
+      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
     );
 
     if (result.isConfirmed) {

@@ -57,6 +57,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.requestForm.controls['typeUser'].valueChanges.subscribe(
       (data: any) => {
         this.typeUser = data;
+
         this.getUserList();
       }
     );
@@ -99,6 +100,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   removeUnNecessaryData() {
     for (let i = 0; i < this.requestToTurn.length; i++) {
+      console.log(this.requestToTurn[i]);
       const request = this.requestToTurn[i];
       delete request.delegationName;
       delete request.stateOfRepublicName;
@@ -132,10 +134,17 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     }
     this.loading = true;
     this.requestToTurn.map(async (item: any, i: number) => {
+      console.log(item.typeOfTransfer);
       let index = i + 1;
       item.requestStatus = 'A_TURNAR';
       item.receiptRoute = 'ELECTRONICA';
-      item.affair = 37;
+      //
+      item.affair =
+        item.typeOfTransfer == 'FGR_SAE' ||
+        item.typeOfTransfer == 'PGR_SAE' ||
+        item.typeOfTransfer == 'SAT_SAE'
+          ? 39
+          : 37;
       item.targetUserType = this.requestForm.controls['typeUser'].value;
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();
