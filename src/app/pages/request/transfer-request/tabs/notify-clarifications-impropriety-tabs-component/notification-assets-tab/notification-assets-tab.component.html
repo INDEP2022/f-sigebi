@@ -2,7 +2,7 @@
   <div class="row">
     <div class="d-flex justify-content-end">
       <div class="p-2">
-        <button (click)="saveData()" class="btn btn-pink btn-sm active">
+        <button (click)="saveData()" class="btn btn-primary btn-sm active">
           <i class="fa-thin fa-repeat"></i> Guardar
         </button>
       </div>
@@ -40,24 +40,6 @@
           (click)="reloadData()"
           class="btn btn-info btn-sm active">
           <i class="fa-thin fa-repeat"></i> Actualizar
-        </button>
-      </div>
-
-      <div class="p-2">
-        <button
-          id="btn3"
-          (click)="saveData()"
-          class="btn btn-primary btn-sm active">
-          <i class="fa-thin fa-repeat"></i> Guardar
-        </button>
-      </div>
-
-      <div class="p-2">
-        <button
-          id="btn4"
-          (click)="endClarification()"
-          class="btn btn-primary btn-sm active">
-          <i class="fa-thin fa-repeat"></i> Terminar
         </button>
       </div>
     </div>
@@ -99,6 +81,14 @@
           class="btn btn-success btn-sm active"
           (click)="acceptClariImpro()">
           Aceptar Aclaraci&oacute;n&#47;Improcedencia
+        </button>
+      </div>
+      <div class="p-2" *ngIf="showButton">
+        <button
+          id="btn8"
+          class="btn btn-success btn-sm active"
+          (click)="FinishClariImpro()">
+          Finalizar Aclaraci&oacute;n&#47;improcedencia
         </button>
       </div>
       <div class="p-2">

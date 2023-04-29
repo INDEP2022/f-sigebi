@@ -35,6 +35,7 @@ import { MinPubService } from '../catalogs/minpub.service';
 import { StationService } from '../catalogs/station.service';
 import { TransferenteService } from '../catalogs/transferente.service';
 import { DynamicTablesService } from '../dynamic-catalogs/dynamic-tables.service';
+import { RTdictaAarusrService } from '../ms-convertiongood/r-tdicta-aarusr.service';
 import { GoodParametersService } from '../ms-good-parameters/good-parameters.service';
 import { ProcedureManagementService } from '../proceduremanagement/proceduremanagement.service';
 
@@ -57,7 +58,8 @@ export class DocReceptionRegisterService extends HttpService {
     private goodParametersService: GoodParametersService,
     private departamentService: DepartamentService,
     private identifierService: IdentifierService,
-    private courtsService: CourtByCityService
+    private courtsService: CourtByCityService,
+    private userCheckService: RTdictaAarusrService
   ) {
     super();
   }
@@ -548,5 +550,9 @@ export class DocReceptionRegisterService extends HttpService {
         };
       })
     );
+  }
+
+  userAreaCheck(params: string) {
+    return this.userCheckService.getAllWithFilters(params);
   }
 }

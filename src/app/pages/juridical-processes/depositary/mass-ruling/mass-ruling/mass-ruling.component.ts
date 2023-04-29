@@ -10,7 +10,6 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -45,12 +44,15 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     mode: 'external', // ventana externa
 
     columns: {
-      id: {
+      goodNumber: {
         title: 'No. Bien',
+        valuePrepareFunction: (data: any) => {
+          return data ? data.id : '';
+        },
       },
-      expediente: {
+      fileNumber: {
         title: 'No. Expediente',
-        valuePrepareFunction: (data: IExpedient) => {
+        valuePrepareFunction: (data: any) => {
           return data ? data.id : '';
         },
       },

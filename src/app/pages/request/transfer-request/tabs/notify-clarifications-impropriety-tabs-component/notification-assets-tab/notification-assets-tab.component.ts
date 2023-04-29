@@ -128,7 +128,7 @@ export class NotificationAssetsTabComponent
     this.settings2 = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
+
       columns: { ...NOTIFY_ASSETS_COLUMNS },
     };
 
@@ -309,7 +309,16 @@ export class NotificationAssetsTabComponent
     }
   }
 
+  showButton = false;
   selectRow(row?: any) {
+    console.log(row);
+    if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
+      this.showButton = true;
+      // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
+      // btn8?.setAttribute('disabled', '');
+    } else {
+      this.showButton = false;
+    }
     this.selectedRow = row;
     this.rowSelected = true;
   }
@@ -558,6 +567,34 @@ export class NotificationAssetsTabComponent
           'warning',
           'Acción no valida',
           'La notificación ya fue aclarada no se puede volver a aceptar'
+        );
+      } else {
+        this.getRequest();
+      }
+    }
+  }
+
+  FinishClariImpro() {
+    if (this.rowSelected == false) {
+      this.message('Error', 'Seleccione notificación a Finalizar');
+    } else {
+      if (this.selectedRow.answered == 'RECHAZADA') {
+        this.message('Error', 'La notificación ya fue rechazada');
+      }
+
+      if (this.selectedRow.clarification.type < 1) {
+        this.message('Error', 'Seleccione almenos un registro!');
+        return;
+      }
+
+      if (
+        this.selectedRow.chatClarification.clarificationStatus ==
+        'IMPROCEDENCIA'
+      ) {
+        this.onLoadToast(
+          'warning',
+          'Atención:',
+          'Aún se desconoce la funcionalidad de este botón'
         );
       } else {
         this.getRequest();

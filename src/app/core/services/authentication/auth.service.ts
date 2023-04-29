@@ -1,7 +1,7 @@
 import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { BYPASS_JW_TOKEN } from 'src/app/common/interceptors/auth.interceptor';
 import { environment } from 'src/environments/environment';
 import { AuthModel } from '../../models/authentication/auth.model';
@@ -13,6 +13,7 @@ import { TokenInfoModel } from '../../models/authentication/token-info.model';
 })
 export class AuthService {
   private token: string;
+  private tokenTimeOut: NodeJS.Timeout;
   private tokenR: string;
   private readonly url = environment.API_URL;
   private readonly tokenUrl = environment.api_external_token;
@@ -20,7 +21,6 @@ export class AuthService {
   private readonly userType = environment.api_external_typeUser;
   private readonly userRoles = environment.api_external_rolesUser;
   private reportAuthFlag: boolean = false;
-
   constructor(
     private readonly http: HttpClient,
     private readonly jwtService: JwtHelperService
@@ -30,13 +30,44 @@ export class AuthService {
     return this.reportAuthFlag;
   }
 
+  setTokenTimer() {
+    const token = localStorage.getItem('token');
+    const decodedToken: any = this.jwtService.decodeToken(token);
+    const expires = new Date(decodedToken.exp * 1000);
+    const tokenCreation = new Date(decodedToken.iat * 1000);
+    const timeOut = new Date((decodedToken.exp - 300) * 1000);
+    const _timeout = timeOut.getTime() - tokenCreation.getTime();
+    console.log(
+      `El token se genero a las ${tokenCreation}, expira a las ${new Date(
+        decodedToken.exp * 1000
+      )}, se refrescara el token a las ${timeOut}, en ${
+        timeOut.getTime() - tokenCreation.getTime()
+      } milisegundos`
+    );
+    this.tokenTimeOut = setTimeout(() => {
+      const refresh_token = localStorage.getItem('r_token');
+      if (!refresh_token) {
+        return;
+      }
+      this.refreshToken(refresh_token).subscribe(response => {
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('r_token', response.refresh_token);
+      });
+    }, _timeout);
+  }
+
   getToken(username: string, password: string): Observable<AuthModel> {
     let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
     let headers = new HttpHeaders().set(
       'Content-Type',
       'application/x-www-form-urlencoded'
     );
-    return this.http.post<AuthModel>(this.tokenUrl, params, { headers });
+    return this.http.post<AuthModel>(this.tokenUrl, params, { headers }).pipe(
+      tap(response => {
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('r_token', response.refresh_token);
+      })
+    );
   }
 
   refreshToken(token: string) {
@@ -45,10 +76,12 @@ export class AuthService {
       'Content-Type',
       'application/x-www-form-urlencoded'
     );
-    return this.http.post<AuthModel>(this.tokenUrl, params, {
-      headers,
-      context: new HttpContext().set(BYPASS_JW_TOKEN, true),
-    });
+    return this.http
+      .post<AuthModel>(this.tokenUrl, params, {
+        headers,
+        context: new HttpContext().set(BYPASS_JW_TOKEN, true),
+      })
+      .pipe(tap(() => this.setTokenTimer()));
   }
 
   existToken() {
