@@ -29,6 +29,7 @@ export class PartializesGeneralGoodsComponent
 
   ngOnInit(): void {
     this.service.initFormControl();
+    this.bienesPar = this.service.getSavedPartializedGoods();
   }
 
   cleanBlock() {
@@ -42,7 +43,7 @@ export class PartializesGeneralGoodsComponent
     return this.service.bienesPar;
   }
   set bienesPar(value) {
-    this.bienesPar = value;
+    this.service.bienesPar = value;
   }
 
   get form() {
@@ -91,10 +92,12 @@ export class PartializesGeneralGoodsComponent
           this.bienesPar.shift();
         } else {
           this.bienesPar = this.bienesPar
-            .slice(0, row.index)
+            .slice(0, row.index - 1)
             .concat(this.bienesPar[this.bienesPar.length - 1]);
         }
+        console.log(this.bienesPar);
         this.bienesPar = [...this.bienesPar];
+        this.service.savePartializeds();
       }
     });
   }
@@ -112,7 +115,8 @@ export class PartializesGeneralGoodsComponent
         this.loading = false;
         return;
       }
-      this.saldo.setValue(vres);
+      // this.saldo.setValue(vres);
+      this.service.savePartializeds();
       // this.ind.setValue('S');
     } else {
       this.form.markAllAsTouched();
@@ -126,7 +130,7 @@ export class PartializesGeneralGoodsComponent
   async apply() {
     this.loading = true;
     this.form.get('ind').setValue('N');
-    if (this.form.valid && this.formGood.valid) {
+    if (this.formGood.valid) {
       await this.applyObj.execute();
     }
     this.loading = false;
