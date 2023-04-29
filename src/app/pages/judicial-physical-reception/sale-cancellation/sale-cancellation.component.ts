@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -9,7 +10,9 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { IVban } from 'src/app/core/models/ms-good/good';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
@@ -31,8 +34,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   itemsSelect = new DefaultSelect();
   settings1 = {
     ...TABLE_SETTINGS,
-    rowClassFunction: (row: { data: { status: any } }) =>
-      row.data.status ? 'available' : 'not-available',
+    rowClassFunction: (row: { data: { avalaible: any } }) =>
+      row.data.avalaible ? 'available' : 'not-available',
     pager: {
       display: false,
     },
@@ -95,7 +98,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         type: 'number',
         sort: false,
       },
-      descripcion: {
+      description: {
         title: 'Descripción',
         type: 'string',
         sort: false,
@@ -105,12 +108,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         type: 'string',
         sort: false,
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
         type: 'number',
         sort: false,
       },
-      unidad: {
+      unit: {
         title: 'Unidad',
         type: 'string',
         sort: false,
@@ -118,21 +121,30 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
-  data = EXAMPLE_DATA;
-  data2 = EXAMPLE_DATA2;
   dataGoods = new LocalDataSource();
+  dataGoodAct = new LocalDataSource();
   transferSelect = new DefaultSelect();
   form: FormGroup;
-  records: string[] = ['A', 'RT'];
+  records: string[] = ['A'];
   recibeSelect = new DefaultSelect();
   maxDatefecElab = subDays(new Date(), 1);
+  statusProceeding: string;
+  act2Valid: boolean = false;
+  maxDate = new Date();
+  labelActa = 'Abrir acta';
+  btnCSSAct = 'btn-success';
+  selectData: any = null;
+  selectActData: any = null;
+  goodData: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
     private serviceExpedient: ExpedientService,
-    private serviceRNomencla: ParametersService
+    private serviceRNomencla: ParametersService,
+    private serviceSssubtypeGood: GoodSssubtypeService,
+    private router: Router
   ) {
     super();
   }
@@ -141,10 +153,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
     this.form.get('mes').setValue(format(new Date(), 'MM'));
-
-    this.form.get('fecElab').valueChanges.subscribe(res => {
-      this.form.get('fecRecepFisica').setValue(res);
-    });
+    this.checkChange();
   }
 
   prepareForm() {
@@ -152,10 +161,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       expediente: [null, [Validators.required]],
       averPrev: [null, [Validators.required]],
       acta: [null, [Validators.required]],
-      transfer: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      transfer: [null, [Validators.required]],
       ident: [null, [Validators.required]],
       entrego: [
         null,
@@ -227,49 +233,177 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     }
   }
 
-  getGoodsByExpedient() {
+  //Select Rows
+
+  rowSelect(e: any) {
+    const { data } = e;
+    console.log(data);
+    this.selectData = data;
+    this.form.get('estatusPrueba').setValue(data.goodStatus);
+  }
+
+  deselectRow() {
+    this.selectData = null;
+    this.form.get('estatusPrueba').setValue('');
+  }
+
+  selectRowGoodActa(e: any) {
+    const { data } = e;
+    console.log(data);
+    this.selectActData = data;
+    this.form.get('estatusBienActa').setValue(data.goodStatus);
+  }
+
+  deselectRowGoodActa() {
+    this.selectActData = null;
+    this.form.get('estatusBienActa').setValue('');
+  }
+
+  //*Traer bienes
+  goodsByExpediente() {
     this.serviceGood
-      .getByExpedient(this.form.get('expediente').value, {
-        text: '?expedient=',
-      })
+      .getAllFilter(
+        `filter.fileNumber=$eq:${
+          this.form.get('expediente').value
+        }&filter.status=$eq:VXP&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+      )
       .subscribe({
-        next: (res: any) => {
+        next: async (res: any) => {
           if (res.data.length > 0) {
-            this.dataGoods.load(res.data); //Pintar los vienes en la tabla
-            this.form.get('ident').setValue('DEV'); //Asignar el valor DEV a ident
-            this.form.get('entrego').setValue('PART');
-            this.serviceExpedient //Busqueda de los datos del expediente, según su número
+            this.form.get('ident').setValue('DEV');
+            this.dataGoods.load(res.data);
+            console.log(res);
+            const newData = await Promise.all(
+              res.data.map(async (e: any) => {
+                let disponible: boolean = false;
+                if (e.detail != null) {
+                  if (
+                    format(
+                      new Date(e.detail.approvedXAdmonDate),
+                      'yyyy-MM-dd'
+                    ) <= format(new Date(), 'yyyy-MM-dd') &&
+                    format(
+                      new Date(e.detail.indicatesUserApprovalDate),
+                      'yyyy-MM-dd'
+                    ) >= format(new Date(), 'yyyy-MM-dd')
+                  ) {
+                    disponible = true;
+                  } else {
+                    disponible = false;
+                  }
+                } else {
+                  disponible = false;
+                }
+
+                return { ...e, avalaible: disponible };
+              })
+            );
+            this.dataGoods.load(newData);
+
+            this.serviceExpedient
               .getById(this.form.get('expediente').value)
-              .subscribe(
-                res => {
+              .subscribe(res => {
+                console.log(res.expedientType);
+                if (
+                  res.expedientType != 'A' &&
+                  res.expedientType != 'N/A' &&
+                  res.expedientType != 'T'
+                ) {
+                  this.alert(
+                    'error',
+                    'Numero de expediente invalido',
+                    'El número de expediente ingresado tiene un tipo de expediente no valido'
+                  );
+                } else {
                   let model: TransferProceeding = {
-                    //Llenar los datos del expediente para buscar el transfer
                     numFile: res.transferNumber as number,
                     typeProceedings: res.expedientType,
                   };
-
-                  this.serviceProcVal.getTransfer(model).subscribe(
-                    res => {
-                      console.log(res);
-                      this.transferSelect = new DefaultSelect(
-                        res.data,
-                        res.count
-                      );
-                    },
-                    err => {
-                      console.log(err);
-                    }
-                  );
-                },
-                err => {}
-              );
+                  console.log(model);
+                  this.serviceProcVal.getTransfer(model).subscribe(res => {
+                    this.transferSelect = new DefaultSelect(
+                      res.data,
+                      res.count
+                    );
+                  });
+                  /* this.enableElement('acta'); */
+                }
+              });
+          } else {
+            this.alert(
+              'warning',
+              'Sin bienes válidos',
+              'El número de expediente registrado no tiene bienes válidos'
+            );
           }
         },
         error: (err: any) => {
           console.error(err);
+          if (err.status === 404) {
+            this.alert(
+              'warning',
+              'No hay bienes para este expediente',
+              'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+            );
+          }
         },
       });
   }
+
+  /*  getGoodsByExpedient() {
+    //Validar si hay un acta abierta
+    const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'numFile',
+      this.form.get('expediente').value,
+      SearchFilter.EQ
+    );
+    paramsF.addFilter('statusProceedings', 'ABIERTA');
+    this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        if (res.data != null) {
+          const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+          console.log(new Date(dataRes.captureDate));
+          console.log(dataRes.captureDate);
+
+          this.form.get('acta2').setValue(dataRes.keysProceedings);
+          this.form.get('direccion').setValue(dataRes.address);
+          this.form.get('entrega').setValue(dataRes.witness1);
+          this.form
+            .get('fecElabRec')
+            .setValue(addDays(new Date(dataRes.dateElaborationReceipt), 1));
+          this.form
+            .get('fecEntBien')
+            .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
+          this.form
+            .get('fecElab')
+            .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+          this.form
+            .get('fecReception')
+            .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
+          this.form
+            .get('fecCaptura')
+            .setValue(addDays(new Date(dataRes.captureDate), 1));
+          this.form.get('observaciones').setValue(dataRes.observations);
+          this.form.get('recibe2').setValue(dataRes.witness2);
+          this.form.get('testigo').setValue(dataRes.comptrollerWitness);
+          this.statusProceeding = dataRes.statusProceedings;
+          this.labelActa = 'Cerrar acta';
+          this.btnCSSAct = 'btn-primary';
+          this.act2Valid = true;
+        } else {
+          this.initialdisabled = false;
+        }
+      },
+      err => {
+        console.log(err);
+        this.initialdisabled = false;
+      }
+    );
+
+    this.goodsByExpediente();
+  } */
 
   //Catalogs
   getRecibe(params: ListParams) {
@@ -304,9 +438,27 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     }
   }
 
+  //
+
+  checkChange() {
+    this.form.get('fecElab').valueChanges.subscribe(res => {
+      this.form.get('fecRecepFisica').setValue(res);
+    });
+  }
+
   //Fill Act 2
   fillActTwo() {
-    console.log(this.form.get('entrego').value);
+    let countAct: Number =
+      0 +
+      (this.form.get('acta').value != null ? 1 : 0) +
+      (this.form.get('transfer').value != null ? 1 : 0) +
+      (this.form.get('ident').value != null ? 1 : 0) +
+      (this.form.get('entrego').value != null ? 1 : 0) +
+      (this.form.get('recibe').value != null ? 1 : 0) +
+      (this.form.get('folio').value != null ? 1 : 0) +
+      (this.form.get('year').value != null ? 1 : 0) +
+      (this.form.get('mes').value != null ? 1 : 0);
+
     const nameAct =
       (this.form.get('acta').value != null ? this.form.get('acta').value : '') +
       '/' +
@@ -319,7 +471,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         : '') +
       '/' +
       (this.form.get('entrego').value != null
-        ? this.form.get('entrego').value
+        ? this.form.get('entrego').value.delegation
         : '') +
       '/' +
       (this.form.get('recibe').value != null
@@ -327,7 +479,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         : '') +
       '/' +
       (this.form.get('folio').value != null
-        ? this.zeroAdd(this.form.get('folio').value, 5)
+        ? this.zeroAdd(this.form.get('folio').value.toString(), 5)
         : '') +
       '/' +
       (this.form.get('year').value != null
@@ -338,157 +490,186 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         ? this.zeroAdd(this.form.get('mes').value, 2)
         : '');
     this.form.get('acta2').setValue(nameAct);
+    //Validar Acta 2
+    countAct == 8 ? (this.act2Valid = true) : (this.act2Valid = false);
+  }
+
+  //*Agregar bienes
+  addGood() {
+    let v_ban: boolean;
+    let v_tipo_acta: string;
+    let no_type: number | string;
+    let no_subtype: number | string;
+
+    if (this.selectData != null) {
+      const goodClass = this.selectData.goodClassNumber;
+      const available = this.selectData.avalaible;
+      console.log(available);
+      if (!available) {
+        this.alert(
+          'error',
+          'Estatus no disponible',
+          'El bien tiene un estatus invalido para ser asignado a alguna acta'
+        );
+      } else if (!this.act2Valid) {
+        this.alert(
+          'error',
+          'Error en el número de acta',
+          'Debe registrar un Acta antes de poder mover el bien'
+        );
+      } else {
+        //Tipo y subtipo de bien
+        const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
+        this.serviceSssubtypeGood.getFilter(newParams).subscribe(
+          res => {
+            const type = JSON.parse(JSON.stringify(res.data[0]['numType']));
+            const subtype = JSON.parse(
+              JSON.stringify(res.data[0]['numSubType'])
+            );
+            no_type = parseInt(type.id);
+            no_subtype = parseInt(subtype.id);
+            if (this.statusProceeding === 'CERRADA') {
+              this.alert(
+                'warning',
+                'Acta cerrada',
+                'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+              );
+            } else if (
+              this.form.get('fecElab').value != null &&
+              format(this.form.get('fecElab').value, 'MM-yyyy') !=
+                format(new Date(), 'MM-yyyy')
+            ) {
+              this.alert(
+                'error',
+                'Error en la fecha de elaboración',
+                'No puede realizar modificaciones a esta acta, por estar fuera del mes'
+              );
+            } else if (
+              this.form.get('ident').value != this.selectData.identifier &&
+              !['D', 'ND'].includes(this.form.get('acta').value)
+            ) {
+              this.alert(
+                'error',
+                'Problemas con el identificador del bien',
+                'El bien tiene un identificador diferente al del acta'
+              );
+            } else {
+              v_ban = true;
+              const model: IVban = {
+                array: [
+                  {
+                    screenKey: 'FACTREFACTAVENT',
+                    goodNumber: this.selectData.id,
+                    identificador: this.selectData.identifier,
+                    typeAct: 'DXCV',
+                  },
+                ],
+              };
+              console.log(model);
+              this.serviceGood.getVBan(model).subscribe(
+                res => {
+                  v_ban = res.data[0]['ban'];
+                  v_ban = false; //!Forzando el false
+                  if (v_ban) {
+                    this.alert(
+                      'warning',
+                      'Bien no valido',
+                      'El bien no es válido para esta acta'
+                    );
+                  } else {
+                    console.log('else');
+                    this.dataGoods.load(
+                      this.dataGoods['data'].map((e: any) => {
+                        if (e.id == this.selectData.id) {
+                          return { ...e, avalaible: false };
+                        } else {
+                          return e;
+                        }
+                      })
+                    );
+                    /* console.log(dataTry.data); */
+                    console.log(this.dataGoods);
+                    this.goodData.push(this.selectData);
+                    this.dataGoodAct.load(this.goodData);
+                    console.log(this.dataGoodAct);
+                    this.selectData = null;
+                  }
+                },
+                err => {
+                  console.log(err);
+                }
+              );
+            }
+          },
+          err => {}
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'No selecciono bien',
+        'Debe seleccionar un bien para agregar al acta'
+      );
+    }
+  }
+
+  deleteGoods() {
+    let v_ban: boolean;
+    if (this.statusProceeding === 'CERRADO') {
+      this.alert(
+        'error',
+        'El acta está cerrada',
+        'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+    } else if (
+      this.form.get('fecElab').value != null &&
+      format(this.form.get('fecElab').value, 'MM-yyyy') !=
+        format(new Date(), 'MM-yyyy')
+    ) {
+      this.alert(
+        'error',
+        'Error en la fecha de elaboración',
+        'No puede realizar modificaciones a esta acta, por estar fuera del mes'
+      );
+    } else {
+      if (!this.act2Valid) {
+        this.alert(
+          'warning',
+          'Problemas con el número de acta',
+          'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+        );
+      } else if (this.selectActData == null) {
+        this.alert(
+          'warning',
+          'No selecciono bien del acta',
+          'Debe seleccionar un bien que forme parte del acta primero'
+        );
+      } else {
+        this.goodData = this.goodData.filter(
+          (e: any) => e.id != this.selectActData.id
+        );
+        this.dataGoodAct.load(this.goodData);
+        console.log(this.goodData);
+
+        this.dataGoods.load(
+          this.dataGoods['data'].map((e: any) => {
+            if (e.id == this.selectActData.id) {
+              return { ...e, avalaible: true };
+            } else {
+              return e;
+            }
+          })
+        );
+        this.form.get('estatusBienActa').setValue('');
+        this.selectActData = null;
+      }
+    }
+  }
+
+  //Botones
+  goParcializacion() {
+    this.router.navigate([
+      '/pages/judicial-physical-reception/partializes-general-goods-1',
+    ]);
   }
 }
-
-const EXAMPLE_DATA = [
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-];
-
-const EXAMPLE_DATA2 = [
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-    unidad: 'PIEZA',
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-    unidad: 'PIEZA',
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-    unidad: 'PIEZA',
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-    unidad: 'PIEZA',
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-    unidad: 'PIEZA',
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-    unidad: 'PIEZA',
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-    unidad: 'PIEZA',
-  },
-];
