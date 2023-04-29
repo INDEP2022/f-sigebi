@@ -93,9 +93,9 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.pgrForm = this.fb.group({
       from: [null],
       to: [null],
-      issue: [null, [Validators.maxLength(30)]],
+      issue: [null, [Validators.maxLength(400)]],
       delegationNumber: [null],
-      officeNumber: [null, [Validators.maxLength(30)]],
+      officeNumber: [null, [Validators.maxLength(50)]],
       processStatus: [null],
     });
     this.pgrTransferForm = this.fb.group({

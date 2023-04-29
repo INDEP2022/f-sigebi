@@ -822,7 +822,7 @@ export class RegistrationOfRequestsComponent
   approveRequest() {
     this.msgSaveModal(
       'Aprobar',
-      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
+      'Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -875,7 +875,7 @@ export class RegistrationOfRequestsComponent
   refuseRequest() {
     this.msgSaveModal(
       'Rechazar',
-      'Deseas rechazar la solicitud con el folio: ' + this.requestData.id + '?',
+      'Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       'refuse'
@@ -1098,10 +1098,7 @@ export class RegistrationOfRequestsComponent
           console.log(clarification);
           console.log(this.requestData.typeOfTransfer);
           //debugger;
-          if (
-            clarification === true &&
-            this.requestData.typeOfTransfer !== 'MANUAL'
-          ) {
+          if (clarification === true) {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
