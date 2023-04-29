@@ -310,6 +310,8 @@ export class RegistrationOfRequestsComponent
           await this.getDictamen(data.id);
         }
 
+        this.verifyTransDelegaStatiAuthoExist(data);
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
@@ -330,6 +332,30 @@ export class RegistrationOfRequestsComponent
         console.log(error.error.message);
       },
     });
+  }
+
+  verifyTransDelegaStatiAuthoExist(data: any) {
+    if (
+      !data.transferenceId ||
+      !data.regionalDelegationId ||
+      !data.stationId ||
+      !data.authorityId
+    ) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Sin los campos de transferente, emisora y autoridad no se podran realizar las documentaciones requeridas! ',
+        icon: 'error',
+        width: 450,
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#b38e5d',
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+      }).then(async result => {
+        if (result.isConfirmed) {
+        }
+      });
+    }
   }
 
   setRequiredFields(data: any) {

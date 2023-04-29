@@ -68,7 +68,7 @@ export class RequestDetailTabComponent
   causaPenal: string = 'Causa Penal';
   noAmparoLabel: string = 'No. Amparo';
   tocaPenal: string = 'Toca Penal';
-  gestionDestinoLabel: string = 'Gestión Destino';
+  gestionDestinoLabel: string = 'Gestión de Destino';
   actaCircunstacial: string = 'Acta Circunstanciada';
   averiguacionPreviaLabel: string = 'Averiguación Previa';
 

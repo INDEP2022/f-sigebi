@@ -1300,7 +1300,7 @@ export class DetailAssetsTabComponentComponent
 
             if (data.id != null) {
               this.domicileForm.controls['id'].setValue(data.id);
-              resolve('Se actualizo el registro del domicilio del bien');
+              resolve(true);
             }
           },
           error: error => {
