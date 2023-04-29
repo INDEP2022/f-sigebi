@@ -86,7 +86,7 @@ export class GoodByProceedingsModalComponent
     this.alertQuestion(
       'question',
       'Precaución',
-      'Se abrirá otra pantalla para insertar vía rastreador. ¿Deseas continuar?'
+      'Se abrirá otra pantalla para insertar vía rastreador. ¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         this.modalRef.hide();
