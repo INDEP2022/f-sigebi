@@ -334,7 +334,10 @@ export class RequestRecordTabComponent
   }
 
   async confirm() {
-    if (this.pgr) {
+    if (
+      this.typeOfTransfer === 'PGR_SAE' ||
+      this.typeOfTransfer === 'FGR_SAE'
+    ) {
       if (
         this.requestForm.get('paperDate').value === null ||
         this.requestForm.get('paperDate').value === '' ||
@@ -367,8 +370,10 @@ export class RequestRecordTabComponent
     }
     this.loading = true;
     this.submitted = true;
-    // if (this.requestForm.invalid || this.requestForm.value.paperDate.length == 0 || this.requestForm.value.previousInquiry.length == 0 || this.requestForm.value.circumstantialRecord.length == 0) { this.formLoading = false; return }
     const request = this.requestForm.getRawValue() as IRequest;
+    request.transferEntNotes = request.transferEntNotes
+      ? request.transferEntNotes
+      : null;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {

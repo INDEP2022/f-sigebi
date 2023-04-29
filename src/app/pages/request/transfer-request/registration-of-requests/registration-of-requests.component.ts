@@ -313,6 +313,10 @@ export class RegistrationOfRequestsComponent
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
+        console.log({ data });
+        if (!data?.typeOfTransfer) {
+          data.typeOfTransfer = 'MANUAL';
+        }
         this.requestData = data as IRequest;
         this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
@@ -818,7 +822,7 @@ export class RegistrationOfRequestsComponent
   approveRequest() {
     this.msgSaveModal(
       'Aprobar',
-      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
+      'Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -871,7 +875,7 @@ export class RegistrationOfRequestsComponent
   refuseRequest() {
     this.msgSaveModal(
       'Rechazar',
-      'Deseas rechazar la solicitud con el folio: ' + this.requestData.id + '?',
+      'Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       'refuse'
@@ -914,9 +918,7 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       this.requestService.update(request.id, request).subscribe({
         next: resp => {
-          if (resp.id !== null) {
-            resolve(true);
-          }
+          resolve(true);
         },
         error: error => {
           reject(true);
@@ -1093,12 +1095,16 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'validar-destino-bien') {
           const clarification = await this.haveNotificacions();
-
-          if (
-            clarification === true &&
-            this.requestData.typeOfTransfer !== 'MANUAL'
-          ) {
-            this.notifyClarificationsMethod();
+          console.log(clarification);
+          console.log(this.requestData.typeOfTransfer);
+          //debugger;
+          if (clarification === true) {
+            const user: any = this.authService.decodeToken();
+            const body: any = {};
+            body.id = this.requestData.id;
+            body.rulingCreatorName = user.username;
+            await this.updateRequest(body);
+            await this.notifyClarificationsMethod();
           } else {
             this.destinyDocumental();
           }
@@ -1119,8 +1125,9 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO');
+      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
+      //debugger;
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
           if (resp.data) {

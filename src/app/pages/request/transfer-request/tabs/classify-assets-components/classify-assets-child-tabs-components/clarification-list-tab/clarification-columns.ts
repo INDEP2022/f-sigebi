@@ -11,7 +11,7 @@ export const CLARIFICATION_COLUMNS = {
     sort: false,
   },
 
-  clarificationId: {
+  clarificationName: {
     title: 'Aclaración',
     type: 'string',
     sort: false,

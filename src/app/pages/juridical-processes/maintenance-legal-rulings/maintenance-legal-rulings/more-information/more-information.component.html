@@ -1,33 +1,58 @@
-<form [formGroup]="form" class="form-material">
+<form [formGroup]="form" class="form-material" (ngSubmit)="send()">
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('numberOfDict')"
+        [control]="form.get('dictatesNumber')"
         label="No&#46; Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="numberOfDict" />
+        <input
+          type="number"
+          class="form-control"
+          maxlength="11"
+          formControlName="dictatesNumber" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('typeDict')"
+        [control]="form.get('rulingType')"
         label="Tipo Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="typeDict" />
+        <input
+          class="form-control"
+          maxlength="15"
+          required
+          formControlName="rulingType" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field [control]="form.get('textX')" label="Texto 1">
-        <textarea class="form-control" formControlName="textX"></textarea>
+        <textarea
+          class="form-control"
+          maxlength="4000"
+          formControlName="textX"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field [control]="form.get('textY')" label="Texto 2">
-        <textarea class="form-control" formControlName="textY"></textarea>
+        <textarea
+          class="form-control"
+          maxlength="4000"
+          formControlName="textY"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field [control]="form.get('textZ')" label="Texto 3">
-        <textarea class="form-control" formControlName="textZ"></textarea>
+        <textarea
+          class="form-control"
+          maxlength="4000"
+          formControlName="textZ"></textarea>
       </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <button
+        class="btn btn-sm btn-primary active"
+        type="submit"
+        [disabled]="form.invalid">
+        Agregar
+      </button>
     </div>
   </div>
 </form>

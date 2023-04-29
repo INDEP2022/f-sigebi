@@ -1,6 +1,6 @@
 export const REQUEST_OF_ASSETS_COLUMNS = {
   id: {
-    title: 'Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -19,13 +19,23 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  fractionCode: {
+    title: 'Fracción',
+    type: 'string',
+    sort: false,
+  },
   quantity: {
     title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  unitMeasureName: {
     title: 'Unidad de Medida Transferente',
+    type: 'string',
+    sort: false,
+  },
+  ligieUnitName: {
+    title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },
@@ -35,7 +45,7 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     sort: false,
   },
   physicstateName: {
-    title: 'Estado Fisico',
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },

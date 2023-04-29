@@ -33,7 +33,7 @@ export class RejectionJustifyFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas mandar la justificación de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      '¿Desea mandar la justificación de servicio con folio METROPOLITANA-SAT-1340-OS?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

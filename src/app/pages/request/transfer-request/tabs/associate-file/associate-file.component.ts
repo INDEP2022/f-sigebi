@@ -134,237 +134,223 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   confirm() {
     let request = this.parameter.getRawValue() as IRequest;
     if (!request.regionalDelegationId) {
-      this.onLoadToast(
-        'error',
-        '',
-        'Se requiere tener una Delegación Regional'
-      );
+      this.onLoadToast('error', '', 'No cuenta con una Delegación Regional');
     } else if (!request.transferenceId) {
-      this.onLoadToast('error', '', 'Se requiere tener una transferente');
+      this.onLoadToast('error', '', 'No cuenta con una transferente');
     }
     this.alertQuestion(
       'warning',
       'Generar Carátula',
-      '¿Estas seguro de querer generar la carátula?'
+      '¿Está seguro de querer generar la carátula?'
     ).then(val => {
       if (val.isConfirmed) {
         this.generateCaratula();
       }
     });
-    /*Swal.fire({
-      title: 'Generar Carátula',
-      text: '¿Esta seguro de querer generar una carátula?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#b38e5d',
-      confirmButtonText: 'Aceptar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.generateCaratula();
-      }
-    }); */
   }
 
-  generateCaratula() {
+  async generateCaratula() {
     let request = this.parameter.getRawValue();
-    let expedient = this.associateFileForm.getRawValue();
     this.loader.load = true;
-    //guardar expediente
-    this.expedientSamiService.create(expedient).subscribe({
-      next: resp => {
-        const expedient = resp;
-        //verifica si fecha de recerva es nula
-        if (expedient.id) {
-          let resevateDate = '';
-          if (expedient.reserveDateInai) {
-            resevateDate = this.getDocNameDate(
-              this.associateFileForm.controls['reserveDateInai'].value
-            );
-          } else {
-            resevateDate = '';
-          }
-          const body = {
-            funcionario: expedient['inaiOfficial'],
-            usrID: expedient['inaiUser'],
-            fojas: expedient['sheetsInai'],
-            arhId: expedient['inaiFile'],
-            legajos: expedient['filesInai'],
-            fechaExpediente: this.getDocNameDate(
-              this.associateFileForm.controls['expedientDate'].value
-            ),
-            nombreExpediente: `EXPEDIENTE ${expedient.id}. TRANSFERENTE: ${request.transferenceId}`,
-            ddcid: this.ddcId,
-            fechaReserva: resevateDate,
-          };
-          //insertar datos la caratula del expediente
-          this.externalExpedientService.insertExpedient(body).subscribe({
-            next: resp => {
-              if (resp.InsertaExpedienteResult.Insertado === true) {
-                const leagueName = new Date().toISOString();
-                const requestUpdate = {
-                  id: request.id,
-                  recordId: expedient.id,
-                  fileLeagueType: 'CREACION',
-                  fileLeagueDate: leagueName,
-                };
-                //actualizar solicitud
-                this.requestService
-                  .update(requestUpdate.id, requestUpdate)
-                  .subscribe({
-                    next: (resp: any) => {
-                      //const solicitud = resp as any;
-                      if (resp.statusCode == 200) {
-                        //console.log(request, expedient)
-                        //llamar al reporte caratula inai
-                        this.wcontetService
-                          .downloadCaratulaINAIFile('Etiqueta_INAI', request.id)
-                          .subscribe({
-                            next: resp => {
-                              const file: any = resp;
-                              const user: any = this.authService.decodeToken();
-                              const docName = `Reporte_${94}${this.getDocNameDate()}`;
-                              const body = {
-                                ddocTitle:
-                                  'Carátula del Expediente ' + expedient.id,
-                                dDocAuthor: user.username,
-                                ddocType: '',
-                                ddocCreator: '',
-                                ddocName: docName,
-                                dID: '',
-                                dSecurityGroup: 'Public',
-                                dDocAccount: '',
-                                dDocId: '',
-                                dInDate: this.setDate(new Date()),
-                                dOutDate: '',
-                                dRevLabel: '',
-                                xIdcProfile: '',
-                                xdelegacionRegional:
-                                  request.regionalDelegationId,
-                                xidTransferente: request.transferenceId ?? '',
-                                xidBien: '',
-                                xidExpediente: expedient.id,
-                                xidSolicitud: request.id,
-                                //xNombreProceso: 'Captura Solicitud',
-                                xnombreProceso: 'Captura Solicitud',
-                                xestado: request.stationId ?? '',
-                                xnoOficio: request.paperNumber ?? '',
-                                xremitente: request.nameOfOwner ?? '',
-                                xnivelRegistroNSBDB: 'Expediente',
-                                xcargoRemitente: request.holderCharge ?? '',
-                                xtipoDocumento: '94',
-                                xcontribuyente:
-                                  request.contribuyente_indiciado ?? '',
-                              };
-                              const form = JSON.stringify(body);
-                              //se guarda el file y el documento
-                              this.wcontetService
-                                .addDocumentToContent(
-                                  docName,
-                                  '.pdf',
-                                  form,
-                                  file,
-                                  'pdf'
-                                )
-                                .subscribe({
-                                  next: resp => {
-                                    const reporteName = resp.dDocName;
-                                    console.log(reporteName);
-                                    //se arma los parametros y se habre un modal
-                                    const autoridad: any =
-                                      this.authService.decodeToken();
-                                    const parameters = {
-                                      idExpedient: expedient.id,
-                                      expedientDate: this.setDate(
-                                        this.associateFileForm.controls[
-                                          'expedientDate'
-                                        ].value
-                                      ),
-                                      usrCreation: autoridad.username,
-                                      dateCreation: this.setDate(new Date()),
-                                      docName: reporteName,
-                                    };
-                                    this.loader.load = false;
-                                    this.openModal(
-                                      OpenDescriptionComponent,
-                                      parameters
-                                    );
-                                    this.close();
-                                    this.onLoadToast(
-                                      'success',
-                                      'Caratula generada correctamente',
-                                      ''
-                                    );
-                                  },
-                                  error: error => {
-                                    this.loader.load = false;
-                                    console.log(error.error.message);
 
-                                    this.onLoadToast(
-                                      'error',
-                                      'Error',
-                                      'Error guardar la carátula al contenedor:'
-                                    );
-                                  },
-                                });
-                            },
-                            error: error => {
-                              this.loader.load = false;
-                              this.onLoadToast(
-                                'error',
-                                'Error',
-                                'Error al generar la carátula'
-                              );
-                            },
-                          });
-                      } else {
-                        this.loader.load = false;
-                        console.log('error');
-                        this.onLoadToast(
-                          'error',
-                          'Error',
-                          `No se inserto los datos el expediente!:
-                            ${resp.InsertaExpedienteResult.CodCompleta}`
-                        );
-                      }
-                    },
-                    error: error => {
-                      this.loader.load = false;
-                      this.onLoadToast(
-                        'error',
-                        'Error',
-                        'Error al actualizar la solicitud'
-                      );
-                    },
-                  });
-              }
-            },
-            error: error => {
-              this.loader.load = false;
-              this.onLoadToast(
-                'error',
-                'Error',
-                'Error al insertar la documentacion'
-              );
-            },
-          });
+    const expedient: any = await this.saveExpedientSami();
+    if (expedient.id) {
+      let resevateDate = '';
+      if (expedient.reserveDateInai) {
+        resevateDate = this.getDocNameDate(
+          this.associateFileForm.controls['reserveDateInai'].value
+        );
+      } else {
+        resevateDate = '';
+      }
+
+      const body = {
+        funcionario: expedient['inaiOfficial'],
+        usrID: expedient['inaiUser'],
+        fojas: expedient['sheetsInai'],
+        arhId: expedient['inaiFile'],
+        legajos: expedient['filesInai'],
+        fechaExpediente: this.getDocNameDate(
+          this.associateFileForm.controls['expedientDate'].value
+        ),
+        nombreExpediente: `EXPEDIENTE ${expedient.id}. TRANSFERENTE: ${request.transferenceId}`,
+        ddcid: this.ddcId,
+        fechaReserva: resevateDate,
+      };
+
+      const caratulaResult: any = await this.insertCaratulaData(body);
+      if (caratulaResult.InsertaExpedienteResult.Insertado === true) {
+        const leagueName = new Date().toISOString();
+        const requestUpdate = {
+          id: request.id,
+          recordId: expedient.id,
+          fileLeagueType: 'CREACION',
+          fileLeagueDate: leagueName,
+        };
+
+        const requestResult: any = await this.updateRequest(requestUpdate);
+        if (requestResult.statusCode == 200) {
+          const caratualResult = await this.downloadCaratuala(request.id);
+          const file: any = caratualResult;
+          const user: any = this.authService.decodeToken();
+          const docName = `Reporte_${94}${this.getDocNameDate()}`;
+          const body = {
+            ddocTitle: 'Carátula del Expediente ' + expedient.id,
+            dDocAuthor: user.username,
+            ddocType: '',
+            ddocCreator: '',
+            ddocName: docName,
+            dID: '',
+            dSecurityGroup: 'Public',
+            dDocAccount: '',
+            dDocId: '',
+            dInDate: this.setDate(new Date()),
+            dOutDate: '',
+            dRevLabel: '',
+            xIdcProfile: '',
+            xdelegacionRegional: request.regionalDelegationId,
+            xidTransferente: request.transferenceId ?? '',
+            xidBien: '',
+            xidExpediente: expedient.id,
+            xidSolicitud: request.id,
+            //xNombreProceso: 'Captura Solicitud',
+            xnombreProceso: 'Captura Solicitud',
+            xestado: request.stationId ?? '',
+            xnoOficio: request.paperNumber ?? '',
+            xremitente: request.nameOfOwner ?? '',
+            xnivelRegistroNSBDB: 'Expediente',
+            xcargoRemitente: request.holderCharge ?? '',
+            xtipoDocumento: '94',
+            xcontribuyente: request.contribuyente_indiciado ?? '',
+          };
+          const form = JSON.stringify(body);
+          const contentResult: any = await this.insertDataToContent(
+            docName,
+            form,
+            file
+          );
+          if (contentResult) {
+            const reporteName = contentResult.dDocName;
+            console.log(reporteName);
+
+            const autoridad: any = this.authService.decodeToken();
+            const parameters = {
+              idExpedient: expedient.id,
+              expedientDate: this.setDate(
+                this.associateFileForm.controls['expedientDate'].value
+              ),
+              usrCreation: autoridad.username,
+              dateCreation: this.setDate(new Date()),
+              docName: reporteName,
+            };
+            this.loader.load = false;
+            this.openModal(OpenDescriptionComponent, parameters);
+            this.close();
+            this.onLoadToast('success', 'Carátula generada correctamente', '');
+          }
         }
-      },
+      }
+    }
+  }
+
+  insertDataToContent(docName: string, form: any, file: any) {
+    return new Promise((resolve, reject) => {
+      this.wcontetService
+        .addDocumentToContent(docName, '.pdf', form, file, 'pdf')
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(false);
+            this.loader.load = false;
+            this.onLoadToast(
+              'error',
+              'Error',
+              `Error insertar los datos al content ${error.error.message}`
+            );
+          },
+        });
+    });
+  }
+  downloadCaratuala(id: string) {
+    return new Promise((resolve, reject) => {
+      this.wcontetService
+        .downloadCaratulaINAIFile('Etiqueta_INAI', id)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(false);
+            this.loader.load = false;
+            this.onLoadToast(
+              'error',
+              'Error',
+              `Error al obtener el documento ${error.error.message}`
+            );
+          },
+        });
     });
   }
 
-  createPDF(resp: any, docName: string) {
-    const byteString = window.atob(resp);
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const int8Array = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < byteString.length; i++) {
-      int8Array[i] = byteString.charCodeAt(i);
-    }
-
-    const blob = new Blob([int8Array], { type: 'application/pdf' });
-    var downloadURL = window.URL.createObjectURL(blob);
-    // open the window
-    var newWin = window.open(downloadURL, `${docName}.pdf`);
+  //actualizar solicitud
+  updateRequest(requestUpdate: any) {
+    return new Promise((resolve, reject) => {
+      this.requestService.update(requestUpdate.id, requestUpdate).subscribe({
+        next: (resp: any) => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(false);
+          this.loader.load = false;
+          this.onLoadToast(
+            'error',
+            'Error',
+            `No se pudo actualizar la solicitud ${error.error.message}`
+          );
+        },
+      });
+    });
+  }
+  //insertar datos la caratula del expediente
+  insertCaratulaData(body: any) {
+    return new Promise((resolve, reject) => {
+      this.externalExpedientService.insertExpedient(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(false);
+          this.loader.load = false;
+          this.onLoadToast(
+            'error',
+            'Error',
+            `No se insertaron los datos de la carátula ${error.error.message}`
+          );
+        },
+      });
+    });
+  }
+  //guardar expediente
+  saveExpedientSami() {
+    return new Promise((resolve, reject) => {
+      let expedient = this.associateFileForm.getRawValue();
+      this.expedientSamiService.create(expedient).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(false);
+          this.loader.load = false;
+          this.onLoadToast(
+            'error',
+            'Error',
+            `No se puede guardar el expediente SAMI ${error.error.message}`
+          );
+        },
+      });
+    });
   }
 
   setDate(date: Date) {

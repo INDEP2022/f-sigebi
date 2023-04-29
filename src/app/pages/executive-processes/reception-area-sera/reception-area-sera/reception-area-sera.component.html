@@ -19,7 +19,8 @@
               bindLabel="description"
               label="Delegaci&oacute;n"
               [control]="'delegation'"
-              (change)="onDelegationsChange($event)">
+              (change)="onDelegationsChange($event)"
+              [showTooltip]="true">
             </ngx-select>
           </form-field>
         </div>
@@ -33,7 +34,8 @@
               bindLabel="description"
               label="Sub Delegaci&oacute;n"
               [control]="'subdelegation'"
-              (change)="onSubDelegationsChange($event)">
+              (change)="onSubDelegationsChange($event)"
+              [showTooltip]="true">
             </ngx-select>
           </form-field>
         </div>
@@ -44,7 +46,6 @@
             <input
               class="form-control"
               formControlName="rangeDate"
-              ngModel
               bsDaterangepicker
               [maxDate]="today"
               [bsConfig]="{
@@ -66,7 +67,8 @@
               bindLabel="dsarea"
               label="Área Destino"
               [control]="'departamentDes'"
-              (change)="onValuesChange($event)">
+              (change)="onValuesChange($event)"
+              [showTooltip]="true">
             </ngx-select>
           </form-field>
         </div>

@@ -7,7 +7,6 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
-import { Inappropriateness } from 'src/app/core/models/notification-aclaration/notification-aclaration-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
@@ -33,8 +32,8 @@ export class NotifyAssetsImproprietyFormComponent
 {
   title: string = 'Aclaración';
   clarificationForm: FormGroup = new FormGroup({});
-  procedenceForm: ModelForm<any>;
-  inappropriatenessForm: ModelForm<Inappropriateness>;
+  //procedenceForm: ModelForm<any>;
+  inappropriatenessForm: ModelForm<any>;
   clarification: any;
 
   //en el caso de que una aclaracion llege sin documentacion
@@ -55,6 +54,8 @@ export class NotifyAssetsImproprietyFormComponent
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
   infoRequest: IRequest;
 
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -68,15 +69,30 @@ export class NotifyAssetsImproprietyFormComponent
     super();
   }
 
+  //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('Información de la solicitud', this.infoRequest);
+    console.log('data', this.dataClarifications2);
     this.withDocumentation = this.idAclara === '1' ? true : false;
+
     this.initForm1();
-    this.initForm2();
-    console.log('información dl bien', this.goodValue);
-    const token = this.authService.decodeToken();
-    let userId = token.preferred_username;
-    console.log('userId', token);
+
+    const applicationId = this.idRequest;
+    const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
+
+    //Verifica si la solicitud tiene guardado un formulario largo en documents
+    this.documentService
+      .getAllfilter(applicationId, rejectNoticeId, this.params.getValue())
+      .subscribe({
+        next: res => {
+          console.log('Documento si existe');
+          const dataDocumentsImpro = res.data[0];
+          this.initForm2(dataDocumentsImpro); //Manda a llamar el formulario largo para asignarle valores guardados
+        },
+        error: error => {
+          console.log('Documento no');
+          this.initForm3(); //Se agregó para parchar un error deúltimo momento
+        },
+      });
   }
 
   initForm1(): void {
@@ -89,7 +105,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       observations: [
-        null,
+        this.dataClarifications2.observations,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
       senderName: [
@@ -101,7 +117,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       jobClarificationKey: [
-        null,
+        this.dataClarifications2.chatClarification.keyClarificationPaper,
         [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
       ],
       senderCharge: [
@@ -113,60 +129,114 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       userAreaCaptures: [
-        null,
+        this.dataClarifications2?.chatClarification?.areaUserCapture,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
 
       webMail: [
-        null,
+        this.dataClarifications2?.chatClarification?.emailWeb,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
-      /*
-      receiver: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      receiverCharge: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      idTransmitter: [null, [Validators.maxLength(15)]],
-      clarification: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(100),
-        ],
-      ],
-      consistent: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(100),
-        ],
-      ],
-      initialParagraph: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
-      finalParagraph: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ], */
     });
   }
 
-  initForm2(): void {
+  initForm2(dataDocumentsImpro?: IClarificationDocumentsImpro): void {
+    console.log('Información del documento', dataDocumentsImpro);
+    this.inappropriatenessForm = this.fb.group({
+      addresseeName: [
+        dataDocumentsImpro.managedTo,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      positionSender: [
+        dataDocumentsImpro.positionSender,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      positionAddressee: [
+        dataDocumentsImpro.positionAddressee,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      //Aclaración
+      jobClarificationKey: [
+        dataDocumentsImpro.invoiceLearned,
+        [
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      senderName: [
+        dataDocumentsImpro.sender,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
+      ],
+      clarification: [
+        dataDocumentsImpro.clarification,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(100),
+        ],
+      ],
+
+      consistentIn: [
+        dataDocumentsImpro.consistentIn,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(100),
+        ],
+      ],
+      paragraphInitial: [
+        dataDocumentsImpro.paragraphInitial,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
+      paragraphFinal: [
+        dataDocumentsImpro.paragraphFinal,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
+      //Aclaración
+      observations: [
+        this.dataClarifications2.observations,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      ],
+
+      userAreaCaptures: [
+        dataDocumentsImpro.modificationUser,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+      transmitterId: [
+        dataDocumentsImpro.transmitterId,
+        [Validators.maxLength(15)],
+      ], // request emisora?
+      webMail: [
+        dataDocumentsImpro.mailNotification,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+      ],
+      senderCharge: [this.infoRequest.holderCharge, []],
+      applicationId: [this.idRequest],
+      documentTypeId: [104],
+      clarificationStatus: 'EN_ACLARACION',
+    });
+  }
+
+  initForm3(): void {
+    //Se agregó para parchar un error deúltimo momento
+
     this.inappropriatenessForm = this.fb.group({
       addresseeName: [
         null,
@@ -202,7 +272,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       senderName: [
-        this.infoRequest.nameOfOwner,
+        null,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -228,15 +298,15 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       paragraphInitial: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       paragraphFinal: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       //Aclaración
       observations: [
-        null,
+        this.dataClarifications2.observations,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
@@ -258,6 +328,8 @@ export class NotifyAssetsImproprietyFormComponent
 
   confirm() {
     if (!this.withDocumentation) {
+      //Formulario largo
+
       //Recupera información del usuario logeando para luego registrarlo como firmante
       let token = this.authService.decodeToken();
 
@@ -293,16 +365,13 @@ export class NotifyAssetsImproprietyFormComponent
         mailNotification: this.inappropriatenessForm.controls['webMail'].value,
         areaUserCapture:
           this.inappropriatenessForm.controls['userAreaCaptures'].value,
+        rejectNoticeId: this.dataClarifications2.rejectNotificationId,
       };
 
       this.loading = true;
       this.documentService.createClarDocImp(modelReport).subscribe({
         next: data => {
           //this.onLoadToast('success','Aclaración guardada correctamente','' );
-          console.log(
-            'Datos del formulario largo se han guardado en larification-documents-impro',
-            data
-          );
           this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
           this.openReport(data); //Falta verificar información que se envia...
           this.modalRef.content.callback(true);
@@ -319,7 +388,16 @@ export class NotifyAssetsImproprietyFormComponent
         },
       });
     } else {
-      console.log('Formuario corto');
+      //Si el input de observaciones tiene información, se va a guardar en "bienesRechaNoti"
+      const observations =
+        this.clarificationForm.controls['observations'].value;
+      const id = this.dataClarifications2.rejectNotificationId;
+
+      if (observations != null) {
+        console.log('obs y id', observations, id);
+        this.updateNotify(id, observations);
+      }
+
       this.chatClarifications1(); //PARA FORMULARIO CORTO
     }
   }
@@ -335,14 +413,12 @@ export class NotifyAssetsImproprietyFormComponent
     //Trae lista de chat-clarifications con el filtrado, para verificar si ya existe un registro
     this.chatService.getAll(this.paramsReload.getValue()).subscribe({
       next: data => {
-        console.log('Registro de ChatClarifications, filtrado', data.data);
         this.dataChatClarifications = data.data;
         //Si ya existe un registro en chatClarificatios, entonces se va a actualizar ese mismo registro
         this.chatClarificationUpdate1(this.dataChatClarifications[0]);
       },
       error: error => {
         //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
-        console.log('no se encuentra', error);
         this.chatClarificationCreate1();
       },
     });
@@ -350,15 +426,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Método que Actualiza ChatClarifications PARA FORMULARIO CORTO
   chatClarificationUpdate1(chatClarifications: IChatClarifications) {
-    console.log('Actualizando chatClarifications');
-    console.log('información de ChatClarificaions', chatClarifications);
-    console.log('chatClarifications.id', chatClarifications.id);
-    console.log('chatClarifications.requestId', chatClarifications.requestId);
-    console.log(
-      'id id_recha_noti',
-      this.dataClarifications2.rejectNotificationId
-    );
-
     //Construyendo objeto/model para enviarle
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
@@ -384,7 +451,6 @@ export class NotifyAssetsImproprietyFormComponent
             'Notificación actualizada correctamente',
             ''
           );
-          console.log('SE ACTUALIZÓ:', data);
           this.loading = false;
           this.updateNotify(data.clarifiNewsRejectId);
           this.modalRef.content.callback(true, data.goodId);
@@ -393,7 +459,6 @@ export class NotifyAssetsImproprietyFormComponent
         error: error => {
           this.loading = false;
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
-          console.log('NO SE ACTUALIZÓ:', error);
           this.modalRef.hide();
         },
       });
@@ -401,8 +466,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Método para crear un nuevo chatClarifications PARA FORMULARIO CORTO
   chatClarificationCreate1() {
-    console.log('Creando chatClarifications');
-
     //Creando objeto nuevo para ChatClarifications
     const modelChatClarifications: IChatClarifications = {
       //id: , //ID primaria
@@ -420,7 +483,6 @@ export class NotifyAssetsImproprietyFormComponent
     //Servicio para crear registro de ChatClariffications
     this.chatService.create(modelChatClarifications).subscribe({
       next: async data => {
-        console.log('SE CREÓ:', data);
         this.onLoadToast(
           'success',
           'Notificación contestada correctamente',
@@ -434,7 +496,6 @@ export class NotifyAssetsImproprietyFormComponent
       error: error => {
         this.loading = false;
         this.onLoadToast('error', 'No se pudo crear', error.error);
-        console.log('NO SE CREÓ:', error);
         this.modalRef.hide();
       },
     });
@@ -449,14 +510,12 @@ export class NotifyAssetsImproprietyFormComponent
     //Trae lista de chat-clarifications con el filtrado, para verificar si ya existe un registro
     this.chatService.getAll(this.paramsReload.getValue()).subscribe({
       next: data => {
-        console.log('Registro de ChatClarifications, filtrado', data.data);
         this.dataChatClarifications = data.data;
         //Si ya existe un registro en chatClarificatios, entonces se va a actualizar ese mismo registro
         this.chatClarificationUpdate2(this.dataChatClarifications[0]);
       },
       error: error => {
         //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
-        console.log('no se encuentra', error);
         this.chatClarificationCreate2();
       },
     });
@@ -464,15 +523,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Método que Actualiza ChatClarifications PARA FORMULARIO LARGO
   chatClarificationUpdate2(chatClarifications: IChatClarifications) {
-    console.log('Actualizando chatClarifications');
-    console.log('información de ChatClarificaions', chatClarifications);
-    console.log('chatClarifications.id', chatClarifications.id);
-    console.log('chatClarifications.requestId', chatClarifications.requestId);
-    console.log(
-      'id id_recha_noti',
-      this.dataClarifications2.rejectNotificationId
-    );
-
     //Construyendo objeto/model para enviarle
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
@@ -494,7 +544,6 @@ export class NotifyAssetsImproprietyFormComponent
       .subscribe({
         next: async data => {
           this.onLoadToast('success', 'Actualizado', '');
-          console.log('SE ACTUALIZÓ:', data);
           this.loading = false;
           this.updateNotify(data.clarifiNewsRejectId);
           this.modalRef.content.callback(true, data.goodId);
@@ -503,18 +552,18 @@ export class NotifyAssetsImproprietyFormComponent
         error: error => {
           this.loading = false;
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
-          console.log('NO SE ACTUALIZÓ:', error);
           this.modalRef.hide();
         },
       });
   }
 
-  updateNotify(id: number) {
-    console.log('notificación id', id);
+  updateNotify(id?: number, observations?: string) {
+    console.log('Observación nueva', observations);
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
       answered: 'EN ACLARACION',
+      observations: observations,
     };
 
     this.rejectedGoodService.update(id, data).subscribe({
@@ -524,8 +573,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Método para crear un nuevo chatClarifications PARA FORMULARIO LARGO
   chatClarificationCreate2() {
-    console.log('Creando chatClarifications');
-
     //Creando objeto nuevo para ChatClarifications
     const modelChatClarifications: IChatClarifications = {
       //id: , //ID primaria
@@ -544,7 +591,6 @@ export class NotifyAssetsImproprietyFormComponent
     //Servicio para crear registro de ChatClariffications
     this.chatService.create(modelChatClarifications).subscribe({
       next: async data => {
-        console.log('SE CREÓ:', data);
         this.loading = false;
         this.modalRef.content.callback(true, data.goodId);
         this.modalRef.hide();
@@ -553,7 +599,6 @@ export class NotifyAssetsImproprietyFormComponent
       error: error => {
         this.loading = false;
         this.onLoadToast('error', 'No se pudo crear', error.error);
-        console.log('NO SE CREÓ:', error);
         this.modalRef.hide();
       },
     });
@@ -564,12 +609,12 @@ export class NotifyAssetsImproprietyFormComponent
     const idReportAclara = data.id;
     const idDoc = data.id;
     const idTypeDoc = 211;
-    const dataClarifications = data;
+    const requestInfo = data;
 
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
-        dataClarifications,
+        requestInfo,
         idTypeDoc,
         idDoc,
         idReportAclara,

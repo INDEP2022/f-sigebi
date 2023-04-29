@@ -82,7 +82,7 @@
               typeDoc === 'request-expedient' ||
               typeDoc === 'request-assets'
             ">
-            <div class="col-md-4">
+            <div class="col-md-4" *ngIf="typeDoc != 'doc-request'">
               <form-field [control]="docRequestForm.get('regDelega')">
                 <ngx-select
                   [form]="docRequestForm"
@@ -94,7 +94,7 @@
                   (fetchItems)="getRegDelegation($event)"></ngx-select>
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" *ngIf="typeDoc != 'doc-request'">
               <ngx-select
                 [form]="docRequestForm"
                 control="state"
@@ -105,7 +105,7 @@
                 bindLabel="descCondition">
               </ngx-select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" *ngIf="typeDoc != 'doc-request'">
               <ngx-select
                 [form]="docRequestForm"
                 control="tranfe"
@@ -126,7 +126,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  maxlength="40"
+                  maxlength="150"
                   formControlName="docTitle" />
               </form-field>
             </div>

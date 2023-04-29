@@ -100,7 +100,7 @@
                 <div class="col-md-4">
                   <div>
                     <label for="">Fecha de Solicitud&#58;</label>
-                    {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -220,10 +220,10 @@
                   (response)="getResponse($event)"></app-clarifications>
                 <!-- fin -->
                 <!-- notificar aclaraciones o improcedencias -->
-                <app-notification-assets-tab
+                <!--<app-notification-assets-tab
                   *ngIf="notifyClarifiOrImpropriety"
                   [isSaving]="saveClarifiObject"
-                  [process]="process"></app-notification-assets-tab>
+                  [process]="process"></app-notification-assets-tab> -->
                 <!-- fin -->
                 <!-- Aprovar solicitudes -->
                 <app-approval-assets-tabs

@@ -240,12 +240,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {
@@ -258,7 +258,7 @@ export class DocRequestTabComponent
 
           if (transferent != 1) {
             const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document' && item.xidTransferente != 1) {
+              if (item.dDocType == 'Document') {
                 return item;
               }
             });
@@ -278,12 +278,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {
@@ -636,6 +636,7 @@ export class DocRequestTabComponent
 
   cleanForm(): void {
     this.docRequestForm.reset();
+    this.docRequestForm.get('noRequest').patchValue(this.idRequest);
     this.allDataDocReq = [];
     this.paragraphs.load([]);
     this.totalItems = 0;
