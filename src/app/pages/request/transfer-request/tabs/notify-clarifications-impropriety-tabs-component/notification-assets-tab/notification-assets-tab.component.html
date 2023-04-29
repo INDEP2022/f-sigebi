@@ -1,133 +1,378 @@
-<div>
-  <div class="row">
-    <div class="d-flex justify-content-end">
-      <div class="p-2">
-        <button (click)="saveData()" class="btn btn-primary btn-sm active">
-          <i class="fa-thin fa-repeat"></i> Guardar
-        </button>
-      </div>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Notificar Aclaración-Improcedencia, No. Solicitud: {{ idRequest }}
+    </h5>
 
-      <div class="p-2">
-        <button
-          (click)="endClarification()"
-          class="btn btn-primary btn-sm active">
-          <i class="fa-thin fa-repeat"></i> Terminar
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <h5><strong>Lista de Bienes</strong></h5>
-  </div>
-  <div class="row">
-    <div class="d-flex">
-      <div class="mr-auto p-2"></div>
-      <div class="p-2">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
-      <div class="p-2">
-        <button
-          id="btn1"
-          class="btn btn-primary btn-sm active"
-          (click)="verifyClarification()">
-          <i class="bx bx-check"></i>Verificar Cumplimiento
-        </button>
-      </div>
+    <div class="row pt-2">
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button (click)="saveData()" class="btn btn-primary btn-sm active">
+            <i class="fa-thin fa-repeat"></i> Guardar
+          </button>
+        </div>
 
-      <div class="p-2">
-        <button
-          id="btn2"
-          (click)="reloadData()"
-          class="btn btn-info btn-sm active">
-          <i class="fa-thin fa-repeat"></i> Actualizar
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="row pt-1">
-    <div class="col-md-12">
-      <div class="table-responsive">
-        <div [class]="loadingGoods ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (userRowSelect)="goodSelect($event.selected)">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+        <div class="p-2">
+          <button
+            (click)="endClarification()"
+            class="btn btn-primary btn-sm active">
+            <i class="fa-thin fa-repeat"></i> Terminar
+          </button>
         </div>
       </div>
     </div>
   </div>
-  <div class="row pt-4">
-    <h5><strong>Notificaciones del Bien</strong></h5>
-  </div>
-  <div class="row">
-    <div class="d-flex">
-      <div class="mr-auto p-2"></div>
-      <div class="p-2">
-        <button
-          id="btn5"
-          class="btn btn-success btn-sm active"
-          (click)="changeStatuesTmp()">
-          Simular respuesta
-        </button>
-      </div>
-      <div class="p-2">
-        <button
-          id="btn6"
-          class="btn btn-success btn-sm active"
-          (click)="acceptClariImpro()">
-          Aceptar Aclaraci&oacute;n&#47;Improcedencia
-        </button>
-      </div>
-      <div class="p-2" *ngIf="showButton">
-        <button
-          id="btn8"
-          class="btn btn-success btn-sm active"
-          (click)="FinishClariImpro()">
-          Finalizar Aclaraci&oacute;n&#47;improcedencia
-        </button>
-      </div>
-      <div class="p-2">
-        <button class="btn btn-info btn-sm active" (click)="satAnswer()">
-          Ver Respuesta Aclaraci&oacute;n
-        </button>
-      </div>
-      <div class="p-2">
-        <button
-          id="btn7"
-          class="btn btn-danger btn-sm active"
-          (click)="refuseClarification()">
-          Rechazar
-        </button>
-      </div>
-      <div class="p-2">
-        <app-columns-select [(settings)]="settings2"></app-columns-select>
-      </div>
-    </div>
-  </div>
-  <div class="row pt-1">
-    <div class="col-md-12">
-      <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
-        <form-loader *ngIf="formLoading"></form-loader>
-      </div>
-      <div class="table-responsive" *ngIf="!formLoading">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="notificationsList"
-            (userRowSelect)="notifyAssetRowSelected($event)"
-            (rowSelect)="selectRow($event.data)">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="params2"
-            [totalItems]="totalItems2"></app-pagination>
+
+  <div body>
+    <app-card [header]="false">
+      <div body>
+        <div class="row pt-2">
+          <div class="col-md-4">
+            <div>
+              <label for="">No&#46; Solicitud&#58;</label>
+              {{ requestData?.id }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div>
+              <label for="">Fecha de Solicitud&#58;</label>
+              {{ requestData?.applicationDate | date: 'dd/MM/yyyy' }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div>
+              <label for="">Estado&#58;</label>
+              {{ nameState }}
+            </div>
+          </div>
+        </div>
+        <div class="row pt-2">
+          <div class="col-lg-4">
+            <div>
+              <label for="">Transferente&#58;</label>
+              {{ nameTransferent }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div>
+              <label for="">Emisora&#58;</label>
+
+              {{ nameStation }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div>
+              <label for="">Autoridad&#58;</label>
+              {{ nameAuthority }}
+            </div>
+          </div>
+        </div>
+        <div class="row pt-2">
+          <div class="col-md-4">
+            <div>
+              <label for="">Delegaci&oacute;n Regional&#58;</label>
+
+              {{ delRegName }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div>
+              <label for="">No&#46; Oficio&#58;</label>
+
+              {{ requestData?.paperNumber }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div>
+              <label for="">Tipo Expediente&#58;</label>
+              {{ requestData?.typeRecord }}
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div>
+              <label for="">No&#46; Expediente&#58;</label>
+              {{ requestData?.recordId }}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </app-card>
+    <tabset class="md-tabs" #staticTabs>
+      <tab heading="Detalle de la Solicitud" id="tab1">
+        <div class="row pt-2">
+          <div class="col-md-6">
+            <label for="">Prioridad&#58;</label>
+          </div>
+
+          <div class="col-md-6">
+            <label for="">Causa Penal&#58; {{ requestData?.lawsuit }}</label>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Fecha recepci&oacute;n&#58;
+              {{ requestData?.receptionDate }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >No. Amparo&#58; {{ requestData?.protectNumber }}</label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Tipo expediente&#58; {{ requestData?.typeRecord }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for="">Toca Penal&#58; {{ requestData?.tocaPenal }}</label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">nombre MP&#58; {{ requestData?.nameOfOwner }}</label>
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Fecha de oficio&#58; {{ requestData?.paperDate }}</label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Cargo y/o Adscripci&oacute;n&#58;
+              {{ requestData?.holderCharge }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Ministerio publico&#58; {{ requestData?.publicMinistry }}</label
+            >
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Telefono MP&#58; {{ requestData?.phoneOfOwner }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for="">Juzgado&#58; {{ requestData?.court }}</label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">Email MP&#58; {{ requestData?.emailOfOwner }}</label>
+          </div>
+          <div class="col-md-6">
+            <label for="">Delito&#58; {{ requestData?.crime }}</label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Contribuyente y/o indiciado&#58;
+              {{ requestData?.indicatedTaxpayer }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >V&iacute;a de Recepci&oacute;n&#58;
+              {{ requestData?.receiptRoute }}</label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Expediente Transferente / PAMA&#58;
+              {{ requestData?.transferenceFile }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Gesti&oacute;n de Destino&#58;
+              {{ requestData?.destinationManagement }}</label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Notas Entidad Transferente&#58;
+              {{ requestData?.transferEntNotes }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for="">Asunto&#58;</label>
+          </div>
+        </div>
+        <!--Pendiente-->
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">Procedencia Informaci&oacute;n </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">Extincion Dominio&#58;</label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">Acta Circunstanciada&#58;</label>
+          </div>
+          <div class="col-md-6">
+            <label for="">Tipo Jucio&#58;</label>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">Averiguaci&oacute;n Previa&#58;</label>
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Observaciones&#58; {{ requestData?.observations }}</label
+            >
+          </div>
+        </div>
+      </tab>
+      <tab heading="Bienes" id="tab2">
+        <div>
+          <div class="row">
+            <h5><strong>Lista de Bienes</strong></h5>
+          </div>
+          <div class="row">
+            <div class="d-flex">
+              <div class="mr-auto p-2"></div>
+
+              <div class="p-2">
+                <button
+                  id="btn2"
+                  (click)="reloadData()"
+                  class="btn btn-info btn-sm active">
+                  <i class="fa-thin fa-repeat"></i> Actualizar
+                </button>
+              </div>
+              <div class="p-2">
+                <button
+                  id="btn1"
+                  class="btn btn-primary btn-sm active"
+                  (click)="verifyClarification()">
+                  <i class="bx bx-check"></i>Verificar Cumplimiento
+                </button>
+              </div>
+              <div class="p-2">
+                <app-columns-select
+                  [(settings)]="settings"></app-columns-select>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <div [class]="loadingGoods ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="data"
+                    (userRowSelect)="goodSelect($event.selected)">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="params"
+                    [totalItems]="totalItems"></app-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <h5><strong>Notificaciones del Bien</strong></h5>
+          </div>
+          <div class="row">
+            <div class="d-flex">
+              <div class="mr-auto p-2"></div>
+              <div class="p-2" *ngIf="requestData.typeOfTransfer == 'SAT_SAE'">
+                <button
+                  id="btn5"
+                  class="btn btn-success btn-sm active"
+                  (click)="changeStatuesTmp()">
+                  Simular respuesta
+                </button>
+              </div>
+              <div class="p-2">
+                <button
+                  id="btn6"
+                  class="btn btn-success btn-sm active"
+                  (click)="acceptClariImpro()">
+                  Aceptar Aclaraci&oacute;n&#47;Improcedencia
+                </button>
+              </div>
+              <div
+                class="p-2"
+                *ngIf="
+                  requestData.typeOfTransfer == 'PGR_SAE' ||
+                  requestData.typeOfTransfer == 'MANUAL'
+                ">
+                <button
+                  id="btn8"
+                  class="btn btn-success btn-sm active"
+                  (click)="FinishClariImpro()">
+                  Finalizar Aclaraci&oacute;n&#47;improcedencia
+                </button>
+              </div>
+              <div class="p-2" *ngIf="requestData.typeOfTransfer == 'SAT_SAE'">
+                <button
+                  class="btn btn-info btn-sm active"
+                  (click)="satAnswer()">
+                  Ver Respuesta Aclaraci&oacute;n
+                </button>
+              </div>
+              <div class="p-2">
+                <button
+                  id="btn7"
+                  class="btn btn-danger btn-sm active"
+                  (click)="refuseClarification()">
+                  Rechazar
+                </button>
+              </div>
+              <div class="p-2">
+                <app-columns-select
+                  [(settings)]="settings2"></app-columns-select>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <div class="col-md-12">
+              <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+                <form-loader *ngIf="formLoading"></form-loader>
+              </div>
+              <div class="table-responsive" *ngIf="!formLoading">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings2"
+                    [source]="notificationsList"
+                    (userRowSelect)="notifyAssetRowSelected($event)"
+                    (rowSelect)="selectRow($event.data)">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="params2"
+                    [totalItems]="totalItems2"></app-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </tab>
+      <tab heading="Expediente" id="tab3">
+        <app-expedients-tabs></app-expedients-tabs>
+      </tab>
+    </tabset>
   </div>
-</div>
+</app-card>

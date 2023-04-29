@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
+import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notification-assets-tab/notification-assets-tab.component';
 
 const routes: Routes = [
   {
@@ -33,7 +34,7 @@ const routes: Routes = [
   },
   {
     path: 'notify-clarification-inadmissibility/:id',
-    component: RegistrationOfRequestsComponent,
+    component: NotificationAssetsTabComponent,
     data: {
       process: 'notify-clarification-inadmissibility',
     },
