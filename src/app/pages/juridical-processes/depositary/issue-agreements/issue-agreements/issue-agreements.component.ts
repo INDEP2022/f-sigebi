@@ -17,8 +17,11 @@ import { addDays, format } from 'date-fns';
 import { BehaviorSubject, from, map, takeUntil } from 'rxjs';
 import { DATE_FORMAT } from 'src/app/common/constants/data-formats/date.format';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { EventEmitterService } from './eventEmitter.service';
 
 /** ROUTING MODULE */
@@ -38,6 +41,32 @@ export class CustomRender implements ViewCell {
   @HostListener('click') onclick() {
     // console.log('CELL clicked', this.rowData);
     this.eventEmitterService.onFirstComponentButtonClick(this.rowData);
+  }
+}
+
+/** CHECK COMPONENT */
+@Component({
+  selector: 'my-check',
+  template: `
+    <input type="checkbox" name="check" [checked]="this.isChecked" />
+  `,
+})
+export class CheckboxComponent implements OnInit {
+  @Input() value: any; // This hold the cell value
+  @Input() rowData: any;
+  isChecked: boolean;
+  constructor(private eventEmitterService: EventEmitterService) {}
+  ngOnInit(): void {
+    if (this.value) {
+      this.isChecked = true;
+    }
+  }
+  @HostListener('change', ['$event']) changeListener(event: any) {
+    // console.log('CELL clicked', this.rowData);
+    this.eventEmitterService.onFirstComponentCheckClick({
+      event,
+      row: this.rowData,
+    });
   }
 }
 @Component({
@@ -112,9 +141,11 @@ export class IssueAgreementsComponent
         title: 'Observaciones Acuerdo Inicial',
         sort: false,
       },
-      aceptaSuspencion: {
+      acceptSuspension: {
         title: 'Acepta Suspención',
         sort: false,
+        type: 'custom',
+        renderComponent: CheckboxComponent,
       }, //*
     },
   };
@@ -130,7 +161,9 @@ export class IssueAgreementsComponent
     private fb: FormBuilder,
     private eventEmitterService: EventEmitterService,
     private goodService: GoodService,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private historicGoodService: HistoryGoodService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -143,6 +176,37 @@ export class IssueAgreementsComponent
             this.open(name);
           }
         );
+    }
+    if (this.eventEmitterService.subsCheck == undefined) {
+      this.eventEmitterService.subsCheck =
+        this.eventEmitterService.invokeSecondComponentFunction.subscribe({
+          next: ({ event, row }: any) => {
+            if (
+              event.target.checked &&
+              row.statusResourceReview == 'DICTAMINADO RECURSO DE REVISION'
+            ) {
+              let document: IHistoryGood = {
+                changeDate: new Date(),
+                propertyNum: row.goodId,
+                reasonForChange: 'Automatico',
+                statusChangeProgram: 'FACTJUREMISIONACU',
+                status: row.status,
+                userChange: this.authService.decodeToken().sub,
+                extDomProcess: '',
+                registryNum: '',
+              };
+              this.historicGoodService.create(document).subscribe({
+                next: () => {
+                  this.alert(
+                    'success',
+                    'Registrado Correctamente.',
+                    'El registro fue exitoso.'
+                  );
+                },
+              });
+            }
+          },
+        });
     }
     this.prepareForm();
     this.getData();
@@ -173,7 +237,8 @@ export class IssueAgreementsComponent
             })
           )
           .subscribe({
-            next: value => {
+            next: (value: any) => {
+              value.acceptSuspension = false;
               data.push(value);
               if (data.length == val.data.length) {
                 setTimeout(() => {

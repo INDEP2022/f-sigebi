@@ -20,7 +20,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
-  title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
+  title: string = 'TURNAR LAS SOLICITUDES SELECCIONAS';
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
@@ -129,7 +129,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   confirm() {
     if (this.user === undefined) {
-      this.onLoadToast('info', 'Informacion', `Seleccione un usuario!`);
+      this.onLoadToast('info', 'Información', `Seleccione un usuario`);
       return;
     }
     this.loading = true;
