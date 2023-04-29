@@ -35,6 +35,7 @@ import { MinPubService } from '../catalogs/minpub.service';
 import { StationService } from '../catalogs/station.service';
 import { TransferenteService } from '../catalogs/transferente.service';
 import { DynamicTablesService } from '../dynamic-catalogs/dynamic-tables.service';
+import { RTdictaAarusrService } from '../ms-convertiongood/r-tdicta-aarusr.service';
 import { GoodParametersService } from '../ms-good-parameters/good-parameters.service';
 import { ProcedureManagementService } from '../proceduremanagement/proceduremanagement.service';
 
@@ -57,7 +58,8 @@ export class DocReceptionRegisterService extends HttpService {
     private goodParametersService: GoodParametersService,
     private departamentService: DepartamentService,
     private identifierService: IdentifierService,
-    private courtsService: CourtByCityService
+    private courtsService: CourtByCityService,
+    private userCheckService: RTdictaAarusrService
   ) {
     super();
   }
@@ -269,9 +271,25 @@ export class DocReceptionRegisterService extends HttpService {
     let partials = ENDPOINT_LINKS.Transferente.split('/');
     self.microservice = partials[0];
     const route = `${partials[1]}/transferring-levels-view`;
-    return self
-      .get<IListResponse<ITransferingLevelView>>(route, params)
-      .pipe(tap(() => (self.microservice = '')));
+    return self.get<IListResponse<ITransferingLevelView>>(route, params).pipe(
+      map(data => {
+        data = {
+          ...data,
+          data: data.data.map(e => {
+            return {
+              ...e,
+              cityDesc: `${e.cityNum} - ${e.cityDesc}`,
+              federalEntityDesc: `${e.federalEntityCve} - ${e.federalEntityDesc}`,
+              transfereeDesc: `${e.transfereeNum} - ${e.transfereeDesc}`,
+              stationDesc: `${e.stationNum} - ${e.stationDesc}`,
+              authorityDesc: `${e.authorityNum} - ${e.authorityDesc}`,
+            };
+          }),
+        };
+        return data;
+      }),
+      tap(() => (self.microservice = ''))
+    );
   }
 
   getGoods(params?: string): Observable<IListResponse<IGood>> {
@@ -532,5 +550,9 @@ export class DocReceptionRegisterService extends HttpService {
         };
       })
     );
+  }
+
+  userAreaCheck(params: string) {
+    return this.userCheckService.getAllWithFilters(params);
   }
 }

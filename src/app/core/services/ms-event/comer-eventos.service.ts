@@ -71,4 +71,8 @@ export class ComerEventosService extends HttpService {
     const route = `${EventEndpoints.ComerEvents}?filter.address=${id}`;
     return this.get(route, params);
   }
+
+  getComerEventById(id: string | number, params?: ListParams) {
+    return this.get(`${EventEndpoints.ComerE}/${id}`, params);
+  }
 }

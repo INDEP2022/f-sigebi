@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -24,6 +25,7 @@ import { RequestDetailTabComponent } from './tabs/compliance-verification-compon
 import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 import { FulfillmentComponent } from './tabs/compliance-verification-components/verify-compliance-tab/fulfillment/fulfillment.component';
 import { SaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
+import { SelectInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/select-input/select-input.component';
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
 import { GeneralDocumentsFormComponent } from './tabs/general-documents-form/general-documents-form.component';
@@ -86,6 +88,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     CopyAddressComponent,
     FulfillmentComponent,
     PrintSatAnswerComponent,
+    SelectInputComponent,
   ],
   imports: [
     CommonModule,
@@ -98,6 +101,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     PdfViewerModule,
     FormLoaderComponent,
     HttpClientModule,
+    TooltipModule,
   ],
   exports: [VerifyComplianceTabComponent],
 })

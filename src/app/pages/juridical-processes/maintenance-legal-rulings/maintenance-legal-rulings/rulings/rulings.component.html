@@ -8,9 +8,14 @@
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field [control]="form.get('wheelNumber')" label="No&#46; Volante">
-        <input class="form-control" formControlName="wheelNumber" />
+      <form-field [control]="form.get('typeDict')" label="Tipo">
+        <input class="form-control" formControlName="typeDict" />
       </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-8 p-2">
+      <button class="btn btn-sm btn-primary active" (click)="setFormData()">
+        Buscar
+      </button>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
@@ -20,17 +25,18 @@
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('wheelNumber')" label="No&#46; Volante">
+        <input class="form-control" formControlName="wheelNumber" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
         [control]="form.get('delegationDictNumber')"
         label="No&#46; Delegación">
         <input class="form-control" formControlName="delegationDictNumber" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field [control]="form.get('typeDict')" label="Tipo">
-        <input class="form-control" formControlName="typeDict" />
-      </form-field>
-    </div>
+
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
         [control]="form.get('statusDict')"
@@ -46,7 +52,9 @@
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
-      <form-field [control]="form.get('folioUniversal')" label="folioUniversal">
+      <form-field
+        [control]="form.get('folioUniversal')"
+        label="Folio Universal">
         <input class="form-control" formControlName="folioUniversal" />
       </form-field>
     </div>
@@ -70,6 +78,7 @@
     <div class="col-sm-12 col-12 col-md-12 p-2">
       <form-field [control]="form.get('observations')" label="Observaciones">
         <textarea
+          rows="4"
           class="form-control"
           formControlName="observations"></textarea>
       </form-field>

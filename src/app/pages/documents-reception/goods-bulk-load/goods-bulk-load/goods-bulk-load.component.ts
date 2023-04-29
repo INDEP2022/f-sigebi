@@ -44,6 +44,7 @@ import {
   IDocumentsReceptionRegisterForm,
 } from '../../flyers/documents-reception-register/interfaces/documents-reception-register-form';
 import {
+  FGR_OPCION,
   GOODS_BULK_LOAD_ACTIONS,
   GOODS_BULK_LOAD_TARGETS,
   SAT_SAE_INMUEBLES_PROCESO_4,
@@ -86,7 +87,12 @@ import {
   VALIDATION_UPLOAD_END_MESSAGE,
   VALIDATION_UPLOAD_START_MESSAGE,
 } from '../utils/goods-bulk-load.message';
-import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
+import {
+  APPLY_DATA_COLUMNS,
+  GOODS_BULK_LOAD_COLUMNS,
+  OFFICE_COLOR_DATA_COLUMN,
+  WHEEL_COLOR_DATA_COLUMN,
+} from './goods-bulk-load-columns';
 
 interface IValidInfoData {
   error: any; // Arreglo de errores encontrados
@@ -122,7 +128,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   tableSourceActualPreload: previewData[] = [];
   tableSourceActualUpload: previewData[] = [];
   actions = GOODS_BULK_LOAD_ACTIONS.general;
-  target = new FormControl<'general' | 'sat' | 'pgr'>('general');
+  target = new FormControl<'general' | 'sat' | typeof FGR_OPCION>('general');
   targets = GOODS_BULK_LOAD_TARGETS;
   get bulkId() {
     return this.assetsForm.get('idCarga');
@@ -172,6 +178,10 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   flyersRegistrationParams: IDocReceptionFlyersRegistrationParams = null;
   documentsReceptionRegisterForm: Partial<IDocumentsReceptionRegisterForm> =
     null;
+  WHEEL_COLOR_DATA_COLUMN = WHEEL_COLOR_DATA_COLUMN;
+  OFFICE_COLOR_DATA_COLUMN = OFFICE_COLOR_DATA_COLUMN;
+  FGR_OPCION = FGR_OPCION;
+  optionInvalid: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -191,6 +201,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.optionInvalid = false;
     this.wheelCount = 0;
     this.fileNumberCount = 0;
     this.blockErrors(true); // OCULTAR MENSAJES DEL INTERCEPTOR
@@ -201,8 +212,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (this.userId == 'SIGEBIADMON') {
       this.userId = this.userId.toLocaleLowerCase();
     }
-    let main = document.documentElement.querySelector('.init-page');
-    main.scroll(0, 0);
+    // let main = document.documentElement.querySelector('.init-page');
+    // main.scroll(0, 0);
     // this.blockErrors(false); // OCULTAR MENSAJES DEL INTERCEPTOR
     this.globalVarsService
       .getGlobalVars$()
@@ -225,9 +236,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       if (this.target.value == 'sat') {
         // console.log('SAT');
         this.validatorPreloadMassiveSat();
-      } else if (this.target.value == 'pgr') {
+      } else if (this.target.value == FGR_OPCION) {
         this.endProcess = false;
-        // console.log('PGR');
+        // console.log('PGR--');
         this.validatorPreloadMassivePgr(); // Iniciar proceso de validación
       } else if (this.target.value == 'general') {
         // console.log('GENERAL');
@@ -302,7 +313,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.target.updateValueAndValidity();
           this.targetChange();
         }
-      } else if (this.tipoCarga == 'pgr') {
+      } else if (this.tipoCarga == FGR_OPCION) {
         let validParam = true;
         let param1 = this.route.snapshot.paramMap.get('P_NO_EXPEDIENTE');
         if (!param1) {
@@ -365,13 +376,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           //     }
           //   }
           // }
-
+          console.log(this.paramsGeneral);
           this.target.setValue(this.tipoCarga);
           this.target.updateValueAndValidity();
           this.targetChange();
           this.getDataPGRFromParams(); // Obtener PGR data
         }
       } else {
+        this.optionInvalid = true;
         this.stopProcess = true;
         this.alert(
           'warning',
@@ -404,7 +416,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.assetsForm.reset();
     this.targetChange();
     this.inicioProceso = false;
-    if (this.tipoCarga == 'pgr') {
+    if (this.tipoCarga == FGR_OPCION) {
       this.assetsForm.get('idCarga').setValue('ASEG');
       this.assetsForm.updateValueAndValidity();
       this.validParameters();
@@ -433,7 +445,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
 
   save() {
     // this.validParameters();
-    if (this.stopProcess) {
+    if (this.stopProcess || this.optionInvalid) {
       return;
     }
     this.DeclarationsSatSaeMassive = undefined;
@@ -487,7 +499,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: Event) {
-    if (this.tipoCarga == 'pgr') {
+    if (this.tipoCarga == FGR_OPCION) {
       return;
     } else {
       const files = (event.target as HTMLInputElement).files;
@@ -525,11 +537,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       for (const key in object) {
         if (Object.prototype.hasOwnProperty.call(object, key)) {
           if (key) {
-            obj[key] = {
-              title: key.toLocaleUpperCase(),
-              type: 'string',
-              sort: false,
-            };
+            obj[key] = APPLY_DATA_COLUMNS(key);
+            // obj[key] = {
+            //   title: key.toLocaleUpperCase(),
+            //   type: 'string',
+            //   sort: false,
+            // };
           }
         }
       }
@@ -551,8 +564,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     this.assetsForm.get('actionType').reset();
     const target = this.target.value;
     this.actions = GOODS_BULK_LOAD_ACTIONS[target] ?? [];
-    this.assetsForm.get('actionType').setValue(this.actions[0].value);
-    this.assetsForm.get('actionType').updateValueAndValidity();
+    console.log(this.actions[0], target);
+    if (this.actions[0]) {
+      this.assetsForm.get('actionType').setValue(this.actions[0].value);
+      this.assetsForm.get('actionType').updateValueAndValidity();
+    }
   }
 
   /**
@@ -612,9 +628,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (this.target.value == 'sat') {
       // console.log('SAT');
       this.validatorPreloadMassiveSat();
-    } else if (this.target.value == 'pgr') {
+    } else if (this.target.value == FGR_OPCION) {
       this.endProcess = false;
-      // console.log('PGR');
+      // console.log(FGR_OPCION);
       this.validatorPreloadMassivePgr(); // Iniciar proceso de validación
     } else if (this.target.value == 'general') {
       // console.log('GENERAL');
@@ -697,7 +713,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (this.tableSource.length > 0) {
       return true;
     } else {
-      if (this.tipoCarga == 'pgr') {
+      if (this.tipoCarga == FGR_OPCION) {
         this.alert(
           'warning',
           'Error al cargar la información de los bienes, revisa los parámetros: EXPEDIENTE, VOLANTE y OFICIO',
@@ -741,7 +757,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Carga Masiva FGR',
-              'Ocurrió un error al cargar la información de los bienes.'
+              'Ocurrió un error al cargar la información de los bienes. Para el Oficio: ' +
+                this.paramsGeneral.p_av_previa
             );
           }
         },
@@ -750,13 +767,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Carga Masiva FGR',
-            'Ocurrió un error al cargar la información de los bienes.'
+            'Ocurrió un error al cargar la información de los bienes.' +
+              err.error.message
           );
         },
       });
   }
 
   initDataPgr(pgrData: IPgrTransfer[]) {
+    console.log(pgrData);
     const params = new FilterParams();
     params.addFilter('user', this.userId);
     this.hideError();
@@ -776,7 +795,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Carga Masiva FGR',
-          'Ocurrió un error al cargar la Delegación y Subdelegación.'
+          'Ocurrió un error al cargar la Delegación y Subdelegación. Del usuario: ' +
+            err.error.message
         );
       },
     });
@@ -790,12 +810,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     params.addFilter('expedientNumber', expedient);
     let volante = encodeURIComponent(this.paramsGeneral.p_no_volante);
     params.addFilter('wheelNumber', volante);
-    let oficio = encodeURIComponent(this.paramsGeneral.p_av_previa);
+    let off = this.paramsGeneral.p_av_previa.substring(0, 34);
+    console.log(off, off.length);
+    let oficio = encodeURIComponent(off);
     params.addFilter('officeExternalKey', oficio);
     this.goodsBulkService
       .getDataPgrNotificationByFilter(params.getFilterParams())
       .subscribe({
         next: res => {
+          console.log(res);
           this.getFilterDataPgr(dataPgr, count, res.data[0], null); // Inicia proceso de carga y validacion
         },
         error: err => {
@@ -815,47 +838,56 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     volanteData: INotification,
     copiasData: ICopiesxFlier
   ) {
-    let fechaParseOficio = this.datePipe.transform(
-      volanteData.entryProcedureDate,
-      'dd/MM/yyyy'
-    );
+    // let fechaParseOficio = this.datePipe.transform(
+    //   volanteData.entryProcedureDate,
+    //   'dd/MM/yyyy'
+    // );
+    let fechaParseOficio = volanteData.externalOfficeDate
+      ? this.datePipe.transform(volanteData.externalOfficeDate, 'dd/MM/yyyy')
+      : '';
     let data: any = {
       tipovolante: volanteData.wheelType,
       remitente: volanteData.externalRemitter,
       identificador: volanteData.identifier,
       asunto: volanteData.affair.id,
-      nooficio: dataPgr.pgrOffice,
-      fecoficio: fechaParseOficio,
       exptrans: volanteData.expedientTransferenceNumber,
-      descripcion: volanteData.observations,
+      // descripcion: volanteData.observations,
       ciudad: volanteData.cityNumber,
       entfed: volanteData.entFedKey,
-      solicitante: '200',
       contribuyente: volanteData.indiciadoNumber,
       transferente: volanteData.endTransferNumber,
       viarecepcion: volanteData.viaKey,
       areadestino: volanteData.departamentDestinyNumber,
       gestiondestino: volanteData.departament.dsarea,
+      observaciones: volanteData.observations,
+      autoridad: volanteData.autorityNumber,
+      nooficio: dataPgr.pgrOffice,
+      fecoficio: fechaParseOficio,
+      // solicitante: '200',
+      solicitante:
+        typeof volanteData.institutionNumber == 'number'
+          ? volanteData.institutionNumber
+          : volanteData.institutionNumber
+          ? volanteData.institutionNumber.id
+          : '',
       // destinatario: copiasData ? copiasData.copyuser : null,
       destinatario: null,
-      descbien: '',
+      descripcion: '',
       cantidad: null,
       unidad: '',
       status: 'ROP',
       clasif: null,
       marca: '',
       serie: '',
-      observaciones: volanteData.observations,
-      autoridad: volanteData.autorityNumber,
     };
     for (let index = 10; index < 44; index++) {
       data['col' + index] = null;
     }
-    data['SAT_CVE_UNICA'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
+    data['FGR_NO_BIEN'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
     if (dataPgr.pgrTypeGoodVeh) {
       // CONDICION VEH
       data.clasif = dataPgr.pgrTypeGoodVeh;
-      data.descbien = dataPgr.pgrDescrGoodVeh;
+      data.descripcion = dataPgr.pgrDescrGoodVeh;
       data.cantidad = dataPgr.pgrAmountVeh;
       data.unidad =
         dataPgr.pgrUnitMeasureVeh == 'PZ' ? 'PIEZA' : dataPgr.pgrUnitMeasureVeh;
@@ -890,7 +922,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodAer) {
       // CONDICION AER
       data.clasif = dataPgr.pgrTypeGoodAer;
-      data.descbien = dataPgr.pgrDescrGoodAer;
+      data.descripcion = dataPgr.pgrDescrGoodAer;
       data.cantidad = dataPgr.pgrAmountAer;
       data.unidad =
         dataPgr.pgrUniMeasureAer == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureAer;
@@ -924,7 +956,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodEmb) {
       // CONDICION EMB
       data.clasif = dataPgr.pgrTypeGoodEmb;
-      data.descbien = dataPgr.pgrDescrGoodEmb;
+      data.descripcion = dataPgr.pgrDescrGoodEmb;
       data.cantidad = dataPgr.pgrAmountEmb;
       data.unidad =
         dataPgr.pgrUniMeasureEmb == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureEmb;
@@ -956,7 +988,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodInm) {
       // CONDICION INM
       data.clasif = dataPgr.pgrTypeGoodInm;
-      data.descbien = dataPgr.pgrDescrGoodInm;
+      data.descripcion = dataPgr.pgrDescrGoodInm;
       data.cantidad = dataPgr.pgrAmountInm;
       data.unidad =
         dataPgr.pgrUniMeasureInm == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureInm;
@@ -988,7 +1020,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodNum) {
       // CONDICION NUM
       data.clasif = dataPgr.pgrTypeGoodNum;
-      data.descbien = dataPgr.pgrDescrGoodNum;
+      data.descripcion = dataPgr.pgrDescrGoodNum;
       data.cantidad = dataPgr.pgrAmountNum;
       data.unidad =
         dataPgr.pgrUniMeasureNum == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureNum;
@@ -1025,7 +1057,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodJoy) {
       // CONDICION JOY
       data.clasif = dataPgr.pgrTypeGoodJoy;
-      data.descbien = dataPgr.pgrDescrGoodJoy;
+      data.descripcion = dataPgr.pgrDescrGoodJoy;
       data.cantidad = dataPgr.pgrAmountJoy;
       data.unidad =
         dataPgr.pgrUniMeasureJoy == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureJoy;
@@ -1056,7 +1088,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodDiv) {
       // CONDICION DIV
       data.clasif = dataPgr.pgrTypeGoodDiv;
-      data.descbien = dataPgr.pgrDescrGoodDiv;
+      data.descripcion = dataPgr.pgrDescrGoodDiv;
       data.cantidad = dataPgr.pgrAmountDiv;
       data.unidad =
         dataPgr.pgrUniMeasureDiv == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureDiv;
@@ -1073,7 +1105,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     } else if (dataPgr.pgrTypeGoodMen) {
       // CONDICION MEN
       data.clasif = dataPgr.pgrTypeGoodMen;
-      data.descbien = dataPgr.pgrDescrGoodMen;
+      data.descripcion = dataPgr.pgrDescrGoodMen;
       data.cantidad = dataPgr.pgrAmountMen;
       data.unidad =
         dataPgr.pgrUniMeasureMen == 'PZ' ? 'PIEZA' : dataPgr.pgrUniMeasureMen;
@@ -1099,6 +1131,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     body: any,
     dataInfo: any
   ) {
+    console.log(body);
     this.goodsBulkService.getFaValAtributo1(body).subscribe({
       next: res => {
         let dataResponse: any = res;
@@ -1142,11 +1175,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     for (const key in object) {
       if (Object.prototype.hasOwnProperty.call(object, key)) {
         if (key) {
-          obj[key] = {
-            title: key.toLocaleUpperCase(),
-            type: 'string',
-            sort: false,
-          };
+          obj[key] = APPLY_DATA_COLUMNS(key);
+          // obj[key] = {
+          //   title: key.toLocaleUpperCase(),
+          //   type: 'string',
+          //   sort: false,
+          // };
         }
       }
     }
@@ -1671,7 +1705,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               } else {
                 this.proceso2SatGeneral(infoData);
               }
-            } else if (opcionValid == 'pgr') {
+            } else if (opcionValid == FGR_OPCION) {
               if (
                 !this.assetsForm.get('cars').value &&
                 !this.assetsForm.get('inmuebles').value
@@ -1724,7 +1758,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               } else {
                 this.proceso2SatGeneral(infoData);
               }
-            } else if (opcionValid == 'pgr') {
+            } else if (opcionValid == FGR_OPCION) {
               if (
                 !this.assetsForm.get('cars').value &&
                 !this.assetsForm.get('inmuebles').value
@@ -1778,7 +1812,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         } else {
           this.proceso2SatGeneral(infoData);
         }
-      } else if (opcionValid == 'pgr') {
+      } else if (opcionValid == FGR_OPCION) {
         if (
           !this.assetsForm.get('cars').value &&
           !this.assetsForm.get('inmuebles').value
@@ -2207,7 +2241,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                 likeVar = 1;
               }
             }
-          } else if (opcionValid == 'pgr') {
+          } else if (opcionValid == FGR_OPCION) {
             if (element == info.attribute) {
               likeVar = 1;
             }
@@ -2226,7 +2260,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                 equalVar = 1;
               }
             }
-          } else if (opcionValid == 'pgr') {
+          } else if (opcionValid == FGR_OPCION) {
             if (element == info.attribute) {
               equalVar = 1;
             }
@@ -2305,7 +2339,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       error = this.agregarError(error, ERROR_CANTIDAD(data.cantidad));
     }
     // Validar Estatus
-    this.validStatusColumnaPRE(this.infoDataValidation, 'pgr');
+    this.validStatusColumnaPRE(this.infoDataValidation, FGR_OPCION);
   }
 
   /**
@@ -2823,7 +2857,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       await this.goodsBulkService.getSatKey(objParams).subscribe({
         next: res => {
           console.log(res);
-          infoData.objInsertResponse['SAT_CVE_UNICA'] = res.satOnlyKey; // Obtener SAT CVE Unica
+          if (opcionValid == FGR_OPCION) {
+            infoData.objInsertResponse['FGR_NO_BIEN'] = res.satOnlyKey; // Obtener FGR CVE Unica
+          } else {
+            infoData.objInsertResponse['SAT_CVE_UNICA'] = res.satOnlyKey; // Obtener SAT CVE Unica
+          }
           this.searchCityByAsuntoSat(infoData, opcionValid);
         },
         error: err => {
@@ -2850,11 +2888,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     let dataFilter = '';
     if (opcionValid == 'sat') {
       dataFilter = this.paramsGeneral.asunto_sat;
-    } else if (opcionValid == 'pgr') {
+    } else if (opcionValid == FGR_OPCION) {
       dataFilter = this.paramsGeneral.p_av_previa;
     }
     // Creacion del bien
-    if (infoData.dataRow.descripcion || opcionValid == 'pgr') {
+    if (infoData.dataRow.descripcion || opcionValid == FGR_OPCION) {
       // Obtener la clave de la ciudad apartir de la clave Asunto SAT
       await this.goodsBulkService
         .searchCityByAsuntoSat(dataFilter, opcionValid)
@@ -2994,7 +3032,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           ),
           city: infoData.objInsertResponse.no_ciudad,
         };
-      } else if (opcionValid == 'pgr') {
+      } else if (opcionValid == FGR_OPCION) {
         issuingParams = {
           office: this.paramsGeneral.p_av_previa,
           transferent: parseInt(
@@ -3151,7 +3189,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           if (
             err.status == 400 &&
             err.error.message == 'Data no encontrada' &&
-            opcionValid == 'pgr'
+            opcionValid == FGR_OPCION
           ) {
             this.insertExpedient(infoData, opcionValid);
           } else {
@@ -3188,7 +3226,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       identifier: infoData.dataRow.identificador, // IDENTIFICADOR
       transferNumber: infoData.dataRow.transferente, // NUMERO DE TRANSFERENTE
       expTransferNumber:
-        opcionValid == 'pgr'
+        opcionValid == FGR_OPCION
           ? infoData.dataRow.exptrans
           : infoData.dataRow.expediente, // EXPEDIENTE TRANSFER NUMBER
       expedientType: opcionValid == 'sat' ? 'T' : 'P', // TIPO DE EXPEDIENTE
@@ -3256,7 +3294,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       'Obtener etiqueta por clasificacion del bien.';
     console.log(this.DeclarationsValidationMassive.message_progress);
     let trans =
-      opcionValid == 'pgr'
+      opcionValid == FGR_OPCION
         ? infoData.dataRow.transferente
         : infoData.objInsertResponse.manualvar_no_transferente;
     if (!infoData.dataRow.clasif || !trans) {
@@ -3269,7 +3307,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       if (opcionValid == 'general') {
         this.validExpedientColumna(infoData, opcionValid); // Expediente
       } else {
-        if (opcionValid == 'pgr') {
+        if (opcionValid == FGR_OPCION) {
           this.processUploadEndPgr(infoData); // Termina proceso
         } else {
           // this.createGood(infoData, opcionValid); // Crear bien
@@ -3278,7 +3316,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       }
     } else {
       let transfNumber =
-        opcionValid == 'pgr'
+        opcionValid == FGR_OPCION
           ? infoData.dataRow.transferente
           : infoData.objInsertResponse['lnu_TRANSFERENTE']
           ? parseInt(infoData.objInsertResponse['lnu_TRANSFERENTE'])
@@ -3454,8 +3492,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dataGood = {
         id: '', // ID
         // satUniqueKey: '', // SAT_CVE_UNICA
-        siabiInventoryId: infoData.dataRow['sat_cve_unica'], // SIAB_INVENTORY ES PGR_NO_BIEN
-        inventoryNumber: infoData.dataRow['sat_cve_unica'], // NUMERO DE INVENTARIO
+        siabiInventoryId:
+          opcionValid != FGR_OPCION
+            ? infoData.dataRow['sat_cve_unica']
+            : infoData.dataRow['fgr_no_bien'], // SIAB_INVENTORY ES PGR_NO_BIEN
+        inventoryNumber:
+          opcionValid != FGR_OPCION
+            ? infoData.dataRow['sat_cve_unica']
+            : infoData.dataRow['fgr_no_bien'], // NUMERO DE INVENTARIO
         // associatedFileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE ---- SE CAMBIO POR ESTE CAMPO EL DATOS DEL EXPEDIENTE YA QUE CON EL OTRO MANDA ERROR EL MS
         fileNumber: this.paramsGeneral.p_no_expediente, // NO_EXPEDIENTE
         description: infoData.dataRow.descripcion, // Descripcion
@@ -3515,7 +3559,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         );
         this.infoDataValidation.error = infoData.error; // Setear error
         infoData.validLastRequest = false; // Respuesta incorrecta
-        if (opcionValid == 'pgr') {
+        if (opcionValid == FGR_OPCION) {
           this.processUploadEndPgr(infoData); // Termina proceso
         } else if (opcionValid == 'general') {
           this.processUploadEndGeneral(infoData); // Terminar proceso
@@ -3635,7 +3679,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   ) {
     if (opcionValid == 'sat') {
       this.idPantalla = 'FMASINSUPDBIENES_SATSAE';
-    } else if (opcionValid == 'pgr') {
+    } else if (opcionValid == FGR_OPCION) {
       this.idPantalla = 'FMASINSUPDBIENES_PGRSAE';
     } else if (opcionValid == 'general') {
       this.idPantalla = 'FMASINSUPDBIENES';
@@ -3671,7 +3715,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             this.processUploadEndGeneral(infoData); //  Fin de proceso 2 para general
           }
         } else {
-          if (opcionValid == 'pgr') {
+          if (opcionValid == FGR_OPCION) {
             this.updatePGRTransferencia(infoData, opcionValid); // Actualizar PGR Transferencia
           } else {
             this.updateSatTransferencia(infoData, opcionValid); // Crear registro carga masiva
@@ -3691,7 +3735,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         if (opcionValid == 'general') {
           this.processUploadEndGeneral(infoData); //  Fin de proceso para general
         } else {
-          if (opcionValid == 'pgr') {
+          if (opcionValid == FGR_OPCION) {
             this.updatePGRTransferencia(infoData, opcionValid); // Actualizar PGR Transferencia
           } else {
             this.updateSatTransferencia(infoData, opcionValid); // Crear bien
@@ -3706,11 +3750,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     infoData: IValidInfoData,
     opcionValid: string = 'sat'
   ) {
+    let cve =
+      opcionValid != FGR_OPCION
+        ? infoData.dataRow['sat_cve_unica']
+        : infoData.dataRow['fgr_no_bien'];
     // this.processUploadEndPgr(infoData);
     const params = new FilterParams();
     params.removeAllFilters();
     params.addFilter('pgrOffice', this.paramsGeneral.p_av_previa);
-    params.addFilter('pgrGoodNumber', infoData.dataRow['sat_cve_unica']); // SET pgrGoodNumber from filter data
+    params.addFilter('pgrGoodNumber', cve); // SET pgrGoodNumber from filter data
     this.goodsBulkService
       .getDataPGRFromParams(params.getFilterParams())
       .subscribe({
@@ -3735,7 +3783,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                     ' Con el Oficio: ' +
                     this.paramsGeneral.p_av_previa +
                     ' y el Número de Bien: ' +
-                    infoData.dataRow['sat_cve_unica'] +
+                    cve +
                     err.error.message
                 );
                 this.infoDataValidation.error = infoData.error; // Setear error
@@ -3751,7 +3799,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                 ' Con el Oficio: ' +
                 this.paramsGeneral.p_av_previa +
                 ' y el Número de Bien: ' +
-                infoData.dataRow['sat_cve_unica'] +
+                cve +
                 error
             );
             this.infoDataValidation.error = infoData.error; // Setear error
@@ -3767,7 +3815,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               ' Con el Oficio: ' +
               this.paramsGeneral.p_av_previa +
               ' y el Número de Bien: ' +
-              infoData.dataRow['sat_cve_unica'] +
+              cve +
               err.error.message
           );
           this.infoDataValidation.error = infoData.error; // Setear error
@@ -3815,90 +3863,94 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     infoData: IValidInfoData,
     opcionValid: string = 'sat'
   ) {
+    let cve =
+      opcionValid != FGR_OPCION
+        ? infoData.dataRow['sat_cve_unica']
+          ? infoData.dataRow['sat_cve_unica']
+          : infoData.objInsertResponse['SAT_CVE_UNICA']
+        : infoData.dataRow['fgr_no_bien']
+        ? infoData.dataRow['fgr_no_bien']
+        : infoData.objInsertResponse['FGR_NO_BIEN'];
     // --************** ACTUALIZACION DE TABLA DE REGISTROS DEL SAT CON EL NO DE BIEN**-----------
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
       'Actualización de tabla de registros del SAT con el número de bien.';
     console.log(this.DeclarationsValidationMassive.message_progress);
     // Crear el historico del bien
-    await this.goodsBulkService
-      .getSatTransferencia(infoData.objInsertResponse['SAT_CVE_UNICA'])
-      .subscribe({
-        next: async res => {
-          console.log(res);
-          infoData.validLastRequest = true; // Respuesta correcta
-          let dataUpdate: ISatTransfer = res;
+    await this.goodsBulkService.getSatTransferencia(cve).subscribe({
+      next: async res => {
+        console.log(res);
+        infoData.validLastRequest = true; // Respuesta correcta
+        let dataUpdate: ISatTransfer = res;
+        if (opcionValid == 'sat') {
+          dataUpdate.saeGoodNumber = infoData.objInsertResponse['LNU_NO_BIEN'];
+          dataUpdate.saeStatusShipping = 'G'; // Cambiar el estatus del envio
+        } else if (FGR_OPCION) {
+          dataUpdate.saeGoodNumber = infoData.objInsertResponse['LNU_NO_BIEN'];
+        }
+        // actualizar el estatus de sat transferencia
+        await this.goodsBulkService
+          .updateSatTransferencia(res.id, dataUpdate)
+          .subscribe({
+            next: res => {
+              console.log(res);
+              infoData.validLastRequest = true; // Respuesta correcta
+              if (
+                this.assetsForm.get('cars').value ||
+                this.assetsForm.get('inmuebles').value
+              ) {
+                this.validMuebleInmuebleUpload(infoData, opcionValid); // Validar muebles e inmuebles
+              } else {
+                if (opcionValid == 'sat') {
+                  this.processUploadEndSat(infoData);
+                } else if (opcionValid == FGR_OPCION) {
+                  this.processUploadEndPgr(infoData);
+                }
+              }
+            },
+            error: err => {
+              infoData.error = this.agregarErrorUploadValidation(
+                infoData.error,
+                'Error al actualizar el estatus de sat transferencia'
+              );
+              this.infoDataValidation.error = infoData.error; // Setear error
+              infoData.validLastRequest = false; // Respuesta incorrecta
+              if (
+                this.assetsForm.get('cars').value ||
+                this.assetsForm.get('inmuebles').value
+              ) {
+                this.validMuebleInmuebleUpload(infoData, opcionValid); // Validar muebles e inmuebles
+              } else {
+                if (opcionValid == 'sat') {
+                  this.processUploadEndSat(infoData);
+                } else if (opcionValid == FGR_OPCION) {
+                  this.processUploadEndPgr(infoData);
+                }
+              }
+            },
+          });
+      },
+      error: err => {
+        infoData.error = this.agregarErrorUploadValidation(
+          infoData.error,
+          'Error al obtener el registro de SAT tarnsferencia.'
+        );
+        this.infoDataValidation.error = infoData.error; // Setear error
+        infoData.validLastRequest = false; // Respuesta incorrecta
+        if (
+          this.assetsForm.get('cars').value ||
+          this.assetsForm.get('inmuebles').value
+        ) {
+          this.validMuebleInmuebleUpload(infoData, opcionValid); // Validar muebles e inmuebles
+        } else {
           if (opcionValid == 'sat') {
-            dataUpdate.saeGoodNumber =
-              infoData.objInsertResponse['LNU_NO_BIEN'];
-            dataUpdate.saeStatusShipping = 'G'; // Cambiar el estatus del envio
-          } else if ('pgr') {
-            dataUpdate.saeGoodNumber =
-              infoData.objInsertResponse['LNU_NO_BIEN'];
+            this.processUploadEndSat(infoData);
+          } else if (opcionValid == FGR_OPCION) {
+            this.processUploadEndPgr(infoData);
           }
-          // actualizar el estatus de sat transferencia
-          await this.goodsBulkService
-            .updateSatTransferencia(res.id, dataUpdate)
-            .subscribe({
-              next: res => {
-                console.log(res);
-                infoData.validLastRequest = true; // Respuesta correcta
-                if (
-                  this.assetsForm.get('cars').value ||
-                  this.assetsForm.get('inmuebles').value
-                ) {
-                  this.validMuebleInmuebleUpload(infoData, opcionValid); // Validar muebles e inmuebles
-                } else {
-                  if (opcionValid == 'sat') {
-                    this.processUploadEndSat(infoData);
-                  } else if (opcionValid == 'pgr') {
-                    this.processUploadEndPgr(infoData);
-                  }
-                }
-              },
-              error: err => {
-                infoData.error = this.agregarErrorUploadValidation(
-                  infoData.error,
-                  'Error al actualizar el estatus de sat transferencia'
-                );
-                this.infoDataValidation.error = infoData.error; // Setear error
-                infoData.validLastRequest = false; // Respuesta incorrecta
-                if (
-                  this.assetsForm.get('cars').value ||
-                  this.assetsForm.get('inmuebles').value
-                ) {
-                  this.validMuebleInmuebleUpload(infoData, opcionValid); // Validar muebles e inmuebles
-                } else {
-                  if (opcionValid == 'sat') {
-                    this.processUploadEndSat(infoData);
-                  } else if (opcionValid == 'pgr') {
-                    this.processUploadEndPgr(infoData);
-                  }
-                }
-              },
-            });
-        },
-        error: err => {
-          infoData.error = this.agregarErrorUploadValidation(
-            infoData.error,
-            'Error al obtener el registro de SAT tarnsferencia.'
-          );
-          this.infoDataValidation.error = infoData.error; // Setear error
-          infoData.validLastRequest = false; // Respuesta incorrecta
-          if (
-            this.assetsForm.get('cars').value ||
-            this.assetsForm.get('inmuebles').value
-          ) {
-            this.validMuebleInmuebleUpload(infoData, opcionValid); // Validar muebles e inmuebles
-          } else {
-            if (opcionValid == 'sat') {
-              this.processUploadEndSat(infoData);
-            } else if (opcionValid == 'pgr') {
-              this.processUploadEndPgr(infoData);
-            }
-          }
-        },
-      });
+        }
+      },
+    });
   }
 
   async validMuebleInmuebleUpload(
@@ -4157,7 +4209,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           console.log(res);
           if (opcionValid == 'sat') {
             this.processUploadEndSat(infoData); // Terminar proceso SAT
-          } else if (opcionValid == 'pgr') {
+          } else if (opcionValid == FGR_OPCION) {
             this.processUploadEndPgr(infoData); // Terminar proceso PGR
           }
         },
@@ -4171,7 +4223,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           infoData.validLastRequest = false; // Respuesta incorrecta
           if (opcionValid == 'sat') {
             this.processUploadEndSat(infoData); // Terminar proceso SAT
-          } else if (opcionValid == 'pgr') {
+          } else if (opcionValid == FGR_OPCION) {
             this.processUploadEndPgr(infoData); // Terminar proceso PGR
           }
         },
@@ -4420,12 +4472,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       // BUSCAR CLAVE UNICA
       if (this.infoDataValidation.dataRow.tipovolante) {
         // COL1 IS NOT NULL
-        this.searchCityByAsuntoSat(this.infoDataValidation, 'pgr');
+        this.searchCityByAsuntoSat(this.infoDataValidation, FGR_OPCION);
       } else {
         // COL1 IS NULL
-        this.getTagXClassif(this.infoDataValidation, 'pgr');
+        this.getTagXClassif(this.infoDataValidation, FGR_OPCION);
       }
-      // this.searchSatUniqueKey(this.infoDataValidation, 'pgr'); // Buscar clave sat
+      // this.searchSatUniqueKey(this.infoDataValidation, FGR_OPCION); // Buscar clave sat
     } else {
       // COMMIT SILECIOSO PARA ACTUALIZAR LOS BIENES DE CARGA MASIVA CON EL USUARIO
       this.processUploadEndPgr(this.infoDataValidation);
@@ -4697,8 +4749,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           console.log('DATA VOLANTE PRINCIPAL', res);
           if (onlyCreate == false) {
             this.endProcess = true;
-            let main = document.documentElement.querySelector('.fin-proceso');
-            main.scroll(0, 0);
+            // let main = document.documentElement.querySelector('.fin-proceso');
+            // main.scroll(0, 0);
           } else {
             // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
           }

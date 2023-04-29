@@ -22,7 +22,13 @@
           <i class="bx bxs-pencil"></i> Firmar Dictamen
         </button>
       </div>
-      <div class="p-2" *ngIf="requestRegistration">
+      <div
+        class="p-2"
+        *ngIf="
+          requestRegistration === true &&
+          (requestData?.typeOfTransfer === 'SAT_SAE' ||
+            requestData?.typeOfTransfer === 'PGR_SAE')
+        ">
         <button
           type="button"
           class="btn btn-secondary btn-sm active"
@@ -33,8 +39,9 @@
       <div
         class="p-2"
         *ngIf="
-          requestData?.typeOfTransfer === 'SAT_SAE' ||
-          requestData?.typeOfTransfer === 'PGR_SAE'
+          requestRegistration === true &&
+          (requestData?.typeOfTransfer === 'SAT_SAE' ||
+            requestData?.typeOfTransfer === 'PGR_SAE')
         ">
         <button
           type="button"
@@ -47,7 +54,6 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          [disabled]="registRequestForm.invalid"
           (click)="confirm()">
           <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
         </button>
@@ -165,6 +171,7 @@
                 <!-- Registro de Solicitudes o bines -->
                 <app-request-record-tab
                   *ngIf="requestRegistration"
+                  [pgr]="pgr"
                   [requestForm]="registRequestForm"></app-request-record-tab>
                 <!-- Fin -->
                 <!-- cumplimiento de verificacion y clasificacion de bienes-->
@@ -208,7 +215,9 @@
                 <app-clarifications
                   [requestObject]="requestData"
                   *ngIf="validateDocument"
-                  [process]="process"></app-clarifications>
+                  [process]="process"
+                  [question]="question"
+                  (response)="getResponse($event)"></app-clarifications>
                 <!-- fin -->
                 <!-- notificar aclaraciones o improcedencias -->
                 <app-notification-assets-tab

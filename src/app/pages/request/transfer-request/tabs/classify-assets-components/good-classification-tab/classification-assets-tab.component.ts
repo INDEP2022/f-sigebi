@@ -22,6 +22,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -35,7 +36,7 @@ import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 @Component({
   selector: 'app-classification-assets-tab',
   templateUrl: './classification-assets-tab.component.html',
-  styles: [],
+  styleUrls: ['./classification-assets-tab.component.scss'],
 })
 export class ClassificationAssetsTabComponent
   extends BasePage
@@ -47,6 +48,7 @@ export class ClassificationAssetsTabComponent
   @Input() process: string = '';
 
   idRequest: number = 0;
+  request: any;
   title: string = 'Bienes de la Solicitud';
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsFraction = new BehaviorSubject<ListParams>(new ListParams());
@@ -83,7 +85,8 @@ export class ClassificationAssetsTabComponent
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private typeRelevantSevice: TypeRelevantService,
     private genericService: GenericService,
-    private goodDomicilieService: GoodDomiciliesService
+    private goodDomicilieService: GoodDomiciliesService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -100,6 +103,7 @@ export class ClassificationAssetsTabComponent
       columns: REQUEST_OF_ASSETS_COLUMNS,
     };
     this.initForm();
+    this.request = this.requestObject.getRawValue();
   }
 
   prepareForm() {
@@ -133,6 +137,7 @@ export class ClassificationAssetsTabComponent
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: resp => {
+        console.log(resp.data);
         var result = resp.data.map(async (item: any) => {
           item['quantity'] = Number(item.quantity);
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
@@ -158,6 +163,15 @@ export class ClassificationAssetsTabComponent
 
           const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
           item['destinyName'] = destiny;
+
+          if (item.fraccion) {
+            item['fractionCode'] = item.fraccion.code;
+          } else {
+            item['fractionCode'] = '';
+          }
+
+          item['unitMeasureName'] = await this.getLigieUnit(item.unitMeasure);
+          item['ligieUnitName'] = await this.getLigieUnit(item.ligieUnit);
         });
 
         Promise.all(result).then(data => {
@@ -200,6 +214,27 @@ export class ClassificationAssetsTabComponent
       } else {
         resolve(null);
       }
+    });
+  }
+
+  getLigieUnit(id?: string) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.uomCode'] = `$eq:${id}`;
+      params.limit = 20;
+
+      this.goodsQueryService
+        .getCatMeasureUnitView(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: resp => {
+            const ligieUnit = resp.data[0].measureTlUnit;
+            resolve(ligieUnit);
+          },
+          error: error => {
+            resolve('');
+          },
+        });
     });
   }
 

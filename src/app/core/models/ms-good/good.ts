@@ -1,6 +1,7 @@
 import { ILabelOKey } from '../catalogs/label-okey.model';
 import { IWarehouse } from '../catalogs/warehouse.model';
 import { IExpedient } from '../ms-expedient/expedient';
+import { IFraccion } from './fraccion';
 
 export interface IGood {
   id?: number;
@@ -138,6 +139,7 @@ export interface IGood {
   volume?: string;
   origin?: string;
   useType?: string;
+  fraccion?: IFraccion;
   manufacturingYear?: string;
   capacity?: string;
   operationalState?: string;

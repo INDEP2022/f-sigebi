@@ -4,13 +4,13 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noRequest: {
+  requestId: {
     title: 'No. Solicitud',
     type: 'number',
     sort: false,
   },
   taskNumber: {
-    title: 'Número de Tarea',
+    title: 'No. de Tarea',
     type: 'string',
     sort: false,
   },
@@ -19,13 +19,8 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  State: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
   creator: {
-    title: 'Creador',
+    title: 'Autor',
     type: 'string',
     sort: false,
   },

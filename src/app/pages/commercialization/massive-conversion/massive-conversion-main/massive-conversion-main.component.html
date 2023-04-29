@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row">
-      <form class="form-material mb-0" [formGroup]="consultForm">
+      <div class="form-material mb-0" [formGroup]="form">
         <div class="rounded-3 bg-gray-card px-3 py-3">
           <div class="row">
             <div class="col-sm-12 col-md-6 d-flex align-content-center">
@@ -35,8 +35,9 @@
                 class="row row-cols-sm-2 row-cols-md-2 row-cols-lg-auto g-2 align-items-center">
                 <div class="col-12">
                   <button
+                    type="submit"
                     class="btn btn-sm btn-success btn-block active me-2 font-size-14"
-                    (click)="consult()">
+                    (click)="consultInServer()">
                     <i class="bx bx-search text-light float-icon"></i>
                     Consultar Datos
                   </button>
@@ -66,8 +67,8 @@
                             #rfc
                             hidden
                             type="file"
-                            accept=".csv"
-                            (change)="getCsv($event)"
+                            accept=".csv, .xlsx, .xls"
+                            (change)="readFile($event, 'rfc')"
                         /></a>
                       </li>
                       <li role="menuitem">
@@ -78,8 +79,8 @@
                             #clientId
                             hidden
                             type="file"
-                            accept=".csv"
-                            (change)="getCsv($event)"
+                            accept=".csv, .xlsx, .xls"
+                            (change)="readFile($event, 'client_id')"
                         /></a>
                       </li>
                     </ul>
@@ -98,7 +99,7 @@
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="generateLcs()"
-                    [disabled]="dataColumns.length === 0">
+                    [disabled]="dataColumns.count() === 0">
                     <i class="bx bx-send text-light float-icon"></i>
                     Generar LCs
                   </button>
@@ -113,15 +114,23 @@
               <i
                 class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-              <ngx-select
-                [form]="consultForm"
-                [data]="eventItems"
-                value="id"
-                bindLabel="id"
-                (fetchItems)="getEvents($event)"
-                (change)="selectEvent($event)"
-                control="id">
-              </ngx-select>
+              <form-field
+                [control]="form.get('eventId')"
+                class="form-group position-relative d-flex">
+                <input
+                  type="number"
+                  class="form-control px-3"
+                  formControlName="eventId"
+                  (keyup.enter)="searchEvent()" />
+                <button
+                  class="btn-event-search mt-2"
+                  type="button"
+                  (click)="selectedEvent ? enableInputEvent() : searchEvent()">
+                  <i
+                    [ngClass]="selectedEvent ? 'bx-x text-danger' : 'bx-search'"
+                    class="bx"></i>
+                </button>
+              </form-field>
             </div>
             <div
               class="col-sm-6 col-md-3"
@@ -130,7 +139,7 @@
               <i
                 class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
-              <p class="text-muted">{{ selectedEvent.cve }}</p>
+              <p class="text-muted">{{ selectedEvent.processKey }}</p>
             </div>
             <div
               class="col-sm-6 col-md-3"
@@ -139,7 +148,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
               <p class="text-muted">
-                {{ selectedEvent.date }}
+                {{ selectedEvent.eventDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -159,7 +168,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
               <p class="text-muted">
-                {{ selectedEvent.rulingDate }}
+                {{ selectedEvent.failedDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -169,7 +178,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
               <p class="text-muted">
-                {{ selectedEvent.status }}
+                {{ selectedEvent.statusvtaId }}
               </p>
             </div>
           </div>
@@ -195,20 +204,25 @@
             [isAnimated]="true"
             [collapse]="!toggleFilter">
             <div class="col-sm-4 col-md-2">
-              <form-field [control]="consultForm.get('batchId')">
-                <ngx-select
-                  [form]="consultForm"
-                  [data]="batchItems"
+              <form-field
+                label="Lote"
+                class="form-group"
+                [control]="form.get('batchId')">
+                <ng-custom-select
+                  class="form-control"
+                  formControlName="batchId"
+                  paramSearch="search"
                   value="id"
-                  bindLabel="id"
-                  label="Id Lote"
-                  (fetchItems)="getBatches($event)"
+                  [path]="pathGetBath"
                   control="batchId">
-                </ngx-select>
+                  <ng-template let-item>
+                    {{ item.id }}/ {{ item.description }}
+                  </ng-template>
+                </ng-custom-select>
               </form-field>
             </div>
             <div class="col-sm-4 col-md-2">
-              <form-field [control]="consultForm.get('status')" label="Estatus">
+              <form-field [control]="form.get('status')" label="Estatus">
                 <ng-select
                   formControlName="status"
                   [searchable]="false"
@@ -219,22 +233,10 @@
                 </ng-select>
               </form-field>
             </div>
-            <div class="col-sm-4 col-md-2">
-              <form-field [control]="consultForm.get('operationId')">
-                <ngx-select
-                  [form]="consultForm"
-                  [data]="batchItems"
-                  value="id"
-                  bindLabel="id"
-                  label="Id Operación"
-                  (fetchItems)="getOperations($event)"
-                  control="operationId">
-                </ngx-select>
-              </form-field>
-            </div>
+
             <div class="col-sm-4 col-md-2">
               <form-field
-                [control]="consultForm.get('insertDate')"
+                [control]="form.get('insertDate')"
                 label="Fecha Insert">
                 <input
                   type="text"
@@ -245,8 +247,8 @@
             </div>
             <div class="col-sm-4 col-md-2">
               <form-field
-                [control]="consultForm.get('validityDate')"
-                label="Fecha Fallo">
+                [control]="form.get('validityDate')"
+                label="Fecha Vigencia">
                 <input
                   type="text"
                   formControlName="validityDate"
@@ -263,7 +265,7 @@
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </div>
     <div class="row mt-5">
       <div class="md-tabs mt-n3">
@@ -290,7 +292,7 @@
                   id="data-table"
                   [attr.class]="'table-bordered'"
                   [settings]="dataSettings"
-                  [source]="dataColumns">
+                  [source]="dataSource">
                 </ng2-smart-table>
               </div>
             </div>
@@ -316,9 +318,9 @@
                           </div>
                           <div>
                             <button
+                              [disabled]="isLoadingExportFile"
                               class="btn btn-sm btn-success active me-2 font-size-14"
-                              (click)="exportExcel()"
-                              [disabled]="!maintenance">
+                              (click)="exportFile()">
                               <i class="fas fa-file-excel text-light me-1"></i>
                               Exportar
                             </button>
@@ -327,12 +329,12 @@
                       </div>
                     </div>
                     <div class="table-responsive">
-                      <div [class]="loading ? 'table-loading' : ''">
+                      <div [class]="isLoadingLcs ? 'table-loading' : ''">
                         <ng2-smart-table
                           id="lcsTable"
                           [attr.class]="'table-bordered'"
                           [settings]="lcsSettings"
-                          [source]="lcsColumns">
+                          [source]="lcsSource">
                         </ng2-smart-table>
                       </div>
                     </div>
@@ -396,7 +398,7 @@
                           id="rfcTable"
                           [attr.class]="'table-bordered'"
                           [settings]="rfcSettings"
-                          [source]="lcSource"
+                          [source]="rfcSource"
                           (edit)="openForm($event.data)"
                           (delete)="delete($event.data)">
                         </ng2-smart-table>
@@ -408,7 +410,7 @@
                           id="clientIdTable"
                           [attr.class]="'table-bordered'"
                           [settings]="clientIdSettings"
-                          [source]="lcSource"
+                          [source]="clientSource"
                           (edit)="openForm($event.data)"
                           (delete)="delete($event.data)">
                         </ng2-smart-table>

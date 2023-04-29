@@ -6,6 +6,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 /** SERVICE IMPORTS */
 import { format } from 'date-fns';
+import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -15,6 +16,7 @@ import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IUserAccessAreaRelational } from 'src/app/core/models/ms-users/seg-access-area-relational.model';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -64,29 +66,7 @@ export class AbandonmentsDeclarationTradesComponent
   cities = new DefaultSelect<ICity>();
 
   /** Tabla bienes */
-  data1 = [
-    {
-      noBien: 12345,
-      description: 'UNA BOLSA',
-      cantidad: 1,
-      est: 'ENGD',
-      proceso: 'ASEGURADO',
-    },
-    {
-      noBien: 12345,
-      description: 'UNA BOLSA',
-      cantidad: 1,
-      est: 'ENGD',
-      proceso: 'ASEGURADO',
-    },
-    {
-      noBien: 12345,
-      description: 'UNA BOLSA',
-      cantidad: 1,
-      est: 'ENGD',
-      proceso: 'ASEGURADO',
-    },
-  ];
+  data1 = [{}];
   settings1 = {
     pager: {
       display: false,
@@ -96,7 +76,7 @@ export class AbandonmentsDeclarationTradesComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      noBien: {
+      goodId: {
         title: 'No. Bien',
         type: 'number',
       },
@@ -104,19 +84,19 @@ export class AbandonmentsDeclarationTradesComponent
         title: 'Descripcion',
         type: 'string',
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
         type: 'string',
       },
-      ident: {
+      status: {
         title: 'Ident.',
         type: 'string',
       },
-      est: {
+      processStatus: {
         title: 'Est',
         type: 'string',
       },
-      proceso: {
+      origin: {
         title: 'Proceso',
         type: 'string',
       },
@@ -159,7 +139,8 @@ export class AbandonmentsDeclarationTradesComponent
     private abandonmentsService: AbandonmentsDeclarationTradesService,
     public fileUpdateService: JuridicalFileUpdateService,
     private changeDetectorRef: ChangeDetectorRef,
-    private docDataService: DocumentsReceptionDataService
+    private docDataService: DocumentsReceptionDataService,
+    private readonly goodServices: GoodService
   ) {
     super();
   }
@@ -176,6 +157,7 @@ export class AbandonmentsDeclarationTradesComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+    this.onLoadGoodList();
   }
 
   private prepareForm() {
@@ -362,5 +344,22 @@ export class AbandonmentsDeclarationTradesComponent
         this.cities = new DefaultSelect();
       },
     });
+  }
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  onLoadGoodList() {
+    this.goodServices
+      .getByExpedient(
+        this.formDeclaratoriaTabla.get('noExpediente').value,
+        this.params.getValue()
+      )
+      .subscribe({
+        next: response => {
+          debugger;
+          this.data1 = response.data;
+        },
+        error: err => {
+          this.data1 = [];
+        },
+      });
   }
 }

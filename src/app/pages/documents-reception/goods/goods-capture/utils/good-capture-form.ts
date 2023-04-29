@@ -25,7 +25,7 @@ export class GOOD_CAPTURE_FORM {
   unidadLigie = new FormControl({ value: null, disabled: true });
   unidadMedida = new FormControl(null, [Validators.required]);
   cantidad = new FormControl<number>(null, [
-    Validators.pattern(NUMBERS_PATTERN),
+    // Validators.pattern(NUMBERS_PATTERN),
     Validators.required,
     Validators.min(1),
     Validators.max(999999999999),

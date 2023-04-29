@@ -75,3 +75,17 @@ export interface IAppointmentDepositary {
   iva: string;
   withKitchenware: string;
 }
+
+export interface IRequestDepositary {
+  propertyNumber: number;
+  requestDate: Date;
+  requestType: string;
+  applicantSera: string;
+  attentionDelegationNumber: number;
+  attentionSubDelegationNumber: number;
+  attentionDepartmentNumber: number;
+  attentionDate: Date;
+  attentionUser: string;
+  registerNumber: number;
+  proposedCandidate: string;
+}

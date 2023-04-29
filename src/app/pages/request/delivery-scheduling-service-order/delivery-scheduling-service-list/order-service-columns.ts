@@ -12,7 +12,7 @@ export const ORDER_LIST_COLUMNS = {
   },
 
   created: {
-    title: 'Creador',
+    title: 'Autor',
     type: 'string',
     sort: false,
   },

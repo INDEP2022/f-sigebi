@@ -99,6 +99,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
+    console.log('idReportAclara', this.idReportAclara);
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -457,7 +458,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             } else {
               this.alert(
                 'info',
-                'Error al generar firma electrónic',
+                'Error al generar firma electrónica',
                 error.error + '. Verificar datos del firmante'
               );
               this.updateStatusSigned();
@@ -466,7 +467,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         });
     }
     //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
-    if (this.idTypeDoc == 111) {
+    if (this.idTypeDoc == 211) {
       const nameTypeReport = 'OficioImprocedencia';
       const formData: Object = {
         id: this.idDoc,

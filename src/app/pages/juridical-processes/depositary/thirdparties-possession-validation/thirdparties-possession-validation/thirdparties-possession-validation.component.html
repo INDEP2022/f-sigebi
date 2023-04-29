@@ -50,7 +50,7 @@
         <span class="badge m-2 badge-pill bg-primary"
           >&#42;&#42;Disponibles</span
         >
-        <span class="badge m-2 badge-pill bg-danger"
+        <span class="badge m-2 badge-pill bg-dark"
           >&#42;&#42;No Disponibles</span
         >
       </div>
@@ -100,7 +100,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('officeExternalKey')"
-            label="Cve&#46; Oficio">
+            label="Clave de Oficio">
             <input class="form-control" formControlName="officeExternalKey" />
           </form-field>
         </div>
@@ -183,6 +183,37 @@
           </div>
         </form>
         <!-- Form CON COPIA PARA -->
+        <form [formGroup]="formGood" class="form-material">
+          <div class="row tp-2 mb-2">
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                [control]="formGood.get('delegationCloseNumber')"
+                label="Delegación Cierre">
+                <input
+                  type="text"
+                  maxlength="40"
+                  class="form-control"
+                  formControlName="delegationCloseNumber" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                maxlength="40"
+                [control]="formGood.get('numClueNavy')"
+                label="Clave Armada">
+                <input class="form-control" formControlName="numClueNavy" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                maxlength="40"
+                [control]="formGood.get('closingDate')"
+                label="Fecha de Cierre">
+                <input class="form-control" formControlName="closingDate" />
+              </form-field>
+            </div>
+          </div>
+        </form>
       </div>
     </form>
   </div>

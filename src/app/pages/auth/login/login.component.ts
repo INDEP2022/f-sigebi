@@ -47,8 +47,6 @@ export class LoginComponent extends BasePage implements OnInit {
           token = data;
         },
         complete: () => {
-          localStorage.setItem('token', token.access_token);
-          localStorage.setItem('r_token', token.refresh_token);
           if (this.authService.existToken()) {
             let uidUser = this.authService.decodeToken().sub;
             this.authService.getRoles(uidUser).subscribe({
@@ -63,6 +61,9 @@ export class LoginComponent extends BasePage implements OnInit {
                 localStorage.setItem('username', username);
                 localStorage.setItem('roles', JSON.stringify(roles));
                 this.router.navigate(['pages/general-processes/goods-tracker']);
+                setTimeout(() => {
+                  location.reload();
+                }, 1000);
               },
             });
           }

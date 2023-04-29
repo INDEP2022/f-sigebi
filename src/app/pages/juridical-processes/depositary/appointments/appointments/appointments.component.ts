@@ -81,10 +81,11 @@ export class AppointmentsComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+    this.validGoodNumberInDepositaryAppointment(); // Buscar Bien
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: ['', Validators.required], //*
+      noBien: ['3003674', Validators.required], //*
       descriptionGood: { value: '', disabled: true }, //*
       noExpedient: { value: '', disabled: true }, //*
       averiguacionPrevia: [{ value: '', disabled: true }], //*
@@ -94,77 +95,104 @@ export class AppointmentsComponent
       fechaRecepcion: { value: '', disabled: true }, //*
       fechaDecomiso: { value: '', disabled: true }, //*
 
-      tipoNombramiento: '', //*
+      tipoNombramiento: [{ value: '', disabled: true }], //*
       ///*"Administrador, Depositaría, Interventor, Comodatarío,Bien en uso del SAE"
-      tipoDepositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      estatus: '', //* Provisional, Definitiva
-      representanteSAE: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      nombre: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      bienesMenaje: '', //* Sin Menaje, Con Menaje
+      tipoDepositaria: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      estatus: [{ value: '', disabled: true }], //* Provisional, Definitiva
+      representanteSAE: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      nombre: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      bienesMenaje: { value: '', disabled: true }, //* Sin Menaje, Con Menaje
 
-      depositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
-      representante: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      depositaria: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
+      representante: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //*
       calle: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       noExterno: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       noInterno: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
-      colonia: { value: null, disabled: false }, //*
-      delegacionMunicipio: { value: null, disabled: false }, //*
-      codigoPostal: { value: null, disabled: false }, //*
-      entidadFederativa: { value: null, disabled: false }, //*
+      colonia: { value: null, disabled: true }, //*
+      delegacionMunicipio: { value: null, disabled: true }, //*
+      codigoPostal: { value: null, disabled: true }, //*
+      entidadFederativa: { value: null, disabled: true }, //*
       telefono: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(PHONE_PATTERN)],
       ], //*
-      rfc: [{ value: '', disabled: false }, [Validators.pattern(RFC_PATTERN)]], //*
-      curp: [
-        { value: '', disabled: false },
-        [Validators.pattern(CURP_PATTERN)],
-      ], //*
+      rfc: [{ value: '', disabled: true }, [Validators.pattern(RFC_PATTERN)]], //*
+      curp: [{ value: '', disabled: true }, [Validators.pattern(CURP_PATTERN)]], //*
       tipoPersona: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       tipoPersona2: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ], //*
       giro: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
       referencia: [
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN)],
       ],
 
-      remocion: '',
-      fecha: '',
-      noOficio: '',
+      remocion: [{ value: '', disabled: true }],
+      fecha: [{ value: '', disabled: true }],
+      noOficio: [{ value: '', disabled: true }],
 
       // Acuerdo Junta de Gobierno
-      fechaAcuerdo: '',
-      noAcuerdo: '',
+      fechaAcuerdo: [{ value: '', disabled: true }],
+      noAcuerdo: [{ value: '', disabled: true }],
 
-      contraprestacion: '',
-      honorarios: ['', [Validators.pattern(STRING_PATTERN)]],
-      iva: '',
-      noNombramiento: '',
-      fechapage: '',
+      contraprestacion: [{ value: '', disabled: true }],
+      honorarios: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      iva: [{ value: '', disabled: true }],
+      noNombramiento: [{ value: '', disabled: true }],
+      fechaInicio: [{ value: '', disabled: true }],
 
-      anexo: ['', [Validators.pattern(STRING_PATTERN)]],
-      observaciones: ['', [Validators.pattern(STRING_PATTERN)]],
+      anexo: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      observaciones: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
 
-      folioRemocion: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      folioActaDepositaria: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      folioRemocion: [
+        { value: '', disabled: true },
+        [Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      folioActaDepositaria: [
+        { value: '', disabled: true },
+        [Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
   }
 
@@ -356,6 +384,7 @@ export class AppointmentsComponent
               }
             }
             this.getFromGoodsAndExpedients(true); // Get data good
+            this.setOthers();
           },
           error: err => {
             this.loadingAppointment = false;
@@ -381,9 +410,6 @@ export class AppointmentsComponent
 
   setDataDepositary() {
     this.form
-      .get('depositaria')
-      .setValue(this.depositaryAppointment.responsible);
-    this.form
       .get('representanteSAE')
       .setValue(this.depositaryAppointment.seraRepresentative);
     this.form.get('referencia').setValue(this.depositaryAppointment.reference);
@@ -397,6 +423,26 @@ export class AppointmentsComponent
 
   setDataPerson() {
     this.form
+      .get('depositaria')
+      .setValue(
+        this.depositaryAppointment.personNumber.nom_persona
+          ? this.depositaryAppointment.personNumber.nom_persona +
+            ' --- ' +
+            this.depositaryAppointment.personNumber.nombre
+            ? this.depositaryAppointment.personNumber.nombre
+            : ''
+          : '' + ' --- ' + this.depositaryAppointment.personNumber.nombre
+          ? this.depositaryAppointment.personNumber.nombre
+          : ''
+      );
+    this.form
+      .get('representante')
+      .setValue(
+        this.depositaryAppointment.personNumber.representante
+          ? this.depositaryAppointment.personNumber.representante
+          : ''
+      );
+    this.form
       .get('calle')
       .setValue(this.depositaryAppointment.personNumber.calle);
     this.form
@@ -405,18 +451,38 @@ export class AppointmentsComponent
     this.form
       .get('noInterno')
       .setValue(this.depositaryAppointment.personNumber.no_interior);
-    // this.form
-    //   .get('colonia')
-    //   .setValue(this.depositaryAppointment.personNumber.colonia);
-    // this.form
-    //   .get('delegacion_municipio')
-    //   .setValue(this.depositaryAppointment.personNumber.deleg_munic);
-    this.form
-      .get('codigoPostal')
-      .setValue(this.depositaryAppointment.personNumber.codigo_postal);
-    // this.form
-    //   .get('entidadFederativa')
-    //   .setValue(this.depositaryAppointment.personNumber.cve_entfed);
+    if (
+      this.depositaryAppointment.personNumber.codigo_postal ||
+      this.depositaryAppointment.personNumber.codigo_postal == '0'
+    ) {
+      this.postalCodeSelectValue =
+        this.depositaryAppointment.personNumber.codigo_postal;
+      this.getPostalCodeByDetail(new ListParams(), true);
+    }
+    // if (
+    //   this.depositaryAppointment.personNumber.cve_entfed ||
+    //   this.depositaryAppointment.personNumber.cve_entfed == '0'
+    // ) {
+    //   this.stateSelectValue =
+    //     this.depositaryAppointment.personNumber.cve_entfed;
+    //   this.getStateByDetail(new ListParams());
+    // }
+    // if (this.depositaryAppointment.personNumber.deleg_munic) {
+    //   this.delegationSelectValue =
+    //     this.depositaryAppointment.personNumber.deleg_munic;
+    //   let deleg = new ListParams();
+    //   deleg['search'] = this.depositaryAppointment.personNumber.deleg_munic;
+    //   deleg['text'] = this.depositaryAppointment.personNumber.deleg_munic;
+    //   this.getDelegationByDetail(deleg);
+    // }
+    // if (this.depositaryAppointment.personNumber.colonia) {
+    //   this.localitySelectValue =
+    //     this.depositaryAppointment.personNumber.colonia;
+    //   let colonia = new ListParams();
+    //   colonia['search'] = this.depositaryAppointment.personNumber.colonia;
+    //   colonia['text'] = this.depositaryAppointment.personNumber.colonia;
+    //   this.getLocalityByDetail(colonia);
+    // }
     this.form
       .get('telefono')
       .setValue(this.depositaryAppointment.personNumber.telefono);
@@ -477,6 +543,39 @@ export class AppointmentsComponent
         this.form.get('fechaDecomiso').setValue(dateConfiscate);
       }
     }
+  }
+
+  setOthers() {
+    // Revocation
+    this.form.get('remocion').setValue(this.depositaryAppointment.revocation);
+    this.form.get('fecha').setValue(this.depositaryAppointment.revocationDate);
+    this.form
+      .get('noOficio')
+      .setValue(this.depositaryAppointment.officialRevocationNumber);
+    // Junta de gobierno
+    this.form
+      .get('fechaAcuerdo')
+      .setValue(this.depositaryAppointment.governmentMeetingOfficialDate);
+    this.form
+      .get('noAcuerdo')
+      .setValue(this.depositaryAppointment.governmentMeetingOfficialDate);
+    // Honorarios y Contraprestaciones
+    this.form
+      .get('contraprestacion')
+      .setValue(this.depositaryAppointment.importConsideration);
+    this.form.get('honorarios').setValue(this.depositaryAppointment.feeAmount);
+    this.form.get('iva').setValue(this.depositaryAppointment.iva);
+    this.form
+      .get('fechaInicio')
+      .setValue(this.depositaryAppointment.contractStartDate);
+    this.form
+      .get('noNombramiento')
+      .setValue(this.depositaryAppointment.appointmentNumber);
+    // Anexo y Observaciones
+    this.form.get('anexo').setValue(this.depositaryAppointment.annexed);
+    this.form
+      .get('observaciones')
+      .setValue(this.depositaryAppointment.observation);
   }
 
   /**
@@ -552,140 +651,341 @@ export class AppointmentsComponent
    * DATA SELECT DEL COMPONENTE
    */
 
-  changeLocalityDetail(event: any) {
+  changePostalCodeDetail(event: any) {
     if (event) {
-      if (event.id) {
-        this.localitySelectValue = event.id;
+      if (event.postalCode) {
+        this.postalCodeSelectValue = event.postalCode.toString();
+        if (event.stateKey) {
+          this.stateSelectValue = event.stateKey.toString();
+        }
+        if (event.municipalityKey) {
+          this.delegationSelectValue = event.municipalityKey.toString();
+        }
+        if (event.townshipKey) {
+          this.localitySelectValue = event.townshipKey.toString();
+        }
+        if (this.stateSelectValue) {
+          // call function
+          this.getStateByDetail(new ListParams());
+        }
+        if (this.delegationSelectValue) {
+          // CALL FUNCTION
+          this.getDelegationByDetail(new ListParams());
+        }
+        if (this.localitySelectValue) {
+          // call function
+          this.getLocalityByDetail(new ListParams());
+        }
+      } else {
+        this.postalCodeSelectValue;
       }
     } else {
-      this.localitySelectValue = '';
+      this.postalCodeSelectValue;
     }
   }
-  getLocalityByDetail(paramsData: ListParams) {
-    console.log(this.stateSelectValue, paramsData, this.delegationSelectValue);
-    if (
-      !this.stateSelectValue &&
-      this.stateSelectValue != '0' &&
-      !this.delegationSelectValue &&
-      this.delegationSelectValue != '0'
-    ) {
-      return;
-    }
+
+  getPostalCodeByDetail(
+    paramsData: ListParams,
+    setPostalCode: boolean = false
+  ) {
     const params: any = new FilterParams();
     params.removeAllFilters();
-    params['sortBy'] = 'township:ASC';
-    params.addFilter('municipalityKey', this.delegationSelectValue);
-    params.addFilter('stateKey', this.stateSelectValue);
-    params.addFilter('township', paramsData['search'], SearchFilter.LIKE);
-    console.log(params, paramsData);
+    params['sortBy'] = 'postalCode:ASC';
+    if (this.delegationSelectValue) {
+      params.addFilter('municipalityKey', this.delegationSelectValue);
+    }
+    if (this.stateSelectValue) {
+      params.addFilter('stateKey', this.stateSelectValue);
+    }
+    if (this.localitySelectValue) {
+      params.addFilter('townshipKey', this.localitySelectValue);
+    }
+    if (this.postalCodeSelectValue && !paramsData['search']) {
+      params.addFilter(
+        'postalCode',
+        this.postalCodeSelectValue,
+        SearchFilter.LIKE
+      );
+    } else {
+      if (paramsData['search'] || paramsData['search'] == '0') {
+        params.addFilter('postalCode', paramsData['search'], SearchFilter.LIKE);
+      }
+    }
     let subscription = this.appointmentsService
-      .getLocalityByFilter(params.getFilterParams())
+      .getPostalCodeByFilter(params.getParams())
       .subscribe({
         next: data => {
-          console.log(data.data);
-          this.delegations = new DefaultSelect(
-            data.data,
-            // data.data.map(i => {
-            //   i.description = '#' + i.id + ' -- ' + i.description;
-            //   return i;
-            // }),
-            data.count
-          );
+          if (this.postalCodeSelectValue && !paramsData['search']) {
+            this.setPostalCode(data, setPostalCode);
+          } else {
+            if (setPostalCode) {
+              this.setPostalCode(data, setPostalCode);
+            } else {
+              this.postalCode = new DefaultSelect(
+                data.data.map((i: any) => {
+                  i.township = '#' + i.postalCode + ' -- ' + i.township;
+                  return i;
+                }),
+                data.count
+              );
+            }
+          }
           subscription.unsubscribe();
         },
         error: error => {
-          this.delegations = new DefaultSelect();
-          this.onLoadToast('error', 'Error', error.error.message);
+          this.postalCode = new DefaultSelect();
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  setPostalCode(data: any, setPostalCode: boolean = false) {
+    let dataSet = data.data.find((item: any) => {
+      return setPostalCode
+        ? item.postalCode
+        : Number(item.postalCode) == Number(this.postalCodeSelectValue);
+    });
+    console.log(dataSet);
+    if (dataSet) {
+      if (setPostalCode) {
+        this.postalCodeSelectValue = dataSet.postalCode.toString();
+      }
+      this.postalCode = new DefaultSelect(
+        [dataSet].map((i: any) => {
+          i.township = '#' + i.postalCode + ' -- ' + i.township;
+          return i;
+        }),
+        data.count
+      );
+      if (setPostalCode) {
+        this.form.get('codigoPostal').setValue(this.postalCodeSelectValue);
+        this.changePostalCodeDetail(dataSet);
+      }
+    }
+  }
+
+  changeLocalityDetail(event: any) {
+    console.log(event);
+    if (event) {
+      if (event.townshipKey) {
+        this.localitySelectValue = event.townshipKey.toString();
+      } else {
+        this.localitySelectValue;
+      }
+      if (event.stateKey) {
+        this.stateSelectValue = event.stateKey.toString();
+        this.getStateByDetail(new ListParams());
+      }
+      if (event.municipalityKey) {
+        this.delegationSelectValue = event.municipalityKey.toString();
+        this.getDelegationByDetail(new ListParams());
+      }
+      if (event.townshipKey && event.stateKey && event.municipalityKey) {
+        this.getPostalCodeByDetail(new ListParams(), true);
+      }
+    } else {
+      this.localitySelectValue;
+    }
+  }
+  getLocalityByDetail(paramsData: ListParams) {
+    // if (!this.stateSelectValue && !this.delegationSelectValue) {
+    //   this.locality = new DefaultSelect();
+    //   return;
+    // }
+    const params: any = new FilterParams();
+    params.removeAllFilters();
+    params['sortBy'] = 'townshipKey:DESC';
+    if (this.delegationSelectValue) {
+      params.addFilter('municipalityKey', this.delegationSelectValue);
+    }
+    if (this.stateSelectValue) {
+      params.addFilter('stateKey', this.stateSelectValue);
+    }
+    if (this.localitySelectValue && !paramsData['search']) {
+      params.addFilter('townshipKey', this.localitySelectValue);
+    } else {
+      if (paramsData['search'] || paramsData['search'] == '0') {
+        params.addFilter('township', paramsData['search'], SearchFilter.LIKE);
+      }
+    }
+    let subscription = this.appointmentsService
+      .getLocalityByFilter(params.getParams())
+      .subscribe({
+        next: data => {
+          if (this.localitySelectValue && !paramsData['search']) {
+            if (data.data) {
+              let dataSet = data.data.find((item: any) => {
+                return (
+                  Number(item.townshipKey) == Number(this.localitySelectValue)
+                );
+              });
+              if (dataSet) {
+                this.localitySelectValue = dataSet.townshipKey.toString();
+                this.locality = new DefaultSelect(
+                  [dataSet].map((i: any) => {
+                    i.township = '#' + i.townshipKey + ' -- ' + i.township;
+                    return i;
+                  }),
+                  1
+                );
+                this.form
+                  .get('colonia')
+                  .setValue(Number(this.localitySelectValue));
+              }
+            }
+          } else {
+            this.locality = new DefaultSelect(
+              data.data.map((i: any) => {
+                i.township = '#' + i.townshipKey + ' -- ' + i.township;
+                return i;
+              }),
+              data.count
+            );
+          }
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.locality = new DefaultSelect();
           subscription.unsubscribe();
         },
       });
   }
 
   changeDelegationDetail(event: any) {
+    console.log(event);
     if (event) {
-      if (event.id) {
-        this.delegationSelectValue = event.id;
+      if (event.municipalityKey) {
+        this.delegationSelectValue = event.municipalityKey.toString();
+      } else {
+        this.delegationSelectValue;
+      }
+      if (event.stateKey) {
+        this.stateSelectValue = event.stateKey.toString();
+        this.getStateByDetail(new ListParams());
       }
     } else {
-      this.delegationSelectValue = '';
+      this.delegationSelectValue;
     }
   }
   getDelegationByDetail(paramsData: ListParams) {
-    console.log(this.stateSelectValue, paramsData);
-    if (!this.stateSelectValue && this.stateSelectValue != '0') {
-      return;
-    }
-    const params: any = new FilterParams();
+    // if (!this.stateSelectValue) {
+    //   this.delegations = new DefaultSelect();
+    //   return;
+    // }
+    const params = new FilterParams();
     params.removeAllFilters();
-    params['sortBy'] = 'municipality:ASC';
-    params.addFilter('stateKey', this.stateSelectValue);
-    params.addFilter('municipality', paramsData['search'], SearchFilter.LIKE);
-    console.log(params, paramsData);
+    params['sortBy'] = 'municipalityKey:ASC';
+    if (this.stateSelectValue) {
+      params.addFilter('stateKey', this.stateSelectValue);
+    }
+    if (this.delegationSelectValue && !paramsData['search']) {
+      params.addFilter(
+        'municipalityKey',
+        this.delegationSelectValue,
+        SearchFilter.LIKE
+      );
+      params['limit'] = 100;
+    } else {
+      if (paramsData['search'] || paramsData['search'] == '0') {
+        params.addFilter(
+          'municipality',
+          paramsData['search'],
+          SearchFilter.LIKE
+        );
+      }
+    }
     let subscription = this.appointmentsService
-      .getDelegationsByFilter(params.getFilterParams())
+      .getDelegationsByFilter(params.getParams())
       .subscribe({
         next: data => {
-          console.log(data.data);
-          this.delegations = new DefaultSelect(
-            data.data.map((i: any) => {
-              i.municipality =
-                '#' + i.municipalityKey + ' -- ' + i.municipality;
-              return i;
-            }),
-            data.count
-          );
+          if (this.delegationSelectValue && !paramsData['search']) {
+            if (data.data) {
+              let dataSet = data.data.find((item: any) => {
+                return (
+                  Number(item.municipalityKey) ==
+                  Number(this.delegationSelectValue)
+                );
+              });
+              if (dataSet) {
+                this.delegationSelectValue = dataSet.municipalityKey.toString();
+                this.delegations = new DefaultSelect(
+                  [dataSet].map((i: any) => {
+                    i.municipality =
+                      '#' + i.municipalityKey + ' -- ' + i.municipality;
+                    return i;
+                  }),
+                  1
+                );
+                this.form
+                  .get('delegacionMunicipio')
+                  .setValue(this.delegationSelectValue.toString());
+              }
+            }
+          } else {
+            this.delegations = new DefaultSelect(
+              data.data.map((i: any) => {
+                i.municipality =
+                  '#' + i.municipalityKey + ' -- ' + i.municipality;
+                return i;
+              }),
+              1
+            );
+          }
           subscription.unsubscribe();
         },
         error: error => {
           this.delegations = new DefaultSelect();
-          this.onLoadToast('error', 'Error', error.error.message);
           subscription.unsubscribe();
         },
       });
   }
 
   changeStateDetail(event: any) {
+    console.log(event);
     if (event) {
       if (event.id) {
         this.stateSelectValue = event.id;
+      } else {
+        this.stateSelectValue;
       }
     } else {
-      this.stateSelectValue = '';
+      this.stateSelectValue;
     }
   }
   getStateByDetail(paramsData: ListParams) {
-    console.log(this.stateSelectValue, paramsData);
-    console.log(paramsData, this.stateSelectValue);
-    if (this.stateSelectValue) {
+    if (this.stateSelectValue && !paramsData['search']) {
       let subscription = this.appointmentsService
         .getStateOfRepublicById(this.stateSelectValue)
         .subscribe({
           next: data => {
-            console.log(data);
-            this.state = new DefaultSelect(
-              [data].map(i => {
-                i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
-                return i;
-              }),
-              1
-            );
-            this.form.get('entidadFederativa').setValue(this.stateSelectValue);
-            this.form.get('entidadFederativa').updateValueAndValidity();
+            if (data) {
+              this.state = new DefaultSelect(
+                [data].map(i => {
+                  i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
+                  return i;
+                }),
+                1
+              );
+              this.form
+                .get('entidadFederativa')
+                .setValue(this.stateSelectValue.toString());
+            }
             subscription.unsubscribe();
           },
           error: error => {
             this.state = new DefaultSelect();
-            this.onLoadToast('error', 'Error', error.error.message);
             subscription.unsubscribe();
           },
         });
     } else {
       paramsData['sortBy'] = 'id:ASC';
+      if (!isNaN(Number(paramsData['search']))) {
+        return;
+      }
       let subscription = this.appointmentsService
         .getStateOfRepublicByAll(paramsData)
         .subscribe({
           next: data => {
-            console.log(data);
             this.state = new DefaultSelect(
               data.data.map(i => {
                 i.descCondition = '#' + i.id + ' -- ' + i.descCondition;
@@ -693,11 +993,11 @@ export class AppointmentsComponent
               }),
               data.count
             );
+            console.log(data, this.state);
             subscription.unsubscribe();
           },
           error: error => {
             this.state = new DefaultSelect();
-            this.onLoadToast('error', 'Error', error.error.message);
             subscription.unsubscribe();
           },
         });

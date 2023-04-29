@@ -30,6 +30,9 @@ export class BanksSharedComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   banks = new DefaultSelect<IBank>();
+  //---
+  @Output() objBank: EventEmitter<IBank> = new EventEmitter<IBank>();
+  @Output() stringBank: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(private service: BankService) {
     super();
@@ -46,17 +49,15 @@ export class BanksSharedComponent extends BasePage implements OnInit {
         },
       ]);
     }
-
-    if (this.form.get('bankKey')) {
-      this.form.get('bankKey').valueChanges.subscribe(data => {
-        if (data) {
-          this.service.getById(data).subscribe(resp => {
-            this.banks = new DefaultSelect([resp], 1);
-            this.nameBank.next(resp.name);
-          });
-        }
-      });
-    }
+    this.form.get('bankKey')?.valueChanges.subscribe(data => {
+      if (data) {
+        this.service.getById(data).subscribe(resp => {
+          this.banks = new DefaultSelect([resp], 1);
+          this.nameBank.next(resp.name);
+          this.stringBank.next(resp.bankCode);
+        });
+      }
+    });
   }
 
   getBanks(params: ListParams) {
@@ -83,8 +84,12 @@ export class BanksSharedComponent extends BasePage implements OnInit {
 
   onBanksChange(type: any) {
     this.nameBank.next(this.banks.data[0].name);
-    //this.resetFields([this.subdelegation]);
+    // alert("this.banks.data[0].name " + this.nameBank);
+    //this.objBank.next(this.banks.data[0]);
+    //alert("this.banks.data[0].bankCode " + this.banks.data[0].bankCode);
     this.form.updateValueAndValidity();
+    //this.objBank.next(this.banks.data[0].bankCode);
+    this.stringBank.next(this.banks.data[0].bankCode);
   }
 
   resetFields(fields: AbstractControl[]) {

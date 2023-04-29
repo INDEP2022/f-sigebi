@@ -20,8 +20,12 @@ import {
 
 /** SERVICE IMPORTS */
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 /** ROUTING MODULE */
 
@@ -39,12 +43,14 @@ export class ThirdpartiesPossessionValidationComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  users: ISegUsers[] = [];
   dataTableNotifications: INotification[] = [];
   // Table settings
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   selectedRows: IGood = {};
   selectedRows2: IGood = {};
   wheelNotifications: INotification;
+  goodsPosessionThirdParty: IGoodPossessionThirdParty[] = [];
 
   tableSettingsNotificaciones = {
     actions: {
@@ -61,6 +67,13 @@ export class ThirdpartiesPossessionValidationComponent
 
   // Table settings
   tableSettingsBienes = {
+    rowClassFunction: (row: any) => {
+      if (row.cells[1].value != 'ADM') {
+        return 'bg-dark';
+      } else {
+        return 'bg-primary';
+      }
+    },
     actions: {
       columnTitle: '',
       add: false,
@@ -97,11 +110,14 @@ export class ThirdpartiesPossessionValidationComponent
   public form: FormGroup;
   public formCcpOficio: FormGroup;
   public noExpediente: FormGroup;
+  public formGood: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private notificationService: NotificationService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private usersService: UsersService,
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
   ) {
     super();
   }
@@ -122,6 +138,7 @@ export class ThirdpartiesPossessionValidationComponent
       .valueChanges.pipe(debounceTime(500))
       .subscribe(x => {
         this.getNotificationByWheel(new ListParams(), x);
+        this.getGoodsPosessionThird(new ListParams(), x);
       });
   }
 
@@ -139,6 +156,38 @@ export class ThirdpartiesPossessionValidationComponent
       ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
       ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
       firma: ['', [Validators.pattern(STRING_PATTERN)]],
+    });
+    this.formGood = this.fb.group({
+      delegationCloseNumber: [''],
+      numClueNavy: [''],
+      closingDate: [''],
+    });
+  }
+
+  getGoodsPosessionThird(params: ListParams, wheelNumber?: number) {
+    if (!wheelNumber) {
+      return;
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    if (wheelNumber) {
+      data.addFilter('wheelNumber', wheelNumber);
+    }
+
+    this.goodPosessionThirdpartyService.getAll(data.getParams()).subscribe({
+      next: data => {
+        this.formCcpOficio.get('ccp1').patchValue(data.data[0].usrCcp1);
+        this.formCcpOficio.get('ccp2').patchValue(data.data[0].usrCcp2);
+        this.formCcpOficio.get('firma').patchValue(data.data[0].usrResponsible);
+        this.goodsPosessionThirdParty = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
     });
   }
 
@@ -207,11 +256,29 @@ export class ThirdpartiesPossessionValidationComponent
 
     if (numberExpedient) {
       data.addFilter('fileNumber', numberExpedient);
+      this.getGoodsByOffice(new ListParams(), numberExpedient);
     }
 
     this.goodService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableBienes = data.data;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+  }
+
+  getGoodsByOffice(params: ListParams, numberExpedient: number) {
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+
+    data.addFilter('status', 'STI');
+    data.addFilter('fileNumber', numberExpedient);
+    this.goodService.getAllFilter(data.getParams()).subscribe({
+      next: data => {
         this.dataTableBienesOficio = data.data;
       },
       error: err => {
@@ -230,38 +297,40 @@ export class ThirdpartiesPossessionValidationComponent
 
   addGoodOffice() {
     if (Object.keys(this.selectedRows).length < 1) {
-      this.onLoadToast(
+      this.alert(
         'info',
         'Selecciona un bien',
         'Selecciona un bien para poder realizar esta acción.'
       );
       return;
     }
-    const request: IGood = {
-      ...this.selectedRows,
-      delegationNumber: null,
-      subDelegationNumber: null,
-    };
 
-    this.goodService.create(request).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.selectedRows.status === 'STI') {
+      this.alert(
+        'info',
+        'Selecciona un bien',
+        'Selecciona un bien que esté disponible.'
+      );
+      return;
+    }
+
+    this.goodService
+      .updateGoodStatus(this.selectedRows.goodId, 'STI')
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
     this.getGoods(new ListParams(), this.expedientNumber);
-    this.onLoadToast(
-      'success',
-      'Excelente',
-      'Se ha agregado el bien correctamente'
-    );
+    this.alert('success', 'Excelente', 'Se ha agregado el bien correctamente');
     this.loading = false;
   }
 
   deleteGoodOffice() {
     if (Object.keys(this.selectedRows2).length < 1) {
-      this.onLoadToast(
+      this.alert(
         'info',
         'Selecciona un bien',
         'Selecciona un bien para poder realizar esta acción.'
@@ -269,10 +338,12 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
-    this.goodService.remove(this.selectedRows2.id).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.goodService
+      .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   mostrarInfo(form: any): any {
@@ -284,7 +355,32 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   sendForm() {
-    console.log('Send form log');
+    if (!this.form.get('officeExternalKey').value) {
+      this.alert(
+        'info',
+        '',
+        'No puede cerrar el Acta si no se han incorporado bienes y generado la clave armada.'
+      );
+      return;
+    }
+
+    const maxNumClaveArmada = this.goodsPosessionThirdParty.reduce(
+      (max, obj) => {
+        return Math.max(max, obj.numClueNavy || 0);
+      },
+      0
+    );
+
+    let oficio = maxNumClaveArmada + 1;
+
+    this.formGood.get('closingDate').patchValue(new Date());
+    this.formGood.get('numClueNavy').patchValue(
+      this.formGood
+        .get('numClueNavy')
+        .value.replace('?', ('00000' + oficio).slice(-5))
+        .replace(' ', '')
+    );
+    this.alert('info', 'Nota', 'La clave ya ha sido enviada.');
   }
 
   btnInsertarTextoPredefinido() {
@@ -300,7 +396,7 @@ export class ThirdpartiesPossessionValidationComponent
     replaceText = replaceText.replaceAll(
       '<C>',
       this.dataTableBienes
-        ? `${this.dataTableBienes[0].goodId} ${this.dataTableBienes[0].description}`
+        ? `${this.dataTableBienes[0].goodId}  ${this.dataTableBienes[0].description}`
         : '<C>'
     );
 
@@ -308,6 +404,22 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   btnImprimir() {
-    console.log('btnImprimir');
+    this.loading = true;
+    const pdfurl = `http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
+    // console.log(this.flyersForm.value);
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.alert('success', '', 'Reporte generado');
+    this.loading = false;
   }
 }

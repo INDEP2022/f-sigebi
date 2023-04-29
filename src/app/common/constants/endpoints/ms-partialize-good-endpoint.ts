@@ -3,4 +3,5 @@ export enum PartializeGoodEndpoints {
   Partializeds = 'partialized-good',
   Partilize = 'aplication/pa-partialization',
   InsertGood = 'aplication/insertGood',
+  PupInsertGood = 'aplication/pupInsertGood',
 }

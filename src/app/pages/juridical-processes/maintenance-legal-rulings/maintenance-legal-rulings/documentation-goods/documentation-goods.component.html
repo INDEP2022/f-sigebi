@@ -12,11 +12,18 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-12 col-12 col-md-12 p-2">
-    <ng2-smart-table
-      (edit)="openForm($event.data)"
-      [attr.class]="'table-bordered'"
-      [settings]="tableSettings"
-      [source]="dataTable"></ng2-smart-table>
+  <div class="row">
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettings"
+          [source]="dataTable"
+          (edit)="openForm($event.data)"></ng2-smart-table>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
 </div>

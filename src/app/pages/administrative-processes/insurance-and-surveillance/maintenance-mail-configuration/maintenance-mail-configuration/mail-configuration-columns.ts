@@ -4,17 +4,17 @@ export const EMAIL_CONFIG_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  email: {
-    title: 'Correo Electronico',
+  emailSend: {
+    title: 'Correo Electrónico',
     type: 'string',
     sort: false,
   },
-  name: {
+  nameSend: {
     title: 'Nombre',
     type: 'number',
     sort: false,
   },
-  job: {
+  postSend: {
     title: 'Puesto',
     type: 'number',
     sort: false,

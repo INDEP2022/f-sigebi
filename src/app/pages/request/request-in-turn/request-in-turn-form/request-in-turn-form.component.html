@@ -73,7 +73,7 @@
             <ngx-select
               [form]="searchForm"
               control="station"
-              (fetchItems)="($event)"
+              (fetchItems)="getStation($event)"
               [data]="selectStation"
               label="Emisora"
               bindLabel="nameAndId"
@@ -184,7 +184,7 @@
               bindLabel="nameAndId"
               (fetchItems)="getTransferente($event)"
               label="Transferente"
-              value="id"></ngx-select>
+              value="idTransferee"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field

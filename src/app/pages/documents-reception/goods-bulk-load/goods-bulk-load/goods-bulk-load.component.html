@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      <ng-container *ngIf="tipoCarga == 'pgr'; else otroTitulo">
+      <ng-container *ngIf="tipoCarga == FGR_OPCION; else otroTitulo">
         Proceso de Carga Masiva de Bienes FGR
       </ng-container>
       <ng-template #otroTitulo>
@@ -11,7 +11,18 @@
   </div>
 
   <div body class="init-page">
-    <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
+    <div class="row mt-3 mb-5" *ngIf="optionInvalid">
+      <div class="col-md-12">
+        <div class="col-md-12 alert alert-warning">
+          La opción {{ tipoCarga }} no esta disponible...
+        </div>
+      </div>
+    </div>
+    <form
+      [formGroup]="assetsForm"
+      (submit)="save()"
+      class="form-material"
+      *ngIf="!optionInvalid">
       <!-- <div class="row pb-0 mb-0">
         <div class="col-md-12 d-flex">
           <label class="mr-5">Destino: </label>
@@ -35,24 +46,30 @@
               <div class="card">
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-md-12" *ngIf="tipoCarga == 'pgr'">
+                    <div class="col-md-12" *ngIf="tipoCarga == FGR_OPCION">
                       <div class="card p-2">
                         <ul class="list-group list-group-flush">
                           <li class="list-group-item">
                             EXPEDIENTE:
-                            <div class="badge badge-pill bg-success text-wrap">
+                            <div class="badge badge-pill bg-primary text-wrap">
                               {{ paramsGeneral.p_no_expediente }}
                             </div>
                           </li>
                           <li class="list-group-item">
                             VOLANTE:
-                            <div class="badge badge-pill bg-success text-wrap">
+                            <div
+                              class="badge badge-pill {{
+                                WHEEL_COLOR_DATA_COLUMN
+                              }} text-wrap">
                               {{ paramsGeneral.p_no_volante }}
                             </div>
                           </li>
                           <li class="list-group-item">
-                            AVERIGUACIÓN PREVIA:
-                            <div class="badge badge-pill bg-success text-wrap">
+                            NÚMERO DE OFICIO:
+                            <div
+                              class="badge badge-pill {{
+                                OFFICE_COLOR_DATA_COLUMN
+                              }} text-wrap">
                               {{ paramsGeneral.p_av_previa }}
                             </div>
                           </li>
@@ -74,7 +91,7 @@
                     </div>
                     <div
                       class="col-md-6"
-                      *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'">
+                      *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'">
                       <div class="row">
                         <form-check label="Son automoviles" for="cars">
                           <input
@@ -138,14 +155,16 @@
           </div>
         </div>
         <div class="col-md-12">
-          <div class="row">
+          <div class="row" *ngIf="!optionInvalid">
             <div class="col-12 text-center">
               <button
-                *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'"
+                *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'"
                 class="m-4 btn btn-success btn-sm ml-2"
                 type="button"
                 [disabled]="
-                  procesandoUpload || procesandoPreload || tipoCarga == 'pgr'
+                  procesandoUpload ||
+                  procesandoPreload ||
+                  tipoCarga == FGR_OPCION
                 "
                 (click)="file.click()">
                 Abrir archivo Excel / CSV
@@ -181,7 +200,8 @@
               </button>
               <button
                 *ngIf="
-                  tipoCarga == 'pgr' && !DeclarationsUploadValidationMassive
+                  tipoCarga == FGR_OPCION &&
+                  !DeclarationsUploadValidationMassive
                 "
                 [disabled]="
                   procesandoUpload || procesandoPreload || cargandoPgr
@@ -198,7 +218,7 @@
     </form>
 
     <hr class="row mt-3" />
-    <div class="row mt-3 mb-5" *ngIf="cargandoPgr && tipoCarga == 'pgr'">
+    <div class="row mt-3 mb-5" *ngIf="cargandoPgr && tipoCarga == FGR_OPCION">
       <div class="col-md-12">
         <div class="col-md-12 alert alert-warning">
           Cargando la información de la pantalla, Espere un momento...
@@ -211,11 +231,11 @@
         DeclarationsValidationMassive &&
         DeclarationsValidationMassive.message_progress != ''
       ">
-      <div
+      <!-- <div
         class="col-md-12 alert alert-warning"
         *ngIf="stopProcess && procesandoPreload">
         Deteniendo el proceso, Espere un momento...
-      </div>
+      </div> -->
       <div class="col-md-12"><h2>Proceso de validación de datos</h2></div>
       <div class="col-md-8">
         <div class="card">
@@ -287,7 +307,7 @@
       </div>
       <div class="col-md-4">
         <div class="card">
-          <div class="card-header text-center">
+          <!-- <div class="card-header text-center">
             <button
               (click)="detenerProceso()"
               type="button"
@@ -295,7 +315,7 @@
               class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
               Detener Proceso
             </button>
-          </div>
+          </div> -->
           <div class="card-body">
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
@@ -449,11 +469,11 @@
                   </div>
                 </div>
               </div>
-              <div class="list-group-item">
+              <!-- <div class="list-group-item">
                 <div
                   class="col-md-6 fin-proceso"
                   *ngIf="
-                    tipoCarga == 'pgr' &&
+                    tipoCarga == FGR_OPCION &&
                     ((DeclarationsUploadValidationMassive &&
                       !procesandoUpload &&
                       endProcess) ||
@@ -466,12 +486,12 @@
                     Regresar al proceso anterior
                   </button>
                 </div>
-              </div>
+              </div> -->
             </ul>
             <div
               class="row"
               *ngIf="
-                tipoCarga == 'pgr' &&
+                tipoCarga == FGR_OPCION &&
                 ((DeclarationsUploadValidationMassive &&
                   !procesandoUpload &&
                   endProcess) ||
@@ -482,19 +502,25 @@
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       EXPEDIENTE:
-                      <div class="badge badge-pill bg-info text-wrap">
+                      <div class="badge badge-pill bg-primary text-wrap">
                         {{ paramsGeneral.p_no_expediente }}
                       </div>
                     </li>
                     <li class="list-group-item">
                       VOLANTE:
-                      <div class="badge badge-pill bg-info text-wrap">
+                      <div
+                        class="badge badge-pill {{
+                          WHEEL_COLOR_DATA_COLUMN
+                        }} text-wrap">
                         {{ paramsGeneral.p_no_volante }}
                       </div>
                     </li>
                     <li class="list-group-item">
-                      AVERIGUACIÓN PREVIA:
-                      <div class="badge badge-pill bg-info text-wrap">
+                      NÚMERO DE OFICIO:
+                      <div
+                        class="badge badge-pill {{
+                          OFFICE_COLOR_DATA_COLUMN
+                        }} text-wrap">
                         {{ paramsGeneral.p_av_previa }}
                       </div>
                     </li>
@@ -579,6 +605,24 @@
                   }}
                 </div>
               </li>
+              <li class="list-group-item">
+                <div
+                  class="col-md-6 fin-proceso"
+                  *ngIf="
+                    tipoCarga == FGR_OPCION &&
+                    ((DeclarationsUploadValidationMassive &&
+                      !procesandoUpload &&
+                      endProcess) ||
+                      (tableSource.length == 0 && !cargandoPgr))
+                  ">
+                  <button
+                    (click)="goPageVolante()"
+                    type="button"
+                    class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                    Terminar Proceso
+                  </button>
+                </div>
+              </li>
             </ul>
             <div
               class="alert alert-info"
@@ -610,10 +654,31 @@
     <hr *ngIf="tableSource.length > 0" class="row" />
     <h4 *ngIf="tableSource.length > 0">
       <ng-container
-        *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'; else otroData">
+        *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'; else otroData">
         Registros del Excel/CSV seleccionado
       </ng-container>
-      <ng-template #otroData> Listado de Registros </ng-template>
+
+      <ng-template #otroData>
+        <h2>Listado de Registros</h2>
+        <ng-container *ngIf="tipoCarga == FGR_OPCION">
+          <div
+            class="badge badge-pill {{
+              WHEEL_COLOR_DATA_COLUMN
+            }} text-wrap m-3">
+            Color para los datos del Volante
+          </div>
+          <div
+            class="badge badge-pill {{
+              OFFICE_COLOR_DATA_COLUMN
+            }} text-wrap m-3">
+            Color para los datos del Oficio
+          </div>
+          <div class="badge badge-pill bg-light text-dark text-wrap m-3">
+            Las columnas que no tienen color pertenecen a los datos de los
+            bienes que se van a procesar.
+          </div>
+        </ng-container>
+      </ng-template>
     </h4>
     <div class="row mt-3" style="max-height: 600px; overflow-y: scroll">
       <div

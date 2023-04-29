@@ -44,6 +44,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() placeholder: string = '';
   @Input() data = new DefaultSelect<T>();
   @Input() multiple: boolean = false;
+  @Input() addTag: boolean = false;
   @Input() loading: boolean = false;
   @Input() closeOnSelect: boolean = true;
   @Input() maxSelectedItems: number;
@@ -140,7 +141,9 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
     if (this.paramFilter === 'search') {
       filterParam.search = text ?? '';
     } else {
-      filterParam.addFilter(this.paramFilter, text ?? '', this.operator);
+      if (text && text.length > 0) {
+        filterParam.addFilter(this.paramFilter, text, this.operator);
+      }
     }
     this.fetchByParamsItems.emit(filterParam);
   }

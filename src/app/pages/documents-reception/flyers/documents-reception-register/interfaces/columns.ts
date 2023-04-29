@@ -115,53 +115,28 @@ export const DOCUMENTS_RECEPTION_SELECT_UNIQUE_KEY_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  transfereeNum: {
-    title: 'No. Transfer.',
-    type: 'number',
-    sort: false,
-  },
   transfereeDesc: {
-    title: 'Desc. Transferente',
+    title: 'Transferente',
     type: 'string',
-    sort: false,
-  },
-  stationNum: {
-    title: 'No. Emisora.',
-    type: 'number',
     sort: false,
   },
   stationDesc: {
-    title: 'Desc. Emisora',
+    title: 'Emisora',
     type: 'string',
-    sort: false,
-  },
-  authorityNum: {
-    title: 'No. Autoridad.',
-    type: 'number',
     sort: false,
   },
   authorityDesc: {
-    title: 'Desc. Autoridad',
+    title: 'Autoridad',
     type: 'string',
-    sort: false,
-  },
-  cityNum: {
-    title: 'No. Ciudad.',
-    type: 'number',
     sort: false,
   },
   cityDesc: {
-    title: 'Desc. Ciudad',
+    title: 'Ciudad',
     type: 'string',
     sort: false,
   },
-  federalEntityCve: {
-    title: 'No. Entidad Federal.',
-    type: 'number',
-    sort: false,
-  },
   federalEntityDesc: {
-    title: 'Desc. Entidad Federal',
+    title: 'Entidad Federal',
     type: 'string',
     sort: false,
   },

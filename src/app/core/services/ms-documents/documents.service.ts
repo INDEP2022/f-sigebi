@@ -4,8 +4,8 @@ import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-docume
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { IDocuments } from '../../models/ms-documents/documents';
-import { Inappropriateness } from '../../models/notification-aclaration/notification-aclaration-model';
 
 @Injectable({
   providedIn: 'root',
@@ -79,9 +79,27 @@ export class DocumentsService extends HttpService {
     return this.put(route, body);
   }
 
-  createClarDocImp(data: Object) {
-    const route = `clarification-documents-impro`;
-    return this.post<Inappropriateness>(route, data);
+  createClarDocImp(model: IClarificationDocumentsImpro) {
+    const route = DocumentsEndpoints.ClarificationDocumentsImpro;
+    return this.post<IClarificationDocumentsImpro>(route, model);
+  }
+
+  getAllClarificationDocImpro(
+    params?: ListParams | string
+  ): Observable<IListResponse<IClarificationDocumentsImpro>> {
+    return this.get<IListResponse<IClarificationDocumentsImpro>>(
+      DocumentsEndpoints.ClarificationDocumentsImpro,
+      params
+    );
+  }
+
+  getAllfilter(
+    applicationID: string | number,
+    rejectNoticeId: string | number,
+    params?: ListParams | string
+  ): Observable<IListResponse<IClarificationDocumentsImpro>> {
+    const route = `${DocumentsEndpoints.ClarificationDocumentsImpro}?filter.applicationId=${applicationID}&filter.rejectNoticeId=${rejectNoticeId}`;
+    return this.get<IListResponse<IClarificationDocumentsImpro>>(route, params);
   }
 
   // updateClarDocImp(id: string | number, data: Object) {

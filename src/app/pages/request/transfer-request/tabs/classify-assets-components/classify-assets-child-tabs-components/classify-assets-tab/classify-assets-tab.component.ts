@@ -14,6 +14,7 @@ import { showHideErrorInterceptorService } from 'src/app/common/services/show-hi
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IPostGoodResDev } from 'src/app/core/models/ms-rejectedgood/get-good-goodresdev';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -62,6 +63,7 @@ export class ClassifyAssetsTabComponent
   formLoading: boolean = false;
   noItemsFoundMessage = 'No se encontraron elementos';
   fractionCode: string = null;
+  goodResDev: IPostGoodResDev = {};
 
   constructor(
     private fb: FormBuilder,
@@ -95,15 +97,10 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    /*console.log('df', this.assetsId);
-      if (changes['assetsId'].currentValue != '') {
-        //cargar la clasificacion de bienes segun el id que se envio
-      } */
     //bienes selecionados
-
+    //console.log(this.requestObject);
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
-      //this.formLoading = true;
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
         this.classiGoodsForm.patchValue(this.good);
@@ -131,12 +128,15 @@ export class ClassifyAssetsTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
-      goodDescription: [null, [Validators.maxLength(4000)]],
-      quantity: [
+      goodDescription: [
         null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      quantity: [
+        1,
         [
           Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.pattern('^[0-9]+([.][0-9]+)?$'),
           Validators.maxLength(13),
         ],
       ],
@@ -182,12 +182,18 @@ export class ClassifyAssetsTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
       ],
       destiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //preguntar Destino ligie
-      transferentDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      transferentDestiny: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       compliesNorm: [
         'N',
         [Validators.pattern(STRING_PATTERN), , Validators.maxLength(1)],
       ], //cumple norma
-      notesTransferringEntity: [null, [Validators.maxLength(1500)]],
+      notesTransferringEntity: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
+      ],
       unitMeasure: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
@@ -394,7 +400,15 @@ export class ClassifyAssetsTabComponent
     });
 
     if (this.goodObject != null) {
-      this.getSection(new ListParams(), this.good.ligieSection);
+      if (this.good.ligieSection) {
+        this.getSection(new ListParams(), this.good.ligieSection);
+      } else {
+        this.onLoadToast(
+          'info',
+          'Clasificación del bien',
+          'El bien no cuenta con la fracción arancelaria'
+        );
+      }
       this.classiGoodsForm.patchValue(this.good);
       this.classiGoodsForm.controls['quantity'].setValue(
         Number(this.good.quantity)
@@ -414,6 +428,13 @@ export class ClassifyAssetsTabComponent
       .subscribe((data: any) => {
         if (data === true) {
           this.formLoading = true;
+
+          if (!this.good.ligieSection) {
+            this.getSection(new ListParams());
+            setTimeout(() => {
+              this.formLoading = false;
+            }, 500);
+          }
         }
       });
   }
@@ -487,7 +508,7 @@ export class ClassifyAssetsTabComponent
             this.getSection(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject) {
+          if (this.goodObject && this.good.ligieChapter) {
             this.classiGoodsForm.controls['ligieChapter'].setValue(
               this.good.ligieChapter
             );
@@ -653,6 +674,7 @@ export class ClassifyAssetsTabComponent
 
   matchLevelFraction(res: any) {
     this.advSearch = true;
+    this.listAdvancedFractions = [];
     switch (Number(res.level)) {
       case 5:
         this.getLevel4(new ListParams(), res.id);
@@ -677,17 +699,18 @@ export class ClassifyAssetsTabComponent
     }
   }
 
-  clean() {
-    this.classiGoodsForm.controls['ligieSection'].setValue(null);
-    this.classiGoodsForm.controls['ligieChapter'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-    this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+  cleanLvl(lvl?: number) {
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+    this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+    this.classiGoodsForm.controls['ligieSection'].setValue(null);
+    this.getSection(new ListParams());
   }
 
-  saveRequest(): void {
+  async saveRequest(): Promise<void> {
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
       this.message(
@@ -716,65 +739,90 @@ export class ClassifyAssetsTabComponent
       goods.fractionId = Number(goods.fractionId.id);
     }
 
-    let goodAction: any = null;
+    //se modifica el estadus del bien
+    if (goods.transferType === 'PGR_SAE' || goods.transferType === 'PGR_SAE') {
+      goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+    }
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      this.createGood(goods);
+      const newGood = await this.createGood(goods);
     } else {
-      this.updateGood(goods);
+      const updateGood = await this.updateGood(goods);
     }
   }
 
   createGood(good: any) {
-    this.goodService
-      .create(good)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.message(
-            'success',
-            'Guardado',
-            `¡El registro se guardó exitosamente!`
-          );
-          this.classiGoodsForm.controls['id'].setValue(data.id);
+    return new Promise((resolve, reject) => {
+      this.goodService
+        .create(good)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: data => {
+            this.message(
+              'success',
+              'Guardado',
+              `¡El registro se guardó exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-          this.refreshTable(true);
+            this.refreshTable(true);
 
-          setTimeout(() => {
-            this.refreshTable(false);
-          }, 5000);
-        },
-        error: error => {},
-      });
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+
+            resolve(data);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Bien no creado',
+              `Ocurrio un error al guardar el bien ${error.error.message}`
+            );
+            console.log(error);
+          },
+        });
+    });
   }
 
   updateGood(good: any) {
-    good.requestId = good.requestId.id;
-    if (good.addressId.id) {
-      good.addressId = Number(good.addressId.id);
-    }
-    good.quantity = Number(good.quantity);
-    this.goodService
-      .update(good)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.message(
-            'success',
-            'Guardado',
-            `El registro se actualizo exitosamente!`
-          );
-          this.classiGoodsForm.controls['id'].setValue(data.id);
+    return new Promise((resolve, reject) => {
+      good.requestId = good.requestId.id;
+      if (good.addressId.id) {
+        good.addressId = Number(good.addressId.id);
+      }
+      good.quantity = Number(good.quantity);
+      this.goodService
+        .update(good)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: data => {
+            this.message(
+              'success',
+              'Guardado',
+              `El registro se actualizo exitosamente!`
+            );
+            this.classiGoodsForm.controls['id'].setValue(data.id);
 
-          this.refreshTable(true);
+            this.refreshTable(true);
 
-          setTimeout(() => {
-            this.refreshTable(false);
-          }, 5000);
-        },
-        error: error => {},
-      });
+            setTimeout(() => {
+              this.refreshTable(false);
+            }, 5000);
+            resolve(data);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Bien no creado',
+              `Ocurrio un error al guardar el bien ${error.error.message}`
+            );
+            console.log(error);
+          },
+        });
+    });
   }
 
   getReactiveFormActions() {
@@ -783,13 +831,8 @@ export class ClassifyAssetsTabComponent
         //this.classiGoodsForm.controls['ligieChapter'].setValue(null);
         if (data != null) {
           if (this.advSearch === false) {
+            // this.classiGoodsForm.controls['ligieChapter'].setValue(null);
             this.getChapter(new ListParams(), data);
-            /* this.classiGoodsForm.controls['ligieChapter'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
@@ -797,18 +840,15 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
         if (dataChapter != null) {
-          let fractionCode = this.selectChapter.filter(
+          let fraction = this.selectChapter.filter(
             (x: any) => x.id === dataChapter
           )[0];
 
-          if (fractionCode) {
-            this.fractionCode = fractionCode.fractionCode;
-            this.getUnidMeasure(fractionCode.fractionCode);
-            this.setFractionId(
-              dataChapter,
-              fractionCode.fractionCode,
-              'Capítulo'
-            );
+          if (fraction) {
+            this.fractionCode = fraction.fractionCode;
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
+            this.setFractionId(dataChapter, fraction.fractionCode, 'Capítulo');
 
             const relativeTypeId = this.getRelevantTypeId(
               this.selectChapter,
@@ -819,11 +859,6 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel1(new ListParams(), dataChapter);
-            /* this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
         }
       }
@@ -831,13 +866,18 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
         if (dataLevel1 != null) {
-          let fractionCode =
+          let fractionCodes =
             this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
 
-          this.fractionCode = fractionCode;
-          this.getUnidMeasure(fractionCode);
-          this.setFractionId(dataLevel1, fractionCode, 'Nivel 1');
+          let fraction = this.selectLevel1.filter(
+            (x: any) => x.id === dataLevel1
+          )[0];
+
+          this.fractionCode = fractionCodes;
+          this.setNoClasifyGood(fraction);
+          this.setUnidLigieMeasure(fraction);
+          this.setFractionId(dataLevel1, fraction.fractionCode, 'Nivel 1');
 
           const relativeTypeId = this.getRelevantTypeId(
             this.selectLevel1,
@@ -848,12 +888,13 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
-            /* this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.classiGoodsForm.controls['goodTypeId'].setValue(null); */
           }
-        }
+        } /* else {
+          const lvl2 = this.classiGoodsForm.controls['ligieLevel2'].value;
+          if(lvl2){
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+          }
+        } */
       }
     );
     this.classiGoodsForm.controls['ligieLevel2'].valueChanges.subscribe(
@@ -866,7 +907,8 @@ export class ClassifyAssetsTabComponent
 
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
-            this.getUnidMeasure(fraction.fractionCode);
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
 
             const relativeTypeId = this.getRelevantTypeId(
               this.selectLevel2,
@@ -879,10 +921,13 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
-            /* this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
-        }
+        } /* else {
+          const lvl3 = this.classiGoodsForm.controls['ligieLevel3'].value;
+          if(lvl3){
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+          }
+        } */
       }
     );
     this.classiGoodsForm.controls['ligieLevel3'].valueChanges.subscribe(
@@ -896,7 +941,8 @@ export class ClassifyAssetsTabComponent
 
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
-            this.getUnidMeasure(fraction.fractionCode);
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
             this.setFractionId(dataLevel3, fraction.fractionCode, 'Nivel 3');
 
             const relevantTypeId = this.getRelevantTypeId(
@@ -909,9 +955,13 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel4(new ListParams(), dataLevel3);
-            /* this.classiGoodsForm.controls['ligieLevel4'].setValue(null); */
           }
-        }
+        } /* else {
+          const lvl4 = this.classiGoodsForm.controls['ligieLevel4'].value;
+          if(lvl4){
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+          }
+        } */
       }
     );
 
@@ -931,7 +981,8 @@ export class ClassifyAssetsTabComponent
 
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
-            this.getUnidMeasure(fraction.fractionCode);
+            this.setNoClasifyGood(fraction);
+            this.setUnidLigieMeasure(fraction);
             this.setFractionId(dataLevel4, fraction.fractionCode, 'Nivel 4');
             this.getNorma(fraction);
           }
@@ -974,8 +1025,42 @@ export class ClassifyAssetsTabComponent
     }
   }
 
+  //guarda el no_clasify_good numero clasificacion del bien
+  setNoClasifyGood(fraction: any) {
+    if (fraction.fractionCode != null) {
+      if (fraction.fractionCode.length === 8) {
+        if (fraction.clasificationId) {
+          this.classiGoodsForm.controls['goodClassNumber'].setValue(
+            fraction.clasificationId
+          );
+        } else {
+          this.classiGoodsForm.controls['goodClassNumber'].setValue(null);
+          this.message(
+            'info',
+            'clasificación de bien nula',
+            'El bien seleccionado no tiene numero de clasificación de bien'
+          );
+        }
+      }
+    } else {
+      this.classiGoodsForm.controls['goodClassNumber'].setValue(null);
+    }
+  }
+
+  setUnidLigieMeasure(fraction: any) {
+    if (fraction.unit) {
+      //this.classiGoodsForm.controls['ligieUnit'].setValue(fraction.unit);
+      this.classiGoodsForm.controls['ligieUnit'].setValue(fraction.unit);
+
+      if (this.classiGoodsForm.controls['unitMeasure'].value === null) {
+        this.classiGoodsForm.controls['unitMeasure'].setValue(fraction.unit);
+      }
+    } else {
+      this.classiGoodsForm.controls['ligieUnit'].setValue(null);
+    }
+  }
   //obtenien la unidad de medida
-  getUnidMeasure(value: string) {
+  /*getUnidMeasure(value: string) {
     if (value) {
       if (value.length === 8) {
         const fractionCode = { fraction: value };
@@ -1017,15 +1102,18 @@ export class ClassifyAssetsTabComponent
                 });
             },
             error: error => {
+              console.log('codigo de graccion', value);
               console.log(error.error.message);
+              this.onLoadToast(
+                'error',
+                '',
+                'El bien no cuenta con su clasificacion del bien'
+              );
             },
           });
-      } /*  else {
-        this.classiGoodsForm.controls['goodClassNumber'].setValue(0);
-        this.classiGoodsForm.controls['ligieUnit'].setValue('');
-      } */
+      } 
     }
-  }
+  }*/
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
