@@ -24,6 +24,10 @@ import { PartializesGeneralGoodsComponent } from './partializes-general-goods.co
     GoodsClasificationSharedComponent,
     SelectFormComponent,
   ],
-  providers: [PartializeGeneralGoodService],
+  providers: [
+    { provide: 'dbPartialize', useValue: 'goodsPartializeds2' },
+    { provide: 'dbSelectedGood', useValue: 'goodSelected2' },
+    PartializeGeneralGoodService,
+  ],
 })
 export class PartializesGeneralGoodsModule {}

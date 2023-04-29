@@ -26,6 +26,11 @@ import { IGetGoodResVe } from 'src/app/core/models/ms-rejectedgood/get-good-good
 import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
@@ -95,7 +100,12 @@ export class NotificationAssetsTabComponent
   task: any = null;
   dataTask: ITask;
   buttonsFinish: boolean = false;
-
+  nameTransferent: string = '';
+  delRegName: string = '';
+  nameStation: string = '';
+  nameState: string = '';
+  nameAuthority: string = '';
+  priority: any = null;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -106,7 +116,12 @@ export class NotificationAssetsTabComponent
     private requestService: RequestService,
     private authService: AuthService,
     private taskService: TaskService,
-    private router: Router
+    private router: Router,
+    private transferentService: TransferenteService,
+    private regionalDelegationService: RegionalDelegationService,
+    private stationService: StationService,
+    private stateOfRepublicService: StateOfRepublicService,
+    private authorityService: AuthorityService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -191,7 +206,57 @@ export class NotificationAssetsTabComponent
   dataRequest() {
     this.requestService.getById(this.idRequest).subscribe({
       next: data => {
+        console.log('request', data);
+        this.transferentName(data?.transferenceId);
+        this.regDelName(data?.regionalDelegationId);
+        this.stationName(data?.stationId);
+        this.stateName(data?.keyStateOfRepublic);
+        this.authorityName(data?.authorityId);
         this.requestData = data;
+      },
+      error: error => {},
+    });
+  }
+
+  transferentName(idTransference: number) {
+    this.transferentService.getById(idTransference).subscribe({
+      next: response => {
+        this.nameTransferent = response.nameTransferent;
+      },
+      error: error => {},
+    });
+  }
+
+  regDelName(idRegDel: number) {
+    this.regionalDelegationService.getById(idRegDel).subscribe({
+      next: data => {
+        this.delRegName = data.description;
+      },
+      error: error => {},
+    });
+  }
+  stationName(idStation: number) {
+    this.stationService.getById(idStation).subscribe({
+      next: data => {
+        this.nameStation = data.stationName;
+      },
+      error: error => {},
+    });
+  }
+
+  stateName(stateId: number) {
+    this.stateOfRepublicService.getById(stateId).subscribe({
+      next: data => {
+        this.nameState = data.descCondition;
+      },
+      error: error => {},
+    });
+  }
+
+  authorityName(authorityId: number) {
+    this.authorityService.getById(authorityId).subscribe({
+      next: data => {
+        this.nameAuthority = data.authorityName;
       },
       error: error => {},
     });
@@ -309,7 +374,7 @@ export class NotificationAssetsTabComponent
     }
   }
 
-  showButton = false;
+  showButton = true;
   selectRow(row?: any) {
     console.log(row);
     if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
@@ -317,7 +382,7 @@ export class NotificationAssetsTabComponent
       // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
       // btn8?.setAttribute('disabled', '');
     } else {
-      this.showButton = false;
+      this.showButton = true;
     }
     this.selectedRow = row;
     this.rowSelected = true;

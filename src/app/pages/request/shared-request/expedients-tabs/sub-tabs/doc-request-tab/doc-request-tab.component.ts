@@ -240,12 +240,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {
@@ -278,12 +278,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {
