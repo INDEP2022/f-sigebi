@@ -230,7 +230,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas crear un nuevo documento?'
+      '¿Estás seguro que desea crear un nuevo documento?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
