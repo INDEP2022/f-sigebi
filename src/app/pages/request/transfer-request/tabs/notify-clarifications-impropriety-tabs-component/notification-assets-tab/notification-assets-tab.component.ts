@@ -374,7 +374,7 @@ export class NotificationAssetsTabComponent
     }
   }
 
-  showButton = false;
+  showButton = true;
   selectRow(row?: any) {
     console.log(row);
     if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
@@ -382,7 +382,7 @@ export class NotificationAssetsTabComponent
       // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
       // btn8?.setAttribute('disabled', '');
     } else {
-      this.showButton = false;
+      this.showButton = true;
     }
     this.selectedRow = row;
     this.rowSelected = true;
