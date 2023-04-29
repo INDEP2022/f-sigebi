@@ -270,7 +270,7 @@ export class Apply extends PartializeFunctions {
       return false;
     }
     this.vestatus = estatus_nuevo_bien;
-    this.formGood.get('estatus').setValue(estatus_final);
+    this.good.status = estatus_final;
     this.vobserv_padre = 'Bien(es) parcializado(s): ';
     if (this.insertGoodByGoodPar(bienesPar)) {
       if (this.vsumimp < this.v_importe) {

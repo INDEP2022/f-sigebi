@@ -32,6 +32,11 @@ export class GoodFormComponent extends AlertButton implements OnInit {
 
   ngOnInit(): void {
     this.service.initFormGood();
+    this.selectGood(this.service.getSavedGood());
+  }
+
+  get saldo() {
+    return this.service.formControl.get('saldo');
   }
 
   get form() {
@@ -145,14 +150,18 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.good = good;
     if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodClassNumber)) {
       this.service.setSettingsFirstCase();
-      if (+good.val14 <= 0) {
+      if (isNaN(+good.val2) || +good.val14 <= 0 || good.appraisedValue <= 0) {
         this.onLoadToast(
           'error',
           'Parcialización',
           'Bien ' + good.goodId + ' no cuenta con importe'
         );
+        this.service.good = null;
         return;
       }
+      this.saldo.setValue(
+        good.appraisedValue ? good.appraisedValue : good.val14
+      );
     } else {
       this.service.setSettingsSecondCase();
     }
