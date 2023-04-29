@@ -1098,10 +1098,7 @@ export class RegistrationOfRequestsComponent
           console.log(clarification);
           console.log(this.requestData.typeOfTransfer);
           //debugger;
-          if (
-            clarification === true &&
-            this.requestData.typeOfTransfer !== 'MANUAL'
-          ) {
+          if (clarification === true) {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
