@@ -7,12 +7,9 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, debounceTime } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
-import { DictamenService } from 'src/app/core/services/catalogs/dictamen.service';
+import { BehaviorSubject } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -38,7 +35,7 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private dictationService: DictamenService
+    private dictationService: DictationService
   ) {
     super();
   }
@@ -71,46 +68,72 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
       dictHcDAte: '',
       entryHcDate: '',
     });
-
-    this.form
-      .get('expedientNumber')
-      .valueChanges.pipe(debounceTime(500))
-      .subscribe(x => {
-        this.emitChange(x);
-      });
-    this.form
-      .get('id')
-      .valueChanges.pipe(debounceTime(500))
-      .subscribe(x => {
-        this.emitChange(null, x);
-      });
   }
 
-  getData(params?: ListParams) {
-    if (!this.form.get('id').value) {
-      return;
-    }
+  setFormData() {
+    const typeDict = this.form.get('typeDict').value;
+    const dictationNumber = this.form.get('id').value;
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
-    data.page = params.page;
-    data.limit = params.limit;
 
-    if (this.form.get('id').value) {
-      data.addFilter('id', this.form.get('id').value);
+    if (typeDict) {
+      data.addFilter('typeDict', this.form.get('typeDict').value);
+    }
+
+    if (dictationNumber) {
+      data.addFilter('id', dictationNumber);
     }
 
     this.dictationService.getAll(data.getParams()).subscribe({
       next: data => {
-        this.form.patchValue(data);
+        this.form.patchValue(data.data[0]);
+        const value = this.form.value;
+        this.form
+          .get('dictDate')
+          .patchValue(value.dictDate ? new Date(value.dictDate) : null);
+        this.form
+          .get('entryDate')
+          .patchValue(value.entryDate ? new Date(value.entryDate) : null);
+        this.form
+          .get('entryHcDate')
+          .patchValue(value.entryHcDate ? new Date(value.entryHcDate) : null);
+        this.form
+          .get('instructorDate')
+          .patchValue(
+            value.instructorDate ? new Date(value.instructorDate) : null
+          );
+        this.form
+          .get('notifyResolutionDate')
+          .patchValue(
+            value.notifyResolutionDate
+              ? new Date(value.notifyResolutionDate)
+              : null
+          );
+        this.form
+          .get('notifyAssuranceDate')
+          .patchValue(
+            value.notifyAssuranceDate
+              ? new Date(value.notifyAssuranceDate)
+              : null
+          );
+        this.form
+          .get('resolutionDate')
+          .patchValue(
+            value.resolutionDate ? new Date(value.resolutionDate) : null
+          );
+        this.form
+          .get('dictHcDAte')
+          .patchValue(value.dictHcDAte ? new Date(value.dictHcDAte) : null);
+        this.emitChange();
       },
       error: err => {
-        this.loading = false;
+        console.log(err);
       },
     });
   }
 
-  public emitChange(expedientNumber?: number, dictaNumber?: number) {
+  public emitChange() {
     this.formValues.emit(this.form.value);
   }
 }

@@ -1,8 +1,15 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
@@ -14,10 +21,13 @@ import { DICTAMINATION_X_GOOD_COLUMNS } from './goods.columns';
   selector: 'app-goods',
   templateUrl: './goods.component.html',
 })
-export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
+export class GoodsComponent
+  extends BasePage
+  implements OnInit, OnDestroy, OnChanges
+{
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -32,6 +42,14 @@ export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
 
   dataTable: IDictationXGood1[] = [];
 
+  @Input() set loadingData(value: boolean) {
+    this.loading = value;
+  }
+
+  @Input() set data(value: IDictationXGood1[]) {
+    this.dataTable = value;
+  }
+
   constructor(
     private modalService: BsModalService,
     private dictationService: DictationXGood1Service
@@ -40,31 +58,39 @@ export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loading = true;
-    this.data
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        this.getGoods();
-      });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods());
+    // this.loading = true;
+    // this.data
+    //   .onChanged()
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(change => {
+    //     this.getGoods();
+    //   });
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getGoods());
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes && changes['data']) {
+      if (changes['data'].currentValue.length > 0) {
+        this.loading = false;
+      }
+    }
   }
 
   getGoods() {
-    this.dictationService.getAll().subscribe({
-      next: data => {
-        this.dataTable = data.data;
-        this.data.load(this.dataTable);
-        this.totalItems = data.count || 0;
-        this.data.refresh();
-        this.loading = false;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
+    // this.dictationService.getAll().subscribe({
+    //   next: data => {
+    //     this.dataTable = data.data;
+    //     this.data.load(this.dataTable);
+    //     this.totalItems = data.count || 0;
+    //     this.data.refresh();
+    //     this.loading = false;
+    //   },
+    //   error: err => {
+    //     this.loading = false;
+    //   },
+    // });
   }
 
   openForm(dictationXGood?: IDictationXGood1) {
@@ -73,7 +99,7 @@ export class GoodsComponent extends BasePage implements OnInit, OnDestroy {
       initialState: {
         dictationXGood,
         callback: (next: boolean) => {
-          if (next) this.getGoods();
+          //if (next) this.getGoods();
         },
       },
       class: 'modal-lg modal-dialog-centered',
