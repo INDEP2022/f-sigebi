@@ -128,6 +128,11 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     let bandera;
     let clasif: number;
     console.log(good.goodClassNumber);
+    const newBinesPar = this.service.bienesPar.filter(bien => {
+      bien.noBien = good.goodId;
+    });
+    this.service.bienesPar = newBinesPar;
+    this.service.savePartializeds();
     if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
       bandera = 0;
       const validacion = await this.validateGood(good);
