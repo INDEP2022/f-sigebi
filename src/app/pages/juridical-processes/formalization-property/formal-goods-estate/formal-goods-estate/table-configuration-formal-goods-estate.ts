@@ -1,11 +1,56 @@
+interface TableSettings {
+  selectMode: string;
+  actions: any;
+  attr: Object;
+  pager: Object;
+  hideSubHeader: boolean;
+  mode: string;
+  add: Object;
+  edit: Object;
+  next: Object;
+  delete: Object;
+  columns: Object;
+  noDataMessage: string;
+  selectedRowIndex?: number;
+  rowClassFunction?: any;
+}
+
+export const TABLE_SETTINGS2: TableSettings = {
+  selectMode: '',
+  selectedRowIndex: -1,
+  actions: {
+    columnTitle: 'Acciones',
+    position: 'right',
+    add: false,
+    edit: true,
+    next: true,
+    delete: true,
+  },
+  attr: {
+    class: 'table-bordered',
+  },
+  pager: {
+    display: false,
+  },
+  hideSubHeader: true,
+  mode: 'external',
+  add: {},
+  edit: {
+    editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+  },
+  next: {
+    editButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  delete: {
+    deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  columns: {},
+  noDataMessage: 'No se encontrarón registros',
+  rowClassFunction: (row: any) => {},
+};
+
 // Procede Formalizacion
 export const tableSettingsProcedeFormalizacion: any = {
-  actions: {
-    columnTitle: '',
-    add: false,
-    edit: false,
-    delete: false,
-  },
   hideSubHeader: true, //oculta subheaader de filtro
   mode: 'external', // ventana externa
   columns: {
@@ -18,7 +63,57 @@ export const tableSettingsProcedeFormalizacion: any = {
     incorporado: { title: 'Incorporado' },
     oficioDCBI: { title: 'Oficio DCBI' },
   },
+  actions: {
+    columnTitle: '',
+    add: false,
+    edit: true,
+    delete: false,
+  },
 };
+
+export const FORMALIZACION_COLUMNS = {
+  eventDad: {
+    title: 'ID',
+    type: 'number',
+    sort: false,
+  },
+  processKey: {
+    title: 'Evento Clave',
+    type: 'string',
+    sort: false,
+  },
+  goodNumber: {
+    title: 'No. Bien',
+    sort: false,
+    type: 'string',
+  },
+  description: {
+    title: 'No. Bien Detalle',
+    type: 'string',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus Comercial',
+    type: 'string',
+    sort: false,
+  },
+  customerId: {
+    title: 'Cliente',
+    type: 'number',
+    sort: false,
+  },
+  incorporationDate: {
+    title: 'Incorporado',
+    type: 'string',
+    sort: false,
+  },
+  oficioDCBI: {
+    title: 'Oficio DCBI',
+    type: 'string',
+    sort: false,
+  },
+};
+
 export const dataTableProcedeFormalizacion: any = [
   {
     evento: 'DATA',

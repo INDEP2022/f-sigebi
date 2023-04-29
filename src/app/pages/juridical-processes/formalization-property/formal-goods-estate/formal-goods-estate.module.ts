@@ -13,10 +13,11 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FormalGoodsEstateRoutingModule } from './formal-goods-estate-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { FormProcedeFormalizacionComponent } from './form-procede-formalizacion/form-procede-formalizacion.component';
 import { FormalGoodsEstateComponent } from './formal-goods-estate/formal-goods-estate.component';
 
 @NgModule({
-  declarations: [FormalGoodsEstateComponent],
+  declarations: [FormalGoodsEstateComponent, FormProcedeFormalizacionComponent],
   imports: [
     CommonModule,
     FormalGoodsEstateRoutingModule,

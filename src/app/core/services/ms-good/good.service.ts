@@ -2,6 +2,8 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
+import { Repository } from '../../../common/repository/repository';
 import {
   IListResponse,
   IResponse,
@@ -30,13 +32,22 @@ import { GoodEndpoints } from './../../../common/constants/endpoints/ms-good-end
 export class GoodService extends HttpService {
   good$ = new EventEmitter<IGood>();
 
-  constructor() {
+  private readonly route: string = ENDPOINT_LINKS.GoodsQuery;
+  constructor(private goodRepository: Repository<IGood>) {
     super();
     this.microservice = GoodEndpoints.Good;
   }
 
   getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
+  }
+
+  getAllGoods(params?: ListParams): Observable<IListResponse<IGood>> {
+    console.log('SI', params);
+    return this.get<IListResponse<IGood>>(
+      GoodEndpoints.Good + '/searchGoods',
+      params
+    );
   }
 
   getActAccount(model: IGoodStatusProcess) {
@@ -115,6 +126,11 @@ export class GoodService extends HttpService {
 
   getById(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
+    return this.get<IGood>(route);
+  }
+
+  getGoodById(id: string | number) {
+    const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
     return this.get<IGood>(route);
   }
 

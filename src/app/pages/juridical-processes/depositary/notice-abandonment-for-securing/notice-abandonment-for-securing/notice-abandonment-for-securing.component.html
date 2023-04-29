@@ -6,11 +6,18 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberGood')" label="No Bien">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="numberGood" />
+          <form-field [control]="form.get('numberGood')">
+            <ngx-select
+              [form]="form"
+              control="numberGood"
+              (change)="getGood($event)"
+              (fetchItems)="listGoodsId($event)"
+              [data]="selectRegDele"
+              label="No&#46; Bien"
+              value="id"
+              bindLabel="id">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="numberGood" /> -->
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -18,6 +25,7 @@
             [control]="form.get('description')"
             label="Descripci&oacute;n">
             <input
+              readonly
               type="text"
               class="form-control"
               formControlName="description" />
@@ -25,19 +33,28 @@
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('amount')" label="Cantidad">
-            <input type="text" class="form-control" formControlName="amount" />
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="amount" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('periods')" label="Periodo 1">
-            <input type="text" class="form-control" formControlName="periods" />
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="periods" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('periods1')" label="Periodo 2">
             <input
+              readonly
               type="text"
               class="form-control"
               formControlName="periods1" />
@@ -46,6 +63,7 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('periods2')" label="Periodo 3">
             <input
+              readonly
               type="text"
               class="form-control"
               formControlName="periods2" />

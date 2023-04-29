@@ -267,3 +267,31 @@ export interface INotificationTransferentIndiciadoCity {
     depDelegation: string;
   };
 }
+
+export interface INotificationDictum {
+  dictumKey: string;
+}
+
+export interface INotificationXProperty {
+  numberProperty: number;
+  notificationDate: Date;
+  notifiedTo: string;
+  notifiedPlace: string;
+  duct: string;
+  editPublicationDate: Date;
+  newspaperPublication: string;
+  insertMethod: string;
+  periodEndDate: Date;
+  observation: string;
+  abandonmentExpirationDate: Date;
+  registerNumber: number;
+  nameInstitutionNotified: string;
+  namePersonNotified: string;
+  positionPersonNotified: string;
+  statusNotified: string;
+  responseNotifiedDate: Date;
+  resolutionDescription: string;
+  temporarySuspension: string;
+  definitiveSuspension: string;
+  userCorrectsKey: string;
+}

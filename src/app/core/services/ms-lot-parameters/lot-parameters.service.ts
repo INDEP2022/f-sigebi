@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { LotParamsEndpoints } from 'src/app/common/constants/endpoints/ms-lot-params-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -30,6 +31,11 @@ export class LotParamsService extends HttpService {
     filterParams += 'limit=' + params.limit;
 
     const route = `${LotParamsEndpoints.FindAll}?${filterParams}`;
+    return this.get<any>(route);
+  }
+
+  getAll2(): Observable<any> {
+    const route = `${LotEndpoints.ComerLot}`;
     return this.get<any>(route);
   }
 

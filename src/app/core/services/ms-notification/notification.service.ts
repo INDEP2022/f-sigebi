@@ -3,6 +3,7 @@ import { map, Observable } from 'rxjs';
 import { NotificationEndpoints } from 'src/app/common/constants/endpoints/ms-notification-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationRepository } from 'src/app/common/repository/repositories/ms-notification-repository';
+import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
@@ -17,9 +18,10 @@ import {
 })
 export class NotificationService extends HttpService {
   private readonly route = NotificationEndpoints;
-
+  private readonly endpoint: string = 'notification';
   constructor(
-    private notificationRepository: NotificationRepository<INotification>
+    private notificationRepository: NotificationRepository<INotification>,
+    private notificationRepository2: Repository<INotification>
   ) {
     super();
     this.microservice = this.route.Notification;
@@ -27,6 +29,15 @@ export class NotificationService extends HttpService {
 
   getAll(params?: ListParams): Observable<IListResponse<INotification>> {
     return this.notificationRepository.getAll(this.route.Notification, params);
+  }
+
+  getAllWithFilter(
+    params?: ListParams | string
+  ): Observable<IListResponse<INotification>> {
+    return this.notificationRepository2.getAllPaginatedFilter(
+      this.endpoint,
+      params
+    );
   }
 
   getAllFilter(params: _Params): Observable<IListResponse<INotification>> {
@@ -109,6 +120,12 @@ export class NotificationService extends HttpService {
       this.route.NotificationxProperty,
       params
     );
+  }
+
+  getByNotificationxProperty2(
+    params: any
+  ): Observable<IListResponse<INotification>> {
+    return this.post(this.route.NotificationxPropertyFilter2, params);
   }
 
   createNotificationxPropertyFilter(model: any): Observable<any> {

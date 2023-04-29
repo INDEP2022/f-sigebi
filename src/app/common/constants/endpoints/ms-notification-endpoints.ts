@@ -25,4 +25,6 @@ export enum NotificationEndpoints {
   FindCountByInquiry = `notification/find-count-by-inquiri`,
   //Last-Flyer-id
   LastFlyerId = `notification/last-flyer-identification`,
+  //post
+  NotificationxPropertyFilter2 = `notification-x-property/filter`,
 }

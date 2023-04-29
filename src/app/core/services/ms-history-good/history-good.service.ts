@@ -35,6 +35,11 @@ export class HistoryGoodService extends HttpService {
     return this.get<IHistoryGood>(route);
   }
 
+  getHistoryStatusGoodById(query: any) {
+    const route = `${HistoryGoodEndpoints.HistoryStatusGoodFindById}`;
+    return this.post(route, query);
+  }
+
   create(documents: IHistoryGood) {
     return this.post<IHistoryGood>(
       HistoryGoodEndpoints.HistoryStatusGood,

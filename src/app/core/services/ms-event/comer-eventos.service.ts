@@ -4,7 +4,10 @@ import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endp
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IComerEvent } from './../../models/ms-event/event.model';
+import {
+  IComerEvent,
+  IComerLotEvent,
+} from './../../models/ms-event/event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +26,16 @@ export class ComerEventosService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(this.endpoint, params);
   }
+
+  getAllComerLotEvent(
+    params?: ListParams
+  ): Observable<IListResponse<IComerLotEvent>> {
+    return this.get<IListResponse<IComerLotEvent>>(
+      EventEndpoints.ComerLotEvent,
+      params
+    );
+  }
+
   getAllTypeEvent(params?: ListParams): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(
       EventEndpoints.ComerTEvents,
