@@ -19,7 +19,11 @@ export class ProtectionService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IProtection>> {
     return this.get<IListResponse<IProtection>>(this.route.Protection, params);
   }
-
+  getByIdNew(id: string): Observable<IListResponse<IProtection>> {
+    return this.httpClient.get<IListResponse<IProtection>>(
+      `${this.url}${this.prefix}${this.route.Protection}/${id}`
+    );
+  }
   getAllWithFilters(params?: string): Observable<IListResponse<IProtection>> {
     return this.get<IListResponse<IProtection>>(this.route.Protection, params);
   }

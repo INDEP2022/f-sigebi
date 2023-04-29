@@ -32,7 +32,7 @@ export class ElectronicSignatureListComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas mandar el documento a firmar?'
+      '¿Estás seguro que desea mandar el documento a firmar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

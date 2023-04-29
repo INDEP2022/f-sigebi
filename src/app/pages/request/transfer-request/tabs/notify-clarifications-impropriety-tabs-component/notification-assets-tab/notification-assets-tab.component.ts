@@ -84,7 +84,7 @@ export class NotificationAssetsTabComponent
 
   rowSelected: boolean = false;
   selectedRow: any = null;
-  goodsReject: IGoodresdev[] = [];
+  goodsReject: LocalDataSource = new LocalDataSource();
   valueClarification: IClarification;
   valueGood: number;
   valueRejectNotificationId: number;
@@ -128,7 +128,7 @@ export class NotificationAssetsTabComponent
     this.settings2 = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
+
       columns: { ...NOTIFY_ASSETS_COLUMNS },
     };
 
@@ -221,11 +221,16 @@ export class NotificationAssetsTabComponent
   }
 
   goodSelect(data: any) {
-    this.goodsReject = data;
-    if (this.goodsReject.length == 1) {
-      this.params2
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getClarificationsByGood(data[0].goodid));
+    console.log('select', data);
+    if (data.length > 0) {
+      this.goodsReject.load(data);
+      if (this.goodsReject.count() == 1) {
+        this.params2
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getClarificationsByGood(data[0].goodid));
+      }
+    } else {
+      this.notificationsList = new LocalDataSource();
     }
   }
 
@@ -241,6 +246,11 @@ export class NotificationAssetsTabComponent
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
         this.notificationsList.load(response.data);
+        console.log(
+          this.notificationsList.getElements().then(data => {
+            console.log('notificaciones', data);
+          })
+        );
         this.totalItems2 = response.count;
         this.formLoading = false;
       },
@@ -265,9 +275,18 @@ export class NotificationAssetsTabComponent
     } else {
       if (this.selectedRow.answered == 'RECHAZADA') {
         this.message('Error', 'La notificación ya fue rechazada');
-      } else {
+      }
+      if (
+        this.selectedRow.chatClarification.clarificationStatus ==
+        'EN_ACLARACION'
+      ) {
+        this.onLoadToast(
+          'warning',
+          'Acción no permitida',
+          'La notificación no se puede rechazar porque ya se encunetra a espera de respuesta del SAT'
+        );
+      } else if (this.selectedRow.answered != 'ACLARADA') {
         const refuseObj = { ...this.valuesNotifications }; //Info de sus notificaciones
-
         const modalConfig = MODAL_CONFIG;
         modalConfig.initialState = {
           refuseObj,
@@ -280,65 +299,92 @@ export class NotificationAssetsTabComponent
           },
         };
         this.modalService.show(RefuseClarificationModalComponent, modalConfig);
+      } else {
+        this.onLoadToast(
+          'warning',
+          'Acción no valida',
+          'La notificación ya fue aclarada no se puede rechazar'
+        );
       }
     }
   }
 
+  showButton = false;
   selectRow(row?: any) {
+    console.log(row);
+    if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
+      this.showButton = true;
+      // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
+      // btn8?.setAttribute('disabled', '');
+    } else {
+      this.showButton = false;
+    }
     this.selectedRow = row;
     this.rowSelected = true;
   }
 
   verifyClarification() {
-    if (this.goodsReject.length < this.columns.length) {
+    console.log('seleccio', this.goodsReject.count());
+    console.log('se tiene', this.columns.length);
+    if (this.goodsReject.count() < this.columns.length) {
       this.onLoadToast(
         'warning',
         'Para verificar el cumplimiento se necesita tener todos los bienes seleccionados',
         ''
       );
     } else {
-      this.goodsReject.map(bien => {
-        if (
-          bien.clarificationstatus == 'ACLARADO' ||
-          bien.clarificationstatus == 'CANCELADO'
-        ) {
-          this.alertQuestion(
-            'question',
-            'Confirmación',
-            'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
-          ).then(async question => {
-            if (question.isConfirmed) {
-              const updateData = await this.verifyGoodCompliance();
-              if (updateData == true) {
-                this.createTaskVerifyCompliance();
-              }
+      this.goodsReject.getElements().then(data => {
+        data.map((bien: IGoodresdev) => {
+          if (
+            bien.clarificationstatus == 'ACLARADO' ||
+            bien.clarificationstatus == 'CANCELADO'
+          ) {
+            if ([bien].length < this.goodsReject.count()) {
+              this.onLoadToast(
+                'info',
+                'Acción no permitida',
+                'El estatus de la notificación de todos los bienes debe de estar en aclarado'
+              );
+            } else {
+              this.alertQuestion(
+                'question',
+                'Confirmación',
+                'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
+              ).then(async question => {
+                if (question.isConfirmed) {
+                  const updateData = await this.verifyGoodCompliance();
+                  if (updateData == true) {
+                    this.createTaskVerifyCompliance();
+                    /*
+            if (user.employeetype == 'TE') {
+              //Se actualiza el orden de servicio
             }
-          });
-
-          let user = this.authService.decodeToken();
-          if (user.employeetype == 'TE') {
-            //Se actualiza el orden de servicio
+           */
+                  }
+                }
+              });
+            }
           }
-        } else {
-          this.onLoadToast('info', 'Aun se tiene bienes sin ser aclarados', '');
-        }
+        });
       });
     }
   }
 
   verifyGoodCompliance() {
     return new Promise((resolve, reject) => {
-      this.goodsReject.map(bien => {
-        this.updateStatusGood(
-          null,
-          'VERIFICAR_CUMPLIMIENTO',
-          bien.goodid,
-          bien.goodresdev,
-          bien.typeorigin
-        );
-      });
+      this.goodsReject.getElements().then(data => {
+        data.map((bien: IGoodresdev) => {
+          this.updateStatusGood(
+            null,
+            'VERIFICAR_CUMPLIMIENTO',
+            bien.goodid,
+            bien.goodresdev,
+            bien.typeorigin
+          );
+        });
 
-      resolve(true);
+        resolve(true);
+      });
     });
   }
 
@@ -369,7 +415,7 @@ export class NotificationAssetsTabComponent
         this.msgGuardado(
           'success',
           'Creación de tarea exitosa',
-          `Se creo la tarea verificar cumplimiento con el id: ${this.requestData.id}`
+          `Se creó la tarea verificar cumplimiento con el id: ${this.requestData.id}`
         );
       }
     }
@@ -456,27 +502,29 @@ export class NotificationAssetsTabComponent
   }
 
   validateGoodStatus() {
-    this.goodsReject.map(item => {
-      if (
-        item.clarificationstatus == 'ACLARADO' ||
-        item.clarificationstatus == 'CANCELADO'
-      ) {
-        this.updateStatusGood(
-          null,
-          'VERIFICAR_CUMPLIMIENTO',
-          item.goodid,
-          item.goodresdev,
-          item.typeorigin
-        );
-        //Verificar lo de orden de servicio if()
-        //Manda a generar la tarea//
-      } else {
-        this.onLoadToast(
-          'info',
-          'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
-          ''
-        );
-      }
+    this.goodsReject.getElements().then(data => {
+      data.map((item: IGoodresdev) => {
+        if (
+          item.clarificationstatus == 'ACLARADO' ||
+          item.clarificationstatus == 'CANCELADO'
+        ) {
+          this.updateStatusGood(
+            null,
+            'VERIFICAR_CUMPLIMIENTO',
+            item.goodid,
+            item.goodresdev,
+            item.typeorigin
+          );
+          //Verificar lo de orden de servicio if()
+          //Manda a generar la tarea//
+        } else {
+          this.onLoadToast(
+            'info',
+            'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
+            ''
+          );
+        }
+      });
     });
   }
 
@@ -513,7 +561,44 @@ export class NotificationAssetsTabComponent
         this.message('Error', 'Seleccione almenos un registro!');
         return;
       }
-      this.getRequest();
+
+      if (this.selectedRow.answered == 'ACLARADA') {
+        this.onLoadToast(
+          'warning',
+          'Acción no valida',
+          'La notificación ya fue aclarada no se puede volver a aceptar'
+        );
+      } else {
+        this.getRequest();
+      }
+    }
+  }
+
+  FinishClariImpro() {
+    if (this.rowSelected == false) {
+      this.message('Error', 'Seleccione notificación a Finalizar');
+    } else {
+      if (this.selectedRow.answered == 'RECHAZADA') {
+        this.message('Error', 'La notificación ya fue rechazada');
+      }
+
+      if (this.selectedRow.clarification.type < 1) {
+        this.message('Error', 'Seleccione almenos un registro!');
+        return;
+      }
+
+      if (
+        this.selectedRow.chatClarification.clarificationStatus ==
+        'IMPROCEDENCIA'
+      ) {
+        this.onLoadToast(
+          'warning',
+          'Atención:',
+          'Aún se desconoce la funcionalidad de este botón'
+        );
+      } else {
+        this.getRequest();
+      }
     }
   }
 
@@ -550,6 +635,7 @@ export class NotificationAssetsTabComponent
     const dataNotification = this.valueClarification;
     const idNotify = { ...this.notificationsGoods };
     const idAclara = this.selectedRow.clarification.type; //Id del tipo de aclaración
+
     let config: ModalOptions = {
       initialState: {
         //Quitar algunas variable que se pueden remplazar por los objetos que se estan enviado
@@ -911,7 +997,7 @@ export class NotificationAssetsTabComponent
             this.alertQuestion(
               'question',
               'Finalizar',
-              'Desea finalizar el proceso de aclaraciones'
+              '¿Desea finalizar el proceso de aclaraciones?'
             ).then(question => {
               if (question.isConfirmed) {
                 const result: string = '';
@@ -925,7 +1011,7 @@ export class NotificationAssetsTabComponent
             this.alertQuestion(
               'question',
               'Finalizar',
-              'Desea finalizar el proceso de aclaraciones'
+              '¿Desea finalizar el proceso de aclaraciones?'
             ).then(question => {
               if (question.isConfirmed) {
                 const result: string = '';
@@ -1201,13 +1287,36 @@ export class NotificationAssetsTabComponent
     if (this.rowSelected == false) {
       this.message('Error', 'Primero seleccione una notificación');
     } else {
+      if (
+        this.selectedRow.answered == 'ACLARADA' &&
+        this.selectedRow.chatClarification.clarificationStatus == 'ACLARADO'
+      ) {
+        this.onLoadToast(
+          'info',
+          'Acción no permitida',
+          'Ya se simulo una respuesta del SAT'
+        );
+      }
       if (this.selectedRow.answered == 'RECHAZADA') {
         this.message('Error', 'La notificación ya fue rechazada');
       } else {
         if (this.selectedRow.chatClarification == null) {
           this.message('Aviso', 'Aún no hay una respuesta del SAT');
-        } else {
+        }
+
+        if (
+          this.selectedRow.answered == 'EN ACLARACION' &&
+          this.selectedRow.chatClarification.clarificationStatus ==
+            'EN_ACLARACION' &&
+          this.selectedRow.chatClarification.satClarify == null
+        ) {
           this.updateChatClarificationsTmp();
+        } else if (this.selectedRow.answered != 'ACLARADA') {
+          this.onLoadToast(
+            'info',
+            'Acción no permitida',
+            'El status de la notificación y el de la aclaración debe de estar: EN ACLARACIÓN'
+          );
         }
       }
     }

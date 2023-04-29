@@ -34,7 +34,7 @@ export class ConsultTxtComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas subir el archivo de busqueda?'
+      '¿Desea subir el archivo de busqueda?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
