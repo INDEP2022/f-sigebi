@@ -1,6 +1,7 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
-export const WORK_MAILBOX_COLUMNS = {
+/*export const WORK_MAILBOX_COLUMNS = {
   columname: {
     title: 'Fecha',
     sort: false,
@@ -29,7 +30,7 @@ export const WORK_MAILBOX_COLUMNS = {
     title: 'Urgente Volante',
     sort: false,
   },
-};
+};*/
 
 export const WORK_BIENES_COLUMNS = {
   id: {
@@ -83,6 +84,19 @@ export const WORK_ANTECEDENTES_COLUMNS = {
 };
 
 export const WORK_MAILBOX_COLUMNS2 = {
+  turnSelect: {
+    title: 'Turnar',
+    sort: false,
+    filter: false,
+    editable: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.turn = data.toggle;
+      });
+    },
+  },
   processNumber: {
     title: 'No. Trámite',
     sort: false,

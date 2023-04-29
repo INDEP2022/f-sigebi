@@ -428,6 +428,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   NUM_POSITIVE,
                   11
                 );
+                searchFilter = SearchFilter.EQ;
                 filter.search = valueProceedingsNumber.validValue;
                 break;
               case 'issue':
@@ -964,26 +965,29 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     };
 
     //console.log(params);
-    this.workService.getView(params).subscribe({
-      next: (resp: any) => {
-        //console.log(resp);
-        if (resp.data) {
-          this.data = resp.data;
-          this.totalItems = resp.count || 0;
-          this.dataTable.load(resp.data);
+    this.workService
+      .getView(params)
+      .map((elem: any) => elem.turnSelect == false)
+      .subscribe({
+        next: (resp: any) => {
+          console.log(resp);
+          if (resp.data) {
+            this.data = resp.data;
+            this.totalItems = resp.count || 0;
+            this.dataTable.load(resp.data);
+            this.dataTable.refresh();
+            this.loading = false;
+          }
+        },
+        error: error => {
+          //console.log(error);
+          this.dataTable.load([]);
+          this.totalItems = 0;
           this.dataTable.refresh();
+          //this.onLoadToast('warning', 'Advertencia','No se encontrarón registros');
           this.loading = false;
-        }
-      },
-      error: error => {
-        //console.log(error);
-        this.dataTable.load([]);
-        this.totalItems = 0;
-        this.dataTable.refresh();
-        //this.onLoadToast('warning', 'Advertencia','No se encontrarón registros');
-        this.loading = false;
-      },
-    });
+        },
+      });
   }
 
   insertIntoTmp(body: any) {
@@ -1000,8 +1004,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     this.showPGRDocs = false;
     this.showScan = false;
     this.showValDoc = false;
-    //console.log(e);
-    //console.log(e.data);
+    console.log(e);
+    console.log(e.data);
 
     const { processNumber, folioRep, turnadoiUser } = e.data;
     this.dataSelect = {};
@@ -1598,6 +1602,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   turnPaperwork() {
+    console.log();
     if (!this.selectedRow) {
       this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
       return;
