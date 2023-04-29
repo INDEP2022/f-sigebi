@@ -77,7 +77,7 @@ export class ClassificationGoodsFormComponent
     this.alert(
       'question',
       'confirmar',
-      '¿Deseas enviar la aprobación de bienes en especie para la programación con folio 56564?'
+      '¿Desea enviar la aprobación de bienes en especie para la programación con folio 56564?'
     );
   }
 

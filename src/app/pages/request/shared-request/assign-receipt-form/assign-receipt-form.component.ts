@@ -27,7 +27,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas guardar los recibos?'
+      '¿Estás seguro que desea guardar los recibos?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

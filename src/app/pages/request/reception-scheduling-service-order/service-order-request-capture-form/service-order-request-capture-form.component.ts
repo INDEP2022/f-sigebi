@@ -34,7 +34,7 @@ export class ServiceOrderRequestCaptureFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas enviar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      '¿Desea enviar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -51,7 +51,7 @@ export class ServiceOrderRequestCaptureFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      '¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

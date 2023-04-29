@@ -47,7 +47,7 @@ export class CreateClassificateVehicleFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas editar una clasificación de vehiculos?'
+      '¿Desea editar una clasificación de vehiculos?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar servicio
@@ -61,7 +61,7 @@ export class CreateClassificateVehicleFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas crear una clasificación de vehiculos?'
+      '¿Desea crear una clasificación de vehiculos?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar servicio
