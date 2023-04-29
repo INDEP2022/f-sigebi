@@ -100,7 +100,7 @@ export const CONSULTGOODS_COLUMNS = {
     sort: false,
   },
   physicalState: {
-    title: 'Estado Fisico',
+    title: 'Estado Físico',
     sort: false,
   },
   stateConservation: {

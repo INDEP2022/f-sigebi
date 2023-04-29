@@ -549,6 +549,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               case 'folioRep':
                 // FOLIO REP.
+                searchFilter = SearchFilter.EQ;
                 let valueFolioRep = VALID_VALUE_REGEXP(
                   filter.search,
                   NUM_POSITIVE,
@@ -1659,7 +1660,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const result = await this.alertQuestion(
         'question',
         'Utilizar datos predeterminados',
-        `¿Deseas enviar el trámite al usuario ${this.selectedRow.userATurn} 
+        `¿Desea enviar el trámite al usuario ${this.selectedRow.userATurn} 
           y área ${this.selectedRow.areaATurn}?`,
         `Enviar`,
         `Buscar`
@@ -1966,6 +1967,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       );
       this.fileBrowserService.moveFile(folio, officeNumber).subscribe({
         next: () => {
+          this.getData();
           let config = {
             class: 'modal-lg modal-dialog-centered',
             initialState: {
@@ -2047,7 +2049,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           const result = await this.alertQuestion(
             'warning',
             'Advertencia',
-            'No se ha generado una solicitud de escaneo. ¿Deseas generarla?'
+            'No se ha generado una solicitud de escaneo. ¿Desea generarla?'
           );
           if (result.isConfirmed) {
             this.router.navigate(

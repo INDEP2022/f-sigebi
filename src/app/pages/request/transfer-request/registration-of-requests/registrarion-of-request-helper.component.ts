@@ -6,7 +6,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-
 @Injectable()
 export class RegistrationHelper extends BasePage {
   requestData: IRequest = {};
@@ -114,7 +113,7 @@ export class RegistrationHelper extends BasePage {
 
     const lisDocument: any = await this.getDocument(idRequest);
     //Todo: verificar y obtener documentos de la solicitud
-    if (request.recordId === null) {
+    /*if (request.recordId === null) {
       //Verifica si hay expediente
       this.message(
         'error',
@@ -122,7 +121,7 @@ export class RegistrationHelper extends BasePage {
         'La solicitud no tiene expediente asociado'
       );
       validoOk = false;
-    } else if (lisDocument && lisDocument < 1) {
+    } else*/ if (lisDocument && lisDocument < 1) {
       this.message(
         'error',
         'Error sin archivos',
@@ -236,6 +235,7 @@ export class RegistrationHelper extends BasePage {
 
         for (let i = 0; i < goods.data.length; i++) {
           const good = goods.data[i];
+
           if (good.addressId == null && good.idGoodProperty == null) {
             sinDireccion = true;
             this.message(
@@ -392,6 +392,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.model === null) {
+              //modelo
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -400,6 +401,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.axesNumber === null) {
+              //numero de ejes
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -408,6 +410,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.engineNumber === null) {
+              //numero de motor
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -424,6 +427,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } */ else if (good.theftReport === null) {
+              //reporte de robos
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -432,6 +436,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.serie === null) {
+              // serie
               tipoRelVehiculo = true;
               this.message(
                 'error',
@@ -440,6 +445,7 @@ export class RegistrationHelper extends BasePage {
               );
               break;
             } else if (good.subBrand === null) {
+              //sub marca
               tipoRelVehiculo = true;
               this.message(
                 'error',

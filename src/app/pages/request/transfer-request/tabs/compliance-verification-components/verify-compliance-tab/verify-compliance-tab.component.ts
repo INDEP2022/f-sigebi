@@ -8,12 +8,14 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
@@ -23,6 +25,7 @@ import { ClarificationService } from 'src/app/core/services/catalogs/clarificati
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -65,7 +68,7 @@ export class VerifyComplianceTabComponent
 
   goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
-  goodData: any = [];
+  goodData = new LocalDataSource();
   //detallesBienes: IDetailEstate[] = [];
   columns = DETAIL_ESTATE_COLUMNS;
   articleColumns = VERIRY_COMPLIANCE_COLUMNS;
@@ -103,7 +106,8 @@ export class VerifyComplianceTabComponent
     private clarificationService: ClarificationService,
     private rejectedGoodService: RejectedGoodService,
     private requestHelperService: RequestHelperService,
-    private goodResDevService: GetGoodResVeService
+    private goodResDevService: GetGoodResVeService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
   }
@@ -124,14 +128,22 @@ export class VerifyComplianceTabComponent
         });
       },
     };
+
+    this.columns.unitMeasureName = {
+      ...this.columns.unitMeasureName,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setUnitTransferent(data);
+        });
+      },
+    };
+
     this.initForm();
 
     this.articleColumns.cumple = {
       ...this.articleColumns.cumple,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log('data', data);
-
           this.articlesSelected(data);
         });
       },
@@ -141,7 +153,7 @@ export class VerifyComplianceTabComponent
       ...this.articleColumns.fulfill,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
-          console.log('data', data);
+          //console.log('data', data);
         });
       },
     };
@@ -168,7 +180,7 @@ export class VerifyComplianceTabComponent
     if (changes['question'].currentValue === true) {
       const article3 = this.article3array.filter(x => x.cumple === true);
       const article12 = this.article12and13array.filter(x => x.cumple === true);
-      console.log(article3, article12);
+      //console.log(article3, article12);
       /* verifica si tiene articulos seleccionados */
       if (article3.length >= 3 && article12.length >= 3) {
         /* verifica si ya el fomulario guardado */
@@ -475,6 +487,7 @@ export class VerifyComplianceTabComponent
   }
 
   openForm(event?: any): void {
+    //Modal para abrir formulario para crear Clarifications
     let docClarification = event;
     let config: ModalOptions = {
       initialState: {
@@ -499,10 +512,13 @@ export class VerifyComplianceTabComponent
   }
 
   setDescriptionGoodSae(data: any) {
-    this.goodData.map((item: any) => {
-      if (item.id === data.data.id) {
-        item.descriptionGoodSae = data.text;
-      }
+    this.goodData.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === data.data.id) {
+          item.descriptionGoodSae = data.text;
+        }
+      });
+      this.goodData.load(data);
     });
   }
 
@@ -536,10 +552,15 @@ export class VerifyComplianceTabComponent
 
           const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
           item['destinyName'] = destiny;
+
+          const unitMeasureName = await this.getTransferentUnit(
+            item.unitMeasure
+          );
+          item['unitMeasureName'] = unitMeasureName;
         });
 
         Promise.all(result).then(data => {
-          this.goodData = resp.data;
+          this.goodData.load(resp.data); //load  new LocalDataSource()
           this.totalItems = resp.count;
           this.loading = false;
         });
@@ -581,6 +602,24 @@ export class VerifyComplianceTabComponent
     });
   }
 
+  getTransferentUnit(id: string) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.uomCode'] = `$eq:${id}`;
+      this.goodsQueryService
+        .getCatMeasureUnitView(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: resp => {
+            resolve(resp.data[0].measureTlUnit);
+          },
+          error: erro => {
+            resolve('');
+          },
+        });
+    });
+  }
+
   getDomicilieGood(id: number) {
     this.goodDomicilieService.getById(id).subscribe({
       next: resp => {
@@ -589,17 +628,30 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  getArticle3(id: number, transferent: number) {
-    const params = new ListParams();
-    params['filter.requestId'] = `$eq:${id}`;
-    params['filter.cumpliance.article'] = `$eq:Articulo 3 Ley`;
-    if (this.transferenceId === 1 || this.transferenceId === 120) {
-      params['filter.cumpliance.transfereeId'] = `$eq:${transferent}`;
-    } else {
-      params['filter.cumpliance.transfereeId'] = `$null`;
-    }
+  setUnitTransferent(unitData: any) {
+    this.goodData.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === unitData.id) {
+          item['unitMeasureName'] = unitData.unitDesc;
+          item['unitMeasure'] = unitData.unitId;
+        }
+      });
+      this.goodData.load(data);
+    });
+  }
 
-    this.requestDocumentService.getAll(params).subscribe({
+  getArticle3(id: number, transferentId: number) {
+    let param = new FilterParams();
+    param.addFilter('requestId', id);
+    param.addFilter('cumpliance.article', 'Articulo 3 Ley');
+    if (Number(transferentId) === 1 || Number(transferentId) === 120) {
+      param.addFilter('cumpliance.transfereeId', transferentId);
+    } else {
+      param.addFilter('cumpliance.transfereeId', '', SearchFilter.NULL);
+    }
+    param.limit = 30;
+    let filter = param.getParams();
+    this.requestDocumentService.getAll(filter).subscribe({
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
@@ -618,17 +670,18 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  getArticle1213(id: number, tranferent: number) {
-    const params = new ListParams();
-    params['filter.requestId'] = `$eq:${id}`;
-    params['filter.cumpliance.article'] = `$eq:Articulo 12 y 13 Reglamento`;
-    if (this.transferenceId === 1 || this.transferenceId === 120) {
-      params['filter.cumpliance.transfereeId'] = `$eq:${tranferent}`;
+  getArticle1213(id: number, transferentId: number) {
+    let param = new FilterParams();
+    param.addFilter('requestId', id);
+    param.addFilter('cumpliance.article', 'Articulo 12 y 13 Reglamento');
+    if (Number(transferentId) === 1 || Number(transferentId) === 120) {
+      param.addFilter('cumpliance.transfereeId', transferentId);
     } else {
-      params['filter.cumpliance.transfereeId'] = `$null`;
+      param.addFilter('cumpliance.transfereeId', '', SearchFilter.NULL);
     }
-
-    this.requestDocumentService.getAll(params).subscribe({
+    param.limit = 30;
+    let filter = param.getParams();
+    this.requestDocumentService.getAll(filter).subscribe({
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
@@ -770,6 +823,12 @@ export class VerifyComplianceTabComponent
                 this.goodsSelected[0].id
               );
               await this.removeDevGood(Number(goodResDev));
+              let body: any = {};
+              body['id'] = this.goodsSelected[0].id;
+              body['goodId'] = this.goodsSelected[0].goodId;
+              body.processStatus = 'REGISTRO_SOLICITUD';
+              body.goodStatus = 'REGISTRO_SOLICITUD';
+              await this.updateGoods(body);
             }
           },
           error: error => {
@@ -809,13 +868,20 @@ export class VerifyComplianceTabComponent
       await this.updateDocRequest(id, item);
     });
 
+    const good = this.goodData['data'];
     setTimeout(() => {
-      this.goodData.map(async (item: any, i: number) => {
+      good.map(async (item: any, i: number) => {
         let index = i + 1;
-        const result = await this.updateGoods(item);
+
+        let body: any = {};
+        body['id'] = item.id;
+        body['goodId'] = item.goodId;
+        body['descriptionGoodSae'] = item.descriptionGoodSae;
+        body['unitMeasure'] = item.unitMeasure ? item.unitMeasure : null;
+        const result = await this.updateGoods(body);
 
         if (result === true) {
-          if (this.goodData.length === index) {
+          if (good.length === index) {
             this.onLoadToast(
               'success',
               'Verificación Guardada',
@@ -828,24 +894,15 @@ export class VerifyComplianceTabComponent
     }, 400);
   }
 
-  updateGoods(item: any) {
+  updateGoods(body: any) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
-      body['id'] = item.id;
-      body['goodId'] = item.goodId;
-      body['descriptionGoodSae'] = item.descriptionGoodSae;
-
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);
         },
         error: error => {
           console.log(error.error.message);
-          this.alert(
-            'error',
-            'Error al guardar',
-            'No se pudieron guardar los datos'
-          );
+          this.alert('error', 'Error al actualizar', 'No actualizar el bien');
           reject(false);
         },
       });
@@ -859,7 +916,6 @@ export class VerifyComplianceTabComponent
       body['requestId'] = requestId;
       body['fulfillmentId'] = article.id;
       body['fulfill'] = article.cumple === true ? 'S' : 'N';
-      console.log(body, article);
       this.requestDocumentService.update(body).subscribe({
         next: resp => {
           console.log('actualizado', resp);

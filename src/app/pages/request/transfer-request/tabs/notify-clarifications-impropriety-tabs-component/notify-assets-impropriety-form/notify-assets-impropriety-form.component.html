@@ -97,20 +97,6 @@
           </div>
           <div class="col-md-6">
             <form-field
-              [control]="inappropriatenessForm.get('positionSender')"
-              label="Cargo Remitente">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="50"
-                formControlName="positionSender" />
-            </form-field>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-6">
-            <form-field
               [control]="inappropriatenessForm.get('positionAddressee')"
               label="Cargo Destinatario">
               <input
@@ -118,6 +104,19 @@
                 class="form-control"
                 maxlength="50"
                 formControlName="positionAddressee" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('clarification')"
+              label="Aclaraci&oacute;n">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="clarification"></textarea>
             </form-field>
           </div>
           <div class="col-md-6">
@@ -148,12 +147,13 @@
 
           <div class="col-md-6">
             <form-field
-              [control]="inappropriatenessForm.get('clarification')"
-              label="Aclaraci&oacute;n">
-              <textarea
+              [control]="inappropriatenessForm.get('positionSender')"
+              label="Cargo Remitente">
+              <input
+                type="text"
                 class="form-control"
-                maxlength="100"
-                formControlName="clarification"></textarea>
+                maxlength="50"
+                formControlName="positionSender" />
             </form-field>
           </div>
         </div>
@@ -178,7 +178,7 @@
               label="P&aacute;rrafo Inicial">
               <textarea
                 class="form-control"
-                maxlength="100"
+                maxlength="500"
                 formControlName="paragraphInitial"></textarea>
             </form-field>
           </div>
@@ -188,7 +188,7 @@
               label="P&aacute;rrafo Final">
               <textarea
                 class="form-control"
-                maxlength="100"
+                maxlength="500"
                 formControlName="paragraphFinal"></textarea>
             </form-field>
           </div>

@@ -36,7 +36,7 @@ export const PHOTOGRAPHY_COLUMNS = {
   },
 
   noProgrammation: {
-    title: 'No°. programación',
+    title: 'No. programación',
     type: 'number',
     sort: false,
   },

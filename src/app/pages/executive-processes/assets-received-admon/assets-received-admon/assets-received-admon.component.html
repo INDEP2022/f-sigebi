@@ -13,7 +13,6 @@
             <input
               class="form-control"
               formControlName="rangeDate"
-              ngModel
               bsDaterangepicker
               [maxDate]="today"
               [bsConfig]="{
@@ -33,8 +32,19 @@
               bindLabel="description"
               label="Delegaci&oacute;n"
               [control]="'delegation'"
-              (change)="onDelegationsChange($event)">
+              [showTooltip]="true"
+              (change)="onDelegationsChange($event)"
+              [labelTemplate]="delegationLabel"
+              [optionTemplate]="delegationOption">
             </ngx-select>
+            <ng-template #delegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-3">
@@ -46,12 +56,23 @@
               value="id"
               bindLabel="description"
               label="Sub Delegaci&oacute;n"
+              [showTooltip]="true"
               [control]="'subdelegation'"
-              (change)="onSubDelegationsChange($event)">
+              (change)="onSubDelegationsChange($event)"
+              [labelTemplate]="subdelegationLabel"
+              [optionTemplate]="subdelegationOption">
             </ngx-select>
+            <ng-template #subdelegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #subdelegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('status')">
             <ngx-select
               [searchOnInit]="true"
@@ -62,11 +83,23 @@
               bindLabel="otKey"
               label="Estatus"
               [control]="'status'"
-              (change)="onValuesChange($event)">
+              [showTooltip]="true"
+              (change)="onValuesChange($event)"
+              [labelTemplate]="statusLabel"
+              [optionTemplate]="statusOption">
             </ngx-select>
+
+            <ng-template #statusLabel let-item="item">
+              {{ item.otKey }} - {{ item.value }}
+            </ng-template>
+            <ng-template #statusOption let-item="item">
+              <div [title]="item.otKey + '-' + item.value">
+                {{ item.otKey }} - {{ item.value }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
-        <div class="col-md-2">
+        <!--<div class="col-md-2">
           <form-field
             [control]="form.get('statusDescription')"
             label="Descripcipon">
@@ -76,7 +109,7 @@
               formControlName="statusDescription"
               readonly />
           </form-field>
-        </div>
+        </div>-->
       </div>
     </form>
   </div>

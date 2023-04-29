@@ -26,10 +26,14 @@ export class CapturelineService extends HttpService {
     event: string;
     p_FLAG: boolean;
     validation: string;
-    // createdBy: string;
-    // records: string;
-    // amount: string;
   }) {
     return this.post(this.route.LoadCheckPortal, body);
+  }
+
+  postComerRefGuaranteesSearch(body: any) {
+    return this.post<IListResponse<any>>(
+      this.route.ComerRefGuaranteesSearch,
+      body
+    );
   }
 }

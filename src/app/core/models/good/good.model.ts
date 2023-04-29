@@ -25,8 +25,8 @@ export interface IGood {
   solIncripRegister?: any;
   fecOpinion?: any;
   proficientOpinion?: any;
-  fileeNumber: string;
-  appraisal: string;
+  fileNumber?: string;
+  appraisal?: string;
   appraiserOpinion?: any;
   goodTypeId: number;
   originSignals?: any;

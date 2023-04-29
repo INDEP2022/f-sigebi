@@ -80,18 +80,21 @@
                 <!-- <app-goods-shared (good)="selectGood($event)" [form]="form">
                 </app-goods-shared> -->
                 <div>
-                  <ng-custom-select
-                    [limit]="4"
-                    formControlName="goodId"
-                    paramSearch="filter.description"
-                    prefixSearch="$ilike"
-                    (valueChange)="changeGood($event)"
-                    value="goodId"
-                    [path]="pathGoods">
-                    <ng-template let-item>
-                      {{ item?.description }}
-                    </ng-template>
-                  </ng-custom-select>
+                  <form-field class="form-group" [control]="form.get('goodId')">
+                    <ng-custom-select
+                      [limit]="4"
+                      class="form-control"
+                      formControlName="goodId"
+                      paramSearch="filter.description"
+                      prefixSearch="$ilike"
+                      (valueChange)="changeGood($event)"
+                      value="goodId"
+                      [path]="pathGoods">
+                      <ng-template let-item>
+                        {{ item?.description }}
+                      </ng-template>
+                    </ng-custom-select>
+                  </form-field>
                 </div>
               </div>
               <ng-container *ngIf="selectedGood">

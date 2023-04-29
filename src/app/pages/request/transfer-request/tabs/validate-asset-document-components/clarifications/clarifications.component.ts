@@ -64,6 +64,7 @@ export class ClarificationsComponent
   domicilieObject: any;
   articleColumns = CLARIFICATION_COLUMNS;
   haveNotification: boolean = false;
+  isLoadingTable2 = false;
 
   constructor(
     private modalService: BsModalService,
@@ -612,6 +613,7 @@ export class ClarificationsComponent
             if (clarifycationLength === 1) {
               const goodResDev: any = await this.getGoodResDev(this.good.id);
               await this.removeDevGood(Number(goodResDev));
+              await this.updateGood(this.good.id);
             }
           },
           complete: () => {
@@ -659,6 +661,30 @@ export class ClarificationsComponent
             'error',
             'Error interno',
             'No se pudo eliminar el bien-res-deb'
+          );
+        },
+      });
+    });
+  }
+
+  updateGood(id: number) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body.id = this.good.id;
+      body.goodId = this.good.goodId;
+      //body.goodResdevId = Number(id);
+      body.processStatus = 'REGISTRO_SOLICITUD';
+      body.goodStatus = 'REGISTRO_SOLICITUD';
+      this.goodService.update(body).subscribe({
+        next: resp => {
+          console.log('good updated', resp);
+        },
+        error: error => {
+          console.log('good updated', error);
+          this.onLoadToast(
+            'error',
+            'Erro Interno',
+            'No se actualizo el campo bien-res-dev en bien'
           );
         },
       });

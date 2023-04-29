@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row mt-n3">
-      <div class="form-material col-md-5">
+      <div class="form-material col-md-7">
         <search-bar
           *ngIf="dataObservableFn"
           [haveSearch]="haveSearch"
@@ -12,7 +12,8 @@
           [filterParams]="filterParams"
           [filterField]="searchFilter"
           [dynamicFilters]="filters"
-          [searchFilterCompatible]="searchFilterCompatible"></search-bar>
+          [searchFilterCompatible]="searchFilterCompatible"
+          [placeholder]="placeholder"></search-bar>
         <search-bar
           *ngIf="dataObservableListParamsFn"
           [params]="params"
