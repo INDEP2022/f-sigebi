@@ -1,4 +1,4 @@
-<div *ngIf="showButton">
+<div *ngIf="typeOfRequest == 'MANUAL'">
   <!--  ESTE DIV ES PARA CLASIFICACIÓN MANUAL (según se ha detectado)  -->
   <div class="row">
     <div class="d-flex justify-content-end">
@@ -30,7 +30,7 @@
         <div class="col-md-4">
           <!-- <div class="form-group"> -->
           <label>Tipo Bien</label>
-          <span class="fs-4">{{ relevantTypeName }}</span>
+          <span class="fs-4"></span>
           <!-- </div> -->
         </div>
         <div class="col-md-4">
@@ -44,7 +44,7 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <label>Tipo de Bien</label>
-          <span class="fs-4"></span>
+          <span class="fs-4">{{ goodType }}</span>
         </div>
         <div class="col-md-3">
           <label>Destino INDEP</label>
@@ -266,7 +266,7 @@
   </div>
 </div>
 
-<div *ngIf="!showButton">
+<div *ngIf="typeOfRequest == 'PGR_SAE' || typeOfRequest == 'FGR_SAE'">
   <!--  ESTE DIV ES PARA CLASIFICACIÓN PGR (según se ha detectado)  -->
   <div class="row">
     <div class="d-flex justify-content-end">
@@ -281,10 +281,8 @@
     <form [formGroup]="goodForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <!-- <div class="form-group"> -->
           <label>No. Gesti&oacute;n</label>
           <span class="fs-4">{{ goodData?.id }}</span>
-          <!--  </div> -->
         </div>
         <div class="col-md-6">
           <label>Unidad de Medida Transferente</label>
@@ -294,25 +292,30 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <!-- <div class="form-group"> -->
           <label>Tipo Bien</label>
           <span class="fs-4">{{ relevantTypeName }}</span>
-          <!-- </div> -->
         </div>
         <div class="col-md-6">
-          <!--  CAMBIAR VALOR -->
-          <label>Unidad medida INDEP</label>
-          <span class="fs-4">{{ goodData?.destinyName }}</span>
-          <!--  </div> -->
+          <div style="width: 20rem">
+            <label>Unidad medida INDEP</label>
+            <ngx-select
+              [form]="goodForm"
+              control="saeMeasureUnit"
+              (fetchItems)="getUnitMeasureSae($event)"
+              [data]="selectMeasureUnitSae"
+              label=""
+              [searchable]="false"
+              bindLabel="measureTlUnit"
+              value="uomCode"
+              [readonly]="false"></ngx-select>
+          </div>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <!-- CAMBIAR VALOR -->
           <label>Cumple Norma</label>
-          <span class="fs-4">{{ relevantTypeName }}</span>
-          <!-- </div> -->
+          <span class="fs-4">{{ cumplyNorma }}</span>
         </div>
         <div class="col-md-6">
           <label>Duplicidad</label>
@@ -321,12 +324,12 @@
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-6">
-          <!-- CAMBIAR VALOR -->
-          <label>Consultar Norma - link</label>
-          <span class="fs-4">{{ relevantTypeName }}</span>
-          <!-- </div> -->
-        </div>
+        <!-- <div class="col-md-6"> -->
+        <!-- CAMBIAR VALOR -->
+        <!-- <label>Consultar Norma - link</label>
+          <span class="fs-4">{{ relevantTypeName }}</span> -->
+        <!-- </div> -->
+        <!-- </div> -->
         <div class="col-md-6">
           <label>Cantidad de la Transferente</label>
           <span class="fs-4">{{ goodData?.quantity | number }}</span>
@@ -335,24 +338,21 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <!-- CAMBIAR VALOR -->
+          <!-- CONSULTAR VALOR -->
           <label>Norma</label>
-          <span class="fs-4">{{ relevantTypeName }}</span>
+          <span class="fs-4"></span>
           <!-- </div> -->
         </div>
         <div class="col-md-6">
-          <!-- CAMBIAR VALOR -->
           <label>Destino Ligie</label>
-          <span class="fs-4">{{ goodData?.quantity | number }}</span>
+          <span class="fs-4">{{ destinyLigie }}</span>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <!-- CAMBIAR VALOR -->
           <label>Descripción</label>
-          <span class="fs-4">{{ relevantTypeName }}</span>
-          <!-- </div> -->
+          <span class="fs-4">{{ goodData?.description }}</span>
         </div>
         <div class="col-md-6">
           <label>Destino transferente&#58;</label>
@@ -363,10 +363,9 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <!-- CAMBIAR VALOR -->
+          <!-- averiguar -->
           <label>Tipo</label>
-          <span class="fs-4">{{ relevantTypeName }}</span>
-          <!-- </div> -->
+          <span class="fs-4">{{ goodData?.type }}</span>
         </div>
         <div class="col-md-6">
           <label>Destino INDEP</label>
@@ -386,10 +385,8 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <div class="form-group">
-            <label class="col-lg-5 text-right">Folio de solicitud&#58;</label>
-            <span class="fs-4">{{ goodData?.requestFolio }}</span>
-          </div>
+          <label>Folio de solicitud&#58;</label>
+          <span class="fs-4">{{ goodData?.requestFolio }}</span>
         </div>
         <div class="col-md-6">
           <label>Color </label>
@@ -400,7 +397,7 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <label>Tipo de Bien</label>
-          <span class="fs-4"></span>
+          <span class="fs-4">{{ goodType }}</span>
         </div>
         <div class="col-md-6">
           <label>Capacidad (lts)</label>
@@ -409,10 +406,9 @@
       </div>
 
       <div class="row pt-4">
-        <!--CAMBIAR VALOR-->
         <div class="col-md-6">
           <label>Clave Única</label>
-          <span class="fs-4">{{ goodData?.volume }}</span>
+          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
         </div>
         <div class="col-md-6">
           <label>Volumen (m3)</label>

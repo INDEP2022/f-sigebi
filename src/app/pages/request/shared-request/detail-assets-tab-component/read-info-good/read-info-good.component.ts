@@ -10,10 +10,11 @@ import { FormBuilder } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -28,35 +29,53 @@ export class ReadInfoGoodComponent
   extends BasePage
   implements OnInit, OnChanges
 {
-  @Input() goodData: IGood;
+  @Input() detailAssets: any;
+  @Input() process: string = '';
+  @Input() typeOfRequest: string = '';
+  goodData: any = {};
   relevantTypeName: string = 'buscar';
   goodForm: ModelForm<any>;
   destiniSaeSelected = new DefaultSelect();
   selectPhysicalState = new DefaultSelect();
   selectConcervationState = new DefaultSelect();
+  selectMeasureUnitSae = new DefaultSelect();
   duplicity: string = '';
   avaluo: string = '';
+  cumplyNorma: string = '';
+  destinyLigie: string = '';
+  goodType: string = '';
   showButton = true;
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);
   private readonly goodService = inject(GoodService);
   private readonly authService = inject(AuthService);
+  private readonly goodsQueryService = inject(GoodsQueryService);
+  private readonly typeRelevantSevice = inject(TypeRelevantService);
 
   constructor(private fb: FormBuilder) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.goodData.id) {
-      console.log(this.goodData);
-
+    console.log('proceso', this.process);
+    console.log('type of request', this.typeOfRequest);
+    this.goodData = this.detailAssets.value;
+    console.log('bien', this.goodData);
+    if (this.goodData) {
       this.getTypeGood();
       this.getDestinoSAE(new ListParams());
       this.getPhysicalState(new ListParams());
       this.getConcervationState(new ListParams());
       this.getDuplicity();
       this.getAvaluo();
+      this.achiveNorma();
+      this.getDestiny();
+      this.getGoodType();
+
+      if (this.typeOfRequest == 'PGR_SAE') {
+        this.getUnitMeasureSae(new ListParams());
+      }
     }
   }
 
@@ -65,6 +84,7 @@ export class ReadInfoGoodComponent
       saeDestiny: [null],
       physicalStatus: [null],
       stateConservation: [null],
+      saeMeasureUnit: [null],
     });
   }
   //.pipe(takeUntil(this.$unSubscribe))
@@ -131,12 +151,52 @@ export class ReadInfoGoodComponent
       });
   }
 
+  getDestiny() {
+    if (this.goodData.destiny) {
+      let params = new ListParams();
+      params['filter.name'] = '$eq:Destino';
+      params['filter.keyId'] = `$eq:${this.goodData.destiny}`;
+      this.genericService
+        .getAll(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: ({ data }: any) => {
+            this.destinyLigie = data[0].description;
+          },
+        });
+    }
+  }
+
+  getUnitMeasureSae(params: ListParams) {
+    this.goodsQueryService
+      .getCatMeasureUnitView(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          this.selectMeasureUnitSae = new DefaultSelect(resp.data, resp.count);
+        },
+      });
+  }
+
+  getGoodType() {
+    const id = this.goodData.goodTypeId;
+    this.typeRelevantSevice.getById(id).subscribe({
+      next: (data: any) => {
+        this.goodType = data.description;
+      },
+    });
+  }
+
   getAvaluo() {
     this.avaluo = this.goodData.appraisal === 'Y' ? 'Si' : 'No';
   }
 
   getDuplicity() {
     this.duplicity = this.goodData.duplicity === 'Y' ? 'Si' : 'No';
+  }
+
+  achiveNorma() {
+    this.cumplyNorma = this.goodData.compliesNorm === 'Y' ? 'Si' : 'No';
   }
 
   save() {
