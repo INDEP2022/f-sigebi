@@ -56,6 +56,9 @@ export class ReadInfoDomicileComponent
   ngOnInit(): void {}
 
   getStateOfRepublic(keyState?: number) {
+    if (!keyState) {
+      return;
+    }
     this.stateOfRepublicService
       .getById(keyState)
       .pipe(takeUntil(this.$unSubscribe))
@@ -71,6 +74,9 @@ export class ReadInfoDomicileComponent
   }
 
   getMunicipaly(stateKey: number | string, municipalyId?: number | string) {
+    if (!stateKey || !municipalyId) {
+      return;
+    }
     const params = new ListParams();
     params['filter.stateKey'] = `$eq:${stateKey}`;
     params['filter.municipalityKey'] = `$eq:${municipalyId}`;
@@ -93,6 +99,9 @@ export class ReadInfoDomicileComponent
     stateKey: number | string,
     localityKey: number | string
   ) {
+    if (!stateKey || !municipalityId || !localityKey) {
+      return;
+    }
     const params = new FilterParams();
     params.addFilter('municipalityKey', municipalityId);
     params.addFilter('stateKey', Number(stateKey));

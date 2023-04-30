@@ -12,7 +12,7 @@
     <ng-template tabHeading>
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
-    <div *ngIf="process != 'classify-assets'">
+    <div *ngIf="process == 'registration-request'">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
@@ -292,10 +292,12 @@
         </div>
       </form>
     </div>
-
+    {{ process }}
     <app-read-info-good
-      *ngIf="process == 'classify-assets'"
-      [goodData]="goodData"></app-read-info-good>
+      *ngIf="process != 'registration-request'"
+      [detailAssets]="detailAssets"
+      [process]="process"
+      [typeOfRequest]="typeOfRequest"></app-read-info-good>
   </tab>
 
   <tab>

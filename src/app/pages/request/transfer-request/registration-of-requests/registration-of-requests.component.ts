@@ -563,7 +563,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'finish';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      '¿Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -574,7 +574,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'returnar';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      '¿Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -848,7 +848,7 @@ export class RegistrationOfRequestsComponent
   approveRequest() {
     this.msgSaveModal(
       'Aprobar',
-      'Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
+      '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -901,7 +901,7 @@ export class RegistrationOfRequestsComponent
   refuseRequest() {
     this.msgSaveModal(
       'Rechazar',
-      'Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
+      '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       'refuse'

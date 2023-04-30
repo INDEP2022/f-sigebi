@@ -46,7 +46,7 @@
       </tab>
 
       <tab heading="Atributos del Bien">
-        <div>
+        <div *ngIf="goodSelect.length == 1">
           <app-detail-assets-tab-component
             [typeDoc]="typeDoc"
             [requestObject]="requestObject"
