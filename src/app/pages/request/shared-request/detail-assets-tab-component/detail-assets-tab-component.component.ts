@@ -182,7 +182,9 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    this.typeOfRequest = this.requestObject.typeOfTransfer;
+    this.typeOfRequest = this.requestObject.typeOfTransfer
+      ? this.requestObject.typeOfTransfer
+      : this.requestObject.controls['typeOfTransfer'].value;
     if (this.process == 'validate-document') {
       this.getDomicilieGood(
         parseInt(this.detailAssets.controls['addressId'].value)
