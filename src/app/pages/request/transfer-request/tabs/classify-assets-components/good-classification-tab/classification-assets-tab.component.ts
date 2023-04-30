@@ -137,7 +137,7 @@ export class ClassificationAssetsTabComponent
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: resp => {
-        console.log(resp.data);
+        //console.log(resp.data);
         var result = resp.data.map(async (item: any) => {
           item['quantity'] = Number(item.quantity);
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
