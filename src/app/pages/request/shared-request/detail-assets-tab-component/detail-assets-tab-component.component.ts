@@ -158,6 +158,7 @@ export class DetailAssetsTabComponentComponent
   isGoodInfReadOnly: boolean = false;
   isGoodTypeReadOnly: boolean = false;
   ligieUnit: string = '';
+  typeOfRequest: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -181,8 +182,7 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    //console.log({ process: this.process });
-    console.log('goods ', this.detailAssets);
+    this.typeOfRequest = this.requestObject.typeOfTransfer;
     if (this.process == 'validate-document') {
       this.getDomicilieGood(
         parseInt(this.detailAssets.controls['addressId'].value)
@@ -712,9 +712,6 @@ export class DetailAssetsTabComponentComponent
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
-    /*if (municipalyId) {
-      params['filter.municipalityKey'] = `$eq:${municipalyId}`;
-    }*/
     this.goodsInvService
       .getAllMunipalitiesByFilter(params)
       .pipe(takeUntil(this.$unSubscribe))
