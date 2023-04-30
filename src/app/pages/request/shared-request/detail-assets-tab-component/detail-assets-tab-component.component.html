@@ -303,18 +303,16 @@
       <i class="bx bx-home"></i> Domicilio del Bien
     </ng-template>
     <form [formGroup]="domicileForm" class="form-material">
-      <div class="addressGood">
+      <div *ngIf="process == 'registration-request'" class="addressGood">
         <div class="row pt-4" *ngIf="typeDoc === 'assets'">
           <div style="text-align: center">
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
               <i class="bx bx-home"></i> Seleccionar Domicilio
             </button>
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-secondary btn-sm active"
               style="margin-left: 2px"
               (click)="openSelectMenage()">
@@ -538,6 +536,10 @@
         </div>
       </div>
     </form>
+
+    <app-read-info-domicile
+      *ngIf="process != 'registration-request'"
+      [domicileForm]="domicileForm"></app-read-info-domicile>
   </tab>
 
   <!-- Información del  vehiculo tab -->
