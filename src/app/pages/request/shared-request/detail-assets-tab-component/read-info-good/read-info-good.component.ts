@@ -58,10 +58,10 @@ export class ReadInfoGoodComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('proceso', this.process);
-    console.log('type of request', this.typeOfRequest);
+    //console.log('proceso', this.process);
+    //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
-    console.log('bien', this.goodData);
+    // console.log('bien', this.goodData);
     if (this.goodData) {
       this.getTypeGood();
       this.getDestinoSAE(new ListParams());
