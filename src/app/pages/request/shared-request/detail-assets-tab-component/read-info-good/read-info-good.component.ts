@@ -36,6 +36,7 @@ export class ReadInfoGoodComponent
   selectConcervationState = new DefaultSelect();
   duplicity: string = '';
   avaluo: string = '';
+  showButton = true;
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);

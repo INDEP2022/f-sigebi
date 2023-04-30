@@ -30,7 +30,6 @@
                   type="text"
                   class="form-control"
                   formControlName="txtTituloTarea"
-                  placeholder="T&iacute;tulo de la tarea"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
@@ -46,7 +45,6 @@
                   max="999999999999999"
                   class="form-control"
                   formControlName="txtNoProgramacionEntrega"
-                  placeholder="No. programaci&oacute;n entrega"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
@@ -61,7 +59,6 @@
                   type="text"
                   class="form-control"
                   formControlName="txtNombreActividad"
-                  placeholder="Nombre de la actividad"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
@@ -98,11 +95,8 @@
             <div class="col-md-5">
               <form-field
                 [control]="consultTasksForm.get('State')"
-                label="Estado">
-                <ng-select
-                  placeholder="Estado"
-                  class="form-control"
-                  formControlName="State">
+                label="Estatus">
+                <ng-select class="form-control" formControlName="State">
                   <ng-option value="">Todos</ng-option>
                   <ng-option value="FINALIZADA">Finalizados</ng-option>
                   <ng-option value="null">Asignados</ng-option>
@@ -124,7 +118,7 @@
             </div> -->
             <!-- </div>
           <div class="row margin-input"> -->
-            <div class="col-md-5">
+            <div class="col-md-5 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtAprobador')"
                 label="Aprobador">
@@ -132,7 +126,6 @@
                   type="text"
                   class="form-control"
                   formControlName="txtAprobador"
-                  placeholder="Aprobador"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
@@ -152,7 +145,7 @@
             </div> -->
             <!-- </div>
           <div class="row margin-input"> -->
-            <div class="col-md-5">
+            <div class="col-md-5 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtNombreAplicacion')"
                 label="Nombre de la Aplicaci&oacute;n">
@@ -160,7 +153,6 @@
                   type="text"
                   class="form-control"
                   formControlName="txtNombreAplicacion"
-                  placeholder="Nombre de la aplicacion"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
@@ -233,7 +225,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="consultTasksForm.get('txtFechaFinDesde')"
-                label="Fecha de Finalizacion Desde:"
+                label="Fecha de Finalización Desde:"
                 style="padding-left: 10px">
                 <input
                   class="form-control"
@@ -264,7 +256,7 @@
                 <!-- [minDate]="fechaInicio.value" -->
               </form-field>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoDelegacionRegional')"
                 label="No. de Delegación Regional">
@@ -274,7 +266,6 @@
                   max="999999999999999"
                   class="form-control"
                   formControlName="txtNoDelegacionRegional"
-                  placeholder="No. de Delegación Regional"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
@@ -295,7 +286,7 @@
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div> -->
-            <div class="col-md-5">
+            <div class="col-md-5 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoTransferente')"
                 label="No. Transferente">
@@ -305,14 +296,13 @@
                   max="999999999999999"
                   class="form-control"
                   formControlName="txtNoTransferente"
-                  placeholder="No. Transferente"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div>
             <!-- </div>
           <div class="row margin-input"> -->
-            <div class="col-md-5">
+            <div class="col-md-5 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoProgramacion')"
                 label="No. de Programaci&oacute;n">
@@ -322,13 +312,12 @@
                   max="999999999999999"
                   class="form-control"
                   formControlName="txtNoProgramacion"
-                  placeholder="No. de Programaci&oacute;n"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-2 pt-5">
               <button
                 type="button"
                 class="btn btn-sm btn-primary active"
@@ -337,7 +326,7 @@
                 Buscar
               </button>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 pt-5">
               <button
                 type="button"
                 class="btn btn-sm btn-success active"
@@ -345,7 +334,7 @@
                 Exportar a Excel
               </button>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 pt-5">
               <button
                 type="button"
                 class="btn btn-sm btn-secondary active"
