@@ -64,18 +64,6 @@ export class DetailAssetsTabComponentComponent
   @Input() requestObject: any; //solicitud
   @Input() assetsId: any; //id del bien
   @Input() detailAssets: ModelForm<any>;
-
-  // set detailAssets(value: ModelForm<any>) {
-  //   this.initForm();
-  //   this.getBrand(new ListParams(), () => {
-  //     this._detailAssets = value;
-  //     return {};
-  //   });
-  // }
-  // get detailAssets() {
-  //   return this._detailAssets;
-  // }
-  // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   @Input() process: string = '';
