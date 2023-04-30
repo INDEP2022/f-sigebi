@@ -563,7 +563,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'finish';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Esta seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -574,7 +574,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'returnar';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Esta seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
