@@ -194,10 +194,8 @@ export class NotificationAssetsTabComponent
       next: response => {
         this.dataTask = response.data[0];
         if (this.dataTask.State == 'FINALIZADA') {
-          console.log('LA TAREA YA ESTA FINALIZADA');
           this.hideButtons();
         } else {
-          console.log('LA TAREA NO ESTA FINLAIZADA');
         }
       },
     });
@@ -206,7 +204,6 @@ export class NotificationAssetsTabComponent
   dataRequest() {
     this.requestService.getById(this.idRequest).subscribe({
       next: data => {
-        console.log('request', data);
         this.transferentName(data?.transferenceId);
         this.regDelName(data?.regionalDelegationId);
         this.stationName(data?.stationId);
@@ -286,7 +283,6 @@ export class NotificationAssetsTabComponent
   }
 
   goodSelect(data: any) {
-    console.log('select', data);
     if (data.length > 0) {
       this.goodsReject.load(data);
       if (this.goodsReject.count() == 1) {
@@ -311,11 +307,6 @@ export class NotificationAssetsTabComponent
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
         this.notificationsList.load(response.data);
-        console.log(
-          this.notificationsList.getElements().then(data => {
-            console.log('notificaciones', data);
-          })
-        );
         this.totalItems2 = response.count;
         this.formLoading = false;
       },
@@ -376,7 +367,6 @@ export class NotificationAssetsTabComponent
 
   showButton = true;
   selectRow(row?: any) {
-    console.log(row);
     if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
       this.showButton = true;
       // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
@@ -389,8 +379,6 @@ export class NotificationAssetsTabComponent
   }
 
   verifyClarification() {
-    console.log('seleccio', this.goodsReject.count());
-    console.log('se tiene', this.columns.length);
     if (this.goodsReject.count() < this.columns.length) {
       this.onLoadToast(
         'warning',
@@ -670,7 +658,6 @@ export class NotificationAssetsTabComponent
         impro = true;
       }
 
-      console.log('improc', impro);
       if (aclaration || impro) {
         if (aclaration) {
           this.alertQuestion(
@@ -702,7 +689,6 @@ export class NotificationAssetsTabComponent
       this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION' &&
       this.selectedRow.answered == 'EN ACLARACION'
     ) {
-      console.log('sdf', this.selectedRow);
       const data: ClarificationGoodRejectNotification = {
         rejectNotificationId: this.selectedRow.rejectNotificationId,
         answered: 'ACLARADA',
@@ -712,7 +698,6 @@ export class NotificationAssetsTabComponent
         .update(this.selectedRow.rejectNotificationId, data)
         .subscribe({
           next: async data => {
-            console.log('Actualizado', data);
             this.getClarificationsByGood(this.selectedRow.goodId);
             const update = await this.validateStatusAclaration();
             if (update) {
@@ -720,7 +705,6 @@ export class NotificationAssetsTabComponent
             }
           },
           error: error => {
-            console.log(error);
             this.onLoadToast(
               'error',
               'Error',
@@ -736,7 +720,6 @@ export class NotificationAssetsTabComponent
       this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
       this.selectedRow.answered == 'EN ACLARACION'
     ) {
-      console.log('sdf', this.selectedRow);
       const data: ClarificationGoodRejectNotification = {
         rejectNotificationId: this.selectedRow.rejectNotificationId,
         answered: 'ACLARADA',
@@ -746,14 +729,12 @@ export class NotificationAssetsTabComponent
         .update(this.selectedRow.rejectNotificationId, data)
         .subscribe({
           next: async data => {
-            console.log('Actualizado', data);
             this.getClarificationsByGood(this.selectedRow.goodId);
             this.validateStatusAclaration();
 
             this.updateStatusGoodTmp(this.selectedRow.goodId);
           },
           error: error => {
-            console.log(error);
             this.onLoadToast(
               'error',
               'Error',
@@ -1202,7 +1183,6 @@ export class NotificationAssetsTabComponent
     this.paramsReject.getValue()['filter.id'] = this.task.id;
     this.taskService.getAll(this.paramsReject.getValue()).subscribe({
       next: response => {
-        console.log('información de task', response.data[0]);
         this.dataTask = response.data[0];
         this.updateStatusTask(this.dataTask);
       },
@@ -1227,7 +1207,6 @@ export class NotificationAssetsTabComponent
     //Actualizar State a FINALIZADA
     this.taskService.update(dataTask.id, model).subscribe({
       next: response => {
-        console.log('Información actualizada', response.data);
         //Desahabilita los botones
         this.hideButtons();
 
@@ -1235,7 +1214,6 @@ export class NotificationAssetsTabComponent
         this.endProcess();
       },
       error: error => {
-        console.log('No se actualizó', error.error);
         this.buttonsFinish = true;
       },
     });
