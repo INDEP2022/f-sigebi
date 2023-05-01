@@ -339,6 +339,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
+    console.log('información del good v1', this.detailAssets.value); //Henry
     this.initForm();
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
