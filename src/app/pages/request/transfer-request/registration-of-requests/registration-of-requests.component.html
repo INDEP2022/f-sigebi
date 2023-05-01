@@ -219,15 +219,10 @@
                   [question]="question"
                   (response)="getResponse($event)"></app-clarifications>
                 <!-- fin -->
-                <!-- notificar aclaraciones o improcedencias -->
-                <app-notification-assets-tab
-                  *ngIf="notifyClarifiOrImpropriety"
-                  [isSaving]="saveClarifiObject"
-                  [process]="process"></app-notification-assets-tab>
-                <!-- fin -->
                 <!-- Aprovar solicitudes -->
                 <app-approval-assets-tabs
                   *ngIf="approvalProcess"
+                  [requestObject]="requestData"
                   [dataObject]="object"
                   [process]="process"></app-approval-assets-tabs>
                 <!-- Fin -->

@@ -50,7 +50,8 @@
               <form-field [control]="form.get('acta')" label="Acta 1">
                 <select
                   id="acta"
-                  class="form-control disabled"
+                  class="form-control"
+                  [class]="initialdisabled ? 'disabled' : ''"
                   formControlName="acta"
                   (ngModelChange)="verifyActAndTransfer()">
                   <option *ngFor="let record of records" [value]="record">
@@ -64,7 +65,7 @@
               <form-field [control]="form.get('transfer')">
                 <ngx-select
                   (change)="verifyTransferenteAndAct()"
-                  class="disabled"
+                  [class]="initialdisabled ? 'disabled' : ''"
                   id="transfer"
                   control="transfer"
                   label="Transfer"
@@ -83,7 +84,8 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
-                  class="form-control disabled"
+                  [class]="initialdisabled ? 'disabled' : ''"
+                  class="form-control"
                   formControlName="ident"
                   (change)="fillActTwo()" />
               </form-field>
@@ -95,8 +97,10 @@
                   (fetchItems)="getRecibe($event)"
                   (change)="fillActTwo()"
                   control="recibe"
+                  [class]="initialdisabled ? 'disabled' : ''"
                   label="Recibe"
                   bindLabel="delegation"
+                  ngbTooltip="Prueba"
                   [data]="recibeSelect"
                   [form]="form"></ngx-select>
               </form-field>
@@ -107,6 +111,7 @@
                 <ngx-select
                   (fetchItems)="getAdmin($event)"
                   (change)="fillActTwo()"
+                  [class]="initialdisabled ? 'disabled' : ''"
                   control="admin"
                   label="Admin"
                   bindLabel="delegation"
@@ -123,8 +128,11 @@
             <div class="col">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
+                  [class]="initialdisabled ? 'disabled' : ''"
+                  min="0"
+                  [max-length]="5"
                   formControlName="folio"
                   (change)="fillActTwo()" />
               </form-field>
@@ -319,6 +327,7 @@
                 [routerLink]="['partialization']"
                 class="my-1 mx-2 btn btn-warning active btn-sm"
                 size="small"
+                (click)="goParcializacion()"
                 >Parcializaci&oacute;n
               </a>
 
@@ -343,18 +352,17 @@
           class="col-md-12"
           [settings]="settings1"
           [source]="dataGoods"
-          (rowSelect)="selectRow($event)"></ng2-smart-table>
+          (rowSelect)="selectRow($event)"
+          (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
-          <form-field
-            class="col-md-3"
-            [control]="form.get('estatusPrueba')"
-            label="Prueba ">
+          <form-field class="col-md-3" [control]="form.get('estatusPrueba')">
             <input
               type="text"
               class="form-control"
+              [readOnly]="true"
               formControlName="estatusPrueba" />
           </form-field>
 
@@ -371,14 +379,18 @@
 
       <div class="row pt-2">
         <div class="col-md-12 text-center">
-          <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+          <button
+            type="button"
+            class="mx-2 btn btn-secondary btn-sm active"
+            [disabled]="!dataGoodAct"
+            (click)="deleteGood()">
             <i class="fa fa-angle-up"></i>
           </button>
           <button
             type="button"
             class="mx-2 btn btn-secondary btn-sm active"
             [disabled]="!act2Valid"
-            (click)="pushData()">
+            (click)="addGood()">
             <i class="fa fa-angle-down"></i>
           </button>
         </div>
@@ -388,7 +400,9 @@
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
-          [source]="dataGoodApraiser"></ng2-smart-table>
+          [source]="dataGoodAct"
+          (rowSelect)="selectRowGoodActa($event)"
+          (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
       <hr class="row" />
       <div class="row">
@@ -396,10 +410,18 @@
           <form-field
             class="col-md-3"
             [control]="form.get('edoFisico')"
-            label="Estado F&iacute;sico">
+            label="Estado físico">
+            <!--             <label for="edoFisico">Estado físico</label>
+            <select name="" id="edoFisico" formControlName="edoFisico">
+              <option value="null">Sin especificar</option>
+              <option value="0">MALO</option>
+              <option value="1">REGULAR</option>
+              <option value="2">BUENO</option>
+            </select> -->
             <input
               type="text"
               class="form-control"
+              [readOnly]="true"
               formControlName="edoFisico" />
           </form-field>
           <form-check label="Requerido" for="label">
@@ -407,12 +429,13 @@
           </form-check>
           <form-field
             class="col-md-3"
-            [control]="form.get('etiqueta')"
+            [control]="form.get('estatusBienActa')"
             label="Etiqueta">
             <input
               type="text"
               class="form-control"
-              formControlName="etiqueta" />
+              [readOnly]="true"
+              formControlName="estatusBienActa" />
           </form-field>
         </div>
       </div>
@@ -434,13 +457,16 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row" *ngIf="false">
             <div class="col-md-9">
-              <form-field [control]="form.get('boveda')" label="B&oacute;veda">
+              <form-field [control]="form.get('boveda')">
                 <ngx-select
+                  (fetchItems)="getSafeVault($event)"
                   control="boveda"
+                  bindLabel="description"
+                  label="B&oacute;veda"
                   [form]="form"
-                  [data]="itemsSelect"></ngx-select>
+                  [data]="vaultSelect"></ngx-select>
               </form-field>
             </div>
           </div>
@@ -449,7 +475,11 @@
           <button type="button" size="small" class="mx-2 my-1">
             Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
-          <button type="button" size="small" class="mx-2 my-1">
+          <button
+            type="button"
+            size="small"
+            class="mx-2 my-1"
+            (click)="applyWarehouseSafe()">
             Aplica Alm&#46;&#47;Bov&#46;
           </button>
           <a

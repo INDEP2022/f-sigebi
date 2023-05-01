@@ -133,7 +133,7 @@ export class ComplementaryRequestInformationComponent
   turnRequest() {
     this.alertQuestion(
       'question',
-      `¿Desea turnar la solicitud con Folio ${this.requestNumb}`,
+      `¿Desea turnar la solicitud con Folio ${this.requestNumb}?`,
       '',
       'Turnar'
     ).then(question => {

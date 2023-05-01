@@ -71,7 +71,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('data', this.dataClarifications2);
     this.withDocumentation = this.idAclara === '1' ? true : false;
 
     this.initForm1();
@@ -84,12 +83,10 @@ export class NotifyAssetsImproprietyFormComponent
       .getAllfilter(applicationId, rejectNoticeId, this.params.getValue())
       .subscribe({
         next: res => {
-          console.log('Documento si existe');
           const dataDocumentsImpro = res.data[0];
           this.initForm2(dataDocumentsImpro); //Manda a llamar el formulario largo para asignarle valores guardados
         },
         error: error => {
-          console.log('Documento no');
           this.initForm3(); //Se agregó para parchar un error deúltimo momento
         },
       });
@@ -141,7 +138,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   initForm2(dataDocumentsImpro?: IClarificationDocumentsImpro): void {
-    console.log('Información del documento', dataDocumentsImpro);
     this.inappropriatenessForm = this.fb.group({
       addresseeName: [
         dataDocumentsImpro.managedTo,
@@ -229,7 +225,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       senderCharge: [this.infoRequest.holderCharge, []],
       applicationId: [this.idRequest],
-      documentTypeId: [104],
+      documentTypeId: [111],
       clarificationStatus: 'EN_ACLARACION',
     });
   }
@@ -321,7 +317,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       senderCharge: [this.infoRequest.holderCharge, []],
       applicationId: [this.idRequest],
-      documentTypeId: [104],
+      documentTypeId: [111],
       clarificationStatus: 'EN_ACLARACION',
     });
   }
@@ -350,13 +346,13 @@ export class NotifyAssetsImproprietyFormComponent
           this.inappropriatenessForm.controls['paragraphFinal'].value,
         consistentIn: this.inappropriatenessForm.controls['consistentIn'].value,
         managedTo: this.inappropriatenessForm.controls['addresseeName'].value,
-        invoiceLearned: 'folio_docto sin armar ',
+        invoiceLearned: 'folio docto sin armar ',
         //invoiceNumber: 1,
         positionAddressee:
           this.inappropriatenessForm.controls['positionAddressee'].value,
         modificationDate: new Date(),
         creationUser: token.name,
-        documentTypeId: '211',
+        documentTypeId: '111',
         modificationUser: token.name,
         //worthAppraisal: 1,
         creationDate: new Date(),
@@ -374,16 +370,13 @@ export class NotifyAssetsImproprietyFormComponent
           //this.onLoadToast('success','Aclaración guardada correctamente','' );
           this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
           this.openReport(data); //Falta verificar información que se envia...
-          this.modalRef.content.callback(true);
+          //this.modalRef.content.callback(true);
           this.loading = false;
-          //this.modalRef.hide()
+          this.close();
         },
         error: error => {
           this.loading = false;
-          console.log(
-            'No se envió información del formulario largo en larification-documents-impro',
-            error.error
-          );
+
           //this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
@@ -394,7 +387,6 @@ export class NotifyAssetsImproprietyFormComponent
       const id = this.dataClarifications2.rejectNotificationId;
 
       if (observations != null) {
-        console.log('obs y id', observations, id);
         this.updateNotify(id, observations);
       }
 
@@ -558,7 +550,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   updateNotify(id?: number, observations?: string) {
-    console.log('Observación nueva', observations);
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
@@ -608,7 +599,7 @@ export class NotifyAssetsImproprietyFormComponent
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
     const idDoc = data.id;
-    const idTypeDoc = 211;
+    const idTypeDoc = 111;
     const requestInfo = data;
 
     //Modal que genera el reporte

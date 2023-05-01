@@ -495,7 +495,7 @@ export class ClarificationsComponent
 
   getClarifications() {
     this.paragraphs = [];
-    this.loading = true;
+    this.isLoadingTable2 = true;
     const params = new ListParams();
     params['filter.goodId'] = `$eq:${this.good.id}`;
 
@@ -510,11 +510,11 @@ export class ClarificationsComponent
 
         Promise.all(clarification).then(data => {
           this.paragraphs = resp.data;
-          this.loading = false;
+          this.isLoadingTable2 = false;
         });
       },
       error: error => {
-        this.loading = false;
+        this.isLoadingTable2 = false;
       },
     });
   }

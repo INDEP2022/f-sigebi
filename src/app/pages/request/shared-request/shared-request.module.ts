@@ -22,6 +22,7 @@ import { ConfirmProgrammingComponent } from './confirm-programming/confirm-progr
 import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
+import { ReadInfoDomicileComponent } from './detail-assets-tab-component/read-info-domicile/read-info-domicile.component';
 import { ReadInfoGoodComponent } from './detail-assets-tab-component/read-info-good/read-info-good.component';
 import { DictumInformationComponent } from './dictum-information/dictum-information.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
@@ -184,6 +185,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ViewDocumentsComponent,
     ReadInfoGoodComponent,
     SelectUnitModalComponent,
+    ReadInfoDomicileComponent,
   ],
   imports: [
     CommonModule,

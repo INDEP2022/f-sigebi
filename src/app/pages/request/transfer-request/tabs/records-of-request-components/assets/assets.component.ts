@@ -56,6 +56,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
   @Input() process: string = '';
   goodObject: any; //bienes
+  goodDomiciliesMasive: any = []; // domicilios masivo
   listgoodObjects: any[] = [];
   totalItems: number = 0;
   principalSave: boolean = false;
@@ -159,8 +160,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           Promise.all(result).then(x => {
             this.totalItems = data.count;
             this.paragraphs = data.data;
-            console.log(this.paragraphs);
-
             this.loading = false;
           });
         } else {
@@ -342,13 +341,26 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //cargarlos en el formulario
+      this.loading = true;
       if (res) {
         for (let i = 0; i < this.listgoodObjects.length; i++) {
           const element = this.listgoodObjects[i];
-          element.addressId = res.id;
+          const good: any = {};
+
+          good.id = element.id;
+          good.goodId = element.goodId;
+          good.addressId = res.id;
+
+          this.goodDomiciliesMasive.push(good);
         }
         this.isSaveDomicilie = true;
       }
+      this.loading = false;
+      this.onLoadToast(
+        'success',
+        'Proceso Finalizado',
+        'Ya se puede guardar el bien'
+      );
     });
   }
   // abrir menaje
@@ -397,82 +409,37 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   saveDomicilie() {
-    new Promise((resolve, reject) => {
-      for (let i = 0; i < this.listgoodObjects.length; i++) {
-        const element = this.listgoodObjects[i];
-        delete element.goodTypeName;
-        delete element.physicalStatusName;
-        delete element.stateConservationName;
-        delete element.transferentDestinyName;
-        delete element.destinyLigieName;
-        delete element.goodMenaje;
-
-        if (element.requestId.id) {
-          element.requestId = Number(element.requestId.id);
+    this.goodDomiciliesMasive.map(async (item: any, i: number) => {
+      let index = i + 1;
+      const domicileResult = await this.updateGoods(item);
+      if (domicileResult) {
+        if (this.goodDomiciliesMasive.length === index) {
+          this.message(
+            'success',
+            'El domicio se actualizo',
+            `Se guardo el domicilio del bien`
+          );
+          this.refreshTable();
+          this.isSaveFraction = false;
         }
-        if (element.fractionId.id) {
-          element.fractionId = Number(element.fractionId.id);
-        }
-        this.goodService.update(element).subscribe({
-          next: resp => {
-            if (resp.statusCode != null) {
-              this.message(
-                'error',
-                'Error',
-                `El registro del bien del domicilio guardar!\n. ${resp.message}`
-              );
-              reject('El registro del bien del domicilio guardar!');
-            }
-
-            if (resp.id != null) {
-              this.message(
-                'success',
-                'Actualizado',
-                `¡Se guardó correctamente el bien del domicilio!`
-              );
-              this.isSaveDomicilie = false;
-              resolve('¡Se guardó correctamente el bien del domicilio!');
-            }
-          },
-          error: error => {
-            this.onLoadToast(
-              'error',
-              'No se guardo el domicilio',
-              `${error.error.message}`
-            );
-          },
-        });
       }
     });
   }
 
   saveMenaje() {
-    new Promise((resolve, reject) => {
-      for (let i = 0; i < this.menajeSelected.length; i++) {
-        const element = this.menajeSelected[i];
-
-        this.menageService.create(element).subscribe({
-          next: data => {
-            if (data.statusCode != null) {
-              this.message(
-                'error',
-                'Error',
-                `¡El menaje no se pudo guardar!\n. ${data.message}`
-              );
-              reject('¡El registro del bien del domicilio no se guardó!');
-            }
-
-            if (data.noGoodMenaje != null) {
-              this.message(
-                'success',
-                'Menaje guardado',
-                `Se guardaron los menajes exitosamente`
-              );
-              this.isSaveMenaje = false;
-              resolve('¡Se guardó correctamente el menaje!');
-            }
-          },
-        });
+    this.menajeSelected.map(async (item: any, i: number) => {
+      let index = i + 1;
+      const menajeResult = await this.createMenaje(item);
+      if (menajeResult) {
+        if (this.menajeSelected.length === index) {
+          this.message(
+            'success',
+            'Menaje guardado',
+            `Se guardaron los menajes exitosamente`
+          );
+          this.refreshTable();
+          this.isSaveFraction = false;
+        }
       }
     });
   }
@@ -508,6 +475,25 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'error',
             'Error',
             `Error al actualizar los bienes ${error.error.message}`
+          );
+          console.log(error.error.message);
+          reject(false);
+        },
+      });
+    });
+  }
+
+  createMenaje(item: any) {
+    return new Promise((resolve, reject) => {
+      this.menageService.create(item).subscribe({
+        next: data => {
+          resolve(true);
+        },
+        error: error => {
+          this.message(
+            'error',
+            'Error',
+            `Error al crear el menaje ${error.error.message}`
           );
           console.log(error.error.message);
           reject(false);
@@ -621,8 +607,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       this.idFractions = [];
+      this.loading = true;
       this.isSaveFraction = true;
-      this.cleanForm();
+      //this.cleanForm();
       this.matchLevelFraction(res);
     });
   }
@@ -635,7 +622,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       delete this.listgoodObjects[i].stateConservationName;
       delete this.listgoodObjects[i].transferentDestinyName;
       delete this.listgoodObjects[i].destinyLigieName;
+
       delete this.listgoodObjects[i].goodMenaje;
+      delete this.listgoodObjects[i].boveda;
+      delete this.listgoodObjects[i].gaveta;
+      delete this.listgoodObjects[i].expediente;
+      delete this.listgoodObjects[i].almacen;
+      delete this.listgoodObjects[i].solicitud;
+      delete this.listgoodObjects[i].fraccion;
       for (const key in good) {
         // console.log(good[key], key);
         if (
@@ -666,36 +660,55 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       'ligieLevel3',
       'ligieLevel4',
     ];
-
-    //this.listGoodsFractions = this.listgoodObjects;
-    //this.listGoodsFractions = [];
-
-    console.log('antes ', this.listgoodObjects);
+    this.listGoodsFractions = [];
+    let existAddres = 0;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
-      this.listgoodObjects[j].id = Number(item.id);
-      this.listgoodObjects[j].addressId = Number(item.addressId.id);
-      this.listgoodObjects[j].requestId = Number(item.requestId.id);
-      this.listgoodObjects[j].goodClassNumber = Number(
-        this.fractionProperties['goodClassNumber']
-      );
-      this.listgoodObjects[j].unitMeasure =
-        this.fractionProperties['unitMeasure'];
-      this.listgoodObjects[j].ligieUnit = this.fractionProperties['ligieUnit'];
-      this.listgoodObjects[j].fractionId = Number(
-        this.fractionProperties['fractionId']
-      );
+      good.id = Number(item.id);
+      good.goodId = Number(item.goodId);
+      if (!item.addressId) {
+        good.addressId = null;
+        existAddres++;
+      } else {
+        good.addressId = Number(item.addressId.id)
+          ? Number(item.addressId.id)
+          : Number(item.addressId);
+      }
+
+      good.requestId = Number(item.requestId.id)
+        ? Number(item.requestId.id)
+        : Number(item.requestId);
+      good.goodClassNumber = Number(this.fractionProperties['goodClassNumber']);
+      good.unitMeasure = this.fractionProperties['unitMeasure'];
+      good.ligieUnit = this.fractionProperties['ligieUnit'];
+      good.fractionId = Number(this.fractionProperties['fractionId']);
+      good.goodTypeId = Number(this.fractionProperties['goodTypeId']);
+
+      good.goodDescription = item.goodDescription;
+      good.processStatus = item.processStatus;
 
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
-        this.listgoodObjects[j][fractions[i]] = Number(fractionsId);
-        //good[fractions[i]] = Number(fractionsId);
+        good[fractions[i]] = Number(fractionsId);
       }
-
-      this.listGoodsFractions = this.listgoodObjects;
-      console.log('despues ', this.listGoodsFractions);
+      this.listGoodsFractions.push(good);
     }
+    this.loading = false;
+    if (existAddres > 0) {
+      this.onLoadToast(
+        'info',
+        'Bienes sin domicilio',
+        'Existen bienes que aun no se les asigno un domicilio!'
+      );
+    }
+    setTimeout(() => {
+      this.onLoadToast(
+        'success',
+        'Proceso Finalizado',
+        'Ya se pueden guardar los bien'
+      );
+    }, 600);
   }
 
   getNoClasifyGood(value: string) {
@@ -722,18 +735,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             });
         }
       }
-    });
-  }
-
-  getUnit(data: any) {
-    return new Promise((resolve, reject) => {
-      this.goodsQueryService
-        .getLigieUnitDescription(data.ligieUnit)
-        .subscribe((data: any) => {
-          this.fractionProperties['unitMeasure'] = data.description;
-          this.fractionProperties['ligieUnit'] = data.description;
-          resolve(true);
-        });
     });
   }
 
@@ -780,9 +781,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
-          await this.getUnit(fractionDesc);
+          this.fractionProperties['unitMeasure'] = fraction.unit
+            ? fraction.unit
+            : '';
+          this.fractionProperties['ligieUnit'] = fraction.unit
+            ? fraction.unit
+            : '';
         }
         const listReverse = this.idFractions.reverse();
         //estable los id para ser visualizados
@@ -808,9 +814,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
-          await this.getUnit(fractionDesc);
+          this.fractionProperties['unitMeasure'] = fraction.unit
+            ? fraction.unit
+            : '';
+          this.fractionProperties['ligieUnit'] = fraction.unit
+            ? fraction.unit
+            : '';
         }
         this.getSection(new ListParams(), data.data[0].parentId);
       },
@@ -839,9 +850,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
-          await this.getUnit(fractionDesc);
+          this.fractionProperties['unitMeasure'] = fraction.unit
+            ? fraction.unit
+            : '';
+          this.fractionProperties['ligieUnit'] = fraction.unit
+            ? fraction.unit
+            : '';
         }
         this.getChapter(new ListParams(), fraction.parentId);
       },
@@ -867,9 +883,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
-          await this.getUnit(fractionDesc);
+          this.fractionProperties['unitMeasure'] = fraction.unit
+            ? fraction.unit
+            : '';
+          this.fractionProperties['ligieUnit'] = fraction.unit
+            ? fraction.unit
+            : '';
         }
         this.getLevel1(new ListParams(), data.data[0].parentId);
       },
@@ -894,9 +915,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
-          await this.getUnit(fractionDesc);
+          this.fractionProperties['unitMeasure'] = fraction.unit
+            ? fraction.unit
+            : '';
+          this.fractionProperties['ligieUnit'] = fraction.unit
+            ? fraction.unit
+            : '';
         }
         this.getLevel2(new ListParams(), data.data[0].parentId);
       },
@@ -923,7 +949,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           if (fraction.typeRelevant) {
             this.fractionProperties['goodTypeId'] = fraction.id;
           }
-          await this.getUnit(fractionDesc);
+          this.fractionProperties['unitMeasure'] = fraction.unit
+            ? fraction.unit
+            : '';
+          this.fractionProperties['ligieUnit'] = fraction.unit
+            ? fraction.unit
+            : '';
         }
         this.getLevel3(new ListParams(), data.data[0].parentId);
       },

@@ -810,7 +810,7 @@ export class ClassifyAssetsTabComponent
 
             setTimeout(() => {
               this.refreshTable(false);
-            }, 5000);
+            }, 500);
             resolve(data);
           },
           error: error => {

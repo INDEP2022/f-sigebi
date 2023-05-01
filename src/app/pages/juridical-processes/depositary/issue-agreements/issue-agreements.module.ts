@@ -14,10 +14,13 @@ import { IssueAgreementsRoutingModule } from './issue-agreements-routing.module'
 
 /** COMPONENTS IMPORTS */
 import { EventEmitterService } from './issue-agreements/eventEmitter.service';
-import { IssueAgreementsComponent } from './issue-agreements/issue-agreements.component';
+import {
+  CheckboxComponent,
+  IssueAgreementsComponent,
+} from './issue-agreements/issue-agreements.component';
 
 @NgModule({
-  declarations: [IssueAgreementsComponent],
+  declarations: [IssueAgreementsComponent, CheckboxComponent],
   imports: [
     CommonModule,
     IssueAgreementsRoutingModule,
