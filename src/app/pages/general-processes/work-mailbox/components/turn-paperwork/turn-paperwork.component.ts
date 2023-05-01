@@ -19,6 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class TurnPaperworkComponent extends BasePage implements OnInit {
+  paperworks: any = null;
   paperwork: any = null;
   form = this.fb.group({
     user: new FormControl<string>(null, Validators.required),
@@ -41,7 +42,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.paperwork);
+    this.paperwork = this.paperworks[0];
   }
 
   getUsers(params: ListParams) {
