@@ -64,18 +64,6 @@ export class DetailAssetsTabComponentComponent
   @Input() requestObject: any; //solicitud
   @Input() assetsId: any; //id del bien
   @Input() detailAssets: ModelForm<any>;
-
-  // set detailAssets(value: ModelForm<any>) {
-  //   this.initForm();
-  //   this.getBrand(new ListParams(), () => {
-  //     this._detailAssets = value;
-  //     return {};
-  //   });
-  // }
-  // get detailAssets() {
-  //   return this._detailAssets;
-  // }
-  // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   @Input() process: string = '';
@@ -170,6 +158,7 @@ export class DetailAssetsTabComponentComponent
   isGoodInfReadOnly: boolean = false;
   isGoodTypeReadOnly: boolean = false;
   ligieUnit: string = '';
+  typeOfRequest: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -193,8 +182,9 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    //console.log({ process: this.process });
-    console.log('goods ', this.detailAssets);
+    this.typeOfRequest = this.requestObject.typeOfTransfer
+      ? this.requestObject.typeOfTransfer
+      : this.requestObject.controls['typeOfTransfer'].value;
     if (this.process == 'validate-document') {
       this.getDomicilieGood(
         parseInt(this.detailAssets.controls['addressId'].value)
@@ -349,6 +339,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
+    console.log('información del good v1', this.detailAssets.value); //Henry
     this.initForm();
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
@@ -724,9 +715,6 @@ export class DetailAssetsTabComponentComponent
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
-    /*if (municipalyId) {
-      params['filter.municipalityKey'] = `$eq:${municipalyId}`;
-    }*/
     this.goodsInvService
       .getAllMunipalitiesByFilter(params)
       .pipe(takeUntil(this.$unSubscribe))

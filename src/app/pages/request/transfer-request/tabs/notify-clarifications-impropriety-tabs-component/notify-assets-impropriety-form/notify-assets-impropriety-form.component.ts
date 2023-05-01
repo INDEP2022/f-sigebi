@@ -229,7 +229,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       senderCharge: [this.infoRequest.holderCharge, []],
       applicationId: [this.idRequest],
-      documentTypeId: [104],
+      documentTypeId: [111],
       clarificationStatus: 'EN_ACLARACION',
     });
   }
@@ -321,7 +321,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       senderCharge: [this.infoRequest.holderCharge, []],
       applicationId: [this.idRequest],
-      documentTypeId: [104],
+      documentTypeId: [111],
       clarificationStatus: 'EN_ACLARACION',
     });
   }
@@ -350,13 +350,13 @@ export class NotifyAssetsImproprietyFormComponent
           this.inappropriatenessForm.controls['paragraphFinal'].value,
         consistentIn: this.inappropriatenessForm.controls['consistentIn'].value,
         managedTo: this.inappropriatenessForm.controls['addresseeName'].value,
-        invoiceLearned: 'folio_docto sin armar ',
+        invoiceLearned: 'folio docto sin armar ',
         //invoiceNumber: 1,
         positionAddressee:
           this.inappropriatenessForm.controls['positionAddressee'].value,
         modificationDate: new Date(),
         creationUser: token.name,
-        documentTypeId: '211',
+        documentTypeId: '111',
         modificationUser: token.name,
         //worthAppraisal: 1,
         creationDate: new Date(),
@@ -374,9 +374,9 @@ export class NotifyAssetsImproprietyFormComponent
           //this.onLoadToast('success','Aclaración guardada correctamente','' );
           this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
           this.openReport(data); //Falta verificar información que se envia...
-          this.modalRef.content.callback(true);
+          //this.modalRef.content.callback(true);
           this.loading = false;
-          //this.modalRef.hide()
+          this.close();
         },
         error: error => {
           this.loading = false;
@@ -608,7 +608,7 @@ export class NotifyAssetsImproprietyFormComponent
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
     const idDoc = data.id;
-    const idTypeDoc = 211;
+    const idTypeDoc = 111;
     const requestInfo = data;
 
     //Modal que genera el reporte

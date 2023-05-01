@@ -434,10 +434,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-    const id = this.idDoc; //ID solicitud
-
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
+      const id = this.idDoc; //ID solicitud
       const nameTypeReport = 'DictamenProcendecia';
       const formData: Object = {
         id: this.idDoc,
@@ -467,17 +466,18 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         });
     }
     //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
-    if (this.idTypeDoc == 211) {
+    if (this.idTypeDoc == 111) {
+      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'OficioImprocedencia';
       const formData: Object = {
-        id: this.idDoc,
+        id: requestInfo.id,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
 
       this.gelectronicFirmService
-        .firmDocument(id, nameTypeReport, formData)
+        .firmDocument(requestInfo.id, nameTypeReport, formData)
         .subscribe({
           next: data => (console.log('correcto', data), this.handleSuccess()),
           error: error => {
