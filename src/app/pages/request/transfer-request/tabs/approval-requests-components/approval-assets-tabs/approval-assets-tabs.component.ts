@@ -233,11 +233,7 @@ export class ApprovalAssetsTabsComponent
       ], //numero motor
       tuition: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       serie: [
         null,
