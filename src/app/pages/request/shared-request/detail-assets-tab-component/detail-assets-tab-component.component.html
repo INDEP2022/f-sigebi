@@ -12,7 +12,7 @@
     <ng-template tabHeading>
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
-    <div *ngIf="process != 'classify-assets'">
+    <div *ngIf="process == 'registration-request'">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
@@ -121,7 +121,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('volume')"
-                label="Volumen m3">
+                label="Volumen (m3)">
                 <input
                   type="text"
                   class="form-control"
@@ -294,8 +294,10 @@
     </div>
 
     <app-read-info-good
-      *ngIf="process == 'classify-assets'"
-      [goodData]="goodData"></app-read-info-good>
+      *ngIf="process != 'registration-request'"
+      [detailAssets]="detailAssets"
+      [process]="process"
+      [typeOfRequest]="typeOfRequest"></app-read-info-good>
   </tab>
 
   <tab>
@@ -303,18 +305,16 @@
       <i class="bx bx-home"></i> Domicilio del Bien
     </ng-template>
     <form [formGroup]="domicileForm" class="form-material">
-      <div class="addressGood">
+      <div *ngIf="process == 'registration-request'" class="addressGood">
         <div class="row pt-4" *ngIf="typeDoc === 'assets'">
           <div style="text-align: center">
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
               <i class="bx bx-home"></i> Seleccionar Domicilio
             </button>
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-secondary btn-sm active"
               style="margin-left: 2px"
               (click)="openSelectMenage()">
@@ -538,6 +538,10 @@
         </div>
       </div>
     </form>
+
+    <app-read-info-domicile
+      *ngIf="process != 'registration-request'"
+      [domicilieObject]="domicilieObject"></app-read-info-domicile>
   </tab>
 
   <!-- Información del  vehiculo tab -->

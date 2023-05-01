@@ -1659,7 +1659,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       const result = await this.alertQuestion(
         'question',
         'Utilizar datos predeterminados',
-        `¿Deseas enviar el trámite al usuario ${this.selectedRow.userATurn} 
+        `¿Desea enviar el trámite al usuario ${this.selectedRow.userATurn} 
           y área ${this.selectedRow.areaATurn}?`,
         `Enviar`,
         `Buscar`
@@ -2048,7 +2048,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           const result = await this.alertQuestion(
             'warning',
             'Advertencia',
-            'No se ha generado una solicitud de escaneo. ¿Deseas generarla?'
+            'No se ha generado una solicitud de escaneo. ¿Desea generarla?'
           );
           if (result.isConfirmed) {
             this.router.navigate(

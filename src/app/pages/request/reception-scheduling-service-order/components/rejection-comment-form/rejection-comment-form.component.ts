@@ -27,7 +27,7 @@ export class RejectionCommentFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas rechazar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+      '¿Desea rechazar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

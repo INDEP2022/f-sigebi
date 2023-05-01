@@ -246,7 +246,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
             this.loader.load = false;
             this.openModal(OpenDescriptionComponent, parameters);
             this.close();
-            this.onLoadToast('success', 'Caratula generada correctamente', '');
+            this.onLoadToast('success', 'Carátula generada correctamente', '');
           }
         }
       }
@@ -326,7 +326,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            `No se insertaron los datos de la caratula ${error.error.message}`
+            `No se insertaron los datos de la carátula ${error.error.message}`
           );
         },
       });
@@ -346,7 +346,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            `No se puedo guardar el expediente sami! ${error.error.message}`
+            `No se puede guardar el expediente SAMI ${error.error.message}`
           );
         },
       });

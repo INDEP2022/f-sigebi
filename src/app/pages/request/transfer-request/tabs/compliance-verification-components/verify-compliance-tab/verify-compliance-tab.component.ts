@@ -15,6 +15,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
@@ -640,16 +641,17 @@ export class VerifyComplianceTabComponent
   }
 
   getArticle3(id: number, transferentId: number) {
-    const params = new ListParams();
-    params['filter.requestId'] = `$eq:${id}`;
-    params['filter.cumpliance.article'] = `$eq:Articulo 3 Ley`;
+    let param = new FilterParams();
+    param.addFilter('requestId', id);
+    param.addFilter('cumpliance.article', 'Articulo 3 Ley');
     if (Number(transferentId) === 1 || Number(transferentId) === 120) {
-      params['filter.cumpliance.transfereeId'] = `$eq:${transferentId}`;
+      param.addFilter('cumpliance.transfereeId', transferentId);
     } else {
-      params['filter.cumpliance.transfereeId'] = `$null`;
+      param.addFilter('cumpliance.transfereeId', '', SearchFilter.NULL);
     }
-    params.limit = 30;
-    this.requestDocumentService.getAll(params).subscribe({
+    param.limit = 30;
+    let filter = param.getParams();
+    this.requestDocumentService.getAll(filter).subscribe({
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
@@ -669,16 +671,17 @@ export class VerifyComplianceTabComponent
   }
 
   getArticle1213(id: number, transferentId: number) {
-    const params = new ListParams();
-    params['filter.requestId'] = `$eq:${id}`;
-    params['filter.cumpliance.article'] = `$eq:Articulo 12 y 13 Reglamento`;
+    let param = new FilterParams();
+    param.addFilter('requestId', id);
+    param.addFilter('cumpliance.article', 'Articulo 12 y 13 Reglamento');
     if (Number(transferentId) === 1 || Number(transferentId) === 120) {
-      params['filter.cumpliance.transfereeId'] = `$eq:${transferentId}`;
+      param.addFilter('cumpliance.transfereeId', transferentId);
     } else {
-      params['filter.cumpliance.transfereeId'] = `$null`;
+      param.addFilter('cumpliance.transfereeId', '', SearchFilter.NULL);
     }
-    params.limit = 30;
-    this.requestDocumentService.getAll(params).subscribe({
+    param.limit = 30;
+    let filter = param.getParams();
+    this.requestDocumentService.getAll(filter).subscribe({
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
@@ -724,6 +727,7 @@ export class VerifyComplianceTabComponent
   selectGood(event: any) {
     //if (event.isSelected === true) {
     this.formLoading = true;
+    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
@@ -732,14 +736,18 @@ export class VerifyComplianceTabComponent
       this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
+        //console.log("info del goodSELECTED v1", this.goodsSelected[0]); //henry
         this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
+        console.log('info del good v1', this.detailArray); //henry
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
         this.formLoading = false;
       }, 1000);
+
+      //console.log("Información de domicilio ",);
     } else {
       this.formLoading = false;
     }

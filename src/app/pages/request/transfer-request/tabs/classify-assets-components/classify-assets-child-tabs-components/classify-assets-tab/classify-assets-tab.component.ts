@@ -140,6 +140,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(13),
         ],
       ],
+      quantityy: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       duplicity: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
@@ -739,7 +740,11 @@ export class ClassifyAssetsTabComponent
       goods.fractionId = Number(goods.fractionId.id);
     }
 
-    let goodAction: any = null;
+    //se modifica el estadus del bien
+    if (goods.transferType === 'PGR_SAE' || goods.transferType === 'PGR_SAE') {
+      goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+    }
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
@@ -806,7 +811,7 @@ export class ClassifyAssetsTabComponent
 
             setTimeout(() => {
               this.refreshTable(false);
-            }, 5000);
+            }, 500);
             resolve(data);
           },
           error: error => {

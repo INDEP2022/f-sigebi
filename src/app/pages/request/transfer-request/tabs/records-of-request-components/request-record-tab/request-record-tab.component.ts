@@ -214,8 +214,8 @@ export class RequestRecordTabComponent
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
-    // this.requestForm.updateValueAndValidity();
   }
+
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
     this.minPub.getAll(params).subscribe({
@@ -263,21 +263,6 @@ export class RequestRecordTabComponent
     } else {
       this.transfe = 'MP';
     }
-    // let params = new ListParams();
-    // params['filter.id'] = `$eq:${transferenceNumber}`;
-    // this.transferenteService.getAll(params).subscribe({
-    //   next: ({ data }) => {
-    //     console.log(this.transfe);
-    //     if (transferenceNumber === 1 || transferenceNumber === 120) {
-    //       this.transfe = 'MP';
-    //     } else {
-    //       this.transfe = this.rem;
-    //     }
-    //   },
-    //   error: error => {
-    //     this.transfe = '';
-    //   },
-    // });
   }
 
   changeDateEvent(event: Date) {
@@ -370,8 +355,10 @@ export class RequestRecordTabComponent
     }
     this.loading = true;
     this.submitted = true;
-    // if (this.requestForm.invalid || this.requestForm.value.paperDate.length == 0 || this.requestForm.value.previousInquiry.length == 0 || this.requestForm.value.circumstantialRecord.length == 0) { this.formLoading = false; return }
     const request = this.requestForm.getRawValue() as IRequest;
+    request.transferEntNotes = request.transferEntNotes
+      ? request.transferEntNotes
+      : null;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
