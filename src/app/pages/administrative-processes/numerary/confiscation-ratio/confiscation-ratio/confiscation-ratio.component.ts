@@ -25,8 +25,9 @@ export class ConfiscationRatioComponent implements OnInit {
   }
   prepareForm() {
     this.form = this.fb.group({
-      forfeitureKey: [null, Validators.required],
+      forfeitureKey: [null],
       check: [null, Validators.required],
+      import: [null],
       pgr: [null, Validators.required],
       ssa: [null, Validators.required],
       pjf: [null, Validators.required],

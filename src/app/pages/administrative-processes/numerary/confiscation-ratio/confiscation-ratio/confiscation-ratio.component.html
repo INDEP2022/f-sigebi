@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
+      <form class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-2">
             <form-field
@@ -12,62 +12,70 @@
               label="Clave Decomiso">
               <input
                 type="number"
+                min="0"
                 class="form-control"
                 formControlName="forfeitureKey"
-                min="1"
-                pattern="^[0-9]+" />
+                oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
             </form-field>
+          </div>
+          <div class="col-1">
+            <button class="btn btn-danger btn-sm">
+              <i class="fa fa-lock"></i>
+            </button>
           </div>
           <div class="col-md-2">
             <form-radio label="M.N">
-              <input type="radio" formControlName="check" value="mn" />
+              <input type="radio" formControlName="check" value="PESOS" />
             </form-radio>
-            <form-radio label="U.S">
-              <input type="radio" formControlName="check" value="us" />
-            </form-radio>
-            <form-radio label="DLLS">
-              <input type="radio" formControlName="check" value="dlls" />
+            <form-radio label="U.S.DLLS.">
+              <input type="radio" formControlName="check" value="DOLARES" />
             </form-radio>
             <form-radio label="CONV_NUM">
-              <input type="radio" formControlName="check" value="convnum" />
+              <input type="radio" formControlName="check" value="CONV_NUM" />
             </form-radio>
           </div>
-          <div class="col-md-2">
-            <form-field [control]="form.get('pgr')" label="PGR">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="pgr"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field [control]="form.get('ssa')" label="SSA">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="ssa"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field [control]="form.get('pjf')" label="PJF">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="pjf"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="openPrevPdf()">
-              Impresión
-            </button>
+          <div class="col-md-7">
+            <div class="row">
+              <div class="col-1">
+                <button class="btn btn-danger btn-sm">
+                  <i class="fa fa-print"></i>
+                </button>
+              </div>
+              <div class="col-5">
+                <form-field [control]="form.get('import')" label="Importe">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="import"
+                    min="0"
+                    oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);" />
+                </form-field>
+              </div>
+              <div class="col-6">
+                <form-field [control]="form.get('pgr')" label="PGR">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="pgr" />
+                </form-field>
+              </div>
+              <div class="col-6">
+                <form-field [control]="form.get('ssa')" label="SSA">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="ssa" />
+                </form-field>
+              </div>
+              <div class="col-6">
+                <form-field [control]="form.get('pjf')" label="PJF">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="pjf" />
+                </form-field>
+              </div>
+            </div>
           </div>
         </div>
       </form>
@@ -78,11 +86,11 @@
               Abrir archivo de texto
             </button>
           </div>
-          <!-- <div class="col-md-2">
-          <form-field label="">
-            <input type="number" class="form-control" min="1" pattern="^[0-9]+" />
-          </form-field>
-        </div> -->
+          <div class="col-md-2">
+            <!-- <form-field label="">
+              <input type="file" class="form-control" />
+            </form-field> -->
+          </div>
           <div class="col-md-2">
             <form-field
               [control]="file.get('recordRead')"
@@ -90,9 +98,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="recordRead"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="recordRead" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -102,9 +108,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="recordsProcessed"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="recordsProcessed" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -112,9 +116,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="processed"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="processed" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -122,9 +124,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="wrong"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="wrong" />
             </form-field>
           </div>
         </div>
@@ -136,9 +136,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="noGood"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="noGood" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -148,9 +146,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="criminalCase"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="criminalCase" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -170,9 +166,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="dateTesofe"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="dateTesofe" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -182,9 +176,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="jobTesofe"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="jobTesofe" />
             </form-field>
           </div>
         </div>
@@ -194,9 +186,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="authority"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="authority" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -206,9 +196,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="dateTreasury"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="dateTreasury" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -218,9 +206,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="dateJudgment"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="dateJudgment" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -230,9 +216,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="appraisalValue"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="appraisalValue" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -240,9 +224,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="interests"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="interests" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -250,9 +232,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="results"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="results" />
             </form-field>
           </div>
         </div>
@@ -265,9 +245,7 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="totalSeizures"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="totalSeizures" />
             </form-field>
           </div>
         </div>
