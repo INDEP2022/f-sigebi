@@ -241,7 +241,7 @@
               <a
                 class="dropdown-item"
                 (click)="workFunction('acptionAntecedente')"
-                >Antecedente</a
+                >Antecedentes</a
               >
             </li>
             <li role="menuitem">
@@ -312,12 +312,12 @@
             </li>
             <li role="menuitem" *ngIf="showValDoc">
               <a class="dropdown-item" (click)="workFunction('validDoc')"
-                >Validar documentación</a
+                >Validar Documentación</a
               >
             </li>
             <li role="menuitem" *ngIf="showPGRDocs">
               <a class="dropdown-item" (click)="workFunction('viewDoc')"
-                >Ver documentación</a
+                >Ver Documentación</a
               >
             </li>
             <li role="menuitem" *ngIf="showScan">
@@ -329,14 +329,16 @@
               <a
                 class="dropdown-item"
                 (click)="workFunction('getNotificationsReport')"
-                >Reporte de notificaciones</a
+                >Reporte de Notificaciones</a
               >
             </li>
           </ul>
         </div>
       </div>
       <div class="col-3 text-end">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <app-columns-select
+          [(settings)]="settings"
+          [defaultColumns]="6"></app-columns-select>
       </div>
     </div>
     <div class="row pt-4 mb-3 mt-3">
