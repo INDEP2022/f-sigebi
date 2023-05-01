@@ -15,7 +15,7 @@ import {
   IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
-import { GoodGetData, IGood } from '../../models/ms-good/good';
+import { GoodGetData, IGood, IGoodSami } from '../../models/ms-good/good';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -37,6 +37,15 @@ export class GoodService extends HttpService {
 
   getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
+  }
+
+  getAllSiab(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGoodSami>> {
+    return this.get<IListResponse<IGoodSami>>(
+      GoodEndpoints.GoodGetSiab,
+      params
+    );
   }
 
   getActAccount(model: IGoodStatusProcess) {
@@ -122,6 +131,11 @@ export class GoodService extends HttpService {
 
   getById(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
+    return this.get<IGood>(route);
+  }
+
+  getByIdAndGoodId(id: string | number, goodId: string | number) {
+    const route = `${GoodEndpoints.GetGoodById}/${id}/${goodId}`;
     return this.get<IGood>(route);
   }
 

@@ -74,8 +74,8 @@ export class IncomeOrdersDepositoryGoodsComponent
 
   ngOnInit(): void {
     this.buildForm();
+
     this.getItemsNumberBienes();
-    this.getUserDepositary();
 
     this.form.get('numberGood')?.valueChanges.subscribe(data => {
       if (data) {
@@ -84,33 +84,48 @@ export class IncomeOrdersDepositoryGoodsComponent
         );
         this.form.get('depositary').setValue('');
         this.form.get('description').setValue('');
+        console.log('this.objJsonInterfaz[0]');
+        console.log('<=>=>=>=>=>=>==>=>==>=>=>==>=>=>=>=>==>=>=>=>=>=>=<');
         console.log(JSON.stringify(this.objJsonInterfaz[0]));
         this.form
           .get('depositary')
-          .setValue(this.objJsonInterfaz[0].responsible);
+          .setValue(this.objJsonInterfaz[0].depositaryType);
+        this.form
+          .get('date')
+          .setValue(this.objJsonInterfaz[0].good.fecRegInsert);
+
         this.form
           .get('description')
-          .setValue(this.objJsonInterfaz[0].observation);
+          .setValue(this.objJsonInterfaz[0].good.description);
+        this.form
+          .get('contractKey')
+          .setValue(this.objJsonInterfaz[0].contractKey);
+        this.form.get('user').setValue(this.objJsonInterfaz[0].user.users);
+        this.form.get('username').setValue(this.objJsonInterfaz[0].user.name);
+        this.form
+          .get('charge')
+          .setValue(this.objJsonInterfaz[0].user.profession);
         this.form.patchValue(this.objJsonInterfaz[0]);
       }
     });
-    //
-    //
-    //
-
+    /*
+    this.getUserDepositary();
     this.form.get('user')?.valueChanges.subscribe(data => {
       this.form.get('username').setValue('');
       this.form.get('charge').setValue('');
+      let v:ISegUsers;
       if (data) {
         this.objJsonInterfazUser = this.itemsJsonInterfazUser.filter(
           X => X.id === data
         );
+        console.log("USUARIOS\n=============\n " + JSON.stringify(this.objJsonInterfazUser));
         this.form.get('username').setValue(this.objJsonInterfazUser[0].name);
         this.form
           .get('charge')
-          .setValue(this.objJsonInterfazUser[0].profession);
+          .setValue(this.objJsonInterfazUser[0].keyPosition);
+
       }
-    });
+    });*/
   }
 
   getUserDepositary() {
@@ -136,7 +151,9 @@ export class IncomeOrdersDepositoryGoodsComponent
   getItemsNumberBienes() {
     this.depositaryService.getGoodAppointmentDepositaryByNoGood().subscribe({
       next: resp => {
+        console.log('1.-  getItemsNumberBienes  ');
         console.log(JSON.stringify(resp.data));
+        console.log('===========1.-  getItemsNumberBienes=====');
         this.itemsJsonInterfaz = [...resp.data];
       },
       error: err => {
