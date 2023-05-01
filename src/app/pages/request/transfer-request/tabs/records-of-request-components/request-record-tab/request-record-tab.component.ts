@@ -214,8 +214,8 @@ export class RequestRecordTabComponent
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
-    // this.requestForm.updateValueAndValidity();
   }
+
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
     this.minPub.getAll(params).subscribe({
@@ -263,21 +263,6 @@ export class RequestRecordTabComponent
     } else {
       this.transfe = 'MP';
     }
-    // let params = new ListParams();
-    // params['filter.id'] = `$eq:${transferenceNumber}`;
-    // this.transferenteService.getAll(params).subscribe({
-    //   next: ({ data }) => {
-    //     console.log(this.transfe);
-    //     if (transferenceNumber === 1 || transferenceNumber === 120) {
-    //       this.transfe = 'MP';
-    //     } else {
-    //       this.transfe = this.rem;
-    //     }
-    //   },
-    //   error: error => {
-    //     this.transfe = '';
-    //   },
-    // });
   }
 
   changeDateEvent(event: Date) {
