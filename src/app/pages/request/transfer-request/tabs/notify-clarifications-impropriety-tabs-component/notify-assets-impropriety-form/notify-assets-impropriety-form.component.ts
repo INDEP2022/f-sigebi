@@ -71,7 +71,6 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('data', this.dataClarifications2);
     this.withDocumentation = this.idAclara === '1' ? true : false;
 
     this.initForm1();
@@ -84,12 +83,10 @@ export class NotifyAssetsImproprietyFormComponent
       .getAllfilter(applicationId, rejectNoticeId, this.params.getValue())
       .subscribe({
         next: res => {
-          console.log('Documento si existe');
           const dataDocumentsImpro = res.data[0];
           this.initForm2(dataDocumentsImpro); //Manda a llamar el formulario largo para asignarle valores guardados
         },
         error: error => {
-          console.log('Documento no');
           this.initForm3(); //Se agregó para parchar un error deúltimo momento
         },
       });
@@ -141,7 +138,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   initForm2(dataDocumentsImpro?: IClarificationDocumentsImpro): void {
-    console.log('Información del documento', dataDocumentsImpro);
     this.inappropriatenessForm = this.fb.group({
       addresseeName: [
         dataDocumentsImpro.managedTo,
@@ -380,10 +376,7 @@ export class NotifyAssetsImproprietyFormComponent
         },
         error: error => {
           this.loading = false;
-          console.log(
-            'No se envió información del formulario largo en larification-documents-impro',
-            error.error
-          );
+
           //this.onLoadToast('error', 'No se pudo guardar', '');
         },
       });
@@ -394,7 +387,6 @@ export class NotifyAssetsImproprietyFormComponent
       const id = this.dataClarifications2.rejectNotificationId;
 
       if (observations != null) {
-        console.log('obs y id', observations, id);
         this.updateNotify(id, observations);
       }
 
@@ -558,7 +550,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   updateNotify(id?: number, observations?: string) {
-    console.log('Observación nueva', observations);
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
