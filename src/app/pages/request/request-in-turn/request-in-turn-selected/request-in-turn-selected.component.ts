@@ -134,7 +134,6 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     }
     this.loading = true;
     this.requestToTurn.map(async (item: any, i: number) => {
-      console.log(item.typeOfTransfer);
       let index = i + 1;
       item.requestStatus = 'A_TURNAR';
       item.receiptRoute = 'ELECTRONICA';

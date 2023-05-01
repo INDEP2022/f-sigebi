@@ -160,8 +160,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           Promise.all(result).then(x => {
             this.totalItems = data.count;
             this.paragraphs = data.data;
-            console.log(this.paragraphs);
-
             this.loading = false;
           });
         } else {
@@ -662,17 +660,22 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       'ligieLevel3',
       'ligieLevel4',
     ];
-
     this.listGoodsFractions = [];
-    console.log('antes ', this.listgoodObjects);
+    let existAddres = 0;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
       good.id = Number(item.id);
       good.goodId = Number(item.goodId);
-      good.addressId = Number(item.addressId.id)
-        ? Number(item.addressId.id)
-        : Number(item.addressId);
+      if (!item.addressId) {
+        good.addressId = null;
+        existAddres++;
+      } else {
+        good.addressId = Number(item.addressId.id)
+          ? Number(item.addressId.id)
+          : Number(item.addressId);
+      }
+
       good.requestId = Number(item.requestId.id)
         ? Number(item.requestId.id)
         : Number(item.requestId);
@@ -690,15 +693,22 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         good[fractions[i]] = Number(fractionsId);
       }
       this.listGoodsFractions.push(good);
-      console.log('despues ', this.listGoodsFractions);
     }
-
-    this.onLoadToast(
-      'success',
-      'Proceso Finalizado',
-      'Ya se puede guardar el bien'
-    );
     this.loading = false;
+    if (existAddres > 0) {
+      this.onLoadToast(
+        'info',
+        'Bienes sin domicilio',
+        'Existen bienes que aun no se les asigno un domicilio!'
+      );
+    }
+    setTimeout(() => {
+      this.onLoadToast(
+        'success',
+        'Proceso Finalizado',
+        'Ya se pueden guardar los bien'
+      );
+    }, 600);
   }
 
   getNoClasifyGood(value: string) {
