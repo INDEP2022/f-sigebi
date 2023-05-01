@@ -1,37 +1,6 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
-/*export const WORK_MAILBOX_COLUMNS = {
-  columname: {
-    title: 'Fecha',
-    sort: false,
-  },
-  columname2: {
-    title: 'Dias Hab. Nat',
-    sort: false,
-  },
-  columname3: {
-    title: 'Fecha Última Acción',
-    sort: false,
-  },
-  columname4: {
-    title: 'Estatus',
-    sort: false,
-  },
-  columname5: {
-    title: 'Trámite',
-    sort: false,
-  },
-  columname6: {
-    title: 'Usr Turnado',
-    sort: false,
-  },
-  columname7: {
-    title: 'Urgente Volante',
-    sort: false,
-  },
-};*/
-
 export const WORK_BIENES_COLUMNS = {
   id: {
     title: 'No. Bien',
@@ -41,7 +10,7 @@ export const WORK_BIENES_COLUMNS = {
     title: 'Cantidad',
     sort: false,
   },
-  description: {
+  goodDescription: {
     title: 'Descripción',
     sort: false,
   },
@@ -50,7 +19,7 @@ export const WORK_BIENES_COLUMNS = {
     title: 'No. Bien Padre Menaje',
     sort: false,
   },
-  status: {
+  goodStatus: {
     title: 'Estatus',
     sort: false,
   },
@@ -85,15 +54,16 @@ export const WORK_ANTECEDENTES_COLUMNS = {
 
 export const WORK_MAILBOX_COLUMNS2 = {
   turnSelect: {
-    title: 'Turnar',
+    title: 'Selección',
     sort: false,
+    showAlways: true,
     filter: false,
     editable: false,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        data.row.turn = data.toggle;
+        data.row.turnSelect = data.toggle;
       });
     },
   },
