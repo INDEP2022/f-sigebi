@@ -141,7 +141,9 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
     if (this.paramFilter === 'search') {
       filterParam.search = text ?? '';
     } else {
-      filterParam.addFilter(this.paramFilter, text ?? '', this.operator);
+      if (text && text.length > 0) {
+        filterParam.addFilter(this.paramFilter, text, this.operator);
+      }
     }
     this.fetchByParamsItems.emit(filterParam);
   }

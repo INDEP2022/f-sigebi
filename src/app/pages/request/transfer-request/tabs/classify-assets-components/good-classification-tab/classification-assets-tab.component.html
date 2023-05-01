@@ -8,11 +8,11 @@
   </div>
   <div class="row">
     <div class="d-flex">
-      <div class="form-material col-md-5 mr-auto p-2">
-        <!--<search-bar [params]="params"></search-bar> -->
-      </div>
-      <div class="p-2">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <!-- <div class="form-material col-md-5 mr-auto p-2"> -->
+      <!--<search-bar [params]="params"></search-bar> -->
+      <!-- </div> -->
+      <div class="mr-auto p-2">
+        <app-columns-select [(settings)]="settingsGood"></app-columns-select>
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@
           <ng2-smart-table
             (userRowSelect)="selectGood($event)"
             [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings"
+            [settings]="settingsGood"
             [source]="paragraphs">
           </ng2-smart-table>
         </div>
@@ -46,7 +46,10 @@
       </tab>
 
       <tab heading="Atributos del Bien">
-        <div>
+        <div
+          *ngIf="
+            goodSelect.length === 1 && isGoodSelected === true && !formLoading
+          ">
           <app-detail-assets-tab-component
             [typeDoc]="typeDoc"
             [requestObject]="requestObject"
@@ -58,9 +61,10 @@
         </div>
       </tab>
 
-      <tab heading="Aclaración">
+      <tab heading="Aclaraciones">
         <app-clarification-list-tab
-          [good]="goodObject"></app-clarification-list-tab>
+          [good]="goodObject"
+          [request]="request"></app-clarification-list-tab>
       </tab>
     </tabset>
   </div>

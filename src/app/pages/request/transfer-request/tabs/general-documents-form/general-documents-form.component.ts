@@ -220,6 +220,8 @@ export class GeneralDocumentsFormComponent
   resetForm() {
     this.searchForm.reset();
     this.documentsGenData = [];
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    this.search();
   }
 
   search() {
@@ -264,7 +266,6 @@ export class GeneralDocumentsFormComponent
       },
       error: error => {
         this.loading = false;
-        console.log(error);
       },
     });
   }
@@ -339,7 +340,6 @@ export class GeneralDocumentsFormComponent
 
   associateRequestAndExpedient(expedient: any) {
     var request = { id: this.requestId, recordId: expedient.recordId };
-    this.updateStateRequestTab();
     if (this.requestId) {
       this.alertMessage(request);
     }
@@ -397,8 +397,9 @@ export class GeneralDocumentsFormComponent
     Swal.fire({
       title: 'Asociar Solicitud',
       text:
-        'Esta seguro de querer asociar la solicitud actual con el expediente Nº ' +
-        request.recordId,
+        '¿Está seguro de querer asociar la solicitud actual con el expediente Nº ' +
+        request.recordId +
+        '?',
       icon: 'info',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -406,6 +407,12 @@ export class GeneralDocumentsFormComponent
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
+        this.onLoadToast(
+          'success',
+          'Expediente relacionado a la solicitud correctamente',
+          ''
+        );
+        this.updateStateRequestTab();
         this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             if (resp.stateCode != null) {
@@ -426,6 +433,11 @@ export class GeneralDocumentsFormComponent
                 confirmButtonColor: '#9D2449',
               }).then(result => {
                 if (result.isConfirmed) {
+                  this.onLoadToast(
+                    'success',
+                    'Expediente asociado a la solicitud correctamente',
+                    ''
+                  );
                   this.updateStateRequestTab();
                 }
               });

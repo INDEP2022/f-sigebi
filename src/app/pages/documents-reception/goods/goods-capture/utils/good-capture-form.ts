@@ -37,7 +37,7 @@ export class GOOD_CAPTURE_FORM {
   ]);
   valRef = new FormControl(null, [
     Validators.min(1),
-    // Validators.max(999999999999),
+    Validators.max(999999999999),
     Validators.pattern(DOUBLE_PATTERN),
   ]);
   identifica = new FormControl(null, [Validators.required]);

@@ -99,6 +99,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
+    console.log('idReportAclara', this.idReportAclara);
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -123,7 +124,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.signParams();
 
     if (this.idReportAclara != null) {
-      let linkDoc2: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=OficioAclaracionTransferente.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
+      let linkDoc2: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
       this.src = linkDoc2;
       console.log('ID del reporte Oficio_Aclaracion', this.idReportAclara);
       console.log('url del reporte', linkDoc2);
@@ -433,10 +434,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   firm() {
-    const id = this.idDoc; //ID solicitud
-
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
+      const id = this.idDoc; //ID solicitud
       const nameTypeReport = 'DictamenProcendecia';
       const formData: Object = {
         id: this.idDoc,
@@ -457,7 +457,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             } else {
               this.alert(
                 'info',
-                'Error al generar firma electrónic',
+                'Error al generar firma electrónica',
                 error.error + '. Verificar datos del firmante'
               );
               this.updateStatusSigned();
@@ -467,16 +467,17 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     }
     //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
     if (this.idTypeDoc == 111) {
+      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'OficioImprocedencia';
       const formData: Object = {
-        id: this.idDoc,
+        id: requestInfo.id,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
 
       this.gelectronicFirmService
-        .firmDocument(id, nameTypeReport, formData)
+        .firmDocument(requestInfo.id, nameTypeReport, formData)
         .subscribe({
           next: data => (console.log('correcto', data), this.handleSuccess()),
           error: error => {

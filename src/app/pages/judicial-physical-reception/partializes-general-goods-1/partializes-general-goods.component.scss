@@ -26,6 +26,12 @@
   color: #28a745 !important;
 }
 
+:host ::ng-deep ng2-smart-table tr:last-child td:last-child.ng2-smart-actions {
+  > * {
+    display: none;
+  }
+}
+
 :host ::ng-deep ng2-smart-table tr.not-available td {
   color: #dc3545 !important;
 }

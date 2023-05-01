@@ -43,7 +43,10 @@ export class MaxLengthDirective {
   }
 
   validateNumbers(target: HTMLInputElement, value: string, $event: InputEvent) {
-    target.max = `${this.maxLenght}`;
+    ($event.target as HTMLInputElement).setAttribute(
+      'max',
+      `${this.maxLenght}`
+    );
     const intPart = `${value}`.split('.')[0];
     if (!intPart.length) {
       return;

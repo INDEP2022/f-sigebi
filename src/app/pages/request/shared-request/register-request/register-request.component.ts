@@ -110,7 +110,7 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
   turnRequest() {
     this.alertQuestion(
       'question',
-      `¿Desea turnar la solicitud con Folio ${this.requestId}`,
+      `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
       '',
       'Turnar'
     ).then(question => {

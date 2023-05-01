@@ -10,6 +10,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FileUploadModule } from 'src/app/utils/file-upload/file-upload.module';
+import { SelectUnitModalComponent } from '../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/select-unit-modal/select-unit-modal.component';
 import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt-form.component';
 import { AssociateFileButtonComponent } from './associate-file/associate-file-button/associate-file-button.component';
 import { AssociateFileComponent } from './associate-file/associate-file.component';
@@ -21,6 +22,8 @@ import { ConfirmProgrammingComponent } from './confirm-programming/confirm-progr
 import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
+import { ReadInfoDomicileComponent } from './detail-assets-tab-component/read-info-domicile/read-info-domicile.component';
+import { ReadInfoGoodComponent } from './detail-assets-tab-component/read-info-good/read-info-good.component';
 import { DictumInformationComponent } from './dictum-information/dictum-information.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
@@ -180,6 +183,9 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ShowDocumentsGoodComponent,
     DocExpedientTabComponent,
     ViewDocumentsComponent,
+    ReadInfoGoodComponent,
+    SelectUnitModalComponent,
+    ReadInfoDomicileComponent,
   ],
   imports: [
     CommonModule,

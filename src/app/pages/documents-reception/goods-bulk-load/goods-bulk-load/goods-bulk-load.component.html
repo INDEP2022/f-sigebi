@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      <ng-container *ngIf="tipoCarga == 'pgr'; else otroTitulo">
+      <ng-container *ngIf="tipoCarga == FGR_OPCION; else otroTitulo">
         Proceso de Carga Masiva de Bienes FGR
       </ng-container>
       <ng-template #otroTitulo>
@@ -11,7 +11,18 @@
   </div>
 
   <div body class="init-page">
-    <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
+    <div class="row mt-3 mb-5" *ngIf="optionInvalid">
+      <div class="col-md-12">
+        <div class="col-md-12 alert alert-warning">
+          La opción {{ tipoCarga }} no esta disponible...
+        </div>
+      </div>
+    </div>
+    <form
+      [formGroup]="assetsForm"
+      (submit)="save()"
+      class="form-material"
+      *ngIf="!optionInvalid">
       <!-- <div class="row pb-0 mb-0">
         <div class="col-md-12 d-flex">
           <label class="mr-5">Destino: </label>
@@ -35,7 +46,7 @@
               <div class="card">
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-md-12" *ngIf="tipoCarga == 'pgr'">
+                    <div class="col-md-12" *ngIf="tipoCarga == FGR_OPCION">
                       <div class="card p-2">
                         <ul class="list-group list-group-flush">
                           <li class="list-group-item">
@@ -80,7 +91,7 @@
                     </div>
                     <div
                       class="col-md-6"
-                      *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'">
+                      *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'">
                       <div class="row">
                         <form-check label="Son automoviles" for="cars">
                           <input
@@ -144,14 +155,16 @@
           </div>
         </div>
         <div class="col-md-12">
-          <div class="row">
+          <div class="row" *ngIf="!optionInvalid">
             <div class="col-12 text-center">
               <button
-                *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'"
+                *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'"
                 class="m-4 btn btn-success btn-sm ml-2"
                 type="button"
                 [disabled]="
-                  procesandoUpload || procesandoPreload || tipoCarga == 'pgr'
+                  procesandoUpload ||
+                  procesandoPreload ||
+                  tipoCarga == FGR_OPCION
                 "
                 (click)="file.click()">
                 Abrir archivo Excel / CSV
@@ -187,7 +200,8 @@
               </button>
               <button
                 *ngIf="
-                  tipoCarga == 'pgr' && !DeclarationsUploadValidationMassive
+                  tipoCarga == FGR_OPCION &&
+                  !DeclarationsUploadValidationMassive
                 "
                 [disabled]="
                   procesandoUpload || procesandoPreload || cargandoPgr
@@ -204,7 +218,7 @@
     </form>
 
     <hr class="row mt-3" />
-    <div class="row mt-3 mb-5" *ngIf="cargandoPgr && tipoCarga == 'pgr'">
+    <div class="row mt-3 mb-5" *ngIf="cargandoPgr && tipoCarga == FGR_OPCION">
       <div class="col-md-12">
         <div class="col-md-12 alert alert-warning">
           Cargando la información de la pantalla, Espere un momento...
@@ -248,7 +262,7 @@
                   [attr.aria-valuenow]="
                     ((DeclarationsValidationMassive.common_general.count + 1) /
                       DeclarationsValidationMassive.common_general.total) *
-                      100 | number: '1.2-2'
+                      100 | number : '1.2-2'
                   "
                   aria-valuemin="0"
                   aria-valuemax="100">
@@ -258,13 +272,13 @@
                       (((DeclarationsValidationMassive.common_general.count +
                         1) /
                         DeclarationsValidationMassive.common_general.total) *
-                        100 | number: '1.2-2') + '%'
+                        100 | number : '1.2-2') + '%'
                     ">
                     {{
                       ((DeclarationsValidationMassive.common_general.count +
                         1) /
                         DeclarationsValidationMassive.common_general.total) *
-                        100 | number: '1.2-2'
+                        100 | number : '1.2-2'
                     }}%
                   </div>
                 </div>
@@ -310,7 +324,7 @@
                   {{
                     (((DeclarationsValidationMassive.common_general.count + 1) /
                       DeclarationsValidationMassive.common_general.total) *
-                      100 | number: '1.2-2') + '%'
+                      100 | number : '1.2-2') + '%'
                   }}
                 </div>
               </li>
@@ -411,7 +425,7 @@
                       1) /
                       DeclarationsUploadValidationMassive.common_general
                         .total) *
-                      100 | number: '1.2-2'
+                      100 | number : '1.2-2'
                   "
                   aria-valuemin="0"
                   aria-valuemax="100">
@@ -423,7 +437,7 @@
                         1) /
                         DeclarationsUploadValidationMassive.common_general
                           .total) *
-                        100 | number: '1.2-2') + '%'
+                        100 | number : '1.2-2') + '%'
                     ">
                     {{
                       ((DeclarationsUploadValidationMassive.common_general
@@ -431,7 +445,7 @@
                         1) /
                         DeclarationsUploadValidationMassive.common_general
                           .total) *
-                        100 | number: '1.2-2'
+                        100 | number : '1.2-2'
                     }}%
                   </div>
                 </div>
@@ -459,7 +473,7 @@
                 <div
                   class="col-md-6 fin-proceso"
                   *ngIf="
-                    tipoCarga == 'pgr' &&
+                    tipoCarga == FGR_OPCION &&
                     ((DeclarationsUploadValidationMassive &&
                       !procesandoUpload &&
                       endProcess) ||
@@ -477,7 +491,7 @@
             <div
               class="row"
               *ngIf="
-                tipoCarga == 'pgr' &&
+                tipoCarga == FGR_OPCION &&
                 ((DeclarationsUploadValidationMassive &&
                   !procesandoUpload &&
                   endProcess) ||
@@ -539,7 +553,7 @@
                       1) /
                       DeclarationsUploadValidationMassive.common_general
                         .total) *
-                      100 | number: '1.2-2') + '%'
+                      100 | number : '1.2-2') + '%'
                   }}
                 </div>
               </li>
@@ -595,7 +609,7 @@
                 <div
                   class="col-md-6 fin-proceso"
                   *ngIf="
-                    tipoCarga == 'pgr' &&
+                    tipoCarga == FGR_OPCION &&
                     ((DeclarationsUploadValidationMassive &&
                       !procesandoUpload &&
                       endProcess) ||
@@ -640,13 +654,13 @@
     <hr *ngIf="tableSource.length > 0" class="row" />
     <h4 *ngIf="tableSource.length > 0">
       <ng-container
-        *ngIf="tipoCarga != 'pgr' && tipoCarga != 'sat'; else otroData">
+        *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'; else otroData">
         Registros del Excel/CSV seleccionado
       </ng-container>
 
       <ng-template #otroData>
         <h2>Listado de Registros</h2>
-        <ng-container *ngIf="tipoCarga == 'pgr'">
+        <ng-container *ngIf="tipoCarga == FGR_OPCION">
           <div
             class="badge badge-pill {{
               WHEEL_COLOR_DATA_COLUMN

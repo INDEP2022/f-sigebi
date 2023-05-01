@@ -56,7 +56,11 @@
           <form-field
             [control]="newDocForm.get('docTit')"
             label="T&iacute;tulo del Documento">
-            <input type="text" class="form-control" formControlName="docTit" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="docTit"
+              maxlength="70" />
           </form-field>
         </div>
       </div>
@@ -80,7 +84,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="contributor" />
+              formControlName="contributor"
+              maxlength="70" />
           </form-field>
         </div>
       </div>
@@ -95,7 +100,11 @@
           <form-field
             [control]="newDocForm.get('noOfi')"
             label="No&#46; Oficio">
-            <input type="text" class="form-control" formControlName="noOfi" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noOfi"
+              maxlength="60" />
           </form-field>
         </div>
       </div>
@@ -114,7 +123,11 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field [control]="newDocForm.get('sender')" label="Remitente">
-            <input type="text" class="form-control" formControlName="sender" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sender"
+              maxlength="70" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -124,7 +137,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="senderCharge" />
+              formControlName="senderCharge"
+              maxlength="60" />
           </form-field>
         </div>
       </div>
@@ -136,14 +150,18 @@
             <input
               type="text"
               class="form-control"
-              formControlName="responsible" />
+              formControlName="responsible"
+              maxlength="60" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="newDocForm.get('observations')"
             label="Comentarios">
-            <textarea class="form-control" formControlName="observations">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              maxlength="70">
             </textarea>
           </form-field>
         </div>

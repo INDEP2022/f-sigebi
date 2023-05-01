@@ -333,7 +333,7 @@ export class DestructionAuthorizationComponent
     this.alertQuestion(
       'question',
       'Precaución',
-      'Se abrirá la pantalla de escaneo para el folio de escaneo de la solicitud abierta. ¿Deseas continuar?'
+      'Se abrirá la pantalla de escaneo para el folio de escaneo de la solicitud abierta. ¿Desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         this.alert('success', 'Listo', 'Se redirigió');

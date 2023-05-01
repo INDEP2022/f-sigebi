@@ -41,9 +41,19 @@ export class GoodFeaturesComponent
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges) {
-    this.goodForm.reset();
-    this.checkRequiredFields();
-    this.goodForm.patchValue(this.good);
+    if (changes['loading']) {
+    } else {
+      this.goodForm.reset();
+      const f = this.goodForm.getRawValue();
+      const keys = Object.keys(f);
+      keys.forEach(key => {
+        this.goodForm.get(key).reset();
+        this.goodForm.get(key).clearValidators();
+        this.goodForm.get(key).updateValueAndValidity();
+      });
+      this.checkRequiredFields();
+      this.goodForm.patchValue(this.good);
+    }
   }
 
   checkRequiredFields() {

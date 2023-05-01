@@ -13,6 +13,15 @@ import { ViewCell } from 'ng2-smart-table';
 import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
+import { addDays, format } from 'date-fns';
+import { BehaviorSubject, from, map, takeUntil } from 'rxjs';
+import { DATE_FORMAT } from 'src/app/common/constants/data-formats/date.format';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { EventEmitterService } from './eventEmitter.service';
 
 /** ROUTING MODULE */
@@ -34,6 +43,32 @@ export class CustomRender implements ViewCell {
     this.eventEmitterService.onFirstComponentButtonClick(this.rowData);
   }
 }
+
+/** CHECK COMPONENT */
+@Component({
+  selector: 'my-check',
+  template: `
+    <input type="checkbox" name="check" [checked]="this.isChecked" />
+  `,
+})
+export class CheckboxComponent implements OnInit {
+  @Input() value: any; // This hold the cell value
+  @Input() rowData: any;
+  isChecked: boolean;
+  constructor(private eventEmitterService: EventEmitterService) {}
+  ngOnInit(): void {
+    if (this.value) {
+      this.isChecked = true;
+    }
+  }
+  @HostListener('change', ['$event']) changeListener(event: any) {
+    // console.log('CELL clicked', this.rowData);
+    this.eventEmitterService.onFirstComponentCheckClick({
+      event,
+      row: this.rowData,
+    });
+  }
+}
 @Component({
   selector: 'app-issue-agreements',
   templateUrl: './issue-agreements.component.html',
@@ -43,7 +78,7 @@ export class IssueAgreementsComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
-  noBien: string = '';
+  noBien: any;
   mostrarHistoricalSituationGoods: boolean = false;
   tableSettings = {
     actions: {
@@ -53,67 +88,82 @@ export class IssueAgreementsComponent
       delete: false,
     },
     hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
+    mode: 'external', // ventana externa prueba
 
     columns: {
-      noBien: {
+      goodId: {
         title: 'No. Bien',
+        sort: false,
       }, //*
-      descripcion: {
+      description: {
         title: 'Descripción',
+        sort: false,
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
+        sort: false,
       },
-      estatus: {
+      status: {
         title: 'Estatus',
         type: 'custom',
         renderComponent: CustomRender,
+        sort: false,
       },
-      fechaRecepcion: {
+      physicalReceptionDate: {
         title: 'Fecha de Recepción',
+        valuePrepareFunction: (cell: any, row: any) => {
+          return format(new Date(row.physicalReceptionDate), DATE_FORMAT);
+        },
+        sort: false,
       },
-      fechaAcuerdoInicial: {
+      initialAgreementDate: {
         title: 'Fecha de Acuerdo Inicial',
+        valuePrepareFunction: (cell: any, row: any) => {
+          return row.expediente?.initialAgreementDate;
+        },
+        sort: false,
       },
       diasEmitirResolucion: {
         title: 'Días para Emitir Resolución',
+        valuePrepareFunction: (cell: any, row: any) => {
+          return format(
+            addDays(new Date(row.physicalReceptionDate), 90),
+            DATE_FORMAT
+          );
+        },
+        sort: false,
       },
-      fechaAudiencia: {
+      audienceRevRecDate: {
         title: 'Fecha de Audiencia',
+        sort: false,
       },
-      observacionesAcuerdoInicial: {
+      revRecObservations: {
         title: 'Observaciones Acuerdo Inicial',
+        sort: false,
       },
-      aceptaSuspencion: {
+      acceptSuspension: {
         title: 'Acepta Suspención',
+        sort: false,
+        type: 'custom',
+        renderComponent: CheckboxComponent,
       }, //*
     },
   };
   // Data table
-  dataTable = [
-    {
-      noBien: 'No. Bien',
-      descripcion: 'Descripción',
-      cantidad: 'Cantidad',
-      estatus: 'Estatus',
-      fechaRecepcion: 'Fecha de Recepción',
-      fechaAcuerdoInicial: 'Fecha de Acuerdo Inicial',
-      diasEmitirResolucion: 'Días para Emitir Resolución',
-      fechaAudiencia: 'Fecha de Audiencia',
-      observacionesAcuerdoInicial: 'Observaciones Acuerdo Inicial',
-      aceptaSuspencion: 'Acepta Suspención',
-    },
-  ];
-
+  dataTable: any[] = [];
+  params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: Example[] = [];
-
+  totalItems = 0;
   public form: FormGroup;
   public formDepositario: FormGroup;
 
   constructor(
-    private fb?: FormBuilder,
-    private eventEmitterService?: EventEmitterService
+    private fb: FormBuilder,
+    private eventEmitterService: EventEmitterService,
+    private goodService: GoodService,
+    private statusGoodService: StatusGoodService,
+    private historicGoodService: HistoryGoodService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -127,13 +177,86 @@ export class IssueAgreementsComponent
           }
         );
     }
+    if (this.eventEmitterService.subsCheck == undefined) {
+      this.eventEmitterService.subsCheck =
+        this.eventEmitterService.invokeSecondComponentFunction.subscribe({
+          next: ({ event, row }: any) => {
+            if (
+              event.target.checked &&
+              row.statusResourceReview == 'DICTAMINADO RECURSO DE REVISION'
+            ) {
+              let document: IHistoryGood = {
+                changeDate: new Date(),
+                propertyNum: row.goodId,
+                reasonForChange: 'Automatico',
+                statusChangeProgram: 'FACTJUREMISIONACU',
+                status: row.status,
+                userChange: this.authService.decodeToken().sub,
+                extDomProcess: '',
+                registryNum: '',
+              };
+              this.historicGoodService.create(document).subscribe({
+                next: () => {
+                  this.alert(
+                    'success',
+                    'Registrado Correctamente.',
+                    'El registro fue exitoso.'
+                  );
+                },
+              });
+            }
+          },
+        });
+    }
     this.prepareForm();
+    this.getData();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
     this.loading = true;
+  }
+
+  private getData() {
+    let data: any[] = [];
+    this.loading = true;
+    let params = `limit=${this.params.value.limit}&page=${this.params.value.page}`;
+    this.goodService.getAllFilter(params).subscribe({
+      next: val => {
+        this.totalItems = val.count;
+        from(val.data)
+          .pipe(
+            map(value => {
+              if (value.status) {
+                this.statusGoodService.getById(value.status).subscribe({
+                  next: val => {
+                    value.status = val['description'];
+                  },
+                });
+              }
+              return value;
+            })
+          )
+          .subscribe({
+            next: (value: any) => {
+              value.acceptSuspension = false;
+              data.push(value);
+              if (data.length == val.data.length) {
+                setTimeout(() => {
+                  console.log(data);
+                  this.dataTable = [...data];
+                  this.loading = false;
+                }, 500);
+              }
+            },
+          });
+      },
+      complete: () => {},
+    });
   }
 
   public open(data: any) {
     if (data) {
-      this.noBien = data.noBien;
+      this.noBien = { noBien: data.goodId, descripcion: data.description };
       this.mostrarHistoricalSituationGoods = true;
     }
   }

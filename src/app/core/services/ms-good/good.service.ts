@@ -15,7 +15,14 @@ import {
   IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
-import { GoodGetData, IGood, IGoodSami } from '../../models/ms-good/good';
+
+import {
+  GoodGetData,
+  IGood,
+  IGoodSami,
+  IVban,
+} from '../../models/ms-good/good';
+
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -46,6 +53,9 @@ export class GoodService extends HttpService {
       GoodEndpoints.GoodGetSiab,
       params
     );
+  }
+  getVBan(array: IVban) {
+    return this.post<IResponse>(GoodEndpoints.Vban, array);
   }
 
   getActAccount(model: IGoodStatusProcess) {
@@ -213,6 +223,7 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.StatusAndDesc}/${idGood}`;
     return this.get<any>(route);
   }
+
   getBySafe(
     id: number | string,
     params?: ListParams

@@ -28,7 +28,7 @@ getGoodAppointmentDepositaryByNoGood(
   }*/
 
   getGoodAppointmentDepositaryByNoGood(
-    params?: ListParams
+    params?: ListParams | string
   ): Observable<IListResponse<IAppointmentDepositary>> {
     return this.get<IListResponse<IAppointmentDepositary>>(
       DepositaryEndPoints.DepositaryAppointment,

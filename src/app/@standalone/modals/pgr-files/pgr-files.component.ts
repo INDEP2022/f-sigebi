@@ -132,6 +132,9 @@ export class PgrFilesComponent extends BasePage implements OnInit {
   getAllDocuments(params: FilterParams) {
     return this.fileBrowserService.getPgrFiles(params.getParams()).pipe(
       catchError(error => {
+        if (error.status < 500) {
+          this.onLoadToast('info', 'Aviso', 'No hay documentos');
+        }
         return throwError(() => error);
       }),
       tap(response => {

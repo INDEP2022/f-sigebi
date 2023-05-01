@@ -86,29 +86,15 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="inappropriatenessForm.get('managedTo')"
+              [control]="inappropriatenessForm.get('addresseeName')"
               label="Destinatario">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="managedTo" />
+                formControlName="addresseeName" />
             </form-field>
           </div>
-          <div class="col-md-6">
-            <form-field
-              [control]="inappropriatenessForm.get('positionSender')"
-              label="Cargo Remitente">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="50"
-                formControlName="positionSender" />
-            </form-field>
-          </div>
-        </div>
-
-        <div class="row pt-3">
           <div class="col-md-6">
             <form-field
               [control]="inappropriatenessForm.get('positionAddressee')"
@@ -118,6 +104,19 @@
                 class="form-control"
                 maxlength="50"
                 formControlName="positionAddressee" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('clarification')"
+              label="Aclaraci&oacute;n">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="clarification"></textarea>
             </form-field>
           </div>
           <div class="col-md-6">
@@ -136,24 +135,25 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field
-              [control]="inappropriatenessForm.get('sender')"
+              [control]="inappropriatenessForm.get('senderName')"
               label="Nombre Remitente">
               <input
                 type="text"
                 class="form-control"
                 maxlength="50"
-                formControlName="sender" />
+                formControlName="senderName" />
             </form-field>
           </div>
 
           <div class="col-md-6">
             <form-field
-              [control]="inappropriatenessForm.get('clarification')"
-              label="Aclaraci&oacute;n">
-              <textarea
+              [control]="inappropriatenessForm.get('positionSender')"
+              label="Cargo Remitente">
+              <input
+                type="text"
                 class="form-control"
-                maxlength="100"
-                formControlName="clarification"></textarea>
+                maxlength="50"
+                formControlName="positionSender" />
             </form-field>
           </div>
         </div>
@@ -178,7 +178,7 @@
               label="P&aacute;rrafo Inicial">
               <textarea
                 class="form-control"
-                maxlength="100"
+                maxlength="500"
                 formControlName="paragraphInitial"></textarea>
             </form-field>
           </div>
@@ -188,7 +188,7 @@
               label="P&aacute;rrafo Final">
               <textarea
                 class="form-control"
-                maxlength="100"
+                maxlength="500"
                 formControlName="paragraphFinal"></textarea>
             </form-field>
           </div>
@@ -210,13 +210,13 @@
         <div class="row pt-3">
           <div class="col-md-4">
             <form-field
-              [control]="inappropriatenessForm.get('areaUserCapture')"
+              [control]="inappropriatenessForm.get('userAreaCaptures')"
               label="&Aacute;rea del Usuario Captura">
               <input
                 type="text"
                 class="form-control"
                 maxlength="60"
-                formControlName="areaUserCapture" />
+                formControlName="userAreaCaptures" />
             </form-field>
           </div>
 
@@ -234,13 +234,13 @@
 
           <div class="col-md-4">
             <form-field
-              [control]="inappropriatenessForm.get('mailNotification')"
+              [control]="inappropriatenessForm.get('webMail')"
               label="Correo Notificaci&oacute;n SAT">
               <input
                 type="text"
                 class="form-control"
                 maxlength="30"
-                formControlName="mailNotification" />
+                formControlName="webMail" />
             </form-field>
           </div>
         </div>

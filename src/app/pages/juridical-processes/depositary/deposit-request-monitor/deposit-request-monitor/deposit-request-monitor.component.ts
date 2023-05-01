@@ -22,7 +22,8 @@ export class DepositRequestMonitorComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   request: any[] = [];
-  MILISENGUNDOS_POR_DIA: number = 1000 * 60 * 60 * 24;
+  today: any = new Date();
+  MILLISECONDS_PER_DAY: number = 1000 * 60 * 60 * 24;
   //Data Table
 
   // data: Example[] = [
@@ -91,15 +92,9 @@ export class DepositRequestMonitorComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.Dias(new Date(), -3));
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getRequestDepositaryInformation());
-  }
-
-  Dias(fecha: any, dias: any) {
-    fecha.setDate(fecha.getDate() - dias);
-    return fecha.getDay();
   }
 
   getRequestDepositaryInformation() {
@@ -110,9 +105,9 @@ export class DepositRequestMonitorComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           data.data.forEach((element: any) => {
-            element['daysDelay'] = this.Dias(
-              new Date(element.requestDate),
-              new Date().getDay()
+            var daysDelay: any = new Date(element.requestDate);
+            element['daysDelay'] = Math.ceil(
+              (this.today - daysDelay) / this.MILLISECONDS_PER_DAY
             );
             element['requestDate'] = this.datePipe.transform(
               element.requestDate,
