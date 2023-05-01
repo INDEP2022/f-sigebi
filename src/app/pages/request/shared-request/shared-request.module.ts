@@ -24,6 +24,7 @@ import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
 import { ReadInfoDomicileComponent } from './detail-assets-tab-component/read-info-domicile/read-info-domicile.component';
 import { ReadInfoGoodComponent } from './detail-assets-tab-component/read-info-good/read-info-good.component';
+import { ReadInfoVehicleComponent } from './detail-assets-tab-component/read-info-vehicle/read-info-vehicle.component';
 import { DictumInformationComponent } from './dictum-information/dictum-information.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
@@ -186,6 +187,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ReadInfoGoodComponent,
     SelectUnitModalComponent,
     ReadInfoDomicileComponent,
+    ReadInfoVehicleComponent,
   ],
   imports: [
     CommonModule,
