@@ -194,27 +194,10 @@ export class DetailAssetsTabComponentComponent
     }
     if (this.process == 'classify-assets') {
       if (this.domicilieObject) {
-        // console.log(this.domicilieObject.warehouseAlias);
-        //console.log({ alias: this.domicilieObject.warehouseAlias });
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
-
-      /*  this.domicileForm
-        .get('warehouseAlias')
-        .setValue(this.domicilieObject.warehouseAlias);
-      this.getStateOfRepublic(new ListParams(), this.domicilieObject.statusKey); */
       this.goodData = this.detailAssets.value;
-      /*if (this.goodData.fractionId) {
-        this.relevantTypeService
-          .getById(this.goodData.fractionId?.relevantTypeId)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: data => {
-              this.relevantTypeName = data.description;
-            },
-            error: error => {},
-          });
-      }*/
+
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         console.log(this.detailAssets.value);

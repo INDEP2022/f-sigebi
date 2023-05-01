@@ -266,7 +266,201 @@
   </div>
 </div>
 
-<div *ngIf="typeOfRequest == 'PGR_SAE' || typeOfRequest == 'FGR_SAE'">
+<!-- TIPO TRANSFERENTE PGR_SAE PARA VERIFICAR CUMPLIMIENTO -->
+<div
+  *ngIf="
+    (typeOfRequest == 'PGR_SAE' || typeOfRequest == 'FGR_SAE') &&
+    process == 'verify-compliance'
+  ">
+  <div>
+    <form [formGroup]="goodForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <label>No&#46; Gesti&oacute;n</label>
+          <span class="fs-4">{{ goodData?.id }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Cantidad de la Transferente</label>
+          <span class="fs-4">{{ goodData?.quantity | number }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Tipo Bien</label>
+          <span class="fs-4">{{ relevantTypeName }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Destino transferente&#58;</label>
+          <span class="fs-4">{{ goodData?.destinyName }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Tipo de Bien</label>
+          <span class="fs-4">{{ goodType }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Destino INDEP</label>
+          <div style="width: 20rem">
+            <ngx-select
+              [form]="goodForm"
+              control="saeDestiny"
+              (fetchItems)="getDestinoSAE($event)"
+              [data]="destiniSaeSelected"
+              bindLabel="description"
+              label=""
+              value="keyId"
+              [readonly]="false"></ngx-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Descripci&oacute;n de Bien Transferente</label>
+          <span class="fs-4">{{ goodData?.goodDescription }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Color </label>
+          <span class="fs-4">{{ goodData?.color }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Descripci&oacute;n Bien INDEP</label>
+          <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Capacidad (lts)</label>
+          <span class="fs-4">{{ goodData?.capacity }}</span>
+        </div>
+      </div>
+
+      <div class="row-pt-4">
+        <div class="col-md-6">
+          <label>No&#46; Expediente de la Transferente</label>
+          <span class="fs-4">{{ goodData?.fileNumber }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Volumen (m3)</label>
+          <span class="fs-4">{{ goodData?.volume }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Estado F&iacute;sico</label>
+          <div style="width: 20rem">
+            <ngx-select
+              style="width: 20rem"
+              [form]="goodForm"
+              control="physicalStatus"
+              (fetchItems)="getPhysicalState($event)"
+              [data]="selectPhysicalState"
+              label=""
+              [searchable]="false"
+              bindLabel="description"
+              value="keyId"
+              [readonly]="false"></ngx-select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label>Tipo de Uso </label>
+          <span class="fs-4">{{ goodData?.useType }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Unidad de Medida Ligie</label>
+          <span class="fs-4">{{ goodData?.ligieUnit }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Procedencia</label>
+          <span class="fs-4">{{ goodData?.origin }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Unidad de Medida Transferente</label>
+          <span class="fs-4">{{ goodData?.unitMeasure }}</span>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Aval&uacute;o</label>
+            <span class="fs-4">{{ avaluo }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label>Estado de Conservaci&oacute;n</label>
+            <div style="width: 20rem">
+              <ngx-select
+                style="width: 20rem"
+                [form]="goodForm"
+                control="stateConservation"
+                (fetchItems)="getConcervationState($event)"
+                [data]="selectConcervationState"
+                label=""
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"
+                [readonly]="false"></ngx-select>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label>No. Norma</label>
+          <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <div style="width: 20rem">
+            <label>Unidad medida INDEP</label>
+            <ngx-select
+              [form]="goodForm"
+              control="saeMeasureUnit"
+              (fetchItems)="getUnitMeasureSae($event)"
+              [data]="selectMeasureUnitSae"
+              label=""
+              [searchable]="false"
+              bindLabel="measureTlUnit"
+              value="uomCode"
+              [readonly]="false"></ngx-select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label>Menaje</label>
+          <span class="fs-4"></span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Duplicidad</label>
+          <span class="fs-4">{{ duplicity }}</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- FIN VERIFICAR CUMPLIMIENTO -->
+
+<!-- TIPO TRANSFERENTE PGR SAE PARA CLASIFICACION DEL BIEN  -->
+<div
+  *ngIf="
+    (typeOfRequest == 'PGR_SAE' || typeOfRequest == 'FGR_SAE') &&
+    process == 'classify-assets'
+  ">
   <!--  ESTE DIV ES PARA CLASIFICACIÓN PGR (según se ha detectado)  -->
   <div class="row">
     <div class="d-flex justify-content-end">
@@ -508,3 +702,4 @@
     </form>
   </div>
 </div>
+<!-- FIN CLASIFICACION DEL BIEN PGR -->

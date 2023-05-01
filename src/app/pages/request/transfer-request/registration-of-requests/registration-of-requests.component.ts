@@ -638,7 +638,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegúrese de tener guardado los formularios antes de turnar la solicitud',
+      'Asegúrese de haber guardado la información antes de turnar la solicitud',
       'Confirmación',
       undefined,
       this.typeDocument
