@@ -640,6 +640,8 @@ export class NotificationAssetsTabComponent
   }
 
   FinishClariImpro() {
+    let aclaration: boolean = false;
+    let impro: boolean = false;
     if (this.rowSelected == false) {
       this.message('Error', 'Seleccione notificación a Finalizar');
     } else {
@@ -652,18 +654,113 @@ export class NotificationAssetsTabComponent
         return;
       }
 
-      if (
-        this.selectedRow.chatClarification.clarificationStatus ==
-        'IMPROCEDENCIA'
+      if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
+        if (this.selectedRow.answered == 'EN ACLARACION') {
+          aclaration = true;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Acción Invalida',
+            'El estatus de la aclaración debe ser igual a EN ACLARACIÓN'
+          );
+        }
+      } else if (
+        this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
       ) {
-        this.onLoadToast(
-          'warning',
-          'Atención:',
-          'Aún se desconoce la funcionalidad de este botón'
-        );
-      } else {
-        this.getRequest();
+        impro = true;
       }
+
+      console.log('improc', impro);
+      if (aclaration || impro) {
+        if (aclaration) {
+          this.alertQuestion(
+            'question',
+            'Finalizar',
+            '¿Desea Finalizar la Aclaración?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.endAclaration();
+            }
+          });
+        } else if (impro) {
+          this.alertQuestion(
+            'question',
+            'Finalizar',
+            '¿Desea Finalizar la Improcedencia?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.endImpinappropriateness();
+            }
+          });
+        }
+      }
+    }
+  }
+
+  endAclaration() {
+    if (
+      this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION' &&
+      this.selectedRow.answered == 'EN ACLARACION'
+    ) {
+      console.log('sdf', this.selectedRow);
+      const data: ClarificationGoodRejectNotification = {
+        rejectNotificationId: this.selectedRow.rejectNotificationId,
+        answered: 'ACLARADA',
+        rejectionDate: '2023-04-30',
+      };
+      this.rejectedGoodService
+        .update(this.selectedRow.rejectNotificationId, data)
+        .subscribe({
+          next: async data => {
+            console.log('Actualizado', data);
+            this.getClarificationsByGood(this.selectedRow.goodId);
+            const update = await this.validateStatusAclaration();
+            if (update) {
+              this.updateStatusGoodTmp(this.selectedRow.goodId);
+            }
+          },
+          error: error => {
+            console.log(error);
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al actualizar el status de la notifiación'
+            );
+          },
+        });
+    }
+  }
+
+  endImpinappropriateness() {
+    if (
+      this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
+      this.selectedRow.answered == 'EN ACLARACION'
+    ) {
+      console.log('sdf', this.selectedRow);
+      const data: ClarificationGoodRejectNotification = {
+        rejectNotificationId: this.selectedRow.rejectNotificationId,
+        answered: 'ACLARADA',
+        rejectionDate: '2023-04-30',
+      };
+      this.rejectedGoodService
+        .update(this.selectedRow.rejectNotificationId, data)
+        .subscribe({
+          next: async data => {
+            console.log('Actualizado', data);
+            this.getClarificationsByGood(this.selectedRow.goodId);
+            this.validateStatusAclaration();
+
+            this.updateStatusGoodTmp(this.selectedRow.goodId);
+          },
+          error: error => {
+            console.log(error);
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al actualizar el status de la notifiación'
+            );
+          },
+        });
     }
   }
 
@@ -1448,7 +1545,11 @@ export class NotificationAssetsTabComponent
         next: data => {
           this.notificationsList.load(data.data);
           const filterAclaration = data.data.filter((item: any) => {
-            if (item.answered == 'ACLARADA' || item.answered == 'RECHAZADA') {
+            if (
+              item.answered == 'ACLARADA' ||
+              item.answered == 'RECHAZADA' ||
+              item.answered == 'EN ACLARACION'
+            ) {
               return item;
             }
           });
