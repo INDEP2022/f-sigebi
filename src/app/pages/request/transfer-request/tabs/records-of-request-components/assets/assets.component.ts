@@ -297,7 +297,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.listgoodObjects = event.selected;
     if (this.listgoodObjects.length <= 1) {
       if (event.isSelected === true) {
+        this.setQuantyy();
         this.goodObject = this.listgoodObjects[0];
+
         this.createNewAsset = true;
         this.btnCreate = 'Cerrar Bien';
         const load = true;
@@ -317,6 +319,17 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     }
   }
 
+  setQuantyy() {
+    const typeOfTransferent = this.requestObject.typeOfTransfer;
+    if (typeOfTransferent === 'PGR_SAE' || typeOfTransferent === 'FGR_SAE') {
+      if (
+        !this.listgoodObjects[0].quantity ||
+        this.listgoodObjects[0].quantity <= this.listgoodObjects[0].quantityy
+      ) {
+        this.listgoodObjects[0].quantity = this.listgoodObjects[0].quantityy;
+      }
+    }
+  }
   loadLoading(loading: boolean) {
     this.requestHelperService.loadingForm(loading);
   }
