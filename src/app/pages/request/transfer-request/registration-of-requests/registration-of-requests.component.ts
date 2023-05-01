@@ -315,7 +315,6 @@ export class RegistrationOfRequestsComponent
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
-        console.log({ data });
         if (!data?.typeOfTransfer) {
           data.typeOfTransfer = 'MANUAL';
         }
@@ -1121,18 +1120,15 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'validar-destino-bien') {
           const clarification = await this.haveNotificacions();
-          console.log(clarification);
-          console.log(this.requestData.typeOfTransfer);
-          //debugger;
           if (clarification === true) {
+            await this.notifyClarificationsMethod();
+          } else {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
             body.rulingCreatorName = user.username;
             await this.updateRequest(body);
-            await this.notifyClarificationsMethod();
-          } else {
-            this.destinyDocumental();
+            await this.destinyDocumental();
           }
         }
         if (typeCommit === 'proceso-aprovacion') {

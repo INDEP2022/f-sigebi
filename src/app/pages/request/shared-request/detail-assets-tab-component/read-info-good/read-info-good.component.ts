@@ -179,6 +179,9 @@ export class ReadInfoGoodComponent
   }
 
   getGoodType() {
+    if (!this.goodData.goodTypeId) {
+      return;
+    }
     const id = this.goodData.goodTypeId;
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {

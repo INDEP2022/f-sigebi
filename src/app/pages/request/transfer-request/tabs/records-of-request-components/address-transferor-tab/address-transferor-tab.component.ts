@@ -253,7 +253,6 @@ export class AddressTransferorTabComponent
     }
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        console.log('s', resp);
         this.selectMunicipe = new DefaultSelect(resp.data, resp.count);
 
         /*    if (this.municipalityId !== 0 && this.municipalityId !== null) {
@@ -308,7 +307,6 @@ export class AddressTransferorTabComponent
   getCountMunicipaly(params: ListParams) {
     this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: resp => {
-        console.log('s', resp);
         this.countMunicipaly = resp.count;
       },
       error: err => {
@@ -548,7 +546,6 @@ export class AddressTransferorTabComponent
     this.getCountMunicipaly(new ListParams());
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(
       (data: any) => {
-        console.log('aqui entra para setear municipio');
         this.keyStateOfRepublic = Number(data);
         this.selectMunicipe = new DefaultSelect([]);
         this.domicileForm.get('municipalityKey').setValue(null);
