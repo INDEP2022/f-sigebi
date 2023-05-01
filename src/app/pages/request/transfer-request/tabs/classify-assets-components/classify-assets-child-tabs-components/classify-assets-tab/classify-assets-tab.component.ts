@@ -140,6 +140,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(13),
         ],
       ],
+      quantityy: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       duplicity: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
