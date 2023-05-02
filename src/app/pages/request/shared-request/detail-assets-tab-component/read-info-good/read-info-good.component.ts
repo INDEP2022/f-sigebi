@@ -39,11 +39,19 @@ export class ReadInfoGoodComponent
   selectPhysicalState = new DefaultSelect();
   selectConcervationState = new DefaultSelect();
   selectMeasureUnitSae = new DefaultSelect();
+
   duplicity: string = '';
   avaluo: string = '';
   cumplyNorma: string = '';
   destinyLigie: string = '';
   goodType: string = '';
+  transferentDestiny: string = '';
+  physicalStatus: string = '';
+  conservationState: string = '';
+  destinySAE: string = '';
+  unitMeasureLigie: string = '';
+  fraction: string = '';
+  unitMeasureTransferent: string = '';
   showButton = true;
 
   private readonly fractionsService = inject(FractionService);
@@ -58,28 +66,57 @@ export class ReadInfoGoodComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log('proceso', this.process);
+    console.log('proceso', this.process);
     //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
-    // console.log('bien', this.goodData);
+    console.log('bien', this.goodData);
     if (this.goodData) {
       this.getTypeGood();
-      this.getDestinoSAE(new ListParams());
-      this.getPhysicalState(new ListParams());
-      this.getConcervationState(new ListParams());
+
+      this.getPhysicalState(new ListParams(), this.goodData.physicalStatus);
+      //this.getConcervationState(new ListParams());
       this.getDuplicity();
       this.getAvaluo();
       this.achiveNorma();
-      this.getDestiny();
+      this.getDestiny(this.goodData.destiny); // no se usa en verificar cumpli
       this.getGoodType();
 
-      if (this.typeOfRequest == 'PGR_SAE') {
+      if (
+        // this.typeOfRequest == 'PGR_SAE' &&
+        this.process == 'classify-assets'
+      ) {
         this.getUnitMeasureSae(new ListParams());
+        this.getConcervationState(new ListParams());
+        //destino sae
+        this.getDestinoSAE(new ListParams(), this.goodData.saeDestiny);
+      }
+
+      if (
+        // this.typeOfRequest == 'PGR_SAE' &&
+        this.process == 'verify-compliance'
+      ) {
+        this.getDestinyTransferent(this.goodData.transferentDestiny);
+        this.getConcervationState(
+          new ListParams(),
+          this.goodData.stateConservation
+        );
+        this.getDestinoSAE(new ListParams());
+      }
+
+      if (
+        // this.typeOfRequest == 'MANUAL' &&
+        this.process == 'verify-compliance'
+      ) {
+        this.getConcervationState(
+          new ListParams(),
+          this.goodData.stateConservation
+        );
       }
     }
   }
 
   ngOnInit(): void {
+    console.log('proceso>>>>>', this.process, this.typeOfRequest);
     this.goodForm = this.fb.group({
       saeDestiny: [null],
       physicalStatus: [null],
@@ -87,12 +124,14 @@ export class ReadInfoGoodComponent
       saeMeasureUnit: [null],
     });
   }
-  //.pipe(takeUntil(this.$unSubscribe))
+
   getTypeGood() {
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
       next: resp => {
+        console.log(resp);
+        this.fraction = resp.data[0].code;
         this.relevantTypeName = resp.data[0].description;
       },
       error: error => {
@@ -101,11 +140,21 @@ export class ReadInfoGoodComponent
     });
   }
 
-  getDestinoSAE(params: ListParams) {
+  getDestinoSAE(params: ListParams, id?: string | number) {
     params['filter.name'] = '$eq:Destino';
+    if (id) {
+      params['filter.keyId'] = `$eq:${id}`;
+    }
     this.genericService.getAll(params).subscribe({
       next: resp => {
-        this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
+        if (
+          this.typeOfRequest == 'PGR_SAE' &&
+          this.process == 'verify-compliance'
+        ) {
+          this.destinySAE = resp.data[0].description;
+        } else {
+          this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
+        }
       },
       error: error => {
         console.log('destinoSae ', error);
@@ -116,7 +165,7 @@ export class ReadInfoGoodComponent
   getPhysicalState(params: ListParams, id?: string) {
     params['filter.name'] = '$eq:Estado Fisico';
     if (id) {
-      params['filter.id'] = `$eq:${id}`;
+      params['filter.keyId'] = `$eq:${id}`;
     }
     this.genericService
       .getAll(params)
@@ -124,38 +173,78 @@ export class ReadInfoGoodComponent
       .subscribe({
         next: (data: any) => {
           console.log('estado fisico', data.data);
-          this.selectPhysicalState = new DefaultSelect(data.data, data.count);
-          this.goodForm.controls['physicalStatus'].setValue(
-            this.goodData.physicalStatus
-          );
+          if (
+            (this.typeOfRequest == 'MANUAL' ||
+              this.typeOfRequest == 'PGR_SAE') &&
+            this.process == 'verify-compliance'
+          ) {
+            this.physicalStatus = data.data[0].description;
+          } else {
+            this.selectPhysicalState = new DefaultSelect(data.data, data.count);
+            this.goodForm.controls['physicalStatus'].setValue(
+              this.goodData.physicalStatus
+            );
+          }
         },
       });
   }
 
-  getConcervationState(params: ListParams) {
+  getConcervationState(params: ListParams, id?: string | number) {
     params['filter.name'] = '$eq:Estado Conservacion';
+    if (id) {
+      params['filter.keyId'] = `$eq:${id}`;
+    }
     this.genericService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          this.selectConcervationState = new DefaultSelect(
-            data.data,
-            data.count
-          );
+          if (
+            (this.typeOfRequest == 'MANUAL' ||
+              this.typeOfRequest == 'PGR_SAE') &&
+            this.process == 'verify-compliance'
+          ) {
+            this.conservationState = data.data[0].description;
+          } else {
+            this.selectConcervationState = new DefaultSelect(
+              data.data,
+              data.count
+            );
 
-          this.goodForm.controls['stateConservation'].setValue(
-            this.goodData.stateConservation
-          );
+            this.goodForm.controls['stateConservation'].setValue(
+              this.goodData.stateConservation
+            );
+          }
         },
       });
   }
 
-  getDestiny() {
+  //trae datos para verificar cumplimiento
+
+  getDestinyTransferent(id: string | number) {
+    let params = new ListParams();
+    params['filter.name'] = '$eq:Destino';
+    params['filter.keyId'] = `$eq:${id}`;
+    this.genericService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: ({ data }: any) => {
+          if (
+            this.typeOfRequest == 'PGR_SAE' &&
+            this.process == 'verify-compliance'
+          ) {
+            this.transferentDestiny = data[0].description;
+          }
+        },
+      });
+  }
+
+  getDestiny(id: string | number) {
     if (this.goodData.destiny) {
       let params = new ListParams();
       params['filter.name'] = '$eq:Destino';
-      params['filter.keyId'] = `$eq:${this.goodData.destiny}`;
+      params['filter.keyId'] = `$eq:${id}`;
       this.genericService
         .getAll(params)
         .pipe(takeUntil(this.$unSubscribe))
@@ -167,13 +256,25 @@ export class ReadInfoGoodComponent
     }
   }
 
-  getUnitMeasureSae(params: ListParams) {
+  getUnitMeasureSae(params: ListParams, id?: string | number) {
     this.goodsQueryService
       .getCatMeasureUnitView(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          this.selectMeasureUnitSae = new DefaultSelect(resp.data, resp.count);
+          console.log(resp);
+          if (
+            (this.typeOfRequest == 'MANUAL' ||
+              this.typeOfRequest == 'PGR_SAE') &&
+            this.process == 'verify-compliance'
+          ) {
+            this.unitMeasureLigie = resp.data[0].municipality;
+          } else {
+            this.selectMeasureUnitSae = new DefaultSelect(
+              resp.data,
+              resp.count
+            );
+          }
         },
       });
   }
@@ -185,6 +286,7 @@ export class ReadInfoGoodComponent
     const id = this.goodData.goodTypeId;
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.goodType = data.description;
       },
     });

@@ -10,6 +10,8 @@ export class SeePhotoComponent implements OnInit {
   @Input() value: string | number;
   @Input() rowData: any = '';
   @Output() btnclick: EventEmitter<any> = new EventEmitter();
+  task: any;
+  statusTask: any;
 
   constructor() {}
 

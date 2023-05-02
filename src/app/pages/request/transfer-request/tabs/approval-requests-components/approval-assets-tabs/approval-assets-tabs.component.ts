@@ -233,11 +233,7 @@ export class ApprovalAssetsTabsComponent
       ], //numero motor
       tuition: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       serie: [
         null,
@@ -462,7 +458,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Estado Fisico`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data[0].description);
+            resolve(data.data.length > 0 ? data.data[0].description : '');
           },
         });
       } else {
@@ -479,7 +475,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Estado Conservacion`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data[0].description);
+            resolve(data.data.length > 0 ? data.data[0].description : '');
           },
         });
       } else {
@@ -496,7 +492,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Destino`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data[0].description);
+            resolve(data.data.length > 0 ? data.data[0].description : '');
           },
         });
       } else {

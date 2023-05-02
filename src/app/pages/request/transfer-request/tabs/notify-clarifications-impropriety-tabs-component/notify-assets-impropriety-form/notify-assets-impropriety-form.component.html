@@ -263,6 +263,14 @@
           (confirm)="confirm()">
         </confirm-button>
       </div>
+      <!--Botón de prueba-->
+      <div class="m-3" *ngIf="!withDocumentation">
+        <confirm-button
+          [text]="'Generar'"
+          [loading]="loading"
+          (confirm)="dictamenSeq()">
+        </confirm-button>
+      </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar
