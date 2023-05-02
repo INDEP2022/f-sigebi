@@ -4,6 +4,7 @@
   window["env"].EXTERNAL_INTEGRATION_URL = "${ENV_EXTERNAL_INTEGRATION_URL}";
   //TODO: AGREGAR ENV
   window["env"].API_BACKEND_URL2 = "${ENV_API_BACKEND_URL}";
+  window["env"].API_CONTENT = "${ENV_API_CONTENT}";
   window["env"].URL_PREFIX = "${ENV_URL_PREFIX}";
 
   window["env"].API_REPORTS_BASE = "${ENV_API_REPORTS_BASE}";

@@ -7,6 +7,7 @@ export const environment = {
   production: true,
   API_URL: window.env.API_BACKEND_URL,
   API_URL2: window.env.API_BACKEND_URL2,
+  API_CONTENT: window.env.API_CONTENT,
   URL_PREFIX: window.env.URL_PREFIX,
 
   API_REPORTS_BASE: window.env.API_REPORTS_BASE,
