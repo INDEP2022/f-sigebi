@@ -3,14 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
+import { IDictamenSeq } from 'src/app/core/models/ms-goods-query/opinionDelRegSeq-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -33,7 +34,7 @@ export class NotifyAssetsImproprietyFormComponent
   title: string = 'Aclaración';
   clarificationForm: FormGroup = new FormGroup({});
   //procedenceForm: ModelForm<any>;
-  inappropriatenessForm: ModelForm<any>;
+  inappropriatenessForm: FormGroup = new FormGroup({});
   clarification: any;
 
   //en el caso de que una aclaracion llege sin documentacion
@@ -45,16 +46,17 @@ export class NotifyAssetsImproprietyFormComponent
   //Parámetro con el id del tipo de la aclaración
   idAclara: any;
   idRequest: any;
-
   goodValue: any;
   rejectedID: any;
-
   dataClarifications2: ClarificationGoodRejectNotification;
-
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
   infoRequest: IRequest;
-
   params = new BehaviorSubject<ListParams>(new ListParams());
+
+  //Parámetros para generar el folio en el reporte
+  today: Date;
+  folio: IDictamenSeq;
+  folioReporte: string;
 
   constructor(
     private fb: FormBuilder,
@@ -64,22 +66,26 @@ export class NotifyAssetsImproprietyFormComponent
     private chatService: ChatClarificationsService,
     private rejectedGoodService: RejectedGoodService,
     private authService: AuthService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private chatClarificationsService: ChatClarificationsService,
+    private applicationGoodsQueryService: ApplicationGoodsQueryService
   ) {
     super();
+    this.today = new Date();
   }
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    //this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
 
     this.initForm1();
-
+    this.initForm2();
     const applicationId = this.idRequest;
     const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
 
     //Verifica si la solicitud tiene guardado un formulario largo en documents
-    this.documentService
+    /*this.documentService
       .getAllfilter(applicationId, rejectNoticeId, this.params.getValue())
       .subscribe({
         next: res => {
@@ -89,7 +95,7 @@ export class NotifyAssetsImproprietyFormComponent
         error: error => {
           this.initForm3(); //Se agregó para parchar un error deúltimo momento
         },
-      });
+      }); */
   }
 
   initForm1(): void {
@@ -140,7 +146,7 @@ export class NotifyAssetsImproprietyFormComponent
   initForm2(dataDocumentsImpro?: IClarificationDocumentsImpro): void {
     this.inappropriatenessForm = this.fb.group({
       addresseeName: [
-        dataDocumentsImpro.managedTo,
+        dataDocumentsImpro?.managedTo,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -148,7 +154,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       positionSender: [
-        dataDocumentsImpro.positionSender,
+        dataDocumentsImpro?.positionSender,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -156,7 +162,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       positionAddressee: [
-        dataDocumentsImpro.positionAddressee,
+        dataDocumentsImpro?.positionAddressee,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -165,7 +171,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
       //Aclaración
       jobClarificationKey: [
-        dataDocumentsImpro.invoiceLearned,
+        dataDocumentsImpro?.invoiceLearned,
         [
           Validators.pattern(KEYGENERATION_PATTERN),
           Validators.required,
@@ -173,7 +179,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       senderName: [
-        dataDocumentsImpro.sender,
+        dataDocumentsImpro?.sender,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -181,7 +187,7 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       clarification: [
-        dataDocumentsImpro.clarification,
+        dataDocumentsImpro?.clarification,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -190,7 +196,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       consistentIn: [
-        dataDocumentsImpro.consistentIn,
+        dataDocumentsImpro?.consistentIn,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -198,32 +204,32 @@ export class NotifyAssetsImproprietyFormComponent
         ],
       ],
       paragraphInitial: [
-        dataDocumentsImpro.paragraphInitial,
+        dataDocumentsImpro?.paragraphInitial,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       paragraphFinal: [
-        dataDocumentsImpro.paragraphFinal,
+        dataDocumentsImpro?.paragraphFinal,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       //Aclaración
       observations: [
-        this.dataClarifications2.observations,
+        this.dataClarifications2?.observations,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
       userAreaCaptures: [
-        dataDocumentsImpro.modificationUser,
+        dataDocumentsImpro?.modificationUser,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
       transmitterId: [
-        dataDocumentsImpro.transmitterId,
+        dataDocumentsImpro?.transmitterId,
         [Validators.maxLength(15)],
       ], // request emisora?
       webMail: [
-        dataDocumentsImpro.mailNotification,
+        dataDocumentsImpro?.mailNotification,
         [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
-      senderCharge: [this.infoRequest.holderCharge, []],
+      senderCharge: [this.infoRequest?.holderCharge, []],
       applicationId: [this.idRequest],
       documentTypeId: [111],
       clarificationStatus: 'EN_ACLARACION',
@@ -324,6 +330,13 @@ export class NotifyAssetsImproprietyFormComponent
 
   confirm() {
     if (!this.withDocumentation) {
+      //Verificar si ya el formulario tiene información
+
+      //Verificar si ya existe un folio armado
+
+      //Métodos para crear clave armado
+      this.dictamenSeq();
+
       //Formulario largo
 
       //Recupera información del usuario logeando para luego registrarlo como firmante
@@ -346,7 +359,7 @@ export class NotifyAssetsImproprietyFormComponent
           this.inappropriatenessForm.controls['paragraphFinal'].value,
         consistentIn: this.inappropriatenessForm.controls['consistentIn'].value,
         managedTo: this.inappropriatenessForm.controls['addresseeName'].value,
-        invoiceLearned: 'folio docto sin armar ',
+        invoiceLearned: this.folioReporte,
         //invoiceNumber: 1,
         positionAddressee:
           this.inappropriatenessForm.controls['positionAddressee'].value,
@@ -411,7 +424,7 @@ export class NotifyAssetsImproprietyFormComponent
       },
       error: error => {
         //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
-        this.chatClarificationCreate1();
+        //this.chatClarificationCreate1();
       },
     });
   }
@@ -444,9 +457,11 @@ export class NotifyAssetsImproprietyFormComponent
             ''
           );
           this.loading = false;
-          this.updateNotify(data.clarifiNewsRejectId);
-          this.modalRef.content.callback(true, data.goodId);
-          this.modalRef.hide();
+          this.updateNotify(
+            data.clarifiNewsRejectId,
+            chatClarifications.id,
+            modelChatClarifications.goodId
+          );
         },
         error: error => {
           this.loading = false;
@@ -457,7 +472,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   //Método para crear un nuevo chatClarifications PARA FORMULARIO CORTO
-  chatClarificationCreate1() {
+  /*chatClarificationCreate1() {
     //Creando objeto nuevo para ChatClarifications
     const modelChatClarifications: IChatClarifications = {
       //id: , //ID primaria
@@ -491,7 +506,7 @@ export class NotifyAssetsImproprietyFormComponent
         this.modalRef.hide();
       },
     });
-  }
+  } */
 
   //------------------------------------ PARA FORMULARIO LARGO -----------------------------------
   chatClarifications2() {
@@ -508,7 +523,7 @@ export class NotifyAssetsImproprietyFormComponent
       },
       error: error => {
         //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
-        this.chatClarificationCreate2();
+        //this.chatClarificationCreate2();
       },
     });
   }
@@ -530,6 +545,7 @@ export class NotifyAssetsImproprietyFormComponent
       clarificationStatus: 'A_ACLARACION',
     };
 
+    console.log('data', chatClarifications);
     //Servicio para actualizar registro de ChatClariffications
     this.chatService
       .update(chatClarifications.id, modelChatClarifications)
@@ -537,19 +553,25 @@ export class NotifyAssetsImproprietyFormComponent
         next: async data => {
           this.onLoadToast('success', 'Actualizado', '');
           this.loading = false;
-          this.updateNotify(data.clarifiNewsRejectId);
-          this.modalRef.content.callback(true, data.goodId);
-          this.modalRef.hide();
+          this.updateNotify(
+            data.clarifiNewsRejectId,
+            chatClarifications.id,
+            modelChatClarifications.goodId
+          );
         },
         error: error => {
           this.loading = false;
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
-          this.modalRef.hide();
         },
       });
   }
 
-  updateNotify(id?: number, observations?: string) {
+  updateNotify(
+    id?: number,
+    chatClarId?: number,
+    goodId?: number,
+    observations?: string
+  ) {
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
@@ -558,7 +580,33 @@ export class NotifyAssetsImproprietyFormComponent
     };
 
     this.rejectedGoodService.update(id, data).subscribe({
-      next: () => {},
+      next: () => {
+        this.alertQuestion(
+          'question',
+          'Confirmar',
+          '¿Deseas guardar la información de la notificación?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            const updateInfo: IChatClarifications = {
+              requestId: this.idRequest,
+              goodId: goodId,
+              clarificationStatus: 'EN_ACLARACION',
+            };
+            console.log('info', data);
+            this.chatClarificationsService
+              .update(chatClarId, updateInfo)
+              .subscribe({
+                next: data => {
+                  this.modalRef.content.callback(true, data.goodId);
+                  this.modalRef.hide();
+                },
+                error: error => {
+                  console.log(error);
+                },
+              });
+          }
+        });
+      },
     });
   }
 
@@ -615,6 +663,44 @@ export class NotifyAssetsImproprietyFormComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(PrintReportModalComponent, config);
+  }
+
+  //Método para crear número secuencial según la no delegación del user logeado
+  dictamenSeq() {
+    let token = this.authService.decodeToken();
+
+    const pNumber = Number(token.department);
+
+    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+      next: response => {
+        // this.noFolio = response.data;
+        this.folio = response;
+        this.generateClave(this.folio.dictamenDelregSeq);
+        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
+      },
+      error: error => {
+        console.log('Error al generar secuencia de dictamen', error.error);
+      },
+    });
+  }
+
+  //Método para construir folio con información del usuario
+  generateClave(noDictamen?: string) {
+    //Trae información del usuario logeado
+    let token = this.authService.decodeToken();
+    console.log(token);
+
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
+      console.log('Folio Armado final', this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
+      console.log('Folio Armado final', this.folioReporte);
+    }
   }
 
   close() {
