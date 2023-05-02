@@ -7,10 +7,12 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
+import { IDictamenSeq } from 'src/app/core/models/ms-goods-query/opinionDelRegSeq-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -45,16 +47,16 @@ export class NotifyAssetsImproprietyFormComponent
   //Parámetro con el id del tipo de la aclaración
   idAclara: any;
   idRequest: any;
-
   goodValue: any;
   rejectedID: any;
-
   dataClarifications2: ClarificationGoodRejectNotification;
-
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
   infoRequest: IRequest;
-
   params = new BehaviorSubject<ListParams>(new ListParams());
+
+  //Parámetros para generar el folio en el reporte
+  today: Date;
+  folio: IDictamenSeq;
 
   constructor(
     private fb: FormBuilder,
@@ -64,13 +66,16 @@ export class NotifyAssetsImproprietyFormComponent
     private chatService: ChatClarificationsService,
     private rejectedGoodService: RejectedGoodService,
     private authService: AuthService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private applicationGoodsQueryService: ApplicationGoodsQueryService
   ) {
     super();
+    this.today = new Date();
   }
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    //this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
 
     this.initForm1();
@@ -615,6 +620,80 @@ export class NotifyAssetsImproprietyFormComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(PrintReportModalComponent, config);
+  }
+
+  //Método para crear número secuencial según la no delegación del user logeado
+  dictamenSeq() {
+    let token = this.authService.decodeToken();
+
+    const pNumber = Number(token.department);
+
+    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+      next: response => {
+        // this.noFolio = response.data;
+        this.folio = response;
+        this.generateClave(this.folio.dictamenDelregSeq);
+        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
+      },
+      error: error => {
+        console.log('Error al generar secuencia de dictamen', error.error);
+      },
+    });
+  }
+
+  siglasNivel1: string = '';
+  siglasNivel2: string = '';
+  siglasNivel3: string = '';
+
+  //Método para construir folio con información del usuario
+  generateClave(noDictamen?: string) {
+    //Trae información del usuario logeado
+    let token = this.authService.decodeToken();
+    console.log(token);
+
+    //Separa en palabras los 3 niveles del cargo del usuario logeado
+    const cargoNivel1 = token.cargonivel1.replace(/,/g, '');
+    const cargoNivel2 = token.cargonivel2.replace(/,/g, '');
+    const cargoNivel3 = token.cargonivel3.replace(/,/g, '');
+
+    //Cuenta cuantas palabras tiene el CargoNivel1 y obtiene su longitud
+    const palabrasNivel1 = cargoNivel1.split(' ');
+    const noPalabrasNivel1 = palabrasNivel1.length;
+
+    //Ciclo para extraer la primera letra del cargoNivel1 y concatenarlo en una nueva palabra
+    for (let i = 0; i < noPalabrasNivel1; i++) {
+      this.siglasNivel1 = `${this.siglasNivel1}${palabrasNivel1[i].charAt(0)}`;
+    }
+
+    //Cuenta cuantas palabras tiene el CargoNivel2 y obtiene su longitud
+    const palabrasNivel2 = cargoNivel2.split(' ');
+    const noPalabrasNivel2 = palabrasNivel2.length;
+
+    //Ciclo para extraer la primera letra del cargoNivel2 y concatenarlo en una nueva palabra
+    for (let i = 0; i < noPalabrasNivel2; i++) {
+      this.siglasNivel2 = `${this.siglasNivel2}${palabrasNivel2[i].charAt(0)}`;
+    }
+
+    //Cuenta cuantas palabras tiene el CargoNivel3 y obtiene su longitud
+    const palabrasNivel3 = cargoNivel3.split(' ');
+    const noPalabrasNivel3 = palabrasNivel3.length;
+
+    //Ciclo para extraer la primera letra del cargoNivel3 y concatenarlo en una nueva palabra
+    for (let i = 0; i < noPalabrasNivel3; i++) {
+      this.siglasNivel3 = `${this.siglasNivel3}${palabrasNivel3[i].charAt(0)}`;
+    }
+
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      const folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
+      console.log('Folio Armado final', folioReporte);
+    } else {
+      const folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
+      console.log('Folio Armado final', folioReporte);
+    }
   }
 
   close() {
