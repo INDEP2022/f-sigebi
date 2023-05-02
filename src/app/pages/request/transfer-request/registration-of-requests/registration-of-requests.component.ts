@@ -100,7 +100,7 @@ export class RegistrationOfRequestsComponent
   question: boolean = false;
   verifyResp: string = null;
   task: any = null;
-
+  statusTask: any = '';
   pgr: boolean = false;
 
   constructor(
@@ -134,6 +134,10 @@ export class RegistrationOfRequestsComponent
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
     console.log('task', this.task);
+
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');

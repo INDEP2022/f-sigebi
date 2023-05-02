@@ -92,6 +92,8 @@ export class VerifyComplianceTabComponent
   clarificationData: any = [];
   clarifyRowSelected: any = [];
   confirmation: boolean = false;
+  task: any;
+  statusTask: any = '';
 
   constructor(
     private fb: FormBuilder,
@@ -113,6 +115,11 @@ export class VerifyComplianceTabComponent
   }
 
   ngOnInit(): void {
+    // DISABLED BUTTON - FINALIZED //
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     /* aclaraciones */
     this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
 

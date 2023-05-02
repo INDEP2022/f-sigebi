@@ -7,7 +7,10 @@
         </h5>
       </div>
       <div class="p-2 bd-highlight buttons">
-        <button class="btn btn-primary btn-sm active" (click)="confirm()">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="statusTask == 'FINALIZADA'"
+          (click)="confirm()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
@@ -83,17 +86,20 @@
     <div class="col-md-12">
       <div class="float-right" style="padding-bottom: 3px">
         <button
+          [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-primary btn-sm active"
           (click)="newClarification()">
           Nuevo
         </button>
         <button
+          [disabled]="statusTask == 'FINALIZADA'"
           style="margin-left: 2px"
           class="btn btn-secondary btn-sm active"
           (click)="editForm()">
           Editar
         </button>
         <button
+          [disabled]="statusTask == 'FINALIZADA'"
           style="margin-left: 2px"
           class="btn btn-danger btn-sm active"
           (click)="deleteClarification()">
