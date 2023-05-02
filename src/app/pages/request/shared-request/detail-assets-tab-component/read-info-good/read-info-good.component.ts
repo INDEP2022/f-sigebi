@@ -82,7 +82,7 @@ export class ReadInfoGoodComponent
       this.getGoodType();
 
       if (
-        this.typeOfRequest == 'PGR_SAE' &&
+        // this.typeOfRequest == 'PGR_SAE' &&
         this.process == 'classify-assets'
       ) {
         this.getUnitMeasureSae(new ListParams());
@@ -92,7 +92,7 @@ export class ReadInfoGoodComponent
       }
 
       if (
-        this.typeOfRequest == 'PGR_SAE' &&
+        // this.typeOfRequest == 'PGR_SAE' &&
         this.process == 'verify-compliance'
       ) {
         this.getDestinyTransferent(this.goodData.transferentDestiny);
@@ -104,7 +104,7 @@ export class ReadInfoGoodComponent
       }
 
       if (
-        this.typeOfRequest == 'MANUAL' &&
+        // this.typeOfRequest == 'MANUAL' &&
         this.process == 'verify-compliance'
       ) {
         this.getConcervationState(
@@ -262,6 +262,7 @@ export class ReadInfoGoodComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
+          console.log(resp);
           if (
             (this.typeOfRequest == 'MANUAL' ||
               this.typeOfRequest == 'PGR_SAE') &&
