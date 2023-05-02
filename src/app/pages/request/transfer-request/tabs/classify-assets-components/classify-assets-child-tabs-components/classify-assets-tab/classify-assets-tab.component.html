@@ -14,7 +14,10 @@
         </button>
       </div>
       <div class="p-2 buttons">
-        <button class="btn btn-primary btn-sm active" (click)="saveRequest()">
+        <button
+          [disabled]="statusTask == 'FINALIZADA'"
+          class="btn btn-primary btn-sm active"
+          (click)="saveRequest()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>

@@ -50,6 +50,7 @@ export class ReadInfoGoodComponent
   conservationState: string = '';
   destinySAE: string = '';
   unitMeasureLigie: string = '';
+  fraction: string = '';
   unitMeasureTransferent: string = '';
   showButton = true;
 
@@ -65,10 +66,10 @@ export class ReadInfoGoodComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log('proceso', this.process);
+    console.log('proceso', this.process);
     //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
-    // console.log('bien', this.goodData);
+    console.log('bien', this.goodData);
     if (this.goodData) {
       this.getTypeGood();
 
@@ -115,6 +116,7 @@ export class ReadInfoGoodComponent
   }
 
   ngOnInit(): void {
+    console.log('proceso>>>>>', this.process, this.typeOfRequest);
     this.goodForm = this.fb.group({
       saeDestiny: [null],
       physicalStatus: [null],
@@ -128,6 +130,8 @@ export class ReadInfoGoodComponent
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
       next: resp => {
+        console.log(resp);
+        this.fraction = resp.data[0].code;
         this.relevantTypeName = resp.data[0].description;
       },
       error: error => {
