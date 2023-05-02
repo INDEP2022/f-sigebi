@@ -478,7 +478,7 @@ export class ClarificationsComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
