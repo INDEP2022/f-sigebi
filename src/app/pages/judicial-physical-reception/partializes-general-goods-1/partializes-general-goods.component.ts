@@ -15,20 +15,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IBienesPar } from './models/bienesPar.model';
 import { PartializeGeneralGoodService } from './services/partialize-general-good.service';
 
-// export interface IPupBien {
-//   description: string;
-//   amount: string;
-//   worthappraisal: number;
-//   goodReferenceNumber: string;
-//   status: string;
-//   processExtSun: string;
-//   pval2: number;
-//   observations: string;
-//   pfactornum: number;
-//   pEviction: string;
-//   certificateNumber: number;
-//   good: IGood;
-// }
 @Component({
   selector: 'app-partializes-general-goods',
   templateUrl: './partializes-general-goods.component.html',
@@ -61,6 +47,7 @@ export class PartializesGeneralGoodsComponent
 
   ngOnInit(): void {
     this.service.initFormControl();
+    this.bienesPar = [...this.service.getSavedPartializedGoods()];
   }
 
   cleanBlock() {
@@ -350,6 +337,7 @@ export class PartializesGeneralGoodsComponent
           this.bienesPar.pop();
         }
         this.bienesPar = [...this.bienesPar];
+        this.service.savePartializeds();
       }
     });
   }
@@ -595,7 +583,9 @@ export class PartializesGeneralGoodsComponent
     // vproextdom = this.good.extDomProcess;
     try {
       vno_acta = await this.getNoActa();
-    } catch (x) {}
+    } catch (x) {
+      vno_acta = 0;
+    }
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
       this.service.good.status = status;

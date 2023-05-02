@@ -12,7 +12,7 @@
     <ng-template tabHeading>
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
-    <div *ngIf="process != 'classify-assets'">
+    <div *ngIf="process == 'registration-request'">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
@@ -121,7 +121,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('volume')"
-                label="Volumen m3">
+                label="Volumen (m3)">
                 <input
                   type="text"
                   class="form-control"
@@ -294,8 +294,10 @@
     </div>
 
     <app-read-info-good
-      *ngIf="process == 'classify-assets'"
-      [goodData]="goodData"></app-read-info-good>
+      *ngIf="process != 'registration-request'"
+      [detailAssets]="detailAssets"
+      [process]="process"
+      [typeOfRequest]="typeOfRequest"></app-read-info-good>
   </tab>
 
   <tab>
@@ -303,18 +305,16 @@
       <i class="bx bx-home"></i> Domicilio del Bien
     </ng-template>
     <form [formGroup]="domicileForm" class="form-material">
-      <div class="addressGood">
+      <div *ngIf="process == 'registration-request'" class="addressGood">
         <div class="row pt-4" *ngIf="typeDoc === 'assets'">
           <div style="text-align: center">
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
               <i class="bx bx-home"></i> Seleccionar Domicilio
             </button>
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-secondary btn-sm active"
               style="margin-left: 2px"
               (click)="openSelectMenage()">
@@ -538,6 +538,10 @@
         </div>
       </div>
     </form>
+
+    <app-read-info-domicile
+      *ngIf="process != 'registration-request'"
+      [domicilieObject]="domicilieObject"></app-read-info-domicile>
   </tab>
 
   <!-- Información del  vehiculo tab -->
@@ -549,14 +553,11 @@
       <i class="bx bxs-car"></i> Ficha t&eacute;cnica vehiculos
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
-      <div class="vehicleDateSheet">
-        <p class="msg-required" *ngIf="process != 'classify-assets'">
-          Los campos con <span>*</span> son requeridos
-        </p>
+      <div *ngIf="process == 'registration-request'" class="vehicleDateSheet">
+        <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
         <div class="row pt-5">
           <div class="col-md-4">
             <ngx-select
-              *ngIf="process != 'classify-assets'"
               [form]="detailAssets"
               control="brand"
               (fetchItems)="getBrand($event)"
@@ -566,21 +567,12 @@
               bindLabel="flexValueMeaning"
               [readonly]="isGoodTypeReadOnly"
               (change)="onValuesChange($event)"></ngx-select>
-            <ngx-select
-              *ngIf="process == 'classify-assets'"
-              [form]="detailAssets"
-              control="brand"
-              (fetchItems)="getBrand($event)"
-              [data]="selectBrand"
-              label="Marca"
-              value="flexValue"
-              [readonly]="isDisabled"
-              bindLabel="flexValueMeaning"
-              (change)="onValuesChange($event)"></ngx-select>
+            <!-- <ngx-select *ngIf="process == 'classify-assets'" [form]="detailAssets" control="brand"
+              (fetchItems)="getBrand($event)" [data]="selectBrand" label="Marca" value="flexValue"
+              [readonly]="isDisabled" bindLabel="flexValueMeaning" (change)="onValuesChange($event)"></ngx-select> -->
           </div>
           <div class="col-md-3">
             <form-field
-              *ngIf="process != 'classify-assets'"
               [control]="detailAssets.get('tuition')"
               label="Matr&iacute;cula">
               <input
@@ -590,24 +582,16 @@
                 formControlName="tuition"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              *ngIf="process == 'classify-assets'"
-              [control]="detailAssets.get('tuition')"
+            <!-- <form-field *ngIf="process == 'classify-assets'" [control]="detailAssets.get('tuition')"
               label="Matr&iacute;cula">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="40"
-                [readOnly]="true"
-                formControlName="tuition" />
-            </form-field>
+              <input type="text" class="form-control" maxlength="40" [readOnly]="true" formControlName="tuition" />
+            </form-field> -->
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
             <ngx-select
-              *ngIf="process != 'classify-assets'"
               [form]="detailAssets"
               control="subBrand"
               (fetchItems)="getSubBrand($event)"
@@ -616,46 +600,26 @@
               value="flexValueDependent"
               bindLabel="flexValueMeaningDependent"
               [readonly]="isGoodTypeReadOnly"></ngx-select>
-            <ngx-select
-              *ngIf="process == 'classify-assets'"
-              [form]="detailAssets"
-              control="subBrand"
-              (fetchItems)="getSubBrand($event)"
-              [data]="selectSubBrand"
-              label="Sub Marca"
-              value="flexValueDependent"
-              [readonly]="isDisabled"
-              bindLabel="flexValueMeaningDependent"></ngx-select>
+            <!-- <ngx-select *ngIf="process == 'classify-assets'" [form]="detailAssets" control="subBrand"
+              (fetchItems)="getSubBrand($event)" [data]="selectSubBrand" label="Sub Marca" value="flexValueDependent"
+              [readonly]="isDisabled" bindLabel="flexValueMeaningDependent"></ngx-select> -->
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('serie')"
-              label="Serie"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('serie')" label="Serie">
               <input
                 type="text"
                 class="form-control"
                 formControlName="serie"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('serie')"
-              label="Serie"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="serie"
-                [readOnly]="true" />
-            </form-field>
+            <!-- <form-field [control]="detailAssets.get('serie')" label="Serie" *ngIf="process == 'classify-assets'">
+              <input type="text" class="form-control" formControlName="serie" [readOnly]="true" />
+            </form-field> -->
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-check
-              label="Blindaje"
-              for="armor"
-              *ngIf="process != 'classify-assets'">
+            <form-check label="Blindaje" for="armor">
               <input
                 id="armor"
                 type="checkbox"
@@ -664,24 +628,13 @@
                 [disabled]="isGoodTypeReadOnly"
                 (change)="handleArmor($event)" />
             </form-check>
-            <form-check
-              label="Blindaje"
-              for="armor"
-              *ngIf="process == 'classify-assets'">
-              <input
-                id="armor"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="armor"
-                [readOnly]="true"
-                (change)="handleArmor($event)" />
-            </form-check>
+            <!-- <form-check label="Blindaje" for="armor" *ngIf="process == 'classify-assets'">
+              <input id="armor" type="checkbox" [ngModelOptions]="{ standalone: true }" [(ngModel)]="armor"
+                [readOnly]="true" (change)="handleArmor($event)" />
+            </form-check> -->
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('chassis')"
-              label="Chasis"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('chassis')" label="Chasis">
               <input
                 type="text"
                 class="form-control"
@@ -689,26 +642,15 @@
                 [readOnly]="isGoodTypeReadOnly"
                 maxlength="40" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('chassis')"
-              label="Chasis"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="chassis"
-                maxlength="40" />
-            </form-field>
+            <!-- <form-field [control]="detailAssets.get('chassis')" label="Chasis" *ngIf="process == 'classify-assets'">
+              <input type="text" class="form-control" [readOnly]="true" formControlName="chassis" maxlength="40" />
+            </form-field> -->
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('model')"
-              label="Modelo"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('model')" label="Modelo">
               <input
                 type="number"
                 class="form-control"
@@ -717,23 +659,13 @@
                 min="0"
                 oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('model')"
-              label="Modelo"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="model"
+            <!-- <form-field [control]="detailAssets.get('model')" label="Modelo" *ngIf="process == 'classify-assets'">
+              <input type="number" class="form-control" [readOnly]="true" formControlName="model"
                 oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('cabin')"
-              label="Cabina"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('cabin')" label="Cabina">
               <input
                 type="number"
                 class="form-control"
@@ -742,17 +674,10 @@
                 min="0"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('cabin')"
-              label="Cabina"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="cabin"
+            <!-- <form-field [control]="detailAssets.get('cabin')" label="Cabina" *ngIf="process == 'classify-assets'">
+              <input type="number" class="form-control" [readOnly]="true" formControlName="cabin"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
-            </form-field>
+            </form-field> -->
           </div>
         </div>
 
@@ -760,8 +685,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('doorsNumber')"
-              label="Num&#46; Puertas"
-              *ngIf="process != 'classify-assets'">
+              label="Num&#46; Puertas">
               <input
                 type="number"
                 class="form-control"
@@ -770,23 +694,16 @@
                 min="0"
                 oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('doorsNumber')"
-              label="Num&#46; Puertas"
+            <!-- <form-field [control]="detailAssets.get('doorsNumber')" label="Num&#46; Puertas"
               *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="doorsNumber"
+              <input type="number" class="form-control" [readOnly]="true" formControlName="doorsNumber"
                 oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('origin')"
-              label="Procedencia"
-              *ngIf="process != 'classify-assets'">
+              label="Procedencia">
               <input
                 type="text"
                 class="form-control"
@@ -794,25 +711,16 @@
                 maxlength="40"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('origin')"
-              label="Procedencia"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                [readOnly]="true"
-                maxlength="40"
-                formControlName="origin" />
-            </form-field>
+            <!-- <form-field [control]="detailAssets.get('origin')" label="Procedencia" *ngIf="process == 'classify-assets'">
+              <input type="text" class="form-control" [readOnly]="true" maxlength="40" formControlName="origin" />
+            </form-field> -->
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('axesNumber')"
-              label="Num&#46; Ejes"
-              *ngIf="process != 'classify-assets'">
+              label="Num&#46; Ejes">
               <input
                 type="number"
                 class="form-control"
@@ -821,23 +729,14 @@
                 min="0"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('axesNumber')"
-              label="Num&#46; Ejes"
+            <!-- <form-field [control]="detailAssets.get('axesNumber')" label="Num&#46; Ejes"
               *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                [readOnly]="true"
-                class="form-control"
-                formControlName="axesNumber"
+              <input type="number" [readOnly]="true" class="form-control" formControlName="axesNumber"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-4">
-            <form-check
-              label="Apto para Circular"
-              for="fitCircular"
-              *ngIf="process != 'classify-assets'">
+            <form-check label="Apto para Circular" for="fitCircular">
               <input
                 id="fitCircular"
                 type="checkbox"
@@ -846,18 +745,10 @@
                 (change)="handleCirculateEvent($event)"
                 [disabled]="isGoodTypeReadOnly" />
             </form-check>
-            <form-check
-              label="Apto para Circular"
-              for="fitCircular"
-              *ngIf="process == 'classify-assets'">
-              <input
-                id="fitCircular"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="circulate"
-                [disabled]="true"
-                (change)="handleCirculateEvent($event)" />
-            </form-check>
+            <!-- <form-check label="Apto para Circular" for="fitCircular" *ngIf="process == 'classify-assets'">
+              <input id="fitCircular" type="checkbox" [ngModelOptions]="{ standalone: true }" [(ngModel)]="circulate"
+                [disabled]="true" (change)="handleCirculateEvent($event)" />
+            </form-check> -->
           </div>
         </div>
 
@@ -865,8 +756,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
-              *ngIf="process != 'classify-assets'">
+              label="Num&#46; Motor">
               <input
                 type="text"
                 class="form-control"
@@ -874,23 +764,13 @@
                 maxlength="40"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+            <!-- <form-field [control]="detailAssets.get('engineNumber')" label="Num&#46; Motor"
               *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="40"
-                [readOnly]="true"
-                formControlName="engineNumber" />
-            </form-field>
+              <input type="text" class="form-control" maxlength="40" [readOnly]="true" formControlName="engineNumber" />
+            </form-field> -->
           </div>
           <div class="col-md-4">
-            <form-check
-              label="Cuenta con reporte de robos"
-              for="theftReport"
-              *ngIf="process != 'classify-assets'">
+            <form-check label="Cuenta con reporte de robos" for="theftReport">
               <input
                 id="theftReport"
                 type="checkbox"
@@ -899,22 +779,17 @@
                 (change)="handleTheftReportEvent($event)"
                 [disabled]="isGoodTypeReadOnly" />
             </form-check>
-            <form-check
-              label="Cuenta con reporte de robos"
-              for="theftReport"
-              *ngIf="process == 'classify-assets'">
-              <input
-                id="theftReport"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="theftReport"
-                [disabled]="true"
-                (change)="handleTheftReportEvent($event)" />
-            </form-check>
+            <!-- <form-check label="Cuenta con reporte de robos" for="theftReport" *ngIf="process == 'classify-assets'">
+              <input id="theftReport" type="checkbox" [ngModelOptions]="{ standalone: true }" [(ngModel)]="theftReport"
+                [disabled]="true" (change)="handleTheftReportEvent($event)" />
+            </form-check> -->
           </div>
         </div>
       </div>
     </form>
+    <app-read-info-vehicle
+      *ngIf="process != 'registration-request'"
+      [vehicleObject]="detailAssetsInfo"></app-read-info-vehicle>
   </tab>
 
   <!-- Información de Embarcación  -->

@@ -4,6 +4,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import {
   IValidations,
   TransferProceeding,
@@ -17,6 +18,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
+  }
+
+  postProceeding(data: IProccedingsDeliveryReception) {
+    return this.post<IListResponse<IValidations>>(this.endpoint, data);
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IValidations>> {

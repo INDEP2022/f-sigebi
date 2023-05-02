@@ -80,8 +80,26 @@ export class DocumentsService extends HttpService {
   }
 
   createClarDocImp(model: IClarificationDocumentsImpro) {
-    const route = `clarification-documents-impro`;
+    const route = DocumentsEndpoints.ClarificationDocumentsImpro;
     return this.post<IClarificationDocumentsImpro>(route, model);
+  }
+
+  getAllClarificationDocImpro(
+    params?: ListParams | string
+  ): Observable<IListResponse<IClarificationDocumentsImpro>> {
+    return this.get<IListResponse<IClarificationDocumentsImpro>>(
+      DocumentsEndpoints.ClarificationDocumentsImpro,
+      params
+    );
+  }
+
+  getAllfilter(
+    applicationID: string | number,
+    rejectNoticeId: string | number,
+    params?: ListParams | string
+  ): Observable<IListResponse<IClarificationDocumentsImpro>> {
+    const route = `${DocumentsEndpoints.ClarificationDocumentsImpro}?filter.applicationId=${applicationID}&filter.rejectNoticeId=${rejectNoticeId}`;
+    return this.get<IListResponse<IClarificationDocumentsImpro>>(route, params);
   }
 
   // updateClarDocImp(id: string | number, data: Object) {

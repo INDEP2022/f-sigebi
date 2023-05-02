@@ -18,7 +18,7 @@ export interface IChatClarifications {
   jobClarificationKey?: string | null;
   id?: number;
   process?: string | null;
-  goodId?: string | number;
+  goodId?: number;
   jobType?: string | null;
   clarificationOrigin?: string | null;
   senderUser?: string | null;
@@ -64,7 +64,7 @@ export interface IChatClarifications2 {
   keyClarificationPaper: string | null;
   idClarification: string | null;
   process: string | null;
-  idProperty: string | null;
+  idProperty: number;
   paperType: string | null;
   clarificationOrigin: string | null;
   senderUser: string | null;

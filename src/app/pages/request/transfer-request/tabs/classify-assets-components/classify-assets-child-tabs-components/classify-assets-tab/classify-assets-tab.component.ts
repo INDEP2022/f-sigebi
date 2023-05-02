@@ -64,6 +64,8 @@ export class ClassifyAssetsTabComponent
   noItemsFoundMessage = 'No se encontraron elementos';
   fractionCode: string = null;
   goodResDev: IPostGoodResDev = {};
+  task: any;
+  statusTask: any = '';
 
   constructor(
     private fb: FormBuilder,
@@ -79,6 +81,12 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnInit(): void {
+    this.task = JSON.parse(localStorage.getItem('Task'));
+
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     this.showHideErrorInterceptorService.showHideError(false);
     this.initForm();
     if (!this.goodObject) {
@@ -140,6 +148,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(13),
         ],
       ],
+      quantityy: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       duplicity: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
@@ -397,6 +406,7 @@ export class ClassifyAssetsTabComponent
         ],
       ],
       fractionId: [null],
+      duplicatedGood: [3434343],
     });
 
     if (this.goodObject != null) {
@@ -739,7 +749,9 @@ export class ClassifyAssetsTabComponent
       goods.fractionId = Number(goods.fractionId.id);
     }
 
-    let goodAction: any = null;
+    //se modifica el estadus del bien
+    goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
@@ -806,7 +818,7 @@ export class ClassifyAssetsTabComponent
 
             setTimeout(() => {
               this.refreshTable(false);
-            }, 5000);
+            }, 500);
             resolve(data);
           },
           error: error => {

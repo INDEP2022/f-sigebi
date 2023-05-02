@@ -76,6 +76,8 @@ export class ClassificationAssetsTabComponent
   goodSelect: any = [];
   idGood: string | number;
   formLoading: boolean = false;
+  settingsGood = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  isGoodSelected: boolean = false;
   constructor(
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
@@ -96,12 +98,7 @@ export class ClassificationAssetsTabComponent
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
-    this.settings = {
-      ...TABLE_SETTINGS,
-      actions: false,
-      selectMode: '',
-      columns: REQUEST_OF_ASSETS_COLUMNS,
-    };
+    this.settingsGood.columns = REQUEST_OF_ASSETS_COLUMNS;
     this.initForm();
     this.request = this.requestObject.getRawValue();
   }
@@ -137,7 +134,7 @@ export class ClassificationAssetsTabComponent
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: resp => {
-        console.log(resp.data);
+        //console.log(resp.data);
         var result = resp.data.map(async (item: any) => {
           item['quantity'] = Number(item.quantity);
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
@@ -208,7 +205,7 @@ export class ClassificationAssetsTabComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
@@ -288,19 +285,23 @@ export class ClassificationAssetsTabComponent
 
   selectGood(event: any) {
     this.formLoading = true;
+    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
     this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
+        //console.log("info del goodSELECTED v1", this.goodSelect[0]); //henry|
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
-      }, 1000);
-      setTimeout(() => {
+        console.log('infor del good v1', this.goodSelect[0] as IGood); //henry
+        if (this.detailArray.controls['id'].value !== null) {
+          this.isGoodSelected = true;
+        }
         this.formLoading = false;
-      }, 4000);
+      }, 1000);
     } else {
       // this.goodSelect[0].quantity = 0;
       this.detailArray.patchValue(null);

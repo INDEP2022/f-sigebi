@@ -67,10 +67,10 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoOrdenServicio: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtAsignado: [
-        '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
-      ],
+      // txtAsignado: [
+      //   '',
+      //   [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      // ],
       txtNoOrdenPago: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtAprobador: [
         '',
@@ -97,6 +97,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
+      State: ['null'],
     });
 
     this.params
@@ -119,7 +120,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
-
+    //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
+    const filterStatus = this.consultTasksForm.get('State').value;
+    if (filterStatus) {
+      isfilterUsed = true;
+      if (filterStatus === 'null') {
+        this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+      } else {
+        this.filterParams.getValue().addFilter('State', filterStatus);
+      }
+    }
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
       this.filterParams
@@ -160,16 +170,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtAsignado || this.userName) {
-      // isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'assignees',
-          this.consultTasksForm.value.txtAsignado || this.userName,
-          SearchFilter.ILIKE
-        );
-    }
+    // if (this.consultTasksForm.value.txtAsignado || this.userName) {
+    //   // isfilterUsed = true;
+    //   this.filterParams
+    //     .getValue()
+    //     .addFilter(
+    //       'assignees',
+    //       this.consultTasksForm.value.txtAsignado || this.userName,
+    //       SearchFilter.ILIKE
+    //     );
+    // }
     if (this.consultTasksForm.value.txtNoOrdenPago) {
       isfilterUsed = true;
       this.filterParams
@@ -292,7 +302,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.filterParams
         .getValue()
         .addFilter(
-          'transferenceId',
+          'request.transferenceId',
           this.consultTasksForm.value.txtNoTransferente,
           SearchFilter.ILIKE
         );
@@ -321,9 +331,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     this.tasks = [];
     this.totalItems = 0;
-    if (!isfilterUsed) {
-      this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
-    }
+    // if (!isfilterUsed) {
+    //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+    // }
     this.taskService
       .getTasksByUser(this.filterParams.getValue().getParams())
       .subscribe({
@@ -364,11 +374,13 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   openTask(selected: any): void {
+    console.log('SELEC', selected);
     let obj2Storage = {
       assignees: selected.assignees,
       displayName: this.userName,
       taskId: selected.requestId,
       id: selected.id,
+      status: selected.State,
     };
 
     localStorage.setItem(`Task`, JSON.stringify(obj2Storage));

@@ -63,7 +63,7 @@ export class RegisterDocumentReturnComponent
       title: 'Verifica los datos antes de continuar!',
       html:
         '<p>Se ha seleccionado el asunto: <span class="badge badge-info bg-info">"DEVOLUCIÓN"</span>.</p></br>' +
-        '<p>¿Deseas turnar la solicitud con Folio: <span class="badge badge-success bg-success">"12345"</span>.?</p>',
+        '<p>¿Desea turnar la solicitud con Folio: <span class="badge badge-success bg-success">"12345"</span>.?</p>',
       icon: undefined,
       showCancelButton: true,
       confirmButtonColor: '#9D2449',

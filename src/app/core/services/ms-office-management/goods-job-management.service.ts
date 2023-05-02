@@ -5,6 +5,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IGoodJobManagement,
   IGoodJobManagementByIds,
+  ImanagementOffice,
 } from '../../models/ms-officemanagement/good-job-management.model';
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,13 @@ export class GoodsJobManagementService extends HttpService {
     return this.post<IListResponse<IGoodJobManagementByIds>>(
       GoodsJobManagementEndpoints.FindByIds,
       body
+    );
+  }
+
+  // => Oficce Documents
+  getAllOfficialDocument() {
+    return this.get<IListResponse<ImanagementOffice>>(
+      GoodsJobManagementEndpoints.mJobManagement
     );
   }
 }

@@ -278,7 +278,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que deseas eliminar las imágenes seleccionadas?'
+      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
     );
 
     if (result.isConfirmed) {
@@ -290,12 +290,13 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const obs = this.filesToDelete.map(filename => this.deleteFile(filename));
     forkJoin(obs).subscribe({
       complete: () => {
+        this.files = [];
         this.onLoadToast(
           'success',
           'Se eliminaron los archivos correctamente',
           ''
         );
-        this.filesToDelete.length = 0;
+        this.filesToDelete = [];
         this.loadImages(this.folio).subscribe(() => {
           this.updateSheets();
         });

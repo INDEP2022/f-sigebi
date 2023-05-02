@@ -49,7 +49,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Advertencía',
-      '¿Deseas asignar el almacén para bienes de resguardo?'
+      '¿Desea asignar el almacén para bienes de resguardo?'
     ).then(question => {
       if (question.isConfirmed) {
         this.loading = true;

@@ -77,6 +77,8 @@ export class DocRequestTabComponent
   typesDocuments: any = [];
   idDelegation: number = 0;
   idState: string = '';
+  statusTask: any = '';
+  task: any;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -96,6 +98,11 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
+    // DISABLED BUTTON - FINALIZED //
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     this.prepareForm();
     this.getRegDelegation(new ListParams());
     this.getState(new ListParams());
@@ -240,12 +247,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {
@@ -278,12 +285,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {

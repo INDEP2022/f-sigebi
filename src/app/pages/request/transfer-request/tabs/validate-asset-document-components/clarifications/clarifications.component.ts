@@ -65,6 +65,8 @@ export class ClarificationsComponent
   articleColumns = CLARIFICATION_COLUMNS;
   haveNotification: boolean = false;
   isLoadingTable2 = false;
+  task: any;
+  statusTask: any = '';
 
   constructor(
     private modalService: BsModalService,
@@ -88,6 +90,13 @@ export class ClarificationsComponent
   }
 
   ngOnInit(): void {
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    console.log('task', this.task);
+
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -469,7 +478,7 @@ export class ClarificationsComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
@@ -495,7 +504,7 @@ export class ClarificationsComponent
 
   getClarifications() {
     this.paragraphs = [];
-    this.loading = true;
+    this.isLoadingTable2 = true;
     const params = new ListParams();
     params['filter.goodId'] = `$eq:${this.good.id}`;
 
@@ -510,11 +519,11 @@ export class ClarificationsComponent
 
         Promise.all(clarification).then(data => {
           this.paragraphs = resp.data;
-          this.loading = false;
+          this.isLoadingTable2 = false;
         });
       },
       error: error => {
-        this.loading = false;
+        this.isLoadingTable2 = false;
       },
     });
   }
