@@ -55,6 +55,7 @@ export class RequestRecordTabComponent
   transfe: string = '';
   paperDateLabel: any = '';
   rem: string = 'del Remitente';
+  maxDate = new Date();
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
