@@ -75,7 +75,6 @@ export class MaintenanceLegalRulingComponent
   }
 
   rulingsData(value: IDictation) {
-    console.log(value);
     this.getDocumentsDictumStateM(value.id, value.typeDict);
     this.getCopiesOfficialOpinion(value.id, value.typeDict);
     this.getDictationXGood1(value.id, value.typeDict);
@@ -94,7 +93,7 @@ export class MaintenanceLegalRulingComponent
     }
 
     if (typeDict) {
-      data.addFilter('typeDict', typeDict);
+      data.addFilter('typeDictum', typeDict);
     }
 
     this.loading2 = true;
@@ -104,7 +103,8 @@ export class MaintenanceLegalRulingComponent
         this.dataDocumentDictumStateM = data.data;
       },
       error: err => {
-        console.log(err);
+        this.dataDocumentDictumStateM = [];
+        this.loading2 = false;
       },
     });
   }
@@ -118,11 +118,11 @@ export class MaintenanceLegalRulingComponent
     let data = this.params.value;
 
     if (dictationNumber) {
-      data.addFilter('officialNumber', dictationNumber);
+      data.addFilter('numberOfDicta', dictationNumber);
     }
 
     if (typeDict) {
-      data.addFilter('typeDict', typeDict);
+      data.addFilter('typeDictamination', typeDict);
     }
 
     this.loading3 = true;
@@ -132,7 +132,8 @@ export class MaintenanceLegalRulingComponent
         this.dataCopiesOfficialOpinion = data.data;
       },
       error: err => {
-        console.log(err);
+        this.dataCopiesOfficialOpinion = [];
+        this.loading3 = false;
       },
     });
   }
@@ -146,7 +147,7 @@ export class MaintenanceLegalRulingComponent
     let data = this.params.value;
 
     if (dictationNumber) {
-      data.addFilter('officialNumber', dictationNumber);
+      data.addFilter('ofDictNumber', dictationNumber);
     }
 
     if (typeDict) {
@@ -155,15 +156,13 @@ export class MaintenanceLegalRulingComponent
 
     this.loading1 = true;
 
-    console.log(data.getParams());
-
     this.dictationXGood1Service.getAll(data.getParams()).subscribe({
       next: data => {
-        console.log(data);
         this.dataDictationXGood1 = data.data;
       },
       error: err => {
-        console.log(err);
+        this.dataDictationXGood1 = [];
+        this.loading1 = false;
       },
     });
   }
@@ -180,15 +179,15 @@ export class MaintenanceLegalRulingComponent
     if (!this.form.get('justificacion').value.trim()) {
       this.alert('info', 'Es necesario ingresar la justificación.', '');
     }
-
+    console.log(this.user);
     const req: IUsrRelBitacora = {
       observed: this.form.get('justificacion').value,
       observedDate: new Date(),
-      detiUser: '',
-      sessionId: null,
+      // sessionId: this.user.session_state,
+      detiUser: 'USER',
       sidId: this.user.sid,
       user: this.user.name,
-      userrequired: '',
+      userrequired: 'USER',
     };
 
     this.usrRelLogService.create(req).subscribe({
