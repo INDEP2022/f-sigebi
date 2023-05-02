@@ -68,7 +68,6 @@ export class ReadInfoGoodComponent
     //console.log('proceso', this.process);
     //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
-    // console.log('bien', this.goodData);
     if (this.goodData) {
       this.getTypeGood();
 
