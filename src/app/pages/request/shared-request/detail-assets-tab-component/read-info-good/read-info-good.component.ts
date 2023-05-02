@@ -12,6 +12,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -34,6 +35,7 @@ export class ReadInfoGoodComponent
   @Input() typeOfRequest: string = '';
   goodData: any = {};
   relevantTypeName: string = 'buscar';
+  subType: string;
   goodForm: ModelForm<any>;
   destiniSaeSelected = new DefaultSelect();
   selectPhysicalState = new DefaultSelect();
@@ -59,7 +61,7 @@ export class ReadInfoGoodComponent
   private readonly authService = inject(AuthService);
   private readonly goodsQueryService = inject(GoodsQueryService);
   private readonly typeRelevantSevice = inject(TypeRelevantService);
-
+  private readonly fractionService = inject(FractionsService);
   constructor(private fb: FormBuilder) {
     super();
   }
@@ -129,6 +131,19 @@ export class ReadInfoGoodComponent
     this.fractionsService.getAll(params).subscribe({
       next: resp => {
         this.relevantTypeName = resp.data[0].description;
+        this.getSubTypeGood(this.goodData.fractionId);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  getSubTypeGood(fractionId: number) {
+    this.fractionService.findByFraction(fractionId).subscribe({
+      next: resp => {
+        this.subType = resp.data[0].siabClasification.typeDescription;
+        console.log(this.subType);
       },
       error: error => {
         console.log(error);
