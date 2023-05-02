@@ -6,11 +6,11 @@
 
     <div class="row pt-2">
       <div class="d-flex justify-content-end">
-        <div class="p-2">
+        <!-- <div class="p-2">
           <button (click)="saveData()" class="btn btn-primary btn-sm active">
             <i class="fa-thin fa-repeat"></i> Guardar
           </button>
-        </div>
+        </div> -->
 
         <div class="p-2">
           <button
@@ -265,7 +265,7 @@
               <div class="table-responsive">
                 <div [class]="loadingGoods ? 'table-loading' : ''">
                   <ng2-smart-table
-                    [attr.class]="'table-bordered'"
+                    [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings"
                     [source]="data"
                     (userRowSelect)="goodSelect($event.selected)">
@@ -341,7 +341,7 @@
               <div class="table-responsive" *ngIf="!formLoading">
                 <div [class]="loading ? 'table-loading' : ''">
                   <ng2-smart-table
-                    [attr.class]="'table-bordered'"
+                    [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings2"
                     [source]="notificationsList"
                     (userRowSelect)="notifyAssetRowSelected($event)"
