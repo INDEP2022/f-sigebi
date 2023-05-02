@@ -31,6 +31,10 @@
           <span class="fs-4">{{ subType }}</span>
         </div>
         <div class="col-md-5">
+          <label>Clave Única</label>
+          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+        </div>
+        <div class="col-md-5">
           <label>Destino INDEP</label>
           <span class="fs-4">{{ goodData?.saeDestiny }}</span>
         </div>
@@ -281,6 +285,11 @@
           <label>Tipo de Bien</label>
           <span class="fs-4">{{ subType }}</span>
         </div>
+
+        <div class="col-md-5">
+          <label>Clave Única</label>
+          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+        </div>
         <div class="col-md-5">
           <label>Destino INDEP</label>
           <span class="fs-4">{{ goodData?.saeDestiny }}</span>
@@ -400,10 +409,10 @@
           <label>Cantidad de la Transferente</label>
           <span class="fs-4">{{ goodData?.quantity | number }}</span>
         </div>
-        <div class="col-md-5">
+        <!-- <div class="col-md-5">
           <label>Clave Única</label>
           <span class="fs-4">{{ goodData?.uniqueKey }}</span>
-        </div>
+        </div> -->
       </div>
       <div class="row pt-4">
         <div class="col-md-5">
@@ -548,6 +557,7 @@
           <label>Tipo de Bien</label>
           <span class="fs-4">{{ subType }}</span>
         </div>
+
         <div class="col-md-5">
           <label>Destino INDEP</label>
           <span class="fs-4">{{ goodData?.saeDestiny }}</span>
@@ -807,12 +817,17 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <label>Tipo de Bien</label>
+          <label>Tipo Bien</label>
           <span class="fs-4">{{ goodType }}</span>
         </div>
         <div class="col-md-6">
-          <label>Capacidad (lts)</label>
-          <span class="fs-4">{{ goodData?.capacity }}</span>
+          <label>Tipo de Bien</label>
+          <span class="fs-4">{{ subType }}</span>
+        </div>
+
+        <div class="col-md-5">
+          <label>Clave Única</label>
+          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
         </div>
       </div>
 
@@ -820,6 +835,10 @@
         <div class="col-md-6">
           <label>Volumen (m3)</label>
           <span class="fs-4">{{ goodData?.volume }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Capacidad (lts)</label>
+          <span class="fs-4">{{ goodData?.capacity }}</span>
         </div>
       </div>
 
