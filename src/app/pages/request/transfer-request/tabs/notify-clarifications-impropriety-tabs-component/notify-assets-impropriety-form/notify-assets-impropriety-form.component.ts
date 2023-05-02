@@ -440,7 +440,7 @@ export class NotifyAssetsImproprietyFormComponent
         next: async data => {
           this.onLoadToast(
             'success',
-            'Notificación actualizada correctamente',
+            'Notificación actualizada y guardada correctamente',
             ''
           );
           this.loading = false;
@@ -532,7 +532,6 @@ export class NotifyAssetsImproprietyFormComponent
       clarificationStatus: 'A_ACLARACION',
     };
 
-    console.log('data', chatClarifications);
     //Servicio para actualizar registro de ChatClariffications
     this.chatService
       .update(chatClarifications.id, modelChatClarifications)
@@ -568,31 +567,22 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {
-        this.alertQuestion(
-          'question',
-          'Confirmar',
-          '¿Deseas guardar la información de la notificación?'
-        ).then(question => {
-          if (question.isConfirmed) {
-            const updateInfo: IChatClarifications = {
-              requestId: this.idRequest,
-              goodId: goodId,
-              clarificationStatus: 'EN_ACLARACION',
-            };
-            console.log('info', data);
-            this.chatClarificationsService
-              .update(chatClarId, updateInfo)
-              .subscribe({
-                next: data => {
-                  this.modalRef.content.callback(true, data.goodId);
-                  this.modalRef.hide();
-                },
-                error: error => {
-                  console.log(error);
-                },
-              });
-          }
-        });
+        const updateInfo: IChatClarifications = {
+          requestId: this.idRequest,
+          goodId: goodId,
+          clarificationStatus: 'EN_ACLARACION',
+        };
+        this.chatClarificationsService
+          .update(chatClarId, updateInfo)
+          .subscribe({
+            next: data => {
+              this.modalRef.content.callback(true, data.goodId);
+              this.modalRef.hide();
+            },
+            error: error => {
+              console.log(error);
+            },
+          });
       },
     });
   }
