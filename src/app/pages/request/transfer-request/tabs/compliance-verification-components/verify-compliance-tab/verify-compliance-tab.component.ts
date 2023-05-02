@@ -607,7 +607,8 @@ export class VerifyComplianceTabComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            console.log(resp);
+            resolve(resp.data.length > 0 ? resp.data[0].description : 0);
           },
         });
       } else {
