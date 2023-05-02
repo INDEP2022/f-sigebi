@@ -302,7 +302,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.filterParams
         .getValue()
         .addFilter(
-          'transferenceId',
+          'request.transferenceId',
           this.consultTasksForm.value.txtNoTransferente,
           SearchFilter.ILIKE
         );

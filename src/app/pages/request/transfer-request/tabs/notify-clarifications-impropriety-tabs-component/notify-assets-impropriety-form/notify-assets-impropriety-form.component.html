@@ -267,7 +267,6 @@
       <div class="m-3" *ngIf="!withDocumentation">
         <confirm-button
           [text]="'Generar'"
-          [disabled]="inappropriatenessForm.invalid"
           [loading]="loading"
           (confirm)="dictamenSeq()">
         </confirm-button>
