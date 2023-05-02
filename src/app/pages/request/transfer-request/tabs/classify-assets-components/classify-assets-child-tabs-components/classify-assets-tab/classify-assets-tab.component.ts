@@ -741,9 +741,7 @@ export class ClassifyAssetsTabComponent
     }
 
     //se modifica el estadus del bien
-    if (goods.transferType === 'PGR_SAE' || goods.transferType === 'PGR_SAE') {
-      goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-    }
+    goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
 
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);

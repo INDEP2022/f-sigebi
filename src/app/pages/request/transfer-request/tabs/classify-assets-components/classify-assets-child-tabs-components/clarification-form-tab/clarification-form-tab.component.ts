@@ -254,7 +254,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       goodResDev.destination = null;
       goodResDev.proceedingsType = null;
       goodResDev.origin = null;
-      debugger;
+
       this.goodResDevService.create(goodResDev).subscribe({
         next: resp => {
           console.log('good-res-dev', resp);

@@ -809,6 +809,75 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
 
+  /* Metodo para crear solo aprovacion de solicitud */
+  createApprovalProcessOnly() {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.task.assignees;
+      task['assigneesDisplayname'] = this.task.displayName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestData.id);
+      task[
+        'title'
+      ] = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestData.id;
+      task['expedientId'] = this.requestData.recordId;
+      task['urlNb'] = 'pages/request/transfer-request/process-approval';
+
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+          reject(false);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'No se pudo crear la tarea de Aprovación de Solicitud'
+          );
+        },
+      });
+    });
+  }
+  /* FIN CREAR SOLO TAREA APROVACION DE SOLICITUD */
+
+  /* Cerrar la tarea de validacion documental */
+  async closeValidateDocumentation() {
+    const title = `Cerrar tarea de (Destino-Documental), No. Solicitud: ${this.requestData.id}`;
+    const url =
+      'pages/request/transfer-request/notify-clarification-inadmissibility';
+    const from = 'VERIFICAR_CUMPLIMIENTO';
+    const to = 'NOTIFICAR_ACLARACIONES';
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Destino_Documental',
+      'APROBAR_SOLICITUD_AA'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se Turno la solicitud con el folio: ${this.requestData.id}`
+      );
+      console.log('Tarea Cerrada');
+    }
+  }
+  /* FIN CERRAR VALIDACION DOCUMENTAL */
+
   close() {
     this.registRequestForm.reset();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
@@ -1119,10 +1188,21 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
+          this.loader.load = true;
           const clarification = await this.haveNotificacions();
-          if (clarification === true) {
-            await this.notifyClarificationsMethod();
-          } else {
+          if (clarification === 'POR_ACLARAR') {
+            const result = await this.createApprovalProcessOnly();
+            if (result) {
+              await this.notifyClarificationsMethod();
+            }
+          } else if (clarification === 'ACLARADO') {
+            const user: any = this.authService.decodeToken();
+            const body: any = {};
+            body.id = this.requestData.id;
+            body.rulingCreatorName = user.username;
+            await this.updateRequest(body);
+            await this.closeValidateDocumentation();
+          } else if (clarification === 'SIN_ACLARACIONES') {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
@@ -1147,19 +1227,22 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
+      //params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
-      //debugger;
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
-          if (resp.data) {
-            resolve(true);
+          const goodsClarified = resp.data.filter(
+            (x: any) => x.good.goodStatus === 'ACLARADO'
+          );
+          if (goodsClarified.length > 0) {
+            resolve('ACLARADO');
           } else {
-            resolve(false);
+            resolve('POR_ACLARAR');
           }
+          console.log(goodsClarified);
         },
         error: (error: any) => {
-          resolve(false);
+          resolve('SIN_ACLARACIONES');
           /*this.onLoadToast(
             'error',
             'Error interno',
