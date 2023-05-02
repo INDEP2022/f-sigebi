@@ -285,6 +285,7 @@ export class ReadInfoGoodComponent
     const id = this.goodData.goodTypeId;
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.goodType = data.description;
       },
     });
