@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="goodSituationForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="goodSituationForm.get('status')"
+            label="Estado">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="goodSituationForm.get('situation')"
+            label="Situación">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="situation" />
+          </form-field>
+        </div>
+        <div class="col-md-8 mt-5">
+          <form-field
+            [control]="goodSituationForm.get('descSituation')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              formControlName="descSituation"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="goodSituationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

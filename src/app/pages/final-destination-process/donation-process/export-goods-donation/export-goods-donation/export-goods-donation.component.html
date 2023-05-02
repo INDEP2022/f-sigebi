@@ -1,0 +1,60 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Exportaci&oacute;n de Bienes para Donaci&oacute;n a Excel
+    </h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-12">
+        <h5>Selecci&oacute;n de Bienes</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-3">
+        <button class="btn btn-secondary btn-sm active">Definir Filtro</button>
+      </div>
+      <div class="col-3">
+        <button class="btn btn-secondary btn-sm active">Bienes</button>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-secondary btn-sm active">Por Rastreador</button>
+      </div>
+    </div>
+    <app-divider></app-divider>
+    <div class="row mt-5">
+      <div class="col-12">
+        <h5>Bienes Disponibles</h5>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-5">
+      <app-columns-select
+        [(settings)]="settings"
+        class="row justify-content-end">
+      </app-columns-select>
+    </div>
+
+    <div class="row mt-5">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+
+    <div class="row mt-5 justify-content-end">
+      <div class="col-12 col-md-3 text-center text-md-right">
+        <button class="btn btn-success btn-sm active">Exportar a Excel</button>
+      </div>
+      <div class="col-12 col-md-6 text-center text-md-right mt-3 mt-md-0">
+        <button class="btn btn-success btn-sm active">
+          Exportar a Excel y Cambiar Estatus
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

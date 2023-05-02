@@ -1,0 +1,96 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">ENVIO DOCUMENTOS AL A. MAESTRO</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="ch-content">
+              <h5 class="title">ENVIO</h5>
+            </div>
+            <div class="mt-4">
+              <form-field [control]="form.get('file')" label="No expediente">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="file"
+                  (change)="onFilterChange($event)" />
+              </form-field>
+            </div>
+            <div class="mt-4">
+              <form-field [control]="form.get('area')" label="Area">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="area"
+                  (change)="onFilterChange($event)" />
+              </form-field>
+            </div>
+            <div class="mt-4">
+              <form-field [control]="form.get('sentBy')" label="Enviado por">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="sentBy"
+                  (change)="onFilterChange($event)" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="ch-content">
+              <h5 class="title">ARCHIVO GENERAL</h5>
+            </div>
+            <div class="mt-4">
+              <form-field [control]="form.get('record')" label="Archivo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="record"
+                  (change)="onFilterChange($event)" />
+              </form-field>
+            </div>
+            <div class="mt-4">
+              <form-field
+                [control]="form.get('responsible')"
+                label="Responsable">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="responsible"
+                  (change)="onFilterChange($event)" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data">
+              </ng2-smart-table>
+            </div>
+          </div>
+
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+        <div class="text-right">
+          <span class="mr-5"
+            ><i class="fa fa-square" style="color: #f2f674"></i>
+            Digitalizado</span
+          >
+          <span class="mr-5"
+            ><i class="fa fa-square" style="color: #1a4f4f"></i> No
+            digitalizado</span
+          >
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

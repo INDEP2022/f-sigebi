@@ -1,0 +1,90 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="affairTypeForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field label="Code" [control]="affairTypeForm.get('code')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Clave relación bien"
+            [control]="affairTypeForm.get('relationPropertyKey')">
+            <ng-select
+              formControlName="relationPropertyKey"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de volante"
+            [control]="affairTypeForm.get('referralNoteType')">
+            <ng-select
+              formControlName="referralNoteType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="A">Administrativo</ng-option>
+              <ng-option value="P">Procesal</ng-option>
+              <ng-option value="T">Transferente</ng-option>
+              <ng-option value="AT">AdminTransferente</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Versión Usuario"
+            [control]="affairTypeForm.get('versionUser')">
+            <ng-select
+              formControlName="versionUser"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <!-- <div class="row">
+        <div class="col-md-3">
+          <form-field label="idRegister" [control]="affairTypeForm.get('idRegister')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idRegister"
+               />
+               </form-field>
+        </div>
+      </div> -->
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="affairTypeForm.invalid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

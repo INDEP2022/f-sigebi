@@ -1,0 +1,151 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE PÓLIZAS</h5>
+  </div>
+
+  <div body>
+    <div class="form-material">
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+            PÓLIZAS VIGENTES
+          </h5>
+        </div>
+        <div class="col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-secondary btn-sm active">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+            BIENES PENDIENTES DE INGRESO A PÓLIZAS
+          </h5>
+        </div>
+        <div class="col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-secondary btn-sm active">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div [formGroup]="formPoliceStartDate" class="row justify-content-center">
+        <div class="col-auto">
+          <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+            BIENES EN PÓLIZAS
+          </h5>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="formPoliceStartDate.get('policy')"
+            label="Póliza">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="policy"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="formPoliceStartDate.get('startDate')"
+            label="Fecha de inicio">
+            <input
+              type="text"
+              formControlName="startDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-secondary btn-sm active">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+      <!-- <div class="row">
+      </div> -->
+      <hr />
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+            BAJA EN PÓLIZAS
+          </h5>
+        </div>
+        <div class="col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-secondary btn-sm active">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div [formGroup]="formFromTo" class="row justify-content-center">
+        <div class="col-md-4">
+          <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+            MOVIMIENTOS DE BIENES EN PÓLIZAS
+          </h5>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="formFromTo.get('from')" label="Del">
+            <input
+              type="text"
+              formControlName="from"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="formFromTo.get('to')" label="Al">
+            <input
+              type="text"
+              formControlName="to"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-secondary btn-sm active">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div [formGroup]="formSinister" class="row justify-content-center">
+        <div class="col-md-4">
+          <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+            BIENES EN PÓLIZAS SINIESTRADAS
+          </h5>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="formSinister.get('policySinister')"
+            label="Póliza">
+            <input
+              type="text"
+              formControlName="policySinister"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="formSinister.get('startDateSinister')"
+            label="Fecha inicio">
+            <input
+              type="text"
+              formControlName="startDateSinister"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-secondary btn-sm active">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

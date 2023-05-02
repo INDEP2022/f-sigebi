@@ -1,0 +1,204 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Recepci&oacute;n de Decomisos</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('expediente')" label="Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="expediente" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('averPrevia')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="averPrevia" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <label class="label col-md-3 form-control-label">Causa Penal</label>
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('causaPenal')"
+                label="Causa Penal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="causaPenal" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('cveActa')" label="Cve&#46; Acta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="cveActa"
+                  (blur)="blurE()" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('tipo')" label="Tipo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="tipo" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('fechaElab')"
+                label="Fecha Elaboraci&oacute;n">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaElab" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('estatusFec')"
+                label="Estado Fecha">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="estatusFec" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('fechaElabRecibo')"
+                label="Fecha Elaboraci&oacute;n Recibo">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaElabRecibo" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('fechaEntrega')"
+                label="Fecha Entrega de Bienes">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaEntrega" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('entregaNombre')"
+                label="Nombre Entrega">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="entregaNombre" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('recibeNombre')"
+                label="Nombre Recibe">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="recibeNombre" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('observaciones')"
+                label="Observaciones">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="observaciones" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <hr class="row" />
+      <div class="row">
+        <div class="row">
+          <form-field
+            class="d-flex justify-content-center"
+            [control]="form.get('estatus')"
+            label="Estado">
+            <input type="text" class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+      </div>
+      <p class="d-flex justify-content-center">
+        <span class="text-success mr-5"
+          ><i class="fa fa-square"></i> Disponibles</span
+        >
+        <span class="text-danger"
+          ><i class="fa fa-square"></i> No disponibles</span
+        >
+      </p>
+    </form>
+  </div>
+</app-card>

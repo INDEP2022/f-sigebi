@@ -1,0 +1,83 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Reportes Ordenes de Ingreso</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas page y final">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              placeholder=""
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('typeAuction')"
+            label="Tipo de subasta">
+            <ng-select
+              formControlName="typeAuction"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Muebles</ng-option>
+              <ng-option value="2">Inmuebles</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('idEvent')" label="ID Evento">
+            <input type="text" class="form-control" formControlName="idEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="show = !show">
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row" *ngIf="show">
+      <div class="mb-2 ch-content" header>
+        <h5 class="title"></h5>
+        <div class="justify-content-end">
+          <div class="col-md-5 buttons">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="openPrevPdf()">
+            Descargar Reporte
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

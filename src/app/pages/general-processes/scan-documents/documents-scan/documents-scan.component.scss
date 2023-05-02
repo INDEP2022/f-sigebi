@@ -1,0 +1,26 @@
+.float-check {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+
+.docs-scroll {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.description {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.documents-row {
+  height: 30px !important;
+}
+
+.grid-square {
+  min-height: 240px;
+}

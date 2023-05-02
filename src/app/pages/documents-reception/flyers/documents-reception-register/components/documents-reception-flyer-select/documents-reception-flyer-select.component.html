@@ -1,0 +1,83 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Volante a trabajar</h5>
+  </div>
+  <div body>
+    <form
+      class="form-material d-flex justify-content-center"
+      [formGroup]="flyerForm">
+      <form-field class="col-md-10" [control]="flyerForm.get('flyerNumber')">
+        <!-- <ngx-select
+          [form]="flyerForm"
+          [data]="flyers"
+          (fetchItems)="getNotifications($event)"
+          bindLabel="wheelNumber"
+          control="flyerNumber"
+          label="No. Volante"
+          [searchOnInit]="false"></ngx-select> -->
+        <input
+          type="text"
+          formControlName="flyerNumber"
+          class="form-control"
+          (keyup)="confirmKey($event)" />
+      </form-field>
+    </form>
+    <div class="row mt-4" *ngIf="false">
+      <div class="d-flex justify-content-center flex-wrap">
+        <div>
+          <button
+            class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
+            (click)="simulateOffice('STANDARD')">
+            Probar flujo desde buz&oacute;n
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
+            (click)="simulateOffice('PGR')">
+            Probar flujo PGR
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
+            (click)="simulateOffice('SAT')">
+            Probar flujo SAT
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
+            (click)="simulateOffice('PGR-MAS')">
+            Probar flujo PGR multiples bienes
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-sm btn-secondary active me-2 my-2 font-size-13"
+            (click)="simulateOffice('SAT-MAS')">
+            Probar flujo SAT multiples bienes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Aceptar"
+          loadingText="Cargando"
+          [disabled]="!flyerForm.valid || !notificationExists"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="exit()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

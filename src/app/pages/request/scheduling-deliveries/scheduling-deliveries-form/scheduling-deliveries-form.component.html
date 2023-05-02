@@ -1,0 +1,272 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Nueva programaci&oacute;n de entrega</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button
+        type="button"
+        [routerLink]="['execute-schelude-delivery']"
+        class="btn btn-primary btn-sm active">
+        Enviar programaci&oacute;n
+      </button>
+      <button type="button" class="btn btn-success btn-sm active">
+        Guardar
+      </button>
+    </div>
+
+    <h5 class="title">Detalle de la programaci&oacute;n de entrega</h5>
+    <form [formGroup]="schedulingDeliverieForm" class="form-material">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <div class="pt-3">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="typeEvent"
+              [data]="TypeEventOptions"
+              value="nameEvent"
+              bindLabel="nameEvent"
+              label="Selecciona un tipo de evento"></ngx-select>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="schedulingDeliverieForm.get('dateStartDelivery')"
+              label="Fecha page de entrega">
+              <input
+                class="form-control"
+                formControlName="dateStartDelivery"
+                bsDatepicker />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="schedulingDeliverieForm.get('transferent')"
+              label="Transferente">
+              <select class="form-control" formControlName="transferent">
+                <option [value]="null">Transferente</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="pt-3">
+            <ngx-select
+              [form]="schedulingDeliverieForm"
+              control="warehouse"
+              [data]="warehouse"
+              value="id"
+              bindLabel="description"
+              label="Selecciona un almac&eacute;n"
+              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="schedulingDeliverieForm.get('dateEndDelivery')"
+              label="Fecha final de entrega">
+              <input
+                class="form-control"
+                formControlName="dateEndDelivery"
+                bsDatepicker />
+            </form-field>
+          </div>
+
+          <div class="pt-3" *ngIf="showFileSaleForm">
+            <form-field
+              [control]="schedulingDeliverieForm.get('client')"
+              label="Cliente">
+              <select
+                class="form-control"
+                formControlName="client"
+                (change)="filterSales = true">
+                <option [value]="null">Cliente</option>
+                <option [value]="null">Prueba 2</option>
+                <option [value]="null">comercializadora</option>
+                <option [value]="null">David Baez</option>
+                <option [value]="null">Prueba 5</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="pt-3">
+            <p>
+              En la siguiente l&iacute;nea escriba los correos
+              electr&oacute;nicos a los que desea enviar informaci&oacute;n de
+              la programaci&oacute;n, debe separar los correos con ; como:
+              ejemplo@correo.com; ejemplo@correo.com.
+            </p>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="schedulingDeliverieForm.get('emails')"
+              label="Correos electr&oacute;nicos">
+              <textarea
+                class="form-control"
+                formControlName="emails"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="filterSales" class="row pt-3">
+        <h5 class="title">
+          <p>
+            <a
+              class="text-color"
+              (click)="showSearchForm = true"
+              *ngIf="!showSearchForm">
+              <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
+              ventas</a
+            >
+          </p>
+
+          <p>
+            <a
+              class="text-color"
+              (click)="showSearchForm = false"
+              *ngIf="showSearchForm">
+              <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
+              ventas</a
+            >
+          </p>
+        </h5>
+
+        <div *ngIf="showSearchForm" class="row pt-3">
+          <form [formGroup]="searchForm" class="form-material">
+            <div class="col-md-6">
+              <div>
+                <form-field
+                  [control]="searchForm.get('goodDescription')"
+                  label="Descripci&oacute;n bien">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="goodDescription" />
+                </form-field>
+              </div>
+
+              <div class="pt-3">
+                <form-field
+                  [control]="searchForm.get('commercialEvent')"
+                  label="Evento comercial">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="commercialEvent" />
+                </form-field>
+              </div>
+
+              <div class="pt-3">
+                <form-field
+                  [control]="searchForm.get('invoice')"
+                  label="Factura">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="invoice" />
+                </form-field>
+              </div>
+
+              <div class="pt-3">
+                <form-field
+                  [control]="searchForm.get('commercialLot')"
+                  label="Lote comercial">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="commercialLot" />
+                </form-field>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div>
+                <form-field
+                  [control]="searchForm.get('numberSae')"
+                  label="N&uacute;mero INDEP">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numberSae" />
+                </form-field>
+              </div>
+
+              <div class="pt-3">
+                <form-field
+                  [control]="searchForm.get('gestionNumber')"
+                  label="N&uacute;mero gesti&oacute;n">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="gestionNumber" />
+                </form-field>
+              </div>
+
+              <div class="pt-3">
+                <form-field
+                  [control]="searchForm.get('numberIventory')"
+                  label="N&uacute;mero de inventario">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numberIventory" />
+                </form-field>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="justify-content-end btn-toolbar">
+                <button type="submit" class="btn btn-primary btn-sm active">
+                  <i class="fa fa-search"></i>Buscar
+                </button>
+                <button
+                  *ngIf="searchForm"
+                  type="submit"
+                  class="btn btn-danger btn-sm active">
+                  Limpiar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="row">
+          <div class="btn-toolbar pt-3">
+            <app-columns-select
+              [(settings)]="settingsSearchSales"></app-columns-select>
+          </div>
+
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settingsSearchSales"
+            [source]="SearchSalesData"
+            (edit)="addEstate($event.data)">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <h5 class="title">Vista previa de bienes a programar</h5>
+
+        <div class="btn-toolbar pt-3">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="goodsToProgramData">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

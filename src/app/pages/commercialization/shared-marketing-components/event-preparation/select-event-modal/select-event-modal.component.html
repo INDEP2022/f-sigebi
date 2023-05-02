@@ -1,0 +1,55 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Preparación del evento</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="ch-content">
+        <h5 class="title"></h5>
+        <div class="justify-content-end m-4">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="row">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="eventList"
+              (edit)="openForm($event.data)"
+              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="ch-content">
+        <h5 class="title">LOTES</h5>
+        <div class="justify-content-end m-4">
+          <app-columns-select [(settings)]="settings2"></app-columns-select>
+        </div>
+      </div>
+      <div class="row">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="loteList"
+              (edit)="openForm2($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

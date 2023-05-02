@@ -1,0 +1,13 @@
+<!-- <div class="d-flex justify-content-end mt-5">
+  <app-columns-select [(settings)]="settings" class="row justify-content-end">
+  </app-columns-select>
+</div> -->
+
+<div class="row mt-5">
+  <ng2-smart-table
+    [attr.class]="'table-bordered'"
+    [settings]="settings"
+    [source]="data">
+  </ng2-smart-table>
+</div>
+<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>

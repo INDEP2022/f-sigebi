@@ -1,0 +1,73 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} de archivos</h5>
+  </div>
+  <div body>
+    <form [formGroup]="uploadFileForm" class="form-material">
+      <div class="row">
+        <form-field [control]="uploadFileForm.get('name')" label="Nombre">
+          <input type="text" class="form-control" formControlName="name" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="uploadFileForm.get('charge')" label="Cargo">
+          <input type="text" class="form-control" formControlName="charge" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="uploadFileForm.get('password')"
+          label="Contrase&ntilde;a">
+          <input
+            type="password"
+            class="form-control"
+            formControlName="password" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field [control]="uploadFileForm.get('rfc')" label="RFC">
+          <input type="text" class="form-control" formControlName="rfc" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          [control]="uploadFileForm.get('certificate')"
+          label="Certificado">
+          <input
+            type="file"
+            class="form-control"
+            formControlName="certificate" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          [control]="uploadFileForm.get('keyCertificate')"
+          label="Key certificado">
+          <input
+            type="file"
+            class="form-control"
+            formControlName="keyCertificate" />
+        </form-field>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [disabled]="!uploadFileForm.valid"
+            [loading]="loading"
+            (confirm)="confirm()"></confirm-button>
+        </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>

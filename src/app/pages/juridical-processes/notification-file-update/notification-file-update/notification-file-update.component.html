@@ -1,0 +1,37 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      ACTUALIZACI&Oacute;N DEL EXPEDIENTE EN NOTIFICACI&Oacute;N
+    </h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="container-fluid form-material">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="form.get('noExpediente')"
+                label="No&#46; Expediente">
+                <input
+                  class="form-control"
+                  formControlName="noExpediente"
+                  (keydown)="onKeyPress($event)"
+                  (blur)="onLoadListNotifications()" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row w-100 overflow-auto">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableFactGenSettings"
+          [source]="dataFactGen"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,74 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="ifaiSerieForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="ifaiSerieForm.get('code')"
+            label="C&oacute;digo">
+            <input type="text" class="form-control" formControlName="code" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="ifaiSerieForm.get('typeProcedure')"
+            label="Tipo de tr&aacute;mite">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="typeProcedure" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field
+            [control]="ifaiSerieForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description">
+            </textarea>
+          </form-field>
+        </div>
+
+        <div class="ol-md-6">
+          <form-field [control]="ifaiSerieForm.get('status')" label="Estado">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="ifaiSerieForm.get('registryNumber')"
+            label="No&#46; registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registryNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="ifaiSerieForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

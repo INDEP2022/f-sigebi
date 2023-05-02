@@ -1,0 +1,33 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Confirmaci&oacute;n</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <div class="row">
+      <form [formGroup]="form" class="form-material">
+        <form-field
+          [control]="form.get('justification')"
+          label="justificaci&oacute;n">
+          <textarea
+            class="form-control"
+            formControlName="justification"></textarea>
+        </form-field>
+      </form>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

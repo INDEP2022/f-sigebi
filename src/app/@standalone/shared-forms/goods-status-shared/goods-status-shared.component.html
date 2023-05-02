@@ -1,0 +1,32 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showGoodStatus">
+    <div class="col-md-12">
+      <form-field [control]="form.get(goodStatusField)">
+        <ngx-select
+          (fetchItems)="getGoodStatus($event)"
+          [data]="status"
+          [multiple]="multiple"
+          [form]="form"
+          value="status"
+          bindLabel="description"
+          [label]="labelStatus"
+          [control]="goodStatusField"
+          (change)="onGoodStatusChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>
+<!-- 
+
+  <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [searchOnInit]="true"
+        control="status"
+        [data]="goodStatuses"
+        value="status"
+        bindLabel="description"
+        (fetchItems)="getGoodStatuses($event)"
+        label="Estatus"></ngx-select>
+ -->

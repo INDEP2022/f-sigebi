@@ -1,0 +1,13 @@
+/*# sourceMappingURL=pj-c-monitor-return-abandonment.component.css.map */
+
+.bg-black-unavailable{
+  background-color: black;
+  color: white;
+  padding: .3rem;
+}
+
+.bg-green-to-confirm {
+  background-color: green;
+  color: white;
+  padding: .3rem;
+}

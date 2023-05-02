@@ -1,0 +1,314 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Realizar programaci&oacute;n con folio: {{ programming?.folio }}
+    </h5>
+  </div>
+  <div body>
+    <div class="h5">Informaci&oacute;n</div>
+    <span class="fs-2 text-danger"
+      >Observaci&oacute;n de rechazo: {{ programming?.msgSise }}
+    </span>
+    <form [formGroup]="form" class="form-material" style="margin: 0 auto">
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right">Delegaci&oacute;n regional&#58;</label>
+            <span class="fs-4 ml-3">{{
+              programming?.regionalDelegationNumber
+            }}</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <form-field
+              [control]="form.get('email')"
+              label="Correo electronico transferente">
+              <input type="text" class="form-control" formControlName="email" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <form-field [control]="form.get('city')" label="Ciudad">
+              <input type="text" class="form-control" formControlName="city" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Transferente&#58;</label>
+            <span class="fs-4"> {{ programming?.tranferId }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('startDate')"
+            label="Fecha inicio operativo">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('endDate')"
+            label="Fecha fin operativo">
+            <input
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Emisora&#58;</label>
+            <span class="fs-4"> {{ programming?.stationId }} </span>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Autoridad&#58;</label>
+            <span class="fs-4"> {{ programming?.autorityId }} </span>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="form.get('observation')"
+            label="Observaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observation" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
+            <span class="fs-3"> {{ programming?.typeRelevantId }} </span>
+          </div>
+        </div>
+      </div>
+      <div class="h5 pt-3">Almac&eacute;n</div>
+      <div class="row pt-3">
+        <div class="col-sm-12 pt-4">
+          <form-field [control]="form.get('warehouse')">
+            <ngx-select
+              [form]="form"
+              control="warehouse"
+              [data]="warehouse"
+              value="description"
+              bindLabel="description"
+              label="Selecciona un almac&eacute;n"
+              (change)="warehouseSelect($event)"
+              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <label class="title"
+            >Direcci&oacute;n Almac&eacute;n&#58; {{ ubicationWarehouse }}
+          </label>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <h5 class="title">Usuarios al operativo</h5>
+
+        <div class="justify-content-end btn-toolbar">
+          <button (click)="listUsers()" class="btn btn-info btn-sm active">
+            Usuarios
+          </button>
+          <button (click)="openForm()" class="btn btn-primary btn-sm active">
+            Nuevo usuario
+          </button>
+        </div>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settingUser"
+          [source]="usersToProgramming"
+          (edit)="openForm($event.data)"
+          (delete)="delete($event.data)">
+        </ng2-smart-table>
+      </div>
+    </form>
+    <div class="row pt-5">
+      <h5 class="title">Selecci&oacute;n de bienes</h5>
+      <h5 class="title">B&uacute;squeda</h5>
+
+      <form [formGroup]="formGoods" class="form-material">
+        <div class="pt-4">
+          <div class="col-md-6">
+            <form-field [control]="formGoods.get('warehouse')">
+              <ngx-select
+                [form]="formGoods"
+                control="warehouse"
+                [data]="akaWarehouse"
+                value="idWarehouse"
+                bindLabel="description"
+                label="Alias Almacén"
+                (fetchItems)="getAkaWarehouseSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field [control]="formGoods.get('state')">
+              <ngx-select
+                [form]="formGoods"
+                control="state"
+                [data]="states"
+                value="id"
+                bindLabel="descCondition"
+                label="Estado"
+                (change)="stateSelect($event)"
+                (fetchItems)="getStateSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="pt-5">
+          <div class="col-md-6 pt-3">
+            <form-field [control]="formGoods.get('municipality')">
+              <ngx-select
+                [form]="formGoods"
+                control="municipality"
+                [data]="municipalities"
+                value="idMunicipality"
+                bindLabel="nameMunicipality"
+                label="Municipio"
+                (change)="municipalitySelect($event)"
+                (fetchItems)="getMunicipalitySelect($event)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6 pt-3">
+            <form-field [control]="formGoods.get('locality')">
+              <ngx-select
+                [form]="formGoods"
+                control="locality"
+                [data]="localities"
+                value="id"
+                bindLabel="nameLocation"
+                label="Localidad"
+                (fetchItems)="getLocalitySelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="form-inline justify-content-end btn-toolbar pt-4">
+        <confirm-button
+          [loading]="loadingGoods"
+          [text]="'Buscar'"
+          [loadingText]="'Buscando bienes'"
+          [btnSmall]="true"
+          (confirm)="searchGoods()"></confirm-button>
+        <button (click)="clear()" class="btn btn-danger btn-sm active mr-2">
+          Limpiar
+        </button>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="justify-content-start btn-toolbar">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="sendTransportable()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Transportable
+        </button>
+        <button class="btn btn-primary btn-sm active" (click)="sendGuard()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Resguardo
+        </button>
+        <button class="btn btn-primary btn-sm active" (click)="sendWarehouse()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Almac&eacute;n
+        </button>
+      </div>
+      <div [class]="loadingGoods ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="tableGoods"
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="estatesList">
+        </ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Bienes seleccionados</h5>
+
+      <div>
+        <div class="md-tabs">
+          <tabset>
+            <tab [heading]="headingTransportable" id="tab1">
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="
+                    settingsTransportableGoods
+                  "></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTransportableGoods"
+                [source]="goodsTranportables"
+                (edit)="showGood($event.data)"
+                (delete)="removeGoodTrans($event.data)">
+              </ng2-smart-table>
+            </tab>
+            <tab [heading]="headingGuard">
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="settingGuardGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingGuardGoods"
+                [source]="goodsGuards"
+                (edit)="showGood($event.data)"
+                (delete)="removeGoodGuard($event.data)">
+              </ng2-smart-table>
+            </tab>
+            <tab [heading]="headingWarehouse">
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="settingWarehouseGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingWarehouseGoods"
+                [source]="goodsWarehouse"
+                (edit)="showGood($event.data)"
+                (delete)="removeGoodWarehouse($event.data)">
+              </ng2-smart-table>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

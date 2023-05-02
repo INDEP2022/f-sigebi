@@ -1,0 +1,107 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DOCUMENTOS RECIBIDOS POR &Aacute;REA</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('departamentDes')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getAreas($event)"
+              [data]="areas"
+              value="id"
+              bindLabel="dsarea"
+              label="Área Destino"
+              [showTooltip]="true"
+              [control]="'departamentDes'"
+              (change)="onValuesChange($event)"
+              [labelTemplate]="areaLabel"
+              [optionTemplate]="areaOption">
+            </ngx-select>
+            <ng-template #areaLabel let-item="item">
+              {{ item.dsarea }} - {{ item.description }}
+            </ng-template>
+            <ng-template #areaOption let-item="item">
+              <div [title]="item.dsarea + '-' + item.description">
+                {{ item.dsarea }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Delegación Destino"
+            [control]="form.get('delegationDes')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationDes"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Sub Delegación Destino"
+            [control]="form.get('subdelegationDes')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subdelegationDes"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-12 text-center">
+          <form-check label="&iquest;Reporte Detallado&#63;" for="4">
+            <input
+              id="4"
+              type="checkbox"
+              class="form-control"
+              formControlName="report" />
+          </form-check>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

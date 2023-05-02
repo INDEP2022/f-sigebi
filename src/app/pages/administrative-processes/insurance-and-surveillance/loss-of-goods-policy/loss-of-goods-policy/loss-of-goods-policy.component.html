@@ -1,0 +1,98 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BAJA DE BIENES EN PÓLIZAS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('noBien')" label="No. Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noBien"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              formControlName="description"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('amount')" label="Suma asegurada">
+            <input type="text" formControlName="amount" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('cvePolicy')" label="Clave de Póliza">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cvePolicy" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('dateOfAdmission')"
+            label="Fecha de Ingreso">
+            <input
+              type="text"
+              formControlName="dateOfAdmission"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('premiumAmount')" label="Monto Prima">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="premiumAmount"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('dailyFactor')" label="Factor diario">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="dailyFactor"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateOfTermination')"
+            label="Fecha de Baja">
+            <input
+              type="text"
+              formControlName="dateOfTermination"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4 float-right">
+        <div class="">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            BAJA
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

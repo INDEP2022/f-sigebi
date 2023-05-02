@@ -1,0 +1,247 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
+    <div class="buttons">
+      <button
+        class="btn btn-secondary btn-sm active mr-2"
+        (click)="back()"
+        *ngIf="isParams">
+        Regresar
+      </button>
+    </div>
+  </div>
+
+  <div body>
+    <form [formGroup]="formNotification" class="form-material">
+      <div class="row">
+        <form-field
+          class="col-md-2"
+          [control]="formNotification.get('expedientNumber')"
+          label="No&#46; Expediente">
+          <input
+            type="number"
+            min="0"
+            [maxlength]="10"
+            formControlName="expedientNumber"
+            class="form-control"
+            (ngModelChange)="limit(10, 'expedientNumber', $event)" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="formNotification.get('wheelNumber')"
+          label="No&#46; Volante">
+          <input
+            type="number"
+            min="0"
+            [maxlength]="10"
+            (ngModelChange)="limit(10, 'wheelNumber', $event)"
+            formControlName="wheelNumber"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="formNotification.get('receiptDate')"
+          label="Fecha Recepci&oacute;n Volante">
+          <input
+            formControlName="receiptDate"
+            class="form-control"
+            bsDatepicker
+            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+            [maxDate]="today" />
+        </form-field>
+
+        <form-field
+          class="col-md-6"
+          [control]="formNotification.get('preliminaryInquiry')"
+          label="Averiguaci&oacute;n Previa">
+          <input
+            (ngModelChange)="limit(200, 'preliminaryInquiry', $event)"
+            [maxlength]="200"
+            formControlName="preliminaryInquiry"
+            class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          class="col-md-3"
+          [control]="formNotification.get('criminalCase')"
+          label="Causa Penal">
+          <input
+            formControlName="criminalCase"
+            class="form-control"
+            [maxlength]="40"
+            (ngModelChange)="limit(40, 'criminalCase', $event)" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="formNotification.get('touchPenaltyKey')"
+          label="Toca Penal">
+          <input
+            formControlName="touchPenaltyKey"
+            class="form-control"
+            [maxlength]="30"
+            (ngModelChange)="limit(30, 'touchPenaltyKey', $event)" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="formNotification.get('circumstantialRecord')"
+          label="Acta Circunstanciada">
+          <input
+            formControlName="circumstantialRecord"
+            [maxlength]="30"
+            class="form-control"
+            (ngModelChange)="limit(30, 'circumstantialRecord', $event)" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="formNotification.get('protectionKey')"
+          label="Amparo">
+          <input
+            formControlName="protectionKey"
+            class="form-control"
+            [maxlength]="30"
+            (ngModelChange)="limit(30, 'protectionKey', $event)" />
+        </form-field>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="buttons text-end">
+            <span *ngIf="count > 0">
+              <button
+                class="btn btn-primary btn-sm active mr-2"
+                (click)="notificationList()">
+                Ver lista expedientes
+              </button>
+            </span>
+            <confirm-button
+              text="Buscar"
+              [loadingText]="'Buscando'"
+              [loading]="loading"
+              [btnSmall]="true"
+              (confirm)="searchNotification()">
+            </confirm-button>
+            <button
+              class="btn btn-primary btn-sm active ml-2"
+              (click)="clear()"
+              [disabled]="loading">
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <hr />
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <app-document-type-shared
+          [form]="form"
+          class="col-md-4"></app-document-type-shared>
+
+        <form-field
+          [control]="form.get('natureDocument')"
+          class="col-md-4 mt-3"
+          label="Naturaleza">
+          <ng-select
+            #selected
+            class="form-control"
+            [items]="['ORIGINAL', 'COPIA SIMPLE', 'MIXTO', 'COPIA CERTIFICADA']"
+            [multiple]="false"
+            [closeOnSelect]="true"
+            [searchable]="false"
+            placeholder=""
+            formControlName="natureDocument">
+          </ng-select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('significantDate')"
+          class="col-md-4 mt-3"
+          label="Fecha Significativa (mm-yyyy)">
+          <input
+            type="text"
+            formControlName="significantDate"
+            class="form-control"
+            (ngModelChange)="
+              limit2(7, 'significantDate', $event); validateDate($event)
+            " />
+        </form-field>
+      </div>
+      <div class="row">
+        <form-field
+          [control]="form.get('descriptionDocument')"
+          class="col-md-6"
+          label="Descripci&oacute;n del Documento">
+          <textarea
+            formControlName="descriptionDocument"
+            (ngModelChange)="limit2(1000, 'descriptionDocument', $event)"
+            class="form-control"></textarea>
+        </form-field>
+        <div class="col">
+          <button class="btn btn-info active btn-sm" (click)="callScan()">
+            Escanear
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="buttons text-end">
+            <span *ngIf="countDoc > 0">
+              <button
+                class="btn btn-primary btn-sm active mr-2"
+                (click)="documentsList()">
+                Ver lista documentos
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row align-items-baseline">
+        <div class="col-auto">
+          <button
+            class="btn btn-primary btn-sm active mr-2"
+            (click)="clearDocument()">
+            Nueva Solicitud
+          </button>
+        </div>
+        <div class="col-auto">
+          <confirm-button
+            text="Generar Solicitud"
+            className="btn-secondary"
+            [loadingText]="'Generando Solicitud'"
+            [loading]="loadingDoc"
+            [btnSmall]="true"
+            (click)="generateDoc()"
+            [disabled]="form.invalid">
+          </confirm-button>
+        </div>
+        <div class="col-md-auto">
+          <p class="mt-3">Folio Universal:</p>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('id')">
+            <input
+              type="text"
+              formControlName="id"
+              class="form-control mt-3"
+              placeholder="FOLIO_UNIERVERSAL" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="proccesReport()">
+            <i class="fas fa-print"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

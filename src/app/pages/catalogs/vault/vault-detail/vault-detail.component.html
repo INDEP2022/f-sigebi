@@ -1,0 +1,158 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="vaultForm">
+      <div class="row">
+        <div class="col-md-8">
+          <form-field
+            [control]="vaultForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              type="text"
+              rows="3"
+              class="form-control"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="vaultForm.get('ubication')"
+            label="Ubicaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ubication" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="vaultForm.get('manager')" label="Responsable">
+            <input type="text" class="form-control" formControlName="manager" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="vaultForm.get('cityDetail')">
+            <ngx-select
+              (fetchItems)="getCities($event)"
+              [data]="cities"
+              [form]="vaultForm"
+              value="nameCity"
+              bindLabel="nameCity"
+              label="Ciudad"
+              control="cityDetail"
+              (change)="onValuesChange1($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="vaultForm.get('municipalityDetail')">
+            <ngx-select
+              (fetchItems)="getMunicipalities($event)"
+              [data]="municipalities"
+              [form]="vaultForm"
+              value="nameMunicipality"
+              bindLabel="nameMunicipality"
+              label="Municipio"
+              control="municipalityDetail"
+              (change)="onValuesChange2($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="vaultForm.get('localityDetail')">
+            <ngx-select
+              (fetchItems)="getLocalities($event)"
+              [data]="localities"
+              [form]="vaultForm"
+              value="nameLocation"
+              bindLabel="nameLocation"
+              label="Localidad"
+              control="localityDetail"
+              (change)="onValuesChange3($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="vaultForm.get('stateDetail')">
+            <ngx-select
+              (fetchItems)="getStates($event)"
+              [data]="states"
+              [form]="vaultForm"
+              value="descCondition"
+              bindLabel="descCondition"
+              label="Estado"
+              control="stateDetail"
+              (change)="onValuesChange4($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="vaultForm.get('localityCode')"
+            label="Localidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="localityCode"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="vaultForm.get('cityCode')" label="Ciudad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cityCode"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="vaultForm.get('stateCode')" label="Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="stateCode"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="vaultForm.get('municipalityCode')"
+            label="Municipio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="municipalityCode"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!vaultForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,196 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Solicitar b&uacute;squeda en SIAB</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form [formGroup]="requestSiabForm" class="form-material">
+        <div class="col-md-6">
+          <div>
+            <form-field [control]="requestSiabForm.get('regionalDelegation')">
+              <ngx-select
+                [form]="requestSiabForm"
+                control="regionalDelegation"
+                [data]="regionalsDelegations"
+                value="id"
+                bindLabel="id"
+                label="Delegaci&oacute;n Regional"
+                (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="requestSiabForm.get('state')">
+              <ngx-select
+                [form]="requestSiabForm"
+                control="state"
+                [data]="states"
+                value="id"
+                bindLabel="id"
+                label="Estado"
+                (fetchItems)="getStateSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="requestSiabForm.get('transferent')">
+              <ngx-select
+                [form]="requestSiabForm"
+                control="transferent"
+                [data]="transferents"
+                value="id"
+                bindLabel="id"
+                label="Transferente"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="requestSiabForm.get('broadStation')">
+              <ngx-select
+                [form]="requestSiabForm"
+                control="broadStation"
+                [data]="broadStations"
+                value="id"
+                bindLabel="id"
+                label="Emisora"
+                (fetchItems)="getBroadStationSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="requestSiabForm.get('authority')">
+              <ngx-select
+                [form]="requestSiabForm"
+                control="authority"
+                [data]="authorities"
+                value="id"
+                bindLabel="id"
+                label="Autoridad"
+                (fetchItems)="getAuthoritySelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="requestSiabForm.get('typeRelevant')">
+              <ngx-select
+                [form]="requestSiabForm"
+                control="typeRelevant"
+                [data]="typeRelevants"
+                value="id"
+                bindLabel="id"
+                label="Tipo relevante"
+                (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="requestSiabForm.get('quantityReserve')"
+              label="Cantidad a reservar">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="quantityReserve" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div>
+            <form-field
+              [control]="requestSiabForm.get('expedientTransferent')"
+              label="Expediente transferente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="expedientTransferent" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="requestSiabForm.get('descriptionRequest')"
+              label="Descripci&oacute;n solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="descriptionRequest" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="requestSiabForm.get('uniqueKey')"
+              label="Clave &Uacute;nica">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="uniqueKey" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="requestSiabForm.get('descriptionGood')"
+              label="Descripci&oacute;n bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="descriptionGood" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="requestSiabForm.get('numberGoodSiab')"
+              label="No&#46; bien SIAB">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numberGoodSiab" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="requestSiabForm.get('codeWarehouse')"
+              label="C&oacute;digo Almac&eacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="codeWarehouse" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="requestSiabForm.get('numberExpedient')"
+              label="No&#46; expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="codeWarehouse" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="justify-content-center btn-toolbar">
+        <button
+          (click)="send()"
+          type="submit"
+          class="btn btn-primary btn-sm active">
+          Solicitar busqueda SIAB
+        </button>
+
+        <button
+          (click)="close()"
+          type="submit"
+          class="btn btn-danger btn-sm active">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

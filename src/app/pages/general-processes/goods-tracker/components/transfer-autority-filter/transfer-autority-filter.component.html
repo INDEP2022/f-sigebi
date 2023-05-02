@@ -1,0 +1,47 @@
+<form [formGroup]="form" class="form-material" (submit)="search()">
+  <div class="row">
+    <form-field [control]="form.get('transfers')" class="col-md-4">
+      <ngx-select
+        [searchOnInit]="true"
+        [multiple]="true"
+        value="id"
+        bindLabel="nameTransferent"
+        [form]="form"
+        control="transfers"
+        label="Transferente"
+        [data]="transfers"
+        (fetchItems)="getTransfers($event)"
+        (change)="transferChange()"></ngx-select>
+    </form-field>
+    <form-field [control]="form.get('transmitters')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        control="transmitters"
+        value="id"
+        bindLabel="stationName"
+        label="Emisora"
+        [data]="transmitters"
+        (fetchItems)="getTransmitters($event)"
+        (change)="transmitterChange()"></ngx-select>
+    </form-field>
+    <form-field [control]="form.get('autorities')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        value="idAuthority"
+        bindLabel="authorityName"
+        control="autorities"
+        label="Autoridad"
+        [data]="autorities"
+        (fetchItems)="getAutorities($event)"></ngx-select>
+    </form-field>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary active">
+        Buscar<i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+</form>

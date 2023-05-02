@@ -1,0 +1,74 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Motivos estatus rev</h5>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="valuesList">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-2"></div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary btn-sm active ml-3">
+          Cargar Archivo
+        </button>
+      </div>
+      <div class="col-md-1"></div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="openModal2()">
+          Cargar Layout
+        </button>
+      </div>
+      <div class="col-md-1"></div>
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <form [formGroup]="form" class="form-material">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('file')" label="Archivo">
+              <input type="text" formControlName="file" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('whereMot')" label="Mot">
+              <input
+                type="text"
+                formControlName="whereMot"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('reasons')" label="Motivos">
+              <input
+                type="text"
+                formControlName="reasons"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-modal>

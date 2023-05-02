@@ -1,0 +1,11 @@
+<form [formGroup]="checkForm" class="form-material no-margin border">
+  <div class="float-check">
+    <form-check label="" [for]="checkId">
+      <input
+        [id]="checkId"
+        type="checkbox"
+        formControlName="type"
+        (click)="change($event)" />
+    </form-check>
+  </div>
+</form>

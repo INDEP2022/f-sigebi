@@ -1,0 +1,89 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">GESTIÓN DE BIENES GABINETE SOCIAL</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <!--Options-->
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <label for="">Proceso Gab-Social</label>
+          <div class="row justify-content-between">
+            <div class="col-lg-6 col-md-6 col-sm-3 col-12">
+              <form-radio label="Susceptible">
+                <input
+                  type="radio"
+                  formControlName="option"
+                  value="susceptible" />
+              </form-radio>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-3 col-12">
+              <form-radio label="Asignados">
+                <input type="radio" formControlName="option" value="assigned" />
+              </form-radio>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-3 col-12">
+              <form-radio label="Entregados">
+                <input type="radio" formControlName="option" value="deliver" />
+              </form-radio>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-3 col-12">
+              <form-radio label="Liberar">
+                <input type="radio" formControlName="option" value="released" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-baseline">
+          <div class="row justify-content-between">
+            <div class="col-12 mb-3 mt-3">
+              <form-field
+                [control]="form.get('file')"
+                label="Abrir Archivo de Texto TXT">
+                <input
+                  class="form-control mb-3 mt-3"
+                  type="file"
+                  id="formFile"
+                  formControlName="file" />
+              </form-field>
+            </div>
+            <div class="col-12 mb-3 mt-3">
+              <form-field [control]="form.get('excuse')" label="Justificación">
+                <textarea class="form-control" formControlName="excuse">
+                </textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!--Data Previsualization-->
+    <div class="ch-content">
+      <h5 class="title">Previsualización de Datos</h5>
+      <div class="row justify-content-end mr-1">
+        <div class="col-12">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings"
+            class="row justify-content-end"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

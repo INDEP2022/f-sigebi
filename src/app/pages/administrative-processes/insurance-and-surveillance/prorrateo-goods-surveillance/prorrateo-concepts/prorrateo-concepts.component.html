@@ -1,0 +1,14 @@
+<div class="row mt-4">
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="concepts">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>

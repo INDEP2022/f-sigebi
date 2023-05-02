@@ -1,0 +1,79 @@
+<h5 class="title">
+  <p>
+    <a class="text-color" (click)="showDatais = true" *ngIf="!showDatais">
+      <i class="fa fa-angle-right" aria-hidden="true"></i> Detalle
+      programaci&oacute;n</a
+    >
+  </p>
+
+  <p>
+    <a class="text-color" (click)="showDatais = false" *ngIf="showDatais">
+      <i class="fa fa-angle-down" aria-hidden="true"></i> Detalle
+      programaci&oacute;n</a
+    >
+  </p>
+</h5>
+
+<div class="pt-3" *ngIf="showDatais">
+  <div class="row">
+    <form class="form-horizontal" style="margin: 0 auto">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-6 text-right"
+            >No&#46; programaci&oacute;n&#58;</label
+          >
+          <span> 516 </span>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Folio&#58;</label>
+          <span> Metropolitana SAT </span>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Tipo relevante&#58;</label>
+          <span> Joyas, obras de arte </span>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Fecha page&#58;</label>
+          <span> 16-nov-2022 </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-7 text-right">Fecha fin&#58;</label>
+          <span> 20-nov-2022 </span>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-7 text-right">Usuario elabor&oacute;&#58;</label>
+          <span> test user </span>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-7 text-right">CveZona&#58;</label>
+          <span>Este</span>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-7 text-right"
+            >Delegaci&oacute;n Regional&#58;</label
+          >
+          <span> Metropolitana </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Transferente&#58;</label>
+          <span> transferente</span>
+        </div>
+
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Almac&eacute;n&#58;</label>
+          <span> Almacén de prueba </span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,182 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">TRANSFERENCIA DE CUENTAS A REGIONAL</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('noBien')" label="No Bien">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="noBien"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('idRequest')"
+              label="Id de solicitud">
+              <input formControlName="idRequest" class="form-control" />
+            </form-field>
+          </div>
+          <div
+            class="col-md-4"
+            style="display: flex; justify-content: start; align-items: center">
+            <button type="button" class="btn btn-sm btn-secondary active m-3">
+              CONSULTAR
+            </button>
+            <button type="button" class="btn btn-sm btn-success active m-3">
+              IMPORTAR
+            </button>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('transferenceReport')"
+              label="Reporte de transferencia">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="transferenceReport"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('dateReport')"
+              label="Fecha de reporte">
+              <input
+                formControlName="dateReport"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div
+            class="col-md-4"
+            style="display: flex; justify-content: start; align-items: center">
+            <button type="button" class="btn btn-sm btn-secondary active m-3">
+              CONSULTAR
+            </button>
+          </div>
+        </div>
+        <form-check label="Marcar como historico">
+          <input
+            type="checkbox"
+            formControlName="historicCheck"
+            value="value" />
+        </form-check>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data1">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+
+        <div class="ch-content">
+          <h5 class="title">DATOS A TURNAR</h5>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div>
+              <form-field
+                [control]="form.get('currencyType')"
+                label="Tipo moneda de cuenta">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="currencyType"
+                  min="1"
+                  pattern="^[0-9]+" />
+              </form-field>
+            </div>
+            <div style="margin-top: 30px">
+              <form-field [control]="form.get('delegation')" label="Delegación">
+                <input formControlName="delegation" class="form-control" />
+              </form-field>
+            </div>
+            <div style="margin-top: 30px">
+              <form-field
+                [control]="form.get('folioCash')"
+                label="No Folio CashWindows">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="folioCash"
+                  min="1"
+                  pattern="^[0-9]+" />
+              </form-field>
+            </div>
+            <div style="margin-top: 30px">
+              <form-field
+                [control]="form.get('transactionDate')"
+                label="Fecha transacción CashWindows">
+                <input
+                  formControlName="transactionDate"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <form-field
+                [control]="form.get('cveAccount')"
+                label="Clave cuenta">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="cveAccount"
+                  min="1"
+                  pattern="^[0-9]+" />
+              </form-field>
+            </div>
+            <div style="margin-top: 30px">
+              <form-field
+                [control]="form.get('accountType')"
+                label="Tipo de cuenta">
+                <input formControlName="accountType" class="form-control" />
+              </form-field>
+            </div>
+            <div style="margin-top: 30px">
+              <form-field
+                [control]="form.get('cveBank')"
+                label="Clave de Banco">
+                <input formControlName="cveBank" class="form-control" />
+              </form-field>
+            </div>
+            <div style="margin-top: 30px">
+              <form-field
+                [control]="form.get('cveCurrency')"
+                label="Clave de Moneda">
+                <input formControlName="cveCurrency" class="form-control" />
+              </form-field>
+            </div>
+            <div style="margin-top: 30px">
+              <p>
+                <span style="font-weight: bold; margin-right: 5px"
+                  >Monto total:</span
+                >
+                $ {{ total }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

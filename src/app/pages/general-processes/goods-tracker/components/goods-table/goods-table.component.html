@@ -1,0 +1,86 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Bienes localizados</h5>
+    <div class="buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="btn-group" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          type="button"
+          class="btn btn-primary dropdown-toggle btn-sm active"
+          aria-controls="dropdown-basic">
+          <div class="d-flex align-items-center">
+            Acciones <span class="caret ml-2"></span>
+          </div>
+        </button>
+        <ul
+          id="dropdown-basic"
+          *dropdownMenu
+          class="dropdown-menu dropdown-menu-right"
+          role="menu"
+          aria-labelledby="button-basic">
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="viewImages()">Im&aacute;genes</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="viewPhotos()">Visualizar Fotos</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Exportar Fotos</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Ficha T&eacute;cnica</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">F&#46; T&eacute;cnica Masiva</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Excel</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#"
+              >Hist&oacute;rico Actas&#47;Prog&#47;Sus&#47;Can</a
+            >
+          </li>
+          <li class="divider dropdown-divider"></li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">C&eacute;dula de Venta</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">C&#46; Venta Masiva</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Excel C&#46;Venta</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <button
+          (click)="backTo()"
+          *ngIf="origin"
+          class="btn btn-secondary btn-sm active">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          Regresar a {{ backToText() }}
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div [ngClass]="{ 'table-loading': loading }">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="goods"></ng2-smart-table>
+        </div>
+
+        <app-pagination
+          [totalItems]="totalItems"
+          [params]="params"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

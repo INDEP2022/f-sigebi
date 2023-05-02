@@ -1,0 +1,86 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('keyServices')" label="Cve servicio">
+            <input
+              type="text"
+              class="form-control"
+              [class.disabled]="edit"
+              formControlName="keyServices" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="form.get('descriptionServices')"
+            label="Descrici&oacute;n Servicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionServices" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 mt-3">
+          <form-field
+            [control]="form.get('typeExpenditure')"
+            label="Tipo de Gasto">
+            <select class="form-control" formControlName="typeExpenditure">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'01'">01</option>
+              <option [value]="'02'">02</option>
+              <option [value]="'03'">03</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-3">
+          <div class="d-flex justify-content-center">
+            <form-check label="Incosteable" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="unaffordable" />
+            </form-check>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-6 mt-3">
+          <div class="d-flex justify-content-center">
+            <form-radio label="Costo">
+              <input type="radio" formControlName="cost" value="cost" />
+            </form-radio>
+          </div>
+        </div>
+        <div class="col-md-6 mt-3">
+          <div class="d-flex justify-content-center">
+            <form-radio label="Gasto">
+              <input type="radio" formControlName="cost" value="expenditure" />
+            </form-radio>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (click)="edit ? putCatalog() : postCatalog()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

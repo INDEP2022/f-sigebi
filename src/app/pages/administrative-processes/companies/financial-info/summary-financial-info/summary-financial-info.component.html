@@ -1,0 +1,110 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">RESUMEN DE INFORMACIÓN FINANCIERA</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!--Goods Types Component-->
+        <!-- <app-goods-types-shared [form]="form" [types]="types" [subTypeShow]="false" [ssubTypeShow]="false"
+            [sssubTypeShow]="false">
+          </app-goods-types-shared> -->
+        <!-- <form-field [control]="form.get('type')" label="Tipo bien" class="col-md-2">
+            <select class="form-control" formControlName="type">
+              <option value=0>Seleccione un tipo de Bien</option>
+              <option [value]="data.id" *ngFor="let data of googList">{{data.nameGoodType}}
+              </option>
+            </select>
+          </form-field> -->
+        <div class="col-md-4">
+          <form-field [control]="form.get('type')" label="No Bien">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+
+        <!--Date Form-->
+        <div class="col-md-4">
+          <form-field [control]="form.get('from')" label="Desde">
+            <input
+              formControlName="from"
+              placeholder="Selección de fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('to')" label="Hasta">
+            <input
+              formControlName="to"
+              placeholder="Selección de fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <!--Financial Info Options-->
+        <div class="col-md-4">
+          <button
+            class="btn btn-primary active btn-sm w-100"
+            (click)="openModal()">
+            Selección de Atributos
+          </button>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6" *ngIf="checkedListFA.length > 0">
+            <h4 class="card-title mb-5">Atributos Financieros</h4>
+            <div class="flex-row">
+              <div
+                class="mb-3"
+                *ngFor="let finAtt of checkedListFA; let i = index">
+                <span class="badge-pill badge-info badge">
+                  {{ finAtt.description }}
+                  <i
+                    class="bi bi-x-circle align-self-center"
+                    (click)="removeItem(finAtt.id, 'financialAtribs')"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6" *ngIf="checkedListFI.length > 0">
+            <h4 class="card-title mb-5">Indicadores Financieros</h4>
+            <div class="flex-row">
+              <div
+                class="mb-3"
+                *ngFor="let finInd of checkedListFI; let i = index">
+                <span class="badge-pill badge-info badge">
+                  {{ finInd.description }}
+                  <i
+                    class="bi bi-x-circle align-self-center"
+                    (click)="removeItem(finInd.id, 'financialIndicators')"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <br /><br /><br /><br />
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,174 @@
+<form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="row pt-5">
+    <div class="col-md-2" *ngIf="!show1">
+      <app-events-shared
+        [label]="'Evento'"
+        [bindLabel]="'id'"
+        [form]="form"></app-events-shared>
+    </div>
+    <div class="col-md-2 pt-3" *ngIf="!show1">
+      <form-field [control]="form.get('idAllotment')" label="Lote">
+        <input type="text" class="form-control" formControlName="idAllotment" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm active"
+        [disabled]="!form.valid"
+        (click)="show1 = !show1">
+        Generar Prefacturas
+      </button>
+    </div>
+    <!-- <div class="col-md-2" *ngIf="show1">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="openPrevPdf()">
+        Visualizar Prefactura
+      </button>
+    </div> -->
+    <div class="col-md-2" *ngIf="show1">
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm active"
+        (click)="show1 = !show1">
+        Actualizar Datos
+      </button>
+    </div>
+  </div>
+</form>
+
+<div class="row" *ngIf="show1">
+  <div class="ch-content">
+    <h5 class="title">FACTURAS DEL EVENTO: {{ idAllotment }}</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="col-md-2 btn-group">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="sendPack()">
+        Enviar paquetes
+      </button>
+    </div>
+    <div class="col-md-2 btn-group">
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="exportAsXLSX()">
+        Exportar a Excel
+      </button>
+    </div>
+    <div class="col-md-2 btn-group">
+      <button
+        id="btnGroupImprimir"
+        type="button"
+        class="btn btn-danger btn-sm active dropdown-toggle"
+        data-toggle="dropdown">
+        Imprimir: <span class="bi bi-arrow-down-short"></span>
+      </button>
+      <div class="dropdown-menu" aria-labelledby="btnGroupExcel">
+        <a class="dropdown-item" (click)="openPrevPdf()">imprime masivo .pdf</a>
+        <a class="dropdown-item" (click)="openPrevPdf()">Factura</a>
+        <a class="dropdown-item" (click)="openPrevPdf()">Anexo</a>
+        <a class="dropdown-item" (click)="openPrevPdf()">CR</a>
+        <a class="dropdown-item" (click)="openPrevPdf()">CE</a>
+        <!-- <input type="file" (change)="ReadExcel($event)" name="fileExcel" #fileExcel class="d-none"
+                accept=".xlsx, .xls, .csv, application/vnd.ms-excel" /> -->
+      </div>
+    </div>
+    <div class="col-md-2 btn-group">
+      <button
+        type="button"
+        class="btn btn-info btn-sm active"
+        (click)="openPrevPdf()">
+        Generar CFDI
+      </button>
+    </div>
+    <div class="col-md-2 btn-group">
+      <button type="button" class="btn btn-secondary btn-sm active">
+        Atenci&oacute;n a clientes
+      </button>
+    </div>
+    <div class="col-md-2 btn-group">
+      <button type="button" class="btn btn-secondary btn-sm active">
+        Act. Matr&iacute;cula
+      </button>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <ng2-smart-table
+      [source]="data"
+      [settings]="settings"
+      (edit)="openModal()"
+      (delete)="delete()"
+      (custom)="openPrevPdf()"></ng2-smart-table>
+  </div>
+
+  <div class="row pt-3">
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">Importe Egresos: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">0.00</h3>
+    </div>
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">IVA Egreso: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">0.00</h3>
+    </div>
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">Total Egresos: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">0.00</h3>
+    </div>
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">Importe Ingresos: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">146,655.17</h3>
+    </div>
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">IVA Ingresos: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">10,344.83</h3>
+    </div>
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">Total Ingresos: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">157,000.00</h3>
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<div class="row pt-3" *ngIf="show1">
+  <div class="ch-content">
+    <h5 class="title">BIENES</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings2"></app-columns-select>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <ng2-smart-table [source]="data2" [settings]="settings2"></ng2-smart-table>
+  </div>
+  <div class="row pt-3">
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">N&uacute;mero de registros: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">1</h3>
+    </div>
+    <div class="col-md-3">
+      <h5 class="font-size-14 d-inline">Total Importe: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">10,000.00</h3>
+    </div>
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">Total IVA: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">0.00</h3>
+    </div>
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">Total: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">10,000.00</h3>
+    </div>
+    <div class="col-md-3">
+      <h5 class="font-size-14 d-inline">Cantidad Total Bienes: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">1</h3>
+    </div>
+  </div>
+</div>

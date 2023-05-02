@@ -1,0 +1,81 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Aprobaci&oacute;n de cambio a numerario</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <h5 class="font-size-14 d-inline">Seleccione Bien</h5>
+          <ngx-select
+            [form]="form"
+            [data]="bienItems"
+            value="id"
+            bindLabel="id"
+            (fetchItems)="getBien($event)"
+            (change)="selectBien($event)"
+            control="id">
+          </ngx-select>
+        </div>
+        <div class="col-md-3" *ngIf="selectedBien != null">
+          <h5 class="font-size-14 d-inline">Descripci&oacute;n</h5>
+          <p class="mt-2 font-size-28 text-muted">
+            {{ selectedBien.description }}
+          </p>
+          <!-- <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field> -->
+        </div>
+        <div class="col-md-2" *ngIf="selectedBien != null">
+          <h5 class="font-size-14 d-inline">Estado</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedBien.status }}</p>
+          <!-- <form-field [control]="form.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field> -->
+        </div>
+        <div class="col-md-3" *ngIf="selectedBien != null">
+          <h5 class="font-size-14 d-inline">Solicitante</h5>
+          <p class="mt-2 font-size-28 text-muted">
+            {{ selectedBien.applicant }}
+          </p>
+          <!-- <form-field [control]="form.get('applicant')" label="Solicitante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="applicant" />
+          </form-field> -->
+        </div>
+        <div class="col-md-2" *ngIf="selectedBien != null">
+          <h5 class="font-size-14 d-inline">Motivo</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedBien.reason }}</p>
+          <!-- <form-field [control]="form.get('reason')" label="Motivo">
+            <input type="text" class="form-control" formControlName="reason" />
+          </form-field> -->
+        </div>
+      </div>
+      <div class="row pt-5" *ngIf="selectedBien != null">
+        <div class="col-md-2" *ngIf="selectedBien != null">
+          <h5 class="font-size-14 d-inline">Fecha Solicitud</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedBien.appDate }}</p>
+          <!-- <form-field [control]="form.get('appDate')" label="Fecha solicitud">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="appDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field> -->
+        </div>
+        <div class="col-md-3">
+          <h5 class="font-size-14 d-inline text-danger">DI_APROBADO</h5>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

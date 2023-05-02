@@ -1,0 +1,113 @@
+<div body>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onClickChangeGoodRandom()"
+    class="form-material">
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <form-field [control]="form.get('year')" label="Año">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="year"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="form.get('period')" label="Periodo">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="period"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="form.get('delegation')"
+          label="Delegación"
+          class="form-group">
+          <ng-custom-select
+            class="form-control"
+            path="catalog/api/v1/delegation"
+            formControlName="delegation"
+            prefixSearch="$ilike"
+            paramSearch="filter.description">
+            <ng-template let-item>
+              {{ item.description }}
+            </ng-template>
+          </ng-custom-select>
+        </form-field>
+      </div>
+      <div class="col-md-4 mt-3">
+        <form-field
+          label="Proceso"
+          class="form-group"
+          [control]="form.get('process')">
+          <select class="form-control" formControlName="process">
+            <option value="1">Supervisión</option>
+            <option value="2">Validación</option>
+          </select>
+        </form-field>
+      </div>
+      <div class="col-md-4 mt-3">
+        <form-field [control]="form.get('random')" label="Aleatorio">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="random"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <app-goods-shared goodField="goodNumber" [form]="form" label="Bien">
+        </app-goods-shared>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="form.get('description')" label="Descripción">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="description" />
+        </form-field>
+      </div>
+
+      <div class="col-md-4">
+        <!-- <form-field
+              [control]="form.get('transference')"
+              label="Transferente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="transference" />
+            </form-field> -->
+        <form-field
+          [control]="form.get('transference')"
+          label="Transferente"
+          class="form-group">
+          <ng-custom-select
+            prefixSearch="$ilike"
+            paramSearch="filter.nameTransferent"
+            class="form-control"
+            path="catalog/api/v1/transferent"
+            formControlName="transference">
+            <ng-template let-item>
+              {{ item.nameTransferent }}
+            </ng-template>
+          </ng-custom-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4 float-right">
+      <div class="">
+        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+          SUSTITUIR
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

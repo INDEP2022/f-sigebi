@@ -1,0 +1,21 @@
+<ng-select
+  [clearable]="true"
+  [hideSelected]="true"
+  #select
+  [virtualScroll]="true"
+  [searchable]="true"
+  notFoundText="No se encontraron elementos"
+  typeToSearchText="Escriba 3 o mas caracteres"
+  [loading]="isLoading"
+  (change)="onSelectChange($event)"
+  (scrollToEnd)="fetchMore(select.searchTerm)"
+  [typeahead]="input$"
+  [placeholder]="placeholder"
+  [closeOnSelect]="true"
+  [(ngModel)]="selectedItem">
+  <ng-option *ngFor="let item of items; let i = index" [value]="item[value]">
+    <ng-container
+      [ngTemplateOutlet]="template"
+      [ngTemplateOutletContext]="{ $implicit: item, index: i }"></ng-container>
+  </ng-option>
+</ng-select>

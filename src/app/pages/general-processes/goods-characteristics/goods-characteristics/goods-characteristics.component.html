@@ -1,0 +1,200 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Caracter&Iacute;sticas del bien</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material">
+          <tabset>
+            <tab heading="Datos de B&uacute;squeda">
+              <div class="row">
+                <div class="col-md-4">
+                  <app-goods-types-shared
+                    [form]="form"
+                    typeField="type"
+                    subtypeField="subtype"
+                    ssubtypeField="ssubtype"
+                    sssubtypeField="sssubtype"
+                    (goodSssubtypeChange)="
+                      getGoods($event)
+                    "></app-goods-types-shared>
+                </div>
+                <div class="col-md-4">
+                  <div class="row pt-3">
+                    <!-- <form-field [control]="form.get('noBien')">
+                      <ngx-select
+                        [form]="form"
+                        control="noBien"
+                        [data]="select"
+                        label="No&#46; Bien"></ngx-select>
+                    </form-field> -->
+                    <div class="form-group row">
+                      <goods-filter-shared
+                        [form]="form"
+                        goodField="noBien"
+                        [classifGood]="good"></goods-filter-shared>
+                    </div>
+                  </div>
+                  <div class="row pt-4">
+                    <form-field
+                      [control]="form.get('noClasif')"
+                      label="No Clasif Bien">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="noClasif" />
+                    </form-field>
+                  </div>
+                  <div class="row pt-3">
+                    <form-field [control]="form.get('status')" label="Estatus">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="status" />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+            </tab>
+            <tab heading="Datos Generales del Bien">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="row">
+                    <form-field
+                      [control]="form.get('descripcion')"
+                      label="Descripci&oacute;n">
+                      <textarea
+                        formControlName="descripcion"
+                        class="form-control"></textarea>
+                    </form-field>
+                  </div>
+                  <div class="row pt-3">
+                    <form-field
+                      [control]="form.get('unidad')"
+                      label="Unidad"
+                      class="col-md-4">
+                      <input
+                        type="text"
+                        formControlName="unidad"
+                        class="form-control" />
+                    </form-field>
+                    <form-field
+                      class="col-md-4"
+                      [control]="form.get('cantidad')"
+                      label="Cantidad">
+                      <input
+                        type="text"
+                        formControlName="cantidad"
+                        class="form-control" />
+                    </form-field>
+                    <form-field
+                      class="col-md-4"
+                      [control]="form.get('valRef')"
+                      label="Val&#46; Referencia">
+                      <input
+                        type="text"
+                        formControlName="valRef"
+                        class="form-control" />
+                    </form-field>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group row">
+                    <form-field
+                      [control]="form.get('delegation')"
+                      label="Delegación"
+                      class="col-md-12">
+                      <input
+                        type="text"
+                        formControlName="delegation"
+                        class="form-control" />
+                    </form-field>
+                  </div>
+                  <div class="form-group row">
+                    <form-field
+                      [control]="form.get('subdelegation')"
+                      label="Delegación"
+                      class="col-md-12">
+                      <input
+                        type="text"
+                        formControlName="subdelegation"
+                        class="form-control" />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <form-field
+                  [control]="form.get('fechaAval')"
+                  label="Fecha Aval&uacute;o Vigencia"
+                  class="col-md-3">
+                  <input
+                    type="text"
+                    formControlName="fechaAval"
+                    class="form-control"
+                    bsDatepicker />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('valorAval')"
+                  label="Valor Aval&uacute;o"
+                  class="col-md-3">
+                  <input
+                    type="text"
+                    formControlName="valorAval"
+                    class="form-control" />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('latitud')"
+                  label="Latitud"
+                  class="col-md-3">
+                  <input
+                    type="text"
+                    formControlName="latitud"
+                    class="form-control" />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('longitud')"
+                  label="Longitud"
+                  class="col-md-3">
+                  <input
+                    type="text"
+                    formControlName="longitud"
+                    class="form-control" />
+                </form-field>
+              </div>
+
+              <div class="row pt-3">
+                <form-field
+                  [control]="form.get('observaciones')"
+                  label="Observaciones"
+                  class="col-md-8">
+                  <textarea
+                    formControlName="observaciones"
+                    class="form-control"></textarea>
+                </form-field>
+
+                <div class="col-md-4">
+                  <small>¿Con Aval&uacute;o?</small>
+                  <div class="d-flex">
+                    <form-radio label="Si">
+                      <input type="radio" formControlName="avaluo" value="1" />
+                    </form-radio>
+                    <form-radio label="No">
+                      <input type="radio" formControlName="avaluo" value="0" />
+                    </form-radio>
+                  </div>
+                </div>
+              </div>
+            </tab>
+          </tabset>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-card>

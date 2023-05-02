@@ -1,0 +1,68 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="validatorsProceedingsForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="validatorsProceedingsForm.get('proceedingsType')"
+            label="Tipo&#58;">
+            <select class="form-control" formControlName="proceedingsType">
+              <option [value]="0">Seleccione un tipo acta</option>
+              <option *ngFor="let item of typeItem" [value]="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="validatorsProceedingsForm.get('secVal')"
+            label="Secuencia">
+            <input
+              class="form-control"
+              formControlName="secVal"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="validatorsProceedingsForm.get('descVal')"
+            label="Validacion">
+            <input class="form-control" formControlName="descVal" type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="validatorsProceedingsForm.get('scriptVal')"
+            label="Script">
+            <textarea
+              class="form-control"
+              formControlName="scriptVal"
+              rows="10"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!validatorsProceedingsForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

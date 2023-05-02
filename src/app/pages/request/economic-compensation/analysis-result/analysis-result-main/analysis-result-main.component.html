@@ -1,0 +1,154 @@
+<app-card [header]="true">
+  <div class="ch-content justify-content-between" header>
+    <div class="">
+      <h5 class="title">
+        Generar Resultado de An&aacute;lisis Resarcmieniento
+        &#40;NUMERARIO&#41;&#44; No&#46; Solicitud&#58; {{ requestId }}&#44;
+        Contribuyente&#58; {{ contributor }}
+      </h5>
+    </div>
+    <div class="">
+      <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="turnRequest()"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="rejectRequest()"
+            [disabled]="">
+            <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bx-save mr-1 float-icon"></i> Guardar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="viewReport()"
+            [disabled]="">
+            <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
+          </button>
+        </div>
+      </div>
+      <div class="" *ngIf="screenWidth < 1200">
+        <div
+          class="btn-group"
+          placement="bottom right"
+          dropdown
+          [isDisabled]="">
+          <button
+            #actionsBtn
+            dropdownToggle
+            type="button"
+            class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
+            aria-controls="dropdown-actions">
+            Acciones
+          </button>
+          <ul
+            id="dropdown-csv"
+            *dropdownMenu
+            class="dropdown-menu dropdown-menu-right bg-primary"
+            role="menu"
+            aria-labelledby="processBtn">
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="viewReport()"
+                ><i class="bx bx-notepad mr-1 float-icon"></i>Dictamen
+                Resarcimiento</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+                ><i class="bx bx-save mr-1 float-icon"></i> Guardar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="rejectRequest()"
+                ><i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="turnRequest()"
+                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i
+                >Turnar</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <app-request-information [request]="requestInfo"></app-request-information>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Registro de Documentación" id="documentationTab">
+          <app-register-documentation-view
+            [requestId]="requestId"></app-register-documentation-view>
+        </tab>
+        <tab heading="Listado de Bienes" id="goodsListTab">
+          <app-goods-list [requestId]="requestId"></app-goods-list>
+        </tab>
+        <tab heading="Lineamientos" id="guidelinesTab">
+          <app-guidelines [requestId]="requestId"></app-guidelines>
+        </tab>
+        <tab heading="Expediente" id="fileTab">
+          <tabset class="md-tabs">
+            <tab
+              heading="Documentos Solicitud"
+              id="tab1"
+              (selectTab)="requestSelected(1)">
+              <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+            </tab>
+            <tab
+              heading="Documentos Generales"
+              (selectTab)="requestSelected(2)">
+              <tabset class="md-tabs">
+                <tab
+                  heading="Documento Expedientes"
+                  id="tab1"
+                  (selectTab)="requestSelected(2)">
+                  <app-doc-request-tab
+                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                </tab>
+                <tab
+                  heading="Solicitudes del Expediente"
+                  (selectTab)="requestSelected(3)">
+                  <app-expedients-request-tab
+                    [typeDoc]="typeDoc"></app-expedients-request-tab>
+                </tab>
+              </tabset>
+            </tab>
+          </tabset>
+        </tab>
+      </tabset>
+    </div>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Salir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

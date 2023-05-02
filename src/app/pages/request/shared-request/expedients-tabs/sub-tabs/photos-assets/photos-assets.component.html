@@ -1,0 +1,104 @@
+<div>
+  <app-card [header]="false">
+    <div body class="body">
+      <div class="row">
+        <div class="d-flex">
+          <div class="mr-auto p-2">
+            <h5 class="title">
+              <p>
+                <a
+                  class="text-color"
+                  (click)="showSearchFilter = true"
+                  *ngIf="!showSearchFilter">
+                  <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  Filtrar</a
+                >
+              </p>
+
+              <p>
+                <a
+                  class="text-color"
+                  (click)="showSearchFilter = false"
+                  *ngIf="showSearchFilter">
+                  <i class="fa fa-angle-down" aria-hidden="true"> </i>
+                  Filtrar</a
+                >
+              </p>
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div
+        class="row pt-4"
+        *ngIf="showSearchFilter"
+        style="padding: 10px 20px 10px">
+        <form [formGroup]="filterForm" class="form-material">
+          <div class="row">
+            <div class="col-md-3">
+              <form-field
+                [control]="filterForm.get('management')"
+                label="No&#46; Gesti&oacute;n">
+                <input
+                  type="string"
+                  class="form-control"
+                  maxlength="30"
+                  formControlName="management" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field [control]="filterForm.get('typeGood')">
+                <ngx-select
+                  [form]="filterForm"
+                  control="typeGood"
+                  [data]="typeGoods"
+                  value="description"
+                  bindLabel="description"
+                  label="Tipo de bien"
+                  (fetchItems)="getTypeRelevant($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <div class="p-2">
+            <button class="btn btn-primary btn-sm active" (click)="filter()">
+              Buscar
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-danger btn-sm active" (click)="clean()">
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <div id="list">
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+
+    <div class="row pt-4" *ngIf="!formLoading">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (delete)="uploadFiles($event.data)"
+            (edit)="openPhotos($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</div>

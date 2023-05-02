@@ -1,0 +1,104 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Programacion de los bienes a entregar</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <ul id="note">
+          <li>
+            El campo de fecha page, deber seleccionarse al menos cinco (5) días
+            en el futuro respecto a la fecha del día de la sesión del usuario
+          </li>
+          <li>
+            Campo de fecha fin, debe ser mayor o igual que la fecha de page del
+            operativo
+          </li>
+        </ul>
+      </div>
+    </div>
+    <form [formGroup]="programmingForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="programmingForm.get('destiny')"
+            label="Destino">
+            <input type="text" formControlName="destiny" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="programmingForm.get('operationDayStart')"
+            label="*Fecha de page de la operación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="operationDayStart"
+              #dp="bsDatepicker"
+              bsDatepicker
+              [bsValue]="bsValue"
+              [minDate]="minDate" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="programmingForm.get('operationDayEnd')"
+            label="*Fecha fin de la operación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="operationDayEnd"
+              #dp="bsDatepicker"
+              bsDatepicker
+              [minDate]="minDate" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-5">
+          <form-field
+            [control]="programmingForm.get('participants')"
+            label="*Participantes">
+            <ng-select
+              #selected
+              class="form-control"
+              [items]="participants"
+              [multiple]="true"
+              [closeOnSelect]="false"
+              [searchable]="true"
+              [maxSelectedItems]="2"
+              bindLabel="name"
+              Descripción=""
+              formControlName="participants"
+              [(ngModel)]="selectedparticipants">
+            </ng-select>
+          </form-field>
+          <div
+            style="color: red; padding-top: 3px"
+            *ngIf="selectedparticipants.length === 2">
+            <small>Solo se pueden seleccionar 2 participantes</small>
+          </div>
+          <div class="mt-3">
+            <button (click)="clearModel()" class="btn btn-danger btn-sm active">
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="program()">
+          Programar
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

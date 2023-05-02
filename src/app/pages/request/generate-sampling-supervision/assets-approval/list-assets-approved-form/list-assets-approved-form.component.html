@@ -1,0 +1,115 @@
+<div>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <h5>Bienes</h5>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="uploadExpedient()">
+          <i class="bx bx-detail"></i> Expediente
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="uploadImages()">
+          <i class="bx bx-images"></i> Fotograf&iacute;a
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="exportCsv()">
+          <i class="bx bx-download"></i> Descargar Archivo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div class="d-flex">
+          <div class="p-2">
+            <button class="btn btn-success btn-sm active" (click)="approve()">
+              <i class="bx bx-check"></i> Aprovar
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-danger btn-sm active" (click)="refuse()">
+              <i class="bx bx-x"></i> Rechazar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <!--    <form [formGroup]="assetsForm">-->
+      <!--      <div [class]="loading ? 'table-loading' : ''">-->
+      <ng-scrollbar track="all" style="min-height: 200px; border: none">
+        <table class="table table-bordered" style="width: 100%">
+          <thead>
+            <tr>
+              <th scope="col" style="text-align: center">
+                <input type="checkbox" name="" id="" />
+              </th>
+              <th scope="col">N&uacute;mero Gesti&oacute;n</th>
+              <th scope="col">N&uacute;mero Inventario</th>
+              <th scope="col" class="description">Descripci&oacute;n</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Cantidad Faltante&#47;Da&ntilde;ada</th>
+              <th scope="col">Estado Restituci&oacute;n</th>
+              <th scope="col">Fecha Reposici&oacute;n</th>
+              <th scope="col">Resultados De Evaluaci&oacute;n</th>
+              <th scope="col">Estado De Bien</th>
+              <th scope="col">Tipo de Restituci&oacute;n</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let asset of assetsArray; let i = index">
+              <th scope="row" style="text-align: center">
+                <input
+                  type="checkbox"
+                  value="{{ asset.id }}"
+                  [(ngModel)]="asset.checked"
+                  id="selectOne"
+                  (change)="selectOne($event, asset)" />
+              </th>
+              <td>{{ asset.noManagement }}</td>
+              <td>{{ asset.noInventory }}</td>
+              <td class="description">{{ asset.description }}</td>
+              <td>{{ asset.quantity }}</td>
+              <td>{{ asset.unity }}</td>
+              <td>{{ asset.quantityMissingDamaged }}</td>
+              <td>
+                <select
+                  class="form-control"
+                  style="
+                    width: 150px;
+                    height: 40px;
+                    font-size: 13px !important;
+                  ">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">Pieza</option>
+                </select>
+              </td>
+              <td>
+                {{ asset.replacementDate }}
+              </td>
+              <td>
+                {{ asset.resultEvaluation }}
+              </td>
+              <td>
+                {{ asset.statusAsset }}
+              </td>
+              <td>
+                {{ asset.typeRestitution }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-scrollbar>
+      <!--    </form>-->
+    </div>
+  </div>
+</div>

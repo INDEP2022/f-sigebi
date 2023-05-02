@@ -1,0 +1,38 @@
+export interface IStateOfRepublic {
+  id?: string;
+  cveState?: string;
+  descCondition?: string;
+  codeState?: string;
+  noRegister?: string;
+  nameTable?: string;
+  abbreviation?: any;
+  risk?: any;
+  version?: string;
+  timeZonaStd?: string;
+  timeZonaView?: string;
+  creationUser?: string;
+  editionUser?: string;
+  fecha_modificacion?: Date;
+  // cveState: string;
+  // descState: string;
+  // codeState: string;
+  // noRegister?: string;
+  // nameTable?: string;
+  // abbreviation?: any;
+  // risk?: any;
+  // version: string;
+  // timeZonaStd: string;
+  // timeZonaView: string;
+  // creationUser?: string;
+  // editionUser?: string;
+  // fecha_modificacion?: Date;
+  codeCondition: string;
+  registrationNumber: number;
+  nmtable: number;
+  zoneHourlyStd: string;
+  zoneHourlyVer: string;
+  userCreation: string;
+  creationDate: string;
+  userModification: string;
+  modificationDate: string;
+}

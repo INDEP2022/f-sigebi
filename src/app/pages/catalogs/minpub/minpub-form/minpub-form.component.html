@@ -1,0 +1,125 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="minpubForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="minpubForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="minpubForm.get('manager')" label="Responsable">
+            <input type="text" class="form-control" formControlName="manager" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6">
+          <form-field [control]="minpubForm.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="minpubForm.get('outNumber')" label="No. Ext">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="outNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="minpubForm.get('insideNumber')"
+            label="No. Int.">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="insideNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6">
+          <form-field [control]="minpubForm.get('colony')" label="Colonia">
+            <input type="text" class="form-control" formControlName="colony" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="minpubForm.get('delegNunic')"
+            label="Delegaci&oacute;n municipal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegNunic" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="minpubForm.get('zipCode')"
+            label="C&oacute;digo postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="minpubForm.get('phone')"
+            label="Tel&eacute;fono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="minpubForm.get('city')">
+            <!-- <input type="text" class="form-control" formControlName="city" /> -->
+            <ngx-select
+              [form]="minpubForm"
+              [data]="items"
+              label="Ciudad"
+              bindLabel="idCity"
+              value="idCity"
+              (fetchItems)="getFromSelect($event)"
+              control="city"
+              (change)="onValuesChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="minpubForm.get('nameCity')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameCity" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!minpubForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

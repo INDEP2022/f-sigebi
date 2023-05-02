@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showLabelStatus">
+    <div class="col-md-12">
+      <form-field [control]="form.get(labelGoodField)">
+        <ngx-select
+          (fetchItems)="getLabelsGood($event)"
+          [data]="status"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Indicador Destino"
+          [control]="labelGoodField"
+          (change)="onLabelGoodChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

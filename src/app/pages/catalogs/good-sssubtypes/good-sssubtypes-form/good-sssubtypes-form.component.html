@@ -1,0 +1,103 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="goodSssubtypeForm">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="goodSssubtypeForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea class="form-control" formControlName="description">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <ngx-select
+            [form]="goodSssubtypeForm"
+            control="numType"
+            (fetchItems)="getTypes($event)"
+            [data]="types"
+            label="Tipo"
+            bindLabel="nameGoodType"
+            value="id"
+            (change)="getSubtypes($event)">
+          </ngx-select>
+        </div>
+        <div class="col-md-12">
+          <ngx-select
+            [form]="goodSssubtypeForm"
+            control="numSubType"
+            (fetchItems)="getSubtypes($event)"
+            [data]="subTypes"
+            label="Subtipo"
+            bindLabel="nameSubtypeGood"
+            value="id">
+            <label class="label">Subtipo</label>
+          </ngx-select>
+        </div>
+        <div class="col-md-12">
+          <ngx-select
+            [form]="goodSssubtypeForm"
+            control="numSsubType"
+            (fetchItems)="getSsubtypes($event)"
+            [data]="ssubTypes"
+            label="Ssubtipo"
+            bindLabel="description"
+            value="id">
+          </ngx-select>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="goodSssubtypeForm.get('numRegister')"
+            label="Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numRegister" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="goodSssubtypeForm.get('numClasifAlterna')"
+            label="ID Clasificaci&oacute;n alterna">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numClasifAlterna" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="goodSssubtypeForm.get('numClasifGoods')"
+            label="ID Clasificaci&oacute;n bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numClasifGoods" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="goodSssubtypeForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,695 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      <ng-container *ngIf="tipoCarga == FGR_OPCION; else otroTitulo">
+        Proceso de Carga Masiva de Bienes FGR
+      </ng-container>
+      <ng-template #otroTitulo>
+        Proceso de Actualizaci&oacute;n y Carga Masiva de Bienes
+      </ng-template>
+    </h5>
+  </div>
+
+  <div body class="init-page">
+    <div class="row mt-3 mb-5" *ngIf="optionInvalid">
+      <div class="col-md-12">
+        <div class="col-md-12 alert alert-warning">
+          La opción {{ tipoCarga }} no esta disponible...
+        </div>
+      </div>
+    </div>
+    <form
+      [formGroup]="assetsForm"
+      (submit)="save()"
+      class="form-material"
+      *ngIf="!optionInvalid">
+      <!-- <div class="row pb-0 mb-0">
+        <div class="col-md-12 d-flex">
+          <label class="mr-5">Destino: </label>
+          <form-radio
+            class="mt-2"
+            *ngFor="let _target of targets"
+            [label]="_target.label">
+            <input
+              type="radio"
+              [formControl]="target"
+              [value]="_target.value"
+              (change)="targetChange()" />
+          </form-radio>
+        </div>
+      </div>
+      <hr /> -->
+      <div class="row">
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12" *ngIf="tipoCarga == FGR_OPCION">
+                      <div class="card p-2">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">
+                            EXPEDIENTE:
+                            <div class="badge badge-pill bg-primary text-wrap">
+                              {{ paramsGeneral.p_no_expediente }}
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            VOLANTE:
+                            <div
+                              class="badge badge-pill {{
+                                WHEEL_COLOR_DATA_COLUMN
+                              }} text-wrap">
+                              {{ paramsGeneral.p_no_volante }}
+                            </div>
+                          </li>
+                          <li class="list-group-item">
+                            NÚMERO DE OFICIO:
+                            <div
+                              class="badge badge-pill {{
+                                OFFICE_COLOR_DATA_COLUMN
+                              }} text-wrap">
+                              {{ paramsGeneral.p_av_previa }}
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label>Opciones de Carga</label>
+                      <div class="mt-4">
+                        <form-radio
+                          *ngFor="let action of actions"
+                          [label]="action.title">
+                          <input
+                            type="radio"
+                            formControlName="actionType"
+                            [value]="action.value" />
+                        </form-radio>
+                      </div>
+                    </div>
+                    <div
+                      class="col-md-6"
+                      *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'">
+                      <div class="row">
+                        <form-check label="Son automoviles" for="cars">
+                          <input
+                            id="cars"
+                            type="checkbox"
+                            formControlName="cars" />
+                        </form-check>
+                      </div>
+                      <div class="row">
+                        <form-check label="Son inmuebles" for="property">
+                          <input
+                            id="property"
+                            type="checkbox"
+                            formControlName="inmuebles" />
+                        </form-check>
+                      </div>
+                      <div class="row">
+                        <hr
+                          class="row mr-4"
+                          style="width: -webkit-fill-available" />
+                        <form-check label="Desalojo" for="desalojov">
+                          <input
+                            id="desalojov"
+                            type="checkbox"
+                            formControlName="desalojo"
+                            (change)="desalojoChange()" />
+                        </form-check>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-2">
+            <div class="card-header">
+              Proceso actual:
+              <div class="badge badge-pill bg-primary text-wrap">
+                {{ assetsForm.get('actionType').value }}
+              </div>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Total de Registros:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{ tableSource.length }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                <form-field
+                  [control]="assetsForm.get('idCarga')"
+                  style="text-transform: uppercase"
+                  label="ID carga:"
+                  class="col-md-12">
+                  <input class="form-control" formControlName="idCarga" />
+                </form-field>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row" *ngIf="!optionInvalid">
+            <div class="col-12 text-center">
+              <button
+                *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'"
+                class="m-4 btn btn-success btn-sm ml-2"
+                type="button"
+                [disabled]="
+                  procesandoUpload ||
+                  procesandoPreload ||
+                  tipoCarga == FGR_OPCION
+                "
+                (click)="file.click()">
+                Abrir archivo Excel / CSV
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
+              <button
+                type="submit"
+                status="info"
+                [disabled]="
+                  !assetsForm.get('idCarga') ||
+                  procesandoUpload ||
+                  procesandoPreload
+                "
+                class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                Ejecutar proceso
+              </button>
+              <button
+                (click)="resetProcess()"
+                type="button"
+                [disabled]="
+                  procesandoUpload ||
+                  procesandoPreload ||
+                  DeclarationsUploadValidationMassive
+                "
+                class="ml-2 mb-0 m-4 btn btn-danger btn-sm active">
+                Limpiar Proceso
+              </button>
+              <button
+                *ngIf="
+                  tipoCarga == FGR_OPCION &&
+                  !DeclarationsUploadValidationMassive
+                "
+                [disabled]="
+                  procesandoUpload || procesandoPreload || cargandoPgr
+                "
+                (click)="goPageVolante()"
+                type="button"
+                class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                Regresar al proceso anterior
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <hr class="row mt-3" />
+    <div class="row mt-3 mb-5" *ngIf="cargandoPgr && tipoCarga == FGR_OPCION">
+      <div class="col-md-12">
+        <div class="col-md-12 alert alert-warning">
+          Cargando la información de la pantalla, Espere un momento...
+        </div>
+      </div>
+    </div>
+    <div
+      class="row mt-3 mb-5 preload-process"
+      *ngIf="
+        DeclarationsValidationMassive &&
+        DeclarationsValidationMassive.message_progress != ''
+      ">
+      <!-- <div
+        class="col-md-12 alert alert-warning"
+        *ngIf="stopProcess && procesandoPreload">
+        Deteniendo el proceso, Espere un momento...
+      </div> -->
+      <div class="col-md-12"><h2>Proceso de validación de datos</h2></div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Proceso actual:
+                <div class="badge badge-pill bg-primary text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.proceso }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Estatus del Proceso Actual:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{ DeclarationsValidationMassive.message_progress }}
+                </div>
+              </li>
+              <div class="list-group-item">
+                <div
+                  class="progress"
+                  role="progressbar"
+                  aria-label="Example with label"
+                  style="background-color: lightgrey"
+                  [attr.aria-valuenow]="
+                    ((DeclarationsValidationMassive.common_general.count + 1) /
+                      DeclarationsValidationMassive.common_general.total) *
+                      100 | number: '1.2-2'
+                  "
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+                  <div
+                    class="progress-bar bg-info"
+                    [style.width]="
+                      (((DeclarationsValidationMassive.common_general.count +
+                        1) /
+                        DeclarationsValidationMassive.common_general.total) *
+                        100 | number: '1.2-2') + '%'
+                    ">
+                    {{
+                      ((DeclarationsValidationMassive.common_general.count +
+                        1) /
+                        DeclarationsValidationMassive.common_general.total) *
+                        100 | number: '1.2-2'
+                    }}%
+                  </div>
+                </div>
+              </div>
+              <div
+                class="list-group-item"
+                *ngIf="
+                  DeclarationsValidationMassive.common_general.count + 1 !=
+                  DeclarationsValidationMassive.common_general.total
+                ">
+                Datos del registro actual en proceso:
+                <div
+                  class="row mt-5 w-100"
+                  style="max-height: 300px; overflow-y: scroll">
+                  <div class="col-md-12">
+                    <ng2-smart-table
+                      [source]="tableSourceActualPreload"
+                      [settings]="settings">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <!-- <div class="card-header text-center">
+            <button
+              (click)="detenerProceso()"
+              type="button"
+              *ngIf="procesandoPreload"
+              class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+              Detener Proceso
+            </button>
+          </div> -->
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Porcentaje proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{
+                    (((DeclarationsValidationMassive.common_general.count + 1) /
+                      DeclarationsValidationMassive.common_general.total) *
+                      100 | number: '1.2-2') + '%'
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Registro actual en proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.count + 1 }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.total }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros con Errores:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{
+                    DeclarationsValidationMassive.common_general
+                      .registro_errores
+                  }}
+                </div>
+              </li>
+              <!-- <li class="list-group-item">
+                Total de Errores en el proceso:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{ DeclarationsValidationMassive.common_general.total_errores }}
+                </div>
+              </li> -->
+            </ul>
+            <div
+              class="alert alert-info"
+              *ngIf="
+                DeclarationsValidationMassive.common_general.total_errores >
+                  0 &&
+                DeclarationsValidationMassive.common_general.valid == false
+              ">
+              El archivo que se genera al dar clic en "Exportar Errores
+              Encontrados en el Proceso de Validación del Archivo" contiene los
+              campos donde se encontraron errores durante el proceso de
+              validación. Se muestran los errores puntuales en la última columna
+              del contenido del excel.
+              <button
+                type="button"
+                [disabled]="procesandoPreload"
+                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap"
+                (click)="exportXlsx()">
+                Exportar Errores Encontrados en el Proceso de Validación del
+                archivo<i class="fa fa-file-excel ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="row mt-5 mb-3 upload-process"
+      *ngIf="
+        DeclarationsUploadValidationMassive &&
+        DeclarationsUploadValidationMassive.message_progress != ''
+      ">
+      <!-- <div
+        class="col-md-12 alert alert-warning"
+        *ngIf="stopProcess && procesandoUpload">
+        Deteniendo el proceso, Espere un momento...
+      </div> -->
+      <div class="col-md-12">
+        <h2>Proceso de validación en la carga de datos</h2>
+      </div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Proceso actual:
+                <div class="badge badge-pill bg-primary text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.proceso
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Estatus del Proceso Actual:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{ DeclarationsUploadValidationMassive.message_progress }}
+                </div>
+              </li>
+              <div class="list-group-item">
+                <div
+                  class="progress"
+                  role="progressbar"
+                  aria-label="Example with label"
+                  style="background-color: lightgrey"
+                  [attr.aria-valuenow]="
+                    ((DeclarationsUploadValidationMassive.common_general.count +
+                      1) /
+                      DeclarationsUploadValidationMassive.common_general
+                        .total) *
+                      100 | number: '1.2-2'
+                  "
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+                  <div
+                    class="progress-bar bg-info"
+                    [style.width]="
+                      (((DeclarationsUploadValidationMassive.common_general
+                        .count +
+                        1) /
+                        DeclarationsUploadValidationMassive.common_general
+                          .total) *
+                        100 | number: '1.2-2') + '%'
+                    ">
+                    {{
+                      ((DeclarationsUploadValidationMassive.common_general
+                        .count +
+                        1) /
+                        DeclarationsUploadValidationMassive.common_general
+                          .total) *
+                        100 | number: '1.2-2'
+                    }}%
+                  </div>
+                </div>
+              </div>
+              <div
+                class="list-group-item"
+                *ngIf="
+                  DeclarationsUploadValidationMassive.common_general.count +
+                    1 !=
+                  DeclarationsUploadValidationMassive.common_general.total
+                ">
+                Datos del registro actual en proceso:
+                <div
+                  class="row mt-5 w-100"
+                  style="max-height: 300px; overflow-y: scroll">
+                  <div class="col-md-12">
+                    <ng2-smart-table
+                      [source]="tableSourceActualUpload"
+                      [settings]="settings">
+                    </ng2-smart-table>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="list-group-item">
+                <div
+                  class="col-md-6 fin-proceso"
+                  *ngIf="
+                    tipoCarga == FGR_OPCION &&
+                    ((DeclarationsUploadValidationMassive &&
+                      !procesandoUpload &&
+                      endProcess) ||
+                      (tableSource.length == 0 && !cargandoPgr))
+                  ">
+                  <button
+                    (click)="goPageVolante()"
+                    type="button"
+                    class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                    Regresar al proceso anterior
+                  </button>
+                </div>
+              </div> -->
+            </ul>
+            <div
+              class="row"
+              *ngIf="
+                tipoCarga == FGR_OPCION &&
+                ((DeclarationsUploadValidationMassive &&
+                  !procesandoUpload &&
+                  endProcess) ||
+                  (tableSource.length == 0 && !cargandoPgr))
+              ">
+              <div class="col-md-12">
+                <div class="card p-2">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      EXPEDIENTE:
+                      <div class="badge badge-pill bg-primary text-wrap">
+                        {{ paramsGeneral.p_no_expediente }}
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      VOLANTE:
+                      <div
+                        class="badge badge-pill {{
+                          WHEEL_COLOR_DATA_COLUMN
+                        }} text-wrap">
+                        {{ paramsGeneral.p_no_volante }}
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      NÚMERO DE OFICIO:
+                      <div
+                        class="badge badge-pill {{
+                          OFFICE_COLOR_DATA_COLUMN
+                        }} text-wrap">
+                        {{ paramsGeneral.p_av_previa }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <!-- <div class="card-header text-center">
+            <button
+              (click)="detenerProceso()"
+              type="button"
+              *ngIf="procesandoUpload"
+              class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+              Detener Proceso
+            </button>
+          </div> -->
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Porcentaje proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{
+                    (((DeclarationsUploadValidationMassive.common_general
+                      .count +
+                      1) /
+                      DeclarationsUploadValidationMassive.common_general
+                        .total) *
+                      100 | number: '1.2-2') + '%'
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Registro actual en proceso:
+                <div class="badge badge-pill bg-info text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.count + 1
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{ DeclarationsUploadValidationMassive.common_general.total }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Registros con Errores:
+                <div class="badge badge-pill bg-danger text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general
+                      .registro_errores
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Bienes creados:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.bienes
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Expedientes creados:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general
+                      .expedientes
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                Total de Volantes creados:
+                <div class="badge badge-pill bg-success text-wrap">
+                  {{
+                    DeclarationsUploadValidationMassive.common_general.volantes
+                  }}
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div
+                  class="col-md-6 fin-proceso"
+                  *ngIf="
+                    tipoCarga == FGR_OPCION &&
+                    ((DeclarationsUploadValidationMassive &&
+                      !procesandoUpload &&
+                      endProcess) ||
+                      (tableSource.length == 0 && !cargandoPgr))
+                  ">
+                  <button
+                    (click)="goPageVolante()"
+                    type="button"
+                    class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
+                    Terminar Proceso
+                  </button>
+                </div>
+              </li>
+            </ul>
+            <div
+              class="alert alert-info"
+              *ngIf="
+                DeclarationsUploadValidationMassive.common_general
+                  .total_errores > 0 &&
+                DeclarationsUploadValidationMassive.common_general.valid ==
+                  false
+              ">
+              El archivo que se genera al dar clic en "Exportar Errores
+              Encontrados en el Proceso de Validación del Archivo" contiene los
+              campos donde se encontraron errores durante el proceso de
+              validación. Se muestran los errores puntuales en la última columna
+              del contenido del excel.
+              <button
+                type="button"
+                [disabled]="procesandoPreload"
+                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap"
+                (click)="exportErrorUploadXlsx()">
+                Exportar Errores Encontrados en el Proceso de Validación del
+                archivo<i class="fa fa-file-excel ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr *ngIf="tableSource.length > 0" class="row" />
+    <h4 *ngIf="tableSource.length > 0">
+      <ng-container
+        *ngIf="tipoCarga != FGR_OPCION && tipoCarga != 'sat'; else otroData">
+        Registros del Excel/CSV seleccionado
+      </ng-container>
+
+      <ng-template #otroData>
+        <h2>Listado de Registros</h2>
+        <ng-container *ngIf="tipoCarga == FGR_OPCION">
+          <div
+            class="badge badge-pill {{
+              WHEEL_COLOR_DATA_COLUMN
+            }} text-wrap m-3">
+            Color para los datos del Volante
+          </div>
+          <div
+            class="badge badge-pill {{
+              OFFICE_COLOR_DATA_COLUMN
+            }} text-wrap m-3">
+            Color para los datos del Oficio
+          </div>
+          <div class="badge badge-pill bg-light text-dark text-wrap m-3">
+            Las columnas que no tienen color pertenecen a los datos de los
+            bienes que se van a procesar.
+          </div>
+        </ng-container>
+      </ng-template>
+    </h4>
+    <div class="row mt-3" style="max-height: 600px; overflow-y: scroll">
+      <div
+        class="col-md-12 alert alert-warning"
+        *ngIf="stopProcess && procesandoUpload">
+        Deteniendo el proceso, Espere un momento...
+      </div>
+      <div class="col-md-12">
+        <ng2-smart-table [source]="tableSource" [settings]="settings">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,31 @@
+a.text-color:hover,
+a.text-color:active {
+  color: #9d2449;
+  cursor: pointer;
+}
+
+:host ::ng-deep ng2-smart-table {
+  font-size: small;
+  app-btn-request {
+    padding-right: 4rem !important;
+
+    button:hover {
+      text-decoration-line: underline !important;
+      color: #9d2449 !important;
+    }
+  }
+
+  .typeDocument ng2-st-column-title .ng2-smart-title {
+    width: 25rem !important;
+  }
+
+  .titleDocument ng2-st-column-title .ng2-smart-title {
+    width: 25rem !important;
+  }
+}
+
+:host ::ng-deep ngx-select {
+  ng-select {
+    border: none !important;
+  }
+}

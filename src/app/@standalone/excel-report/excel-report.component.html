@@ -1,0 +1,19 @@
+<div style="cursor: pointer" (click)="exportToExcel()">
+  <img
+    *ngIf="text === ''"
+    alt="imagen-list"
+    class="d-flex click mr-3"
+    width="30"
+    height="30"
+    src="assets/images/excel-icon.png" />
+  <ng-container *ngIf="text !== ''">
+    <button
+      class="btn btn-primary btn-sm active"
+      type="submit"
+      size="small"
+      (click)="exportToExcel()">
+      <i class="bx bx-download float-icon"></i>
+      {{ text }}
+    </button>
+  </ng-container>
+</div>

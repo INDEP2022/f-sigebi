@@ -1,0 +1,116 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('id_fraccion')"
+            label="Id Fracci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id_fraccion" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('numero')" label="N&uacute;mero">
+            <input type="text" class="form-control" formControlName="numero" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('descripcion')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descripcion" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('validar_ef')" label="Validar Ef">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="validar_ef" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('validar_ec')" label="Validar Ec">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="validar_ec" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('usuario_creacion')"
+            label="Usuario Creaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="usuario_creacion" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('fecha_creacion')"
+            label="Fecha Creaci&oacute;n">
+            <input
+              type="date"
+              class="form-control"
+              formControlName="fecha_creacion" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('usuario_modificacion')"
+            label="Usuario Modificaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="usuario_modificacion" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('fecha_modificacion')"
+            label="Fecha Modificaci&oacute;n">
+            <input
+              type="date"
+              class="form-control"
+              formControlName="fecha_modificacion" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('version')" label="Versi&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

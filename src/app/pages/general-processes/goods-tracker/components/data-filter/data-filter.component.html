@@ -1,0 +1,203 @@
+<form class="form-material" [formGroup]="form" (submit)="search()">
+  <div class="row">
+    <form-field
+      [control]="form.get('goodNum')"
+      class="col-md-3"
+      label="No&#46; Bien">
+      <ng-select
+        class="form-control"
+        formControlName="goodNum"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true">
+      </ng-select>
+      <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
+    </form-field>
+
+    <!-- <form-check label="List&#46; Bienes" for="goodsList" class="col-md-2">
+      <input
+        type="checkbox"
+        formControlName="listBienes"
+        id="goodsList"
+        class="form-control" />
+    </form-check> -->
+
+    <form-field
+      [control]="form.get('process')"
+      class="col-md-3"
+      label="Proceso">
+      <ng-select
+        class="form-control"
+        formControlName="process"
+        bindValue="value"
+        bindLabel="label"
+        [items]="processes"
+        [multiple]="true">
+      </ng-select>
+    </form-field>
+
+    <!-- <form-field
+      [control]="form.get('samiInventory')"
+      class="col-md-3"
+      label="Inv&#46; SAMI">
+      <input type="text" formControlName="samiInventory" class="form-control" />
+    </form-field> -->
+
+    <!-- <form-check
+      label="List&#46; Inventario"
+      for="inventoryList"
+      class="col-md-2">
+      <input
+        type="checkbox"
+        formControlName="listInv"
+        id="inventoryList"
+        class="form-control" />
+    </form-check> -->
+    <form-field [control]="form.get('targetIdentifier')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        control="targetIdentifier"
+        [data]="labels"
+        value="description"
+        bindLabel="description"
+        (fetchItems)="getGoodLabels($event)"
+        label="Identificador de Destino"></ngx-select>
+    </form-field>
+  </div>
+
+  <div class="row pt-5">
+    <form-field [control]="form.get('status')" class="col-md-5">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [searchOnInit]="true"
+        control="status"
+        [data]="goodStatuses"
+        value="status"
+        bindLabel="description"
+        (fetchItems)="getGoodStatuses($event)"
+        label="Estatus"></ngx-select>
+    </form-field>
+
+    <form-field
+      [control]="form.get('withPhoto')"
+      class="col-md-2"
+      label="Fotos de Bienes">
+      <select formControlName="withPhoto" class="form-control">
+        <option
+          [value]="photoOption.value"
+          *ngFor="let photoOption of photosOptions">
+          {{ photoOption.label }}
+        </option>
+      </select>
+    </form-field>
+
+    <form-field
+      [control]="form.get('menageFather')"
+      class="col-md-3"
+      label="Bien Padre Menaje">
+      <ng-select
+        class="form-control"
+        formControlName="menageFather"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true"
+        [selectOnTab]="true"
+        [isOpen]="false">
+      </ng-select>
+    </form-field>
+  </div>
+  <div class="row pt-5">
+    <form-field
+      [control]="form.get('valueFrom')"
+      class="col-md-3"
+      label="Valor Aval&uacute;o de">
+      <input type="number" formControlName="valueFrom" class="form-control" />
+    </form-field>
+
+    <form-field [control]="form.get('valueTo')" class="col-md-3" label="A">
+      <input type="number" formControlName="valueTo" class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('photoDate')"
+      class="col-md-3"
+      label="Fecha Foto">
+      <input
+        type="text"
+        formControlName="photoDate"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+
+    <form-field
+      [control]="form.get('identifier')"
+      class="col-md-3"
+      label="Identificador">
+      <input type="text" formControlName="identifier" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row pt-5">
+    <form-field
+      [control]="form.get('description')"
+      class="col-md-4"
+      label="Descripci&oacute;n">
+      <input type="text" formControlName="description" class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('attributes')"
+      class="col-md-4"
+      label="Atributos">
+      <input type="text" formControlName="attributes" class="form-control" />
+    </form-field>
+
+    <!-- <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
+      <input
+        type="checkbox"
+        formControlName="gabinete"
+        id="gabinete"
+        class="form-control" />
+    </form-check> -->
+  </div>
+
+  <div class="row pt-5">
+    <!-- <form-field
+      [control]="form.get('movableIventory')"
+      class="col-md-3"
+      label="Inv&#46; Mueble">
+      <input
+        type="text"
+        formControlName="movableIventory"
+        class="form-control" />
+    </form-field> -->
+
+    <form-field
+      [control]="form.get('siabiInventory')"
+      class="col-md-3"
+      label="Inv&#46; SIABI">
+      <input
+        type="text"
+        formControlName="siabiInventory"
+        class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('cisiInventory')"
+      class="col-md-3"
+      label="Inv&#46; CISI">
+      <input type="text" formControlName="cisiInventory" class="form-control" />
+    </form-field>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary active">
+        {{ subloading ? 'Espere un momento ...' : 'Buscar' }}
+        <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+</form>

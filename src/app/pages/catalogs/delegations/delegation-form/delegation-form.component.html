@@ -1,0 +1,186 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form
+      [formGroup]="delegationForm"
+      class="form-material"
+      class="form-material">
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="delegationForm.get('id')" label="Id">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4 offset-md-2">
+          <form-field [control]="delegationForm.get('cveState')">
+            <ngx-select
+              [form]="delegationForm"
+              control="cveState"
+              value="cveState"
+              bindLabel="descState"
+              [data]="states"
+              (fetchItems)="getStates($event)"
+              (change)="stateChange($event)"
+              label="CVE Estado">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="delegationForm.get('idZoneGeographic')">
+            <ngx-select
+              [form]="delegationForm"
+              control="idZoneGeographic"
+              value="id_zona_geografica"
+              bindLabel="descripcion"
+              [data]="zones"
+              (fetchItems)="getZones($event)"
+              (change)="zoneChange($event)"
+              label="Zona Geogr&aacute;fica">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="delegationForm.get('addressOffice')"
+            label="Direcci&oacute;n de Oficina">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressOffice" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="delegationForm.get('regionalDelegate')"
+            label="Delegado regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="regionalDelegate" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="delegationForm.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2">
+          <form-field
+            [control]="delegationForm.get('etapaEdo')"
+            label="Etapa Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="etapaEdo" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2">
+          <form-field [control]="delegationForm.get('status')" label="Estatus">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="status" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2">
+          <form-field [control]="delegationForm.get('iva')" label="IVA">
+            <input type="number" class="form-control" formControlName="iva" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="delegationForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              row
+              pt-5s="2"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="delegationForm.get('zoneVigilanceCVE')"
+            label="CVE Zona">
+            <input
+              type="number"
+              class="form-control"
+              class="form-control"
+              formControlName="zoneVigilanceCVE" />
+          </form-field>
+        </div>
+
+        <!-- Diferencia de hras -->
+        <div class="col-md-3">
+          <form-field
+            [control]="delegationForm.get('diffHours')"
+            label="Diferencia de horas">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="diffHours" />
+          </form-field>
+        </div>
+
+        <!-- Cona de contrato CVE -->
+        <div class="col-md-3">
+          <form-field
+            [control]="delegationForm.get('zoneContractCVE')"
+            label="CVE zona de contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="zoneContractCVE" />
+          </form-field>
+        </div>
+
+        <!-- No Register -->
+        <div class="col-md-3">
+          <form-field
+            [control]="delegationForm.get('noRegister')"
+            label="noRegistro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noRegister" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="delegationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

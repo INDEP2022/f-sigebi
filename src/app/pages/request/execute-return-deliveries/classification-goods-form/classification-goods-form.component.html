@@ -1,0 +1,121 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Clasificaci&oacute;n de bienes no entregados</h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button (click)="save()" class="btn btn-primary btn-sm active">
+        Finalizar aprobaci&oacute;n
+      </button>
+    </div>
+    <h5 class="title">
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = true"
+          *ngIf="!showSearchForm">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Detalles
+          programaci&oacute;n</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = false"
+          *ngIf="showSearchForm">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+          programaci&oacute;n</a
+        >
+      </p>
+    </h5>
+    <form *ngIf="showSearchForm" class="form-horizontal" style="margin: 0 auto">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Tipo evento:</label>
+            <span> Devoluci&oacute;n </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Folio:</label>
+            <span> E-METROPOLITANA-320 </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Transferente:</label>
+            <span> Procadur&iacute;a general de la justicia </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Fecha page de entrega:</label>
+            <span> 12-NOV-2022 15:35:00 </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Fecha final de entrega:</label>
+            <span> 13-NOV-2022 15:35:00 </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Almac&eacute;n:</label>
+            <span> Almac&eacute;n de prueba </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Cliente:</label>
+            <span> Cliente test </span>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row pt-3">
+      <h5 class="title">Ejecuci&oacute;n de entrega de bienes</h5>
+      <!--COLUMNS-->
+      <div class="justify-content-end btn-toolbar">
+        <app-columns-select
+          (settingsChange)="settingsChange($event)"
+          [settings]="settings">
+        </app-columns-select
+        >&nbsp;
+
+        <button class="btn btn-primary btn-sm active">
+          <i class="fa fa-save"></i> Guardar
+        </button>
+      </div>
+      <!--TABLE-->
+
+      <form class="form-material mb-3 mt-3" [formGroup]="form">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data"
+                (editConfirm)="onSaveConfirm($event)"
+                (userRowSelect)="selectRow($event.data)">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+      </form>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

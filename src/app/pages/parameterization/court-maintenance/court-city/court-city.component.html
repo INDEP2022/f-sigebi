@@ -1,0 +1,55 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Agregar Ciudad</h5>
+      <div class="buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('city')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="city"
+              [data]="cities"
+              value="idCity"
+              bindLabel="nameCity"
+              label="Ciudad/Entidad"
+              (fetchItems)="getCiities($event)"
+              (change)="onValuesChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+          <form-field label="court" [control]="form.get('court')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="court"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-center">
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            [disabled]="!form.valid"
+            (click)="confirm()">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>

@@ -1,0 +1,75 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="docCompesationSatForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="docCompesationSatForm.get('id')" label="Id">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <form-field
+            [control]="docCompesationSatForm.get('idcat')"
+            label="Id CAT">
+            <input type="number" class="form-control" formControlName="idcat" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-9">
+          <form-field
+            [control]="docCompesationSatForm.get('typeDocSat')"
+            label="Tipo documento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeDocSat" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="docCompesationSatForm.get('subjectCode')"
+            label="Asunto c&oacute;digo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="subjectCode" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="docCompesationSatForm.get('addressee')"
+            label="Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressee" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="docCompesationSatForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

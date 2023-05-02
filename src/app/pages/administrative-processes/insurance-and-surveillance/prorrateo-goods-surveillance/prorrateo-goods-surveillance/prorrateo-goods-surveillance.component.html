@@ -1,0 +1,213 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PRORRATEO DE BIENES PARA VIGILANCIA COMÚN</h5>
+  </div>
+
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">DATOS GENERALES</h5>
+    </div>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('cveContract')" label="Cve Contrato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveContract" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('movementType')"
+            label="Tipo de movimiento">
+            <input
+              type="text"
+              formControlName="movementType"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reportNumber')" label="No Reporte">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="reportNumber"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('startDate')" label="Fecha de page">
+            <input
+              type="text"
+              formControlName="startDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('finishedDate')"
+            label="Fecha de Termino">
+            <input
+              type="text"
+              formControlName="finishedDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('applicationDate')"
+            label="Fecha de Aplicación">
+            <input
+              type="text"
+              formControlName="applicationDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('requestArea')"
+            label="Area solicitada">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="requestArea" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('entregaPerson')"
+            label="Persona Entrega">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="entregaPerson" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('entregaArea')" label="Area Entrega">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="entregaArea" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('receptionDate')"
+            label="Fecha de recepción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="receptionDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('requestPerson')" label="Solicitante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="requestPerson" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('requestSign')"
+            label="Firma solicitante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="requestSign" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('userSign')" label="Firma de Usuario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userSign" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('entregaMotivo')"
+            label="Motivo de entrega">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="entregaMotivo" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('observations')"
+            label="Motivo de entrega">
+            <textarea
+              type="text"
+              rows="2"
+              class="form-control"
+              formControlName="observations"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('prorrateo')"
+            label="Identifique el prorrateo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="prorrateo" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('zone')" label="Zona">
+            <input type="text" class="form-control" formControlName="zone" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            RECUPERA DATOS
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div class="row mt-4" style="padding-top: 40px">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Conceptos" id="tab1">
+            <app-prorrateo-concepts></app-prorrateo-concepts>
+          </tab>
+          <tab heading="Bienes en Vigilancia" id="tab2">
+            <app-prorrateo-goods></app-prorrateo-goods>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

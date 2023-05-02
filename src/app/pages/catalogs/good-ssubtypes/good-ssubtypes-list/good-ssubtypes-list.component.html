@@ -1,0 +1,37 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">lista subtipo bienes</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div>
+        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (edit)="openForm($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</app-card>

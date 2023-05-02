@@ -1,0 +1,106 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">INDICADORES POR BIEN</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <div class="row pt-4">
+            <search-bar-simple
+              id="clean"
+              (eventEmit)="searchGoods($event)"
+              [label]="''"
+              [placeholder]="'N&uacute;mero de Bien'">
+            </search-bar-simple>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-3">
+          <div class="row pt-3">
+            <form-field [control]="form.get('date')" label="Fecha de cierre">
+              <input class="form-control" formControlName="date" bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="row pt-2">
+            <button
+              type="button"
+              (click)="calculate()"
+              class="btn btn-primary btn-sm active mx-2">
+              CALCULAR
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div
+          *ngIf="table"
+          class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+          <span>
+            SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA IZQUIEDA PARA
+            COPIAR&#46;</span
+          >
+        </div>
+        <div class="col-md-6">
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings1" [source]="data1">
+                      </ng2-smart-table> -->
+                <ng2-smart-table
+                  class="col-md-12"
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings1"
+                  [source]="indicatorsTotal"
+                  (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data2">
+                      </ng2-smart-table> -->
+                <ng2-smart-table
+                  class="col-md-12"
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings2"
+                  [source]="indicatorsTotal"></ng2-smart-table>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params2"
+              [totalItems]="totalItems2"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Copiar"
+          [disabled]="!valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

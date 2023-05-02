@@ -1,0 +1,72 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="tdescCveForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="tdescCveForm.get('id')" label="ID">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="tdescCveForm.get('dsKey1')" label="Clave">
+            <input type="text" class="form-control" formControlName="dsKey1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="tdescCveForm.get('swFormat1')" label="Formato">
+            <ng-select
+              formControlName="swFormat1"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="V">Alfanum&eacute;rico</ng-option>
+              <ng-option value="N">Num&eacute;rico</ng-option>
+              <ng-option value="F">Flotante</ng-option>
+              <ng-option value="D">Fecha</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="tdescCveForm.get('longMin1')"
+            label="Longitud Min&#46;">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="longMin1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="tdescCveForm.get('longMax1')"
+            label="Longitud Max&#46;">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="longMax1" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!tdescCveForm.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

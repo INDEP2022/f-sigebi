@@ -1,0 +1,55 @@
+<div>
+  <tabset class="md-tabs">
+    <!-- <tab *ngIf="docExp" heading="Documentos Expediente" id="tab1">
+      <app-doc-expedient-tab [typeDoc]="typeDoc"></app-doc-expedient-tab>
+    </tab> -->
+    <tab
+      *ngIf="docRequest"
+      heading="Documentos Solicitud"
+      id="tab1"
+      (selectTab)="requestSelected(1)">
+      <app-doc-request-tab
+        [typeDoc]="typeDoc"
+        [updateInfo]="updateInfo"></app-doc-request-tab>
+    </tab>
+    <tab heading="Documentos Bienes" *ngIf="goodsDocs">
+      <app-good-doc-tab></app-good-doc-tab>
+    </tab>
+    <ng-container
+      *ngIf="displayName === 'validateEyeVisitResult'; else elseBlock">
+      <tab
+        heading="Documentos Expediente"
+        (selectTab)="requestSelected(2)"
+        *ngIf="generalDocs">
+        <app-doc-request-tab
+          [typeDoc]="typeDoc"
+          [updateInfo]="updateInfo"
+          [displayName]="'validateEyeVisitResult'"></app-doc-request-tab>
+      </tab>
+    </ng-container>
+    <ng-template #elseBlock>
+      <tab
+        heading="Documentos Generales"
+        (selectTab)="requestSelected(2)"
+        *ngIf="generalDocs">
+        <tabset class="md-tabs">
+          <tab
+            heading="Documento Expedientes"
+            id="tab1"
+            (selectTab)="requestSelected(2)">
+            <app-doc-expedient-tab [typeDoc]="typeDoc"></app-doc-expedient-tab>
+          </tab>
+          <tab
+            heading="Solicitudes del Expediente"
+            (selectTab)="requestSelected(3)">
+            <app-expedients-request-tab
+              [typeDoc]="typeDoc"></app-expedients-request-tab>
+          </tab>
+        </tabset>
+      </tab>
+    </ng-template>
+    <tab heading="Fotos Bienes" (selectTab)="selectTabData()">
+      <app-photos-assets></app-photos-assets>
+    </tab>
+  </tabset>
+</div>

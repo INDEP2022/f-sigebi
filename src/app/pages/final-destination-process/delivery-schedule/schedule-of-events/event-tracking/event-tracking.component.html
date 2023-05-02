@@ -1,0 +1,98 @@
+<form
+  class="form-material form-horizontal"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()">
+  <div class="row mt-5">
+    <div class="col-md-2">
+      <div class="mb-3 pl-4 pr-4">
+        <form-field [control]="form.get('typeEvent')" label="Tipo de Evento">
+          <select class="form-control" formControlName="typeEvent">
+            <option [value]="item.id" *ngFor="let item of eventTypeOptions">
+              {{ item.name }}
+            </option>
+          </select>
+        </form-field>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="mb-3 pl-4 pr-4">
+        <form-field [control]="form.get('date')" label="Rango de Fecha">
+          <input
+            type="text"
+            class="form-control"
+            bsDaterangepicker
+            formControlName="date" />
+        </form-field>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="mb-3 pl-4 pr-4">
+        <form-field [control]="form.get('status')" label="Estatus de Evento">
+          <select class="form-control" formControlName="status">
+            <option [value]="item.id" *ngFor="let item of statusEvent">
+              {{ item.name }}
+            </option>
+          </select>
+        </form-field>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="mb-3 pl-4 pr-4">
+        <form-field
+          [control]="form.get('regionalCoord')"
+          label="Coord. Regional">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="regionalCoord" />
+        </form-field>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="mb-3 pl-4 pr-4">
+        <form-field [control]="form.get('typeUser')" label="Usuario">
+          <select class="form-control" formControlName="typeUser">
+            <option>Tipo Usuario</option>
+          </select>
+        </form-field>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="mb-3 pl-4 pr-4">
+        <form-field
+          [control]="form.get('sheduling')"
+          label="Programaci&oacute;n">
+          <input type="text" class="form-control" formControlName="sheduling" />
+        </form-field>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-3 text-center">
+      <button class="btn btn-primary active btn-sm" (click)="search()">
+        Buscar
+      </button>
+    </div>
+  </div>
+</form>
+
+<div *ngIf="response">
+  <div class="row mt-5">
+    <app-divider class=""></app-divider>
+  </div>
+  <div class="row mt-3 pt-2 scroll-table">
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      class="col-md-12"
+      [settings]="settings"
+      [source]="data">
+    </ng2-smart-table>
+  </div>
+
+  <div class="row mt-5 justify-content-sm-end justify-content-center">
+    <div class="col-12 col-sm-3 text-center">
+      <button class="btn btn-success btn-sm">Exportar</button>
+    </div>
+  </div>
+</div>

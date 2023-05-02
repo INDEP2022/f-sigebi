@@ -1,0 +1,64 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="documentsForDictumForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="documentsForDictumForm.get('id')"
+            label="Clave del documento">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="documentsForDictumForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="documentsForDictumForm.get('typeDictum')"
+            label="Tipo de Dictamen">
+            <ng-select
+              formControlName="typeDictum"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">DECOMISO</ng-option>
+              <ng-option value="2">DEVOLUCI&Oacute;N</ng-option>
+              <ng-option value="3">RECREVISI&Oacute;N</ng-option>
+              <ng-option value="4">ASEGURAMIENTO</ng-option>
+              <ng-option value="5">ENAJENACI&Oacute;N</ng-option>
+              <ng-option value="1">DESTRUCCI&Oacute;N</ng-option>
+              <ng-option value="2">DONACI&Oacute;N</ng-option>
+              <ng-option value="3">DESTINO</ng-option>
+              <ng-option value="4">TRANSFERENTE</ng-option>
+              <ng-option value="5">ABANDONO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

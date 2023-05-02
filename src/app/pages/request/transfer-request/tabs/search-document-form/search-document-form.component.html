@@ -1,0 +1,289 @@
+<h5 class="title">
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = true"
+      *ngIf="!showSearchForm">
+      <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+      documentos</a
+    >
+  </p>
+
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = false"
+      *ngIf="showSearchForm">
+      <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+      documentos</a
+    >
+  </p>
+</h5>
+<div *ngIf="showSearchForm">
+  <form [formGroup]="searchForm" class="form-material">
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <form-field [control]="searchForm.get('texto')" label="Texto">
+          <input
+            type="text"
+            maxlength="1000"
+            class="form-control"
+            formControlName="texto" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <form-field [control]="searchForm.get('xTipoDocumento')">
+          <ngx-select
+            [form]="searchForm"
+            control="xTipoDocumento"
+            [data]="typeDocuments"
+            value="ddocType"
+            bindLabel="ddescription"
+            label="Tipo de documento"
+            (fetchItems)="getTypeDocumentSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('dDocTitle')"
+          label="T&iacute;tulo del documento">
+          <input
+            type="text"
+            maxlength="30"
+            class="form-control"
+            formControlName="dDocTitle" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('xIdSIAB')" label="No&#46; siab">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="xIdSIAB"
+            min="0" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('xcargoRemitente')"
+          label="Cargo remitente">
+          <input
+            type="text"
+            maxlength="100"
+            class="form-control"
+            formControlName="xcargoRemitente" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('dDocAuthor')" label="Autor">
+          <input
+            type="text"
+            maxlength="100"
+            class="form-control"
+            formControlName="dDocAuthor" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('xtipoTransferencia')"
+          label="Tipo transferencia">
+          <input
+            type="text"
+            maxlength="30"
+            class="form-control"
+            formControlName="xtipoTransferencia" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('xresponsable')"
+          label="Responsable">
+          <input
+            type="text"
+            maxlength="30"
+            class="form-control"
+            formControlName="xresponsable" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('dDocName')"
+          label="Nombre documento">
+          <input
+            type="text"
+            maxlength="100"
+            class="form-control"
+            formControlName="dDocName" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('xDelegacionRegional')">
+          <ngx-select
+            [form]="searchForm"
+            control="xDelegacionRegional"
+            [data]="regionalsDelegations"
+            value="id"
+            bindLabel="description"
+            label="Delegaci&oacute;n Regional"
+            (fetchItems)="getRegionalDelegationSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('xcontribuyente')"
+          label="Contribuyente">
+          <input
+            type="text"
+            maxlength="100"
+            class="form-control"
+            formControlName="xcontribuyente" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('xidExpediente')"
+          label="No&#46; expediente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="xidExpediente"
+            min="0" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('xestado')">
+          <ngx-select
+            [form]="searchForm"
+            control="xestado"
+            [data]="states"
+            value="id"
+            bindLabel="descCondition"
+            label="Estado"
+            (fetchItems)="getStateSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('xnoOficio')"
+          label="No&#46; oficio">
+          <input
+            type="text"
+            maxlength="30"
+            class="form-control"
+            formControlName="xnoOficio" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <form-field
+          [control]="searchForm.get('xidSolicitud')"
+          label="No&#46; solicitud">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="xidSolicitud"
+            min="0" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('xidTransferente')">
+          <ngx-select
+            [form]="searchForm"
+            control="xidTransferente"
+            [data]="transferents"
+            value="id"
+            bindLabel="nameTransferent"
+            label="Transferente"
+            (fetchItems)="getTransferentSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('xComments')" label="Comentarios">
+          <input
+            type="text"
+            maxlength="1000"
+            class="form-control"
+            formControlName="xComments" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('xidBien')" label="No&#46; bien">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="xidBien"
+            min="0" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('xremitente')" label="Remitente">
+          <input
+            type="text"
+            maxlength="100"
+            class="form-control"
+            formControlName="xremitente" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="form-inline justify-content-end btn-toolbar">
+  <button class="btn btn-primary btn-sm active" (click)="search()">
+    <i class="fa fa-search"></i> Buscar
+  </button>
+
+  <button
+    *ngIf="showSearchForm"
+    class="btn btn-danger btn-sm active"
+    (click)="clean()">
+    Limpiar
+  </button>
+</div>
+
+<div class="row">
+  <div class="btn-toolbar pt-5">
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+    <button (click)="newDocument()" class="btn btn-primary btn-sm active">
+      <i class="fa fa-file-archive"></i> Nuevo documento
+    </button>
+  </div>
+
+  <div class="row pt-4">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="documentsSeaData"
+        (rowSelect)="documentSelect($event)"
+        (edit)="showDocument($event)"
+        (delete)="deleteDocument($event)">
+      </ng2-smart-table>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>

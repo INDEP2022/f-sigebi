@@ -1,0 +1,64 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Parcializaci&oacute;n de Bienes</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material" (submit)="save()">
+          <div class="row">
+            <form-field
+              [control]="form.get('bien')"
+              class="col-md-2"
+              label="Bien">
+              <input
+                type="number"
+                formControlName="bien"
+                (change)="goodChange()"
+                class="form-control" />
+            </form-field>
+
+            <form-field [control]="goodDescriptionCtrl" class="col-md-6">
+              <input
+                type="text"
+                [formControl]="goodDescriptionCtrl"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('original')"
+              [label]="originalPlaceholder"
+              class="col-md-3">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="original" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('en')"
+              label="Parcializar En"
+              class="col-md-3">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="en"
+                (change)="inCtrlChange()" />
+            </form-field>
+
+            <form-field [control]="form.get('y')" label="Y" class="col-md-3">
+              <input type="number" class="form-control" formControlName="y" />
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <confirm-button [loading]="loading"></confirm-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-card>

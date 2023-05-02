@@ -1,0 +1,60 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cat&aacute;logo de preguntas</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
+          Nuevo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <!-- Tabla de preguntas -->
+    <div class="row">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="questionI"
+            (edit)="openForm($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+
+    <!-- Tabla de respuestas -->
+    <div class="row pt-5">
+      <div class="ch-content" header>
+        <h5 class="title">Cat&aacute;logo de Respuesta</h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openForm2()">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [settings]="settings2"
+            [source]="responseI"
+            (edit)="openForm2($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params2" [totalItems]="totalItems2">
+    </app-pagination>
+    <!-- <div class="row pt-3">
+      <div class="col-md-2">
+        <h5 class="font-size-14 d-inline">Total de respuestas&#58; &nbsp;</h5>
+        <h3 class="font-size-14 d-inline">&nbsp; 3</h3>
+      </div>
+    </div> -->
+  </div>
+</app-card>

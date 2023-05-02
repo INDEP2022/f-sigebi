@@ -1,0 +1,313 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Captura de Programaci&oacute;n de Eventos</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-12">
+        <h5 class="">Registro</h5>
+      </div>
+    </div>
+
+    <form
+      class="form-material form-horizontal"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()">
+      <div class="row mt-5">
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('typeEvent')"
+              label="Tipo de Evento">
+              <select class="form-control" formControlName="typeEvent">
+                <option [value]="item.id" *ngFor="let item of eventTypeOptions">
+                  {{ item.name }}
+                </option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('captureDate')"
+              label="Fecha Captura">
+              <input
+                type="text"
+                class="form-control"
+                bsDatepicker
+                formControlName="captureDate" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3 text-center">
+          <div class="text-center">
+            <label class="label text-secondary">Responsable</label>
+          </div>
+          <div class="d-flex justify-content-around pl-4 pr-4">
+            <form-radio label="TLP">
+              <input
+                type="radio"
+                formControlName="responsible"
+                value="Administrativo" />
+            </form-radio>
+            <form-radio label="SAE">
+              <input
+                type="radio"
+                formControlName="responsible"
+                value="Procesal" />
+            </form-radio>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('type')" label="Tipo">
+              <select class="form-control" formControlName="type">
+                <option value="rt">RT</option>
+                <option value="a">A</option>
+                <option value="d">D</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('prog')" label="Prog.">
+              <select class="form-control" formControlName="prog">
+                <option value="prog">Prog</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('transference')"
+              label="Transferente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="transference" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('area')" label="&Aacute;rea">
+              <input type="text" class="form-control" formControlName="area" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('user')" label="Usuario">
+              <input type="text" class="form-control" formControlName="user" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('folio')" label="Folio">
+              <input type="text" class="form-control" formControlName="folio" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('date')" label="Fecha">
+              <input type="text" class="form-control" formControlName="date" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5 justify-content-end">
+        <div class="col-12 col-sm-3 text-center text-sm-right">
+          <button class="btn btn-primary active btn-sm">Cerrar Prog.</button>
+        </div>
+        <div class="col-12 col-sm-3 text-center text-sm-right mt-3 mt-sm-0">
+          <button class="btn btn-success active btn-sm">
+            Exportar a Excel
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <app-divider></app-divider>
+
+    <div class="row mt-5">
+      <div class="col-12">
+        <h5 class="">
+          Par&aacute;metros para Traer Informaci&oacute;n de SIAB
+        </h5>
+      </div>
+    </div>
+
+    <form
+      class="form-material form-horizontal"
+      [formGroup]="formSiab"
+      (ngSubmit)="onSubmit2()">
+      <div class="row mt-5">
+        <div class="col-md-4">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="formSiab.get('dateSiab')"
+              label="Rango de Fecha">
+              <input
+                type="text"
+                class="form-control"
+                bsDaterangepicker
+                formControlName="dateSiab" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="formSiab.get('proceedings')"
+              label="No. Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="proceedings" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="formSiab.get('delegation')" label="Deleg.">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="delegation" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="formSiab.get('transferenceSiab')"
+              label="Transf.">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="transferenceSiab" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="formSiab.get('transmitter')" label="Emisora">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="transmitter" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="formSiab.get('authority')" label="Autoridad">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="authority" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5 justify-content-end">
+        <div class="col-12 col-md-3 text-center text-md-right">
+          <button class="btn btn-primary btn-sm active">Cargar Bienes</button>
+        </div>
+        <div class="col-12 col-md-3 mt-3 mt-md-0 text-center text-md-right">
+          <button class="btn btn-primary btn-sm active">Rastreador</button>
+        </div>
+        <div class="col-12 col-md-3 mt-3 mt-md-0 text-center text-md-right">
+          <button class="btn btn-primary btn-sm active">Paq. Conv.</button>
+        </div>
+      </div>
+    </form>
+
+    <app-divider class="mt-5"></app-divider>
+
+    <div class="row mt-5">
+      <div class="col-6">
+        <div class="d-flex align-items-center">
+          <div>
+            <h5 class="font-size-14">Cantidad de Bienes:</h5>
+          </div>
+          <div class="ml-2">
+            <span class="badge rounded-pill badge-soft-success">1</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="d-flex align-items-center">
+          <div>
+            <h5 class="font-size-14">Cantidad de Registros:</h5>
+          </div>
+          <div class="ml-2">
+            <span class="badge rounded-pill badge-soft-success">1</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="d-flex align-items-center">
+          <div>
+            <h5 class="font-size-14">Cantidad de Expedientes:</h5>
+          </div>
+          <div class="ml-2">
+            <span class="badge rounded-pill badge-soft-success">1</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="d-flex align-items-center">
+          <div>
+            <h5 class="font-size-14">Cantidad de Dict&aacute;menes:</h5>
+          </div>
+          <div class="ml-2">
+            <span class="badge rounded-pill badge-soft-success">1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-end mt-3">
+      <div class="col-md-5 buttons pt-3 text-right">
+        <app-columns-select
+          (settingsChange)="settingsChange($event)"
+          [settings]="settings">
+        </app-columns-select>
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+
+    <div class="row mt-5 justify-content-center justify-content-sm-end">
+      <div class="col-12 col-sm-3 text-center text-sm-right">
+        <button class="btn btn-primary btn-sm active">Aplica</button>
+      </div>
+      <div class="col-12 col-sm-3 mt-3 mt-sm-0 text-center text-sm-right">
+        <button
+          class="btn btn-primary btn-sm active"
+          routerLink="generate-estrategy">
+          Generar Estrategia
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

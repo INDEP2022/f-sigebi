@@ -1,0 +1,91 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Aprobaci&oacute;n para Donaci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <form
+      class="form-material form-horizontal"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()">
+      <div class="row mt-5">
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('keyEvent')" label="Clave Evento">
+              <select class="form-control" formControlName="keyEvent">
+                <option>clave evento</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('status')" label="Estatus Evento">
+              <select class="form-control" formControlName="status">
+                <option>Estatus</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('regionalCoord')"
+              label="Coord. Regional">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="regionalCoord" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('typeUser')" label="Usuario">
+              <select class="form-control" formControlName="typeUser">
+                <option>Tipo Usuario</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5 justify-content-center justify-content-sm-end">
+        <div class="col-12 col-sm-3 text-center text-sm-right">
+          <button class="btn btn-primary active btn-sm" (click)="search()">
+            Buscar
+          </button>
+        </div>
+        <div class="col-12 col-sm-3 text-center mt-3 mt-sm-0 text-sm-right">
+          <button
+            class="btn btn-primary active btn-sm"
+            routerLink="capture-approval-donation">
+            Capturar Evento
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div *ngIf="response">
+      <div class="row mt-5">
+        <app-divider class=""></app-divider>
+      </div>
+      <div class="row mt-3 pt-2 scroll-table">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          class="col-md-12"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+
+      <div class="row mt-5 justify-content-sm-end justify-content-center">
+        <div class="col-12 col-sm-3 text-center">
+          <button class="btn btn-success btn-sm">Exportar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

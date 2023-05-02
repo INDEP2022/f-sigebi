@@ -1,0 +1,43 @@
+<form-field class="col-md-3" [control]="form.get(stateField)">
+  <ngx-select
+    [form]="form"
+    [control]="stateField"
+    [data]="states"
+    value="id"
+    label="Entidad Federativa"
+    bindLabel="otWorth"
+    (fetchItems)="getStates($event)"></ngx-select>
+</form-field>
+
+<form-field class="col-md-3" [control]="form.get(municipalityField)">
+  <ngx-select
+    [form]="form"
+    [control]="municipalityField"
+    [data]="municipalities"
+    label="Municipio"
+    bindLabel="nameMunicipality"
+    value="idMunicipality"
+    (fetchItems)="getMunicipalities($event)"></ngx-select>
+</form-field>
+
+<form-field class="col-md-3" [control]="form.get(cityField)">
+  <ngx-select
+    [form]="form"
+    [control]="cityField"
+    [data]="cities"
+    label="Ciudad"
+    bindLabel="nameCity"
+    value="idCity"
+    (fetchItems)="getCities($event)"></ngx-select>
+</form-field>
+
+<form-field class="col-md-3" [control]="form.get(localityField)">
+  <ngx-select
+    [form]="form"
+    [control]="localityField"
+    [data]="localities"
+    label="Localidad"
+    bindLabel="nameLocation"
+    value="id"
+    (fetchItems)="getLocalities($event)"></ngx-select>
+</form-field>

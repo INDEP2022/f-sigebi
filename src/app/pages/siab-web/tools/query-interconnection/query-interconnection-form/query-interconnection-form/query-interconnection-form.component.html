@@ -1,0 +1,45 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Consulta información interconexión</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <form [formGroup]="form" class="form-material">
+        <form-field
+          [control]="form.get('file')"
+          label="Seleccione un archivo a procesar (excel)">
+          <input type="file" class="form-control" formControlName="file" />
+        </form-field>
+      </form>
+
+      <div class="justify-content-end btn-toolbar">
+        <button class="btn btn-primary btn-sm active">
+          Consultar información
+        </button>
+        <button class="btn btn-info btn-sm active">Descargar resultado</button>
+      </div>
+    </div>
+
+    <div class="row pt-5">
+      <label class="title">Validaciones de la información de excel</label>
+    </div>
+    <div class="row pt-3">
+      <label class="title">Duplicadas excel</label>
+    </div>
+    <div class="row pt-3">
+      <label class="title">Registros excel</label>
+    </div>
+    <div class="row pt-3">
+      <label class="title">Total a buscar</label>
+    </div>
+    <div class="row pt-3">
+      <label class="title">Total registros econtrados</label>
+    </div>
+
+    <div class="row pt-5">
+      <label class="title">Total Dos</label>
+    </div>
+  </div>
+</app-card>

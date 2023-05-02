@@ -1,0 +1,18 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Estado de cuenta de numerario asegurado</h5>
+  </div>
+  <div body>
+    <form [formGroup]="insuredNumeraryAccountForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="insuredNumeraryAccountForm.get('process')"
+            label="Proceso">
+            <input type="text" class="form-control" formControlName="process" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

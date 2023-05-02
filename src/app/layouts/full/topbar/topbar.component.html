@@ -1,0 +1,263 @@
+<header id="page-topbar">
+  <div class="navbar-header-tmp">
+    <div class="d-flex">
+      <!-- LOGO -->
+      <div class="navbar-brand-box">
+        <a routerLink="/" class="logo logo-dark">
+          <span class="logo-sm">
+            <img src="assets/images/Logo_INDEP.png" alt="" height="40" />
+          </span>
+          <span class="logo-lg">
+            <img src="assets/images/Logo_INDEP.png" alt="" height="50" />
+          </span>
+        </a>
+
+        <a routerLink="/" class="logo logo-light">
+          <span class="logo-sm">
+            <img src="assets/images/logo-light.svg" alt="" height="22" />
+          </span>
+          <span class="logo-lg">
+            <img src="assets/images/logo-light.png" alt="" height="19" />
+          </span>
+        </a>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-sm px-3 font-size-16 header-item"
+        id="vertical-menu-btn"
+        (click)="toggleMobileMenu($event)">
+        <i class="fa fa-fw fa-bars"></i>
+      </button>
+    </div>
+
+    <div class="d-flex">
+      <!--<div class="dropdown d-none d-lg-inline-block ms-1" dropdown>
+                <button type="button" class="btn header-item noti-icon" dropdownToggle>
+                    <i class="bx bx-customize"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" *dropdownMenu>
+                    <div class="px-lg-2">
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <a class="dropdown-icon-item" href="javascript: void(0);">
+                                    <img src="assets/images/brands/github.png" alt="Github">
+                                    <span>GitHub</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="dropdown-icon-item" href="javascript: void(0);">
+                                    <img src="assets/images/brands/bitbucket.png" alt="bitbucket">
+                                    <span>Bitbucket</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="dropdown-icon-item" href="javascript: void(0);">
+                                    <img src="assets/images/brands/dribbble.png" alt="dribbble">
+                                    <span>Dribbble</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <a class="dropdown-icon-item" href="javascript: void(0);">
+                                    <img src="assets/images/brands/dropbox.png" alt="dropbox">
+                                    <span>Dropbox</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="dropdown-icon-item" href="javascript: void(0);">
+                                    <img src="assets/images/brands/mail_chimp.png" alt="mail_chimp">
+                                    <span>Mail Chimp</span>
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a class="dropdown-icon-item" href="javascript: void(0);">
+                                    <img src="assets/images/brands/slack.png" alt="slack">
+                                    <span>Slack</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown d-none d-lg-inline-block ms-1">
+                <button type="button" class="btn header-item noti-icon" data-toggle="fullscreen" (click)="fullscreen()">
+                    <i class="bx bx-fullscreen"></i>
+                </button>
+            </div>
+
+            <div class="dropdown d-inline-block" dropdown>
+                <button type="button" class="btn header-item noti-icon" id="page-header-notifications-dropdown"
+                    dropdownToggle>
+                    <i class="bx bx-bell bx-tada"></i>
+                    <span class="badge bg-danger rounded-pill">3</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                    aria-labelledby="page-header-notifications-dropdown" *dropdownMenu>
+                    <div class="p-3">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="m-0">{{ 'HEADER.NOTIFICATIONS.TITLE' }} </h6>
+                            </div>
+                            <div class="col-auto">
+                                <a href="javascript: void(0);" class="small">{{ 'HEADER.NOTIFICATIONS.VIEW_ALL'
+                                    }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <ngx-simplebar style="position: relative; height: 230px;">
+                        <a href="javascript: void(0);" class="text-reset notification-item">
+                            <div class="media">
+                                <div class="avatar-xs me-3">
+                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                        <i class="bx bx-cart"></i>
+                                    </span>
+                                </div>
+                                <div class="media-body">
+                                    <h6 class="mt-0 mb-1">{{ 'HEADER.NOTIFICATIONS.FIRST.TITLE' }}</h6>
+                                    <div class="font-size-12 text-muted">
+                                        <p class="mb-1">{{ 'HEADER.NOTIFICATIONS.FIRST.TEXT' }}</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i>
+                                            {{ 'HEADER.NOTIFICATIONS.FIRST.TIME' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="javascript: void(0);" class="text-reset notification-item">
+                            <div class="media">
+                                <img src="assets/images/users/avatar-3.jpg" class="me-3 rounded-circle avatar-xs"
+                                    alt="user-pic">
+                                <div class="media-body">
+                                    <h6 class="mt-0 mb-1">{{ 'HEADER.NOTIFICATIONS.SECOND.TITLE' }}</h6>
+                                    <div class="font-size-12 text-muted">
+                                        <p class="mb-1">{{ 'HEADER.NOTIFICATIONS.SECOND.TEXT' }}</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i>{{
+                                            'HEADER.NOTIFICATIONS.SECOND.TIME'
+                                            }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="javascript: void(0);" class="text-reset notification-item">
+                            <div class="media">
+                                <div class="avatar-xs me-3">
+                                    <span class="avatar-title bg-success rounded-circle font-size-16">
+                                        <i class="bx bx-badge-check"></i>
+                                    </span>
+                                </div>
+                                <div class="media-body">
+                                    <h6 class="mt-0 mb-1">{{ 'HEADER.NOTIFICATIONS.THIRD.TITLE' }}</h6>
+                                    <div class="font-size-12 text-muted">
+                                        <p class="mb-1">{{ 'HEADER.NOTIFICATIONS.THIRD.TEXT' }}</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i>{{
+                                            'HEADER.NOTIFICATIONS.THIRD.TIME'
+                                            }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="javascript: void(0);" class="text-reset notification-item">
+                            <div class="media">
+                                <img src="assets/images/users/avatar-4.jpg" class="me-3 rounded-circle avatar-xs"
+                                    alt="user-pic">
+                                <div class="media-body">
+                                    <h6 class="mt-0 mb-1">{{ 'HEADER.NOTIFICATIONS.FOUR.TITLE' }}</h6>
+                                    <div class="font-size-12 text-muted">
+                                        <p class="mb-1">{{ 'HEADER.NOTIFICATIONS.FOUR.TEXT' }}</p>
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i>{{
+                                            'HEADER.NOTIFICATIONS.FOUR.TIME'
+                                            }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </ngx-simplebar>
+                    <div class="p-2 border-top d-grid">
+                        <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
+                            <i class="mdi mdi-arrow-right-circle me-1"></i> <span key="t-view-more">{{
+                                'HEADER.NOTIFICATIONS.LOAD_MORE' }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        -->
+      <div class="dropdown d-flex justify-content-end help-button-container">
+        <button
+          type="button"
+          class="btn header-item"
+          (click)="binnacle()"
+          tooltip="Bitácora del sistema"
+          placement="bottom">
+          <i
+            class="fa fa-book text-secondary custom-button"
+            aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          class="btn header-item"
+          (click)="help()"
+          tooltip="Ayuda"
+          placement="bottom">
+          <i
+            class="fa fa-question-circle text-info custom-button"
+            aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="dropdown d-inline-block" dropdown>
+        <button
+          type="button"
+          class="btn header-item"
+          dropdownToggle
+          id="page-header-user-dropdown">
+          <img
+            class="rounded-circle header-profile-user"
+            src="assets/images/users/avatar-2.jpg"
+            alt="Header Avatar" />
+          <span class="d-none d-xl-inline-block ms-1 user-font">{{
+            userName
+          }}</span>
+          <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end user-font" *dropdownMenu>
+          <!-- item-->
+          <!--<a class="dropdown-item" routerLink="/contacts/profile">
+            <i class="bx bx-user font-size-16 align-middle me-1"></i>
+            Perfil
+          </a>-->
+          <!--<a class="dropdown-item" href="javascript: void(0);">
+            <i class="bx bx-wallet font-size-16 align-middle me-1"></i>
+            Billetera
+          </a>-->
+          <!--<a class="dropdown-item d-block" href="javascript: void(0);">
+            <span class="badge bg-success float-end">11</span>
+            <i class="bx bx-wrench font-size-16 align-middle me-1"></i>
+            Configuración
+          </a>-->
+          <!--<a class="dropdown-item" href="javascript: void(0);">
+            <i class="bx bx-lock-open font-size-16 align-middle me-1"></i>
+            Pantalla de bloqueo
+          </a>-->
+          <!--<div class="dropdown-divider"></div>-->
+          <a
+            [routerLink]="['/auth']"
+            class="dropdown-item text-danger"
+            href="javascript: void(0);"
+            (click)="logout()">
+            <i
+              class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i>
+            Cerrar sesión
+          </a>
+        </div>
+      </div>
+
+      <!-- <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item noti-icon right-bar-toggle" (click)="toggleRightSidebar()">
+                    <i class="bx bx-cog bx-spin"></i>
+                </button>
+            </div> -->
+    </div>
+  </div>
+</header>

@@ -1,0 +1,118 @@
+<h5 class="title">
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = true"
+      *ngIf="!showSearchForm">
+      <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+      solicitud</a
+    >
+  </p>
+
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = false"
+      *ngIf="showSearchForm">
+      <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+      solicitud</a
+    >
+  </p>
+</h5>
+<div *ngIf="showSearchForm">
+  <form [formGroup]="searchForm" class="form-material">
+    <div class="row pt-3">
+      <div class="col-md-3">
+        <form-field
+          [control]="searchForm.get('id')"
+          label="N&uacute;mero de solicitud">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="id"
+            min="0" />
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="searchForm.get('regionalDelegationId')">
+          <ngx-select
+            [form]="searchForm"
+            control="regionalDelegationId"
+            [data]="regionalsDelegations"
+            value="id"
+            bindLabel="description"
+            label="Delegaci&oacute;n regional"
+            (fetchItems)="getRegionalDelegationSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-3">
+        <form-field
+          [control]="searchForm.get('recordId')"
+          label="N&uacute;mero de expediente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="recordId"
+            min="0" />
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="searchForm.get('keyStateOfRepublic')">
+          <ngx-select
+            [form]="searchForm"
+            control="keyStateOfRepublic"
+            [data]="states"
+            value="id"
+            bindLabel="descCondition"
+            label="Estado"
+            (fetchItems)="getStateSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <form-field [control]="searchForm.get('lawsuit')" label="Causa penal">
+          <input type="text" class="form-control" formControlName="lawsuit" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="form-inline justify-content-end btn-toolbar">
+  <button class="btn btn-primary btn-sm active" (click)="search()">
+    <i class="fa fa-search"></i> Buscar
+  </button>
+
+  <button class="btn btn-danger btn-sm active" (click)="resetForm()">
+    Limpiar
+  </button>
+</div>
+
+<div class="row">
+  <div class="btn-toolbar pt-5">
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+    <button (click)="showDocsEst()" class="btn btn-primary btn-sm active">
+      <i class="fa fa-file-archive"></i> Ver documentos
+    </button>
+  </div>
+
+  <div class="row pt-4">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        (rowSelect)="selectRow($event)"
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="documentsReqData">
+      </ng2-smart-table>
+    </div>
+  </div>
+  <app-pagination
+    [filterParams]="params"
+    [totalItems]="totalItems"></app-pagination>
+</div>

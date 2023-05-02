@@ -1,0 +1,85 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} ABOGADO</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-5">
+          <form-field
+            [control]="form.get('bankCode')"
+            label="Resgitro del Banco">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="bankCode" />
+          </form-field>
+        </div>
+        <div class="col-md-7">
+          <form-field [control]="form.get('name')" label="Nombre del Banco">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('registerNumber')"
+            label="N&uacute;mero de Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registerNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('ifdsc')" label="IFDSC">
+            <input type="text" class="form-control" formControlName="ifdsc" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('dateType')" label="Tipo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateType" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('code')"
+            label="C&oacute;digo de Banco">
+            <input type="number" class="form-control" formControlName="code" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('idProvider')" label="ID Proveedor">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idProvider" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,608 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Adjudicaciones Directas en Paricialidades</h5>
+  </div>
+  <div body>
+    <div class="md-tabs mt-n3" #tabsContainer>
+      <tabset #directAdjudicationTabs>
+        <tab heading="Adjudicaciones" id="adjudicationTab">
+          <form class="form-material" [formGroup]="adjudicationForm">
+            <div
+              class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                  (click)="(true)">
+                  Generar Adjudicación
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                  (click)="(true)"
+                  [disabled]="">
+                  Autorizar Adjudicación
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                  (click)="generateCl()"
+                  [disabled]="">
+                  Generar Línea Captura
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                  (click)="cleanForm()">
+                  Limpiar Datos
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                  (click)="deleteAdjudication()">
+                  Eliminar Adjudicación
+                </button>
+              </div>
+              <div class="col">
+                <button
+                  class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
+                  (click)="(true)">
+                  Intereses Moratorios
+                </button>
+              </div>
+            </div>
+            <div class="md-tabs mt-5" #tabsContainer2>
+              <tabset #adjudicationTabs>
+                <tab heading="Evento" id="eventTab">
+                  <div class="row mt-5">
+                    <div class="col-sm-12 col-md-4">
+                      <div class="row">
+                        <form-field [control]="adjudicationForm.get('event')">
+                          <ngx-select
+                            [form]="paramsForm"
+                            [data]="eventItems"
+                            value="id"
+                            bindLabel="id"
+                            label="Evento"
+                            (fetchItems)="getEvents($event)"
+                            control="event"
+                            (change)="selectEvent($event)">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div
+                      class="col-sm-12 col-md-4"
+                      *ngIf="selectedEvent != null">
+                      <div class="row">
+                        <p class="mt-3 ms-2">
+                          <strong>Clave: </strong>{{ selectedEvent.cve }}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      class="col-sm-12 col-md-4"
+                      *ngIf="selectedEvent != null">
+                      <div class="row">
+                        <p class="mt-3">
+                          <strong>Tipo: </strong>{{ selectedEvent.type }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-5" *ngIf="selectedEvent != null">
+                    <div class="col-sm-12 col-md-8">
+                      <div class="row">
+                        <p>
+                          <strong>Observaciones: </strong
+                          >{{ selectedEvent.observations }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      <div class="row">
+                        <p>
+                          <strong>Estatus: </strong>{{ selectedEvent.status }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </tab>
+                <tab heading="Lote" id="batchTab">
+                  <div class="row mt-5">
+                    <div class="col-sm-12 col-md-6">
+                      <div class="row">
+                        <form-field [control]="adjudicationForm.get('batchId')">
+                          <ngx-select
+                            [form]="paramsForm"
+                            [data]="batchItems"
+                            value="id"
+                            bindLabel="id"
+                            label="Lote Público"
+                            (fetchItems)="getBatches($event)"
+                            control="batchId"
+                            (change)="selectBatch($event)">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div
+                      class="col-sm-12 col-md-6"
+                      *ngIf="selectedBatch != null">
+                      <div class="row">
+                        <p class="mt-3 ms-2">
+                          {{ selectedBatch.description }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <div class="col-sm-12 col-md-4">
+                      <div class="row">
+                        <form-field
+                          [control]="adjudicationForm.get('clientId')">
+                          <ngx-select
+                            [form]="paramsForm"
+                            [data]="clientItems"
+                            value="id"
+                            bindLabel="id"
+                            label="Cliente"
+                            (fetchItems)="getClients($event)"
+                            control="clientId"
+                            (change)="selectClient($event)">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                    </div>
+                    <div
+                      class="col-sm-12 col-md-5"
+                      *ngIf="selectedClient != null">
+                      <div class="row">
+                        <p class="mt-3 ms-2">
+                          {{ selectedClient.name }}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      class="col-sm-12 col-md-3"
+                      *ngIf="selectedClient != null">
+                      <div class="row">
+                        <p class="mt-3 ms-2">
+                          <strong>RFC: </strong>{{ selectedClient.rfc }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <div
+                      class="col-sm-12 col-md-4"
+                      *ngIf="selectedClient != null">
+                      <div class="row">
+                        <p class="mt-3 ms-2">
+                          <strong>Lista Negra: </strong
+                          >{{ selectedClient.blacklisted }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      <form-field
+                        [control]="adjudicationForm.get('partialityQuantity')"
+                        label="No. Parcialidades">
+                        <input
+                          type="number"
+                          formControlName="partialityQuantity"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                      <form-field
+                        [control]="adjudicationForm.get('advancePercent')"
+                        label="Porcentaje Anticipo">
+                        <input
+                          type="number"
+                          formControlName="advancePercent"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                  </div>
+                </tab>
+                <tab heading="Montos" id="amountsTab">
+                  <div
+                    class="row row-cols-sm-2 row row-cols-2 row-cols-md-4 row row-cols-lg-4 row-cols-xl-4 g-3">
+                    <div class="col">
+                      <p class="text-center">
+                        <strong class="font-size-14">CONCEPTO</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <p class="text-center">
+                        <strong class="font-size-14">PRECIO DE VENTA</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <p class="text-center">
+                        <strong class="font-size-14">ANTICIPO</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <p class="text-center">
+                        <strong class="font-size-14">SALDO</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <p class="text-center mt-4">
+                        <strong class="font-size-14">EXENTO</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('exemptSP')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="exemptSP"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('exemptAdv')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="exemptAdv"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('exemptBal')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="exemptBal"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <p class="text-center mt-4">
+                        <strong class="font-size-14">GRAVADO</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('engravedSP')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="engravedSP"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('engravedAdv')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="engravedAdv"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('engravedBal')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="engravedBal"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <p class="text-center mt-4">
+                        <strong class="font-size-14">SUBTOTAL</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('subtotalSP')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="subtotalSP"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('subtotalAdv')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="subtotalAdv"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('subtotalBal')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="subtotalBal"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <p class="text-center mt-4">
+                        <strong class="font-size-14">IVA</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('taxSP')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="taxSP"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('taxAdv')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="taxAdv"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('taxBal')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="taxBal"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <p class="text-center mt-4">
+                        <strong class="font-size-14">TOTAL</strong>
+                      </p>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('totalSP')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="totalSP"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('totalAdv')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="totalAdv"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                    <div class="col">
+                      <form-field
+                        [control]="adjudicationForm.get('totalBal')"
+                        label="">
+                        <input
+                          type="number"
+                          formControlName="totalBal"
+                          class="form-control" />
+                      </form-field>
+                    </div>
+                  </div>
+                </tab>
+              </tabset>
+            </div>
+          </form>
+        </tab>
+        <tab heading="Parámetros" id="parametersTab">
+          <form class="form-material" [formGroup]="paramsForm">
+            <div class="row mt-3">
+              <div class="col-sm-6 col-md-4">
+                <form-field [control]="paramsForm.get('event')">
+                  <ngx-select
+                    [form]="paramsForm"
+                    [data]="eventItems"
+                    value="id"
+                    bindLabel="id"
+                    label="Evento"
+                    (fetchItems)="getEvents($event)"
+                    control="event"
+                    (change)="selectEvent($event)">
+                  </ngx-select>
+                </form-field>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <form-field [control]="paramsForm.get('batchId')">
+                  <ngx-select
+                    [form]="paramsForm"
+                    [data]="batchItems"
+                    value="id"
+                    bindLabel="id"
+                    label="Lote Público"
+                    (fetchItems)="getBatches($event)"
+                    control="batchId"
+                    (change)="selectBatch($event)">
+                  </ngx-select>
+                </form-field>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <form-field [control]="paramsForm.get('clientId')">
+                  <ngx-select
+                    [form]="paramsForm"
+                    [data]="clientItems"
+                    value="id"
+                    bindLabel="id"
+                    label="Cliente"
+                    (fetchItems)="getClients($event)"
+                    control="clientId"
+                    (change)="selectClient($event)">
+                  </ngx-select>
+                </form-field>
+              </div>
+            </div>
+            <div class="row mt-5">
+              <div class="col-sm-6 col-md-4">
+                <form-field
+                  [control]="paramsForm.get('partialityQuantity')"
+                  label="No. Parcialidades">
+                  <input
+                    type="number"
+                    formControlName="partialityQuantity"
+                    class="form-control" />
+                </form-field>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <form-field
+                  [control]="paramsForm.get('advancePercent')"
+                  label="Porcentaje Anticipo">
+                  <input
+                    type="number"
+                    formControlName="advancePercent"
+                    class="form-control" />
+                </form-field>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <form-field
+                  [control]="paramsForm.get('saleAmount')"
+                  label="Monto Venta">
+                  <input
+                    type="number"
+                    formControlName="saleAmount"
+                    class="form-control" />
+                </form-field>
+              </div>
+            </div>
+            <div class="row mt-5">
+              <div class="col-sm-6 col-md-4">
+                <form-field
+                  [control]="paramsForm.get('percentPoints')"
+                  label="Puntos Porcentuales">
+                  <input
+                    type="number"
+                    formControlName="percentPoints"
+                    class="form-control" />
+                </form-field>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <form-field
+                  [control]="paramsForm.get('moratoriumDays')"
+                  label="Días Moratorios">
+                  <input
+                    type="number"
+                    formControlName="moratoriumDays"
+                    class="form-control" />
+                </form-field>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <form-field
+                  [control]="paramsForm.get('paymentNumber')"
+                  label="Número de Pago">
+                  <input
+                    type="number"
+                    formControlName="paymentNumber"
+                    class="form-control" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+        </tab>
+        <tab heading="Líneas de Captura" id="clTab">
+          <!-- [autoHeightDisabled]="false" -->
+          <ng-scrollbar [track]="'all'" [autoHeightDisabled]="false" class="">
+            <div [class]="loading ? 'table-loading' : 'cl-table'">
+              <!-- <ng2-smart-table
+                id="clTable"
+                [settings]="clSettings"
+                [source]="clColumns">
+              </ng2-smart-table> -->
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th rowspan="2">Pago</th>
+                    <th rowspan="2">Fecha Programada</th>
+                    <th colspan="2">Saldo de Capital Insoluto</th>
+                    <th rowspan="2">Tasa Nominal</th>
+                    <th rowspan="2">D&iacute;as A&ntilde;o</th>
+                    <th rowspan="2">D&iacute;as Mes</th>
+                    <th colspan="3">Intereses</th>
+                    <th colspan="3">Vencimiento de Capital</th>
+                    <th colspan="3">Moratorio</th>
+                    <th rowspan="2">Total IVA</th>
+                    <th rowspan="2">Total Pagar</th>
+                    <th rowspan="2">Fecha Referencia</th>
+                    <th rowspan="2">Referencia</th>
+                    <th rowspan="2">Estatus</th>
+                  </tr>
+                  <tr>
+                    <th>Exento</th>
+                    <th>Gravado</th>
+                    <th>Exento</th>
+                    <th>Gravado</th>
+                    <th>IVA</th>
+                    <th>Exento</th>
+                    <th>Gravado</th>
+                    <th>IVA</th>
+                    <th>Días</th>
+                    <th>Interés</th>
+                    <th>IVA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="21" *ngIf="clColumns.length == 0">
+                      No se encontraron registros
+                    </td>
+                  </tr>
+                  <tr *ngFor="let c of clColumns">
+                    <td>{{ c.paymentId }}</td>
+                    <td>{{ c.scheduledDate }}</td>
+                    <td>{{ c.icbExempt }}</td>
+                    <td>{{ c.icbEngraved }}</td>
+                    <td>{{ c.nominalRate }}</td>
+                    <td>{{ c.daysYear }}</td>
+                    <td>{{ c.daysMonth }}</td>
+                    <td>{{ c.interestExempt }}</td>
+                    <td>{{ c.interestEngraved }}</td>
+                    <td>{{ c.interestTax }}</td>
+                    <td>{{ c.ceExempt }}</td>
+                    <td>{{ c.ceEngraved }}</td>
+                    <td>{{ c.ceTax }}</td>
+                    <td>{{ c.moratoriumExempt }}</td>
+                    <td>{{ c.moratoriumEngraved }}</td>
+                    <td>{{ c.moratoriumTax }}</td>
+                    <td>{{ c.totalTax }}</td>
+                    <td>{{ c.totalAmount }}</td>
+                    <td>{{ c.referenceDate }}</td>
+                    <td>{{ c.reference }}</td>
+                    <td>{{ c.status }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-scrollbar>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

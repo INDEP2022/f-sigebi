@@ -1,0 +1,40 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de par&aacute;metros</h5>
+    <div class="buttons">
+      <button
+        class="btn btn-primary active btn-sm mr-3"
+        (click)="openForm(null, false)">
+        Nuevo
+      </button>
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''" class="table-responsive">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="parameterData.data"
+            (edit)="openForm($event.data, true)"
+            (delete)="deleteParameter($event.data.id)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <app-pagination
+      [filterParams]="filterParams"
+      [totalItems]="parameterData.count">
+    </app-pagination>
+  </div>
+</app-card>

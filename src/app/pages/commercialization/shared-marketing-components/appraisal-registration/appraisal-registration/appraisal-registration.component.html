@@ -1,0 +1,189 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Evento</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('idEvento')">
+            <ngx-select
+              typeToSearchText="Escriba 3 o más caracteres"
+              label="id Evento"
+              [form]="form"
+              control="idEvento">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('descriptionEvent')" label="Evento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field [control]="form.get('eventDate')" label="Fecha de Evento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="eventDate" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field
+            [control]="form.get('appDate')"
+            label="Fecha de solicitud">
+            <input type="text" class="form-control" formControlName="appDate" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="form.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reference" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('typeEvent')" label="Tipo de oficio">
+            <select class="form-control" formControlName="typeEvent">
+              <option value="De respuesta">De respuesta</option>
+              <option value="De cancelación">De cancelación</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-primary btn-sm active">
+            Consultar
+          </button>
+        </div>
+        <div class="col-md-2">
+          <input
+            type="button"
+            class="btn btn-primary btn-sm active"
+            onclick="location.href='http://40.71.225.240/Pantallas/Login.aspx';"
+            value="Generar oficio" />
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">BIENES</h5>
+      <div class="row justify-content-end mr-5">
+        <app-columns-select [(settings)]="settings1"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <ng2-smart-table [settings]="settings1" [source]="data1"></ng2-smart-table>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">AVAL&Uacute;OS</h5>
+      <div class="row justify-content-end mr-5">
+        <app-columns-select [(settings)]="settings2"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <ng2-smart-table [settings]="settings2" [source]="data2"></ng2-smart-table>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">DETALLE AVAL&Uacute;O</h5>
+      <div class="row justify-content-end mr-5">
+        <app-columns-select [(settings)]="settings3"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-2">
+        <div class="btn-group" role="group">
+          <button
+            id="btnGroupDownload"
+            type="button"
+            class="btn btn-success btn-sm active"
+            data-toggle="dropdown">
+            Descargar
+          </button>
+          <div class="dropdown-menu" aria-labelledby="btnGroupDownload">
+            <a class="dropdown-item">Formato</a>
+            <a class="dropdown-item">Formato descuento</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="btn-group" role="group">
+          <button
+            id="btnGrouValidate"
+            type="button"
+            class="btn btn-secondary btn-sm active"
+            data-toggle="dropdown">
+            Validar
+          </button>
+          <div class="dropdown-menu" aria-labelledby="btnGroupValidate">
+            <a class="dropdown-item">Archivo</a>
+            <a class="dropdown-item">Archivo Descuento</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="btn-group" role="group">
+          <button
+            id="btnGroupExcel"
+            type="button"
+            class="btn btn-success btn-sm active"
+            data-toggle="dropdown">
+            Excel
+          </button>
+          <div class="dropdown-menu" aria-labelledby="btnGroupExcel">
+            <a class="dropdown-item">Insertar</a>
+            <a class="dropdown-item">Agregar</a>
+            <a class="dropdown-item">Actualizar</a>
+            <a class="dropdown-item">Aplicar descuento</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br />
+    <ng2-smart-table [settings]="settings3" [source]="data3"></ng2-smart-table>
+  </div>
+</app-card>

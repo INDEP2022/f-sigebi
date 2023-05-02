@@ -1,0 +1,50 @@
+<div style="padding-left: 2rem">
+  <div class="row">
+    <div class="col-md-4">
+      <label for=""
+        >N&uacute;mero Muestreo&#58;
+        <span>{{ this.detailForm.get('noSampling').value }}</span>
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label for=""
+        >Nombre Alamac&eacute;n&#58;
+        <span>{{ this.detailForm.get('nameWarehouse').value }}</span>
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label for=""
+        >Direcci&oacute;n Almac&eacute;n&#58;
+        <span>{{ this.detailForm.get('warehouseAddress').value }}</span>
+      </label>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-4">
+      <label for=""
+        >Delegaci&oacute;n Regional &#58;
+        <span>{{ this.detailForm.get('delegaRegional').value }}</span>
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label for=""
+        >Periodo Inicial&#58;
+        <span>{{ this.detailForm.get('initialDate').value }}</span>
+      </label>
+    </div>
+    <div class="col-md-4">
+      <label for=""
+        >Periodo Final &#58;
+        <span>{{ this.detailForm.get('finalDate').value }}</span>
+      </label>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-4" *ngIf="this.detailForm.get('dateSampling').value">
+      <label for=""
+        >Fecha de elaboraci&oacute;n muestreo &#58;
+        <span>{{ this.detailForm.get('dateSampling').value }}</span>
+      </label>
+    </div>
+  </div>
+</div>

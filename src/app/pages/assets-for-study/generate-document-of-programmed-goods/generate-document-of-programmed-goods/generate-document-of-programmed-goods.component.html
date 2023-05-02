@@ -1,0 +1,83 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">
+      Generar e imnprimir constancia de bienes programados
+    </h5>
+  </div>
+
+  <div body class="body">
+    <div class="row pt-4">
+      <div>
+        <h5 class="modal-title mb-4" style="color: #000; display: flex">
+          Lista de bienes por entregar
+        </h5>
+      </div>
+      <div class="col-md-12">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5 class="modal-title mb-4" style="color: #000; display: flex">
+            Bienes entregados
+          </h5>
+          <button type="button" class="btn btn-sm btn-primary active m-3">
+            GENERAR CONSTANCIA
+          </button>
+        </div>
+        <div>
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings1"
+              [source]="data2">
+            </ng2-smart-table>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <h5 class="modal-title mb-4" style="color: #000; display: flex">
+            Bienes no aceptados
+          </h5>
+          <button type="button" class="btn btn-sm btn-primary active m-3">
+            GENERAR CONSTANCIA
+          </button>
+        </div>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data3">
+          </ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</app-modal>

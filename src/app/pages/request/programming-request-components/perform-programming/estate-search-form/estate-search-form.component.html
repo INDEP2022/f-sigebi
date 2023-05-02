@@ -1,0 +1,83 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Buscar bienes</h5>
+  </div>
+  <div body>
+    <form [formGroup]="estateForm" class="form-material">
+      <form-field [control]="estateForm.get('warehouse')">
+        <ngx-select
+          [form]="estateForm"
+          control="warehouse"
+          [data]="akaWarehouse"
+          value="idWarehouse"
+          bindLabel="description"
+          label="Alias Almacén"
+          (fetchItems)="getAkaWarehouseSelect($event)"></ngx-select>
+      </form-field>
+
+      <div class="row pt-4">
+        <form-field [control]="estateForm.get('state')">
+          <ngx-select
+            [form]="estateForm"
+            control="state"
+            [data]="states"
+            value="id"
+            bindLabel="descCondition"
+            label="Estado"
+            (change)="stateSelect($event)"
+            (fetchItems)="getStateSelect($event)"></ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="estateForm.get('municipality')">
+          <ngx-select
+            [form]="estateForm"
+            control="municipality"
+            [data]="municipalities"
+            value="idMunicipality"
+            bindLabel="nameMunicipality"
+            label="Municipio"
+            (change)="municipalitySelect($event)"
+            (fetchItems)="getMunicipalitySelect($event)"></ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="estateForm.get('locality')">
+          <ngx-select
+            [form]="estateForm"
+            control="locality"
+            [data]="localities"
+            value="id"
+            bindLabel="nameLocation"
+            label="Localidad"
+            (fetchItems)="getLocalitySelect($event)"></ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="estateForm.get('cp')"
+          label="C&oacute;digo postal">
+          <input type="text" class="form-control" formControlName="cp" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!estateForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

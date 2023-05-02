@@ -1,0 +1,92 @@
+<app-modal>
+  <div header>
+    <!-- <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5> -->
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('currency')">
+            <ngx-select
+              [form]="form"
+              [data]="monedas"
+              bindLabel="otKey1"
+              label="Moneda"
+              value="otKey1"
+              (fetchItems)="getCurrencies($event)"
+              control="currency"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('validityId')" label="Vigencia">
+            <input
+              type="text"
+              formControlName="validityId"
+              placeholder="Fecha de solicitud"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('costValue')" label="Costo valor">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="costValue" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('purchaseValue')"
+            label="Valor compra">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="purchaseValue" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="form.get('saleValue')" label="Valor venta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="saleValue" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('registerNumber')"
+            label="Número de registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registerNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

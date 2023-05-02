@@ -1,0 +1,95 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form class="form-material" [formGroup]="detailProceedingsForm">
+        <div class="col-md-4">
+          <form-field
+            [control]="detailProceedingsForm.get('numberProceedings')"
+            label="No. Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberProceedings"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="detailProceedingsForm.get('numberGood')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="detailProceedingsForm"
+              control="numberGood"
+              [data]="goods"
+              value="id"
+              bindLabel="description"
+              label="No. Bien"
+              (fetchItems)="getGoodByStatusPDS($event)"
+              (change)="onValuesChange($event)"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="detailProceedingsForm.get('quantity')"
+            label="Cantidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="quantity"
+              readonly />
+          </form-field>
+        </div>
+      </form>
+      <form class="form-material" [formGroup]="form">
+        <div class="row pt-5">
+          <div class="col-md-4">
+            <form-field [control]="form.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="row pt-5">
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button type="button" class="btn btn-secondary btn-sm active">
+            Insertar vía Archivo plano
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm active"
+            (click)="tracker()">
+            insertar vía rastreador
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [text]="'Agregar Bien'"
+          [disabled]="detailProceedingsForm.invalid"
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

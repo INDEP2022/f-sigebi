@@ -1,0 +1,243 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Buz&oacute;n de Trámites FGR</h5>
+  </div>
+
+  <div body class="init-page">
+    <form
+      [formGroup]="pgrForm"
+      class="form-material"
+      (submit)="consultarPgrForm()">
+      <div class="row">
+        <form-field
+          [control]="pgrForm.get('from')"
+          label="Fecha Desde"
+          class="col-md-3">
+          <input class="form-control" formControlName="from" bsDatepicker />
+        </form-field>
+
+        <form-field
+          [control]="pgrForm.get('to')"
+          label="Fecha Hasta"
+          class="col-md-3">
+          <input class="form-control" formControlName="to" bsDatepicker />
+        </form-field>
+
+        <form-field
+          [control]="pgrForm.get('issue')"
+          label="Averiguaci&oacute;n Previa"
+          class="col-md-3">
+          <input class="form-control" formControlName="issue" />
+        </form-field>
+        <form-field
+          [control]="pgrForm.get('officeNumber')"
+          label="FGR Oficio"
+          class="col-md-3">
+          <input class="form-control" formControlName="officeNumber" />
+        </form-field>
+      </div>
+      <div class="row pt-4">
+        <form-field [control]="pgrForm.get('processStatus')" class="col-md-3">
+          <ngx-select
+            (fetchItems)="getStatusProcess($event)"
+            value="id"
+            bindLabel="description"
+            [form]="pgrForm"
+            control="processStatus"
+            [data]="processStatus"
+            [showTooltip]="true"
+            label="Estatus del Proceso">
+          </ngx-select>
+        </form-field>
+        <div class="col-md-3" *ngIf="pgrForm.get('processStatus').value">
+          <button
+            type="button"
+            class="ml-2 btn btn-danger active btn-sm"
+            (click)="resetStatusProcess()">
+            Limpiar Estatus<i class="fa fa-trash ml-1"></i>
+          </button>
+        </div>
+        <form-field
+          [control]="pgrForm.get('delegationNumber')"
+          class="col-md-3">
+          <ngx-select
+            (fetchItems)="getCoordinador($event)"
+            value="id"
+            bindLabel="description"
+            [form]="pgrForm"
+            control="delegationNumber"
+            [data]="cordinators"
+            [showTooltip]="true"
+            label="Cord&#46; Regional">
+          </ngx-select>
+        </form-field>
+        <div class="col-md-3" *ngIf="pgrForm.get('delegationNumber').value">
+          <button
+            type="button"
+            class="ml-2 btn btn-danger active btn-sm"
+            (click)="resetDelegation()">
+            Limpiar Cord&#46; Regional<i class="fa fa-trash ml-1"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row pb-4">
+        <div class="col-md-12">
+          <button
+            [disabled]="downloading"
+            type="submit"
+            class="btn btn-primary active btn-sm">
+            Consultar
+          </button>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row pb-3">
+        <div class="col-md-12" *ngIf="listGestionPgr.length > 0">
+          <div class="alert alert-info">
+            {{
+              INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
+            }}
+          </div>
+        </div>
+        <div class="col-md-12">
+          <app-columns-select
+            [(settings)]="mailboxSettings"></app-columns-select>
+          <ng-container *ngIf="listGestionPgr.length > 0">
+            <button
+              [disabled]="downloading"
+              type="button"
+              class="ml-2 mr-2 btn btn-success btn-sm"
+              (click)="getReportTramitePgr()">
+              Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
+            </button>
+            <button
+              [disabled]="downloading"
+              type="button"
+              class="ml-2 mr-2 btn btn-success btn-sm"
+              (click)="exportXlsx('gestion', listGestionPgr)">
+              Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
+            </button>
+          </ng-container>
+        </div>
+        <div class="col-md-12" *ngIf="downloading">
+          <div class="alert alert-warning">
+            {{ DOWNLOAD_PROCESS }}
+          </div>
+        </div>
+      </div>
+      <div class="row" style="max-height: 600px; overflow-y: scroll">
+        <div class="col-md-12">
+          <div [class]="loadingGestionPgr ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="mailboxSettings"
+              [source]="listGestionPgr"
+              (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="paramsGestionPgr"
+        [totalItems]="totalGestionPgr"></app-pagination>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Transferencias FGR</h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="pgrTransferForm"
+      class="form-material"
+      (submit)="consultarPgrTransferForm()">
+      <div class="row">
+        <form-field
+          [control]="pgrTransferForm.get('pgrGoodNumber')"
+          label="FGR No&#46; Bien"
+          class="col-md-3">
+          <input class="form-control" formControlName="pgrGoodNumber" />
+        </form-field>
+
+        <form-field
+          [control]="pgrTransferForm.get('saeGoodNumber')"
+          label="INDEP No&#46; Bien"
+          class="col-md-3">
+          <input class="form-control" formControlName="saeGoodNumber" />
+        </form-field>
+
+        <form-field
+          [control]="pgrTransferForm.get('status')"
+          label="INDEP Estatus"
+          class="col-md-3">
+          <input class="form-control" formControlName="status" />
+        </form-field>
+      </div>
+      <div class="row pb-4">
+        <div class="col-md-12">
+          <button
+            [disabled]="downloadingTransferente"
+            type="submit"
+            class="btn btn-primary active btn-sm">
+            Consultar
+          </button>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row pb-3">
+        <div class="col-md-12" *ngIf="listPgrTransferencia.length > 0">
+          <div class="alert alert-info">
+            {{
+              INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
+            }}
+          </div>
+        </div>
+        <div class="col-md-12" *ngIf="listPgrTransferencia.length > 0">
+          <app-columns-select
+            [(settings)]="transfersSettings"></app-columns-select>
+          <ng-container *ngIf="listPgrTransferencia.length > 0"> </ng-container>
+          <button
+            [disabled]="downloadingTransferente"
+            type="button"
+            class="ml-2 mr-2 btn btn-success btn-sm"
+            (click)="getReportTransferenciaPgr()">
+            Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
+          </button>
+          <button
+            [disabled]="downloadingTransferente"
+            type="button"
+            class="ml-2 mr-2 btn btn-success btn-sm"
+            (click)="getReportTransferenciaPgr(true)">
+            <!-- (click)="exportXlsx('transferencia', listPgrTransferencia)"> -->
+            Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
+          </button>
+        </div>
+        <div class="col-md-12" *ngIf="downloadingTransferente">
+          <div class="alert alert-warning">
+            {{ DOWNLOAD_PROCESS }}
+          </div>
+        </div>
+      </div>
+      <div class="row" style="max-height: 600px; overflow-y: scroll">
+        <div class="col-md-12">
+          <div
+            [class]="
+              loadingPgrTransferencia
+                ? 'table-loading'
+                : '' + loadingPgrTransferencia + ''
+            ">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="transfersSettings"
+              [source]="listPgrTransferencia"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="paramsPgrTransferencia"
+        [totalItems]="totalPgrTransferencia"></app-pagination>
+    </form>
+  </div>
+</app-card>

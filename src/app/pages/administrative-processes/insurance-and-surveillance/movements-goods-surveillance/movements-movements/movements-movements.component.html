@@ -1,0 +1,301 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <form-field [control]="form.get('cveContract')" label="Cve contrato">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="cveContract"
+          min="1"
+          pattern="^[0-9]+" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="form.get('movementType')"
+        label="Tipo de Movimiento">
+        <select class="form-control" formControlName="movementType">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">Tipo 1</option>
+          <option [value]="2">Tipo 2</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('noReport')" label="No Reporte">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="noReport"
+          min="1"
+          pattern="^[0-9]+" />
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [data]="bienes"
+        bindLabel="name"
+        label="Concepto de gasto"
+        value="id"
+        (fetchItems)="getBienes($event)"
+        control="noBien"></ngx-select>
+    </div>
+    <div class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [data]="states"
+        bindLabel="name"
+        label="Concepto de gasto"
+        value="id"
+        (fetchItems)="getStates($event)"
+        control="descriptionState"></ngx-select>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('modsus')" label="Mod Sus">
+        <select class="form-control" formControlName="modsus">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">Tipo 1</option>
+          <option [value]="2">Tipo 2</option>
+        </select>
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <form-field
+        [control]="form.get('dateReception')"
+        label="Fecha de recepción">
+        <input
+          type="text"
+          formControlName="dateReception"
+          class="form-control"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('startDate')" label="Fecha de page">
+        <input
+          type="text"
+          formControlName="startDate"
+          class="form-control"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('finishDate')" label="Fecha de termino">
+        <input
+          type="text"
+          formControlName="finishDate"
+          class="form-control"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field
+        [control]="form.get('applicationDate')"
+        label="Fecha de Aplicación">
+        <input
+          type="text"
+          formControlName="applicationDate"
+          class="form-control"
+          bsDatepicker />
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <form-field [control]="form.get('requestArea')" label="Area solicita">
+        <input type="text" formControlName="requestArea" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('resquest')" label="Solicitante">
+        <input type="text" formControlName="resquest" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field
+        [control]="form.get('timeReception')"
+        label="Hora de recepcioón">
+        <input
+          type="text"
+          formControlName="timeReception"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('cveProrrateo')" label="Cve prorrateo">
+        <input
+          type="text"
+          formControlName="cveProrrateo"
+          class="form-control" />
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <form-field [control]="form.get('areaEntrega')" label="Area entrega">
+        <input type="text" formControlName="areaEntrega" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('entrega')" label="Entrega">
+        <input type="text" formControlName="entrega" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field
+        [control]="form.get('entregaMotiv')"
+        label="Motivo de entrega">
+        <input
+          type="text"
+          formControlName="entregaMotiv"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('zone')" label="Zona">
+        <input type="text" formControlName="zone" class="form-control" />
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <form-field [control]="form.get('authorize')" label="Autoriza">
+        <input type="text" formControlName="authorize" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="form.get('solicitanteFirm')"
+        label="Firma solicitante">
+        <input
+          type="text"
+          formControlName="solicitanteFirm"
+          class="form-control" />
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <form-field [control]="form.get('observations')" label="Observaciónes">
+        <textarea
+          type="text"
+          formControlName="observations"
+          rows="2"
+          class="form-control"></textarea>
+      </form-field>
+    </div>
+  </div>
+
+  <hr />
+  <div class="row mt-4">
+    <div class="ch-content">
+      <h5 class="title">CONTROL</h5>
+    </div>
+    <div>
+      <form-radio label="Consulta">
+        <input type="radio" formControlName="consult" value="cat" />
+      </form-radio>
+      <button type="submit" class="btn btn-primary btn-sm active mx-4">
+        REPORTE MOVIMIENTO
+      </button>
+      <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+        ELIMINA MOVIMIENTO
+      </button>
+
+      <button type="submit" class="btn btn-info btn-sm active mx-4">
+        EXCEPCIÓN
+      </button>
+    </div>
+  </div>
+
+  <hr />
+  <div class="row mt-4">
+    <div class="ch-content">
+      <h5 class="title">MOVIMIENTOS</h5>
+    </div>
+    <div>
+      <form-radio label="Movimiento">
+        <input type="radio" formControlName="movement" value="cat" />
+      </form-radio>
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-field [control]="form.get('noBien2')" label="No Bien">
+            <input type="text" formControlName="noBien2" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('prorrateo2')" label="Prorrateo">
+            <input
+              type="text"
+              formControlName="prorrateo2"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-primary btn-sm active mx-4">
+            CARGAR MOVIMIENTO
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="concepts">
+        </ng2-smart-table>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+
+  <hr />
+  <div class="row mt-4">
+    <div>
+      <button type="button" class="btn btn-primary btn-sm active mx-4">
+        GUARDAR
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm active mx-4">
+        EFECTUAR PRORRATEO
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm active mx-4">
+        IMPORTA BIENES
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm active mx-4">
+        CARGA BIENES
+      </button>
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings1"
+          [source]="prorrateos">
+        </ng2-smart-table>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params2"
+      [totalItems]="totalItems2"></app-pagination>
+  </div>
+</form>

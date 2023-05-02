@@ -1,0 +1,74 @@
+<!--Value Goods-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <!--<h5 class="title">PAGO BIENES FALTANTES-DAÑADOS / ADMINISTRACIÓN DE INGRESOS</h5>-->
+    <h5 class="title">Avalúo de bienes</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>
+<!--Value Goods Details-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Detalle de avalúo</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select
+        (settingsChange)="settingsChange2($event)"
+        [settings]="settings2"></app-columns-select>
+    </div>
+  </div>
+  <div body>
+    <div class="row mb-3 mt-3 justify-content-end">
+      <!--Actions-->
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">
+          Validar Archivo
+        </button>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">Avalúos</button>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">
+          Registros Rechazados
+        </button>
+      </div>
+    </div>
+    <!--Value Goods Details Table-->
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data2"
+            (edit)="edit($event.data2)"
+            (delete)="delete($event.data2)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params2" [totalItems]="totalItems2">
+    </app-pagination>
+  </div>
+</app-card>

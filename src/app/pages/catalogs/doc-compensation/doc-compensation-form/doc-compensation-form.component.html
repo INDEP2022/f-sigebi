@@ -1,0 +1,111 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="docCompensationForm" class="form-material">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="docCompensationForm.get('id')" label="ID">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2 offset-md-8">
+          <form-field
+            [control]="docCompensationForm.get('satTypeJob')"
+            label="Tipo Oficio">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="satTypeJob" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-8">
+          <form-field
+            [control]="docCompensationForm.get('typeDocSae')"
+            label="Tipo Doc SAE">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeDocSae" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="docCompensationForm.get('type')" label="Tipo">
+            <input type="number" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="docCompensationForm.get('idTypeDocSat')"
+            label="Doc Resarcimiento SAT">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="idTypeDocSat" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="docCompensationForm.get('idTypeDocSatXml')"
+            label="Doc Resarcimiento SAT XML">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idTypeDocSatXml" />
+          </form-field>
+        </div>
+      </div>
+
+      <!-- <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="docCompensationForm.get('idTypeDocSat')">
+            <ngx-select
+              [form]="docCompensationForm"
+              control="idTypeDocSat"
+              [data]="docCompensationSAT"
+              value="id"
+              bindLabel="typeDocSat"
+              label="Doc Resarcimiento SAT"
+              (fetchItems)="getDocCompensationSAT($event)"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="docCompensationForm.get('idTypeDocSatXml')">
+            <ngx-select
+              [form]="docCompensationForm"
+              control="idTypeDocSatXml"
+              [data]="docCompensationSATXML"
+              value="id"
+              bindLabel="typeDocSatXml"
+              label="Doc Resarcimiento SAT XML"
+              (fetchItems)="getDocCompensationSATXML($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div> -->
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="docCompensationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

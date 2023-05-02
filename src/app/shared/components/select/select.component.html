@@ -1,0 +1,39 @@
+<ng-container [formGroup]="form">
+  <div class="form-group form-secondary form-static-label">
+    <ng-select
+      #select
+      [clearable]="clearable"
+      class="form-control"
+      [items]="buffer"
+      [bindLabel]="bindLabel"
+      [hideSelected]="true"
+      [closeOnSelect]="closeOnSelect"
+      [maxSelectedItems]="maxSelectedItems"
+      [multiple]="multiple"
+      [bindValue]="value"
+      [minTermLength]="1"
+      [loading]="loading"
+      [addTag]="addTag"
+      typeToSearchText="Escriba 3 o mas caracteres"
+      [typeahead]="input$"
+      notFoundText="No se encontraron elementos"
+      [virtualScroll]="true"
+      [formControlName]="control"
+      (scrollToEnd)="fetchMore(select.searchTerm)"
+      (change)="onChange($event)"
+      [searchable]="searchable"
+      [placeholder]="placeholder"
+      [readonly]="readonly"
+      [inputAttrs]="inputAttrs"
+      [title]="title">
+      <ng-template *ngIf="showTooltip" ng-option-tmp let-item="item">
+        <div [title]="item[bindLabel]">{{ item[bindLabel] }}</div>
+      </ng-template>
+    </ng-select>
+    <span class="form-bar"></span>
+    <label class="float-label"
+      >{{ label }}
+      <span [style.color]="'#9D2449'" *ngIf="isRequired()">*</span></label
+    >
+  </div>
+</ng-container>

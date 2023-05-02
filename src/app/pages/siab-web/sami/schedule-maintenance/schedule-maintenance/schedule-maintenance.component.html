@@ -1,0 +1,309 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Mantenimiento programación</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="maintenanceForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="No.Gestión"
+            [control]="maintenanceForm.get('noManagement')">
+            <input
+              class="form-control"
+              formControlName="noManagement"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Descripción (Max.1250 caracteres)"
+            [control]="maintenanceForm.get('description')">
+            <textarea
+              class="form-control"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field
+            label="Justificación del cambio"
+            [control]="maintenanceForm.get('rationaleChange')">
+            <textarea
+              class="form-control"
+              formControlName="rationaleChange"
+              placeholder="Justificación del cambio"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-radio label="Programaciones Recepción">
+            <input type="radio" formControlName="reception" value="reception" />
+          </form-radio>
+        </div>
+        <div class="col-md-4">
+          <form-radio label="Programaciones entrega programación">
+            <input
+              type="radio"
+              formControlName="scheduleDelivery"
+              value="scheduleDelivery" />
+          </form-radio>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="maintenanceForm.get('startDate')"
+            label="Fecha page">
+            <input
+              type="text"
+              formControlName="startDate"
+              placeholder="Fecha page"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="maintenanceForm.get('startEnd')"
+            label="Fecha Fin">
+            <input
+              type="text"
+              formControlName="startEnd"
+              placeholder="Fecha Fin"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Actualizar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Consultar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-danger active">Cancelar</button>
+      </div>
+    </div>
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <form [formGroup]="tariffFractionForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="Nueva Fracción arancelaria:"
+            [control]="tariffFractionForm.get('newTariffFraction')">
+            <input
+              class="form-control"
+              formControlName="newTariffFraction"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <button type="button" class="btn btn-primary active">
+            Ver niveles arancelarios
+          </button>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Justificación del cambio"
+            [control]="tariffFractionForm.get('newTariffFraction')">
+            <textarea
+              class="form-control"
+              formControlName="newTariffFraction"
+              placeholder="Justificación del cambio"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <button type="button" class="btn btn-primary active">
+            Actualizar Fracción
+          </button>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-primary active">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Mantenimiento programación</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="requestForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="No.Solicitud"
+            [control]="requestForm.get('request')">
+            <input
+              class="form-control"
+              formControlName="request"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button type="button" class="btn btn-primary active">
+            Consultar
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <form [formGroup]="requestForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="requestForm.get('newRegionalOffice')"
+            label="Nueva Oficina Regional:">
+            <select class="form-control" formControlName="newRegionalOffice">
+              <option [value]="null">Seleccione</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Justificación del cambio"
+            [control]="requestForm.get('rationaleChange')">
+            <textarea
+              class="form-control"
+              formControlName="rationaleChange"
+              placeholder="Justificación del cambio"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary active">Actualizar</button>
+      </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-danger active">Cancelar</button>
+      </div>
+    </div>
+    <br />
+    <br />
+    <form [formGroup]="statusForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="No.Solicitud"
+            [control]="statusForm.get('request')">
+            <input
+              class="form-control"
+              formControlName="request"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button type="button" class="btn btn-primary active">
+            Consultar
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings3"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <form [formGroup]="statusForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="statusForm.get('statusNew')"
+            label="Nuevo estatus">
+            <select class="form-control" formControlName="statusNew">
+              <option [value]="null">Seleccione estatus</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Justificación del cambio"
+            [control]="statusForm.get('rationaleChange')">
+            <textarea
+              class="form-control"
+              formControlName="rationaleChange"
+              placeholder="Justificación del cambio"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary active">Actualizar</button>
+      </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-danger active">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</app-card>

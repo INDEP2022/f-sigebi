@@ -1,0 +1,285 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="personForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('personName')"
+            label="N&uacute;mero Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="personName" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field
+            [control]="personForm.get('name')"
+            label="Nombre Completo">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="personForm.get('street')"
+            label="Direcci&oacute;n">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('streetNumber')"
+            label="N&uacute;mero Direcci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="streetNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('apartmentNumber')"
+            label="N&uacute;mero Apartamento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="apartmentNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="personForm.get('suburb')" label="Colonia">
+            <input type="text" class="form-control" formControlName="suburb" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('delegation')"
+            label="Delegci&oacute;n Municipal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('zipCode')"
+            label="C&oacute;digo Postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="personForm.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="personForm.get('curp')" label="CURP">
+            <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="personForm.get('phone')"
+            label="Tel&eacute;fono">
+            <input type="tel" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('typePerson')"
+            label="Tipo Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typePerson" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('typeResponsible')"
+            label="Tipo Responsabilidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeResponsible" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="personForm.get('manager')" label="Gerente">
+            <input type="text" class="form-control" formControlName="manager" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('numberDeep')"
+            label="N&uacute;mero Deep">
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="numberDeep" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field
+            [control]="personForm.get('profesion')"
+            label="Profesi&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="profesion" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="personForm.get('curriculum')"
+            label="Curriculum">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curriculum" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('keyEntFed')"
+            label="Entidad Federativa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyEntFed" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('keyOperation')"
+            label="Operaci&oacute;n">
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="keyOperation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-8">
+          <form-field
+            [control]="personForm.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="personForm.get('profile')" label="Perfil">
+            <input type="text" class="form-control" formControlName="profile" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="personForm.get('precedentSecodam')"
+            label="Antecedentes SECODAm">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentSecodam" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="personForm.get('precedentPgr')"
+            label="Antecedentes PGR">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentPgr" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="personForm.get('precedentPff')"
+            label="Antecedentes PTFF">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentPff" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="personForm.get('precedentSera')"
+            label="Antecedentes Sera">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentSera" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="personForm.get('precedent0ther')"
+            label="Otros Antecedentes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedent0ther" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="personForm.get('email')" label="email">
+            <input type="email" class="form-control" formControlName="email" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="personForm.get('blackList')"
+            label="Lista Negra">
+            <input
+              type="test"
+              class="form-control"
+              formControlName="blackList" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!personForm.valid"
+          [type]="'button'"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

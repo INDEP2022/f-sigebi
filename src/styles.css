@@ -1,0 +1,320 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+  font-size: 16px;
+}
+
+.swal2-container.swal2-top-end > .swal2-popup,
+.swal2-container.swal2-top-right > .swal2-popup {
+  border-top: 4px solid #c0c0c0;
+}
+
+.swal2-actions {
+  width: 70% !important;
+  justify-content: space-around !important;
+}
+
+.ch-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ch-content .title {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.ch-content .buttons {
+  display: flex;
+  justify-content: end;
+}
+
+.margin-input {
+  margin: 25px 0 !important;
+}
+
+.form-group {
+  align-items: center;
+}
+.form-group label {
+  font-size: 13px;
+}
+.form-group input,
+.form-group textarea,
+.form-group select,
+.form-group ng-select {
+  font-size: 13px;
+}
+.form-group .search-label {
+  margin: 0 15px;
+}
+.form-group .text-search {
+  width: 100%;
+}
+
+.table-bordered {
+  border: none !important;
+}
+
+.modal-content {
+  border-radius: 7px !important;
+}
+.modal-content .modal-header {
+  border-radius: 7px 7px 0 0;
+  background: #fff !important;
+  border-bottom: 1px solid #f2f2f2 !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-content .modal-header .modal-title {
+  color: #000 !important;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.modal-content .modal-header .close {
+  color: #000;
+  margin-top: 0px !important;
+  font-size: small;
+}
+
+.modal-content .modal-header h5:after {
+  content: '' !important;
+  background-color: #9d2449 !important;
+  position: absolute !important;
+  left: -1px !important;
+  top: 5 !important;
+  width: 4px !important;
+  height: 20px !important;
+}
+
+.is-invalid input {
+  border-color: #dc3545;
+}
+
+.is-invalid select {
+  border-color: #dc3545;
+}
+
+.is-invalid textarea {
+  border-color: #dc3545;
+}
+
+.table-loading tbody:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-image: url('./assets/images/loader-button.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  z-index: 100;
+  content: 'Cargando';
+}
+
+.btn-header {
+  transform: scale(95%);
+  padding-top: 8px;
+}
+
+hr {
+  border-top: 1px solid #000001 !important;
+}
+
+tr.ng2-smart-titles input[type='checkbox'],
+.ng2-smart-actions input:focus[type='checkbox'],
+.ng2-smart-actions input[type='checkbox'] {
+  -webkit-appearance: none;
+  outline: 0;
+  width: 15px;
+  height: 15px;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+tr.ng2-smart-titles input:checked[type='checkbox'],
+.ng2-smart-actions input:checked[type='checkbox'] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+  background-color: #9d2449;
+  border-color: #9d2449;
+}
+
+.txt-primary {
+  color: #9d2449;
+}
+
+i {
+  font-style: normal !important;
+}
+
+table:not(.normal-hover) tbody tr.selected {
+  background: #f0e4d1 !important;
+}
+
+table:not(.normal-hover) tbody tr:hover {
+  background: #f0e4d1 !important;
+  cursor: pointer;
+}
+
+.mh-80 {
+  max-height: 80px;
+}
+
+.table-overflow {
+  max-width: 100%;
+  overflow-x: scroll;
+}
+
+.float-icon {
+  position: relative;
+  top: 2px;
+}
+
+.mw-98 {
+  max-width: 98%;
+}
+
+@media (max-width: 1400px) {
+  hr.mw-98 {
+    max-width: 95%;
+    margin-left: 8px;
+  }
+}
+.pointer:hover {
+  cursor: pointer;
+}
+
+.float-icon-md {
+  position: relative;
+  top: 4px;
+}
+
+.rotate-down {
+  transform: rotate(180deg);
+  transition: all 0.5s;
+}
+
+.rotate-up {
+  transform: rotate(0deg);
+  transition: all 0.5s;
+}
+
+.text-black {
+  color: #000 !important;
+}
+
+.add-row-height td {
+  height: 40px !important;
+  white-space: nowrap;
+  vertical-align: middle !important;
+  padding-bottom: 0px !important;
+}
+
+.lower-select {
+  position: relative;
+  top: 32px;
+}
+
+.custom-file-input ~ .custom-file-label::after {
+  content: 'Examinar' !important;
+}
+
+.btn-warning {
+  color: #fff !important;
+}
+
+.btn.active:hover {
+  opacity: 0.8;
+}
+
+.dropdown-item.text-light:hover {
+  color: #000 !important;
+}
+
+.bg-gray-card {
+  background-color: rgba(173, 181, 189, 0.25);
+}
+
+.center-checkbox thead tr th[ng2-st-checkbox-select-all] {
+  text-align: center !important;
+}
+
+.center-checkbox tbody tr td.ng2-smart-action-multiple-select input {
+  position: relative;
+  left: 12px;
+}
+
+ng-scrollbar {
+  --scrollbar-size: 8px;
+  --scrollbar-thumb-color: rgba(94, 175, 255, 0.5);
+  --scrollbar-thumb-hover-color: dodgerblue;
+  --scrollbar-border-radius: 4px;
+}
+
+.dropdown-item.bg-primary {
+  background-color: #9d2449 !important;
+}
+
+.bk-danger {
+  background-color: #bc955c;
+}
+
+.dismiss {
+  float: right;
+}
+.dismiss:hover {
+  cursor: pointer;
+}
+
+.btn-danger:not(.active):hover {
+  background-color: #bc955c !important;
+  border-color: #bc955c !important;
+}
+
+a.dropdown-item:hover {
+  cursor: pointer;
+}
+
+ng-scrollbar.table-scrollbar {
+  border: none;
+}
+
+.table-padding {
+  height: 1em;
+}
+
+.tab-content form.no-margin {
+  margin-bottom: 0px !important;
+}
+
+.float-check {
+  position: relative;
+  bottom: 6px;
+}
+
+.tooltip.tooltip-style .tooltip-inner {
+  background-color: #fff;
+  color: #000;
+  box-shadow: 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+  -webkit-box-shadow: 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+  -moz-box-shadow: 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+}
+
+.tooltip.top.tooltip-style .tooltip-arrow:before,
+.tooltip.top.tooltip-style .tooltip-arrow {
+  border-top-color: #fff;
+}
+
+.cp {
+  color: #404041 !important;
+}
+
+.cl-table {
+  padding-right: 1em;
+} /*# sourceMappingURL=styles.css.map */

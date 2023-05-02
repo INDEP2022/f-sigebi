@@ -1,0 +1,127 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button
+        *ngIf="!showForm && buttonClaim"
+        (click)="showForm = true"
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-file" aria-hidden="true"></i> Reclamar
+      </button>
+
+      <button
+        (click)="liberateRequest()"
+        *ngIf="(showForm && task != 3) || (showForm && buttonLiberate)"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-file" aria-hidden="true"></i> Liberar
+      </button>
+
+      <button
+        (click)="sendRequest()"
+        *ngIf="(showForm && buttonSend) || (!showForm && buttonSendFalse)"
+        class="btn btn-success btn-sm active">
+        <i class="fa fa-paper-plane" aria-hidden="true"></i> Enviar
+      </button>
+
+      <button
+        (click)="generateReport()"
+        *ngIf="
+          (showForm && buttonGenerateReport) ||
+          (!showForm && buttonGenerateReportFalse)
+        "
+        class="btn btn-pink btn-sm active">
+        <i class="fa fa-file-pdf" aria-hidden="true"></i> Generar reporte de
+        orden de servicio
+      </button>
+
+      <button
+        (click)="aprobeRequest()"
+        *ngIf="
+          (showForm && aprobateService && buttonAprobate) ||
+          (!showForm && aprobateService && buttonAprobateFalse) ||
+          (!showForm && aprobateService && buttonAprobateView5)
+        "
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-check" aria-hidden="true"></i> aprobar
+      </button>
+
+      <button
+        (click)="aprobeRequest()"
+        *ngIf="
+          (showForm && aprobateService && buttonAprobateView2) ||
+          (!showForm && aprobateService && buttonAprobateView3) ||
+          (!showForm && aprobateService && buttonAprobateView4)
+        "
+        class="btn btn-success btn-sm active">
+        <i class="fa fa-check" aria-hidden="true"></i> aprobar
+      </button>
+
+      <button
+        (click)="declineOrderService()"
+        *ngIf="
+          (showForm && buttonReject && !aprobateService) ||
+          (!showForm && buttonRejectFalse && !aprobateService)
+        "
+        class="btn btn-danger btn-sm active">
+        <i class="fa fa-ban" aria-hidden="true"></i> Rechazar
+      </button>
+
+      <button
+        (click)="sendJustify()"
+        *ngIf="!showForm && sendNotification"
+        class="btn btn-pink btn-sm active">
+        <i class="fa fa-send" aria-hidden="true"></i> Enviar
+        justificaci&oacute;n
+      </button>
+
+      <button
+        (click)="saveRequest()"
+        *ngIf="
+          (showForm && task != 3) ||
+          (showForm && buttonSave) ||
+          (!showForm && buttonSaveFalse)
+        "
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-save" aria-hidden="true"></i> Guardar
+      </button>
+
+      <button
+        *ngIf="!showForm && buttonAnnexedW"
+        (click)="createAnnexedW()"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-file-pdf" aria-hidden="true"></i> Anexo W
+      </button>
+
+      <button
+        *ngIf="!showForm && !rejected && task == 10"
+        (click)="validateJustification()"
+        class="btn btn-danger btn-sm active btn-toolbar">
+        <i class="fa fa-minus-circle" aria-hidden="true"></i> Rechazar
+        justificaci&oacute;n
+      </button>
+    </div>
+
+    <app-order-service-form
+      [op]="task"
+      [showForm]="showForm"></app-order-service-form>
+
+    <div
+      *ngIf="(task != 5 && task != 6 && task != 7 && task != 10) || task == 10">
+      <app-classificate-vehicle-form
+        [op]="task"
+        [showForm]="showForm"></app-classificate-vehicle-form>
+    </div>
+
+    <app-comments-form [op]="task" [showForm]="showForm"></app-comments-form>
+
+    <app-event-detail-form [op]="task"></app-event-detail-form>
+
+    <app-service-transportable-goods-form
+      [op]="task"
+      [showForm]="showForm"
+      [rejected]="rejected"></app-service-transportable-goods-form>
+  </div>
+</app-card>

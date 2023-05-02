@@ -1,0 +1,166 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="officeForm" class="form-material">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="officeForm.get('id')" label="ID">
+            <input type="numbre" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 offset-md-4">
+          <form-field [control]="officeForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="officeForm.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="officeForm.get('noExt')"
+            label="No&#46; Exterior">
+            <input type="number" class="form-control" formControlName="noExt" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="officeForm.get('noInt')"
+            label="No&#46; Interior">
+            <input type="number" class="form-control" formControlName="noInt" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="officeForm.get('colony')" label="Colonia">
+            <input type="text" class="form-control" formControlName="colony" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="officeForm.get('municipalDelegate')"
+            label="Delegado Municipal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="municipalDelegate" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="officeForm.get('postalCode')"
+            label="C&oacute;digo Postal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="postalCode" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="officeForm.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="officeForm.get('phone')"
+            label="Tel&eacute;fono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="officeForm.get('phoneTwo')"
+            label="Tel&eacute;fono 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="phoneTwo" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="officeForm.get('fax')" label="Fax">
+            <input type="text" class="form-control" formControlName="fax" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="officeForm.get('typeOffice')"
+            label="Tipo Despacho">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeOffice" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="officeForm.get('noRegistration')"
+            label="Número Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noRegistration" />
+          </form-field>
+        </div>
+      </div>
+
+      <!-- <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="officeForm.get('version')" label="Versión">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+        <div class="col-md-3 d-flex">
+          <form-radio label="Activo">
+            <input type="radio" formControlName="status" value="1" />
+          </form-radio>
+          <form-radio label="Inactivo">
+            <input type="radio" formControlName="status" value="0" />
+          </form-radio>
+        </div>
+      </div> -->
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="officeForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

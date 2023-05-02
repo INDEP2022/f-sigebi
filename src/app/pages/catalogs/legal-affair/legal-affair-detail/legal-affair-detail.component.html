@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="legalAffairForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field label="ID" [control]="legalAffairForm.get('id')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field
+            label="Asunto Jurídico"
+            [control]="legalAffairForm.get('legalAffair')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="legalAffair" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="Status" [control]="legalAffairForm.get('status')">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Activo</ng-option>
+              <ng-option value="0">Inactivo</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

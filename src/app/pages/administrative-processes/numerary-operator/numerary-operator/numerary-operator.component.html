@@ -1,0 +1,48 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CONTROL DE NUMERARIO OPERADO</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="numeraryForm" class="form-material">
+      <div class="form-controls">
+        <div class="col-md-3 form-group mb-3">
+          <form-field
+            [control]="numeraryForm.get('startedDate')"
+            label="Deal día">
+            <input
+              type="text"
+              formControlName="startedDate"
+              placeholder="Del día"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 form-group mb-3">
+          <form-field
+            [control]="numeraryForm.get('finishedDate')"
+            label="Al día">
+            <input
+              type="text"
+              formControlName="finishedDate"
+              placeholder="Al día"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            text="IMPRIMIR REPORTE"
+            [disabled]="numeraryForm.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

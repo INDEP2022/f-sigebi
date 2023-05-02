@@ -1,0 +1,360 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="title">DECLARATORIAS Y OFICIOS DE ABANDONOS</h5>
+      </div>
+      <div class="col-md-6 pt-2">
+        <div class="d-flex justify-content-end">
+          <div class="">
+            <app-form-search-handler
+              [columnsType]="columnsType"
+              [service]="fileUpdateService"
+              [dataObservableFn]="fileUpdateService.getNotifications"
+              [fieldsToSearch]="fieldsToSearch"
+              [formData]="formData"
+              (onSearchStart)="checkSearchMode($event)"
+              (onConfirmSearch)="confirm($event)"
+              (onSelect)="selectData($event)">
+            </app-form-search-handler>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <!-- VOLANTE/EXPEDIENTE PANTALLA -->
+        <tab heading="VOLANTE/EXPEDIENTE">
+          <!-- Forms VOLANTE EXPEDIENTE -->
+          <!-- <ngx-form-volante-expediente
+            [form]="form"
+            (formValues)="mostrarInfo($event)"
+            (oficioRelacionadoEvent)="oficioRelacionado($event)"
+            (capturaCopiasEvent)="
+              capturaCopias($event)
+            "></ngx-form-volante-expediente> -->
+          <div class="mt-5 mb-0 pb-0">
+            <app-juridical-record-update
+              layout="ABANDONMENT"
+              [searchMode]="searchMode"
+              [confirmSearch]="confirmSearch"
+              [selectedNotification]="selectedRow"
+              (onSearch)="search($event)">
+            </app-juridical-record-update>
+          </div>
+          <!-- Forms VOLANTE EXPEDIENTE -->
+        </tab>
+        <!-- VOLANTE/EXPEDIENTE PANTALLA -->
+
+        <!-- DECLARATORIA PANTALLA -->
+        <tab heading="DECLARATORIA" *ngIf="showTabs">
+          <!-- Forms DECLARATORIA -->
+          <!-- <ngx-form-declaratoria
+            [form]="formDeclaratoria"
+            (formValues)="
+              mostrarInfoDeclaratoria($event)
+            "></ngx-form-declaratoria> -->
+          <form
+            [formGroup]="declarationForm"
+            class="container-fluid form-material">
+            <div class="row" *ngIf="dictDate != null">
+              <div class="d-flex justify-content-end">
+                <div>
+                  <h6>{{ dictDate }}</h6>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-5">
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    [control]="declarationForm.get('expedientNumber')"
+                    label="No. Expediente">
+                    <input
+                      type="text"
+                      formControlName="expedientNumber"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('preliminaryInquiry')"
+                    label="Averi. Previa">
+                    <input
+                      type="text"
+                      formControlName="preliminaryInquiry"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('criminalCase')"
+                    label="Causa Penal">
+                    <input
+                      type="text"
+                      formControlName="criminalCase"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('officeType')"
+                    label="Tipo Oficio">
+                    <ng-select
+                      formControlName="officeType"
+                      [searchable]="false"
+                      class="form-control"
+                      [clearable]="false">
+                      <ng-option value="DAN"
+                        >DECLARATORIA ABANDONO NUMERARIO</ng-option
+                      >
+                      <ng-option value="DAB"
+                        >DECLARATORIA ABANDONO BIENES</ng-option
+                      >
+                      <ng-option value="FGR"
+                        >DECLARATORIA ABANDONO FGR</ng-option
+                      >
+                      <ng-option value="PJF"
+                        >DECLARATORIA ABANDONO PJF</ng-option
+                      >
+                    </ng-select>
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    class=""
+                    [control]="declarationForm.get('sender')">
+                    <ngx-select
+                      [form]="declarationForm"
+                      [data]="senders"
+                      (fetchItems)="getSenders($event)"
+                      bindLabel="userAndName"
+                      control="sender"
+                      label="Remitente"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="30">
+                    </ngx-select>
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    class=""
+                    [control]="declarationForm.get('recipient')">
+                    <ngx-select
+                      [form]="declarationForm"
+                      [data]="recipients"
+                      (fetchItems)="getRecipients($event)"
+                      bindLabel="userAndName"
+                      control="recipient"
+                      label="Destinatario"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="30">
+                    </ngx-select>
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field
+                    [control]="declarationForm.get('passOfficeArmy')"
+                    label="Cve. Oficio">
+                    <input
+                      type="text"
+                      formControlName="passOfficeArmy"
+                      class="form-control"
+                      readonly />
+                  </form-field>
+                </div>
+                <div class="row mt-5">
+                  <form-field class="" [control]="declarationForm.get('city')">
+                    <ngx-select
+                      [form]="declarationForm"
+                      [data]="cities"
+                      (fetchItems)="getCities($event)"
+                      bindLabel="nameAndId"
+                      control="city"
+                      label="Ciudad"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="30">
+                    </ngx-select>
+                  </form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-5"></div>
+          </form>
+          <!-- Forms DECLARATORIA -->
+
+          <!-- Tabla de bienes DECLARATORIA -->
+          <form
+            [formGroup]="formDeclaratoriaTabla"
+            class="container-fluid form-material">
+            <div class="row">
+              <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+                <h6 class="title">BIENES</h6>
+                <hr class="row" />
+              </div>
+              <div class="col-sm-12 col-12 col-md-2">
+                <form-field
+                  [control]="formDeclaratoriaTabla.get('noExpediente')"
+                  label="No&#46; Expediente">
+                  <input
+                    type="text"
+                    formControlName="noExpediente"
+                    (blur)="onLoadGoodList()"
+                    class="form-control" />
+                  <!-- <select class="form-control" formControlName="noExpediente">
+                    <option [value]="null">Seleccione un valor</option>
+                    <option [value]="'3767'">3767</option>
+                    <option [value]="'3921'">3921</option>
+                  </select> -->
+                </form-field>
+              </div>
+
+              <div class="col-sm-12 col-12 col-md-10">
+                <form-field
+                  [control]="formDeclaratoriaTabla.get('averiPrevia')"
+                  label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
+                  <select class="form-control" formControlName="averiPrevia">
+                    <option [value]="null">Seleccione un valor</option>
+                    <option
+                      [value]="'TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS'">
+                      TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS
+                    </option>
+                  </select>
+                </form-field>
+              </div>
+            </div>
+          </form>
+
+          <div class="row pt-2 mb-2">
+            <div class="col-sm-12 col-12 col-md-12 pr-3">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings1"
+                [source]="data1">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-6">
+              <span class="badge bagde-danger">
+                Bien entregado en administraci&oacute;n
+              </span>
+            </div>
+          </div>
+          <br />
+          <!-- Tabla de bienes DECLARATORIA -->
+
+          <!-- Forms DECLARATORIA page FIN -->
+          <form
+            [formGroup]="formDeclaratoriapageFin"
+            class="container-fluid form-material">
+            <div class="row w-100">
+              <hr class="row" />
+              <div class="col-sm-12 col-12 col-md-6 pr-3">
+                <form-field
+                  [control]="formDeclaratoriapageFin.get('page')"
+                  label="page">
+                  <!-- <label class="label w-100">page</label> -->
+                  <textarea
+                    class="form-control w-100"
+                    formControlName="page"></textarea>
+                </form-field>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6 pr-3">
+                <form-field
+                  [control]="formDeclaratoriapageFin.get('fin')"
+                  label="Fin">
+                  <!-- <label class="label w-100">Fin</label> -->
+                  <textarea
+                    class="form-control w-100"
+                    formControlName="fin"></textarea>
+                </form-field>
+              </div>
+            </div>
+          </form>
+          <!-- Forms DECLARATORIA page FIN -->
+
+          <!-- Apartado folio de escaneo -->
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-8">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-3 text-center">
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file-find"></i>
+                  </button>
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file"></i>
+                  </button>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 w-100">
+                  <form-field
+                    [control]="formFolioEscaneo.get('folioEscaneo')"
+                    label="Folio Escaneo">
+                    <input nbInput fullWidth type="number" class="w-100" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 text-center">
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file"></i>
+                  </button>
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file-find"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 text-center">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active ml-2 mr-2">
+                    Aprobar
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm active ml-2 mr-2">
+                    Eliminar
+                  </button>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 text-center">
+                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bxs-printer"></i>
+                  </button>
+                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bx-send"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr class="row" />
+          <!-- Apartado folio de escaneo -->
+        </tab>
+        <!-- DECLARATORIA PANTALLA page FIN -->
+
+        <tab heading="OFICIO" *ngIf="showTabs">
+          <!-- FORM OFICIO -->
+          <ngx-fact-abandonos-oficio
+            [formOficio]="formOficio"
+            [formCcpOficio]="formCcpOficio"
+            [formOficiopageFin]="formOficiopageFin"
+            (formValues)="mostrarInfoOficio($event)">
+          </ngx-fact-abandonos-oficio>
+          <!-- FORM OFICIO -->
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

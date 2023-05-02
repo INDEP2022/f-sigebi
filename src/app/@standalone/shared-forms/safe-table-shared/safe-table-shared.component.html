@@ -1,0 +1,48 @@
+<app-select-modal-table-shared
+  [form]="form"
+  [disabled]="disabled"
+  [label]="label"
+  [formField]="formField"
+  [formFieldName]="formFieldName"
+  [labelName]="labelName"
+  [service]="service"
+  [columnsType]="columnsType"
+  searchField="idSafe"
+  id="idSafe"
+  description="description"
+  title="Bovedas"></app-select-modal-table-shared>
+<!--
+<ng-container>
+  <div class="row">
+    <div *ngIf="form" [formGroup]="form" class="row ml-4" style="padding: 0px">
+      <button
+        [disabled]="disabled"
+        type="button"
+        class="btn btn-primary btn-sm active"
+        style="width: 36px"
+        (click)="openModal()">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+      <form-field
+        class="col-xs-10 col-md-4"
+        [control]="form.get(formField)"
+        [label]="label">
+        <input
+          type="text"
+          [formControlName]="formField"
+          class="form-control"
+          [readonly]="disabled" />
+      </form-field>
+      <form-field
+        class="col-md-7"
+        [control]="form.get(formFieldName)"
+        label="Descripción de boveda">
+        <textarea
+          rows="2"
+          class="form-control"
+          [formControlName]="formFieldName"
+          readonly></textarea>
+      </form-field>
+    </div>
+  </div>
+</ng-container> -->

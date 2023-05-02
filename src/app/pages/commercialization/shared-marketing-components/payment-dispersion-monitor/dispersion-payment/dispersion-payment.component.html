@@ -1,0 +1,167 @@
+<!--Referenced Payments-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MONITOR DE DISPERSIÓN DE PAGOS EVENTOS</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <!--Events Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-events-shared [form]="form"></app-events-shared>
+        </div>
+      </div>
+    </form>
+    <!--Info Event-->
+    <div class="row mb-3 mt-3">
+      <div class="col-md-6">
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <div class="mt-4">
+              <h5 class="font-size-14">Estatus</h5>
+              <span class="badge rounded-pill badge-soft-success">{{
+                statusEvent
+              }}</span>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="mt-4">
+              <h5 class="font-size-14">Tipo del Evento</h5>
+              <p class="text-muted mb-0">{{ eventType }}</p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="mt-4">
+              <h5 class="font-size-14">Dirección</h5>
+              <p class="text-muted mb-0">{{ eventManagement }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="mt-4">
+              <h5 class="font-size-14">Fechas del Proceso</h5>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-calendar me-1 text-primary"></i>
+                Evento
+              </h5>
+              <p class="text-muted mb-0">08 Sept, 2019</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-calendar me-1 text-primary"></i>
+                Notificación
+              </h5>
+              <p class="text-muted mb-0">08 Sept, 2019</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-calendar me-1 text-primary"></i>
+                Cierre
+              </h5>
+              <p class="text-muted mb-0">08 Sept, 2019</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-calendar me-1 text-primary"></i>
+                Max. Garantía
+              </h5>
+              <p class="text-muted mb-0">08 Sept, 2019</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-calendar me-1 text-primary"></i>
+                Fallo
+              </h5>
+              <p class="text-muted mb-0">08 Sept, 2019</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-calendar me-1 text-primary"></i>
+                Max. Pago
+              </h5>
+              <p class="text-muted mb-0">08 Sept, 2019</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
+<!--Tabs-->
+<app-card>
+  <div body>
+    <!--Options-->
+
+    <div class="row justify-content-end mb-3 mt-3">
+      <div class="d-flex col-3">
+        <div class="btn-group w-100" dropdown>
+          <button
+            id="button-animated"
+            dropdownToggle
+            type="button"
+            class="btn btn-success btn-sm active dropdown-toggle"
+            aria-controls="dropdown-animated">
+            Descargar
+            <span class="caret"></span>
+          </button>
+          <ul
+            id="dropdown-animated"
+            *dropdownMenu
+            class="dropdown-menu"
+            role="menu"
+            aria-labelledby="button-animated">
+            <li role="menuitem">
+              <a class="dropdown-item">Detalles de los Pagos</a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item">Ventas vs Pagos</a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item">Pagos s/m Estaus</a>
+            </li>
+            <li role="menuitem"><a class="dropdown-item">Pagos vs Lotes</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="md-tabs mb-3 mt-3">
+      <tabset [justified]="true">
+        <tab heading="Clientes Participantes" id="tab1">
+          <app-customers></app-customers>
+        </tab>
+        <tab heading="Pagos Recibidos/Cliente" id="tab2">
+          <app-customers-payments></app-customers-payments>
+        </tab>
+        <tab heading="Lotes" id="tab3">
+          <app-batch></app-batch>
+        </tab>
+        <tab heading="Lotes Desiertos" id="tab4">
+          <app-deserted-batch></app-deserted-batch>
+        </tab>
+        <tab heading="Pagos Recibidos/Lote" id="tab5">
+          <app-batch-payments></app-batch-payments>
+        </tab>
+        <tab heading="Composición de Pagos" id="tab6">
+          <app-composition-batch-payments></app-composition-batch-payments>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

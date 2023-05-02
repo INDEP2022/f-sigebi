@@ -1,0 +1,43 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">par&aacute;metros por lote</h5>
+  </div>
+  <div body>
+    <form class="form-material">
+      <div class="row mb-5">
+        <div class="col-sm-12 col-md-6">
+          <div class="form-material">
+            <search-bar [params]="params"></search-bar>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <div class="d-flex flex-row-reverse mb-4 mt-0">
+            <div class="">
+              <button
+                class="btn btn-sm btn-success active font-size-14"
+                (click)="addRow()"
+                [disabled]="adding">
+                Agregar Registro
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              id="params-table"
+              [attr.class]="'table-bordered'"
+              [settings]="paramSettings"
+              [source]="lotparams"
+              (createConfirm)="addEntry($event)"
+              (editConfirm)="editEntry($event)"
+              (deleteConfirm)="deleteEntry($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </form>
+  </div>
+</app-card>

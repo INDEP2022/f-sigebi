@@ -1,0 +1,47 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MONITOR DE SERVICIOS</h5>
+    <div class="col-md-5 buttons">
+      <div class="ml-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [defaultColumns]="6"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <!--Info Event-->
+    <div class="row mb-3 mt-3 justify-content-end">
+      <div class="col-md-2 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-success">
+            <i class="bx bx-calendar me-1 text-success"></i>
+            Por Vencer
+          </h5>
+        </div>
+      </div>
+      <div class="col-md-2 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-danger">
+            <i class="bx bx-calendar me-1 text-danger"></i>
+            Vencido
+          </h5>
+        </div>
+      </div>
+    </div>
+    <!--MONITORING-->
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

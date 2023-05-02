@@ -1,0 +1,171 @@
+<form [formGroup]="form" class="form-material" (submit)="search()">
+  <div class="row">
+    <form-field
+      [control]="form.get('expedientNum')"
+      label="Expediente"
+      class="col-md-3">
+      <ng-select
+        class="form-control"
+        formControlName="expedientNum"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true"
+        [selectOnTab]="true"
+        [isOpen]="false">
+      </ng-select>
+    </form-field>
+
+    <form-field
+      [control]="form.get('flyerNum')"
+      label="Volante"
+      class="col-md-3">
+      <ng-select
+        class="form-control"
+        formControlName="flyerNum"
+        [items]="[]"
+        [addTag]="true"
+        (change)="flyerChange($event)"
+        [multiple]="true"
+        [selectOnTab]="true"
+        [isOpen]="false">
+      </ng-select>
+      <!-- <input type="text" formControlName="flyerNum" class="form-control" /> -->
+    </form-field>
+
+    <form-field [control]="form.get('judgeNum')" class="col-md-3">
+      <!-- <input type="text" formControlName="judgeNum" class="form-control" /> -->
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        control="judgeNum"
+        [data]="courts"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getCourts($event)"
+        (change)="courtChange($event)"
+        label="No&#46; Juzgado"></ngx-select>
+    </form-field>
+
+    <!-- No hay filtro para este  campo -->
+    <!-- <form-field
+      [control]="form.get('trasnferExp')"
+      label="Exp&#46; Trans&#46;"
+      class="col-md-3">
+      <input type="text" formControlName="trasnferExp" class="form-control" />
+    </form-field> -->
+  </div>
+  <div class="row pt-4">
+    <form-field
+      [control]="form.get('flyerType')"
+      label="Tipo de Volante"
+      class="col-md-2">
+      <!-- <input type="text" formControlName="flyerType" class="form-control" /> -->
+      <select
+        formControlName="flyerType"
+        class="form-control"
+        (change)="flyerTypeChange()">
+        <option value="T">T</option>
+        <option value="P">P</option>
+      </select>
+    </form-field>
+    <form-field
+      [control]="form.get('officeDate')"
+      label="Fecha Oficio Ext&#46;"
+      class="col-md-3">
+      <input
+        type="text"
+        (ngModelChange)="fecChange()"
+        formControlName="officeDate"
+        class="form-control"
+        bsDatepicker />
+    </form-field>
+
+    <form-field
+      [control]="form.get('protection')"
+      label="Amparo"
+      class="col-md-4">
+      <input
+        type="text"
+        formControlName="protection"
+        class="form-control"
+        (change)="protectionChange()" />
+    </form-field>
+  </div>
+
+  <div class="row pt-4">
+    <!-- ! no hay filtro aun -->
+    <!-- <form-field
+      [control]="form.get('indicatedName')"
+      label="Nombre Indiciado"
+      class="col-md-4">
+      <input type="text" formControlName="indicatedName" class="form-control" />
+    </form-field> -->
+
+    <form-field [control]="form.get('publicMin')" class="col-md-4">
+      <!-- <input type="text" formControlName="publicMin" class="form-control" /> -->
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        control="publicMin"
+        [data]="publicMins"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getMinPubs($event)"
+        (change)="minpubChange()"
+        label="Ministerio P&uacute;blico"></ngx-select>
+    </form-field>
+
+    <form-field
+      [control]="form.get('criminalCase')"
+      label="Toca Penal"
+      class="col-md-4">
+      <input
+        type="text"
+        formControlName="criminalCase"
+        (change)="criminalCaseChange()"
+        class="form-control" />
+    </form-field>
+  </div>
+
+  <!-- <div class="row pt-4">
+    <form-field
+      [control]="form.get('extOfficeNum')"
+      label="Oficio Ext&#46; No&#46;"
+      class="col-md-3">
+      <input type="text" formControlName="extOfficeNum" class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('previusInvestigation')"
+      label="Averiguaci&oacute;n Previa"
+      class="col-md-3">
+      <input
+        type="text"
+        formControlName="previusInvestigation"
+        class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('dictum')"
+      label="Dictamen"
+      class="col-md-3">
+      <input type="text" formControlName="dictum" class="form-control" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('criminalCase')"
+      label="Causa Penal"
+      class="col-md-3">
+      <input type="text" formControlName="criminalCase" class="form-control" />
+    </form-field>
+  </div> -->
+
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary active" [disabled]="subloading">
+        {{ subloading ? 'Espere un momento...' : 'Buscar'
+        }}<i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+</form>

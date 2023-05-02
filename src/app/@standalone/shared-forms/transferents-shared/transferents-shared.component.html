@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showTransferent">
+    <div class="col-md-12">
+      <form-field [control]="form.get(transferentField)">
+        <ngx-select
+          (fetchItems)="getTransferents($event)"
+          [data]="transferents"
+          [form]="form"
+          value="id"
+          bindLabel="name"
+          label="Transferentes"
+          [control]="transferentField"
+          (change)="onTransferentsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

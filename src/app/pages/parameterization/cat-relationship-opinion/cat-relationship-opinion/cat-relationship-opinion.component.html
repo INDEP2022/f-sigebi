@@ -1,0 +1,122 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        Cat&aacute;logo de relaci&oacute;n y de asunto dictamen
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="ch-content">
+        <h5 class="title">Asuntos</h5>
+        <div class="row justify-content-end mr-1">
+          <div class="col-12">
+            <app-columns-select
+              [(settings)]="settings"
+              class="row justify-content-end">
+            </app-columns-select>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <div class="table-responsive">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data"
+                (userRowSelect)="rowsSelected($event)"
+                (rowSelect)="selectRow($event.data)">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-5" *ngIf="totalItems2 >= 1">
+      <div class="ch-content">
+        <h5 class="title">Tipo de asuntos</h5>
+        <div class="row justify-content-end mr-1">
+          <div class="col-12">
+            <app-columns-select
+              [(settings)]="settings2"
+              class="row justify-content-end">
+            </app-columns-select>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <div class="table-responsive">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="affairTypeList">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-5" *ngIf="totalItems3 >= 1">
+      <div class="ch-content">
+        <h5 class="title">Dictamen</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select
+            [(settings)]="settings2"
+            class="row justify-content-end">
+          </app-columns-select>
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openForm()">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <div class="table-responsive">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
+                [source]="rAsuntDicList"
+                (edit)="openForm($event.data)"
+                (delete)="showDeleteAlert($event.data)">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params3"
+            [totalItems]="totalItems3"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5 d-flex justify-content-center">
+      <div class="col-md-3">
+        <button
+          class="btn btn-sm btn-secondary btn-block active"
+          (click)="openDictum()">
+          Catálogo de dictamen
+        </button>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-sm btn-secondary btn-block active">
+          impresión
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

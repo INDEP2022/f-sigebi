@@ -1,0 +1,48 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <h5 class="modal-title">Visor de im&aacute;genes de documentos</h5>
+    <div class="buttons">
+      <b>{{ images.length > 0 ? index + 1 : 0 }} </b> de
+      <b>{{ images.length }}</b>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-2 body">
+      <div class="col-md-1 mt-5">
+        <button
+          type="button"
+          (click)="index = index - 1"
+          [disabled]="index == 0"
+          class="btn"
+          tooltip="Anterior"
+          placement="bottom">
+          <i class="fa fa-arrow-left text-danger" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="col-md-10">
+        <div class="col-md-2 m-2" *ngIf="images.length == 0"></div>
+        <div class="col-md-12 m-2" *ngIf="images.length > 0">
+          <small class="text-info"
+            >*Doble click para visualizar el documento</small
+          >
+          <tiff-viewer
+            [filename]="images[index]?.filename"
+            [folio]="folio"></tiff-viewer>
+        </div>
+      </div>
+      <div class="col-md-1 mt-5">
+        <button
+          type="button"
+          (click)="index = index + 1"
+          [disabled]="index == images.length - 1"
+          class="btn"
+          tooltip="Siguiente"
+          placement="bottom">
+          <i class="fa fa-arrow-right text-primary" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div footer></div>
+</app-modal>

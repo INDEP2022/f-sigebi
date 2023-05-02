@@ -1,0 +1,113 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body class="body" style="margin-top: -30px">
+    <div class="see-detail">
+      <form [formGroup]="infoForm" class="form-material">
+        <div class="row pt-1">
+          <div class="col-md-6">
+            <label style="word-spacing: -0.1em" for=""
+              >Tipo de Documento&#58;
+              <span>{{ data?.xtipoDocumento }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Autor&#58; <span>{{ data?.dDocAuthor }}</span></label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              No&#46; Solicitud&#58;
+              <span>{{ data?.xidSolicitud }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              No&#46; Bien&#58; <span>{{ data?.xidBien }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Delegaci&oacute;n Regional&#58;
+              <span>{{ nameRegDelegation }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Estado&#58; <span>{{ nameState }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Transferente&#58; <span>{{ nameTrans }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Tipo Transferente&#58;
+              <span>{{ data?.xtipoTransferencia }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Remitente&#58; <span>{{ data?.xremitente }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Cargo Remitente&#58;
+              <span>{{ data?.xcargoRemitente }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Responsable&#58;
+              <span>{{ data?.xresponsable }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Fecha Creaci&oacute;n&#58;
+              <span>{{ data?.dInDate }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              No&#46; Oficina&#58;
+              <span>{{ data?.xnoOficio }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Comentarios&#58;
+              <span>{{ data?.xcomments }}</span>
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

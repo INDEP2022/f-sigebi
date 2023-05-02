@@ -1,0 +1,7 @@
+export const DESTINATION_INFORMATION_DOCS = [
+  {
+    _id: 'Oficio Destino de Bienes, Venta',
+    content:
+      '<p class="ql-align-right"><strong>Adminstración Titular de Resarcimientos</strong></p><p class="ql-align-right"><strong>DCB/DEBM/CJBM/ATRE/¿../2016</strong></p><p class="ql-align-right"><strong>Asunto: Se da respuesta a su solicitud</strong></p><p><br></p><p class="ql-align-right">Ciudad de México, a ¿.. de ¿.. de 2016</p><p><br></p><p><strong>LIC. JOSÉ GERARDO ARELLANO CASTAÑEDA</strong></p><p><strong>ADMINISTRADOR LOCAL JURÍDICO DE HERMOSILLO</strong></p><p>Paseo Río Sonara Sur esq. Galeana. Edificio Hermosillo,</p><p>Planta Baja, Centro de Gobierno, Col. Villa de Seris,</p><p>CP 83280, Hermosillo, Sonora</p><p><br></p><p><strong>VENTA</strong></p><p><br></p><p class="ql-align-justify"><strong style="color: rgb(0, 0, 0);">Lorem Ipsum</strong><span style="color: rgb(0, 0, 0);">&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p><p class="ql-align-right"><br></p>',
+  },
+];

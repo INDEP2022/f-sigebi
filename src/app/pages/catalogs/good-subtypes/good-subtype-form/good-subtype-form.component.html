@@ -1,0 +1,104 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="goodSubtypeForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="goodSubtypeForm.get('id')"
+            label="Identificador">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-md-offset-3">
+          <form-field [control]="goodSubtypeForm.get('idTypeGood')">
+            <ngx-select
+              label="Tipo Bienes"
+              [form]="goodSubtypeForm"
+              control="idTypeGood"
+              [data]="types"
+              value="id"
+              bindLabel="nameGoodType"
+              label="Tipo Bien"
+              (fetchItems)="getTypes($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="goodSubtypeForm.get('nameSubtypeGood')"
+            label="Nombre Subtipo Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameSubtypeGood" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodSubtypeForm.get('noPhotography')"
+            label="No Fotograf&iacute;a">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noPhotography" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodSubtypeForm.get('noRegister')"
+            label="No. Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noRegister" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="goodSubtypeForm.get('descriptionPhotography')"
+            label="Descripci&oacute;n Fotogr&aacute;fica">
+            <textarea
+              rows="1"
+              class="form-control"
+              formControlName="descriptionPhotography"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="goodSubtypeForm.get('version')"
+            label="Versi&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!goodSubtypeForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

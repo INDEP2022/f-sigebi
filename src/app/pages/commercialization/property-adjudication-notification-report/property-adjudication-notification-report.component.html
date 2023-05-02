@@ -1,0 +1,191 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte De Notificacion De Adjudicacion Inmuebles</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('evento')" label="Evento">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="evento"
+              placeholder="Evento" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('claveOficio')" label="Clave Oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="claveOficio"
+              placeholder="Clave Oficio" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('fechaFallo')" label="Fecha Fallo">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaFallo"
+              placeholder="Fecha Fallo" />
+          </form-field>
+        </div>
+      </div>
+      <br /><br />
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('FechaLimPago')"
+            label="Fecha Limite de Pago">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="FechaLimPago"
+              placeholder="Fecha Limite de Pago" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('texto1')" label="Texto 1">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="texto1"
+              placeholder="texto 1"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('texto2')" label="Texto 2">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="texto2"
+              placeholder="texto 2"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <br /><br />
+
+        <div class="col-md-4">
+          <form-field [control]="form.get('texto3')" label="Texto 3">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="texto3"
+              placeholder="texto 3"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('texto4')" label="Texto 4">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="texto4"
+              placeholder="texto 4"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <br /><br />
+      <!-- 
+   <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-bordered'"
+          [settings]="settings5"
+          (userRowSelect)="userRowSelect($event)"
+          [source]="layousthList"></ng2-smart-table>
+      </div>
+
+ -->
+      <div body>
+        <div class="row">
+          <label for="">Lotes</label>
+        </div>
+        <div class="row pt-2 scroll-table justify-content-center">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings4"
+            [source]="dataBatch"></ng2-smart-table>
+        </div>
+        <div class="row mt-5 d-flex justify-content-center">
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+
+      <br /><br />
+
+      <div class="row">
+        <div class="col">
+          <form-field [control]="form.get('firmante')" label="Firmante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firmante"
+              placeholder="Firmante" />
+          </form-field>
+        </div>
+        <div class="col">
+          <form-field [control]="form.get('elaboro')" label="Elaboro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaboro"
+              placeholder="Elaboro" />
+          </form-field>
+        </div>
+        <div class="col">
+          <form-field [control]="form.get('ccp1')" label="Ccp1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ccp1"
+              placeholder="Ccp1" />
+          </form-field>
+        </div>
+        <div class="col">
+          <form-field [control]="form.get('ccp2')" label="Ccp2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ccp1"
+              placeholder="Ccp2" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
+<!-- <div class="col-md-4">
+          <confirm-button text="Imprimir" [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
+          </confirm-button>
+        </div> 
+        (userRowSelect)="userRowSelect($event)"
+      
+      -->

@@ -1,0 +1,82 @@
+<form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="row pt-5">
+    <div class="col-md-2" *ngIf="!show1">
+      <app-events-shared
+        [label]="'Evento'"
+        [bindLabel]="'id'"
+        [form]="form"></app-events-shared>
+    </div>
+    <div class="col-md-2 pt-3" *ngIf="!show1">
+      <form-field [control]="form.get('idAllotment')" label="Lote">
+        <input type="text" class="form-control" formControlName="idAllotment" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm active"
+        [disabled]="!form.valid"
+        (click)="show1 = !show1">
+        Generar Prefacturas
+      </button>
+    </div>
+    <!-- <div class="col-md-2" *ngIf="show1">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="openPrevPdf()">
+        Visualizar Prefactura
+      </button>
+    </div> -->
+    <div class="col-md-2" *ngIf="show1">
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm active"
+        (click)="show1 = !show1">
+        Actualizar Datos
+      </button>
+    </div>
+  </div>
+</form>
+
+<div class="row" *ngIf="show1">
+  <div class="ch-content">
+    <h5 class="title">PREFACTURAS DEL EVENTO: {{ idAllotment }}</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="col-md-2 btn-group">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="sendPack()">
+        Enviar paquetes
+      </button>
+    </div>
+    <div class="col-md-2 btn-group">
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="exportAsXLSX()">
+        Exportar a Excel
+      </button>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <ng2-smart-table
+      [source]="data"
+      [settings]="settings"
+      (edit)="openModal()"
+      (delete)="delete()"
+      (custom)="openPrevPdf()"></ng2-smart-table>
+  </div>
+
+  <div class="row pt-3">
+    <div class="col-md-2">
+      <h5 class="font-size-14 d-inline">N&uacute;mero de facturas: &nbsp;</h5>
+      <h3 class="font-size-14 d-inline">&nbsp; 3</h3>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,333 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Estado de cuenta (Depósito)</h5>
+  </div>
+  <div body>
+    <h5 class="title">Datos del Depósito</h5>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field [control]="form.get('account')" label="Cuenta">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="account" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('bank')" label="Banco">
+              <input type="text" class="form-control" formControlName="bank" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('currency')" label="Moneda">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="currency" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('amount')" label="Importe">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="amount" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('depositDate')"
+              label="Fecha Depósito">
+              <input
+                type="text"
+                formControlName="depositDate"
+                placeholder="Fecha"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('transfDate')"
+              label="Fecha Transf.">
+              <input
+                type="text"
+                formControlName="transfDate"
+                placeholder="Fecha"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('proceedings')" label="Expediente">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="proceedings"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('good')" label="Bien">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="good"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field [control]="form.get('status')" label="Estatus">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="status" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('indicated')" label="Indiciando">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="indicated" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('avPrevious')" label="Av.previa">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="avPrevious" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('criminalCase')"
+              label="Causa penal">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="criminalCase" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <h5 class="title">Datos para cálculo</h5>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('transferDate')"
+              label="Fecha de tranferencia">
+              <input
+                type="text"
+                formControlName="transferDate"
+                placeholder="Fecha"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('cutoffDate')"
+              label="Fecha de corte">
+              <input
+                type="text"
+                formControlName="cutoffDate"
+                placeholder="Fecha"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('toReturn')" label="A Devolver">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="toReturn"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('interestCredited')"
+              label="Interes acreditados">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="interestCredited"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field [control]="form.get('costsAdmon')" label="Sub total">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="subTotal"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('costsAdmon')"
+              label="Gastos de admon">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="costsAdmon"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('associatedCosts')"
+              label="Costos asociados">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="associatedCosts"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('checkAmount')"
+              label="Importe cheque">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="checkAmount"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-2">
+            <button class="btn btn-secondary btn-sm active">
+              Edo. de Cta.
+            </button>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-secondary btn-sm active">Parametros</button>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-secondary btn-sm active">
+              Cheque Compl.
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <h5 class="title">Datos para el cheque</h5>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('checkType')"
+              label="Tipo de cheque">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="checkType" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('bankAccount')"
+              label="Cuenta bancaria">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="bankAccount"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('check')" label="Cheque">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="check"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('bankCheck')" label="Banco">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="bankCheck" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('expeditionDate')"
+              label="Fecha expedición">
+              <input
+                type="text"
+                formControlName="expeditionDate"
+                placeholder="Fecha"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('collectionDate')"
+              label="Fecha cobro">
+              <input
+                type="text"
+                formControlName="collectionDate"
+                placeholder="Fecha"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('beneficiary')"
+              label="Benefeciario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="beneficiary" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-2">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="openForm()">
+              Traspasar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

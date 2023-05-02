@@ -1,0 +1,120 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="normForm">
+      <div class="row">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="normForm.get('norm')" label="Norma">
+            <input type="text" class="form-control" formControlName="norm" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="normForm.get('article')"
+            label="Art&iacute;culo">
+            <input type="text" class="form-control" formControlName="article" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-3">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="normForm.get('type')" label="Tipo">
+            <select class="form-control" formControlName="type">
+              <option [value]="null">Seleccione un tipo</option>
+              <option *ngFor="let item of type" [value]="item.label">
+                {{ item.label }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-6 pt-sm-5 pt-md-2">
+          <form-field [control]="normForm.get('name')" label="Destino">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              (click)="openDestination()" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-3">
+        <div class="col-12 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="normForm.get('characteristics')"
+            label="Caracter&iacute;sticas">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="characteristics">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-3">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="normForm.get('merchandise')"
+            label="Mercanc&iacute;as Regular">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="merchandise">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="normForm.get('fundament')"
+            label="Fundamento Juridico">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="fundament">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-3">
+        <div class="col-12 pt-sm-5 pt-md-2">
+          <form-field [control]="normForm.get('objective')" label="Objetivo">
+            <textarea
+              rows="3"
+              class="form-control pt-3"
+              formControlName="objective">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-3">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="normForm.get('condition')"
+            label="Condici&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="condition" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!normForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,162 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Bienes Entregados para Estudio</h5>
+  </div>
+
+  <div body>
+    <div class="row mt-5 justify-content-end">
+      <div class="col-md-4 text-center text-md-right">
+        <button class="btn btn-secondary btn-sm active">Cargar Bienes</button>
+      </div>
+      <div class="col-md-4 text-center text-md-right mt-3 mt-md-0">
+        <button class="btn btn-secondary btn-sm active">
+          Cerrar &Aacute;cta
+        </button>
+      </div>
+    </div>
+
+    <div class="pt-5">
+      <form
+        class="form-material form-horizontal"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+        <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <div class="col-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('statusAct')"
+                label="Estatus &Aacute;cta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="statusAct" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('keyAct')"
+                label="Cve &Aacute;cta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="keyAct" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('proceedings')"
+                label="No. Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="proceedings" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('observations')"
+                  label="Observaciones">
+                  <textarea
+                    class="form-control"
+                    formControlName="observations"></textarea>
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12 col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('captureDate')"
+                label="Fecha Captura">
+                <input
+                  type="text"
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="captureDate" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('closingDate')"
+                label="Fecha Cierre">
+                <input
+                  type="text"
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="closingDate" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12 col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('universalFolio')"
+                label="Folio Universal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="universalFolio" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 text-center text-md-right">
+            <button class="btn btn-secondary btn-sm active">
+              Replicar Folio
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <app-divider></app-divider>
+      <div class="row mt-5 justify-content-end mt-3">
+        <div class="col-md-5 buttons pt-3 text-right">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings">
+          </app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-5 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <div class="mt-5 col-6 align-items-center">
+        <div class="row">
+          <div class="col-6">
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Disponibles</span
+            >
+          </div>
+          <div class="col-6">
+            <span class="text-danger"
+              ><i class="fa fa-square"></i> No disponibles</span
+            >
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

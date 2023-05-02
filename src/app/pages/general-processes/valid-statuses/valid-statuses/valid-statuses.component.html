@@ -1,0 +1,36 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Estatus V&aacute;lido por Pantalla</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h3>{{ screenCtrl.value }}</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <tabset>
+          <tab heading="Estatus" id="tab1">
+            <div class="row" [ngClass]="{ 'table-loading': loading }">
+              <ng2-smart-table
+                [settings]="settings"
+                [source]="statuses"></ng2-smart-table>
+              <app-pagination
+                [filterParams]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab heading="Ayuda">
+            <div class="row">
+              <div class="col-md-12">
+                <p><b [innerText]="helpText"></b></p>
+              </div>
+            </div>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

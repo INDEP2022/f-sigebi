@@ -1,0 +1,454 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Generacion de Recibos</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Consultar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Descargar bienes
+        </button>
+      </div>
+    </div>
+    <form [formGroup]="receiptGenerationForm" class="form-material">
+      <div class="row margin-input">
+        <h5 class="title">Selecciona la Operación</h5>
+        <div class="col-md-2">
+          <form-radio label="Actualiza Información">
+            <input
+              type="radio"
+              formControlName="updateInformation"
+              value="updateInformation" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Recibo">
+            <input type="radio" formControlName="receipt" value="receipt" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Resguardo">
+            <input type="radio" formControlName="guard" value="guard" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Almacen">
+            <input type="radio" formControlName="store" value="store" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Reprogramacion">
+            <input
+              type="radio"
+              formControlName="reprogramming"
+              value="reprogramming" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Cancelación">
+            <input
+              type="radio"
+              formControlName="cancellation"
+              value="cancellation" />
+          </form-radio>
+        </div>
+      </div>
+    </form>
+    <div class="margin-input">
+      <h5 class="title">Selecciona el archivo a procesar (excel)</h5>
+      <input type="file" (change)="chargeFile($event.target)" />
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Cargar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Descargar Resultados
+        </button>
+      </div>
+    </div>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Asignar Recibo
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Resguardo</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Almacén</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Reprogramacion
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Cancelación
+        </button>
+      </div>
+    </div>
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Generacion de Recibos</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="receiptGenerationFirmForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field
+            label="No. Gestión"
+            [control]="receiptGenerationFirmForm.get('management')">
+            <input
+              class="form-control"
+              formControlName="management"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Clave Única"
+            [control]="receiptGenerationFirmForm.get('uniqueKey')">
+            <input
+              class="form-control"
+              formControlName="uniqueKey"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Expediente"
+            [control]="receiptGenerationFirmForm.get('proceedings')">
+            <input
+              class="form-control"
+              formControlName="proceedings"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Descripción Transferente"
+            [control]="receiptGenerationFirmForm.get('descriptionTransferee')">
+            <textarea
+              class="form-control"
+              formControlName="descriptionTransferee"
+              placeholder="Descripción Transferente"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="receiptGenerationFirmForm.get('descriptionIn')"
+            label="Descrición INDEP">
+            <textarea
+              class="form-control"
+              formControlName="descriptionIn"
+              placeholder="Descrición INDEP"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="Cantidad transferente"
+            [control]="receiptGenerationFirmForm.get('transferAmount')">
+            <input
+              class="form-control"
+              formControlName="transferAmount"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cantidad INDEP"
+            [control]="receiptGenerationFirmForm.get('amountIn')">
+            <input
+              class="form-control"
+              formControlName="amountIn"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Unidad Medida Transferente"
+            [control]="receiptGenerationFirmForm.get('transferUnitMeasure')">
+            <input
+              class="form-control"
+              formControlName="transferUnitMeasure"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Unidad Medida INDEP"
+            [control]="receiptGenerationFirmForm.get('unitMeasureIn')">
+            <input
+              class="form-control"
+              formControlName="unitMeasureIn"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="Estado físico transferente"
+            [control]="
+              receiptGenerationFirmForm.get('transferringPhysicalState')
+            ">
+            <input
+              class="form-control"
+              formControlName="transferringPhysicalState"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado físico INDEP"
+            [control]="receiptGenerationFirmForm.get('physicalStateIn')">
+            <input
+              class="form-control"
+              formControlName="physicalStateIn"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado conservación transferente"
+            [control]="
+              receiptGenerationFirmForm.get('transferringStateConservation')
+            ">
+            <input
+              class="form-control"
+              formControlName="transferringStateConservation"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado conservación INDEP"
+            [control]="receiptGenerationFirmForm.get('stateConservationIn')">
+            <input
+              class="form-control"
+              formControlName="stateConservationIn"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="Destino Ligie"
+            [control]="receiptGenerationFirmForm.get('fateBinds')">
+            <input
+              class="form-control"
+              formControlName="fateBinds"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Destino INDEP"
+            [control]="receiptGenerationFirmForm.get('destinyIn')">
+            <input
+              class="form-control"
+              formControlName="destinyIn"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Destino transferente"
+            [control]="receiptGenerationFirmForm.get('transferDestination')">
+            <input
+              class="form-control"
+              formControlName="transferDestination"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Asignar Recibo
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Resguardo</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Almacén</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Reprogramacion
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Cancelación
+        </button>
+      </div>
+    </div>
+    <div class="margin-input">
+      <form [formGroup]="receiptGenerationFirmForm" class="form-material">
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="receiptGenerationFirmForm.get('cancellation')"
+              label="Seleccionar el motivo de la cancelación">
+              <select class="form-control" formControlName="cancellation">
+                <option [value]="null">Seleccione</option>
+                <option [value]="1">1</option>
+                <option [value]="2">2</option>
+              </select>
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="receiptGenerationFirmForm.get('reprogramming')"
+              label="Seleccionar el motivo de la Reprogramación">
+              <select class="form-control" formControlName="reprogramming">
+                <option [value]="null">Seleccione</option>
+                <option [value]="1">1</option>
+                <option [value]="2">2</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <form [formGroup]="receiptForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="Nombre quien entrega"
+            [control]="receiptForm.get('nameDelivery')">
+            <input
+              class="form-control"
+              formControlName="nameDelivery"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de transporte"
+            [control]="receiptForm.get('deliveryType')">
+            <input
+              class="form-control"
+              formControlName="deliveryType"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cargo quien entrega"
+            [control]="receiptForm.get('chargeDelivers')">
+            <input
+              class="form-control"
+              formControlName="chargeDelivers"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Número de placa"
+            [control]="receiptForm.get('plateNumber')">
+            <input
+              class="form-control"
+              formControlName="plateNumber"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field label="Precinto" [control]="receiptForm.get('seal')">
+            <input class="form-control" formControlName="seal" type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Nombre quien recibe"
+            [control]="receiptForm.get('nameReceives')">
+            <input
+              class="form-control"
+              formControlName="nameReceives"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Observaciones"
+            [control]="receiptForm.get('observations')">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              placeholder="Observaciones"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-radio label="Recibo con Firma Electrónica">
+            <input
+              type="radio"
+              formControlName="firmElectronic"
+              value="firmElectronic" />
+          </form-radio>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Aceptar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Firmar recibo
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

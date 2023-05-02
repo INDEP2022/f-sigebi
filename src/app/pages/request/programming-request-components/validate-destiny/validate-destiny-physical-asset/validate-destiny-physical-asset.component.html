@@ -1,0 +1,196 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Validar Destino Con Folio</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <h5 class="title">Informaci&oacute;n</h5>
+      <div class="form-group">
+        <label class="text-right"
+          >Usuario creaci&oacute;n de programaci&oacute;n&#58;</label
+        >
+        <span> David Baez </span>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <h5 class="title">Programaci&oacute;n</h5>
+      <div class="col-md-4">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Delegaci&oacute;n regional&#58;</label
+            >
+            <span> NOROESTE </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Transferente&#58;</label>
+            <span> SAT - comercio exterior </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Emisora&#58;</label>
+            <span> AGA </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Autoridad&#58;</label>
+            <span> Administración de la aduana de Nuevo Laredo </span>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-4">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Correo transferente&#58;</label>
+            <span> OST12363@SAE.GOB.MX </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Fecha page operativo&#58;</label>
+            <span> 11-oct-2022 00:00 </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
+            <span> 12-oct-2022 00:00 </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Direcci&oacute;n&#58;</label>
+            <span> Domicilio desconocido </span>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-4">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
+            <span> Diverso </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Ciudad&#58;</label>
+            <span> Nuevo Laredo </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Observaci&oacute;n&#58;</label>
+            <span> Ninguna </span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Almac&eacute;n</h5>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label class="text-right">Almac&eacute;n&#58;</label>
+          <span> Nombre de Almac&eacute;n test </span>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label class="text-right">Direcci&oacute;n almac&eacute;n&#58;</label>
+          <span>
+            Boulevard José López Portillo No 200, Apodaca, Nuevo León, C.P.
+            66613
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Validar Bienes</h5>
+    </div>
+    <div class="row pt-4">
+      <div class="" style="display: flex; justify-content: end">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <form [formGroup]="validateDestinyForm">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <col style="width: 60%" />
+            <col style="width: 80%" />
+            <col style="width: 60%" />
+            <thead>
+              <tr>
+                <th scope="col" class="text-center">Validar/Rechazar</th>
+                <th scope="col">N. gestión</th>
+                <th scope="col">Clave única</th>
+                <th scope="col">Expediente</th>
+                <th scope="col">Descripción transferente</th>
+                <th scope="col">Descripción INDEP</th>
+                <th scope="col">Cantidad transferente</th>
+                <th scope="col">Cantidad INDEP</th>
+                <th scope="col">Medida transferente</th>
+                <th scope="col">Medida INDEP</th>
+                <th scope="col">Estado transferente</th>
+                <th scope="col">Estado físico INDEP</th>
+                <th scope="col">Conservación transferente</th>
+                <th scope="col">Estado conservación INDEP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" class="align-baseline">
+                  <div>
+                    <!--<form-radio label="Validar">-->
+                    <input
+                      type="radio"
+                      id="validate"
+                      formControlName="validateState"
+                      value="validate" />
+                    <label class="radio-label" for="validate"> Validar</label
+                    ><br />
+                    <!--</form-radio>-->
+                    <!--<form-radio label="Rechazar">-->
+                    <input
+                      type="radio"
+                      id="refuse"
+                      formControlName="validateState"
+                      value="refuse" />
+                    <label class="radio-label" for="refuse"> Rechazar</label>
+                    <!--</form-radio>-->
+                  </div>
+                </th>
+                <td scope="row" class="align-baseline">5296016</td>
+                <td class="align-baseline">2019/02/20501</td>
+                <td class="align-baseline">2019/04/20504</td>
+                <td>Cables tomados</td>
+                <td>texto</td>
+                <td class="text-right align-baseline">
+                  <div class="align-items">4</div>
+                </td>
+                <td>texto</td>
+                <td class="text-center align-baseline">Pieza</td>
+                <td>texto</td>
+                <td class="text-center align-baseline">Bueno</td>
+                <td>texto</td>
+                <td></td>
+                <td>texto</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <div class="m-3 btn-toolbar">
+        <button class="btn btn-primary active" (click)="finishValidation()">
+          Terminar Validación
+        </button>
+        <button class="btn btn-danger active">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</app-card>

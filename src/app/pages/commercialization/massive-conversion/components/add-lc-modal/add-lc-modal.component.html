@@ -1,0 +1,170 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="lcForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6" *ngIf="layout == 'RFC'">
+          <form-field [control]="lcForm.get('rfc')">
+            <ngx-select
+              [form]="lcForm"
+              [data]="rfcItems"
+              value="rfc"
+              bindLabel="rfc"
+              label="R.F.C."
+              (fetchItems)="getRfcs($event)"
+              control="rfc">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6" *ngIf="layout == 'clientId'">
+          <form-field [control]="lcForm.get('clientId')">
+            <ngx-select
+              [form]="lcForm"
+              [data]="clientItems"
+              value="id"
+              bindLabel="id"
+              label="Id Cliente"
+              (fetchItems)="getClients($event)"
+              control="clientId">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="lcForm.get('batch')" label="Lote">
+            <input type="number" class="form-control" formControlName="batch" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="lcForm.get('amount')" label="Monto">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="lcForm.get('palette')" label="Paleta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="palette" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="lcForm.get('checkNumber')" label="N° Cheque">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="checkNumber" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="lcForm.get('checkBank')"
+            label="Banco Exp. Cheque">
+            <ng-select
+              formControlName="checkBank"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="BANAMEX">BANAMEX</ng-option>
+              <ng-option value="BANCO SANTANDER">BANCO SANTANDER</ng-option>
+              <ng-option value="BANORTE">BANORTE</ng-option>
+              <ng-option value="BBVA BANCOMER">BBVA BANCOMER</ng-option>
+              <ng-option value="HSBC">HSBC</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="lcForm.get('validityDate')"
+            label="Fecha Vigencia">
+            <input
+              type="text"
+              formControlName="validityDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="lcForm.get('registerDate')"
+            label="Fec. Registro">
+            <input
+              type="text"
+              formControlName="registerDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="lcForm.get('gsaeRef')" label="Referencia Gsae">
+            <input type="text" formControlName="gsaeRef" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="lcForm.get('gbankRef')" label="Ref. Gbanco">
+            <input
+              type="number"
+              formControlName="gbankRef"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="lcForm.get('status')" label="Estatus">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="PAG">PAGADO</ng-option>
+              <ng-option value="GEN">GENERADO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-3 d-flex justify-content-center">
+          <div>
+            <form-radio label="Cheque">
+              <input type="radio" formControlName="type" value="CHECK" />
+            </form-radio>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3 d-flex justify-content-center">
+          <div>
+            <form-radio label="Línea">
+              <input type="radio" formControlName="type" value="LINE" />
+            </form-radio>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!lcForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

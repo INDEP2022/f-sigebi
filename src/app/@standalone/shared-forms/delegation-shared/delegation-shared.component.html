@@ -1,0 +1,36 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showDelegation">
+    <div class="col-md-12">
+      <form-field [control]="form.get(delegationField)">
+        <ngx-select
+          (fetchItems)="getDelegations($event)"
+          [data]="delegations"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          [label]="labelDelegation"
+          [control]="delegationField"
+          (change)="onDelegationsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mb-3 mt-3" *ngIf="showSubdelegation">
+    <div class="col-md-12">
+      <form-field [control]="form.get(subdelegationField)">
+        <ngx-select
+          (fetchItems)="getSubDelegations($event)"
+          [data]="subdelegations"
+          id="sdele"
+          class="disabled"
+          [form]="form"
+          bindLabel="description"
+          [label]="labelSubdelegation"
+          [control]="subdelegationField"
+          (change)="onSubDelegationsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

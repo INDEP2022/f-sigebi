@@ -1,0 +1,84 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="tdescAtribForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="tdescAtribForm.get('keyAtrib')"
+            label="No. Atributo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="keyAtrib" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="tdescAtribForm.get('descriptionAtrib')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionAtrib" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="tdescAtribForm.get('swFormat')"
+            label="Formato">
+            <ng-select
+              formControlName="swFormat"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="V">Alfanum&eacute;rico</ng-option>
+              <ng-option value="N">Num&eacute;rico</ng-option>
+              <ng-option value="F">Flotante</ng-option>
+              <ng-option value="D">Fecha</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="tdescAtribForm.get('longMax')"
+            label="Longitud Máxima">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="longMax" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="tdescAtribForm.get('longMin')"
+            label="Longitud Mínima">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="longMin" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!tdescAtribForm.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

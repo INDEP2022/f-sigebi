@@ -1,0 +1,225 @@
+<app-card [header]="true">
+  <div class="ch-content justify-content-between" header>
+    <div class="">
+      <h5 class="title">
+        {{ title }}&#44; No&#46; Solicitud&#58; {{ requestId }}
+      </h5>
+    </div>
+    <div class="" *ngIf="step == 'register-response-minute'">
+      <div class="d-flex flex-wrap mt-2" *ngIf="screenWidth >= 1600">
+        <div class="mx-1 my-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openDocument('edit')">
+            <i class="bx bx-notepad mr-1 float-icon"></i>Oficio Destino
+          </button>
+        </div>
+        <div class="mx-1 my-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openSendEmail()">
+            <i class="bx bx-mail-send mr-1 float-icon"></i>
+            Enviar Correo de Solicitud
+          </button>
+        </div>
+        <div class="mx-1 my-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bx-save mr-1 float-icon"></i>Guardar
+          </button>
+        </div>
+        <div class="mx-1 my-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="turnRequest()"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+            Turnar
+          </button>
+        </div>
+      </div>
+      <div class="" *ngIf="screenWidth < 1600">
+        <div
+          class="btn-group"
+          placement="bottom right"
+          dropdown
+          [isDisabled]="">
+          <button
+            #actionsBtn
+            dropdownToggle
+            type="button"
+            class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
+            aria-controls="dropdown-actions">
+            Acciones
+          </button>
+          <ul
+            id="dropdown-csv"
+            *dropdownMenu
+            class="dropdown-menu dropdown-menu-right bg-primary"
+            role="menu"
+            aria-labelledby="processBtn">
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="openDocument('edit')"
+                ><i class="bx bx-notepad mr-1 float-icon"></i>Oficio Destino</a
+              >
+            </li>
+            <li role="menuitem" *ngIf="step == 'register-response-minute'">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="openSendEmail()"
+                ><i class="bx bx-mail-send mr-1 float-icon"></i>Enviar Correo de
+                Solicitud</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+                ><i class="bx bx-save mr-1 float-icon"></i>Guardar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="turnRequest()"
+                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i
+                >Turnar</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="" *ngIf="step == 'review-response-minute'">
+      <div class="d-flex flex-wrap mt-2" *ngIf="screenWidth >= 1300">
+        <div class="mx-1 my-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openDocument('view')">
+            <i class="bx bx-notepad mr-1 float-icon"></i>Oficio Destino
+          </button>
+        </div>
+        <div class="mx-1 my-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bx-save mr-1 float-icon"></i>Guardar
+          </button>
+        </div>
+        <div class="mx-1 my-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="endRequest()"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+            Finalizar
+          </button>
+        </div>
+      </div>
+      <div class="" *ngIf="screenWidth < 1300">
+        <div
+          class="btn-group"
+          placement="bottom right"
+          dropdown
+          [isDisabled]="">
+          <button
+            #actionsBtn
+            dropdownToggle
+            type="button"
+            class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
+            aria-controls="dropdown-actions">
+            Acciones
+          </button>
+          <ul
+            id="dropdown-csv"
+            *dropdownMenu
+            class="dropdown-menu dropdown-menu-right bg-primary"
+            role="menu"
+            aria-labelledby="processBtn">
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="openDocument('view')"
+                ><i class="bx bx-notepad mr-1 float-icon"></i>Oficio Destino</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+                ><i class="bx bx-save mr-1 float-icon"></i>Guardar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="endRequest()"
+                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i
+                >Finalizar</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <app-request-information [request]="requestInfo"></app-request-information>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Registro de Documentaci&oacute;n" id="documentationTab">
+          <app-register-documentation-view
+            [requestId]="requestId"></app-register-documentation-view>
+        </tab>
+        <tab heading="Seleccionar Bienes" id="selectGoodsTab">
+          <app-goods-list [requestId]="requestId"></app-goods-list>
+        </tab>
+        <tab heading="Expediente" id="fileTab">
+          <tabset class="md-tabs">
+            <tab
+              heading="Documentos Solicitud"
+              id="tab1"
+              (selectTab)="requestSelected(1)">
+              <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+            </tab>
+            <tab
+              heading="Documentos Generales"
+              (selectTab)="requestSelected(2)">
+              <tabset class="md-tabs">
+                <tab
+                  heading="Documento Expedientes"
+                  id="tab1"
+                  (selectTab)="requestSelected(2)">
+                  <app-doc-request-tab
+                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                </tab>
+                <tab
+                  heading="Solicitudes del Expediente"
+                  (selectTab)="requestSelected(3)">
+                  <app-expedients-request-tab
+                    [typeDoc]="typeDoc"></app-expedients-request-tab>
+                </tab>
+              </tabset>
+            </tab>
+          </tabset>
+        </tab>
+      </tabset>
+    </div>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Salir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

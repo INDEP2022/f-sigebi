@@ -1,0 +1,83 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        REPORTE DE DOCUMENTACI&Oacute;N RECIBIDA POR AUTORIDAD EMISORA
+      </h5>
+    </div>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="onDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="onSubDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

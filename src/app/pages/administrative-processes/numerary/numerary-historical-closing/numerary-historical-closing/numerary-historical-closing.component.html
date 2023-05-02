@@ -1,0 +1,30 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Reporte del cierre para generación histórica del númerario efectivo
+    </h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('dateReport')"
+              label="Fecha a reportar">
+              <input
+                formControlName="dateReport"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <button type="button" class="btn btn-sm btn-success active m-3">
+              Imprimir
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

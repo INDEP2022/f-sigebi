@@ -1,0 +1,577 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">conversi&oacute;n a numerario</h5>
+  </div>
+  <div body>
+    <!-- <form-field [control]="form.get('amountevta')" label="Precio de Venta"> -->
+    <!-- </form-field> -->
+    <div class="md-tabs mt-n3">
+      <tabset>
+        <tab heading="Conversión Individual" id="tabIndividualConversion">
+          <form class="form-material mb-0" [formGroup]="form">
+            <div [formGroup]="form">
+              <!-- <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+                <div class="ms-n2 mb-2">
+                  <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                  <h6 class="d-inline">Datos de venta</h6>
+                </div>
+                <hr class="mw-98" />
+                <div class="row mt-2">
+                  <div class="col-sm-12 col-md-4">
+                    <form-field [control]="form.get('amountevta')" label="Precio de Venta">
+                      <input (keyup)="setIvaSell()" currencyFz type="text" class="form-control px-3"
+                        formControlName="amountevta" />
+                    </form-field>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <div class="form-group form-static-label">
+                      <input formControlName="ivavtaPercent" (keyup)="setIvaSell()" id="ivavtaPercent" type="number"
+                        class="form-control px-3" max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="ivavtaPercent">% IVA</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <form-field [control]="form.get('ivavta')" label="Iva Venta">
+                      <input type="text" class="form-control px-3" formControlName="ivavta" readonly />
+                    </form-field>
+                  </div>
+                </div>
+                <div class="row mt-5">
+                  <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-static-label">
+                      <input (keyup)="setCommission()" formControlName="commissionPercent" id="commissionPercent"
+                        #commissionPercent type="text" class="form-control px-3" max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="commissionPercent">% Comisión</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <form-field [control]="form.get('commission')" label="Comisión">
+                      <input (keyup)="setIvaCommission()" type="text" class="form-control px-3"
+                        formControlName="commission" readonly />
+                    </form-field>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-static-label">
+                      <input (keyup)="setIvaCommission()" formControlName="commissionTaxPercent"
+                        id="commissionTaxPercent" #commissionTaxPercent type="text" class="form-control px-3"
+                        max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="commissionTaxPercent">% IVA Comisión</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <form-field [control]="form.get('ivacom')" label="IVA Comisión">
+                      <input readonly text="text" class="form-control px-3" formControlName="ivacom" />
+                    </form-field>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+
+            <div class="row py-5 rounded-4 shadow">
+              <div
+                [ngClass]="selectedGood ? 'col-md-4' : 'col-md-12'"
+                class="col-sm-12">
+                <i
+                  class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
+                <h5 class="font-size-14 mb-2 d-inline">N° Bien</h5>
+                <!-- <app-goods-shared (good)="selectGood($event)" [form]="form">
+                </app-goods-shared> -->
+                <div>
+                  <form-field class="form-group" [control]="form.get('goodId')">
+                    <ng-custom-select
+                      [limit]="4"
+                      class="form-control"
+                      formControlName="goodId"
+                      paramSearch="filter.description"
+                      prefixSearch="$ilike"
+                      (valueChange)="changeGood($event)"
+                      value="goodId"
+                      [path]="pathGoods">
+                      <ng-template let-item>
+                        {{ item?.description }}
+                      </ng-template>
+                    </ng-custom-select>
+                  </form-field>
+                </div>
+              </div>
+              <ng-container *ngIf="selectedGood">
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Siglas</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.originSignals }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Descripción</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.description }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-dollar text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Importe Avalúo</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.appraisedValue }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-check-circle text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.status }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                  <div>
+                    <i
+                      class="bx bx-table text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Ext. Dominio</h5>
+                    <p class="text-muted">
+                      {{ selectedGood?.extDomProcess }}
+                    </p>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <ng-container *ngIf="selectedGood != null">
+              <!-- <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+                <div class="ms-n2 mb-2">
+                  <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                  <h6 class="d-inline">Datos de venta</h6>
+                </div>
+                <hr class="mw-98" />
+                <div class="row mt-2">
+                  <div class="col-sm-12 col-md-4">
+                    <form-field [control]="form.get('amountevta')" label="Precio de Venta">
+                      <input (keyup)="setIvaSell()" currencyFz type="text" class="form-control px-3"
+                        formControlName="amountevta" />
+                    </form-field>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <div class="form-group form-static-label">
+                      <input (keyup)="setIvaSell()" currencyFz id="ivavtaPercent" type="number"
+                        class="form-control px-3" max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="ivavtaPercent">% IVA</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <form-field [control]="form.get('ivavta')" label="Iva Venta">
+                      <input type="number" class="form-control px-3" formControlName="ivavta" readonly />
+                    </form-field>
+                  </div>
+                </div>
+                <div class="row mt-5">
+                  <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-static-label">
+                      <input currencyFz (keyup)="setCommission()"
+                        id="commissionPercent" #commissionPercent type="number" class="form-control px-3" max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="commissionPercent">% Comisión</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <form-field [control]="form.get('commission')" label="Comisión">
+                      <input #commission type="number" class="form-control px-3" formControlName="commission"
+                        readonly />
+                    </form-field>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-static-label">
+                      <input id="commissionTaxPercent"
+                        #commissionTaxPercent type="number" class="form-control px-3" max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="commissionTaxPercent">% IVA Comisión</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <form-field [control]="form.get('ivacom')" label="IVA Comisión">
+                      <input [value]="
+                          ((+commission?.value || 0) *
+                            (+commissionTaxPercent?.value || 0)) /
+                          100
+                        " readonly type="text" class="form-control px-3" formControlName="ivacom" />
+                    </form-field>
+                  </div>
+                </div>
+              </div> -->
+
+              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+                <div class="ms-n2 mb-2">
+                  <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                  <h6 class="d-inline">Datos de venta</h6>
+                </div>
+                <hr class="mw-98" />
+                <div class="row mt-2">
+                  <div class="col-sm-12 col-md-4">
+                    <form-field
+                      [control]="form.get('amountevta')"
+                      label="Precio de Venta">
+                      <input
+                        (keyup)="setIvaSell()"
+                        currencyFz
+                        type="text"
+                        class="form-control px-3"
+                        formControlName="amountevta" />
+                    </form-field>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <div class="form-group form-static-label">
+                      <input
+                        formControlName="ivavtaPercent"
+                        (keyup)="setIvaSell()"
+                        id="ivavtaPercent"
+                        type="number"
+                        class="form-control px-3"
+                        max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="ivavtaPercent"
+                        >% IVA</label
+                      >
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <form-field
+                      [control]="form.get('ivavta')"
+                      label="Iva Venta">
+                      <input
+                        type="text"
+                        class="form-control px-3"
+                        formControlName="ivavta"
+                        readonly />
+                    </form-field>
+                  </div>
+                </div>
+                <div class="row mt-5">
+                  <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-static-label">
+                      <input
+                        (keyup)="setCommission()"
+                        formControlName="commissionPercent"
+                        id="commissionPercent"
+                        #commissionPercent
+                        type="text"
+                        class="form-control px-3"
+                        max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="commissionPercent"
+                        >% Comisión</label
+                      >
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <form-field
+                      [control]="form.get('commission')"
+                      label="Comisión">
+                      <input
+                        (keyup)="setIvaCommission()"
+                        type="text"
+                        class="form-control px-3"
+                        formControlName="commission"
+                        readonly />
+                    </form-field>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-static-label">
+                      <input
+                        (keyup)="setIvaCommission()"
+                        formControlName="commissionTaxPercent"
+                        id="commissionTaxPercent"
+                        #commissionTaxPercent
+                        type="text"
+                        class="form-control px-3"
+                        max="100" />
+                      <span class="form-bar"></span>
+                      <label class="float-label" for="commissionTaxPercent"
+                        >% IVA Comisión</label
+                      >
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <form-field
+                      [control]="form.get('ivacom')"
+                      label="IVA Comisión">
+                      <input
+                        readonly
+                        text="text"
+                        class="form-control px-3"
+                        formControlName="ivacom" />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+                <div
+                  class="ms-n2 mb-2 pointer"
+                  (click)="toggleExpenses = !toggleExpenses"
+                  [attr.aria-expanded]="!toggleExpenses"
+                  aria-controls="collapseExpenses">
+                  <i
+                    class="bx bx-chevron-down bx-md float-icon-md"
+                    [ngClass]="{
+                      'rotate-down': toggleExpenses,
+                      'rotate-up': !toggleExpenses
+                    }"></i>
+                  <h6 class="d-inline">Gastos</h6>
+                </div>
+                <hr class="mw-98" />
+                <div
+                  class="row mb-5"
+                  id="collapseExpenses"
+                  [isAnimated]="true"
+                  [collapse]="!toggleExpenses">
+                  <div class="table-container">
+                    <div [class]="loading ? 'table-loading' : ''">
+                      <app-table-expenses></app-table-expenses>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+                <div class="ms-n2 mb-2">
+                  <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                  <h6 class="d-inline">Datos de cuenta</h6>
+                </div>
+                <hr class="mw-98" />
+                <div class="row mb-0 d-block">
+                  <div
+                    class="row d-flex justify-content-center align-content-center">
+                    <div class="col-sm-12 col-md-6 mh-80">
+                      <i
+                        class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
+                      <h5 class="font-size-14 mb-2 d-inline">Banco</h5>
+                      <div class="form-group">
+                        <ng-custom-select
+                          placeholder="Buscador de bancos"
+                          class="form-control"
+                          paramSearch="filter.cveBank"
+                          prefixSearch="$ilike"
+                          [moreParams]="{
+                            'filter.accountType': '$eq:CONCENTRADORA'
+                          }"
+                          value="accountNumber"
+                          path="accountmvmnt/api/v1/bank-account"
+                          (valueChange)="selectAccount($event)">
+                          <ng-template let-item
+                            >{{ item.accountNumber }} / {{ item.cveBank }}
+                          </ng-template>
+                        </ng-custom-select>
+                      </div>
+                    </div>
+                    <ng-container *ngIf="selectedBank">
+                      <div class="col-sm-12 col-md-6">
+                        <i
+                          class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                        <h5 class="font-size-14 mb-2 d-inline">
+                          Descripci&oacute;n
+                        </h5>
+                        <p class="text-muted">
+                          {{ selectedBank?.banco?.name }}
+                        </p>
+                      </div>
+                      <div class="col-sm-6 col-md-6">
+                        <i
+                          class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                        <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
+                        <p class="text-muted">
+                          {{ this.form.get('accountNew')?.value }}
+                        </p>
+                      </div>
+                      <div class="col-sm-6 col-md-6">
+                        <i
+                          class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                        <h5 class="font-size-14 mb-2 d-inline">Moneda</h5>
+                        <p class="text-muted">
+                          {{ form.get('moneyNew')?.value }}
+                        </p>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+                <div class="ms-n2 mb-2">
+                  <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                  <h6 class="d-inline">Datos de dep&oacute;sito</h6>
+                  <small
+                    class="text-bg-danger px-2 d-block"
+                    *ngIf="!selectedBank"
+                    >Esta sección esta deshabilitada hasta seleccionar una
+                    cuenta bancaria</small
+                  >
+                </div>
+                <hr class="mw-98" />
+                <div [ngClass]="{ disabled: !selectedBank }" class="row">
+                  <div class="col-sm-12 col-md-3">
+                    <form-field [control]="form.get('dateNew')" label="Fecha">
+                      <ng-custom-select
+                        [moreParams]="{
+                          'filter.isFileDeposit': 'S',
+                          'filter.numberGood': '$null',
+                          'filter.numberAccount': selectedBank?.accountNumber
+                        }"
+                        (valueChange)="changeDeposit($event)"
+                        value="dateMotion"
+                        class="form-control"
+                        path="/accountmvmnt/api/v1/account-movements"
+                        formControlName="dateNew">
+                        <ng-template let-item>
+                          {{
+                            item.numberMotion +
+                              ' - ' +
+                              item.dateMotion +
+                              ' - ' +
+                              item.deposit
+                          }}
+                        </ng-template>
+                      </ng-custom-select>
+                    </form-field>
+                  </div>
+                  <div class="col-md-4">
+                    <form-field
+                      class="form-group"
+                      [control]="form.get('invoiceFile')"
+                      label="Referencia">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="invoiceFile"
+                        readonly />
+                    </form-field>
+                  </div>
+                  <div class="col-md-3">
+                    <form-field [control]="form.get('deposit')" label="Importe">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="deposit"
+                        readonly />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="my-5">
+                <div class="col-12">
+                  <form-field
+                    class="form-group"
+                    label="Comentario nuevo bien"
+                    [control]="form.get('description')">
+                    <textarea
+                      class="form-control"
+                      formControlName="description"></textarea>
+                  </form-field>
+                </div>
+              </div>
+              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+                <div class="ms-n2 mb-2">
+                  <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                  <h6 class="d-inline">Conversi&oacute;n</h6>
+                </div>
+                <hr class="mw-98" />
+                <div class="row">
+                  <div class="col-sm-12 col-md-8 pt-sm-5 pt-md-2">
+                    <div class="form-group">
+                      <form-field
+                        class="form-group"
+                        label="Tipo de conversión"
+                        [control]="form.get('typeConv')">
+                        <select class="form-control" formControlName="typeConv">
+                          <option
+                            [value]="type.value"
+                            *ngFor="let type of conversionTypes">
+                            {{ type.text }}
+                          </option>
+                        </select>
+                      </form-field>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6 col-md-4 d-flex justify-content-center">
+                    <div>
+                      <div class="col-12">
+                        <input
+                          [checked]="checkedMovBan"
+                          (change)="changeGenerateMvBan($event)"
+                          type="checkbox" />
+                        Genera Mov. Bancarios
+                      </div>
+                      <div class="col-12">
+                        <button
+                          class="btn btn-primary active"
+                          (click)="saveInServer()">
+                          Cambiar a numerario
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </form>
+        </tab>
+        <tab heading="Conversión Masiva" id="tabMassiveConversion">
+          <div class="row d-flex justify-content-center">
+            <div class="col-sm-6 col-md-6 col-xl-4">
+              <button
+                class="btn btn-sm btn-block btn-primary active font-size-16"
+                (click)="file.click()">
+                Seleccionar
+              </button>
+              <input
+                #file
+                hidden
+                type="file"
+                class="custom-file-input"
+                id="csvFile"
+                accept=".csv"
+                (change)="getFile($event)" />
+            </div>
+          </div>
+          <div class="mt-3">
+            <div class="d-flex justify-content-between">
+              <div class="form-material col-md-5">
+                <search-bar [params]="params"></search-bar>
+              </div>
+              <div>
+                <app-columns-select
+                  [(settings)]="numeraireSettings"></app-columns-select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="massive-table"
+                  [attr.class]="'table-bordered'"
+                  [settings]="numeraireSettings"
+                  [source]="sourcesMassive">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form action="" class="form-material" [formGroup]="form">
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('bank')" label="Banco">
+            <input type="text" class="form-control" formControlName="bank" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('account')" label="Cuenta">
+            <input type="text" class="form-control" formControlName="account" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('date')" label="Fecha">
+            <input
+              type="text"
+              formControlName="date"
+              placeholder="Fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('amount')" label="Importe">
+            <input type="text" class="form-control" formControlName="amount" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('motion')" label="Movimiento">
+            <input type="text" class="form-control" formControlName="motion" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [loading]="loading"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

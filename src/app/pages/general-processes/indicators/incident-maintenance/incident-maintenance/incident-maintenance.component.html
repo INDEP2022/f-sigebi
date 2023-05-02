@@ -1,0 +1,80 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Ejecuci&oacute;n de Mantenimientos a Incidentes</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <h5>SOLUCI&Oacute;N</h5>
+    </div>
+    <form [formGroup]="form" class="form-material">
+      <div class="row pt-5">
+        <form-field [control]="form.get('aprueba')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="aprueba"
+            [data]="select"
+            label="Aprueba"></ngx-select>
+        </form-field>
+
+        <form-field [control]="form.get('incidencia')" class="col-md-3">
+          <ngx-select
+            [form]="form"
+            control="incidencia"
+            [data]="select"
+            label="Incidencia"></ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('ticket')"
+          class="col-md-2"
+          label="No&#46; Ticket">
+          <input type="number" class="form-control" formControlName="ticket" />
+        </form-field>
+
+        <form-field
+          [control]="form.get('oficio')"
+          class="col-md-3"
+          label="No&#46; Oficio">
+          <input type="text" class="form-control" formControlName="oficio" />
+        </form-field>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary active">Aprobar</button>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <form-field
+          [control]="form.get('solicitud')"
+          label="DESCRIPCI&Oacute;N DETALLADA DE LA SOLICITUD">
+          <textarea
+            formControlName="solicitud"
+            rows="10"
+            class="form-control"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row pt-5">
+        <form-field
+          [control]="form.get('solucion')"
+          label="DESCRIPCI&Oacute;N DE LA SOLUCI&Oacute;N">
+          <textarea
+            formControlName="solucion"
+            rows="10"
+            class="form-control"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row pt-5">
+        <form-field [control]="form.get('scripts')" label="SCRIPTS">
+          <textarea
+            formControlName="scripts"
+            rows="10"
+            class="form-control"></textarea>
+        </form-field>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,0 +1,95 @@
+<div class="pt-3">
+  <h5 class="title">
+    <p>
+      <a
+        class="text-color"
+        (click)="showClassificateVehicle = true"
+        *ngIf="!showClassificateVehicle">
+        <i class="fa fa-angle-right" aria-hidden="true"></i>
+        Clasificaci&oacute;n de veh&iacute;culos</a
+      >
+    </p>
+
+    <p>
+      <a
+        class="text-color"
+        (click)="showClassificateVehicle = false"
+        *ngIf="showClassificateVehicle">
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Clasificaci&oacute;n
+        de veh&iacute;culos</a
+      >
+    </p>
+  </h5>
+
+  <div class="row pt-3" *ngIf="showClassificateVehicle">
+    <div class="btn-toolbar">
+      <button
+        *ngIf="
+          (showForm && createVehicle && op == 1) ||
+          (!showForm && createVehicle && op == 9) ||
+          (!showForm && createVehicle && op == 10 && rejected) ||
+          (!showForm && createVehicle && op == 12) ||
+          (!showForm && createVehicle && op == 13) ||
+          (!showForm && createVehicle && op == 14)
+        "
+        (click)="formClassificateVehicle()"
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo
+      </button>
+      <button
+        *ngIf="
+          (showForm && !createVehicle && op == 1) ||
+          (!showForm && !createVehicle && op == 9) ||
+          (!showForm && !createVehicle && op == 10 && rejected) ||
+          (!showForm && !createVehicle && op == 12) ||
+          (!showForm && !createVehicle && op == 13) ||
+          (!showForm && !createVehicle && op == 14)
+        "
+        (click)="formClassificateVehicle()"
+        class="btn btn-primary btn-sm active"
+        disabled="disabled">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo
+      </button>
+      <button
+        *ngIf="
+          (showForm && dataItem && op == 1) ||
+          (!showForm && dataItem && op == 9) ||
+          (!showForm && dataItem && op == 10 && rejected) ||
+          (!showForm && dataItem && op == 12) ||
+          (!showForm && dataItem && op == 13) ||
+          (!showForm && dataItem && op == 14)
+        "
+        (click)="formClassificateVehicle()"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-pencil-alt"></i> Editar
+      </button>
+      <button
+        *ngIf="
+          (showForm && !dataItem && op == 1) ||
+          (!showForm && createVehicle && op == 9) ||
+          (!showForm && createVehicle && op == 10 && rejected) ||
+          (!showForm && createVehicle && op == 12) ||
+          (!showForm && createVehicle && op == 13) ||
+          (!showForm && createVehicle && op == 14)
+        "
+        (click)="formClassificateVehicle()"
+        class="btn btn-info btn-sm active"
+        disabled="disabled">
+        <i class="fa fa-pencil-alt"></i> Editar
+      </button>
+      <button class="btn btn-pink btn-sm active">Datach</button>
+    </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data"
+        (userRowSelect)="selectItem($event)">
+      </ng2-smart-table>
+    </div>
+
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>

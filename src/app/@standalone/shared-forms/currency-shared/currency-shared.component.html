@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showCurrency">
+    <div class="col-md-12">
+      <form-field [control]="form.get(currencyField)">
+        <ngx-select
+          (fetchItems)="getCurrency($event)"
+          [data]="currency"
+          [form]="form"
+          value="otKey1"
+          bindLabel="otValue01"
+          label="Moneda"
+          [control]="currencyField"
+          (change)="onCurrencyChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

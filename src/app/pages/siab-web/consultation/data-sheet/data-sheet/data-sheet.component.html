@@ -1,0 +1,35 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Consulta de ficha tecnica de bien</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="dataSheetForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+          <form-field
+            label="Número de Bien:"
+            [control]="dataSheetForm.get('goodNumber')">
+            <input
+              class="form-control"
+              formControlName="goodNumber"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-3"></div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary active">
+          Limpiar campos
+        </button>
+      </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary active">Consultar</button>
+      </div>
+    </div>
+  </div>
+</app-card>

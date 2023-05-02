@@ -1,0 +1,76 @@
+a.text-color:hover,
+a.text-color:active {
+  color: #9d2449;
+  cursor: pointer;
+}
+
+:host ::ng-deep ng2-smart-table {
+  .associate {
+    width: 15rem !important;
+    text-align: center;
+  }
+
+  .nameOfOwner {
+    min-width: 25rem;
+  }
+
+  .holderCharge {
+    min-width: 25rem;
+  }
+
+  .phoneOfOwner {
+    min-width: 20rem;
+  }
+
+  .emailOfOwner {
+    min-width: 25rem;
+  }
+
+  .transferentName {
+    min-width: 25rem;
+  }
+
+  .stateName {
+    min-width: 25rem;
+  }
+
+  .authorityName {
+    min-width: 27rem;
+  }
+
+  .regionalDelegationName {
+    min-width: 27rem;
+  }
+
+  .stationName {
+    min-width: 20rem;
+  }
+
+  .observations {
+    min-width: 31rem;
+  }
+
+  .uniqueKey {
+    min-width: 20rem;
+  }
+
+  .fileNumber {
+    min-width: 16rem;
+  }
+
+  .requestId {
+    min-width: 15rem;
+  }
+
+  .goodDescription {
+    min-width: 35rem;
+  }
+
+  .physicalStatusName {
+    min-width: 13rem;
+  }
+
+  .fractionName {
+    min-width: 30rem;
+  }
+}

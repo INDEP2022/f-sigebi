@@ -1,0 +1,100 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CALCULO DE NUMERARIO</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('file')"
+              label="Numero de expediente">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="file"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('penalCause')" label="Causa penal">
+              <input formControlName="penalCause" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('previousAveriguation')"
+              label="Averiguación previa">
+              <input
+                formControlName="previousAveriguation"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data1">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+        <div
+          class=""
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          ">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input formControlName="description" class="form-control" />
+          </form-field>
+          <form-field [control]="form.get('status')" label="Estatus">
+            <input formControlName="status" class="form-control" />
+          </form-field>
+          <div>
+            <span class="text-danger mr-5"
+              ><i class="fa fa-square"></i> No disponible
+            </span>
+            <span class="text-yellow"
+              ><i class="fa fa-square"></i> Bien asociado
+            </span>
+          </div>
+        </div>
+
+        <hr />
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <div>
+              <button type="button" class="btn btn-sm btn-danger active m-3">
+                ASOCIAR
+              </button>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings1"
+                [source]="data2">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

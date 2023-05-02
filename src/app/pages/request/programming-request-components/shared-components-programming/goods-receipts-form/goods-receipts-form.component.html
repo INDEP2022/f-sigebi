@@ -1,0 +1,27 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Bienes por recibo resguardo</h5>
+  </div>
+  <div body>
+    <div class="d-flex justify-content-end">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings"
+      [source]="goodsReceiptGuards">
+    </ng2-smart-table>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

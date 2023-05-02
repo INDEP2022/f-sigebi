@@ -1,0 +1,301 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Documentos por bienes</h5>
+  </div>
+  <div body>
+    <div class="row" *ngIf="showForm">
+      <h5 class="title">B&uacute;squeda de documentos</h5>
+      <form [formGroup]="documentForm" class="form-material">
+        <div class="row pt-4">
+          <form-field [control]="documentForm.get('texto')" label="Texto">
+            <input type="text" class="form-control" formControlName="texto" />
+          </form-field>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div
+              [formGroup]="documentForm"
+              class="form-group form-secondary form-static-label">
+              <ng-select
+                class="form-control"
+                formControlName="xtipoDocumento"
+                [clearable]="false"
+                [items]="typeDocuments"
+                [virtualScroll]="true"
+                [loading]="loading"
+                bindLabel="ddescription"
+                bindValue="ddocType">
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <div [title]="item.ddescription">
+                    {{ item.ddescription }}
+                  </div>
+                </ng-template>
+              </ng-select>
+              <span class="form-bar"></span>
+              <label class="float-label">Tipo de documento</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('dDocTitle')"
+              label="T&iacute;tulo del documento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dDocTitle" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="documentForm.get('xDelegacionRegional')">
+              <ngx-select
+                [form]="documentForm"
+                control="xDelegacionRegional"
+                [data]="regDelegations"
+                value="id"
+                bindLabel="description"
+                label="Delegación Regional"
+                (fetchItems)="getRegionalDelegatioin($event)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xresponsable')"
+              label="Responsable">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xresponsable" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('dDocAuthor')"
+              label="Autor">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dDocAuthor" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="documentForm.get('xestado')">
+              <ngx-select
+                [form]="documentForm"
+                control="xestado"
+                [data]="states"
+                value="id"
+                bindLabel="descCondition"
+                label="Estado"
+                (fetchItems)="getState($event)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xcontribuyente')"
+              label="Contribuyente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xcontribuyente" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('ddocName')"
+              label="No. Documento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ddocName" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="documentForm.get('xidTransferente')">
+              <ngx-select
+                [form]="documentForm"
+                control="xidTransferente"
+                [data]="tranferences"
+                value="id"
+                bindLabel="nametransferent"
+                label="Transferente"
+                (fetchItems)="getTranferences($event)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xtipoTransferencia')"
+              label="Tipo transferencía">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xtipoTransferencia" />
+            </form-field>
+          </div>
+
+          <!-- <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('noGestion')"
+              label="No&#46; gestión">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noGestion"
+                readonly />
+            </form-field>
+          </div> -->
+
+          <!-- documentos expediente -->
+          <div class="col-md-4" *ngIf="typeDoc === 'doc-expediente'">
+            <form-field
+              [control]="documentForm.get('xidExpediente')"
+              label="No&#46; Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidExpediente"
+                readonly />
+            </form-field>
+          </div>
+          <!-- documentos solicitud -->
+          <div class="col-md-4" *ngIf="typeDoc === 'doc-solicitud'">
+            <form-field
+              [control]="documentForm.get('xidSolicitud')"
+              label="No&#46; Solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xidSolicitud"
+                readonly
+                min="0" />
+            </form-field>
+          </div>
+          <!-- documentos solicitud -->
+          <div class="col-md-4" *ngIf="typeDoc === 'doc-bien'">
+            <form-field
+              [control]="documentForm.get('xidBien')"
+              label="No&#46; Bien">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="xidBien"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xnoOficio')"
+              label="No. Oficio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xnoOficio" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xremitente')"
+              label="Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xremitente" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xidSIAB')"
+              label="No&#46; SIAB">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="xidSIAB"
+                min="0" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xcargoRemitente')"
+              label="Cargo remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xcargoRemitente" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('xComments')"
+              label="Comentarios">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="xComments" />
+            </form-field>
+          </div>
+        </div>
+        <div class="form-inline justify-content-end btn-toolbar">
+          <button class="btn btn-primary btn-sm active" (click)="search()">
+            <i class="fa fa-search"></i> Buscar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="btn-toolbar pt-5">
+      <button (click)="uploadFiles()" class="btn btn-primary btn-sm active">
+        <i class="fa fa-paperclip"></i> Nuevo documento
+      </button>
+      <button
+        *ngIf="!showForm"
+        (click)="showForm = !showForm"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-search"></i> Buscar
+      </button>
+
+      <button
+        *ngIf="showForm"
+        (click)="showForm = !showForm"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-times"></i> cancelar
+      </button>
+    </div>
+    <div class="row pt-4">
+      <div class="d-flex justify-content-end">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="table-responsive" style="height: 50rem">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="documentsData"
+            (edit)="showDocument($event)"
+            (delete)="viewDocument($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <!-- <app-pagination
+  [filterParams]="params"
+  [totalItems]="totalItems"></app-pagination> -->
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

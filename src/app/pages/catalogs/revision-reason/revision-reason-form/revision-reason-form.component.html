@@ -1,0 +1,121 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="revisionReasonForm">
+      <div class="row">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="revisionReasonForm.get('id')" label="Registro">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('estatus_inicial')"
+            label="Estado Inicial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="estatus_inicial" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-12 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('descripcion_motivo')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="2"
+              class="form-control pt-3"
+              formControlName="descripcion_motivo">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('tipo_bien')"
+            label="Tipo Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tipo_bien" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('estatus_rev')"
+            label="Estado de Revisi&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="estatus_rev" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('area_responsable')"
+            label="&Aacute;rea Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="area_responsable" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('estatus_fin')"
+            label="Estado Final">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="estatus_fin" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('pantalla')"
+            label="Pantalla">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="pantalla" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="revisionReasonForm.get('parametro')"
+            label="Par&aacute;metro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="parametro" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!revisionReasonForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

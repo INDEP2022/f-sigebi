@@ -1,0 +1,478 @@
+<app-card [header]="true">
+  <!-- <div class="ch-content" header> -->
+  <div class="row" header>
+    <div class="col-12 col-md-6">
+      <h5 class="title">
+        Oficio Gesti&oacute;n
+        {{ pantallaOption ? 'por Dictamen' : 'Relacionados' }}
+      </h5>
+    </div>
+    <div class="col-12 col-md-6 text-right">
+      Fec&#46; Captura:
+      <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
+        {{ oficioGestion ? oficioGestion.insertDate : '00/00/0000' }}
+      </span>
+      / Estatus:
+      <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
+        {{ oficioGestion ? oficioGestion.statusOf : '----' }}
+      </span>
+    </div>
+  </div>
+  <!-- </div> -->
+
+  <div body>
+    <form [formGroup]="managementForm" class="form-material">
+      <div class="row">
+        <form-field
+          [control]="managementForm.get('noVolante')"
+          label="No. Volante"
+          class="col-md-3"
+          maxLength="11">
+          <input
+            class="form-control"
+            type="number"
+            formControlName="noVolante" />
+        </form-field>
+
+        <form-field
+          [control]="managementForm.get('noExpediente')"
+          label="No. Expediente"
+          class="col-md-3"
+          maxLength="11">
+          <input
+            class="form-control"
+            type="number"
+            formControlName="noExpediente" />
+        </form-field>
+
+        <div class="col-md-6 text-right">
+          <button
+            type="button"
+            class="btn btn-success active btn-sm m-2 p-2"
+            (click)="changeOffice()">
+            Cambio
+          </button>
+        </div>
+
+        <form-field
+          [control]="managementForm.get('tipoOficio')"
+          label="Tipo oficio"
+          class="col-md-2 mt-3">
+          <select class="form-control" formControlName="tipoOficio">
+            <option value="INTERNO">INTERNO</option>
+            <option value="EXTERNO">EXTERNO</option>
+          </select>
+        </form-field>
+
+        <form-field
+          [control]="managementForm.get('relacionado')"
+          label="Oficio Por"
+          class="col-md-3 mt-3">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="relacionado"
+            uppercase />
+        </form-field>
+
+        <form-field
+          [control]="managementForm.get('numero')"
+          class="col-md-2 mt-3"
+          label="Número de Gestión">
+          <input type="number" class="form-control" formControlName="numero" />
+        </form-field>
+
+        <form-field
+          [control]="managementForm.get('cveGestion')"
+          class="col-md-5 mt-3"
+          label="Clave Oficio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="cveGestion"
+            readonly
+            [disabled]="true" />
+        </form-field>
+      </div>
+      <div class="row pt-4"></div>
+      <div class="row pt-4">
+        <form-field
+          [control]="managementForm.get('remitente')"
+          class="col-md-4">
+          <ngx-select
+            (fetchItems)="getSenderByDetail($event)"
+            (change)="changeSender()"
+            value="id"
+            bindLabel="name"
+            [data]="senders"
+            [form]="managementForm"
+            control="remitente"
+            [showTooltip]="true"
+            label="Remitente"></ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="managementForm.get('destinatario')"
+          class="col-md-4">
+          <ngx-select
+            [data]="select"
+            [form]="managementForm"
+            control="destinatario"
+            [showTooltip]="true"
+            label="Destinatario"></ngx-select>
+        </form-field>
+
+        <form-field [control]="managementForm.get('ciudad')" class="col-md-4">
+          <ngx-select
+            (fetchItems)="getCityByDetail($event)"
+            value="idCity"
+            bindLabel="nameCity"
+            [data]="cities"
+            [form]="managementForm"
+            control="ciudad"
+            [showTooltip]="true"
+            label="Ciudad"></ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <h6>Se Refiere A:</h6>
+          <div class="col-md-3">
+            <form-radio label="{{ se_refiere_a.A }}">
+              <input
+                [attr.disabled]="se_refiere_a_Disabled.A"
+                type="radio"
+                formControlName="tipoOficio"
+                value="{{ se_refiere_a.A }}" />
+            </form-radio>
+          </div>
+          <div class="col-md-4">
+            <form-radio label="{{ se_refiere_a.B }}" class="mt-0 pt-0 bt-0">
+              <input
+                [attr.disabled]="se_refiere_a_Disabled.B"
+                type="radio"
+                formControlName="tipoOficio"
+                value="{{ se_refiere_a.B }}" />
+            </form-radio>
+          </div>
+          <div class="col-md-4">
+            <form-radio label="{{ se_refiere_a.C }}">
+              <input
+                [attr.disabled]="se_refiere_a_Disabled.C"
+                type="radio"
+                formControlName="tipoOficio"
+                value="{{ se_refiere_a.C }}" />
+            </form-radio>
+          </div>
+          <div class="col-md-1">
+            <form-radio label="{{ se_refiere_a.D }}">
+              <input
+                [attr.disabled]="se_refiere_a_Disabled.D"
+                type="radio"
+                formControlName="tipoOficio"
+                value="{{ se_refiere_a.D }}" />
+            </form-radio>
+          </div>
+        </div>
+        <div class="col-md-12 mb-3">
+          <h6>Tipos de Texto:</h6>
+          <div class="col-md-3">
+            <form-radio label="ACUSE DE RECIBO" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="UNO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="DOCUMENTO DEVOLUCIÓN"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="DOS" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="DOCUMENTO DE BIENES" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="TRES" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="DOCUMENTO DE NUMERARIO"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="CUATRO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="ACLARA INFORMACIÓN" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="CINCO" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio
+              label="SOLICITAR INFORMACIÓN"
+              (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="SEIS" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="SAT" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="SIETE" />
+            </form-radio>
+          </div>
+          <div class="col-md-3">
+            <form-radio label="ABANDONO" (change)="changeTextType()">
+              <input type="radio" formControlName="tipoTexto" value="OCHO" />
+            </form-radio>
+          </div>
+        </div>
+        <form-field
+          [control]="managementForm.get('parrafoInicial')"
+          class="col-md-12 mt-2 pt-3"
+          label="Parrafo Inicial">
+          <textarea
+            rows="7"
+            class="form-control"
+            formControlName="parrafoInicial"></textarea>
+        </form-field>
+      </div>
+      <hr class="row" />
+      <div class="row pt-4">
+        <form-field
+          [control]="managementForm.get('justificacion')"
+          class="col-md-6">
+          <ngx-select
+            (fetchItems)="getJustification($event)"
+            value="id"
+            bindLabel="clarifications"
+            [form]="managementForm"
+            control="justificacion"
+            [data]="justificacion"
+            [showTooltip]="true"
+            label="Justificación">
+          </ngx-select>
+        </form-field>
+        <form-field
+          [control]="managementForm.get('justificacionDetalle')"
+          class="col-md-6"
+          label="Justificación">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="justificacionDetalle"
+            readonly
+            [disabled]="true" />
+        </form-field>
+        <form-field
+          [control]="managementForm.get('noOficio')"
+          class="col-md-4 mt-2"
+          label="Número de Oficio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noOficio"
+            readonly
+            [disabled]="true" />
+        </form-field>
+        <form-field
+          [control]="managementForm.get('fechaAcuse')"
+          class="col-md-4 mt-2"
+          label="Fecha de Acuse">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="fechaAcuse"
+            readonly
+            [disabled]="true" />
+        </form-field>
+        <div class="col-md-4">
+          <button type="button" class="btn btn-primary active btn-sm mr-2">
+            Respuestas FGR
+          </button>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row pb-5">
+        <div class="col-md-12">
+          <!-- <search-bar [params]="params"></search-bar> -->
+          <form-field
+            [control]="managementForm.get('goodTypes')"
+            class="col-md-8">
+            <ngx-select
+              value="id"
+              bindLabel="clasifGood"
+              [form]="managementForm"
+              control="goodTypes"
+              [data]="goodTypes"
+              [showTooltip]="true"
+              label="Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo"
+              (fetchItems)="getClasifSubTypeGoods($event)">
+            </ngx-select>
+          </form-field>
+          <form-check
+            class="col-md-2 text-end"
+            label="Improcedente(s) todo(s)"
+            for="improcedente">
+            <input
+              id="improcedente"
+              type="checkbox"
+              (change)="changeImprocedente($event.target)"
+              formControlName="improcedente" />
+          </form-check>
+          <div class="col-md-2 text-end">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+          <div class="col-md-12" style="max-height: 600px; overflow-y: scroll">
+            <div [class]="loadingGoods ? 'table-loading' : ''">
+              <ng2-smart-table
+                class="col-md-12"
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataGoodTable"></ng2-smart-table>
+            </div>
+          </div>
+          <div class="col-md-12 mt-3 text-right">
+            <button type="button" class="btn btn-info btn-sm mr-2">
+              Documentos
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary active btn-sm mr-2"
+              (click)="send()">
+              Imprimir
+            </button>
+            <button type="button" class="btn btn-danger btn-sm mr-2 active">
+              Borrar
+            </button>
+            <button
+              [attr.disabled]="
+                paramsGestionDictamen.sale == 'C' ||
+                paramsGestionDictamen.sale == 'D'
+              "
+              type="submit"
+              class="btn btn-primary btn-sm active">
+              Enviar
+            </button>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <form-field
+              [control]="managementForm.get('parrafoFinal')"
+              label="Parrafo Final">
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="parrafoFinal"></textarea>
+            </form-field>
+            <form-field [control]="managementForm.get('text3')" label="">
+              <textarea
+                rows="3"
+                class="form-control"
+                formControlName="text3"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-12">
+            <div class="row">
+              <form-field
+                class="col-md-4"
+                [control]="managementForm.get('ccp4')"
+                label="C.P.P.">
+                <select class="form-control" formControlName="ccp4">
+                  <option value="Interno">Interno</option>
+                  <option value="Externo">Externo</option>
+                </select>
+              </form-field>
+              <form-field
+                class="col-md-8"
+                [control]="managementForm.get('ccp5')">
+                <ngx-select
+                  [data]="select"
+                  [form]="managementForm"
+                  [showTooltip]="true"
+                  control="ccp5"></ngx-select>
+              </form-field>
+              <form-field
+                class="col-md-4"
+                [control]="managementForm.get('ccp6')"
+                label="C.P.P.">
+                <select class="form-control" formControlName="ccp6">
+                  <option value="Interno">Interno</option>
+                  <option value="Externo">Externo</option>
+                </select>
+              </form-field>
+              <form-field
+                class="col-md-8"
+                [control]="managementForm.get('ccp5')">
+                <ngx-select
+                  [data]="select"
+                  [form]="managementForm"
+                  [showTooltip]="true"
+                  control="ccp5"></ngx-select>
+              </form-field>
+            </div>
+          </div>
+          <!-- <div class="col-md-6">
+            <div class="row">
+              <form-field
+                [control]="managementForm.get('indPDoctos')"
+                label="Ind. p/doctos">
+                <input class="form-control" formControlName="indPDoctos" />
+              </form-field>
+            </div>
+            <div class="row pt-4">
+              <form-field [control]="managementForm.get('bienes')" class="pt-4">
+                <ngx-select
+                  [data]="select"
+                  [form]="managementForm"
+                  control="bienes"
+                  label="Bien (es)"></ngx-select>
+              </form-field>
+              <form-field [control]="managementForm.get('bienes2')">
+                <ngx-select
+                  [data]="select"
+                  [form]="managementForm"
+                  control="bienes2"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="row pt-4">
+              <form-field [control]="managementForm.get('documento')">
+                <ngx-select
+                  [data]="select"
+                  [form]="managementForm"
+                  control="documento"
+                  label="Documento (s)"></ngx-select>
+              </form-field>
+
+              <form-field [control]="managementForm.get('documento2')">
+                <ngx-select
+                  [data]="select"
+                  [form]="managementForm"
+                  control="documento2"></ngx-select>
+              </form-field>
+            </div>
+          </div> -->
+
+          <!-- <div class="row pt-4">
+            <form-field
+              [control]="managementForm.get('parrafoAusencia')"
+              label="Parrafo pro Ausencia">
+              <textarea
+                rows="3"
+                class="form-control"
+                formControlName="parrafoAusencia"></textarea>
+            </form-field>
+          </div> -->
+
+          <!-- <label class="label form-control-label">c.p.p</label> -->
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 text-right"></div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,0 +1,57 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de Actas</h5>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalProceedings"
+      [limit]="newLimit"
+      [maxSize]="1"></app-pagination>
+  </div>
+
+  <div body>
+    <div>
+      <app-proceeding-info
+        [loading]="loading"
+        [info]="infoForm"
+        (filterEvent)="getData($event)"></app-proceeding-info>
+    </div>
+    <hr />
+    <div class="row border border-dark">
+      <div class="row header mt-3 mb-5 pr-0">
+        <h5 class="title col-md-6">Bienes</h5>
+        <div class="col-md-6 pr-0" style="text-align: right">
+          <app-goodtracker-button
+            [disabled]="statusActa === 'CERRADA'"
+            [data]="data"
+            [origin]="origin"></app-goodtracker-button>
+        </div>
+      </div>
+      <div class="row"></div>
+      <app-good-actions
+        [statusActaValue]="statusActa"
+        [nroActa]="infoForm ? infoForm.id : null"
+        [rowsSelected]="rowsSelected"
+        (addGoodEvent)="addGood($event)"
+        (updateTable)="getGoods()"></app-good-actions>
+      <div *ngIf="dataForAdd && dataForAdd.length > 0">
+        <div class="row header mt-3 mb-5">
+          <h6 class="title">Bienes por agregar</h6>
+        </div>
+        <app-table-good-maintenance
+          [statusActa]="statusActa"
+          [data]="dataForAdd"
+          [totalItems]="dataForAdd.length">
+        </app-table-good-maintenance>
+      </div>
+      <app-table-good-maintenance
+        [statusActa]="statusActa"
+        [data]="data"
+        [totalItems]="totalGoods"
+        (updateRowEvent)="getGoods()"
+        (updateData)="goodParams = $event; getGoods()"
+        (rowsSelected)="rowsSelected = $event">
+      </app-table-good-maintenance>
+      <app-warehouse-proceedings> </app-warehouse-proceedings>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,99 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Resumen diario de recepci&oacute;n documental</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="flyersForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
+          <app-federative-shared [form]="flyersForm"></app-federative-shared>
+
+          <form-check label="Filtrar por &aacute;rea" for="make_filter">
+            <input
+              id="make_filter"
+              type="checkbox"
+              formControlName="includeArea" />
+          </form-check>
+        </div>
+
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('PF_FECINI')"
+              label="Recepci&oacute;n desde">
+              <input
+                formControlName="PF_FECINI"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('PF_FECFIN')" label="Hasta">
+              <input
+                formControlName="PF_FECFIN"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+
+          <!-- (change)="onDptossChange($event)" -->
+
+          <div class="row pt-3" *ngIf="includeArea.value">
+            <app-departments-shared
+              [form]="flyersForm"></app-departments-shared>
+          </div>
+        </div>
+        <div class="col-md-4" *ngIf="includeArea.value">
+          <div class="row pt-3">
+            <ngx-select
+              [form]="flyersForm"
+              control="delegdestino"
+              (fetchItems)="getDelegation($event)"
+              [showTooltip]="true"
+              [data]="selectedDelegation"
+              bindLabel="description"
+              label="Delegación destino"
+              value="id"
+              (change)="onDelegationsChange($event)"></ngx-select>
+          </div>
+          <div class="row pt-3">
+            <ngx-select
+              [form]="flyersForm"
+              control="subddestino"
+              (fetchItems)="getSubDelegations($event)"
+              [showTooltip]="true"
+              [data]="selectedSubDelegation"
+              bindLabel="description"
+              [searchable]="false"
+              (change)="onSubDelegationsChange($event)"
+              label="Subdelegación destino"
+              value="id"></ngx-select>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="flyersForm.invalid"
+          [loading]="loading"
+          (confirm)="Generar()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

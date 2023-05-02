@@ -1,0 +1,151 @@
+<h5 class="title">
+  <p>
+    <a class="text-color" (click)="showDetails = true" *ngIf="!showDetails">
+      <i class="fa fa-angle-right" aria-hidden="true"></i> Detalle del evento</a
+    >
+  </p>
+
+  <p>
+    <a class="text-color" (click)="showDetails = false" *ngIf="showDetails">
+      <i class="fa fa-angle-down" aria-hidden="true"></i> Detalle del evento</a
+    >
+  </p>
+</h5>
+
+<div *ngIf="showDetails">
+  <h5 class="title">
+    <p>
+      <a class="text-color" (click)="showSearch = true" *ngIf="!showSearch">
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Programaci&oacute;n
+        entrega</a
+      >
+    </p>
+
+    <p>
+      <a class="text-color" (click)="showSearch = false" *ngIf="showSearch">
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Programaci&oacute;n
+        entrega</a
+      >
+    </p>
+  </h5>
+  <div *ngIf="showSearch" class="pt-4">
+    <div class="row">
+      <form [formGroup]="searchForm" class="form-material">
+        <div class="col-md-6">
+          <div>
+            <form-field
+              [control]="searchForm.get('numberGestion')"
+              label="N&uacute;mero de gesti&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numberGestion" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="searchForm.get('numberSae')"
+              label="N&uacute;mero INDEP">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numberSae" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="searchForm.get('numberInventory')"
+              label="N&uacute;mero Inventario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numberInventory" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="searchForm.get('goodDescription')"
+              label="Descripci&oacute;n bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="goodDescription" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field [control]="searchForm.get('item')" label="ITEM">
+              <input type="text" class="form-control" formControlName="item" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div>
+            <form-field
+              [control]="searchForm.get('quantityGoods')"
+              label="Cantidad bienes">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="quantityGoods" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="searchForm.get('typeGood')"
+              label="Tipo bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="typeGood" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field
+              [control]="searchForm.get('unitOfMeasurement')"
+              label="Unidad de medida">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="unitOfMeasurement" />
+            </form-field>
+          </div>
+          <div class="pt-3">
+            <form-field [control]="searchForm.get('origin')" label="Origen">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="origin" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="justify-content-end btn-toolbar">
+        <button class="btn btn-primary btn-sm active">
+          <i class="fa fa-search"></i> Buscar
+        </button>
+        <button class="btn btn-danger btn-sm active">
+          <i class="bx bx-trash"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <div class="justify-content-right btn-toolbar">
+        <button class="btn btn-primary btn-sm active">Detach</button>
+      </div>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="paragraphs"
+          (edit)="showDocument()">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>

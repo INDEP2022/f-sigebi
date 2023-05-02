@@ -1,0 +1,49 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar información usuario' : 'Información usuario' }}
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="userForm" class="form-material">
+      <form-field [control]="userForm.get('user')" label="Nombre usuario">
+        <input type="text" class="form-control" formControlName="user" />
+      </form-field>
+      <div class="row pt-3">
+        <form-field
+          [control]="userForm.get('email')"
+          label="Correo electr&oacute;nico">
+          <input type="text" class="form-control" formControlName="email" />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field [control]="userForm.get('userCharge')">
+          <ngx-select
+            [form]="userForm"
+            control="userCharge"
+            [data]="chargesUsers"
+            value="keyId"
+            bindLabel="description"
+            label="Cargo usuario"
+            (change)="chargeSelect($event)"
+            (fetchItems)="getChargesUsers($event)"></ngx-select>
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!userForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

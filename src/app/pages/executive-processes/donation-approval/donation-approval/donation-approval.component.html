@@ -1,0 +1,141 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">APROBACI&Oacute;N DE BIENES PARA DONACI&Oacute;N</h5>
+    </div>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('idExpedient')" label="No expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idExpedient"
+              minlength="1"
+              maxlength="10" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('preliminaryInquiry')">
+            <!-- <input
+              type="text"
+              class="form-control"
+              formControlName="preliminaryInquiry" /> -->
+            <ngx-select
+              [form]="form"
+              [data]="expedientSelec"
+              (fetchItems)="getExpedient($event)"
+              bindLabel="name"
+              control="preliminaryInquiry"
+              [searchOnInit]="true"
+              label="Averiguaci&oacute;n Previa"
+              termMaxLength="100"
+              [showTooltip]="true"
+              (change)="onValuesChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('criminalCase')" label="Causa Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="criminalCase"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('circumstantialRecord')"
+            label="Acta Circunstanciada">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="circumstantialRecord"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('keyPenalty')" label="Toca penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyPenalty"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="getExpedientById()">
+            Buscar
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div *ngIf="form.get('criminalCase').value !== null">
+      <div class="ch-content">
+        <h5 class="title">&nbsp;</h5>
+        <div class="row justify-content-end mr-1">
+          <div class="col-12">
+            <app-columns-select
+              [(settings)]="settings"
+              class="row justify-content-end">
+            </app-columns-select>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="selectRow($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+      <div class="row" *ngIf="rowSelected">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="mt-4">
+            <h5 class="font-size-14">Estatus</h5>
+            <p class="text-muted mb-0">
+              {{ selectedRow?.estatus.descriptionStatus }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <p class="d-flex justify-content-center">
+          <span class="text-success mr-5"
+            ><i class="fa fa-square"></i> Disponibles</span
+          >
+          <span class="text-danger"
+            ><i class="fa fa-square"></i> No disponibles</span
+          >
+        </p>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="row pt-5" *ngIf="form.get('criminalCase').value !== null">
+      <div class="col-md-2">
+        <button
+          class="btn btn-sm btn-primary active"
+          [disabled]="!form.valid"
+          (click)="resetScreen()">
+          Reiniciar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

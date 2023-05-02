@@ -1,0 +1,260 @@
+<ng-template #myTemplate>
+  <div class="row">
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title" style="font-weight: bold">Domicilio del Bien</h5>
+      </div>
+      <div *ngIf="process != 'process-approval'">
+        <div *ngIf="isNewAddress === false">
+          <button class="btn btn-primary btn-sm active" (click)="saveAddres()">
+            <i class="bx bx-save"></i> Guardar
+          </button>
+        </div>
+        <div *ngIf="isNewAddress === true">
+          <button class="btn btn-primary btn-sm active" (click)="copyAddress()">
+            <i class="bx bx-copy-alt"></i> Copiar domicilio existente
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <form [formGroup]="domicileForm" class="form-material">
+      <div class="addressGood">
+        <div class="row pt-5">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('warehouseAlias')"
+              label="Alias Almac&eacute;n">
+              <input
+                type="text"
+                maxlength="500"
+                class="form-control"
+                formControlName="warehouseAlias"
+                [readOnly]="isreadOnly" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="domicileForm"
+              control="statusKey"
+              (fetchItems)="getStateOfRepublic($event)"
+              [data]="selectState"
+              label="Estado"
+              bindLabel="descCondition"
+              value="id"
+              [readonly]="isreadOnly"></ngx-select>
+            <!-- <form-field
+              [control]="domicileForm.get('statusKey')"
+              label="Estado">
+              <input
+                type="text"
+                class="form-control"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="stateOfRepublicName"
+                [readOnly]="isreadOnly" />
+            </form-field> -->
+          </div>
+
+          <div class="col-md-4">
+            <ngx-select
+              [form]="domicileForm"
+              control="municipalityKey"
+              (change)="nullMunicipaly()"
+              (fetchItems)="getMunicipaly($event)"
+              [data]="selectMunicipe"
+              label="Municipio"
+              bindLabel="municipality"
+              value="municipalityKey"></ngx-select>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <ngx-select
+              (fetchItems)="getLocality($event)"
+              [data]="selectLocality"
+              [form]="domicileForm"
+              value="townshipKey"
+              bindLabel="township"
+              label="Colonia"
+              control="localityKey">
+            </ngx-select>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="domicileForm"
+              control="code"
+              (fetchItems)="getCP($event)"
+              [data]="selectCP"
+              label="C&#46;P&#46;"
+              value="postalCode"
+              bindLabel="postalCode"></ngx-select>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('latitude')"
+              label="Latitud">
+              <input
+                type="text"
+                maxlength="30"
+                class="form-control"
+                formControlName="latitude" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="domicileForm.get('length')" label="Longitud">
+              <input
+                type="text"
+                maxlength="30"
+                class="form-control"
+                formControlName="length" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayName')"
+              label="Nombre de la V&iacute;a">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="wayName" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayOrigin')"
+              label="Origen de la V&iacute;a">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="wayOrigin" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayref1Key')"
+              label="Referencia V&iacute;a 1">
+              <input
+                type="text"
+                maxlength="30"
+                class="form-control"
+                formControlName="wayref1Key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayref2Key')"
+              label="Referencia V&iacute;a 2">
+              <input
+                type="text"
+                maxlength="30"
+                class="form-control"
+                formControlName="wayref2Key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayref3Key')"
+              label="Referencia V&iacute;a 3">
+              <input
+                type="text"
+                maxlength="30"
+                class="form-control"
+                formControlName="wayref3Key" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('exteriorNumber')"
+              label="Num&#46; Ext&#46;">
+              <input
+                type="text"
+                maxlength="10"
+                class="form-control"
+                formControlName="exteriorNumber" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('interiorNumber')"
+              label="Num&#46; Int&#46;">
+              <input
+                type="text"
+                maxlength="10"
+                class="form-control"
+                formControlName="interiorNumber" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayDestiny')"
+              label="Destino de la V&iacute;a">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="wayDestiny" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayChaining')"
+              label="Kil&oacute;metro de la V&iacute;a">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="wayChaining" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('description')"
+              label="Descripci&oacute;n">
+              <textarea
+                class="form-control"
+                maxlength="4000"
+                formControlName="description"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<app-modal *ngIf="isNewAddress">
+  <div body *ngTemplateOutlet="myTemplate"></div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="saveAddres()">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

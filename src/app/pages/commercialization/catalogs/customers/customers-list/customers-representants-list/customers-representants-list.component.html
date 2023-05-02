@@ -1,0 +1,27 @@
+<div class="ch-content">
+  <h5 class="title">Representantes por cliente</h5>
+  <div class="col-md-8 buttons">
+    <app-columns-select [(settings)]="settings"> </app-columns-select>
+    <div class="">
+      <button
+        class="btn btn-success active btn-sm ml-3"
+        (click)="exportAllRepresentative()">
+        Exportar todos
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row pt-4">
+  <div class="col-md-12">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settings"
+        [source]="data"
+        (create)="openFormRepresentative()"
+        (edit)="openFormRepresentative($event.data)">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<!-- <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination> -->

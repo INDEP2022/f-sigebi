@@ -1,0 +1,676 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">NOMBRAMIENTOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-8 p-2">
+              <div class="row">
+                <div class="col-12 col-sm-6 col-md-6 p-2">
+                  <form-field
+                    [control]="form.get('noBien')"
+                    label="No&#46; Bien">
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="noBien" />
+                  </form-field>
+                </div>
+                <div class="col-12 col-sm-4 col-md-4 p-2">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="validGoodNumberInDepositaryAppointment()">
+                    Buscar
+                    <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-sm-12 col-12 col-md-12 p-2"
+          *ngIf="loadingGood || loadingAppointment">
+          <div class="alert alert-info">
+            Cargando, Espere un momento...
+            <div class="spinner-border text-info" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('noExpedient')"
+            label="N&uacute;mero de Expediente">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="noExpedient" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('fechaAcuerdoAsegurado')"
+            label="Fecha de Acuerdo Asegurado">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="fechaAcuerdoAsegurado"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('fechaRecepcion')"
+            label="Fecha de Recepci&oacute;n">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="fechaRecepcion"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('fechaDecomiso')"
+            label="Fecha de Decomiso">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="fechaDecomiso"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('estatusBien')"
+            label="Estatus del Bien">
+            <textarea
+              [readonly]="true"
+              class="form-control"
+              formControlName="estatusBien"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="causaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('averiguacionPrevia')"
+            label="Averiguaci&oacute;n Previa">
+            <input
+              [readonly]="true"
+              class="form-control"
+              formControlName="averiguacionPrevia" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripción del Bien">
+            <textarea
+              [readonly]="true"
+              class="form-control"
+              rows="4"
+              formControlName="descriptionGood"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+          <hr class="row" />
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
+          <div class="form-group">
+            <button
+              type="button"
+              [disabled]="form.get('bienesMenaje').value == 1"
+              class="btn btn-primary btn-sm active"
+              (click)="btnBienes()">
+              Bienes
+            </button>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoNombramiento')"
+            label="Tipo de Nombramiento">
+            <select class="form-control" formControlName="tipoNombramiento">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'Administrador'">Administrador</option>
+              <option [value]="'Depositaría'">Depositar&iacute;a</option>
+              <option [value]="'Interventor'">Interventor</option>
+              <option [value]="'Comodatarío'">Comodatar&iacute;o</option>
+              <option [value]="'Bien en uso del INDEP'">
+                Bien en uso del INDEP
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('estatus')" label="Estatus">
+            <select class="form-control" formControlName="estatus">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'Provisional'">Provisional</option>
+              <option [value]="'Definitiva'">Definitiva</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoDepositaria')"
+            label="Tipo de Depositar&iacute;a">
+            <input class="form-control" formControlName="tipoDepositaria" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('representanteSAE')"
+            label="Representante INDEP">
+            <input class="form-control" formControlName="representanteSAE" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field [control]="form.get('nombre')" label="Nombre">
+            <input class="form-control" formControlName="nombre" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <div class="row w-100 pl-4">
+            <label class="form-control-label">Tipo Volante</label>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+              <form-radio label="Sin Menaje" for="sinMenaje">
+                <input
+                  id="sinMenaje"
+                  type="radio"
+                  formControlName="bienesMenaje"
+                  value="N" />
+              </form-radio>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+              <form-radio
+                label="Con Menaje"
+                for="conMenaje"
+                (change)="changeMenaje()">
+                <input
+                  id="conMenaje"
+                  type="radio"
+                  formControlName="bienesMenaje"
+                  value="S" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+          <hr class="row" />
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="btnCatalogoDepositarias()">
+                  Cat&aacute;logo Depositar&iacute;as
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('depositaria')"
+            label="Depositar&iacute;ia">
+            <input
+              class="form-control"
+              formControlName="depositaria"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('representante')"
+            label="Representante">
+            <input
+              class="form-control"
+              formControlName="representante"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoPersona')"
+            label="Tipo Persona &#40;F&iacute;SICA&#47;MORAL&#41;">
+            <input
+              class="form-control"
+              formControlName="tipoPersona"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoPersona2')"
+            label="Tipo Persona &#40;DEDICACI&Oacute;N&#41;">
+            <input
+              class="form-control"
+              formControlName="tipoPersona2"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input
+              class="form-control"
+              formControlName="rfc"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('curp')" label="CURP">
+            <input
+              class="form-control"
+              formControlName="curp"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('telefono')" label="Tel&eacute;fono">
+            <input
+              class="form-control"
+              formControlName="telefono"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field [control]="form.get('calle')" label="Calle">
+            <input
+              class="form-control"
+              formControlName="calle"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noExterno')" label="No&#46; Externo">
+            <input
+              class="form-control"
+              formControlName="noExterno"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noInterno')" label="No&#46; Interno">
+            <input
+              class="form-control"
+              formControlName="noInterno"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <ngx-select
+            [data]="postalCode"
+            bindLabel="township"
+            label="C&oacute;digo Postal"
+            value="postalCode"
+            (fetchItems)="getPostalCodeByDetail($event)"
+            (change)="changePostalCodeDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="codigoPostal"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <ngx-select
+            [data]="locality"
+            bindLabel="township"
+            label="Colonia"
+            value="townshipKey"
+            (fetchItems)="getLocalityByDetail($event)"
+            (change)="changeLocalityDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="colonia"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <ngx-select
+            [data]="delegations"
+            bindLabel="municipality"
+            label="Delegaci&oacute;n&#47;Municipio"
+            value="municipalityKey"
+            (fetchItems)="getDelegationByDetail($event)"
+            (change)="changeDelegationDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="delegacionMunicipio"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <ngx-select
+            [data]="state"
+            bindLabel="descCondition"
+            label="Entidad Federativa"
+            value="id"
+            (fetchItems)="getStateByDetail($event)"
+            (change)="changeStateDetail($event)"
+            [form]="form"
+            [showTooltip]="true"
+            control="entidadFederativa"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field [control]="form.get('giro')" label="Giro">
+            <input
+              class="form-control"
+              formControlName="giro"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field [control]="form.get('referencia')" label="Referencia">
+            <input
+              class="form-control"
+              formControlName="referencia"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <hr class="row" />
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <div class="card p-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <form-check label="Con Remoci&oacute;n" for="remocion">
+                    <input
+                      id="remocion"
+                      type="checkbox"
+                      formControlName="remocion"
+                      (click)="toggleRemocion($event)" />
+                  </form-check>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <form-field [control]="form.get('fecha')" label="Fecha">
+                    <input
+                      class="form-control"
+                      formControlName="fecha"
+                      bsDatepicker
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-2">
+                  <form-field
+                    [control]="form.get('noOficio')"
+                    label="No&#46; Oficio">
+                    <input class="form-control" [readonly]="true" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <div class="card p-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('contraprestacion')"
+                    label="Contrapresentaci&oacute;n">
+                    <input
+                      class="form-control"
+                      formControlName="contraprestacion"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('honorarios')"
+                    label="Honorarios">
+                    <input
+                      class="form-control"
+                      formControlName="honorarios"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field [control]="form.get('iva')" label="Iva">
+                    <input
+                      class="form-control"
+                      formControlName="iva"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('fechaInicio')"
+                    label="Fecha Inicio">
+                    <input
+                      class="form-control"
+                      formControlName="fechaInicio"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-8 p-2">
+                  <form-field
+                    [control]="form.get('noNombramiento')"
+                    label="No&#46; Nombramiento">
+                    <input
+                      class="form-control"
+                      formControlName="noNombramiento"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <hr class="row" />
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <h5 class="text-center">Acuerdo Junta de Gobierno</h5>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('fechaAcuerdo')"
+            label="Fecha Acuerdo Junta de Gobierno">
+            <input
+              class="form-control"
+              formControlName="fechaAcuerdo"
+              bsDatapicker
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-8 p-2">
+          <form-field
+            [control]="form.get('noAcuerdo')"
+            label="No&#46; Acuerdo Junta de Gobierno">
+            <input
+              class="form-control"
+              formControlName="noAcuerdo"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 mt-3 mb-3">
+          <hr class="row" />
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('anexo')" label="Anexo">
+            <textarea
+              class="form-control"
+              formControlName="anexo"
+              rows="3"
+              [readonly]="true"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-9 p-2">
+          <form-field
+            [control]="form.get('observaciones')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="observaciones"
+              rows="3"
+              [readonly]="true"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-5 p-2">
+              <form-field
+                [control]="form.get('folioRemocion')"
+                label="Folio de Remoci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="folioRemocion"
+                  [readonly]="true" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-5 p-2">
+              <form-field
+                [control]="form.get('folioActaDepositaria')"
+                label="Folio Acta Depositar&iacute;a">
+                <input
+                  class="form-control"
+                  formControlName="folioActaDepositaria"
+                  [readonly]="true" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 p-4 text-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="btnReplicarFolio()">
+                Replicar Folio
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-8 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <h6>CONSULTAS</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnCatalogoDepositariasPersona()">
+                  C&aacute;talogo Depositar&iacute;as
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnConsultarImagenesEscaneadas()">
+                  Consultar Im&aacute;genes Escaneadas
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnCatalogoConceptosPagos()">
+                  C&aacute;talogo Conceptos de Pagos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <h6>REPORTES</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnReportesJuridicos()">
+                  Reportes Jur&iacute;dicos
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnReportesAdministrativos()">
+                  Reportes Administrativos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-8 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <h6>ESCANEOS</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnFolioEscaneoSolicitud()">
+                  Generar Folio de Escaneo y Solicitud
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnImprimirSolicitudEscaneo()">
+                  Imprimir Solicitud de Escaneo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <h6>PAGOS</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnDetallesPago()">
+                  Detalles de Pagos
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnIngresoMasivoPagos()">
+                  Ingreso Masivo de Pagos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

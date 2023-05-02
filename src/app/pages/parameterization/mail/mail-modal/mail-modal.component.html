@@ -1,0 +1,206 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Detalles' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field label="Usuario" [control]="form.get('id')">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Nombre" [control]="form.get('name')">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="RFC" [control]="form.get('rfc')">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="CURP" [control]="form.get('curp')">
+            <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="Calle" [control]="form.get('street')">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="No. Int" [control]="form.get('insideNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="insideNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Colonia" [control]="form.get('suburb')">
+            <input type="text" class="form-control" formControlName="suburb" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="C.P." [control]="form.get('zipCode')">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field label="telefono" [control]="form.get('phone')">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="profesion" [control]="form.get('profession')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="profession" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="cve_cargo" [control]="form.get('positionKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="positionKey" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha ingreso x 1ra vez"
+            [control]="form.get('firstTimeLoginDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firstTimeLoginDate" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <!-- <div class="col-md-3">
+          <form-field label="Delegación" [control]="form.get('usuario')">
+            <input type="text" class="form-control" formControlName="usuario" />
+          </form-field>
+        </div> -->
+        <!-- <div class="col-md-3">
+          <form-field label="No. Registro" [control]="form.get('registryNumber')">
+            <input type="text" class="form-control" formControlName="registryNumber" />
+          </form-field>
+        </div> -->
+        <div class="col-md-3">
+          <form-field label="Email" [control]="form.get('email')">
+            <input type="text" class="form-control" formControlName="email" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label=" Usuario SIRSAE"
+            [control]="form.get('userSirsae')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userSirsae" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="Envio de email" [control]="form.get('sendEmail')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sendEmail" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Asignación de atributos"
+            [control]="form.get('attribAsign')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="attribAsign" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="clkdet SIRSAE"
+            [control]="form.get('clkdetSirsae')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="clkdetSirsae" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Intercambiar usuario"
+            [control]="form.get('exchangeAlias')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="exchangeAlias" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field label="clkdet" [control]="form.get('clkdet')">
+            <input type="text" class="form-control" formControlName="clkdet" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="clkid" [control]="form.get('clkid')">
+            <input type="text" class="form-control" formControlName="clkid" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="clave de perfil"
+            [control]="form.get('profileMimKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="profileMimKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Agregar Nombre" [control]="form.get('nameAd')">
+            <input type="text" class="form-control" formControlName="nameAd" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Cve anterior" [control]="form.get('posPrevKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="posPrevKey" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showCircuit">
+    <div class="col-md-12">
+      <form-field [control]="form.get(circuitField)">
+        <ngx-select
+          (fetchItems)="getCircuit($event)"
+          [data]="circuit"
+          [form]="form"
+          value="otKey"
+          bindLabel="value"
+          label="Circuito"
+          [control]="circuitField"
+          (change)="onCircuitChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

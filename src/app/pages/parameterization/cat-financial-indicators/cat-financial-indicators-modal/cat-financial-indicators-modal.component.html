@@ -1,0 +1,59 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="financialIndicatorsForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="financialIndicatorsForm.get('name')"
+            label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="financialIndicatorsForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div style="text-align: center">
+            <form-field
+              [control]="financialIndicatorsForm.get('formula')"
+              label="Escriba la f&oacute;rmula">
+              <input
+                (input)="onInputChange($event)"
+                class="form-control"
+                value="{{ value }}"
+                formControlName="formula" />
+            </form-field>
+            <div class="simple-keyboard"></div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!financialIndicatorsForm.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

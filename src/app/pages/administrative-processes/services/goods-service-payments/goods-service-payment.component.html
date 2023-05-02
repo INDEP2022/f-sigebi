@@ -1,0 +1,50 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Agregar Bienes</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="form-material col-xs-12 col-12 col-md-3">
+          <form-field
+            label="Fecha de Solicitud"
+            [control]="form.get('applicationDate')">
+            <input
+              class="form-control"
+              formControlName="applicationDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Records Shared Component-->
+        <app-records-shared [form]="form"></app-records-shared>
+        <!--Goods Shared Component-->
+        <div class="col-md-12 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-goods-types-shared [form]="form"></app-goods-types-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="close()">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

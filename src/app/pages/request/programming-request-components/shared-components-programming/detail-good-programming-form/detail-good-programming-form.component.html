@@ -1,0 +1,71 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Detalle bien programable</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form class="form-horizontal">
+        <div class="col-md-5">
+          <div class="form-group">
+            <label class="text-right">N&uacute;mero gesti&oacute;n</label>
+            <span> {{ item.goodId }} </span>
+          </div>
+
+          <div class="form-group">
+            <label class="text-right">Clave &uacute;nica</label>
+            <span> {{ item.uniqueKey }} </span>
+          </div>
+
+          <div class="form-group">
+            <label class="text-right">Expediente</label>
+            <span> {{ item.fileNumber }} </span>
+          </div>
+
+          <div class="form-group">
+            <label class="text-right">Descripci&oacute;n</label>
+            <span>
+              {{ item.description }}
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="text-right">Descripci&oacute;n INDEP</label>
+            <span> {{ item.descriptionGoodSae }} </span>
+          </div>
+        </div>
+        <div class="col-md-6 ml-3">
+          <div class="form-group">
+            <label class="text-right">Cantidad Transferente</label>
+            <span> {{ item.quantity }} </span>
+          </div>
+          <div class="form-group">
+            <label class="text-right">Unidad Transferente</label>
+            <span> {{ item.unitMeasure }} </span>
+          </div>
+          <div class="form-group">
+            <label class="text-right">Estado fisico transferente</label>
+            <span> {{ item.physicalStatus }} </span>
+          </div>
+          <div class="form-group">
+            <label class="text-right"
+              >N&uacute;mero reprogramaci&oacute;n</label
+            >
+            <span> {{ item.reprogrammationNumber }} </span>
+          </div>
+          <!--<div class="form-group">
+            <label class="text-right">Alias almac&eacute;n</label>
+            <span> {{ item.aliasWarehouse }} </span>
+          </div> -->
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

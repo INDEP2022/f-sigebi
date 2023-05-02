@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showCrimes">
+    <div class="col-md-12">
+      <form-field [control]="form.get(crimeField)">
+        <ngx-select
+          (fetchItems)="getCrimes($event)"
+          [data]="crimes"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Delitos"
+          [control]="crimeField"
+          (change)="onCrimesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

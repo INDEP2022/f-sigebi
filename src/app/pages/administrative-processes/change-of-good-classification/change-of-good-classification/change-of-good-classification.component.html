@@ -1,0 +1,176 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cambio de Clasificación del Bien</h5>
+  </div>
+  <div body>
+    <h6>° Actual Clasificación</h6>
+    <br />
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('numberGood')" label="Numero de Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood"
+              (change)="loadGood()" />
+          </form-field>
+        </div>
+        <div class="col-md-10 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripcion del bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionGood"
+              [disabled]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('currentClasification')"
+            label="No. Clasif Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentClasification" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionClasification')"
+            label="Descripcion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionClasification" />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('numberFile')" label="No. Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberFile" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <hr />
+    <h6>° Nueva Clasificación</h6>
+    <form [formGroup]="formNew" class="form-material">
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-classification-of-goods-shared
+            [form]="formNew"
+            [patchValue]="true"
+            (descriptionClasification)="
+              onChange($event)
+            "></app-classification-of-goods-shared>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="formNew.get('unitXClassif')" label="Unidad">
+            <select class="form-control" formControlName="unitXClassif">
+              <option [value]="null">Seleccione un valor</option>
+              <option *ngFor="let unit of units" [value]="unit.unit">
+                {{ unit.unit }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            [control]="formNew.get('fileNumberNew')"
+            label="Nuevo No. Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fileNumberNew" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="formNew.get('destination')" label="Destino">
+            <select class="form-control" formControlName="destination">
+              <option [value]="null">Seleccione un valor</option>
+              <option *ngFor="let dest of destinations" [value]="dest.id">
+                {{ dest.description }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-success btn-sm active"
+                (click)="showAlert()">
+                Cambiar Clasificación
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Atributos del Bien</h5>
+    <div class="col-md-5 buttons">
+      <div class="mt-2">
+        <button
+          [disabled]="btnNewAtribut"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="newAtribut()">
+          Nuevos valores
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <h6>° Atributos actuales</h6>
+        <div class="row"></div>
+        <div class="row">
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="atributActSettings"
+                  [source]="dataAct">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <h6>° Nuevos atributos</h6>
+        <div class="row">
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="atributNewSettings"
+                  [source]="listAtributNew"
+                  (edit)="onChangeValid($event.data)"
+                  (editConfirm)="onSaveConfirm($event)">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

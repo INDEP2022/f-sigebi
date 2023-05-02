@@ -1,0 +1,185 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Parcializaci&oacute;n Bienes en Adopci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <div class="mt-5">
+      <form
+        class="form-material form-horizontal"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+        <div class="row mt-5 align-items-center">
+          <div class="col-12 col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('goodNumb')" label="No. Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="goodNumb" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mt-3 mt-md-0">
+            <div class="pl-4 pr-4">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripci&oacute;n">
+                <textarea
+                  class="form-control"
+                  formControlName="description"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('quantity')" label="Cantidad">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="quantity" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('appraisedValue')"
+                label="Valor Aval&uacute;o">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="appraisedValue" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('status')" label="Estatus">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="status" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('statusDescrip')"
+                label="Descrip. Estatus">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="statusDescrip" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('proceedings')"
+                label="No. Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="proceedings" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('sorterNumb')"
+                label="No. Clasificador">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="sorterNumb" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('sorterDescrip')"
+                label="Descrip. Clasificador">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="sorterDescrip" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('currency')" label="Moneda">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="currency" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('amount')" label="Importe">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="amount" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('amountToSplit')"
+                label="Cantidad a Parcializar">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="amountToSplit" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="row mt-3">
+        <div class="col-12 tetx-center text-md-right">
+          <button class="btn btn-secondary btn-sm active">Parcializa</button>
+        </div>
+      </div>
+
+      <app-divider></app-divider>
+      <div class="row mt-5 justify-content-end mt-3">
+        <div class="col-md-5 buttons pt-3 text-right">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings">
+          </app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-5 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

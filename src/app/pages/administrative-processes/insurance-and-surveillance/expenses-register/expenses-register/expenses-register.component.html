@@ -1,0 +1,20 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REGISTRO DE GASTOS</h5>
+  </div>
+
+  <div body>
+    <div class="row mt-4">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Datos del gasto" id="tab1">
+            <app-expenses-data></app-expenses-data>
+          </tab>
+          <tab heading="Bienes" id="tab2">
+            <app-expenses-goods></app-expenses-goods>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

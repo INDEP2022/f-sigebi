@@ -1,0 +1,47 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Transferente &#47; Emisor &#47; Autoridad</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <form-field class="col-md-4" [control]="form.get('transerente')">
+              <ngx-select
+                [form]="form"
+                [data]="select"
+                control="transerente"
+                label="Transferente">
+              </ngx-select>
+            </form-field>
+
+            <form-field class="col-md-4" [control]="form.get('emisora')">
+              <ngx-select
+                [form]="form"
+                [data]="select"
+                control="emisora"
+                label="Emisora">
+              </ngx-select>
+            </form-field>
+
+            <form-field class="col-md-4" [control]="form.get('autoridad')">
+              <ngx-select
+                [form]="form"
+                [data]="select"
+                control="autoridad"
+                label="Autoridad">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <button class="btn btn-primary active">Guardar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-card>

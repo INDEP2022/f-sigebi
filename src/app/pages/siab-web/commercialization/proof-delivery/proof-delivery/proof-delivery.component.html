@@ -1,0 +1,77 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Constancia de entregas</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('delegation')"
+            label="Delegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('allotment')"
+            label="Lote P&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="show = !show">
+              Generar constancia de entrega
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row" *ngIf="show">
+      <div class="ch-content" header>
+        <h5 class="title">Descarga de constancia de entrega</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

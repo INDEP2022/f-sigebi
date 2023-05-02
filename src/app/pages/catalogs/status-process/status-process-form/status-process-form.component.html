@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="statusProcessForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="statusProcessForm.get('status')"
+            label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="statusProcessForm.get('process')"
+            label="Proceso">
+            <input type="text" class="form-control" formControlName="process" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="statusProcessForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="statusProcessForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

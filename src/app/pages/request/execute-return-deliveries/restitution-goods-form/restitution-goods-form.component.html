@@ -1,0 +1,199 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Restituci&oacute;n de bienes</h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button (click)="send()" class="btn btn-primary btn-sm active">
+        <i class="bx bxs-send"></i> Enviar aprobraci&oacute;n
+      </button>
+    </div>
+    <h5 class="title">
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = true"
+          *ngIf="!showSearchForm">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Detalles
+          programaci&oacute;n</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = false"
+          *ngIf="showSearchForm">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+          programaci&oacute;n</a
+        >
+      </p>
+    </h5>
+    <form *ngIf="showSearchForm" class="form-horizontal" style="margin: 0 auto">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Tipo evento:</label>
+            <span> Devoluci&oacute;n </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Folio:</label>
+            <span> E-METROPOLITANA-320 </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Fecha page de entrega:</label>
+            <span> 12-NOV-2022 15:35:00 </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Fecha final de entrega:</label>
+            <span> 13-NOV-2022 15:35:00 </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-3 text-right">Almac&eacute;n:</label>
+            <span> Almac&eacute;n de prueba </span>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row pt-5">
+      <h5 class="title">Ejecuci&oacute;n de entrega de bienes</h5>
+      <div class="d-flex justify-content-end">
+        <div class="m-3 btn-toolbar">
+          <button (click)="photographs()" class="btn btn-info btn-sm active">
+            <i class="bx bxs-image"></i> Fotografías
+          </button>
+
+          <button (click)="warehouse()" class="btn btn-pink btn-sm active">
+            <i class="bx bxs-customize"></i> Almac&eacute;n
+          </button>
+
+          <button (click)="save()" class="btn btn-primary btn-sm active">
+            <i class="bx bxs-save"></i> Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-5">
+      <section>
+        <div class="table-responsive text-nowrap">
+          <div class="justify-content-right btn-toolbar">
+            <button
+              (click)="entryOrder()"
+              class="btn btn-primary btn-sm active">
+              <i class="bx bxs-file-plus"></i> Orden de ingreso
+            </button>
+            <button
+              (click)="submitApproval()"
+              class="btn btn-primary btn-sm active">
+              <i class="bx bxs-send"></i> Enviar a aprobaci&oacute;n
+            </button>
+            <button
+              (click)="formatReclamation()"
+              class="btn btn-primary btn-sm active">
+              <i class="bx bx-file"></i> Formato de reclamaci&oacute;n
+            </button>
+
+            <button (click)="numerary()" class="btn btn-primary btn-sm active">
+              <i class="bx bx-file-blank"></i> Numerario
+            </button>
+
+            <button class="btn btn-primary btn-sm active">
+              <i class="bx bx-archive"></i> En especie
+            </button>
+          </div>
+          <form [formGroup]="form">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col" class="align-middle">
+                    <input
+                      type="checkbox"
+                      class="form-control ng-pristine ng-valid ng-touched"
+                      ng-reflect-model="true"
+                      value="second_checkbox" />
+                  </th>
+                  <th>Tipo Restituci&oacute;n</th>
+                  <th>Fecha reposici&oacute;n</th>
+                  <th>ITEM</th>
+                  <th>N&uacute;mero inventario</th>
+                  <th>N&uacute;mero gesti&oacute;n</th>
+                  <th>Descripci&oacute;n bien</th>
+                  <th>Cantidad bienes</th>
+                  <th>Unidad de medida</th>
+                  <th>N&uacute;mero INDEP</th>
+                  <th>Total bienes no entregados</th>
+                  <th>Causa no entrega</th>
+                  <th>Obervaciones</th>
+                  <th>No&#46; orden ingreso</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td scope="row" class="align-middle">
+                    <input
+                      type="checkbox"
+                      id="cbox2"
+                      class="form-control ng-pristine ng-valid ng-touched"
+                      ng-reflect-model="true"
+                      value="second_checkbox" />
+                  </td>
+                  <td>
+                    <form-radio label="Numerario" class="form-inline">
+                      <input
+                        type="radio"
+                        formControlName="radio"
+                        value="numerary" />
+                    </form-radio>
+                    <form-radio label="En espera" class="form-inline">
+                      <input
+                        type="radio"
+                        formControlName="radio"
+                        value="wait" />
+                    </form-radio>
+                  </td>
+
+                  <td scope="row" class="align-middle">
+                    <input
+                      class="form-control"
+                      formControlName="repositionDate"
+                      bsDatepicker />
+                  </td>
+                  <td scope="row" class="align-middle">9403 20 99-PZ</td>
+                  <td scope="row" class="align-middle">0000088495</td>
+                  <td scope="row" class="align-middle">6903267</td>
+                  <td scope="row" class="align-middle">Los demas</td>
+                  <td scope="row" class="align-middle">3</td>
+                  <td scope="row" class="align-middle">Pieza</td>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle">1</td>
+                  <td scope="row" class="align-middle">
+                    <select class="form-control" readonly>
+                      <option [value]="null">Dañado</option>
+                    </select>
+                  </td>
+                  <td readonly scope="row" class="align-middle">Ninguna</td>
+                  <td readonly scope="row" class="align-middle"></td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+</app-card>

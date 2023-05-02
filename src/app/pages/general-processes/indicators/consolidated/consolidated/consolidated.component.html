@@ -1,0 +1,15 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Indicador de Dictaminaci&oacute;n</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <capture-filter [isConsolidated]="true"></capture-filter>
+    </div>
+    <div class="row pt-3 table-content">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+
+      <app-pagination></app-pagination>
+    </div>
+  </div>
+</app-card>

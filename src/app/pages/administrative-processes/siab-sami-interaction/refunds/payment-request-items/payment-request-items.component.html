@@ -1,0 +1,87 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field label="Monto" [control]="form.get('amountR')">
+            <input
+              class="form-control"
+              formControlName="amountR"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mt-3">
+          <form-field label="I.V.A" [control]="form.get('taxes')">
+            <input class="form-control" formControlName="taxes" type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mt-3">
+          <form-field
+            label="Retención I.V.A"
+            [control]="form.get('withholdingTax')">
+            <input
+              class="form-control"
+              formControlName="withholdingTax"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mt-3">
+          <form-field
+            label="Retención I.S.R"
+            [control]="form.get('withholdingIncomeTax')">
+            <input
+              class="form-control"
+              formControlName="withholdingIncomeTax"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field label="Total" [control]="form.get('total')">
+            <input
+              readonly
+              class="form-control"
+              formControlName="total"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--CABMS Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-cabms-shared
+            [form]="formCabms"
+            [patchValue]="true"></app-cabms-shared>
+        </div>
+        <!--Goods Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-goods-shared
+            [form]="formGoods"
+            [patchValue]="true"></app-goods-shared>
+        </div>
+        <!--Transference Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-transferente-shared [form]="form"></app-transferente-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid || !formCabms.valid || !formGoods.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

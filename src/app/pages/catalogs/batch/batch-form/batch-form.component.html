@@ -1,0 +1,64 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="batchForm">
+      <div class="row">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="batchForm.get('numStore')"
+            label="N&uacute;mero de Almac&eacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numStore" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="batchForm.get('numRegister')"
+            label="N&uacute;mero de Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numRegister" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="batchForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="batchForm.get('status')" label="Estado">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!batchForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

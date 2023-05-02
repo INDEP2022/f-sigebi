@@ -1,0 +1,59 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Crear' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="drawerForm" class="form-material">
+      <form-field
+        [control]="drawerForm.get('noDrawer')"
+        label="N&uacute;mero de gaveta">
+        <input type="text" class="form-control" formControlName="noDrawer" />
+      </form-field>
+
+      <div class="row pt-4">
+        <form-field [control]="drawerForm.get('noBobeda')">
+          <ngx-select
+            [form]="drawerForm"
+            control="noBobeda"
+            [data]="boveda"
+            value="idSafe"
+            bindLabel="description"
+            label="Boveda"
+            (fetchItems)="getBovedaSelect($event)"></ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="drawerForm.get('status')" label="Estatus">
+          <input type="text" class="form-control" formControlName="status" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="drawerForm.get('noRegistration')"
+          label="N&uacute;mero de registro">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noRegistration" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!drawerForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

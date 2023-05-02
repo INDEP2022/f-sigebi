@@ -1,0 +1,176 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="providerForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('rfc')" label="R.F.C.">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('curp')" label="CURP">
+            <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="providerForm.get('nameReason')"
+            label="Nombre o Razón Social">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameReason" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('colony')" label="Colonia">
+            <input type="text" class="form-control" formControlName="colony" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="providerForm.get('delegation')"
+            label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('clkedo')">
+            <ngx-select
+              [form]="providerForm"
+              [data]="stateItems"
+              label="Estado"
+              value="id"
+              bindLabel="descCondition"
+              (fetchItems)="getStates($event)"
+              control="clkedo">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('clkmun')">
+            <ngx-select
+              [form]="providerForm"
+              [data]="cityItems"
+              label="Ciudad"
+              value="idCity"
+              bindLabel="nameCity"
+              (fetchItems)="getCities($event)"
+              control="clkmun">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('desCountry')" label="País">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="desCountry" />
+          </form-field>
+          <!-- <form-field [control]="providerForm.get('clkCountry')">
+            <ngx-select [form]="providerForm" [data]="countryItems" label="País" value="description"
+              bindLabel="description" (fetchItems)="getCountries($event)" control="clkCountry">
+            </ngx-select>
+          </form-field> -->
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('cp')" label="Cp">
+            <input type="text" class="form-control" formControlName="cp" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('phone')" label="Teléfono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('fax')" label="Fax">
+            <input type="text" class="form-control" formControlName="fax" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="providerForm.get('webMail')"
+            label="Correo Web">
+            <input type="text" class="form-control" formControlName="webMail" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="providerForm.get('typePerson')"
+            label="Tipo Persona">
+            <ng-select
+              formControlName="typePerson"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">F&Iacute;SICA</ng-option>
+              <ng-option value="2">MORAL</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="providerForm.get('preponderantAct')"
+            label="Actividad Preponderante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="preponderantAct" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="providerForm.get('contractNo')"
+            label="N° Contrato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contractNo" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!providerForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

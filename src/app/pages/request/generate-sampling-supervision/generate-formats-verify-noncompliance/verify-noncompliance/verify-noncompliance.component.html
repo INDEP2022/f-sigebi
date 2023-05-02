@@ -1,0 +1,178 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title">Muestreo Bienes&#58; {{ title }}</h5>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
+          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4" *ngIf="isEnableAnex">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="openAnnexJ()">
+            <i class="bx bx-square-rounded"></i> Anexo J
+          </button>
+        </div>
+        <div class="m-3">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="opemAnnexK()">
+            <i class="bx bx-square-rounded"></i> Anexo K
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="detail">
+      <app-card [header]="false">
+        <div body>
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="title">
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = true"
+                    *ngIf="!showSamplingDetail">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    Detalles del Muestreo</a
+                  >
+                </p>
+
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = false"
+                    *ngIf="showSamplingDetail">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+                    del Muestreo</a
+                  >
+                </p>
+              </h5>
+            </div>
+          </div>
+          <div class="row pt-4" *ngIf="showSamplingDetail">
+            <app-sampling-detail></app-sampling-detail>
+          </div>
+        </div>
+      </app-card>
+    </div>
+    <div id="assets">
+      <div class="row pt-6">
+        <h5>Filtro de Bienes</h5>
+      </div>
+      <div class="row pt-2">
+        <div class="col-md-12">
+          <h6 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showFilterAssets = true"
+                *ngIf="!showFilterAssets">
+                <i class="fa fa-angle-right" aria-hidden="true"></i> Captura de
+                datos</a
+              >
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showFilterAssets = false"
+                *ngIf="showFilterAssets">
+                <i class="fa fa-angle-down" aria-hidden="true"></i> Captura de
+                datos</a
+              >
+            </p>
+          </h6>
+        </div>
+      </div>
+      <div class="row" *ngIf="showFilterAssets" style="padding-left: 1rem">
+        <form [formGroup]="filterForm" class="form-material">
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="filterForm.get('noManagement')"
+                label="No&#46; Gestión">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noManagement" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="filterForm.get('noInventory')"
+                label="No&#46; Inventario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noInventory" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="filterForm.get('descriptionAsset')"
+                label="Descripci&oacute;n Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="descriptionAsset" />
+              </form-field>
+            </div>
+          </div>
+        </form>
+        <div class="row pt-4">
+          <div class="d-flex justify-content-end">
+            <div class="m-3">
+              <button class="btn btn-primary btn-sm active">
+                <i class="bx bx-search-alt-2"></i> Buscar
+              </button>
+            </div>
+            <div class="m-3">
+              <button class="btn btn-danger btn-sm active">
+                <i class="bx bx-trash"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <tabset class="md-tabs" *ngIf="!isEnableAnex">
+        <tab heading="Bienes" id="tab1">
+          <app-assets-tab
+            [willSave]="willSave"
+            [typeTask]="'verify-noncompliance'"></app-assets-tab>
+        </tab>
+        <tab heading="Verificaciones">
+          <app-verifications></app-verifications>
+        </tab>
+        <tab heading="Detalle Anexo">
+          <app-detail-annex [annexData]="annexDetail"></app-detail-annex>
+        </tab>
+      </tabset>
+
+      <!-- Se turno el formulario se muestrea los tabs -->
+      <tabset class="md-tabs" *ngIf="isEnableAnex">
+        <tab heading="Bienes" id="tab1">
+          <app-assets-tab></app-assets-tab>
+        </tab>
+        <tab heading="Deductivas">
+          <app-deductives></app-deductives>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,57 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE DOCUMENTOS RECIBIDOS POR EL SERA</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-md-3 text-center">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3 text-center">
+          <form-check label="&iquest;Reporte Detallado&#63;" for="4">
+            <input
+              id="4"
+              type="checkbox"
+              class="form-control"
+              formControlName="report" />
+          </form-check>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

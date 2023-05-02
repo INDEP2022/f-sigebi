@@ -1,0 +1,71 @@
+<form class="form-material" [formGroup]="form">
+  <div class="row mr-0">
+    <div class="col-md-4 p-0">
+      <div class="selectGood">
+        <app-select-form
+          [form]="form"
+          [readonly]="statusActaValue !== 'ABIERTA'"
+          formField="goodId"
+          label="Agregar nuevo bien"
+          value="goodNumber"
+          bindLabel="goodNumber"
+          [haveTodos]="false"
+          [getListObservable]="goodsList"
+          (selectEvent)="selectedGood = $event"
+          [(paramsFilter)]="paramsGoods"></app-select-form>
+        <button
+          [disabled]="statusActaValue !== 'ABIERTA'"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="addGood()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+
+      <!-- <app-goods-table-shared
+        [form]="form"
+        [disabled]="statusActaValue !== 'ABIERTA'"
+        label="Agregar Nuevo bien"
+        (selectRow)="addGood($event)">
+      </app-goods-table-shared> -->
+    </div>
+    <div class="col-md-4 mb-3" style="text-align: center">
+      <app-update-dates-goods
+        [disabled]="statusActaValue !== 'ABIERTA' && data && data.length > 0"
+        [data]="data"
+        (updateGoodEvent)="
+          selectedsForUpdate = $event; updateGoods()
+        "></app-update-dates-goods>
+    </div>
+    <div class="col-md-4 p-0" *ngIf="rowsSelected">
+      <form-field
+        class="col-xs-10"
+        [control]="form.get('action')"
+        [class]="
+          statusActaValue !== 'ABIERTA' || rowsSelected.length === 0
+            ? 'disabled'
+            : ''
+        "
+        label="Acción">
+        <select class="form-control" formControlName="action">
+          <option [value]="null">Seleccione una acción</option>
+          <option [value]="1">Cambio de Acta</option>
+          <option [value]="2">Cambio de Estatus</option>
+        </select>
+      </form-field>
+      <div class="col-xs-2 pl-0">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="
+            form.get('action').value === null ||
+            statusActaValue !== 'ABIERTA' ||
+            rowsSelected.length === 0
+          "
+          (click)="openModals()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

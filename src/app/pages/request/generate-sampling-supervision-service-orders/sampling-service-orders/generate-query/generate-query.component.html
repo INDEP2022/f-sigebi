@@ -1,0 +1,136 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title">Muestreo Ordenes de Servicio&#58; {{ title }}</h5>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
+          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active">
+            <i class="bx bxs-component"></i> Buscar Ordenes
+          </button>
+        </div>
+        <div class="p-2">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="openAnnexK()">
+            Anexo K
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="verify-service-orders">
+      <div class="row">
+        <h5>Verificaci&oacute;n de ordenes de servicio</h5>
+      </div>
+      <div>
+        <div>
+          <form [formGroup]="orderServiceForm" class="form-material">
+            <div class="row pt-4">
+              <div class="col-md-3">
+                <form-field
+                  [control]="orderServiceForm.get('geographicalArea')">
+                  <ngx-select
+                    [form]="orderServiceForm"
+                    control="geographicalArea"
+                    [data]="geographicalAreaSelected"
+                    value="id"
+                    bindLabel="id"
+                    label="Area Geográfica"
+                    (fetchItems)="getgeographicalAreaSelect($event)">
+                  </ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field
+                  [control]="orderServiceForm.get('samplingPeriod')"
+                  label="*Periodo Muestreo">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="samplingPeriod"
+                    placeholder=""
+                    bsDatepicker />
+                </form-field>
+              </div>
+            </div>
+            <div class="row pt-4">
+              <div class="col-md-3">
+                <form-field [control]="orderServiceForm.get('contractNumber')">
+                  <ngx-select
+                    [form]="orderServiceForm"
+                    control="contractNumber"
+                    [data]="contractNumberSelected"
+                    value="id"
+                    bindLabel="id"
+                    label="&#42;No&#46; contrato"
+                    (fetchItems)="getContractNumberSelect($event)">
+                  </ngx-select>
+                </form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div id="table-orders">
+          <div class="row">
+            <div class="d-flex">
+              <div class="p-2">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="addOrders()">
+                  Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <ng-scrollbar track="all" style="min-height: 170px; border: none">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    (userRowSelect)="rowsSelected($event)"
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="paragraphs">
+                  </ng2-smart-table>
+                </div>
+              </ng-scrollbar>
+            </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tabs">
+      <div class="row pt-4">
+        <tabset class="md-tabs">
+          <tab heading="Ordenes Servicio" id="tab1">
+            <app-list-service-orders
+              [orders]="sendData"></app-list-service-orders>
+          </tab>
+          <tab heading="Deductivas">
+            <app-create-deductives></app-create-deductives>
+          </tab>
+          <tab heading="Datos Anexo">
+            <app-annex-data [dataAnnex]="dataAnnex"></app-annex-data>
+          </tab>
+          <tab heading="Detalles Almacén">
+            <app-warehouse-detail></app-warehouse-detail>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

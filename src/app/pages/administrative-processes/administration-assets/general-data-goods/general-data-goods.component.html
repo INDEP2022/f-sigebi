@@ -1,0 +1,68 @@
+<form class="form-material" [formGroup]="generalDataForm">
+  <div class="form-group row">
+    <form-field
+      [control]="generalDataForm.get('descripcion')"
+      label="Descripcion">
+      <textarea
+        class="form-control"
+        type="text"
+        formControlName="descripcion"></textarea>
+    </form-field>
+  </div>
+  <div class="form-group row">
+    <div class="col-md-6">
+      <form-field [control]="generalDataForm.get('cantidad')" label="Cantidad">
+        <input class="form-control" type="text" formControlName="cantidad" />
+      </form-field>
+    </div>
+    <div class="col-md-6">
+      <form-field
+        [control]="generalDataForm.get('fechaFe')"
+        label="Fecha Fe Judicial">
+        <input
+          class="form-control"
+          type="text"
+          formControlName="fechaFe"
+          bsDatepicker />
+      </form-field>
+    </div>
+  </div>
+  <div class="form-group row">
+    <form-field
+      [control]="generalDataForm.get('observacion')"
+      label="Observaciones">
+      <textarea
+        class="form-control"
+        type="text"
+        formControlName="observacion"></textarea>
+    </form-field>
+  </div>
+</form>
+<ng-scrollbar style="height: calc(100vh - 700px)">
+  <div class="css-table">
+    <div class="css-table-header">
+      <div>Atributo</div>
+      <div>Valores</div>
+    </div>
+
+    <div class="css-table-body">
+      <div class="css-table-row" *ngFor="let item of list">
+        <div style="text-align: end; font-weight: bold">
+          {{ item.atributo }}
+        </div>
+        <div>
+          <input
+            type="text"
+            class="form-control"
+            [value]="item.valor"
+            style="background-color: #afeeee" />
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-scrollbar>
+<div class="text-center">
+  <span class="mr-5"
+    ><i class="fa fa-square" style="color: #afeeee"></i> Actualizable</span
+  >
+</div>

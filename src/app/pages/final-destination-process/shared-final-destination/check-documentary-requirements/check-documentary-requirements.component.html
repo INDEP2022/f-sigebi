@@ -1,0 +1,189 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Comprobaci&oacute;n de Documentos para {{ title }}</h5>
+  </div>
+
+  <div body>
+    <div class="mt-5">
+      <form
+        class="form-material form-horizontal"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+        <div class="row mt-5 align-items-center">
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('goodNumb')"
+                label="No. Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="goodNumb" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('causePenal')"
+                label="Causa Penal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="causePenal" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('preliminaryAscertainment')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="preliminaryAscertainment" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('destructDate')"
+                label="Fecha de Destrucci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="destructDate" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5 align-items-center">
+          <div class="col-12 col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('goodNumb')" label="No. Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="goodNumb" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mt-3 mt-md-0">
+            <div class="pl-4 pr-4">
+              <form-field
+                [control]="form.get('goodDescrip')"
+                label="Descripci&oacute;n">
+                <textarea
+                  class="form-control"
+                  formControlName="goodDescrip"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-12 col-md-6 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('status')"
+                label="Estatus del Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="status" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('statusDescrip')"
+                label="Descrip. Estatus Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="statusDescrip" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3 align-items-center">
+          <div class="col-12 col-md-6 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('rulingStatus')"
+                label="Estatus Dictaminaci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="rulingStatus" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mt-3 mt-md-0">
+            <div class="pl-4 pr-4">
+              <form-field
+                [control]="form.get('observations')"
+                label="Observaciones">
+                <textarea
+                  class="form-control"
+                  formControlName="observations"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="row mt-3">
+        <div class="col-6 text-center text-md-right">
+          <button class="btn btn-secondary btn-sm active">Aprobar</button>
+        </div>
+        <div class="col-6 text-center text-md-right mt-0 mt-md-3">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="openModal(3)">
+            Parcializar
+          </button>
+        </div>
+      </div>
+
+      <app-divider></app-divider>
+      <div class="d-flex justify-content-end mt-5">
+        <app-columns-select
+          [(settings)]="settings"
+          class="row justify-content-end">
+        </app-columns-select>
+      </div>
+      <div class="row mt-5 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12 col-md-6 text-center text-md-right">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="openModal(2)">
+            Requisitos
+          </button>
+        </div>
+        <div
+          class="col-12 col-md-6 text-center text-md-right mt-3 mt-md-0"
+          (click)="openModal(1)">
+          <button class="btn btn-secondary btn-sm active">
+            Seleccionar Documentos
+          </button>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

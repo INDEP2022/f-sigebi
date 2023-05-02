@@ -1,0 +1,88 @@
+<div body>
+  <form [formGroup]="form" class="form-material">
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form-field [control]="form.get('order')" label="Mandato">
+          <input type="text" class="form-control" formControlName="order" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('amount')" label="importe">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="amount"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('iva')" label="IVA">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="iva"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('total')" label="Total">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="total"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6 d-flex justify-content-end">TOTALES:</div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('importe')" label="importe">
+          <input
+            [disabled]="true"
+            type="number"
+            class="form-control"
+            formControlName="importe"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('ivaa')" label="ivaa">
+          <input
+            [disabled]="true"
+            type="number"
+            class="form-control"
+            formControlName="ivaa"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('totals')" label="Total">
+          <input
+            [disabled]="true"
+            type="number"
+            class="form-control"
+            formControlName="totals"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+  <div class="row mt-4 float-right">
+    <div class="">
+      <button type="submit" class="btn btn-primary btn-sm active mx-4">
+        SOLICITUD DE PAGO
+      </button>
+      <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+        VER REPORTE
+      </button>
+    </div>
+  </div>
+</div>

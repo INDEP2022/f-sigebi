@@ -1,0 +1,97 @@
+<div class="row">
+  <form-field
+    *ngIf="goodTypeShow"
+    [control]="form.get(typeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getTypes($event)"
+      [data]="types"
+      [form]="form"
+      value="id"
+      label="Tipo de Bien"
+      [control]="typeField"
+      (change)="onTypesChange($event)"
+      [labelTemplate]="typeLabel"
+      [optionTemplate]="typeOption">
+    </ngx-select>
+  </form-field>
+  <ng-template #typeLabel let-item="item"
+    >{{ item.id }} - {{ item.nameGoodType }}</ng-template
+  >
+  <ng-template #typeOption let-item="item"
+    >{{ item.id }} - {{ item.nameGoodType }}</ng-template
+  >
+
+  <form-field
+    *ngIf="subTypeShow"
+    [control]="form.get(subtypeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getSubtypes($event)"
+      [data]="subtypes"
+      [form]="form"
+      value="id"
+      label="Subtipo"
+      bindLabel="nameSubtypeGood"
+      [control]="subtypeField"
+      (change)="onSubtypesChange($event)"
+      [labelTemplate]="subtypeLabel"
+      [optionTemplate]="subtypeOption">
+    </ngx-select>
+  </form-field>
+  <ng-template #subtypeLabel let-item="item"
+    >{{ item.id }} - {{ item.nameSubtypeGood }}</ng-template
+  >
+  <ng-template #subtypeOption let-item="item"
+    >{{ item.id }} - {{ item.nameSubtypeGood }}</ng-template
+  >
+
+  <form-field
+    *ngIf="ssubTypeShow"
+    [control]="form.get(ssubtypeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getSsubtypes($event)"
+      [data]="ssubtypes"
+      [form]="form"
+      value="id"
+      label="Ssubtipo"
+      bindLabel="description"
+      [control]="ssubtypeField"
+      (change)="onSsubtypesChange($event)"
+      [labelTemplate]="ssubtypeLabel"
+      [optionTemplate]="ssubtypeOption">
+    </ngx-select>
+  </form-field>
+
+  <ng-template #ssubtypeLabel let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
+  <ng-template #ssubtypeOption let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
+  <form-field
+    *ngIf="sssubTypeShow"
+    [control]="form.get(sssubtypeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getSssubtypes($event)"
+      [data]="sssubtypes"
+      [form]="form"
+      value="id"
+      label="Sssubtipo"
+      bindLabel="description"
+      [control]="sssubtypeField"
+      (change)="onSssubtypesChange($event)"
+      [labelTemplate]="sssubtypeLabel"
+      [optionTemplate]="sssubtypeOption">
+    </ngx-select>
+  </form-field>
+
+  <ng-template #sssubtypeLabel let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
+  <ng-template #sssubtypeOption let-item="item"
+    >{{ item.id }} - {{ item.description }}</ng-template
+  >
+</div>

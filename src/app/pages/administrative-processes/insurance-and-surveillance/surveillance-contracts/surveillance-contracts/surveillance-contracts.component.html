@@ -1,0 +1,108 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CONTRATOS DE VIGILANCIA</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('noContract')" label="No. Contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noContract"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('startDate')" label="Fecha page">
+            <input
+              type="text"
+              formControlName="startDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('finishedDate')"
+            label="Fecha de Termino">
+            <input
+              type="text"
+              formControlName="finishedDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('provider')" label="Proovedor">
+            <input
+              type="text"
+              formControlName="provider"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('amountMin')" label="Monto Minimo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amountMin"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('amountMax')" label="Monto Máximo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amountMax"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('licitacion')" label="No Licitación">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="licitacion"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciónes">
+            <textarea
+              type="text"
+              rows="2"
+              formControlName="observations"
+              class="form-control"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4 float-right">
+        <div class="">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            ENVIAR
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

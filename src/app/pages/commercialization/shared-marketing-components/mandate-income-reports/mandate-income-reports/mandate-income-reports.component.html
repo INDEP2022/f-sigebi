@@ -1,0 +1,173 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de Ingresos por Mandato</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Fecha 1" [control]="form.get('startDate')">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Fecha 2" [control]="form.get('endDate')">
+            <input
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
+          <form-field label="Lote" [control]="form.get('batch')">
+            <input class="form-control" formControlName="batch" type="number" />
+          </form-field>
+        </div>
+        <!--Events Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-events-shared [form]="form"></app-events-shared>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Employees Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'capturingUser'"
+            [label]="'Usuario que Captura'"></app-user-shared>
+        </div>
+        <!--Employees Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'authorizingUser'"
+            [label]="'Usuario que Autoriza'"></app-user-shared>
+        </div>
+        <!--Employees Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'requestingUser'"
+            [label]="'Usuario que Solicita'"></app-user-shared>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3 justify-content-end">
+        <div
+          class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+          <button type="button" class="btn btn-primary btn-sm active w-100">
+            Consultar
+          </button>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
+          <label for=""
+            >Si desea una orden de ingreso en especial índiquela</label
+          >
+          <div class="row mb-3 mt-3">
+            <div class="col-6 mb-3 mb-3 mt-3">
+              <form-field label="O.I" [control]="form.get('incomeOrder')">
+                <input
+                  class="form-control"
+                  formControlName="incomeOrder"
+                  type="number" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
+          <label for="">&Uacute;ltimo reporte: </label>
+          <div class="row mb-3 mt-3">
+            <div class="col-6 mb-3 mb-3 mt-3">
+              <form-field
+                label="No. Reporte a Reimprimir"
+                [control]="form.get('incomeOrder')">
+                <input
+                  class="form-control"
+                  formControlName="reportNumber"
+                  type="number" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+          <button type="button" class="btn btn-primary btn-sm active w-100">
+            Imprimir
+          </button>
+        </div>
+      </div>
+    </form>
+    <!--Income Orders-->
+    <div class="row justify-content-end mr-1">
+      <div class="ch-content">
+        <h5 class="title">Órdenes de Ingreso a Reportar a Tesorería</h5>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mr-1">
+      <div class="col-2">
+        <button
+          type="button"
+          class="btn btn-success btn-sm active w-100"
+          (click)="exportAsXLSX('O.I a Reportar a Tesorería')">
+          Generar XML
+        </button>
+      </div>
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings">
+      </app-columns-select>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="onUserRowSelect($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!--Affected Income Orders-->
+    <div class="row justify-content-end mr-1 mb-3 mt-3">
+      <div class="ch-content">
+        <h5 class="title">Órdenes de Ingreso Afectadas</h5>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mr-1">
+      <div class="col-2">
+        <button
+          type="button"
+          class="btn btn-success btn-sm active w-100"
+          (click)="exportAsXLSX('O.I Afectadas')">
+          Generar XML
+        </button>
+      </div>
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings">
+      </app-columns-select>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="onUserRowSelect($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

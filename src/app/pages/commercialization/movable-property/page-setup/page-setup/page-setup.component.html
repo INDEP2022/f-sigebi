@@ -1,0 +1,37 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        CONFIGURACI&Oacute;N DE CAMPOS A VISUALIZAR EN LA WEB DE VTAS DIRECTAS
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">
+        Tablas y Columnas para visualizar en la p&aacute;gina web
+      </h5>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active ml-3"
+        (click)="openForm()">
+        Nuevo
+      </button>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div [ngClass]="{ 'table-loading': loading }">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="confirmDelete($event.data)"></ng2-smart-table>
+        </div>
+
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

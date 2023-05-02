@@ -1,0 +1,57 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Siniestros Seguimiento</h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <div>
+          <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="claimsFollowUpForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-2"></div>
+        <div class="col-md-3">
+          <form-field
+            label="Numero de Bien"
+            [control]="claimsFollowUpForm.get('numberGood')">
+            <input
+              class="form-control"
+              formControlName="numberGood"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-3"></div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary active">
+          Validar el Bien
+        </button>
+      </div>
+    </div>
+    <br />
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="lawyers"
+            (edit)="edit($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>

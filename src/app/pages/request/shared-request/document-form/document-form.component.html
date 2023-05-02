@@ -1,0 +1,298 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nuevo documento</h5>
+  </div>
+  <div body>
+    <form [formGroup]="documentForm" class="form-material">
+      <div class="row">
+        <!-- <div class="col-md-6">
+          <form-field [control]="documentForm.get('xtipoDocumento')">
+            <ngx-select
+              [form]="documentForm"
+              control="xtipoDocumento"
+              [data]="typesDocuments"
+              value="ddocType"
+              bindLabel="ddescription"
+              label="Tipo de documento"
+              (fetchItems)="getDocType($event)">
+            </ngx-select>
+          </form-field>
+        </div> -->
+        <div class="col-md-6">
+          <div
+            [formGroup]="documentForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="xtipoDocumento"
+              [clearable]="false"
+              [items]="typesDocuments"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="ddescription"
+              bindValue="ddocType">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <div [title]="item.ddescription">
+                  {{ item.ddescription }}
+                </div>
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label"
+              >Tipo de documento <span style="color: #ad4766">*</span></label
+            >
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- documentos tipo solicitud -->
+          <form-field
+            [control]="documentForm.get('document')"
+            label="Documento"
+            *ngIf="typeDoc !== 'doc-bien'">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="document"
+              (change)="uploadFile($event)" />
+          </form-field>
+          <!-- documentos typo bien -->
+          <form-field
+            [control]="documentForm.get('document')"
+            label="Documento"
+            *ngIf="typeDoc === 'doc-bien'">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="document"
+              (change)="uploadFile($event)"
+              accept="application/pdf" />
+          </form-field>
+          <p style="color: blue">Seleccione un archivo no mayor a 10 Mb.</p>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-8">
+          <form-field
+            [control]="documentForm.get('ddocTitle')"
+            label="T&iacute;tulo del documento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ddocTitle" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-expediente' || typeDoc === 'doc-buscar'">
+          <form-field
+            [control]="documentForm.get('xidExpediente')"
+            label="No&#46; Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xidExpediente"
+              [readonly]="isreadOnly" />
+          </form-field>
+        </div>
+
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-solicitud' || typeDoc === 'doc-buscar'">
+          <form-field
+            [control]="documentForm.get('xidSolicitud')"
+            label="No&#46; Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xidSolicitud"
+              [readonly]="isreadOnly" />
+          </form-field>
+        </div>
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-bien' || typeDoc === 'doc-buscar'">
+          <form-field
+            [control]="documentForm.get('xidBien')"
+            label="No&#46; Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xidBien"
+              [readonly]="isreadOnly" />
+          </form-field>
+        </div>
+        <!-- <div class="col-md-6">
+          <form-field
+            [control]="documentForm.get('numberGestion')"
+            label="No&#46; de gesti&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGestion"
+              readonly />
+          </form-field>
+        </div> -->
+
+        <!--  -->
+
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xresponsable')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xresponsable" />
+          </form-field>
+        </div>
+
+        <div
+          class="space col-md-6"
+          *ngIf="typeDoc === 'doc-bien' || typeDoc === 'doc-buscar'">
+          <form-field
+            [control]="documentForm.get('xidSIAB')"
+            label="No&#46; SIAB">
+            <input type="text" class="form-control" formControlName="xidSIAB" />
+          </form-field>
+        </div>
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xdelegacionRegional')"
+            label="Delegaci&oacute;n regional">
+            <input
+              type="text"
+              class="form-control"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="regionalDelegacionName"
+              readonly />
+          </form-field>
+        </div>
+
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xcontribuyente')"
+            label="Contribuyente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xcontribuyente" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="documentForm.get('xestado')">
+            <ngx-select
+              [form]="documentForm"
+              control="xestado"
+              [data]="states"
+              value="id"
+              bindLabel="descCondition"
+              label="Estado"
+              (fetchItems)="getState($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xnoOficio')"
+            label="No&#46; oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xnoOficio" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="documentForm.get('xidTransferente')">
+            <ngx-select
+              [form]="documentForm"
+              control="xidTransferente"
+              [data]="transferents"
+              value="id"
+              bindLabel="nameTransferent"
+              label="Transferente"
+              (fetchItems)="getTransferents($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <!-- <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('numberProgramming')"
+            label="No&#46; programación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberProgramming"
+              readonly />
+          </form-field>
+        </div> -->
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xremitente')"
+            label="Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xremitente" />
+          </form-field>
+        </div>
+
+        <!-- <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('programmingFolio')"
+            label="Folio programaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="programmingFolio"
+              readonly />
+          </form-field>
+        </div> -->
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xcargoRemitente')"
+            label="Cargo remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="xcargoRemitente" />
+          </form-field>
+        </div>
+
+        <div class="space col-md-6">
+          <form-field
+            [control]="documentForm.get('xcomments')"
+            label="Comentarios">
+            <textarea
+              class="form-control"
+              formControlName="xcomments"
+              maxlength="30"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!documentForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

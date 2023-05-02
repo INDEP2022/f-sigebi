@@ -1,0 +1,137 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE BIENES RECIBIDOS EN ADMINISTRACI&oacute;N</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              [showTooltip]="true"
+              (change)="onDelegationsChange($event)"
+              [labelTemplate]="delegationLabel"
+              [optionTemplate]="delegationOption">
+            </ngx-select>
+            <ng-template #delegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [showTooltip]="true"
+              [control]="'subdelegation'"
+              (change)="onSubDelegationsChange($event)"
+              [labelTemplate]="subdelegationLabel"
+              [optionTemplate]="subdelegationOption">
+            </ngx-select>
+            <ng-template #subdelegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #subdelegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('status')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getStatus($event)"
+              [data]="status"
+              value="otKey"
+              bindLabel="otKey"
+              label="Estatus"
+              [control]="'status'"
+              [showTooltip]="true"
+              (change)="onValuesChange($event)"
+              [labelTemplate]="statusLabel"
+              [optionTemplate]="statusOption">
+            </ngx-select>
+
+            <ng-template #statusLabel let-item="item">
+              {{ item.otKey }} - {{ item.value }}
+            </ng-template>
+            <ng-template #statusOption let-item="item">
+              <div [title]="item.otKey + '-' + item.value">
+                {{ item.otKey }} - {{ item.value }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <!--<div class="col-md-2">
+          <form-field
+            [control]="form.get('statusDescription')"
+            label="Descripcipon">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusDescription"
+              readonly />
+          </form-field>
+        </div>-->
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

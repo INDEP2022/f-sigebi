@@ -1,0 +1,61 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Modificar Fechas</h5>
+  </div>
+  <div body>
+    <h5 class="title">Periodo de la visita ocular</h5>
+    <form class="form-material mb-3 mt-5" [formGroup]="form">
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <div class="mb-3 pr-4">
+            <form-field
+              [control]="form.get('initDate')"
+              label="&#42;Fecha Hora page">
+              <input
+                type="text"
+                formControlName="initDate"
+                class="form-control"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
+                }"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3 pl-4">
+            <form-field
+              [control]="form.get('endDate')"
+              label="&#42;Fecha Hora Fin">
+              <input
+                type="text"
+                formControlName="endDate"
+                class="form-control"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
+                }"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-3 text-center">
+        <button
+          class="btn-primary btn btn-sm active"
+          [disabled]="form.invalid"
+          (click)="accept()">
+          Aceptar
+        </button>
+      </div>
+      <div class="col-md-3 text-center">
+        <button class="btn-danger btn btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

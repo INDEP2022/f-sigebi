@@ -1,0 +1,59 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div style="text-align: center" *ngIf="!onlyOrigin">
+        <button
+          class="btn btn-primary btn-sm active"
+          style="margin-right: 2px"
+          (click)="newAddress()">
+          <i class="bx bx-home"></i> Nuevo Domicilio
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [filterParams]="params"></search-bar>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            (rowSelect)="selectRow($event)"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="paragraphs">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [filterParams]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <!-- <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="confirm()">
+          Aceptar
+        </button>
+      </div> -->
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="selectAddress()">
+          Seleccionar
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

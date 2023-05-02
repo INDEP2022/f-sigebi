@@ -1,0 +1,71 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Carga de localizadores</h5>
+    </div>
+  </div>
+
+  <div body>
+    <alert type="success">
+      <h4 class="alert-heading text-left">Estimado usuario:</h4>
+      <p class="text-left">
+        1. Para poder subir al sistema el archivo de localizadores, primero
+        debera seleccionar una Delegación Regional.
+      </p>
+      <p class="text-left">
+        2. Se mostrará un control, que le permitirá seleccionar un archivo de su
+        computadora con extensión <b>.xlsx o .xls.</b>
+      </p>
+      <p class="text-left">
+        3. Para confirmar y procesar la información dar clic en el botón
+        <b>"Enviar localizadores."</b>
+      </p>
+    </alert>
+
+    <div class="row">
+      <form [formGroup]="form" class="form-material">
+        <div class="pt-5">
+          <form-field [control]="form.get('regionalDelegation')">
+            <ngx-select
+              [form]="form"
+              control="regionalDelegation"
+              [data]="regionalDelegations"
+              value="id"
+              bindLabel="name"
+              placeholder="Delegación Regional"
+              label="Delegación Regional"
+              (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="pt-4">
+          <label class="text"
+            >Paso 2.- Seleccione el archivo con la extensión .xlsx o .xls</label
+          >
+        </div>
+        <div class="pt-4">
+          <form-field [control]="form.get('file')">
+            <input type="file" class="form-control" formControlName="file" />
+          </form-field>
+        </div>
+
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <confirm-button
+              [disabled]="!form.valid"
+              [loading]="loading"
+              (confirm)="confirm()"></confirm-button>
+          </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active"
+              (click)="cancel()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

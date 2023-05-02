@@ -1,0 +1,85 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevos' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (submit)="save()">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field label="Tabla" [control]="form.get('idTable')">
+            <input type="text" class="form-control" formControlName="idTable" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Alias" [control]="form.get('aliastab')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="aliastab" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Orden Tabla" [control]="form.get('ordentab')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ordentab" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field label="Columna" [control]="form.get('idColumn')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idColumn" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Alias" [control]="form.get('aliascol')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="aliascol" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Orden Columna" [control]="form.get('ordencol')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ordencol" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-2">
+        <div class="col-md-3">
+          <small for="" class="">Visualizar</small>
+          <div class="d-flex justify-content-between">
+            <form-radio label="Si">
+              <input type="radio" formControlName="visualiza" value="1" />
+            </form-radio>
+            <form-radio label="No">
+              <input type="radio" formControlName="visualiza" value="0" />
+            </form-radio>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button (confirm)="save()" [loading]="loading"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

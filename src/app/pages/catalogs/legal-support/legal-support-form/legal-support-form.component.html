@@ -1,0 +1,48 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="legalSupportForm" class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="legalSupportForm.get('id')"
+            label="Identificador">
+            <input
+              class="form-control"
+              formControlName="id"
+              placeholder="Identificador" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="legalSupportForm.get('support')"
+            label="Sustento">
+            <textarea
+              class="form-control"
+              formControlName="support"
+              placeholder="Sustento">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="legalSupportForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

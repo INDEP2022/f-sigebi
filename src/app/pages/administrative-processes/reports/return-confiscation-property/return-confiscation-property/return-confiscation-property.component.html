@@ -1,0 +1,92 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte Devoluciones y Decomisos de Bienes</h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="returnConfiscationForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="returnConfiscationForm.get('delegation')"
+            label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="returnConfiscationForm.get('subDelegation')"
+            label="Sub Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="returnConfiscationForm.get('ofTheGood')"
+            label="Del Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ofTheGood" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="returnConfiscationForm.get('toGood')"
+            label="Al Bien">
+            <input type="text" class="form-control" formControlName="toGood" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="returnConfiscationForm.get('receiptDateOf')"
+            label="Fecha Recepción del">
+            <input
+              type="text"
+              formControlName="receiptDateOf"
+              placeholder="Fecha Recepción del"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="returnConfiscationForm.get('receptionDateTo')"
+            label="Fecha Recepción al">
+            <input
+              type="text"
+              formControlName="receptionDateTo"
+              placeholder="Fecha Recepción al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field label="Tipo Movimiento">
+            <select class="form-control" formControlName="movementType">
+              <option [value]="null">Seleccione un tipo</option>
+              <option [value]="'1'">VALOR 1</option>
+              <option [value]="'2'">VALOR 2</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm active" type="submit">
+        Reporte
+      </button>
+    </form>
+  </div>
+</app-card>

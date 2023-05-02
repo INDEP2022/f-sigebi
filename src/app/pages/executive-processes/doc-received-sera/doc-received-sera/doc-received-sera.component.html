@@ -1,0 +1,100 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Documentaci&oacute;n recibida en SERA</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="onDelegationsChange($event)"
+              [showTooltip]="true"
+              [labelTemplate]="delegationLabel"
+              [optionTemplate]="delegationOption">
+            </ngx-select>
+            <ng-template #delegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="onSubDelegationsChange($event)"
+              [showTooltip]="true"
+              [labelTemplate]="subdelegationLabel"
+              [optionTemplate]="subdelegationOption">
+            </ngx-select>
+            <ng-template #subdelegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #subdelegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="submit"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,127 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">gesti&oacute;n de firmas electr&oacute;nicas</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="md-tabs mt-n3">
+        <tabset #signatureTabs>
+          <tab heading="Pendientes" id="pendingTab">
+            <div
+              class="row rounded-3 bk-danger py-2"
+              *ngIf="pendingColumns.length > 0 && alertMsg"
+              @OnInOut>
+              <div class="col-11">
+                <div class="d-flex justify-content-center text-light ms-3">
+                  <i class="bx bx-error text-light float-icon me-2"></i>Tiene
+                  {{ pendingColumns.length }} documentos pendientes de firmar.
+                </div>
+              </div>
+              <div class="col-1">
+                <a
+                  class="dismiss text-light font-size-16"
+                  (click)="alertMsg = !alertMsg"
+                  >x</a
+                >
+              </div>
+            </div>
+            <div class="row mt-5">
+              <div class="col-sm-12 col-md-12 col-lg-6">
+                <div class="form-material">
+                  <search-bar [params]="pendingParams"></search-bar>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                <div class="d-flex flex-row-reverse my-3">
+                  <div>
+                    <button
+                      class="btn btn-sm btn-info active me-2 font-size-14"
+                      (click)="refresh()">
+                      <i class="bx bx-revision text-light float-icon"></i>
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      class="btn btn-sm btn-primary active me-2 font-size-14"
+                      (click)="openSignWindow()"
+                      [disabled]="pendingRows.length == 0">
+                      <i class="bx bx-pen text-light float-icon"></i>
+                      Firmar Documento
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      class="btn btn-sm btn-success active me-2 font-size-14"
+                      (click)="viewFile()"
+                      [disabled]="pendingRows.length == 0">
+                      <i class="bx bx-show-alt text-light float-icon"></i>
+                      Ver Documento
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="rfcTable"
+                  [settings]="pendingSettings"
+                  [source]="pendingColumns"
+                  (userRowSelect)="selectPending($event.selected)">
+                </ng2-smart-table>
+              </div>
+            </div>
+            <app-pagination
+              [params]="pendingParams"
+              [totalItems]="pendingTotalItems">
+            </app-pagination>
+          </tab>
+          <tab heading="Histórico" id="historyTab">
+            <div class="row">
+              <div class="col-sm-12 col-md-6">
+                <div class="form-material">
+                  <search-bar [params]="historyParams"></search-bar>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                <div class="d-flex flex-row-reverse my-3">
+                  <div class="">
+                    <app-columns-select
+                      [(settings)]="historySettings"></app-columns-select>
+                  </div>
+                  <div>
+                    <button
+                      class="btn btn-sm btn-primary active me-2 font-size-14"
+                      (click)="downloadFile()"
+                      [disabled]="historyRows.length == 0">
+                      <i class="bx bx-download text-light float-icon"></i>
+                      Descargar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-scrollbar
+              [track]="'horizontal'"
+              [autoHeightDisabled]="false"
+              class="table-scrollbar">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="rfcTable"
+                  [settings]="historySettings"
+                  [source]="historyColumns"
+                  (userRowSelect)="selectHistory($event.selected)">
+                </ng2-smart-table>
+              </div>
+              <div class="table-padding"></div>
+            </ng-scrollbar>
+            <app-pagination
+              [params]="historyParams"
+              [totalItems]="historyTotalItems">
+            </app-pagination>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

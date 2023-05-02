@@ -1,0 +1,435 @@
+<!-- FIXME:  -->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DICTAMINACIONES JUR&Iacute;DICAS - G</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="expedientesForm" class="container-fluid form-material">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <h6>Expedientes</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-2 p-2">
+              <form-field
+                [control]="expedientesForm.get('noExpediente')"
+                label="No Expediente">
+                <input
+                  class="form-control"
+                  (blur)="onLoadGoodList()"
+                  formControlName="noExpediente" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="expedientesForm.get('tipoDictaminacion')"
+                label="Tipo de dictaminaci&oacute;n">
+                <select
+                  class="form-control"
+                  formControlName="tipoDictaminacion">
+                  <option [value]="null" disabled>Seleccione un valor</option>
+                  <option [value]="null">Destrucción</option>
+                  <option [value]="null">Donación</option>
+                  <option [value]="null">Enajenación</option>
+                  <option [value]="null">Transferente</option>
+                  <option [value]="null">Procedencia</option>
+                  <option [value]="null">Devolución</option>
+                  <option [value]="null">Abandono</option>
+                  <option [value]="null">Resarcimiento</option>
+                </select>
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 p-2">
+              <form-field
+                [control]="expedientesForm.get('averiguacionPrevia')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  class="form-control"
+                  formControlName="averiguacionPrevia" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 p-2">
+              <form-field
+                [control]="expedientesForm.get('causaPenal')"
+                label="Causa Penal">
+                <input class="form-control" formControlName="causaPenal" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 p-2">
+              <form-check label="Delito" for="delito">
+                <input id="delito" type="checkbox" formControlName="delito" />
+              </form-check>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="expedientesForm.get('observaciones')"
+                label="Observaciones">
+                <textarea
+                  class="form-control"
+                  formControlName="observaciones"></textarea>
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <div class="col-md-12 text-center text-danger">
+                <b>Observaciones</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form
+      [formGroup]="dictaminacionesForm"
+      class="container-fluid form-material">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <h6>Dictaminaciones</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-3 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('etiqueta')"
+                label="Etiqueta">
+                <input class="form-control" formControlName="etiqueta" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaResolucion')"
+                label="Fecha Resoluci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="fechaResolucion"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaNotificacion')"
+                label="Fecha Notificaci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="fechaNotificacion"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaNotificacionAseg')"
+                label="Fecha Notificaci&oacute;n Aseg">
+                <input
+                  class="form-control"
+                  formControlName="fechaNotificacionAseg"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('cveOficio')"
+                label="Clave Oficio">
+                <input class="form-control" formControlName="cveOficio" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('estatus')"
+                label="Estatus">
+                <input class="form-control" formControlName="estatus" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 p-2">
+              <div class="col-md-12 text-center text-danger">
+                <b>Estatus</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form [formGroup]="subtipoForm" class="container-fluid form-material">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <div class="row">
+            <div class="col-md-4">
+              <form-field
+                [control]="subtipoForm.get('tipoDictaminacion')"
+                label="Ident&#46;">
+                <select
+                  class="form-control"
+                  formControlName="tipoDictaminacion">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="'Alta'">Alta</option>
+                  <option [value]="'Normal'">Normal</option>
+                </select>
+              </form-field>
+            </div>
+            <!-- <div class="col-md-8">
+              <form-field
+                [control]="subtipoForm.get('noExpediente')"
+                label="Subtipo &#45; Ssubtipo &#45; Sssubtipo">
+                <select class="form-control" formControlName="noExpediente">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="'Alta'">Alta</option>
+                  <option [value]="'Normal'">Normal</option>
+                </select>
+              </form-field>
+            </div> -->
+            <div class="mb-5 b-block w-100"></div>
+            <!-- <div class="col-md-3">
+              <form-field [control]="subtipoForm.get('type')">
+                <ngx-select
+                  class="form-control"
+                  [searchOnInit]="true"
+                  (fetchItems)="getTypes($event)"
+                  [data]="types"
+                  [form]="subtipoForm"
+                  value="id"
+                  label="Tipo de bien"
+                  bindLabel="nameGoodType"
+                  control="type"
+                  (change)="onTypesChange($event)">
+                </ngx-select>
+              </form-field>
+            </div> -->
+
+            <!--  -->
+            <div class="col-md-4">
+              <form-field [control]="subtipoForm.get('subtype')">
+                <ngx-select
+                  class="form-control"
+                  [searchOnInit]="true"
+                  (fetchItems)="getSubtypes($event)"
+                  [data]="subtypes"
+                  [form]="subtipoForm"
+                  value="id"
+                  label="Subtipo"
+                  bindLabel="nameGoodType"
+                  control="subtype"
+                  (change)="onSubtypesChange($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+            <!--  -->
+
+            <div class="col-md-4">
+              <form-field [control]="subtipoForm.get('ssubtype')">
+                <ngx-select
+                  [searchOnInit]="true"
+                  (fetchItems)="getSsubtypes($event)"
+                  [data]="ssubtypes"
+                  [form]="subtipoForm"
+                  value="id"
+                  label="Ssubtipo"
+                  bindLabel="description"
+                  control="ssubtype"
+                  (change)="onSsubtypesChange($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+
+            <div class="col-md-4">
+              <form-field [control]="subtipoForm.get('sssubtype')">
+                <ngx-select
+                  [searchOnInit]="true"
+                  (fetchItems)="getSssubtypes($event)"
+                  [data]="sssubtypes"
+                  [form]="subtipoForm"
+                  value="id"
+                  label="Sssubtipo"
+                  bindLabel="description"
+                  control="sssubtype"
+                  (change)="onSssubtypesChange($event)"
+                  (change)="onValuesChange($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+
+            <!-- <div class="col-md-3">
+              <form-field [control]="subtipoForm.get('subtype')">
+                <ngx-select
+                  class="form-control"
+                  [searchOnInit]="true"
+                  (fetchItems)="getSubtypes($event)"
+                  [data]="subtypes"
+                  [form]="subtipoForm"
+                  value="id"
+                  bindLabel="nameSubtypeGood"
+                  control="subtype"
+                  (change)="onSubtypesChange($event)">
+                </ngx-select>
+              </form-field>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row pt-2">
+      <div class="col-md-12 mt-4 mb-4">
+        <hr class="row" />
+        <h5 class="title">BIENES</h5>
+        <br />
+        <ng2-smart-table
+          (rowSelect)="onSelectedRow($event)"
+          [attr.class]="'table-bordered'"
+          [settings]="settings1"
+          [source]="goods"></ng2-smart-table>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-md-12 text-center mt-4 mb-4">
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          type="button"
+          (click)="addSelect()">
+          <!-- Mover uno -->
+          <i class="bx bx-chevron-down bx-md"></i>
+        </button>
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          type="button"
+          (click)="addAll()">
+          <!-- Mover todos -->
+          <i class="bx bx-chevrons-down bx-md"></i>
+        </button>
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          type="button"
+          (click)="removeAll()">
+          <!-- Quitar todos -->
+          <i class="bx bx-chevrons-up bx-md"></i>
+        </button>
+        <button
+          class="btn btn-secondary btn-sm active m-3 p-3 pointer"
+          type="button"
+          (click)="removeSelect()">
+          <!-- Quitar uno -->
+          <i class="bx bx-chevron-up bx-md"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-md-12 mt-4 mb-4">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings2"
+          (rowSelect)="rowSelected($event)"
+          [source]="goodsValid"></ng2-smart-table>
+      </div>
+    </div>
+
+    <div class="row pt-2">
+      <div class="col-md-12">
+        <hr class="row" />
+      </div>
+      <div class="col-md-12">
+        <h5 class="title">DOCUMENTOS</h5>
+        <div class="row">
+          <div class="col-md-10">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings3"
+              [source]="documents"></ng2-smart-table>
+          </div>
+          <div class="col-md-2">
+            <p class="text-info h5">No&#46; bien</p>
+            <p class="text-info h5">{{ idGoodSelected }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <form
+      [formGroup]="gestionDestinoForm"
+      class="container-fluid form-material">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="gestionDestinoForm.get('estatus')"
+            label="Estatus">
+            <input class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+        <button
+          class="btn btn-primary btn-sm active m-3 text-wrap"
+          (click)="btnAprobar()"
+          [routerLink]="rutaAprobado">
+          Aprobar
+        </button>
+        <button
+          class="btn btn-danger btn-sm active m-3 text-wrap"
+          (click)="btnRechazar()">
+          Rechazar
+        </button>
+      </div>
+      <div class="col-sm-12 col-12 col-md-8 p-2 text-center">
+        <button
+          class="btn btn-info btn-sm active m-3 text-wrap"
+          (click)="btnOficioSubstanciacion()">
+          Oficio Substanciaci&oacute;n
+        </button>
+        <button
+          class="btn btn-info btn-sm active m-3 text-wrap"
+          (click)="btnOficioRelacionado()">
+          Oficio Relacionado
+        </button>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <button
+          class="btn btn-info btn-sm active m-3 text-wrap"
+          (click)="btnDocumentos()">
+          Documentos
+        </button>
+        <button
+          class="btn btn-info btn-sm active m-3 text-wrap"
+          (click)="btnParcializar()">
+          Parcializar
+        </button>
+        <button
+          class="btn btn-danger btn-sm active m-3 text-wrap"
+          (click)="btnBorrarDictamen()">
+          Borrar Dictamen
+        </button>
+        <button
+          class="btn btn-primary btn-sm active m-3 text-wrap"
+          (click)="btnImprimeOficio()">
+          Imprime Oficio
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<app-card [header]="true" *ngIf="listadoDocumentos == true">
+  <div class="ch-content" header>
+    <h5 class="title">Fecha de Documentos Asociados al Tr&aacute;mite</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings4"
+          [source]="data4"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 text-right p-2">
+        <div class="form-group">
+          <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
+            Cerrar Ventana
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

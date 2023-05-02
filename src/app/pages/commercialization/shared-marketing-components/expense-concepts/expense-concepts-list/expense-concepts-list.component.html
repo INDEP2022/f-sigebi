@@ -1,0 +1,66 @@
+<!--Unreconciled Payments-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CATÁLOGO DE CONCEPTOS</h5>
+  </div>
+  <div body>
+    <div class="row mb-3 mt-3 justify-content-end">
+      <!--Actions-->
+      <div class="col-lg-3 col-md-3 col-sm-6 col-12 mb-3 mt-3">
+        <button class="btn btn btn-success active btn-sm w-100">
+          COPIAR PAR&Aacute;METROS
+        </button>
+      </div>
+    </div>
+    <!--Payment Concepts Table-->
+    <div class="ch-content">
+      <h5 class="title">Conceptos de Pago</h5>
+      <div class="row justify-content-end mr-1">
+        <div class="col-12">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings"
+            class="row justify-content-end"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!--Params Table-->
+    <div class="ch-content">
+      <h5 class="title">Parámetros del Concepto</h5>
+      <div class="row justify-content-end mr-1">
+        <div class="col-12">
+          <app-columns-select
+            (settingsChange)="settingsChange2($event)"
+            [settings]="settings2"
+            class="row justify-content-end"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data2">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

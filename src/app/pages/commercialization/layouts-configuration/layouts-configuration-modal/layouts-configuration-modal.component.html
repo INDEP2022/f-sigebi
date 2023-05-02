@@ -1,0 +1,189 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="providerForm">
+      <div class="row">
+        <!-- <div class="col-md-3">
+          <form-field [control]="providerForm.get('idLayout')" label="Layout">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idLayout"
+              readonly />
+          </form-field>
+        </div> -->
+        <!-- <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('descLayout')"
+            label="Descripción de Layout">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descLayout" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('screenKey')"
+            label="Pantalla">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="screenKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('table')" label="Tabla">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="screenKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('criterion')"
+            label="Criterio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="criterion" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('indActive')" label="Activo">
+            <select class="form-control" formControlName="indActive">
+              <option [value]="null">Seleccione</option>
+              <option value="1">Activo</option>
+              <option value="2">Inactivo</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('registryNumber')"
+            label="Número de registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registryNumber" />
+          </form-field>
+        </div> -->
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('idConsec')" label="idConsec">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idConsec"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('position')" label="Posición">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="position" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('column')" label="Column">
+            <input type="text" class="form-control" formControlName="column" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('type')" label="Type">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('length')" label="Longitud">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="length" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('constant')"
+            label="Constante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="constant" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('carFilling')"
+            label="Caracter de Relleno">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="carFilling" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('justification')"
+            label="Justificación">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="justification" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('decimal')" label="Decimales">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="decimal" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('dateFormat')"
+            label="Formato de Fecha">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateFormat" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('registryNumber')"
+            label="Número de Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registryNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row"></div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!providerForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"
+          >Agregar estructura</confirm-button
+        >
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

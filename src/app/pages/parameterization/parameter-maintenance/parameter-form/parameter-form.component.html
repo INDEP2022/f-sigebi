@@ -1,0 +1,90 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('id')"
+            label="Cve del Par&aacute;metro">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('initialValue')"
+            label="Valor inicial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="initialValue" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('finalValue')" label="Valor final">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="finalValue" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('startDate')" label="Fecha Inicial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+              [minDate]="minDate" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('endDate')" label="Fecha Final">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+              [minDate]="minDate" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [btnSmall]="true"
+          [disabled]="!form.valid || invalidDate"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

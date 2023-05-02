@@ -1,0 +1,173 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Indicador de desempeño</h5>
+    <div class="col-md-5 buttons">
+      <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+    </div>
+  </div>
+  <div body>
+    <div class="row margin-input">
+      <div class="col-md-6">
+        <form [formGroup]="performanceIndicatorForm" class="form-material">
+          <div class="row margin-input">
+            <div class="col-md-4">
+              <form-field
+                [control]="performanceIndicatorForm.get('dateCapture')"
+                label="Fecha de captura">
+                <input
+                  type="text"
+                  formControlName="dateCapture"
+                  placeholder="Fecha de captura"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <h6 class="title">CERRADO</h6>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-4">
+              <form-field
+                [control]="performanceIndicatorForm.get('year')"
+                label="Año">
+                <input
+                  type="text"
+                  formControlName="year"
+                  placeholder="Año"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="performanceIndicatorForm.get('month')"
+                label="Mes">
+                <input
+                  type="text"
+                  formControlName="month"
+                  placeholder="Mes"
+                  class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <h6 class="title">MES</h6>
+            </div>
+          </div>
+          <div class="row margin-input">
+            <div class="col-md-8">
+              <form-field
+                [control]="
+                  performanceIndicatorForm.get('regionalCoordination')
+                ">
+                <ngx-select
+                  (fetchItems)="getRegionalCoordination($event)"
+                  [data]="regionalCoordination"
+                  [form]="performanceIndicatorForm"
+                  value="regionalCoordination"
+                  bindLabel="description"
+                  label="Coordinación Regional"
+                  control="regionalCoordination">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="performanceIndicatorForm.get('user')"
+                label="Usuario">
+                <input
+                  type="text"
+                  formControlName="user"
+                  placeholder="Usuario"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <h5 class="title">Estrategia y Reportes que se debieron entregar</h5>
+        <div class="row margin-input">
+          <div class="col-md-8">
+            <h6 class="title">Estrategia de administración:</h6>
+          </div>
+          <div class="col-md-2">
+            <input type="text" placeholder="0" class="form-control" />
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-8">
+            <h6 class="title">Reportes de Implementacón:</h6>
+          </div>
+          <div class="col-md-2">
+            <input type="text" placeholder="0" class="form-control" />
+          </div>
+        </div>
+        <h5 class="title">Estrategia y Reportes entregados en tiempo</h5>
+        <div class="row margin-input">
+          <div class="col-md-8">
+            <h6 class="title">Estrategia de administración:</h6>
+          </div>
+          <div class="col-md-2">
+            <input type="text" placeholder="0" class="form-control" />
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-8">
+            <h6 class="title">Reportes de Implementacón:</h6>
+          </div>
+          <div class="col-md-2">
+            <input type="text" placeholder="0" class="form-control" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-6">
+        <h5 class="title">Estrategia de Administración</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+        <div class="row">
+          <div class="col-md-2">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="openStrategy('')">
+              Incorpora
+            </button>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-danger btn-sm active">Eliminar</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h5 class="title">Reportes de Implementación</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+        <div class="row">
+          <div class="col-md-2">
+            <button class="btn btn-primary btn-sm active">Reporte</button>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-danger btn-sm active">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,44 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Archivo plano de notificaciones</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="notificationsForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <app-delegation-shared
+            [showSubdelegation]="false"
+            [form]="notificationsForm"></app-delegation-shared>
+        </div>
+
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field
+              [control]="notificationsForm.get('from')"
+              label="Fecha Desde">
+              <input class="form-control" formControlName="from" bsDatepicker />
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field [control]="notificationsForm.get('from')" label="Hasta">
+              <input class="form-control" formControlName="to" bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <button
+            type="submit"
+            class="btn btn-primary active"
+            (click)="Generar()">
+            Generar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

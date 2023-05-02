@@ -1,0 +1,175 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Escaneo y digitalizaci&oacute;n de documentos</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          label="Expediente"
+          [control]="form.get('expediente')"
+          class="col-md-3">
+          <input
+            type="number"
+            formControlName="expediente"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          label="Expediente"
+          [control]="form.get('folio')"
+          class="col-md-3">
+          <input type="number" formControlName="folio" class="form-control" />
+        </form-field>
+
+        <form-field
+          label="Expediente"
+          [control]="form.get('expediente')"
+          class="col-md-4">
+          <input
+            type="number"
+            formControlName="expediente"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="row">
+        <div class="col-md-10 card">
+          <small class="text-center text-info">Banco de Im&aacute;genes</small>
+          <div class="card-body d-flex mt-3">
+            <div class="col">
+              <button class="btn btn-primary active btn-sm">Guardar</button>
+            </div>
+            <div class="col">
+              <button class="btn btn-info active btn-sm">Actualizar</button>
+            </div>
+            <form-field label="De" [control]="form.get('de')" class="col-md-2">
+              <input type="number" formControlName="de" class="form-control" />
+            </form-field>
+
+            <form-field label="A" [control]="form.get('a')" class="col-md-2">
+              <input type="number" formControlName="a" class="form-control" />
+            </form-field>
+            <div class="col">
+              <button class="btn btn-danger active btn-sm">Borrar</button>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="btn-group" dropdown>
+            <button
+              id="button-basic"
+              dropdownToggle
+              type="button"
+              class="btn btn-primary dropdown-toggle btn-sm active"
+              aria-controls="dropdown-basic">
+              Acciones <span class="caret"></span>
+            </button>
+            <ul
+              id="dropdown-basic"
+              *dropdownMenu
+              class="dropdown-menu"
+              role="menu"
+              aria-labelledby="button-basic">
+              <h6 class="dropdown-header text-info">Directorio</h6>
+              <li class="divider dropdown-divider"></li>
+
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Importar</a>
+              </li>
+              <h6 class="dropdown-header text-danger">Escaner</h6>
+              <li class="divider dropdown-divider"></li>
+
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Seleccionar</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Escanear</a>
+              </li>
+              <h6 class="dropdown-header text-warning">
+                Contenedor de Im&aacute;genes
+              </h6>
+              <li class="divider dropdown-divider"></li>
+
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Abrir</a>
+                <a class="dropdown-item" href="#">Vaciar</a>
+                <a class="dropdown-item" href="#">Muestra</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-12">
+              <button class="btn btn-danger btn-sm active">
+                Borrar im&aacute;genes seleccionadas
+              </button>
+            </div>
+          </div>
+          <div class="row pt-4 docs-scroll">
+            <div class="col-md-12">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Folio</th>
+                    <th>Hojas</th>
+                    <th>Descripci&oacute;n</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let d of data">
+                    <td>lorem</td>
+                    <td>lorem</td>
+                    <td>lorem</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-end">
+              <form-check
+                for="keep"
+                label="Mantener las im&aacute;genes escaneadas despu&eacute;s de guardar">
+                <input
+                  type="checkbox"
+                  id="keep"
+                  formControlName="mantener"
+                  class="form-control" />
+              </form-check>
+            </div>
+          </div>
+          <div class="row docs-scroll">
+            <div class="col-md-12">
+              <div class="col-md-4" *ngFor="let d of data; let i = index">
+                <div class="w-100 m-1 img-container">
+                  <img
+                    src="https://samyak.co.in/wp-content/uploads/2021/04/image.jpg"
+                    alt=""
+                    class="w-100" />
+                  <!-- <input
+                    type="checkbox"
+                    class="float-check checkbox-color checkbox-primary"
+                    id="check2" /> -->
+                  <form-check for="keep-{{ i }}" class="float-check">
+                    <input
+                      type="checkbox"
+                      id="keep-{{ i }}"
+                      formControlName="mantener"
+                      class="form-control" />
+                  </form-check>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('indicator')" label="Indicador">
+            <textarea
+              rows="2"
+              formControlName="indicator"
+              class="form-control"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('formula')" label="Formula">
+            <textarea
+              rows="2"
+              formControlName="formula"
+              class="form-control"></textarea>
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field [control]="form.get('deadline')" label="Plazo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="deadline" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

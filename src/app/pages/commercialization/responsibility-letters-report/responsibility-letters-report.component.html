@@ -1,0 +1,173 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de Cartas de Responsabilidad</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="evento"
+            (fetchItems)="getEvent($event)"
+            [showTooltip]="true"
+            [data]="selectEvent"
+            bindLabel="description"
+            label="Evento"
+            value="id"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="lote"
+            (fetchItems)="getLot($event)"
+            [showTooltip]="true"
+            [data]="selectLot"
+            bindLabel="description"
+            (change)="getGood($event)"
+            [searchable]="true"
+            label="Lote"
+            value="lotId"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('adjudicatorio')"
+            label="Adjudicatorio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="adjudicatorio"
+              placeholder="Adjudicatorio" />
+          </form-field>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('domicilio')" label="Domicilio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="domicilio"
+              placeholder="Domicilio" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('colonia')" label="Colonia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="colonia"
+              placeholder="Colonia" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="evento"
+            (fetchItems)="getDelegation($event)"
+            [showTooltip]="true"
+            [data]="selectedDelegation"
+            bindLabel="description"
+            label="Delegación"
+            value="id"></ngx-select>
+        </div>
+        <!-- <div class="col-md-4">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" placeholder="RFC" />
+          </form-field>
+        </div> -->
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <!-- <form-field [control]="form.get('estado')" label="Estado">
+            <input type="text" class="form-control" formControlName="estado" placeholder="Estado" />
+          </form-field> -->
+          <ngx-select
+            [form]="form"
+            control="estado"
+            (fetchItems)="getEntidad($event)"
+            [showTooltip]="true"
+            [data]="entidad"
+            bindLabel="description"
+            label="Estado"
+            value="id"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('cp')" label="CP">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cp"
+              placeholder="CP" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('parrafo1')" label="Parrafo 1">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="parrafo1"
+              placeholder="Parrafo 1"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="">Bienes</label>
+      </div>
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          [settings]="settings1"
+          [source]="goodList"></ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+      <hr class="row" />
+      <br />
+
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('parrafo2')" label="Parrafo 2">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="parrafo2"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('parrafo3')" label="Parrafo 3">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="parrafo3"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="!valid"
+          [loading]="loading"
+          (confirm)="Generar()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showServices">
+    <div class="col-md-12">
+      <form-field [control]="form.get(serviceField)">
+        <ngx-select
+          (fetchItems)="getServices($event)"
+          [data]="services"
+          [form]="form"
+          value="code"
+          bindLabel="description"
+          label="Servicios"
+          [control]="serviceField"
+          (change)="onServicesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,59 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE ALMACÉN</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <!--Date Form-->
+        <div class="col-xs-12 col-12 col-md-3 mb-3">
+          <form-field [control]="form.get('from')" label="Del">
+            <input
+              formControlName="from"
+              placeholder="Selección de fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3">
+          <form-field [control]="form.get('to')" label="Al">
+            <input
+              formControlName="to"
+              placeholder="Selección de fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Delegation Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-delegation-shared
+            [form]="form"
+            [showSubdelegation]="false"></app-delegation-shared>
+        </div>
+        <!--warehouse Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-warehouse-shared
+            [form]="form"
+            [showWarehouseType]="false"></app-warehouse-shared>
+        </div>
+        <!--Goods Status Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer class="d-flex justify-content-end">
+    <div class="m-3">
+      <confirm-button
+        text="Imprimir"
+        [disabled]="form.invalid"
+        [loading]="loading"
+        (confirm)="confirm()">
+      </confirm-button>
+    </div>
+  </div>
+</app-card>

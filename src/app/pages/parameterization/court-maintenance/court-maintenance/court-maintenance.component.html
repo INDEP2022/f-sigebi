@@ -1,0 +1,137 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">MANTENIMIENTO A JUZGADOS</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openModal()">
+            JUZGADOS
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2 mt-3">
+          <form-field [control]="form.get('id')" label="No Juzgado">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <app-circuit-shared [form]="form"></app-circuit-shared>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4">
+          <form-field [control]="form.get('manager')" label="Responsable">
+            <input type="text" class="form-control" formControlName="manager" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('numExterior')" label="No Exterior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numExterior" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('numInside')" label="No Interior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numInside" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3 mt-3">
+          <form-field [control]="form.get('cologne')" label="Colonia">
+            <input type="text" class="form-control" formControlName="cologne" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field
+            [control]="form.get('delegationMun')"
+            label="Delegación o Municipio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationMun" />
+          </form-field>
+        </div>
+        <div class="col-md-2 mt-3">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+        <div class="col-md-3 mt-3">
+          <form-field [control]="form.get('numPhone')" label="Tel&eacute;fono">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numPhone" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-center">
+          <confirm-button
+            [type]="'button'"
+            [btnSmall]="true"
+            [disabled]="!form.valid"
+            [loading]="loadingForm"
+            (confirm)="confirm()"></confirm-button>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openModalCity()"
+            [disabled]="!isPresent">
+            Agregar ciudad
+          </button>
+          <button class="btn btn-primary active btn-sm ml-3" (click)="clean()">
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="table-responsive mt-5" *ngIf="dataCourtCity.count">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng-scrollbar [track]="'all'" style="min-height: 300px">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="dataCourtCity.data"
+            (edit)="(null)"
+            (delete)="deleteCity($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+      <app-pagination
+        [filterParams]="filterParams"
+        [totalItems]="dataCourtCity.count">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

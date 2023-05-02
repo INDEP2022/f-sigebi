@@ -1,0 +1,53 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="ClaimConclusionForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="ClaimConclusionForm.get('id')"
+            label="Id Conclusi&oacute;n siniestro">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="ClaimConclusionForm.get('flag')"
+            label="Bandera">
+            <input type="number" class="form-control" formControlName="flag" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="ClaimConclusionForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="ClaimConclusionForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

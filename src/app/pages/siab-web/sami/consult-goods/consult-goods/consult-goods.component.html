@@ -1,0 +1,96 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Consulta bienes</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="consultGoodsForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="consultGoodsForm.get('unlinked')"
+            label="Seleccionar">
+            <select class="form-control" formControlName="unlinked">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultGoodsForm.get('unlinked')"
+            label="Seleccionar">
+            <select class="form-control" formControlName="unlinked1">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultGoodsForm.get('unlinked')"
+            label="Seleccionar">
+            <select class="form-control" formControlName="unlinked2">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="consultGoodsForm.get('unlinked')"
+            label="Seleccionar">
+            <select class="form-control" formControlName="unlinked3">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Buscar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-success active">
+          Exportar a Excel
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-secondary active">
+          Limpiar Filtro
+        </button>
+      </div>
+    </div>
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+    <br />
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Aceptar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-secondary active">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,55 @@
+<app-card [header]="false">
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">Bienes Estatus REV</h5>
+      <div class="row justify-content-end mr-1">
+        <div class="col-12">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings"
+            class="row justify-content-end"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!--Actions-->
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">
+          Actualizar Relación
+        </button>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">
+          Depurar Erróneos
+        </button>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">
+          Generar Proceso/Solicitud OI
+        </button>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">Rechazar</button>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-secondary btn-sm active w-100">
+          Generar Layout
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

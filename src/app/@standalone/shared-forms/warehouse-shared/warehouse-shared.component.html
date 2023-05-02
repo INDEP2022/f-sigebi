@@ -1,0 +1,35 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showWarehouseType">
+    <div class="col-md-12">
+      <form-field [control]="form.get(warehouseTypeField)">
+        <ngx-select
+          (fetchItems)="getWarehousesType($event)"
+          [data]="warehousesType"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Tipo de Almacén"
+          [control]="warehouseTypeField"
+          (change)="onWarehouseTypeChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+  <!--Warehouse By Type-->
+  <div class="row mb-3 mt-3" *ngIf="showWarehouse">
+    <div class="col-md-12">
+      <form-field [control]="form.get(warehouseField)">
+        <ngx-select
+          (fetchItems)="getWarehouses($event)"
+          [data]="warehouses"
+          [form]="form"
+          value="idWarehouse"
+          bindLabel="description"
+          label="Almacenes"
+          [control]="warehouseField"
+          (change)="onWarehouseChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

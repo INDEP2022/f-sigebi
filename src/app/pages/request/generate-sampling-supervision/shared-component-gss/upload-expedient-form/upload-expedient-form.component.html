@@ -1,0 +1,233 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Cargar Expediente</h5>
+  </div>
+  <div body class="body">
+    <div class="row">
+      <h5 class="title">
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = true"
+            *ngIf="!showSearchForm">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+            expedientes</a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = false"
+            *ngIf="showSearchForm">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+            expedientes</a
+          >
+        </p>
+      </h5>
+    </div>
+    <div *ngIf="showSearchForm">
+      <form [formGroup]="expedientForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="expedientForm.get('text')" label="Texto">
+              <textarea class="form-control" formControlName="text"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field [control]="expedientForm.get('typeDoc')">
+              <ngx-select
+                [form]="expedientForm"
+                control="typeDoc"
+                [data]="typeDocSelected"
+                value="id"
+                bindLabel="id"
+                label="Tipo de Documento"
+                (fetchItems)="getTypeDocSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('titleDoc')"
+              label="T&iacute;tulo del Documento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="titleDoc" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('typeTranfer')"
+              label="Tipo de Transferencia">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="typeTranfer" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('comments')"
+              label="Comentarios">
+              <textarea
+                class="form-control"
+                formControlName="comments"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="expedientForm.get('author')" label="Autor">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="author" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('sender')"
+              label="Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="sender" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('noDoc')"
+              label="No&#46; Documento">
+              <input type="text" class="form-control" formControlName="noDoc" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('senderCharge')"
+              label="Cargo Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="senderCharge" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('version')"
+              label="Versi&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="version" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="expedientForm.get('responsible')"
+              label="Responsable">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="responsible" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="expedientForm.get('noAsset')"
+              label="No&#46; Bien">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="noAsset" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="expedientForm.get('contributor')"
+              label="Contribuyente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="contributor" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="expedientForm.get('noSab')" label="No. SAB">
+              <input type="text" class="form-control" formControlName="noSab" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="expedientForm.get('noOfice')"
+              label="No&#46; Oficio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noOfice" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row pt-4">
+        <div class="d-flex justify-content-end">
+          <div class="m-3">
+            <button class="btn btn-primary btn-sm active">
+              <i class="bx bx-search-alt-2"></i> Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="d-flex">
+        <div class="mr-auto p-2">
+          <div class="form-material">
+            <search-bar [params]="params"></search-bar>
+          </div>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active" (click)="newDocument()">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-md-12">
+        <!--<div style="overflow: scroll">-->
+
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar track="all" style="min-height: 200px; border: none">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="paragraphs">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+        <!--</div>-->
+
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

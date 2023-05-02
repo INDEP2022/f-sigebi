@@ -1,0 +1,340 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Informaci&oacute;n de acta</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-6">
+        <h5 style="font-size: 15px">Entrega</h5>
+        <form [formGroup]="deliveryForm" class="form-material pt-4">
+          <form-field [control]="deliveryForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+          <div class="row">
+            <form-check label="Firma electrónica" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="electronicSignature" />
+            </form-check>
+          </div>
+
+          <div class="row pt-2">
+            <form-field [control]="deliveryForm.get('charge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="charge" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="deliveryForm.get('resistance')"
+              label="Resistencia">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="resistance" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="deliveryForm.get('identification')"
+              label="Identificaci&oacute;n">
+              <select class="form-control" formControlName="identification">
+                <option [value]="null">
+                  Seleccione una identificaci&oacute;n
+                </option>
+                <option [value]="1">Identificaci&oacute;n</option>
+                <option [value]="2">Identificaci&oacute;n</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="deliveryForm.get('noIdentification')"
+              label="N&uacute;mero de identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noIdentification" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="deliveryForm.get('issuedBy')"
+              label="Expedida por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="issuedBy" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field [control]="deliveryForm.get('email')" label="Email">
+              <input type="text" class="form-control" formControlName="email" />
+            </form-field>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-6">
+        <h5 style="font-size: 15px">Recibe</h5>
+        <form [formGroup]="receiveForm" class="form-material pt-4">
+          <form-field [control]="receiveForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+          <div class="row">
+            <form-check label="Firma electr&oacute;nica" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="electronicSignature" />
+            </form-check>
+          </div>
+
+          <div class="row pt-2">
+            <form-field [control]="receiveForm.get('charge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="charge" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="receiveForm.get('resistance')"
+              label="Resistencia">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="resistance" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="receiveForm.get('identification')"
+              label="Identificaci&oacute;n">
+              <select class="form-control" formControlName="identification">
+                <option [value]="null">
+                  Seleccione una identificaci&oacute;n
+                </option>
+                <option [value]="1">Identificaci&oacute;n</option>
+                <option [value]="2">Identificaci&oacute;n</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="receiveForm.get('noIdentification')"
+              label="N&uacute;mero de identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noIdentification" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="receiveForm.get('issuedBy')"
+              label="Expedida por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="issuedBy" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field [control]="receiveForm.get('email')" label="Email">
+              <input type="text" class="form-control" formControlName="email" />
+            </form-field>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <h5 style="font-size: 15px">Testigo 1</h5>
+        <form [formGroup]="witnessOneForm" class="form-material pt-4">
+          <form-field [control]="witnessOneForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+          <div class="row">
+            <form-check label="Firma electr&oacute;nica" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="electronicSignature" />
+            </form-check>
+          </div>
+
+          <div class="row pt-2">
+            <form-field [control]="witnessOneForm.get('charge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="charge" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessOneForm.get('resistance')"
+              label="Resistencia">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="resistance" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessOneForm.get('identification')"
+              label="Identificaci&oacute;n">
+              <select class="form-control" formControlName="identification">
+                <option [value]="null">
+                  Seleccione una identificaci&oacute;n
+                </option>
+                <option [value]="1">Identificaci&oacute;n</option>
+                <option [value]="2">Identificaci&oacute;n</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessOneForm.get('noIdentification')"
+              label="N&uacute;mero de identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noIdentification" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessOneForm.get('issuedBy')"
+              label="Expedida por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="issuedBy" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field [control]="witnessOneForm.get('email')" label="Email">
+              <input type="text" class="form-control" formControlName="email" />
+            </form-field>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-6">
+        <h5 style="font-size: 15px">Testigo 2</h5>
+        <form [formGroup]="witnessTwoForm" class="form-material pt-4">
+          <form-field [control]="witnessTwoForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+          <div class="row">
+            <form-check label="Firma electrónica" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="electronicSignature" />
+            </form-check>
+          </div>
+
+          <div class="row pt-2">
+            <form-field [control]="witnessTwoForm.get('charge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="charge" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessTwoForm.get('resistance')"
+              label="Resistencia">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="resistance" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessTwoForm.get('identification')"
+              label="Identificaci&oacute;n">
+              <select class="form-control" formControlName="identification">
+                <option [value]="null">
+                  Seleccione una identificaci&oacute;n
+                </option>
+                <option [value]="1">Identificaci&oacute;n</option>
+                <option [value]="2">Identificaci&oacute;n</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessTwoForm.get('noIdentification')"
+              label="Numero de identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noIdentification" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="witnessTwoForm.get('issuedBy')"
+              label="Expedida por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="issuedBy" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field [control]="witnessTwoForm.get('email')" label="Email">
+              <input type="text" class="form-control" formControlName="email" />
+            </form-field>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

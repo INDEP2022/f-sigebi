@@ -1,0 +1,17 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BIENES FALTANTES-DAÑADOS / ADMINISTRACIÓN DE INGRESOS</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Bienes Faltantes-Dañados" id="tab1">
+          <app-missing-damaged-goods></app-missing-damaged-goods>
+        </tab>
+        <tab heading="Administración de Ingresos" id="tab2">
+          <app-revenue-management></app-revenue-management>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

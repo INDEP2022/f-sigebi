@@ -1,0 +1,25 @@
+<ng-container>
+  <div class="row" style="margin: 0">
+    <div *ngIf="form" [formGroup]="form" class="col-md-12" style="padding: 0px">
+      <form-field
+        class="col-xs-10"
+        [control]="form.get(formField)"
+        [label]="label">
+        <input
+          type="text"
+          [formControlName]="formField"
+          class="form-control"
+          [readonly]="disabled" />
+      </form-field>
+      <div class="col-xs-2 pl-0">
+        <button
+          [disabled]="disabled"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="openModal()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-container>

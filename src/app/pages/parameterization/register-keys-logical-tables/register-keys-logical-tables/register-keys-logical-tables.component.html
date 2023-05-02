@@ -1,0 +1,177 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Registro de claves para tablas l&oacute;gicas</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('name')">
+            <ngx-select
+              [form]="form"
+              [data]="tableSelect"
+              (fetchItems)="getTables($event)"
+              bindLabel="name"
+              control="name"
+              [searchOnInit]="true"
+              label="Tabla"
+              termMaxLength="100"
+              [showTooltip]="true"
+              (change)="onValuesChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Descripción" [control]="form.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Tipo de tabla" [control]="form.get('tableType')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tableType"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <!-- <div class="row">
+      <div class="ch-content">
+        <h5 class="title">Tabla Lógica</h5>
+      </div>
+      <div class="table-responsive pt-3">
+        <div [class]="loading1 ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (userRowSelect)="rowsSelected($event)"
+            (rowSelect)="selectRow($event.data)"></ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div> -->
+
+    <div class="row" *ngIf="form.get('tableType').value == 1">
+      <div class="row pt-5">
+        <div class="ch-content">
+          <h5 class="title">Descripción de Claves</h5>
+          <div class="col-md-5 buttons">
+            <app-columns-select [(settings)]="settings1"></app-columns-select>
+            <button
+              (click)="openForm2()"
+              class="btn btn-primary active btn-sm ml-3"
+              *ngIf="form.get('tableType').value == 1">
+              Nuevo
+            </button>
+          </div>
+        </div>
+        <div class="table-responsive pt-3">
+          <div [class]="loading2 ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings1"
+              [source]="tdescCve"
+              (delete)="showDeleteAlert1($event.data)"
+              (edit)="openForm2($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div *ngIf="form.get('tableType').value == 5">
+        <div class="row pt-5">
+          <div class="ch-content">
+            <h5 class="title">Descripción de Claves</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select [(settings)]="settings1"></app-columns-select>
+              <button
+                (click)="openForm()"
+                class="btn btn-primary active btn-sm ml-3"
+                *ngIf="form.get('tableType').value == 1">
+                Nuevo
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive pt-3">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings1"
+                [source]="tdescCve"
+                (delete)="showDeleteAlert1($event.data)"
+                (edit)="openForm($event.data)"></ng2-smart-table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="table-responsive pt-3">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="tdescCve"></ng2-smart-table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="table-responsive pt-3">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
+                [source]="tdescCve"></ng2-smart-table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="table-responsive pt-3">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings4"
+                [source]="tdescCve"></ng2-smart-table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="table-responsive pt-3">
+            <div [class]="loading2 ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings5"
+                [source]="tdescCve"></ng2-smart-table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div footer>
+      <div class="row pt-5" *ngIf="form.get('tableType').value !== null">
+        <div class="col-md-2">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="resetScreen()">
+            Reiniciar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

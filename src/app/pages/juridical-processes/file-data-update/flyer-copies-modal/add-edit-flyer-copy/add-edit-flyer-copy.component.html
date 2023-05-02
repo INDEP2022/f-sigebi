@@ -1,0 +1,41 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="userCopyForm">
+      <div class="row mt-3">
+        <div class="col-sm-12">
+          <form-field [control]="userCopyForm.get('userCopy')">
+            <ngx-select
+              [form]="userCopyForm"
+              control="userCopy"
+              (fetchItems)="getUsersCopy($event)"
+              label="Usuario C.p.p."
+              [data]="users"
+              bindLabel="userAndName"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!userCopyForm.valid && !editChanged()"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

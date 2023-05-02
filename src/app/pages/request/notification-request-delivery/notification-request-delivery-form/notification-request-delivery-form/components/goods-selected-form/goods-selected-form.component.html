@@ -1,0 +1,13 @@
+<h5 class="title">Bienes seleccionados</h5>
+
+<div class="row pt-3">
+  <div class="d-flex justify-content-end">
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+  </div>
+  <ng2-smart-table
+    [attr.class]="'table-bordered'"
+    [settings]="settings"
+    [source]="selectsGoods">
+  </ng2-smart-table>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>

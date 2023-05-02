@@ -1,0 +1,57 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        PROCESO DE ACTUALIZACI&Oacute;N MASIVA DE VALOR AVALU&Oacute;
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-success btn-sm active"
+          (click)="fileExcel.click()">
+          Abrir archivo Excel o CSV
+        </button>
+        <input
+          type="file"
+          (change)="ReadExcel($event)"
+          name="fileExcel"
+          #fileExcel
+          class="d-none"
+          accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+      </div>
+      <div class="col-md-2">
+        <label for="" class="form-group">Registros Leidos: 0</label>
+      </div>
+      <div class="col-md-2">
+        <label for="" class="form-group">Registros Procesados: 0</label>
+      </div>
+    </div>
+    <div class="ch-content">
+      <h5 class="title">&nbsp;</h5>
+      <div class="row justify-content-end mr-1">
+        <div class="col-12">
+          <app-columns-select
+            [(settings)]="settings"
+            class="row justify-content-end">
+          </app-columns-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="ExcelData"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

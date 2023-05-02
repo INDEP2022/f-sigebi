@@ -1,0 +1,178 @@
+<app-modal>
+  <div header>
+    <div class="ch-content">
+      <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!-- <div class="col-md-2">
+          <form-field [control]="form.get('id')" label="No Persona">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div> -->
+        <div class="col-md-5">
+          <form-field [control]="form.get('personName')" label="Nombre Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="personName" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('name')"
+            label="Apellido Paterno y Materno">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('street')" label="Direcci&oacute;n">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('streetNumber')" label="No Exterior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="streetNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('apartmentNumber')"
+            label="No Interior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="apartmentNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('suburb')" label="Colonia">
+            <input type="text" class="form-control" formControlName="suburb" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3 mt-3">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field
+            [control]="form.get('delegation')"
+            label="Delegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <app-federative-shared
+            [form]="form"
+            [federativeField]="'keyEntFed'"></app-federative-shared>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3">
+          <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-field [control]="form.get('curp')" label="CURP">
+            <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-check label="Curr&iacute;culum" for="curriculum">
+            <input
+              id="curriculum"
+              type="checkbox"
+              formControlName="curriculumV" />
+          </form-check>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-6">
+          <form-radio label="* Persona Moral">
+            <input type="radio" formControlName="typePerson" value="M" />
+          </form-radio>
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-6">
+          <form-radio label="* Persona F&iacute;sica">
+            <input type="radio" formControlName="typePerson" value="F" />
+          </form-radio>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <app-turn-company [form]="form"></app-turn-company>
+        </div>
+        <div class="col-md-8 mt-2">
+          <form-field [control]="form.get('profile')" label="Perfil">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="profile"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4" *ngIf="form.get('typePerson').value === 'M'">
+        <div class="col-md-6">
+          <form-field [control]="form.get('manager')" label="Representante">
+            <input type="text" class="form-control" formControlName="manager" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('numberDeep')" label="No Escritura">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberDeep" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

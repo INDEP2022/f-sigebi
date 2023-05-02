@@ -1,0 +1,172 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Solicitud y Autorizaci&oacute;n de Donaci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <form
+      class="form-material form-horizontal"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()">
+      <div class="row mt-5">
+        <div class="col-12 col-md-4">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('proposal')" label="Propuesta">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="proposal" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-12 col-md-4 mt-3 mt-md-0">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('classifNumbGood')"
+              label="No. Clasif. Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="classifNumbGood" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-12 col-md-4 mt-3 mt-md-0">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('descripClassif')"
+              label="Descrip. Clasif. Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="descripClassif" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row mt-5">
+      <div class="col-12 col-md-3 text-center">
+        <button class="btn btn-secondary btn-sm active" (click)="openModal(1)">
+          Incorporar
+        </button>
+      </div>
+      <div class="col-12 col-md-3 text-center">
+        <button class="btn btn-secondary btn-sm active" (click)="openModal(2)">
+          Asociar
+        </button>
+      </div>
+      <div class="col-12 col-md-3 text-center">
+        <button class="btn btn-secondary btn-sm active">Actualizar</button>
+      </div>
+      <div class="col-12 col-md-3 text-center">
+        <button class="btn btn-secondary btn-sm active">Propuesta</button>
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <div class="col-12 col-md-6 text-center">
+        <button class="btn btn-secondary btn-sm active">Agregar Bienes</button>
+      </div>
+      <div class="col-12 col-md-6 text-center">
+        <button class="btn btn-secondary btn-sm active">
+          Aplicar Estatus y Parcializaci&oacute;n
+        </button>
+      </div>
+    </div>
+
+    <app-divider></app-divider>
+
+    <h5 class="mt-5">Solicitudes y Donatarios</h5>
+
+    <!-- <div class="row justify-content-end mt-3">
+      <div class="col-md-5 buttons pt-3 text-right">
+        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings">
+        </app-columns-select>
+      </div>
+    </div> -->
+
+    <div class="row mt-5">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+    <div class="">
+      <form class="form-material form-horizontal" [formGroup]="formTable1">
+        <div class="row mt-5">
+          <div class="col-6">
+            <div class="mb-3 pl-3">
+              <form-field [control]="formTable1.get('totals')" label="Totales">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totals"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+
+    <h5 class="mt-5">Distribuci&oacute;n de Solicitudes con Bienes</h5>
+    <!-- <div class="row justify-content-end mt-3">
+      <div class="col-md-5 buttons pt-3 text-right">
+        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings2">
+        </app-columns-select>
+      </div>
+    </div> -->
+    <div class="row mt-5">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings2"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+    <div class="">
+      <form class="form-material form-horizontal" [formGroup]="formTable2">
+        <div class="row mt-5">
+          <div class="col-6">
+            <div class="mb-3 pl-3">
+              <form-field
+                [control]="formTable2.get('quantityToAssign')"
+                label="Cantidad a Asignar">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="quantityToAssign"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+
+    <h5 class="mt-5">Bienes del Inventario de Donaciones</h5>
+
+    <!-- <div class="row justify-content-end mt-3">
+      <div class="col-md-5 buttons pt-3 text-right">
+        <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings3">
+        </app-columns-select>
+      </div>
+    </div> -->
+
+    <div class="row mt-5">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings3"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

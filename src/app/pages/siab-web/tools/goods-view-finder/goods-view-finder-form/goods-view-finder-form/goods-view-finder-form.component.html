@@ -1,0 +1,454 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Visor de bienes</h5>
+    </div>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="d-flex">
+        <div class="mr-auto p-2 align-items-center">
+          <i class="fa fa-circle text-success" aria-hidden="true"></i>
+          <b class="mr-3"> SIAB</b>
+          <i class="fa fa-circle text-color-danger" aria-hidden="true"></i
+          ><b> NSBDB </b>
+        </div>
+        <div class="p-2">
+          <button (click)="resetForm()" class="btn btn-danger btn-sm active">
+            Limpiar
+          </button>
+        </div>
+        <div class="p-2">
+          <button (click)="consultTxt()" class="btn btn-info btn-sm active">
+            Consultar desde .txt
+          </button>
+        </div>
+        <div class="p-2">
+          <button (click)="consult()" class="btn btn-primary btn-sm active">
+            Consultar
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <p>
+            <i class="fa fa-circle text-success" aria-hidden="true"></i> No.
+            bien
+          </p>
+          <div class="pt-3">
+            <form-field [control]="form.get('numberGood')" label="No. bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numberGood" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <p>
+            <i class="fa fa-circle text-color-danger" aria-hidden="true"></i>
+            No. gestión
+          </p>
+
+          <div class="pt-3">
+            <form-field
+              [control]="form.get('numberGestion')"
+              label="No. Gestión">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numberGestion" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-inline">
+            <p>
+              <i class="fa fa-circle text-success" aria-hidden="true"></i>&nbsp;
+            </p>
+            <p>
+              <i class="fa fa-circle text-color-danger" aria-hidden="true"></i>
+              Descripción
+            </p>
+          </div>
+          <div class="pt-3">
+            <form-field [control]="form.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <div class="form-inline pt-1">
+            <i class="fa fa-circle text-success" aria-hidden="true"></i>
+            <i
+              class="fa fa-circle text-color-danger ml-1 mr-1"
+              aria-hidden="true"></i>
+            Proceso
+          </div>
+
+          <div class="pt-5">
+            <form-field [control]="form.get('process')">
+              <ngx-select
+                [form]="form"
+                [multiple]="true"
+                [closeOnSelect]="false"
+                [maxSelectedItems]="3"
+                control="process"
+                [data]="processData"
+                placeholder="Proceso"
+                value="id"
+                bindLabel="name"
+                label="Proceso"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-inline">
+            <i class="fa fa-circle text-success" aria-hidden="true"></i>
+            <i
+              class="fa fa-circle text-color-danger ml-1 mr-1"
+              aria-hidden="true"></i>
+            Del. regional
+            <label class="ml-3"
+              ><input
+                type="checkbox"
+                formControlName="allDelegationRegional"
+                class="mr-2"
+                ng-reflect-model="true" />
+              Todos</label
+            >
+          </div>
+          <div class="pt-5">
+            <form-field [control]="form.get('regionalDelegation')">
+              <ngx-select
+                [form]="form"
+                control="regionalDelegation"
+                [data]="regionalDelegations"
+                [multiple]="true"
+                [closeOnSelect]="false"
+                [maxSelectedItems]="3"
+                value="id"
+                bindLabel="name"
+                placeholder="Delegación Regional"
+                label="Delegación Regional"
+                (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-inline">
+            <i class="fa fa-circle text-success" aria-hidden="true"></i>
+            <i
+              class="fa fa-circle text-color-danger ml-1 mr-1"
+              aria-hidden="true"></i>
+            Almacén
+
+            <label class="ml-3"
+              ><input
+                type="checkbox"
+                formControlName="allwarehouses"
+                class="mr-2"
+                ng-reflect-model="true" />
+              Todos</label
+            >
+          </div>
+          <div class="pt-5">
+            <form-field [control]="form.get('warehouse')">
+              <ngx-select
+                [form]="form"
+                control="warehouse"
+                [data]="warehouses"
+                [multiple]="true"
+                [closeOnSelect]="false"
+                [maxSelectedItems]="3"
+                value="id"
+                bindLabel="name"
+                placeholder="Almacén"
+                label="Almacén"
+                (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-inline">
+            <i class="fa fa-circle text-success" aria-hidden="true"></i>
+            <i
+              class="fa fa-circle text-color-danger ml-1 mr-1"
+              aria-hidden="true"></i>
+            Destino
+
+            <label class="ml-3"
+              ><input
+                type="checkbox"
+                formControlName="allDestiny"
+                class="mr-2"
+                ng-reflect-model="true" />
+              Todos</label
+            >
+          </div>
+          <div class="pt-5">
+            <form-field [control]="form.get('destiny')">
+              <ngx-select
+                [form]="form"
+                [multiple]="true"
+                [closeOnSelect]="false"
+                [maxSelectedItems]="3"
+                control="destiny"
+                [data]="destinations"
+                placeholder="Destino"
+                value="id"
+                bindLabel="name"
+                label="Destino"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <div class="form-inline">
+            <i class="fa fa-circle text-success" aria-hidden="true"></i>
+            <i
+              class="fa fa-circle text-color-danger ml-1 mr-1"
+              aria-hidden="true"></i>
+            Transferente
+            <label class="ml-3"
+              ><input
+                type="checkbox"
+                formControlName="allTransferents"
+                class="mr-2"
+                ng-reflect-model="true" />
+              Todas</label
+            >
+          </div>
+
+          <div class="pt-5">
+            <form-field [control]="form.get('transferent')">
+              <ngx-select
+                [form]="form"
+                control="transferent"
+                [data]="transferents"
+                value="id"
+                bindLabel="name"
+                label="Transferente"
+                (fetchItems)="getViewFinderSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-inline">
+            <i class="fa fa-circle text-success" aria-hidden="true"></i>
+            <i
+              class="fa fa-circle text-color-danger ml-1 mr-1"
+              aria-hidden="true"></i>
+            Estatus
+            <label class="ml-3"
+              ><input
+                type="checkbox"
+                formControlName="allStatus"
+                class="mr-2"
+                ng-reflect-model="true" />
+              Todos</label
+            >
+          </div>
+
+          <div class="pt-5">
+            <form-field [control]="form.get('status')">
+              <ngx-select
+                [form]="form"
+                control="status"
+                [data]="status"
+                value="id"
+                bindLabel="name"
+                label="Estatus"
+                (fetchItems)="getStatusSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <div class="form-inline">
+            <p>
+              <i class="fa fa-circle text-success" aria-hidden="true"></i>&nbsp;
+            </p>
+            <p>
+              <i class="fa fa-circle text-color-danger" aria-hidden="true"></i>
+              Fecha recep. documental
+            </p>
+          </div>
+          <div class="row">
+            <div class="pt-3 col-md-6">
+              <form-field
+                [control]="form.get('ofDateRecepDocumental')"
+                label="Del">
+                <input
+                  class="form-control"
+                  formControlName="ofDateRecepDocumental"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="pt-3 col-md-6">
+              <form-field
+                [control]="form.get('toTheDateRecepDocumental')"
+                label="Al">
+                <input
+                  class="form-control"
+                  formControlName="toTheDateRecepDocumental"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-inline">
+            <p>
+              <i class="fa fa-circle text-success" aria-hidden="true"></i>&nbsp;
+            </p>
+            <p>
+              <i class="fa fa-circle text-color-danger" aria-hidden="true"></i>
+              Fecha validación
+            </p>
+          </div>
+          <div class="row">
+            <div class="pt-3 col-md-6">
+              <form-field [control]="form.get('ofDateValidation')" label="Del">
+                <input
+                  class="form-control"
+                  formControlName="ofDateValidation"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="pt-3 col-md-6">
+              <form-field
+                [control]="form.get('toTheDateValidation')"
+                label="Al">
+                <input
+                  class="form-control"
+                  formControlName="toTheDateValidation"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <div class="form-inline">
+            <p>
+              <i class="fa fa-circle text-success" aria-hidden="true"></i>&nbsp;
+            </p>
+            <p>
+              <i class="fa fa-circle text-color-danger" aria-hidden="true"></i>
+              Fecha programación
+            </p>
+          </div>
+          <div class="row">
+            <div class="pt-3 col-md-6">
+              <form-field [control]="form.get('ofDateSchedule')" label="Del">
+                <input
+                  class="form-control"
+                  formControlName="ofDateSchedule"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="pt-3 col-md-6">
+              <form-field [control]="form.get('toTheDateSchedule')" label="Al">
+                <input
+                  class="form-control"
+                  formControlName="toTheDateSchedule"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-inline">
+            <p>
+              <i class="fa fa-circle text-success" aria-hidden="true"></i>&nbsp;
+            </p>
+            <p>
+              <i class="fa fa-circle text-color-danger" aria-hidden="true"></i>
+              Fecha recep. física
+            </p>
+          </div>
+          <div class="row">
+            <div class="pt-3 col-md-6">
+              <form-field
+                [control]="form.get('ofPhysicalReceptionDate')"
+                label="Del">
+                <input
+                  class="form-control"
+                  formControlName="ofPhysicalReceptionDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="pt-3 col-md-6">
+              <form-field
+                [control]="form.get('toThePhysicalReceptionDate')"
+                label="Al">
+                <input
+                  class="form-control"
+                  formControlName="toThePhysicalReceptionDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="d-flex">
+          <div class="mr-auto p-2">
+            <b>Total de bienes encontrados: {{ counter }}</b>
+          </div>
+          <div class="p-2">
+            <button
+              (click)="validateDowloadImages()"
+              class="btn btn-primary btn-sm active">
+              Exportar imágenes
+            </button>
+          </div>
+          <div class="p-2">
+            <button
+              (click)="validateExportImages()"
+              class="btn btn-success btn-sm active">
+              Exportar bienes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-start pt-5">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data"
+        (edit)="view()">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </form>
+  </div>
+</app-card>

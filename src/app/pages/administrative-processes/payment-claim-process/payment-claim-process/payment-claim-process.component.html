@@ -1,0 +1,148 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Proceso de reclamación de pago</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+    <hr />
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-full col-sm-12 col-xs-12">
+          <app-justification-shared [form]="form"></app-justification-shared>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                class="btn btn-success btn-sm ml-2"
+                type="button"
+                (click)="file.click()">
+                Importar archivo Excel / CSV
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                [disabled]="form.invalid || document === undefined"
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="changeStatusGood()">
+                Actualizar status
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="clean((file.value = ''))">
+                Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <hr />
+    <div class="row">
+      <app-scanning-foil
+        [goods]="goods"
+        (documentEmmit)="changeFoli($event)"
+        (firstGood)="firstGood($event)"></app-scanning-foil>
+    </div>
+    <div class="row mt-5">
+      <div
+        class="col-md-6"
+        style="border-right: 1px solid rgba(0, 0, 0, 0.1)"
+        *ngIf="showError">
+        <div class="row">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <h6>Registro de Errores</h6>
+            </div>
+          </div>
+        </div>
+        <div
+          class="row pt-3 pb-3"
+          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <span
+            >Numero de registros NO cargados &nbsp;&nbsp;
+            <strong style="color: crimson">{{
+              idsNotExist.length
+            }}</strong></span
+          >
+        </div>
+        <div
+          class="row pt-3 pb-3"
+          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <div class="col-md-full" *ngFor="let item of idsNotExist">
+            <span style="color: crimson">
+              El Bien No <strong>{{ item.id }}</strong> {{ item.reason }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" *ngIf="showError">
+        <div class="row">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <h6>Registro de Éxitos</h6>
+            </div>
+          </div>
+        </div>
+        <div
+          class="row pt-3 pb-3"
+          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <span
+            >Numero de registros cargados &nbsp;&nbsp;
+            <strong style="color: #1e7e34">{{ goods.length }}</strong></span
+          >
+        </div>
+        <div
+          class="row pt-3 pb-3"
+          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <div class="col-md-full" *ngFor="let good of goods">
+            <span
+              >Bien No
+              <strong style="color: #1e7e34">{{ good.id }}</strong> cargado
+              correctamente
+            </span>
+          </div>
+        </div>
+        <div
+          class="row pt-3 pb-3"
+          style="border-top: 1px solid rgba(0, 0, 0, 0.1)"
+          *ngIf="showStatus">
+          <div class="col-md-full" *ngFor="let good of goods">
+            <span
+              >Status del bien No
+              <strong style="color: #1e7e34">{{ good.id }}</strong>
+              cambiado correctamente</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

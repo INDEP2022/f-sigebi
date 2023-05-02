@@ -1,0 +1,78 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PROCEDMIENTO DE CIERRE DE COSTOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form">
+      <div class="ch-content" header>
+        <h5 class="title">ESTADO DE LOS PERIODOS</h5>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <div class="ch-content" header>
+        <h5 class="title">CIFRAS DE LOS PERIODOS</h5>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings1"
+              [source]="data2">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-4 float-right">
+            <p class="d-flex justify-content-end align-items-center">
+              Totales:
+            </p>
+          </div>
+          <div class="col-md-4 w-100">
+            <form-field [control]="form.get('total1')">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="total1" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('total2')">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="total2" />
+            </form-field>
+          </div>
+        </div>
+
+        <app-pagination
+          [params]="params1"
+          [totalItems]="totalItems1"></app-pagination>
+      </div>
+    </form>
+    <div class="row mt-4 float-right">
+      <div class="">
+        <button type="button" class="btn btn-primary btn-sm active mx-4">
+          ABRIR
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm active mx-4">
+          CERRAR
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

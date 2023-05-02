@@ -1,0 +1,248 @@
+<form [formGroup]="form" class="form-material">
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">DERIVACION DE BIENES CONVERSION</h5>
+    </div>
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('idConversion')"
+            label="Id Conversión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idConversion" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberGoodFather')"
+            label="No Bien Padre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGoodFather"
+              (change)="searchGoods()" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('tipo')" label="Tipo">
+            <select class="form-control" formControlName="tipo">
+              <option value="derivado">Derivado</option>
+              <option value="conversion">Conversión</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('numberDossier')" label="Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberDossier" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('situation')" label="Situación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="situation" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('actConvertion')"
+            label="Acta de conversión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="actConvertion" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Datos del Bien Hijo (Bien Derivado)</h5>
+    </div>
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberGoodSon')"
+            label="No Bien Hijo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGoodSon" />
+          </form-field>
+        </div>
+
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('observation')" label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observation" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionSon')"
+            label="Descripción">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="descriptionSon">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('quantity')" label="Cantidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="quantity" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('classifier')" label="Clasificador">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="classifier" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('unitOfMeasure')"
+            label="Unidad de medida">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="unitOfMeasure" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('destinationLabel')"
+            label="Etiqueta de destino">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="destinationLabel" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <button
+            class="btn btn-success btn-sm active"
+            (click)="updateStatus()">
+            Cambiar Status
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>
+
+<div class="row">
+  <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">No Bien Hijo</h5>
+      </div>
+      <div body>
+        <button class="btn btn-danger btn-sm active" (click)="openModal()">
+          +
+        </button>
+        &nbsp;
+        <button class="btn btn-danger btn-sm active" (click)="openModal()">
+          -
+        </button>
+      </div>
+    </app-card>
+  </div>
+  <div class="col-md-8 col-sm-12 col-xs-12 mt-2">
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Atributos del Bien</h5>
+      </div>
+      <div body></div>
+    </app-card>
+  </div>
+</div>
+
+<app-card>
+  <div body>
+    <div class="row">
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button
+          class="btn btn-success btn-sm active"
+          (click)="actConversionBtn()">
+          Actas conversión
+        </button>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button class="btn btn-info btn-sm active" (click)="bulkUpload()">
+          Carga masiva
+        </button>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="finishConversion()">
+          Finalizar conversión
+        </button>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button class="btn btn-info btn-sm active" (click)="imgUpload()">
+          Carga Imagenes
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,90 @@
+<!-- Forms OFICIO -->
+<ngx-form-oficio
+  [form]="formOficio"
+  (formValues)="getDataFormOficio($event)"></ngx-form-oficio>
+<!-- Forms OFICIO -->
+
+<!-- Forms OFICIO page FIN -->
+<form [formGroup]="formOficiopageFin" class="container-fluid form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-6 pr-3">
+      <form-field [control]="formOficiopageFin.get('page')" label="page">
+        <textarea class="form-control" formControlName="page"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 pr-3">
+      <form-field [control]="formOficiopageFin.get('fin')" label="Fin">
+        <textarea class="form-control" formControlName="fin"></textarea>
+      </form-field>
+    </div>
+  </div>
+</form>
+<!-- Forms OFICIO page FIN -->
+
+<hr class="row" />
+<div class="row">
+  <div class="col-sm-12 col-12 col-md-6">
+    <h6>Documentos</h6>
+  </div>
+</div>
+<div class="row pt-2 mb-2">
+  <div class="col-sm-12 col-12 col-md-12">
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings2"
+      [source]="data2"></ng2-smart-table>
+  </div>
+</div>
+
+<!-- C.C.P. -->
+<hr class="row" />
+<div class="row">
+  <div class="col-sm-12 col-12 col-md-6">
+    <h6>Con Copia Para &#40;C&#46;C&#46;P&#46;&#41;</h6>
+  </div>
+</div>
+<br />
+<!-- Form CON COPIA PARA -->
+<form [formGroup]="formCcpOficio" class="container-fluid form-material">
+  <div class="row tp-2 mb-2">
+    <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
+      <form-field [control]="formCcpOficio.get('ccp')" label="C&#46;P&#46;P">
+        <select class="form-control" formControlName="ccp">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="'INTERNO'">INTERNO</option>
+          <option [value]="'EXTERNO'">EXTERNO</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-1 pt-0 pb-0">
+      <ngx-select
+        [data]="items"
+        bindLabel="nombreUsuarioName"
+        label="Nombre Usuario"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="formCcpOficio"
+        control="nombreUsuario"></ngx-select>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
+      <form-field [control]="formCcpOficio.get('ccp2')" label="C&#46;P&#46;P">
+        <select class="form-control" formControlName="ccp2">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="'INTERNO'">INTERNO</option>
+          <option [value]="'EXTERNO'">EXTERNO</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-1 pt-0 pb-0">
+      <ngx-select
+        [data]="items"
+        bindLabel="nombreUsuario2Name"
+        label="Nombre Usuario"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="formCcpOficio"
+        control="nombreUsuario2"></ngx-select>
+    </div>
+  </div>
+</form>
+<!-- Form CON COPIA PARA -->

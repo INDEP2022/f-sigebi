@@ -1,0 +1,15 @@
+<h5>Bienes Seleccionados</h5>
+<ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+  <div [class]="loading ? 'table-loading' : ''">
+    <ng2-smart-table
+      id="selectedGoodsTable"
+      [settings]="selectedGoodSettings"
+      [source]="selectedGoodColumns">
+    </ng2-smart-table>
+    <div class="table-padding"></div>
+  </div>
+</ng-scrollbar>
+<app-pagination
+  [params]="selectedGoodParams"
+  [totalItems]="selectedGoodTotalItems">
+</app-pagination>

@@ -1,0 +1,17 @@
+.label {
+  color: black;
+  font-weight: 900;
+}
+
+label,
+span {
+  color: black;
+  font-size: 0.8em;
+  font-weight: 400;
+}
+
+@media (max-width: 1000px) {
+  #checkbox {
+    text-align: center;
+  }
+}

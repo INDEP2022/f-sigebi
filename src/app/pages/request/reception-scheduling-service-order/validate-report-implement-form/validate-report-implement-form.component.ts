@@ -1,0 +1,191 @@
+import { Component, OnInit } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { ElectronicSignatureListComponent } from '../../shared-request/electronic-signature-list/electronic-signature-list.component';
+import { ShowProgrammingComponent } from '../../shared-request/show-programming/show-programming.component';
+import { ShowSignatureProgrammingComponent } from '../../shared-request/show-signature-programming/show-signature-programming.component';
+import { AnnexWFormComponent } from '../components/annex-w-form/annex-w-form.component';
+import { CreateServiceFormComponent } from '../components/create-service-form/create-service-form.component';
+import { GenerateReportFormComponent } from '../components/generate-report-form/generate-report-form.component';
+
+@Component({
+  selector: 'app-validate-report-implement-form',
+  templateUrl: './validate-report-implement-form.component.html',
+  styleUrls: ['./validate-report-implement.scss'],
+})
+export class ValidateReportImplementFormComponent
+  extends BasePage
+  implements OnInit
+{
+  aprobeReport: boolean = false;
+
+  constructor(private modalService: BsModalService) {
+    super();
+  }
+
+  ngOnInit(): void {}
+
+  saveService() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea guardar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast(
+          'success',
+          'Orden de servicio guardada correctamente',
+          ''
+        );
+      }
+    });
+  }
+
+  generateReport() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+          console.log(data);
+          this.showReport();
+        }
+      },
+    };
+
+    const createService = this.modalService.show(
+      GenerateReportFormComponent,
+      config
+    );
+  }
+
+  showReport() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+          console.log(data);
+          this.electronicSignture();
+        }
+      },
+    };
+
+    const showReport = this.modalService.show(ShowProgrammingComponent, config);
+  }
+
+  electronicSignture() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+          console.log(data);
+          this.showSignProg();
+        }
+      },
+    };
+
+    const showReport = this.modalService.show(
+      ElectronicSignatureListComponent,
+      config
+    );
+  }
+
+  showSignProg() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+          console.log(data);
+          this.aprobeReport = true;
+        }
+      },
+    };
+
+    const showReport = this.modalService.show(
+      ShowSignatureProgrammingComponent,
+      config
+    );
+  }
+
+  declineOrderService() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea rechazar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast(
+          'success',
+          'Orden de servicio rechazada correctamente',
+          ''
+        );
+      }
+    });
+  }
+
+  aprobateOrderService() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea aprobar la orden de servicio con folio METROPOLITANA-SAT-1340-OS?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast(
+          'success',
+          'Orden de servicio aprobada correctamente',
+          ''
+        );
+      }
+    });
+  }
+
+  createAnnexedW() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+          console.log(data);
+        }
+      },
+    };
+
+    const showReport = this.modalService.show(AnnexWFormComponent, config);
+  }
+
+  newService() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+          console.log(data);
+        }
+      },
+    };
+    const createService = this.modalService.show(
+      CreateServiceFormComponent,
+      config
+    );
+  }
+
+  deleteService() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estás seguro que desea eliminar el servicio?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Servicio eliminado correctamente', '');
+      }
+    });
+  }
+}

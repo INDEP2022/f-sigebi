@@ -1,0 +1,16 @@
+<ng-container>
+  <div class="row pt-4 table-container">
+    <div class="col-md-12 table-responsive">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settingsTable"
+          [source]="data"
+          (userRowSelect)="rowsSelected.emit($event.selected)"
+          (editConfirm)="updateRow($event)"
+          (deleteConfirm)="showDeleteAlert.emit($event.data)"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</ng-container>

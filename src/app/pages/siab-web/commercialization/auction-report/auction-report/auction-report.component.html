@@ -1,0 +1,178 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">REPORTE DE SUBASTA</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="showLiquidacion = !showLiquidacion">
+              Liquidaci&oacute;n
+            </button>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="showGarantia = !showGarantia">
+              Garant&iacute;as
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
+          <form-field [control]="form.get('filter01')" label="Lote Público:">
+            <ng-select
+              formControlName="filter01"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">651</ng-option>
+              <ng-option value="2">987</ng-option>
+              <ng-option value="3">234</ng-option>
+              <ng-option value="4">234</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
+          <form-field [control]="form.get('filter02')" label="Cliente:">
+            <ng-select
+              formControlName="filter02"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">user 001</ng-option>
+              <ng-option value="2">user 002</ng-option>
+              <ng-option value="3">user 003</ng-option>
+              <ng-option value="4">user 004</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
+          <form-field [control]="form.get('filter03')" label="Estatus&#58;">
+            <ng-select
+              formControlName="filter03"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Disponible</ng-option>
+              <ng-option value="2">No disponible</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
+          <form-field
+            [control]="form.get('filter04')"
+            label="LC&#39;s Vistas&#58;">
+            <ng-select
+              formControlName="filter03"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Vistas</ng-option>
+              <ng-option value="2">No vistas</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div
+        class="row justify-content-end"
+        *ngIf="showGarantia || showLiquidacion">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm active mx-4"
+          disabled>
+          Filtrar
+        </button>
+        <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+          quitar Filtros
+        </button>
+      </div>
+    </form>
+    <div class="row pt-5" *ngIf="showLiquidacion">
+      <div class="ch-content" header>
+        <h5 class="title">Liquidaci&oacute;n</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div class="form-material">
+            <search-bar [params]="params"></search-bar>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+    <!-- Es la misma tabla, solo cambia el título, falta configuración por separado (Pendiente) -->
+    <div class="row pt-5" *ngIf="showGarantia">
+      <div class="ch-content" header>
+        <h5 class="title">Garant&iacute;as</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div class="form-material">
+            <search-bar [params]="params"></search-bar>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+
+    <div class="row pt-5" *ngIf="showGarantia || showLiquidacion">
+      <form class="form-material" [formGroup]="formReport">
+        <div class="col-md-2">
+          <form-field
+            [control]="formReport.get('nameReport')"
+            label="Nombre del reporte&#58;">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameReport" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!formReport.valid"
+              (click)="openPrevPdf()">
+              Descargar reporte
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

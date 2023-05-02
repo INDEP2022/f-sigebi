@@ -1,0 +1,28 @@
+#warehouseProceedings {
+  .asignButton {
+    display: flex;
+    align-items: center;
+    form-check {
+      ::ng-deep .checkbox-color {
+        margin-right: 10px;
+      }
+    }
+    button {
+      height: 25px;
+      width: 25px;
+      font-size: 12px;
+      text-align: center;
+      padding: 0px;
+      position: relative;
+      top: -5px;
+    }
+  }
+
+  .advice {
+    display: flex;
+    align-items: center;
+    @media screen and (max-width: 576px) {
+      justify-content: center;
+    }
+  }
+}

@@ -1,0 +1,222 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar constancia' : 'Crear constancia' }}
+    </h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <div class="row">
+      <form
+        [formGroup]="deliveryConstancyForm"
+        class="form-material"
+        style="margin: 0 auto">
+        <div class="form-group">
+          <label>Destinario constancia:</label>
+          <form-radio label="Cliente" class="radio-inline align-baseline">
+            <input
+              type="radio"
+              formControlName="radio"
+              value="client"
+              (change)="typeUser($event)" />
+          </form-radio>
+          <form-radio
+            label="Representate legal"
+            class="radio-inline align-baseline">
+            <input
+              type="radio"
+              formControlName="radio"
+              value="representLegal"
+              (change)="typeUser($event)" />
+          </form-radio>
+        </div>
+
+        <div class="form-group">
+          <form-field
+            [control]="deliveryConstancyForm.get('typeConstancy')"
+            label="Tipo constancia">
+            <select
+              class="form-control"
+              formControlName="typeConstancy"
+              readonly>
+              <option [value]="null">Entregados</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="row pt-3">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showClientForm = true"
+                *ngIf="!showClientForm">
+                <i class="fa fa-angle-right" aria-hidden="true"></i> Cliente</a
+              >
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showClientForm = false"
+                *ngIf="showClientForm">
+                <i class="fa fa-angle-down" aria-hidden="true"></i> Cliente</a
+              >
+            </p>
+          </h5>
+
+          <div class="form-group pt-4" *ngIf="showClientForm">
+            <form-field
+              [control]="deliveryConstancyForm.get('identification')"
+              label="Identificación">
+              <select class="form-control" formControlName="identification">
+                <option [value]="null">Seleccione identificaci&oacute;n</option>
+                <option [value]="1">Credencial de elector</option>
+                <option [value]="2">Pasaporte</option>
+                <option [value]="3">Cartilla militar</option>
+                <option [value]="4">C&eacute;dula profesional</option>
+                <option [value]="5">Crendecial del SAT</option>
+                <option [value]="6">Crendecial del INDEP</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="col-md-6 pt-2" *ngIf="showClientForm">
+            <form-field
+              [control]="deliveryConstancyForm.get('numIdentification')"
+              label="No. identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numIdentification" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6 pt-2" *ngIf="showClientForm">
+            <form-field
+              [control]="deliveryConstancyForm.get('issuedBy')"
+              label="Expedida por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="issuedBy" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="personalEstates = true"
+                *ngIf="!personalEstates">
+                <i class="fa fa-angle-right" aria-hidden="true"></i> Personal
+                que entrega los bienes</a
+              >
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="personalEstates = false"
+                *ngIf="personalEstates">
+                <i class="fa fa-angle-down" aria-hidden="true"></i> Personal que
+                entrega los bienes</a
+              >
+            </p>
+          </h5>
+
+          <div class="col-md-6" *ngIf="personalEstates">
+            <div class="form-group pt-4">
+              <form-field
+                [control]="deliveryConstancyForm.get('name')"
+                label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="name" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="col-md-6" *ngIf="personalEstates">
+            <div class="form-group pt-4">
+              <form-field
+                [control]="deliveryConstancyForm.get('position')"
+                label="Puesto">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="position" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="form-group pt-4" *ngIf="personalEstates">
+            <form-field
+              [control]="deliveryConstancyForm.get('identificationEstate')"
+              label="Identificaci&oacute;n">
+              <select
+                class="form-control"
+                formControlName="identificationEstate">
+                <option [value]="null">Seleccione identificaci&oacute;n</option>
+                <option [value]="1">Credencial de elector</option>
+                <option [value]="2">Pasaporte</option>
+                <option [value]="3">Cartilla militar</option>
+                <option [value]="4">C&eacute;dula profesional</option>
+                <option [value]="5">Crendecial del SAT</option>
+                <option [value]="6">Crendecial del INDEP</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="col-md-6 pt-2" *ngIf="personalEstates">
+            <form-field
+              [control]="deliveryConstancyForm.get('numIdentificationEstate')"
+              label="No. identificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numIdentificationEstate" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6 pt-2" *ngIf="personalEstates">
+            <form-field
+              [control]="deliveryConstancyForm.get('issuedByEstate')"
+              label="Expedida por">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="issuedByEstate" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="pt-4">
+        <button class="btn btn-primary btn-sm active">Separar</button>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="personalEstateData">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

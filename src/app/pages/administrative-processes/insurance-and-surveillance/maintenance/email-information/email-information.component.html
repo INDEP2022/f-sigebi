@@ -1,0 +1,126 @@
+<div body>
+  <form [formGroup]="form" (ngSubmit)="send()" class="form-material">
+    <div class="row mt-4">
+      <div class="col-md-8">
+        <form-field
+          [control]="form.get('reasonForChange')"
+          label="Motivo de Cambio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="reasonForChange" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="form.get('date')" label="Fecha de Solicitud">
+          <input
+            type="text"
+            formControlName="date"
+            class="form-control"
+            bsDatepicker />
+        </form-field>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form-field
+          label="Envía"
+          class="form-group"
+          [control]="form.get('from')">
+          <ng-custom-select
+            [moreParams]="{ 'filter.status': '$eq:1' }"
+            class="form-control"
+            path="email/api/v1/vig-email-send"
+            paramSearch="filter.nameSend"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ item.nameSend }} / {{ item.emailSend }}
+            </ng-template>
+          </ng-custom-select>
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="form.get('to')" label="Para">
+          <ng-custom-select
+            [moreParams]="{
+              'filter.bookType': '$eq:P',
+              'filter.bookStatus': '$eq:1'
+            }"
+            class="form-control"
+            path="email/api/v1/vig-mail-book"
+            paramSearch="filter.bookName"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ item.bookName }}/{{ item.bookEmail }}
+            </ng-template>
+          </ng-custom-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form-field label="CC" [control]="form.get('cc')">
+          <ng-custom-select
+            [moreParams]="{
+              'filter.bookType': '$eq:C',
+              'filter.bookStatus': '$eq:1'
+            }"
+            class="form-control"
+            path="email/api/v1/vig-mail-book"
+            paramSearch="filter.bookName"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ item.bookName }}/{{ item.bookEmail }}
+            </ng-template>
+          </ng-custom-select>
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="form.get('type')" label="Tipo">
+          <ng-custom-select
+            (valueChange)="changeType($event)"
+            [isLoadInOnInit]="true"
+            [moreParams]="{ 'filter.status': '$eq:1' }"
+            class="form-control"
+            path="email/api/v1/vig-email-body"
+            paramSearch="filter.bodyEmail"
+            prefixSearch="$ilike">
+            <ng-template let-item>
+              {{ convertEmailBody(item.id) }}
+            </ng-template>
+          </ng-custom-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form-field [control]="form.get('issue')" label="Asunto">
+          <input
+            readonly
+            type="text"
+            class="form-control px-3"
+            formControlName="issue" />
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="form.get('body')" label="Cuerpo">
+          <input
+            readonly
+            type="text"
+            class="form-control px-3"
+            formControlName="body" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4 float-right">
+      <div>
+        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+          ENVIAR
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

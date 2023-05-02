@@ -1,0 +1,59 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <h6>BAJA DE USUARIOS</h6>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-check label="Habilitar Fechas" for="habilitarFecha">
+        <input
+          id="habilitarFecha"
+          type="checkbox"
+          formControlName="habilitarFecha" />
+      </form-check>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('fechaSolicitudBaja')"
+        label="Fecha Solicitud Baja">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaSolicitudBaja"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('fechaBaja')" label="Fecha Baja">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaBaja"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('usuarioBaja')" label="Usuario Baja">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="usuarioBaja"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-2">
+      <form-field [control]="form.get('observaciones')" label="Observaciones">
+        <textarea
+          class="form-control"
+          formControlName="observaciones"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-12 text-center p-2">
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm active m-2"
+        (click)="btnBajaUsuario()">
+        Dar Baja Usuario
+      </button>
+    </div>
+  </div>
+</form>

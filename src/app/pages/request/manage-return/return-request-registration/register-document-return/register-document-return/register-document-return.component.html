@@ -1,0 +1,136 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      REGISTRAR DOCUMENTACI&Oacute;N COMPLEMENTARIA DEVOLUCI&Oacute;N
+    </h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaSolicitud')"
+            label="Fecha Solicitud">
+            <input
+              class="form-control"
+              formControlName="fechaSolicitud"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
+            <input class="form-control" formControlName="noOficio" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="asuntoName"
+            label="Asunto"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="asunto"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="delegacionRegionalName"
+            label="Delegaci&oacute;n Regional"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="delegacionRegional"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="estadoName"
+            label="Estado"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="estado"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="transferenteName"
+            label="Transferente"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="transferente"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="emisoraName"
+            label="Emisora"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="emisora"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="autoridadName"
+            label="Autoridad"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="autoridad"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <div class="row w-100 pl-4">
+            <label class="form-control-label">Tipo Usuario</label>
+            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+              <form-radio label="T&#46;E&#46;">
+                <input
+                  type="radio"
+                  formControlName="tipoUsuario"
+                  [value]="'T.E.'" />
+              </form-radio>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+              <form-radio label="INDEP">
+                <input
+                  type="radio"
+                  formControlName="tipoUsuario"
+                  [value]="'SAE'" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="usuarioRecepcionName"
+            label="Usuario Recepción"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="usuarioRecepcion"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm m-2"
+              (click)="btnGuardar()">
+              Guardar
+            </button>
+            <button
+              type="button"
+              class="btn btn-info active btn-sm m-2"
+              (click)="btnTurnar()">
+              Turnar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

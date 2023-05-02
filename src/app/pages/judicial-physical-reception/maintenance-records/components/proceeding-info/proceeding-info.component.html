@@ -1,0 +1,298 @@
+<form class="form-material" [formGroup]="form">
+  <div class="row border border-dark">
+    <div class="row header-proceeding-info">
+      <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
+      <div class="col-md-6 buttons">
+        <div class="col-md-6">
+          <app-clean-filters-shared
+            [form]="form"
+            (cleanFiltersEvent)="
+              deleteProceedings()
+            "></app-clean-filters-shared>
+        </div>
+        <div class="col-md-6">
+          <button
+            [class]="disabled ? 'disabled' : ''"
+            class="btn btn-sm btn-danger"
+            (click)="filter()">
+            <i class="bx bx-search float-icon"></i> Filtrar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mt-5">
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('id')" label="No&#46; Acta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id"
+              [readonly]="loading" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('numFile')" label="No Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numFile"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('statusActa')" label="Estatus Acta">
+            <select
+              class="form-control"
+              formControlName="statusActa"
+              [class]="disabled ? 'disabled' : ''">
+              <option value="ABIERTA">Abierta</option>
+              <option value="CERRADA">Cerrada</option>
+              <option value="Todos">Todos</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-9">
+          <form-field [control]="form.get('cveActa')" label="Cve Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveActa"
+              [readonly]="loading" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('receiptKey')"
+            label="Clave Del Recibe">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="receiptKey"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <app-proceeding-types-shared
+            [form]="form"
+            formField="tipoActa"
+            label="Tipo Acta"
+            [readonly]="disabled"></app-proceeding-types-shared>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('labelActa')" label="Etiqueta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="labelActa"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <form-field [control]="form.get('address')" label="Direcci&oacute;n">
+          <textarea
+            rows="3"
+            class="form-control"
+            formControlName="address"
+            [readonly]="disabled"></textarea>
+        </form-field>
+      </div>
+      <div class="row" style="margin-bottom: 1.25rem">
+        <form-field [control]="form.get('observations')" label="Observaciones">
+          <textarea
+            rows="3"
+            class="form-control"
+            formControlName="observations"
+            [readonly]="disabled"></textarea>
+        </form-field>
+      </div>
+      <div class="row">
+        <app-recibe-form
+          [form]="form"
+          [disabled]="disabled"
+          label="Recibe"
+          formField="numDelegation1"
+          formFieldName="numDelegation1Description"></app-recibe-form>
+        <app-recibe-form
+          [form]="form"
+          [disabled]="disabled"
+          label="Administra"
+          formField="numDelegation2"
+          formFieldName="numDelegation2Description"></app-recibe-form>
+        <!-- <div class="col-md-6">
+          <form-field [control]="form.get('numDelegation1')" label="Recibe">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numDelegation1"
+              [readonly]="loading" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('numDelegation2')" label="Administra">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numDelegation2"
+              [readonly]="loading" />
+          </form-field>
+        </div> -->
+      </div>
+    </div>
+    <div class="col-md-6 mt-5">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('elaborationDate')"
+            label="Fecha Elaboraci&oacute;n">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="elaborationDate"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('closeDate')" label="Fecha Cierre">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="closeDate"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('datePhysicalReception')"
+            label="Fecha Recepci&oacute;n F&iacute;sica">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="datePhysicalReception"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('maxDate')"
+            label="Fecha M&aacute;xima">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="maxDate"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateElaborationReceipt')"
+            label="Fecha Elaboraci&oacute;n Recibo">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="dateElaborationReceipt"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateCaptureHc')"
+            label="Fecha Captura Hc">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="dateCaptureHc"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateDeliveryGood')"
+            label="Fecha Entrega de bienes">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="dateDeliveryGood"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateCloseHc')"
+            label="Fecha Cierre Hc">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="dateCloseHc"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('captureDate')" label="Fecha Captura">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="captureDate"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('dateMaxHc')"
+            label="Fecha M&aacute;xima Hc">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="dateMaxHc"
+              [readonly]="disabled" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-4">
+        <form-field [control]="form.get('witness1')" label="Testigo 1">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="witness1"
+            [readonly]="disabled" />
+        </form-field>
+      </div>
+      <div class="row mb-4">
+        <form-field [control]="form.get('witness2')" label="Testigo 2">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="witness2"
+            [readonly]="disabled" />
+        </form-field>
+      </div>
+      <div class="row">
+        <form-field
+          [control]="form.get('comptrollerWitness')"
+          label="Testigo Contraloria">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="comptrollerWitness"
+            [readonly]="disabled" />
+        </form-field>
+      </div>
+    </div>
+    <hr
+      style="width: calc(100% - 30px); margin-left: auto; margin-right: auto" />
+    <app-justification></app-justification>
+  </div>
+</form>

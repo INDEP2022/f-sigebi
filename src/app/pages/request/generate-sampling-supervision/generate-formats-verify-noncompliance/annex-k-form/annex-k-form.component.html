@@ -1,0 +1,186 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Captura detalles del anexo</h5>
+  </div>
+  <div body class="body">
+    <div id="signatoryData">
+      <div class="row">
+        <div class="col-md-12">
+          <h5>Capturar datos del firmante</h5>
+        </div>
+      </div>
+      <form
+        [formGroup]="detailForm"
+        class="form-material"
+        style="margin-top: 2rem">
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="detailForm.get('name')" label="&#42;Nombre">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="detailForm.get('position')"
+              label="&#42;Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="position" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12" style="display: flex">
+            <div style="line-height: 3">
+              <label for="electronica">&#42;Tipo de firma</label>
+            </div>
+            <div style="padding-left: 7px">
+              <div>
+                <input
+                  type="radio"
+                  id="electronica"
+                  style="height: 1.5rem !important"
+                  formControlName="typeSign"
+                  value="electronica" />
+                <label class="label-annexk" for="electronica"
+                  >Electr&oacute;nica</label
+                >
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  id="autograma"
+                  style="height: 1.5rem !important"
+                  formControlName="typeSign"
+                  value="autograma" />
+                <label class="label-annexk" for="autograma"
+                  >Aut&oacute;grama</label
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="participantData">
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <h5>Capturar de datos de los participantes</h5>
+        </div>
+      </div>
+      <form
+        [formGroup]="participantDataForm"
+        class="form-material"
+        style="margin-top: 2rem">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('name1')"
+              label="&#42;Nombre">
+              <input type="text" class="form-control" formControlName="name1" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('position1')"
+              label="&#42;Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="position1" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('name2')"
+              label="&#42;Nombre">
+              <input type="text" class="form-control" formControlName="name2" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('position2')"
+              label="&#42;Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="position2" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="annexDetail" *ngIf="displayDetailAnnex()">
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <h5>Capturar detalles del anexo</h5>
+        </div>
+      </div>
+      <form
+        [formGroup]="detailAnnexForm"
+        class="form-material"
+        style="margin-top: 2rem">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="detailAnnexForm.get('warehouseManager')"
+              label="Gerente de Almac&eacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="warehouseManager" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="detailAnnexForm.get('relevantFacts')"
+              label="Hechos Relevantes">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="relevantFacts">
+              </textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="detailAnnexForm.get('agreements')"
+              label="Acuerdos">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="agreements">
+              </textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="signAnnex()">
+          Firmar Anexo
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

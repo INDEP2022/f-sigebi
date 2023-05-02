@@ -1,0 +1,81 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CAT&Aacute;LOGO DE CLIENTES</h5>
+  </div>
+  <div body>
+    <!-- <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
+      </div>
+    </div> -->
+    <div class="ch-content">
+      <h5 class="title">Todos los clientes</h5>
+      <div class="buttons">
+        <app-columns-select [(settings)]="settings"> </app-columns-select>
+        <div>
+          <div class="btn-group col-md-2" dropdown>
+            <button
+              id="button-basic"
+              dropdownToggle
+              type="button"
+              class="btn btn-success active btn-sm ml-3"
+              aria-controls="dropdown-basic">
+              Opciones <span class="caret"></span>
+            </button>
+            <ul
+              id="dropdown-basic"
+              *dropdownMenu
+              class="dropdown-menu"
+              role="menu"
+              aria-labelledby="button-basic">
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="openFormClients()"
+                  >Agregar cliente<i class="fa fa-plus text-primary mx-2"></i
+                ></a>
+              </li>
+              <li class="divider dropdown-divider"></li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="openBlackList()"
+                  >Lista Negraa<i class="fa fa-ban text-danger mx-2"></i
+                ></a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="openWhiteList()"
+                  >Lista Blanca<i class="fa fa-check text-success mx-2"></i
+                ></a>
+              </li>
+              <li class="divider dropdown-divider"></li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="exportAllClients()"
+                  >Descargar todo</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Customers Table-->
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openFormClients($event.data)"
+            (create)="openFormClients()"
+            (userRowSelect)="rowsSelected($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <hr />
+    <app-customers-representants-list
+      [client]="client"></app-customers-representants-list>
+  </div>
+</app-card>

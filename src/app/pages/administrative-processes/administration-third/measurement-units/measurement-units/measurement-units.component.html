@@ -1,0 +1,21 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Catálogo de unidades de medida</h5>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>

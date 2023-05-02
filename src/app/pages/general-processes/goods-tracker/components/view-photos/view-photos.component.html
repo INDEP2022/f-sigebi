@@ -1,0 +1,115 @@
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <h5 class="modal-title">Fotograf&iacute;as de bienes</h5>
+    <div class="buttons">
+      <div class="btn-group" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          type="button"
+          class="btn btn-primary dropdown-toggle btn-sm active"
+          aria-controls="dropdown-basic">
+          <div class="d-flex align-items-center">
+            Acciones <span class="caret ml-2"></span>
+          </div>
+        </button>
+        <ul
+          id="dropdown-basic"
+          *dropdownMenu
+          class="dropdown-menu dropdown-menu-right"
+          role="menu"
+          aria-labelledby="button-basic">
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Importar</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Validar</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Vaciar</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Carga Masiva</a>
+          </li>
+          <li class="divider dropdown-divider"></li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Eliminar Todas</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row b-content">
+      <!-- <carousel
+        [itemsPerSlide]="itemsPerSlide"
+        [singleSlideOffset]="singleSlideOffset"
+        [interval]="0"
+        [noWrap]="noWrap"
+        [showIndicators]="false">
+        <slide *ngFor="let slide of slides; let index = index">
+          <img
+            [src]="slide.image"
+            alt="Bien"
+            style="display: block; width: 100%" />
+          <div class="carousel-caption">
+            <p>
+              <button
+                (click)="mainUrl = slide.image"
+                type="button"
+                class="btn btn-link text-light">
+                No Bien {{ index }}
+              </button>
+            </p>
+            <p></p>
+          </div>
+        </slide>
+      </carousel> -->
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 text-secondary">
+        <small
+          >Seleccione las fotos que estar&aacute;n en el c&aacute;talogo
+          web</small
+        >
+      </div>
+      <!-- <div class="col-md-8 text-secondary">
+        <small>Click en una imagen para visualizarla</small>
+      </div> -->
+    </div>
+
+    <div class="row pt-1">
+      <div class="col-md-4 vertical-carousel">
+        <div class="row" *ngFor="let slide of slides; let index = index">
+          <div class="col-md-10">
+            <img
+              [src]="slide.image"
+              alt="Bien"
+              class="w-100"
+              (click)="mainUrl = slide.image" />
+          </div>
+          <div class="col-md-2">
+            <form-check [for]="'img-' + index">
+              <input type="checkbox" name="" [id]="'img-' + index" />
+            </form-check>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-12">
+            <img [src]="mainUrl" alt="" class="w-100" />
+          </div>
+        </div>
+
+        <div class="row pt-2">
+          <div class="col-md-12 d-flex-justify-content-around">
+            <button class="btn btn-danger btn-sm active">Borrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer></div>
+</app-modal>

@@ -1,0 +1,68 @@
+<form
+  [formGroup]="form"
+  (submit)="mostrarInfo()"
+  class="container-fluid form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
+        <input type="number" class="form-control" formControlName="noVolante" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field
+        [control]="form.get('noExpediente')"
+        label="No&#46; Expediente">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="noExpediente" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('oficio')" label="Oficio">
+        <input class="form-control" formControlName="oficio" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('tipoOficio')" label="Tipo Oficio">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="tipoOficio" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('remitente')" label="Remitente">
+        <input class="form-control" formControlName="remitente" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('destinatario')" label="Destinatario">
+        <input class="form-control" formControlName="destinatario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <form-field [control]="form.get('ciudad')" label="Ciudad">
+        <input class="form-control" formControlName="ciudad" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <div class="form-group">
+        <label class="form-control-label w-100">DATA DE OFICIO</label>
+        <label class="form-control-label w-100">Clave Oficio</label>
+      </div>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <div class="form-group">
+        <label class="form-control-label w-100">FECHA DE CAPTURA</label>
+        <label class="form-control-label w-100">Fecha Captura</label>
+      </div>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-1">
+      <div class="form-group">
+        <label class="form-control-label w-100">ESTATUS</label>
+        <label class="form-control-label w-100">Estatus</label>
+      </div>
+    </div>
+  </div>
+</form>

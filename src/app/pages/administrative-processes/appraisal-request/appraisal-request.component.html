@@ -1,0 +1,274 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">SOLICITUD DE AVALÚOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field [control]="form.get('noRequest')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getRequestAppraisalAll($event)"
+                [data]="noRequest"
+                value="id"
+                bindLabel="id"
+                label="No. Solicitud"
+                [control]="'noRequest'"
+                (change)="getRequestAppraisalById()">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6"></div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('requestDate')"
+              label="Fecha de solicitud">
+              <input
+                type="text"
+                formControlName="requestDate"
+                placeholder="Fecha de solicitud"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('noPerito')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getPeritos($event)"
+              [data]="peritos"
+              value="id"
+              bindLabel="id"
+              label="No. Perito"
+              [control]="'noPerito'"
+              (change)="getPeritos($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('institution')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getInstitutions($event)"
+              [data]="institutions"
+              value="id"
+              bindLabel="id"
+              label="Institución"
+              [control]="'institution'"
+              (change)="getInstitutions($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+        SOLICITANTE
+      </h5>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('applicant')" label="Usuario Origen">
+            <input
+              type="text"
+              formControlName="applicant"
+              placeholder="Usuario Origen"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('userName')"
+            label="Nombre de usuario">
+            <input
+              type="text"
+              formControlName="userName"
+              placeholder="Nombre de usuario"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegation"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubdelegations($event)"
+              [data]="subdelegation"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('department')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getDepartments($event)"
+              [data]="department"
+              value="id"
+              bindLabel="description"
+              label="Departamento"
+              [control]="'department'"
+              (change)="getDepartments($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+        SOLICITADO A
+      </h5>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('requestedTo')" label="Solicitado a">
+            <input
+              type="text"
+              formControlName="requestedTo"
+              placeholder="Usuario destino"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('requestedName')"
+            label="Nombre de usuario">
+            <input
+              type="text"
+              formControlName="requestedName"
+              placeholder="Usuario al que se solicitó"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="form.get('requestedDelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegation"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'requestedDelegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('requestedSubdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubdelegations($event)"
+              [data]="subdelegation"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'requestedSubdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('requestedDepartment')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getDepartments($event)"
+              [data]="department"
+              value="id"
+              bindLabel="description"
+              label="Departamento"
+              [control]="'requestedDepartment'"
+              (change)="getDepartments($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <form-field [control]="form.get('observations')" label="Observaciones">
+          <textarea
+            rows="3"
+            class="form-control"
+            formControlName="observations"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row margin-input">
+        <div class="form-group col-md-6">
+          <form-field [control]="form.get('costCurrency')">
+            <ngx-select
+              [form]="form"
+              [data]="currency"
+              bindLabel="otKey1"
+              label="Moneda del Costo"
+              value="otKey1"
+              (fetchItems)="getCurrencies($event)"
+              control="costCurrency"></ngx-select>
+          </form-field>
+        </div>
+        <div class="form-group col-md-6">
+          <form-field [control]="form.get('appraisalCurrency')">
+            <ngx-select
+              [form]="form"
+              [data]="currency"
+              bindLabel="otKey1"
+              label="Moneda del avalúo"
+              value="otKey1"
+              (fetchItems)="getCurrencies($event)"
+              control="appraisalCurrency"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div footer>
+        <div class="row margin-input">
+          <div class="col-md-6">
+            <div class="row margin-input">
+              <div class="col-md-1 mb-4">
+                <button (click)="add()" class="btn btn-secondary btn-sm active">
+                  Asignar bienes
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="row margin-input">
+              <div class="col-md-1">
+                <confirm-button
+                  text="Generar archivo"
+                  [disabled]="form.invalid"
+                  [loading]="loading"
+                  (confirm)="send()">
+                </confirm-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

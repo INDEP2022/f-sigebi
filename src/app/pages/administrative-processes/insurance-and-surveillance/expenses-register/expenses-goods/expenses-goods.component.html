@@ -1,0 +1,309 @@
+<div class="row pt-4">
+  <div class="col-md-12">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+
+  <div class="row mt-4 float-right">
+    <div class="">
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm active mx-4"
+        (click)="searchGoods()">
+        BUSCAR BIENES
+      </button>
+      <button type="submit" class="btn btn-success btn-sm active mx-4">
+        DISTRIBUIR
+      </button>
+      <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+        AVALÚO
+      </button>
+    </div>
+  </div>
+
+  <section *ngIf="searchGood">
+    <div class="ch-content mt-4" header>
+      <h5 class="title">DATOS PARA LA BUSQUEDA</h5>
+    </div>
+
+    <form
+      action=""
+      [formGroup]="form"
+      class="form-material"
+      style="margin-bottom: 50px">
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegations"
+              bindLabel="name"
+              label="Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('warehouse')">
+            <ngx-select
+              [form]="form"
+              [data]="warehouses"
+              bindLabel="name"
+              label="Almacene"
+              value="id"
+              (fetchItems)="getWarehouses($event)"
+              control="warehouse"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('boveda')">
+            <ngx-select
+              [form]="form"
+              [data]="safes"
+              bindLabel="name"
+              label="Boveda"
+              value="id"
+              (fetchItems)="getSafes($event)"
+              control="boveda"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('file')" label="Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="file"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('tipoBien')">
+            <ngx-select
+              [form]="form"
+              [data]="types"
+              bindLabel="name"
+              label="Tipo Bien"
+              value="id"
+              (fetchItems)="getTypes($event)"
+              control="tipoBien"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('subtipoBien')">
+            <ngx-select
+              [form]="form"
+              [data]="subtypes"
+              bindLabel="name"
+              label="Subtipo"
+              value="id"
+              (fetchItems)="getSubtypes($event)"
+              control="subtipoBien"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('ssubtipoBien')">
+            <ngx-select
+              [form]="form"
+              [data]="ssubtypes"
+              bindLabel="name"
+              label="Ssubtipo"
+              value="id"
+              (fetchItems)="getSsubtypes($event)"
+              control="ssubtipoBien"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('sssubtipoBien')">
+            <ngx-select
+              [form]="form"
+              [data]="sssubtypes"
+              bindLabel="name"
+              label="Sssubtipo"
+              value="id"
+              (fetchItems)="getSssubtypes($event)"
+              control="sssubtipoBien"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4 float-right">
+        <div class="">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            BUSCAR
+          </button>
+          <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+            LIMPIAR
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="ch-content mt-4" header>
+      <h5 class="title">RESULTADOS</h5>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data2">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </section>
+
+  <section *ngIf="searchGood">
+    <div class="ch-content mt-4" header>
+      <h5 class="title">CRITERIOS DE BUSQUEDA</h5>
+    </div>
+
+    <form
+      action=""
+      [formGroup]="form"
+      class="form-material"
+      style="margin-bottom: 50px">
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('costCenter')">
+            <ngx-select
+              [form]="form"
+              [data]="costCenters"
+              bindLabel="name"
+              label="Centro de costo"
+              value="id"
+              (fetchItems)="getCostCenters($event)"
+              control="costCenter"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('conceptGasto')">
+            <ngx-select
+              [form]="form"
+              [data]="gastoConcepts"
+              bindLabel="name"
+              label="Concepto de Gasto"
+              value="id"
+              (fetchItems)="getGastoConcepts($event)"
+              control="conceptGasto"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('from')" label="Desde fecha">
+            <input
+              formControlName="from"
+              placeholder="Desde fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('to')" label="Hasta fecha">
+            <input
+              formControlName="to"
+              placeholder="Hasta fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="ch-content">
+        <h5 class="title">TIPO DE GASTOS</h5>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <form-radio label="Directos">
+            <input type="radio" formControlName="typeGasto" value="cat" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-radio label="Indirectos">
+            <input type="radio" formControlName="typeGasto" value="cat" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-radio label="Ambos">
+            <input type="radio" formControlName="typeGasto" value="cat" />
+          </form-radio>
+        </div>
+      </div>
+
+      <div class="ch-content">
+        <h5 class="title">ESTADO</h5>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <form-radio label="Aplicados">
+            <input type="radio" formControlName="status" value="cat" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-radio label="Pendientes">
+            <input type="radio" formControlName="status" value="cat" />
+          </form-radio>
+        </div>
+      </div>
+
+      <div class="row mt-4 float-right">
+        <div class="">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            BUSCAR
+          </button>
+          <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+            LIMPIAR
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="ch-content mt-4" header>
+      <h5 class="title">RESULTADOS</h5>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings3"
+            [source]="data3">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row mt-4 float-right">
+      <div class="">
+        <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+          SELECCIONAR
+        </button>
+        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+          CERRAR
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

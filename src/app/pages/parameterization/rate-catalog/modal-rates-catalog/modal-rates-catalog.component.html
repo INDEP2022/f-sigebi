@@ -1,0 +1,75 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('currency')" label="Moneda">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currency" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('year')" label="A&ntilde;o">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="year"
+              [bsConfig]="{
+                showPreviousMonth: false,
+                minMode: 'year',
+                adaptivePosition: true,
+                dateInputFormat: 'YYYY',
+                displayMonths: 1
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('month')" label="Mes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="month"
+              [bsConfig]="{
+                showPreviousMonth: false,
+                minMode: 'month',
+                adaptivePosition: true,
+                dateInputFormat: 'MMMM',
+                displayMonths: 1
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="d-flex justify-content-center">
+          <form-field
+            [control]="form.get('rate')"
+            label="Tasas &#40;&#37;&#41;">
+            <input type="text" class="form-control" formControlName="rate" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="saved()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

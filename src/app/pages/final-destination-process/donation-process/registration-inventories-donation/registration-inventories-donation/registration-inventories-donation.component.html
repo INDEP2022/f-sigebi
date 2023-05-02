@@ -1,0 +1,242 @@
+<app-card [header]="true">
+  <div class="ch-content flex-wrap align-items-center" header>
+    <h5 class="title">Registro de Inventarios para Donaci&oacute;n Directa</h5>
+    <div class="buttons">
+      <button class="btn btn-primary btn-sm active mt-2" (click)="openModal()">
+        Lista Donaciones
+      </button>
+      <button
+        class="btn btn-primary btn-sm active mt-2 ml-2"
+        (click)="resetForm()">
+        Nuevo
+      </button>
+    </div>
+  </div>
+
+  <div body>
+    <div class="card br-card p-3">
+      <div class="row">
+        <div class="col-12">
+          <h5>Datos Solicitud</h5>
+        </div>
+      </div>
+      <form class="form-material" [formGroup]="form">
+        <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <div class="col-md-6">
+            <form-field [control]="form.get('requestId')" label="Id Solicitud">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="requestId" />
+            </form-field>
+            <form-field [control]="form.get('doneeId')" label="Id Donatario">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="doneeId" />
+            </form-field>
+            <form-field
+              [control]="form.get('donee')"
+              label="Descrip. Donatario">
+              <input type="text" class="form-control" formControlName="donee" />
+            </form-field>
+            <form-field
+              [control]="form.get('representative')"
+              label="Representante">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="representative" />
+            </form-field>
+            <form-field [control]="form.get('position')" label="Puesto">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="position" />
+            </form-field>
+            <form-field [control]="form.get('state')" label="Estado">
+              <input type="text" class="form-control" formControlName="state" />
+            </form-field>
+            <form-field [control]="form.get('municipality')" label="Municipio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="municipality" />
+            </form-field>
+            <form-field
+              [control]="form.get('direction')"
+              label="Direcci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="direction" />
+            </form-field>
+            <form-field
+              [control]="form.get('requestDate')"
+              label="Fecha Solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="requestDate"
+                bsDatepicker
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('justification')"
+              label="Justificaci&oacute;n">
+              <textarea
+                class="form-control"
+                formControlName="justification"></textarea>
+            </form-field>
+            <div class="row m-0">
+              <div class="col-md-4 text-center br-card">
+                <div class="text-center">
+                  <label class="label text-secondary">Estatus</label>
+                </div>
+                <form-radio label="En Trámite">
+                  <input
+                    type="radio"
+                    formControlName="authorizeType"
+                    value="T" />
+                </form-radio>
+                <form-radio label="Asignaci&oacute;n">
+                  <input
+                    type="radio"
+                    formControlName="authorizeType"
+                    value="A" />
+                </form-radio>
+                <form-radio label="Donaci&oacute;n">
+                  <input
+                    type="radio"
+                    formControlName="authorizeType"
+                    value="D" />
+                </form-radio>
+              </div>
+              <div class="col-md-8 pt-5 text-center br-card">
+                <form-field
+                  [control]="form.get('authorizeCve')"
+                  label="Cve Autorizaci&oacute;n">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="authorizeCve" />
+                </form-field>
+                <form-field
+                  [control]="form.get('authorizeDate')"
+                  label="Fecha Autoriza">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="authorizeDate"
+                    bsDatepicker
+                    [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" />
+                </form-field>
+                <button
+                  class="btn btn-secondary btn-sm active"
+                  (click)="authorize()"
+                  [ngClass]="{ disabled: !PB_CONFIRMAR }">
+                  Autorizar
+                </button>
+              </div>
+              <div class="col-12 br-card">
+                <div
+                  class="d-flex flex-wrap justify-content-between buttons align-items-center p-3">
+                  <div class="col-auto">
+                    <button
+                      class="btn btn-secondary btn-sm active mb-2"
+                      (click)="callFilterDonation()">
+                      Definir Filtro
+                    </button>
+                  </div>
+                  <div class="col-auto">
+                    <confirm-button
+                      [btnSmall]="true"
+                      loadingText="Bienes"
+                      [disabled]="false"
+                      [loading]="loadingGood"
+                      text="Bienes"
+                      (confirm)="getBienes()">
+                    </confirm-button>
+                  </div>
+                  <div class="col-auto">
+                    <button
+                      class="btn btn-secondary btn-sm active mb-2"
+                      (click)="callRastreador()">
+                      Por Rastreador
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="card br-card p-3">
+      <div class="row mt-5">
+        <div class="col-12">
+          <h5>Bienes Disponibles</h5>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-5">
+        <app-columns-select
+          [(settings)]="settings"
+          class="row justify-content-end">
+        </app-columns-select>
+      </div>
+      <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="selectedGoodsTable"
+            [settings]="settings"
+            [source]="data.data">
+          </ng2-smart-table>
+          <div class="table-padding"></div>
+        </div>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="data.count"
+        *ngIf="data.count">
+      </app-pagination>
+      <div class="row mt-2 align-items-center">
+        <div class="col-12 col-md-6">
+          <form class="form-material" [formGroup]="formTable">
+            <div class="row mt-5">
+              <div class="col-6">
+                <div class="mb-3 pl-4 pr-4">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="totalGoods"
+                    readonly />
+                </div>
+              </div>
+              <div class="col-6">
+                <p>Total de Bienes que Aplican</p>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="row">
+            <div class="col-12 col-md-6 pl-4 pr-4 text-right">
+              <button class="btn btn-secondary btn-sm active">
+                Generar/Modifica Solicitud
+              </button>
+            </div>
+            <div class="col-12 col-md-6 pl-4 mt-3 mtm-md-0 pr-4 text-right">
+              <button
+                class="btn btn-secondary btn-sm active"
+                [ngClass]="{ disabled: !PB_REGISTRAR }">
+                Registrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,122 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Modficar información bien transpórtable</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('goodId')"
+            label="ID Gesti&oacute;n bien">
+            <input type="text" class="form-control" formControlName="goodId" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('uniqueKey')"
+            label="Clave &uacute;nica">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="uniqueKey" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripción del bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionGood" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="form.get('quantity')" label="Cantidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="quantity" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('unitMeasure')">
+            <ngx-select
+              [form]="form"
+              control="unitMeasure"
+              [data]="unitMeasures"
+              [loading]="loading"
+              value="unitMeasure"
+              bindLabel="unitMeasure"
+              label="Selecciona la unidad de medida"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field [control]="form.get('physicalStatus')">
+            <ngx-select
+              [form]="form"
+              control="physicalStatus"
+              [data]="physicalStatus"
+              [loading]="loading"
+              value="physicalStatus"
+              bindLabel="physicalStatus"
+              label="Selecciona el estado f&iacute;sico"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field [control]="form.get('stateConservation')">
+            <ngx-select
+              [form]="form"
+              control="stateConservation"
+              [data]="stateConservations"
+              [loading]="loading"
+              value="stateConservation"
+              bindLabel="stateConservation"
+              label="Selecciona estado de conservaci&oacute;n"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

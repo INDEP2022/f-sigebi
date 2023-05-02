@@ -1,0 +1,137 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <form-field [control]="form.get('folio')" label="Folio">
+        <input type="text" class="form-control" formControlName="folio" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('expenseDate')" label="Fecha del Gasto">
+        <input
+          type="text"
+          formControlName="expenseDate"
+          class="form-control"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('expenseType')" label="Tipo de Gasto">
+        <select class="form-control" formControlName="expenseType">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">Tipo de gasto 1</option>
+          <option [value]="2">Tipo de gasto 2</option>
+        </select>
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <form-field [control]="form.get('beneficiario')">
+        <ngx-select
+          [form]="form"
+          [data]="beneficiaries"
+          bindLabel="name"
+          label="Beneficiario"
+          value="id"
+          (fetchItems)="getBeneficiarios($event)"
+          control="beneficiario"></ngx-select>
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('importe')" label="Importe">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="importe"
+          min="1"
+          pattern="^[0-9]+" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('retention')" label="Retención">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="retention"
+          min="1"
+          pattern="^[0-9]+" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col">
+      <form-field [control]="form.get('concept')" label="Concepto">
+        <input type="text" class="form-control" formControlName="concept" />
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <form-field
+        [control]="form.get('institutionalActivity')"
+        label="Actividad institucional">
+        <select class="form-control" formControlName="institutionalActivity">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">Actividad institucional 1</option>
+          <option [value]="2">Actividad institucional 2</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('expenseConcept')">
+        <ngx-select
+          [form]="form"
+          [data]="beneficiaries"
+          bindLabel="name"
+          label="Concepto de gasto"
+          value="id"
+          (fetchItems)="getBeneficiarios($event)"
+          control="expenseConcept"></ngx-select>
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="form.get('costCenter')">
+        <ngx-select
+          [form]="form"
+          [data]="beneficiaries"
+          bindLabel="name"
+          label="Centro de costo"
+          value="id"
+          (fetchItems)="getBeneficiarios($event)"
+          control="costCenter"></ngx-select>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <form-field
+        [control]="form.get('userRequest')"
+        label="Usuario que solicita">
+        <input type="text" class="form-control" formControlName="userRequest" />
+      </form-field>
+    </div>
+    <div class="col-md-6">
+      <form-field
+        [control]="form.get('userAuthorize')"
+        label="Usuario que Autoriza">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="userAuthorize" />
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-4 float-right">
+    <div class="">
+      <button type="submit" class="btn btn-primary btn-sm active mx-4">
+        IMPRIMIR
+      </button>
+      <button type="submit" class="btn btn-primary btn-sm active mx-4">
+        VISTO BUENO
+      </button>
+    </div>
+  </div>
+</form>

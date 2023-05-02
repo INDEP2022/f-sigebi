@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-md-12">
+    <h4>Atributos del bien</h4>
+  </div>
+</div>
+<div class="row">
+  <span class="text-muted">Los campos marcados con * son obligatorios.</span>
+  <form [formGroup]="goodForm" class="form-material" (submit)="save()">
+    <div class="row pt-3">
+      <div class="col-md-4 mt-4" *ngFor="let feature of goodFeatures">
+        <dynamic-catalog-select
+          [feature]="feature"
+          [clasifNumber]="clasifNumber"
+          [goodForm]="goodForm"></dynamic-catalog-select>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <confirm-button
+            [loading]="loading"
+            (confirm)="save()"></confirm-button>
+
+          <button
+            (click)="cancel()"
+            class="btn btn-danger ml-3 active"
+            type="button">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

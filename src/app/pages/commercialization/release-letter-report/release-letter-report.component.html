@@ -1,0 +1,197 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de Cartas de Liberacion</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="evento"
+            (fetchItems)="getEvent($event)"
+            [showTooltip]="true"
+            [data]="selectEvent"
+            bindLabel="description"
+            label="Evento"
+            value="event.id"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="lote"
+            (fetchItems)="getLot($event)"
+            [showTooltip]="true"
+            [data]="selectLot"
+            bindLabel="description"
+            (change)="getGood($event)"
+            [searchable]="true"
+            label="Lote"
+            value="lotId"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('oficio')" label="Oficio">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="oficio"
+              placeholder="Oficio" />
+          </form-field>
+        </div>
+      </div>
+      <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('diridoA')" label="Dirido A">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="diridoA"
+              placeholder="Dirido A" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('puesto')" label="Puesto">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="puesto"
+              placeholder="Puesto" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('parrafo1')" label="Parrafo 1">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="parrafo1"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('adjudicatorio')"
+            label="Adjudicatorio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="adjudicatorio"
+              placeholder="Adjudicatorio" />
+          </form-field>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <label for="">Bienes</label>
+      </div>
+
+      <div class="row pt-2 scroll-table">
+        <!-- <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings1"
+          [source]="data"></ng2-smart-table> -->
+        <ng2-smart-table
+          [settings]="settings2"
+          (userRowSelect)="userRowSelect($event)"
+          [source]="goodList"></ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+
+      <hr class="row mt-5" />
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('factura')" label="No Factura">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="factura"
+              placeholder="No Factura" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('fechaFactura')"
+            label="Fecha Factura">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaFactura"
+              placeholder="Fecha Factura" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('parrafo2')" label="Parrafo 2">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="parrafo2"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('firmante')" label="Firmante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firmante"
+              placeholder="Firmante" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('ccp1')" label="CCP1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ccp1"
+              placeholder="CCP1" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('ccp2')" label="CCP2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ccp2"
+              placeholder="CCP2" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('fechaCarta')" label="Fecha Carta">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaCarta"
+              placeholder="Fecha Carta" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="form.invalid"
+          (confirm)="Generar()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

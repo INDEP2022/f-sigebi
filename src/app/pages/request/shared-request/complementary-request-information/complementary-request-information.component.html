@@ -1,0 +1,219 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title" *ngIf="typeOfRequest != null; else elseBlock">
+      {{ titleArray[typeOfRequest - 1] }}
+    </h5>
+    <ng-template #elseBlock>
+      <h5 class="title">
+        {{ title }}
+      </h5>
+    </ng-template>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="d-flex">
+        <div class="mr-auto p-2"></div>
+        <div
+          class="p-2"
+          *ngIf="
+            nombrePantalla === 'transf-notification' ||
+            nombrePantalla === 'validate-eye-visit-result' ||
+            nombrePantalla === 'prepare-response-office'
+          ">
+          <button
+            type="button"
+            class="d-flex align-items-center btn btn-primary btn-sm active"
+            (click)="generateReport()">
+            <i class="bx bxs-right-arrow-square mr-1"></i> {{ titleReport }}
+          </button>
+        </div>
+        <div class="p-2">
+          <button
+            type="button"
+            class="d-flex align-items-center btn btn-primary btn-sm active"
+            [disabled]="registRequestForm.invalid">
+            <i class="bx bxs-right-arrow-square mr-1"></i> Guardar
+          </button>
+        </div>
+        <div class="p-2">
+          <button
+            type="button"
+            class="d-flex align-items-center btn btn-primary btn-sm active"
+            [disabled]="registRequestForm.invalid"
+            (click)="turnRequest()">
+            <i class="bx bxs-right-arrow-square mr-1"></i> Turnar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div header>
+        <h5 class="title">Informaci&oacute;n de la Solicitud</h5>
+      </div>
+    </div>
+    <div>
+      <form [formGroup]="registRequestForm" class="form-material">
+        <app-card [header]="false">
+          <div body>
+            <div class="row pt-2">
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >Fecha de Solicitud&#58;
+                  <span for="">{{
+                    registRequestForm.get('date').value
+                  }}</span></label
+                >
+              </div>
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >No&#46; Solicitud&#58;
+                  <label for="">{{
+                    registRequestForm.get('noRequest').value
+                  }}</label></label
+                >
+              </div>
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >No&#46; Expediente&#58;
+                  <label for="">{{
+                    registRequestForm.get('noExpedient').value
+                  }}</label></label
+                >
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >No&#46; Oficina&#58;
+                  <label for="">{{
+                    registRequestForm.get('noOfi').value
+                  }}</label></label
+                >
+              </div>
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >Delegaci&oacute;n Regional&#58;
+                  <label for="">{{
+                    registRequestForm.get('regDelega').value
+                  }}</label></label
+                >
+              </div>
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >Estado&#58;
+                  <label for="">{{
+                    registRequestForm.get('state').value
+                  }}</label></label
+                >
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >Transferencia&#58;
+                  <label for="">{{
+                    registRequestForm.get('tranfe').value
+                  }}</label></label
+                >
+              </div>
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >Emisora&#58;
+                  <label for="">
+                    {{ registRequestForm.get('transmitter').value }}
+                  </label>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="label" for=""
+                  >Autoridad&#58;
+                  <label for="">
+                    {{ registRequestForm.get('authority').value }}
+                  </label>
+                </label>
+              </div>
+            </div>
+          </div>
+        </app-card>
+
+        <div class="row pt-2">
+          <tabset class="md-tabs">
+            <tab
+              [heading]="tabRegisterDocumentation"
+              id="tab1"
+              *ngIf="registroDocumentacion">
+              <app-register-complementary-documentation
+                (formValues)="dataRegistration($event)"
+                [nombrePantalla]="nombrePantalla">
+              </app-register-complementary-documentation>
+            </tab>
+            <tab
+              heading="Buscar y Asociar al Expediente"
+              id="tab1"
+              *ngIf="buscarAsociarExpediente">
+              <app-associate-file></app-associate-file>
+            </tab>
+            <tab heading="Seleccionar Bienes" *ngIf="seleccionarBienes">
+              <ng-container
+                *ngIf="
+                  nombrePantalla == 'return-request-record' ||
+                    nombrePantalla == 'goods-classification';
+                  else elseBlock2
+                ">
+                <app-select-goods
+                  [nombrePantalla]="nombrePantalla"></app-select-goods>
+              </ng-container>
+              <ng-template #elseBlock2>
+                <app-select-similar-goods
+                  [nombrePantalla]="nombrePantalla"></app-select-similar-goods>
+              </ng-template>
+            </tab>
+            <tab
+              heading="Validar Resultado Visitas"
+              *ngIf="validarResultadoVisitas">
+              <app-validate-visit-result></app-validate-visit-result>
+            </tab>
+            <tab heading="Resultado Visitas" *ngIf="resultadoVisitas">
+              <app-result-visits></app-result-visits>
+            </tab>
+            <tab
+              heading="Verificar Cumplimiento de Bienes"
+              *ngIf="verificarCumplimientoBienes">
+              verificarCumplimientoBienes
+            </tab>
+            <tab heading="Expediente">
+              <tabset class="md-tabs">
+                <tab
+                  heading="Documentos Solicitud"
+                  id="tab1"
+                  (selectTab)="requestSelected(1)">
+                  <app-doc-request-tab
+                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                </tab>
+                <tab
+                  heading="Documentos Generales"
+                  (selectTab)="requestSelected(2)">
+                  <tabset class="md-tabs">
+                    <tab
+                      heading="Documento Expedientes"
+                      id="tab1"
+                      (selectTab)="requestSelected(2)">
+                      <app-doc-request-tab
+                        [typeDoc]="typeDoc"></app-doc-request-tab>
+                    </tab>
+                    <tab
+                      heading="Solicitudes del Expediente"
+                      (selectTab)="requestSelected(3)">
+                      <app-expedients-request-tab [typeDoc]="typeDoc">
+                      </app-expedients-request-tab>
+                    </tab>
+                  </tabset>
+                </tab>
+              </tabset>
+            </tab>
+          </tabset>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

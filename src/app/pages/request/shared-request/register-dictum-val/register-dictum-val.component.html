@@ -1,0 +1,39 @@
+<form [formGroup]="validateForm" class="form-material pb-0 mb-0">
+  <div class="mt-3 d-flex flex-row-reverse">
+    <div class="mx-1">
+      <button
+        class="btn btn-primary btn-sm active"
+        (click)="save()"
+        [disabled]="!validateForm.touched || validateForm.invalid">
+        <i class="bx bx-save mr-1 float-icon"></i>Guardar
+      </button>
+    </div>
+  </div>
+  <br />
+  <div class="row mt-3">
+    <div class="col-md-4">
+      <form-field
+        [control]="validateForm.get('dictumNo')"
+        label="N&uacute;mero Dictamen">
+        <input type="number" formControlName="dictumNo" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="validateForm.get('courtroom')"
+        label="Juzgado &#47; Sala">
+        <input type="number" formControlName="courtroom" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="validateForm.get('judmentNullity')"
+        label="Juicio Nulidad">
+        <input
+          type="number"
+          formControlName="judmentNullity"
+          class="form-control" />
+      </form-field>
+    </div>
+  </div>
+</form>

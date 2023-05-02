@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row mt-n4 pe-3">
+      <div class="col-12">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active float-end"
+          [disabled]="this.userCopies.length == 0 || loading"
+          (click)="addRow()">
+          Agregar Copia
+        </button>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12 heigth-limit">
+        <ng-scrollbar track="all" [autoHeightDisabled]="true">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              id="events-table"
+              [attr.class]="'table-bordered'"
+              [settings]="copySettings"
+              [source]="columns"
+              (edit)="editRow($event)"
+              (delete)="deleteRow($event)">
+            </ng2-smart-table>
+          </div>
+          <div class="table-padding"></div>
+        </ng-scrollbar>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!userAction"
+          [loading]="loading"
+          text="Guardar"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

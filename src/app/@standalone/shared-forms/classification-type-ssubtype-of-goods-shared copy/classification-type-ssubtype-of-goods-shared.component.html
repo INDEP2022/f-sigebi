@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showClasification">
+    <div class="col-md-12">
+      <form-field [control]="form.get(ClassificationTypeSsubtypeOfGoodFiield)">
+        <ngx-select
+          (fetchItems)="getClassificationTypeSsubtypeOfGoods($event)"
+          [data]="sssubtypes"
+          [form]="form"
+          value="no_clasif_bien"
+          bindLabel="info"
+          [label]="label"
+          [control]="ClassificationTypeSsubtypeOfGoodFiield"
+          (change)="onPackagesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,198 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Solicitud valuaci&oacute;n</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('cveService')" label="Clave oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveService" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('folio')" label="Folio">
+            <input type="text" class="form-control" formControlName="folio" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6 alert alert-info">
+          <div class="col-md-4">
+            <form-field [control]="form.get('sender')" label="Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="sender" />
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field [control]="form.get('senderTxt')" label="Texto Mensaje">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="senderTxt"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6 alert alert-info">
+          <div class="col-md-4">
+            <form-field [control]="form.get('addressee')" label="Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="addressee" />
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field
+              [control]="form.get('addresseeTxt')"
+              label="Texto Mensaje">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="addresseeTxt"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="form.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <div class="col-md-12 alert alert-success">
+            <form-field
+              [control]="form.get('paragraph1')"
+              label="P&aacute;rrafo 1">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="paragraph1"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="col-md-12 alert alert-success">
+            <form-field
+              [control]="form.get('paragraph2')"
+              label="P&aacute;rrafo 2">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="paragraph2"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="col-md-12 alert alert-success">
+            <form-field
+              [control]="form.get('paragraph3')"
+              label="P&aacute;rrafo final">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="paragraph3"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="ch-content">
+          <h5 class="title">Bienes</h5>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="data"></ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+
+        <div class="ch-content">
+          <h5 class="title">Con copia para&#58;</h5>
+        </div>
+        <div class="row pt-5">
+          <div class="col-md-2">
+            <form-field [control]="form.get('user')" label="Usuario y nombre">
+              <ng-select
+                formControlName="user"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="0">user-01 - Cristobal</ng-option>
+                <ng-option value="1">user-02 - Antonia</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('txtUserCCP')"
+              label="Texto con copia">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="txtUserCCP"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <div class="justify-content-center">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Agregar Usuario
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="justify-content-center">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Quitar Usuario
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="form.invalid">
+          Guardar cambios
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="form.invalid">
+          Enviar a Valuaci&oacute;n
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          [disabled]="form.invalid">
+          Ver oficio
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

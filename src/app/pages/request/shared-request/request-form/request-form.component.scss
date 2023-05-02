@@ -1,0 +1,18 @@
+a.text-color:hover,
+a.text-color:active {
+  color: #9d2449;
+  cursor: pointer;
+}
+
+:host ::ng-deep app-modal .modal-content .modal-body {
+  padding: 5px 5px 5px !important;
+}
+
+#loading {
+  position: absolute;
+  z-index: 9999;
+  width: 10rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

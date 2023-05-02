@@ -1,0 +1,36 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">TIPOS DE CAMBIO</h5>
+  </div>
+
+  <div body>
+    <div class="row mt-4">
+      <div class="">
+        <button
+          type="button"
+          (click)="openForm()"
+          class="btn btn-primary btn-sm active mx-4">
+          AGREGAR
+        </button>
+      </div>
+    </div>
+    <div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="exchangeTypes"
+              (edit)="openForm($event.data)">
+              >
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>

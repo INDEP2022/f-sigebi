@@ -1,0 +1,225 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Nuevo Documento</h5>
+  </div>
+  <div body class="body">
+    <div class="row">
+      <h5 class="title">Informaci&oacute;n General</h5>
+    </div>
+    <div>
+      <form [formGroup]="documentForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field [control]="documentForm.get('typeDoc')">
+              <ngx-select
+                [form]="documentForm"
+                control="typeDoc"
+                [data]="typeDocSelected"
+                value="id"
+                bindLabel="id"
+                label="Tipo de Documento"
+                (fetchItems)="getTypeDocSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-7">
+            <form-field [control]="documentForm.get('noDoc')">
+              <input
+                type="file"
+                #FileInput
+                class="form-control"
+                name="noDoc"
+                id="noDoc"
+                (change)="selectFile($event)" />
+            </form-field>
+            <span id="size" *ngIf="sizeMessage"
+              >Seleccione un archivo no mayor a 100 MB&#46;</span
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('titleDoc')"
+              label="T&iacute;tulo del Documento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="titleDoc" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('noExpedient')"
+              label="No&#46; Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noExpedient" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('noRequest')"
+              label="No&#46; Solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noRequest" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('noAsset')"
+              label="No&#46; Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noAsset" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('noSiab')"
+              label="No&#46; SIAB">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noSiab" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="documentForm.get('regionalDelegation')">
+              <ngx-select
+                [form]="documentForm"
+                control="regionalDelegation"
+                [data]="regionalDelegationSelected"
+                value="id"
+                bindLabel="id"
+                label="Delegaci&oacute;n Regional"
+                (fetchItems)="getRegionalDelegationSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="documentForm.get('state')">
+              <ngx-select
+                [form]="documentForm"
+                control="state"
+                [data]="stateSelected"
+                value="id"
+                bindLabel="id"
+                label="Estado"
+                (fetchItems)="getStateSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="documentForm.get('typeTranfer')">
+              <ngx-select
+                [form]="documentForm"
+                control="typeTranfer"
+                [data]="typeTranferSelected"
+                value="id"
+                bindLabel="id"
+                label="Transferente"
+                (fetchItems)="getTypeTranferSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('sender')"
+              label="Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="sender" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('senderCharge')"
+              label="Cargo Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="senderCharge" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('responsible')"
+              label="Responsable">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="responsible" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('contributor')"
+              label="Contribuyente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="contributor" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('noOfice')"
+              label="No&#46; Oficio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noOfice" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="documentForm.get('comments')"
+              label="Comentarios">
+              <textarea
+                class="form-control"
+                formControlName="comments"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="save()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

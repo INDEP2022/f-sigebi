@@ -1,0 +1,108 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="storeHouseForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="storeHouseForm.get('idStorehouse')"
+            label="ID Bodega">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idStorehouse"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="storeHouseForm.get('idEntity')">
+            <ngx-select
+              [form]="storeHouseForm"
+              [data]="states"
+              bindLabel="descCondition"
+              label="Estado"
+              value="id"
+              (fetchItems)="getStates($event)"
+              control="idEntity"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <form-field
+            [control]="storeHouseForm.get('manager')"
+            label="Responsable de la bodega">
+            <input type="text" class="form-control" formControlName="manager" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="storeHouseForm.get('municipality')">
+            <ngx-select
+              [form]="storeHouseForm"
+              [data]="municipalities"
+              bindLabel="description"
+              label="Municipio"
+              value="codeMunicipalityId"
+              (fetchItems)="getMunicipalities($event)"
+              control="municipality"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="storeHouseForm.get('locality')">
+            <ngx-select
+              [form]="storeHouseForm"
+              [data]="localities"
+              label="Localidad"
+              bindLabel="localityName"
+              value="key"
+              (fetchItems)="getLocalities($event)"
+              control="locality"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="storeHouseForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="storeHouseForm.get('ubication')"
+            label="Ubicaci&oacute;n">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="ubication"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!storeHouseForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

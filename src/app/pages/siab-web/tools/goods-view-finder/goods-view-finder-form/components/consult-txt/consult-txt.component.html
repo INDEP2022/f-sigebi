@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Consultar bienes desde TXT</h5>
+  </div>
+
+  <div body style="margin-top: -33px">
+    <form [formGroup]="form" class="form-material">
+      <div class="form-check form-check-inline">
+        <form-radio label="No. bien">
+          <input
+            type="radio"
+            formControlName="typeRequest"
+            value="numberGood" />
+        </form-radio>
+        <form-radio label="No. Gestión">
+          <input
+            type="radio"
+            formControlName="typeRequest"
+            value="numberGestion" />
+        </form-radio>
+      </div>
+
+      <div class="pt-3">
+        <form-field
+          [control]="form.get('file')"
+          label="Selecciona un archivo con extensión .txt">
+          <input
+            type="file"
+            class="form-control pt-2"
+            formControlName="file"
+            accept="file/.txt" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

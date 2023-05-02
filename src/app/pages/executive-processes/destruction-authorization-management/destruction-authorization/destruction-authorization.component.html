@@ -1,0 +1,194 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="row">
+        <div class="form-material col-md-5">
+          <search-bar
+            [filterParams]="filterParams"
+            [filterField]="searchFilter"></search-bar>
+        </div>
+      </div>
+      <div class="ch-content" header>
+        <h5 class="title">Actas</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div>
+            <button
+              (click)="openForm1()"
+              class="btn btn-primary active btn-sm ml-3">
+              Nuevo
+            </button>
+          </div>
+          <div>
+            <button
+              (click)="openEmail()"
+              class="btn btn-primary active btn-sm ml-3"
+              *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
+              Cerrar Acta
+            </button>
+          </div>
+          <div class="ml-3" *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
+            <p class="d-flex justify-content-center">
+              <span class="text-success">ABIERTA</span>
+            </p>
+          </div>
+          <div class="ml-3" *ngIf="selectedRow?.statusProceedings == 'CERRADA'">
+            <p class="d-flex justify-content-center">
+              <span class="text-danger">CERRADA</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div [class]="loadingProceedings ? 'table-loading' : ''">
+        <div class="table-responsive">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="proceedingsList"
+            (edit)="openForm1($event.data)"
+            (userRowSelect)="rowsSelected($event)"
+            (rowSelect)="selectRow($event.data)"></ng2-smart-table>
+        </div>
+        <app-pagination
+          [filterParams]="filterParams"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <hr />
+    </div>
+    <div class="row" *ngIf="rowSelected">
+      <div class="col-md-3">
+        <div class="mt-4">
+          <h5 class="font-size-14">Folio de escaneo:</h5>
+          <p class="text-muted mb-0">
+            {{ selectedRow?.universalFolio }}
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="col-md-4">
+          <button class="btn btn-sm btn-primary active" (click)="report()">
+            Solicitud <i class="fa fa-print"></i>
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-sm btn-primary active" (click)="scan()">
+            Escaneo <i class="fa fa-print"></i>
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-sm btn-primary active" (click)="report()">
+            imprimir <i class="fa fa-print"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mt-4">
+          <h5 class="font-size-14">Observaciones:</h5>
+          <p class="text-muted mb-0">
+            {{ selectedRow?.observations }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-5">
+      <hr />
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title">ACTAS DE RECEPCIÓN</h5>
+        </div>
+        <div [class]="loadingActReception ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings4"
+              [source]="actaList"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params5"
+            [totalItems]="totalItems4"></app-pagination>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title">DICTAMINACIONES</h5>
+        </div>
+        <div [class]="loadingDictation ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings5"
+              [source]="dictaList"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params5"
+            [totalItems]="totalItems5"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar
+          [filterParams]="filterParams2"
+          [filterField]="searchFilter2"></search-bar>
+      </div>
+    </div>
+    <div class="row pt-5">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="ch-content" header>
+            <h5 class="title">Todos los Bienes en estado PDS</h5>
+          </div>
+          <div [class]="loadingGoods ? 'table-loading' : ''">
+            <div class="table-responsive">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings3"
+                [source]="goodPDS"></ng2-smart-table>
+            </div>
+            <app-pagination
+              [filterParams]="filterParams2"
+              [totalItems]="totalItems3"></app-pagination>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row pt-5">
+          <div class="ch-content" header>
+            <h5 class="title">Bienes del acta #{{ selectedRow?.id }}</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select [(settings)]="settings2"></app-columns-select>
+              <div *ngIf="rowSelected">
+                <button
+                  (click)="openForm2()"
+                  class="btn btn-primary active btn-sm ml-3"
+                  *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
+                  Agregar bienes
+                </button>
+              </div>
+            </div>
+          </div>
+          <div [class]="loadingGoodsByP ? 'table-loading' : ''">
+            <div class="table-responsive">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="detailProceedingsList"
+                (userRowSelect)="rowsSelected2($event)"></ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="params2"
+              [totalItems]="totalItems2"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,623 @@
+<<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="newDocForm">
+      <div class="row">
+        <div class="col-md-12">
+          <!--<ngx-select
+            [form]="newDocForm"
+            (change)="typeDocumentSelect($event)"
+            control="docType"
+            (fetchItems)="typedocuments($event)"
+            [data]="selectTypeDoc"
+            label="Tipo de Documento"
+            value="ddocType"
+            bindLabel="ddescription"></ngx-select> -->
+          <div
+            [formGroup]="newDocForm"
+            class="form-group form-secondary form-static-label">
+            <ng-select
+              class="form-control"
+              formControlName="docType"
+              [clearable]="false"
+              [items]="typesDocuments"
+              [virtualScroll]="true"
+              [loading]="loading"
+              bindLabel="ddescription"
+              bindValue="ddocType">
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <div [title]="item.ddescription">
+                  {{ item.ddescription }}
+                </div>
+              </ng-template>
+            </ng-select>
+            <span class="form-bar"></span>
+            <label class="float-label"
+              >Tipo de documento <span style="color: #ad4766">*</span></label
+            >
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field [control]="newDocForm.get('docFile')" label="Carga">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="docFile"
+              (change)="selectFile($event)" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field
+            [control]="newDocForm.get('docTit')"
+            label="T&iacute;tulo del Documento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="docTit"
+              maxlength="70" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <p for="">
+            <span *ngIf="typeDoc === 'doc-request'"
+              >No&#46; Solicitud&#58; {{ request?.id }}
+            </span>
+            <span *ngIf="typeDoc === 'doc-expedient'"
+              >No&#46; Expediente&#58; {{ idExpedient }}</span
+            >
+            <span *ngIf="typeDoc === 'good'">No&#46; Bien&#58;</span>
+            <span *ngIf="typeDoc === 'good'">{{ idGood }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('contributor')"
+            label="Contribuyente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contributor"
+              maxlength="70" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <p for="">
+            Delegaci&oacute;n Regional&#58;
+            <span>{{ regDelName }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('noOfi')"
+            label="No&#46; Oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noOfi"
+              maxlength="60" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <p for="">
+            Estado&#58; <span>{{ stateName }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p for="">
+            Transferente&#58; <span>{{ nameTransferent }}</span>
+          </p>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="newDocForm.get('sender')" label="Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sender"
+              maxlength="70" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('senderCharge')"
+            label="Cargo Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="senderCharge"
+              maxlength="60" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('responsible')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible"
+              maxlength="60" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('observations')"
+            label="Comentarios">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              maxlength="70">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div
+        *ngIf="
+          typeDocument == 2 ||
+          typeDocument == 3 ||
+          typeDocument == 4 ||
+          typeDocument == 5 ||
+          typeDocument == 6 ||
+          typeDocument == 7 ||
+          typeDocument == 9 ||
+          typeDocument == 10 ||
+          typeDocument == 14 ||
+          typeDocument == 15 ||
+          typeDocument == 18 ||
+          typeDocument == 19 ||
+          typeDocument == 20 ||
+          typeDocument == 21 ||
+          typeDocument == 23 ||
+          typeDocument == 25 ||
+          typeDocument == 26 ||
+          typeDocument == 27 ||
+          typeDocument == 29 ||
+          typeDocument == 38 ||
+          typeDocument == 59 ||
+          typeDocument == 61 ||
+          typeDocument == 62 ||
+          typeDocument == 65 ||
+          typeDocument == 67 ||
+          typeDocument == 68 ||
+          typeDocument == 72 ||
+          typeDocument == 74 ||
+          typeDocument == 79 ||
+          typeDocument == 80 ||
+          typeDocument == 81 ||
+          typeDocument == 82 ||
+          typeDocument == 84 ||
+          typeDocument == 88
+        "
+        class="ms-n2 mb-2 pointer"
+        (click)="toggleSearch = !toggleSearch"
+        [attr.aria-expanded]="!toggleSearch"
+        aria-controls="collapseAdditional">
+        <i
+          class="bx bx-chevron-down bx-md float-icon-md"
+          [ngClass]="{
+            'rotate-down': toggleSearch,
+            'rotate-up': !toggleSearch
+          }"></i>
+        <h6 class="d-inline">Informaci&oacute;n Adicional</h6>
+      </div>
+      <div
+        *ngIf="
+          typeDocument == 2 ||
+          typeDocument == 3 ||
+          typeDocument == 4 ||
+          typeDocument == 5 ||
+          typeDocument == 6 ||
+          typeDocument == 7 ||
+          typeDocument == 9 ||
+          typeDocument == 10 ||
+          typeDocument == 14 ||
+          typeDocument == 15 ||
+          typeDocument == 18 ||
+          typeDocument == 19 ||
+          typeDocument == 20 ||
+          typeDocument == 21 ||
+          typeDocument == 23 ||
+          typeDocument == 25 ||
+          typeDocument == 26 ||
+          typeDocument == 27 ||
+          typeDocument == 29 ||
+          typeDocument == 38 ||
+          typeDocument == 59 ||
+          typeDocument == 61 ||
+          typeDocument == 62 ||
+          typeDocument == 65 ||
+          typeDocument == 67 ||
+          typeDocument == 68 ||
+          typeDocument == 72 ||
+          typeDocument == 74 ||
+          typeDocument == 79 ||
+          typeDocument == 80 ||
+          typeDocument == 81 ||
+          typeDocument == 82 ||
+          typeDocument == 84 ||
+          typeDocument == 88
+        "
+        id="collapseAdditional"
+        [isAnimated]="true"
+        [collapse]="!toggleSearch"
+        class="pt-3">
+        <div class="row pt-3" *ngIf="typeDocument == 72">
+          <div class="col-md-12">
+            <form-field [control]="newDocForm.get('bank')" label="Banco">
+              <input type="text" class="form-control" formControlName="bank" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 81">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('keyValidate')"
+              label="Clave validaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="keyValidate" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 72">
+          <div class="col-md-12">
+            <form-field [control]="newDocForm.get('count')" label="Cuenta">
+              <input type="text" class="form-control" formControlName="count" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 79">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('dependecyEmitDoc')"
+              label="Dependencia que emite el documento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dependecyEmitDoc" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 72">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('depositDate')"
+              label="Fecha deposito">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="depositDate" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 2">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioAct')"
+              label="Folio Acta">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioAct" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 3">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioActDes')"
+              label="Folio Acta Destrucci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioActDes" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-3" *ngIf="typeDocument == 4">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioActDev')"
+              label="Folio Acta Devoluci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioActDev" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 62">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioContract')"
+              label="Folio contrato">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioContract" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-3" *ngIf="typeDocument == 23">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioDen')"
+              label="Folio denuncia">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioDen" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 25">
+          <div class="col-md-6">
+            <form-field
+              [control]="newDocForm.get('folioDicDes')"
+              label="Folio dictamen destrucci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioDicDes" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-3" *ngIf="typeDocument == 26">
+          <div class="col-md-6">
+            <form-field
+              [control]="newDocForm.get('folioDicDev')"
+              label="Folio dictamen devoluci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioDicDev" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 27">
+          <div class="col-md-6">
+            <form-field
+              [control]="newDocForm.get('folioDicRes')"
+              label="Folio dictamen resarcimiento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioDicRes" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 38">
+          <div class="col-md-6">
+            <form-field
+              [control]="newDocForm.get('folioFac')"
+              label="Folio factura">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioFac" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 61">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioNomb')"
+              label="Folio nombramiente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioNomb" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 59">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioSISE')"
+              label="Folio SISE">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioSISE" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 72">
+          <div class="col-md-12">
+            <form-field [control]="newDocForm.get('amount')" label="Monto">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="amount" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-3" *ngIf="typeDocument == 9">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('noAgreement')"
+              label="No. Acuerdo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noAgreement" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 14">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('noAutDes')"
+              label="No. Autorizaci&oacute;n destrucci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noAutDes" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 21">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('noConvColb')"
+              label="No. Convenio de colaboraci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noConvColb" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 88">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('folioReg')"
+              label="Folio registro">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioReg" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12" *ngIf="typeDocument == 15">
+            <form-field
+              [control]="newDocForm.get('oficioNoAuth')"
+              label="No. oficio autorizaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="oficioNoAuth" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 82">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('oficioNoAvaluo')"
+              label="No. oficio avalúo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="oficioNoAvaluo" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12" *ngIf="typeDocument == 67">
+            <form-field
+              [control]="newDocForm.get('oficioNoCan')"
+              label="No. oficio cancelaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="oficioNoCan" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3" *ngIf="typeDocument == 65">
+          <div class="col-md-12">
+            <form-field
+              [control]="newDocForm.get('oficioNoProg')"
+              label="No. oficio programaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="oficioNoProg" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6" *ngIf="typeDocument == 84">
+            <form-field
+              [control]="newDocForm.get('oficioNoSolAvaluo')"
+              label="No. oficio sol avaluo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="oficioNoSolAvaluo" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12" *ngIf="typeDocument == 68">
+            <form-field
+              [control]="newDocForm.get('noOfNotification')"
+              label="No. oficio Notificaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noOfNotification" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="typeDocument == 18">
+          <form-field
+            [control]="newDocForm.get('noRegistro')"
+            label="No. Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noRegistro" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="newDocForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,169 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar fracci&oacute;n' : 'Nueva fracci&oacute;n' }}
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="fractionForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="fractionForm.get('code')" label="Codigo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              (change)="codeFraction()" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="fractionForm.get('level')" label="Nivel">
+            <input
+              type="text"
+              class="form-control disabled"
+              formControlName="level" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field
+            [control]="fractionForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="fractionForm.get('normId')">
+            <ngx-select
+              [form]="fractionForm"
+              control="normId"
+              [data]="norms"
+              value="id"
+              bindLabel="norm"
+              label="Norma"
+              (fetchItems)="getFractionSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="fractionForm.get('clasificationId')">
+            <ngx-select
+              [form]="fractionForm"
+              control="clasificationId"
+              [data]="clasifications"
+              value="id"
+              bindLabel="sssubtypeDescription"
+              label="Clasificaci&oacute;n"
+              (fetchItems)="getClasificationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="fractionForm.get('unit')" label="Unidad">
+            <input type="text" class="form-control" formControlName="unit" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="fractionForm.get('version')"
+            label="Versi&oacute;n">
+            <input type="text" class="form-control" formControlName="version" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="fractionForm.get('relevantTypeId')"
+            label="Tipo relevante">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="relevantTypeId" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="fractionForm.get('codeErp1')"
+            label="Codigo ERP1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codeErp1" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="fractionForm.get('codeErp2')"
+            label="Codigo ERP2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codeErp2" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="fractionForm.get('codeErp3')"
+            label="Codigo ERP3">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codeErp3" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="fractionForm.get('decimalAmount')"
+            label="Cantidad decimal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="decimalAmount" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="fractionForm.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="fractionForm.get('fractionCode')"
+            label="Codigo Fracci&oacute;n">
+            <input
+              type="text"
+              class="form-control disabled"
+              formControlName="fractionCode" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="fractionForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

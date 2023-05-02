@@ -1,0 +1,56 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Generación de información para reporte mensual de Recepción,
+      administración y entrega de bienes coordinaciones regionales
+    </h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="informationGenerationForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="informationGenerationForm.get('dateDe')"
+            label="Fecha De">
+            <input
+              type="text"
+              formControlName="dateDe"
+              placeholder="Fecha De"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="informationGenerationForm.get('dateA')"
+            label="Fecha A">
+            <input
+              type="text"
+              formControlName="dateA"
+              placeholder="Fecha A"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="ch-content">
+        <h5 class="title">
+          NOTA: Los Saldos del reportes estarán dados al día del proceso.
+        </h5>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-primary btn-sm active">
+              Reporte
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

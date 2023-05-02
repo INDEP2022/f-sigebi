@@ -1,0 +1,174 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PÓLIZAS DE SEGURO</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('policy')" label="Póliza">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="policy"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              formControlName="description"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <form-field [control]="form.get('insurance')" label="Aseguradora">
+            <input
+              type="text"
+              formControlName="insurance"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('startDate')" label="Fecha page">
+            <input
+              type="text"
+              formControlName="startDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('finishedDate')"
+            label="Fecha de Termino">
+            <input
+              type="text"
+              formControlName="finishedDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('amount')" label="Monto prima">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('amountPro')" label="Monto prorrateo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amountPro"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="form.get('iva')" label="% IVA">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="iva"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('expenses')"
+            label="Gastos de expedición">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expenses"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('changeType')" label="Tipo de cambio">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="changeType"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-8">
+          <form-field
+            [control]="form.get('service')"
+            label="Servicio a contabilizar">
+            <input type="text" formControlName="service" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-radio label="Otra">
+            <input type="radio" formControlName="type" value="cat" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-radio label="Prorroga">
+            <input type="radio" formControlName="prorroga" value="cat" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-radio label="Sustitución">
+            <input type="radio" formControlName="sustitution" value="cat" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('lastPolicy')" label="Última póliza">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="lastPolicy"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4 float-right">
+        <div class="">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            INGRESAR PÓLIZA
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            INGRESAR TIPO DE BIEN
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            ASIGNA BIENES
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

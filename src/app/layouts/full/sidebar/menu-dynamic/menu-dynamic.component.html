@@ -1,0 +1,21 @@
+<ul class="sub-menu" aria-expanded="false" *ngIf="hasChild">
+  <li *ngFor="let subitem of menuChild">
+    <a
+      [routerLink]="subitem.link"
+      *ngIf="!hasItems(subitem)"
+      class="side-nav-link-ref"
+      [attr.data-parent]="subitem.parentId"
+      routerLinkActive="active">
+      {{ subitem.label }}
+    </a>
+    <a
+      *ngIf="hasItems(subitem)"
+      class="side-nav-link-a-ref has-arrow"
+      [attr.data-parent]="subitem.parentId">
+      {{ subitem.label }}
+    </a>
+    <app-menu-dynamic
+      [hasChild]="hasItems(subitem)"
+      [menuChild]="subitem.subItems"></app-menu-dynamic>
+  </li>
+</ul>

@@ -1,0 +1,393 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CONVERSIÓN MASIVA PARCIALIZACIÓN INVERSA</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <!--Packages Component-->
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <app-packages-shared [form]="form"></app-packages-shared>
+        </div>
+        <!--Package type-->
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <div class="row justify-content-between">
+            <div class="col-md-4">
+              <form-radio label="Destrucción">
+                <input
+                  type="radio"
+                  formControlName="packageType"
+                  value="destruction" />
+              </form-radio>
+            </div>
+            <div class="col-md-4">
+              <form-radio label="Donación">
+                <input
+                  type="radio"
+                  formControlName="packageType"
+                  value="donation" />
+              </form-radio>
+            </div>
+            <div class="col-md-4">
+              <form-radio label="Chatarra">
+                <input
+                  type="radio"
+                  formControlName="packageType"
+                  value="junk" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('amountKg')" label="Cantidad en KG.">
+            <input formControlName="amountKg" class="form-control" />
+          </form-field>
+        </div>
+        <div
+          class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
+          <form-field
+            [control]="form.get('status')"
+            label="Estatus del Paquete">
+            <select class="form-control" formControlName="status">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="project">P-Proyecto</option>
+              <option value="validation">V-Validado</option>
+              <option value="authorized">A-Autorizado</option>
+              <option value="closed">C-Cerrado</option>
+              <option value="successful">L-Aplicado</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3 justify-content-between">
+        <!--Actions-->
+        <div
+          class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
+          <button class="btn btn-secondary btn-sm active w-100">
+            Validado
+          </button>
+        </div>
+        <div
+          class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
+          <button class="btn btn-secondary btn-sm active w-100">
+            Autorizado
+          </button>
+        </div>
+        <div
+          class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
+          <button class="btn btn-secondary btn-sm active w-100">Cierre</button>
+        </div>
+      </div>
+      <!--Process dates-->
+      <!--Process Users-->
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="mt-4">
+            <h5 class="font-size-14">Fechas del Proceso</h5>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-between mb-3 mt-3">
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-calendar me-1 text-primary"></i>
+              Proyecto
+            </h5>
+            <p class="text-muted mb-0">08 Sept, 2019</p>
+          </div>
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-user me-1 text-primary"></i>
+              Usuario
+            </h5>
+            <p class="text-muted mb-0">User123</p>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-calendar me-1 text-primary"></i>
+              Validación
+            </h5>
+            <p class="text-muted mb-0">08 Sept, 2019</p>
+          </div>
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-user me-1 text-primary"></i>
+              Usuario
+            </h5>
+            <p class="text-muted mb-0">User123</p>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-calendar me-1 text-primary"></i>
+              Autorización
+            </h5>
+            <p class="text-muted mb-0">08 Sept, 2019</p>
+          </div>
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-user me-1 text-primary"></i>
+              Usuario
+            </h5>
+            <p class="text-muted mb-0">User123</p>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-calendar me-1 text-primary"></i>
+              Cierre/Modificación
+            </h5>
+            <p class="text-muted mb-0">08 Sept, 2019</p>
+          </div>
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-user me-1 text-primary"></i>
+              Usuario
+            </h5>
+            <p class="text-muted mb-0">User123</p>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-calendar me-1 text-primary"></i>
+              Cancelación
+            </h5>
+            <p class="text-muted mb-0">08 Sept, 2019</p>
+          </div>
+          <div class="mt-4">
+            <h5 class="font-size-14">
+              <i class="bx bx-user me-1 text-primary"></i>
+              Usuario
+            </h5>
+            <p class="text-muted mb-0">User123</p>
+          </div>
+        </div>
+      </div>
+      <!--Options Menu-->
+      <div class="row mb-3 mt-3">
+        <!--Delegation Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-delegation-shared
+            [form]="form"
+            [showSubdelegation]="false"></app-delegation-shared>
+        </div>
+        <!--Goods Classification Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-goods-classification-shared
+            [form]="form"></app-goods-classification-shared>
+        </div>
+        <!--Target Tags Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-target-tags-shared [form]="form"></app-target-tags-shared>
+        </div>
+        <!--Goods Status Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+        </div>
+        <!--Measurement Units Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-measurement-units-shared
+            [form]="form"></app-measurement-units-shared>
+        </div>
+        <!--Transference Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-transferente-shared [form]="form"></app-transferente-shared>
+        </div>
+        <!--warehouse Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-warehouse-shared
+            [form]="form"
+            [showWarehouseType]="false"></app-warehouse-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer class="row justify-content-end">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active w-100"
+        (click)="openPermissions('')">
+        Permisos
+      </button>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
+      <button type="button" class="btn btn-danger btn-sm active w-100">
+        Cancelar
+      </button>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
+      <button type="button" class="btn btn-primary btn-sm active w-100">
+        Correo
+      </button>
+    </div>
+  </div>
+</app-card>
+<!--Add New Good-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Nuevo Bien</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form2">
+      <div class="row mb-3 mt-3">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
+          <form-field [control]="form2.get('numberGood')" label="No. Bien">
+            <input
+              formControlName="numberGood"
+              type="text"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
+          <form-field label="Expediente" [control]="form2.get('record')">
+            <input formControlName="record" type="text" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-3 mt-3">
+          <form-field label="Descripción" [control]="form2.get('description')">
+            <input
+              formControlName="description"
+              type="text"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
+          <form-field label="Cantidad" [control]="form2.get('amount')">
+            <input formControlName="amount" type="text" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
+          <form-field label="Unidad" [control]="form2.get('unit')">
+            <input formControlName="unit" type="text" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
+          <form-field label="Estatus" [control]="form2.get('status')">
+            <input formControlName="status" type="text" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <!--Actions-->
+      <div class="row justify-content-between mb-3 mt-3">
+        <div
+          class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
+          <button class="btn btn-secondary btn-sm active w-100">
+            Seleccionar Bienes
+          </button>
+        </div>
+        <div
+          class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
+          <button class="btn btn-secondary btn-sm active w-100">
+            Verificar Bienes
+          </button>
+        </div>
+        <div
+          class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
+          <button class="btn btn-secondary btn-sm active w-100">
+            Ver Error
+          </button>
+        </div>
+        <div
+          class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
+          <button class="btn btn btn-success active btn-sm w-100">
+            Exportar
+          </button>
+        </div>
+        <div
+          class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
+          <form-check label="Bienes Correctos" for="label">
+            <input id="label" type="checkbox" formControlName="check" />
+          </form-check>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+<!--Data Previsualization-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Previsualización de Datos</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>
+<!--Scan Folio-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Escaneo</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3">
+          <form-field [control]="form.get('scanFolio')" label="Folio Escaneo">
+            <input
+              formControlName="scanFolio"
+              type="number"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div
+          class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3 align-self-center">
+          <button class="btn btn-primary btn-sm active w-100">Escanear</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+<!--Paragraphs-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Párrafos</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-12 mb-3 mt-3">
+          <form-field [control]="form.get('paragraphF')" label="Párafo Inicial">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="paragraphF"></textarea>
+          </form-field>
+        </div>
+        <div class="col-12 mb-3 mt-3">
+          <form-field [control]="form.get('paragraphL')" label="Párafo Final">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="paragraphL"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

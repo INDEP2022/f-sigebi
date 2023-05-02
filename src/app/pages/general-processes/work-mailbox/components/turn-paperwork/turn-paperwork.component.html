@@ -1,0 +1,54 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Selecciona el usuario a turnar</h5>
+  </div>
+  <div body>
+    <form class="form-material">
+      <div class="row">
+        <form-field [control]="form.controls.user">
+          <ngx-select
+            [form]="form"
+            [data]="users"
+            (fetchItems)="getUsers($event)"
+            (change)="onUserChange($event)"
+            bindLabel="description"
+            value="id"
+            control="user"
+            [searchOnInit]="true"
+            label="Usuario a turnar"
+            [labelTemplate]="label"
+            [optionTemplate]="option">
+          </ngx-select>
+
+          <ng-template #label let-item="item"
+            >{{ item.id }} - {{ item.name }}</ng-template
+          >
+          <ng-template #option let-item="item"
+            >{{ item.id }} - {{ item.name }}</ng-template
+          >
+        </form-field>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <confirm-button
+          text="Aceptar"
+          [loadingText]="loadingText"
+          [btnSmall]="true"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

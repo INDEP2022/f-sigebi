@@ -1,0 +1,91 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE C&Eacute;DULA DE NOMBRAMIENTOS</h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="form"
+      (submit)="btnReportGenerate()"
+      class="container-fluid form-material">
+      <div class="row w-100">
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <div class="card">
+            <div class="card-header">
+              <form-field
+                class="col-sm-12 col-12 col-md-4 p-2"
+                [control]="form.get('noBien')"
+                label="No&#46; Bien">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="noBien" />
+              </form-field>
+              <div class="col-sm-12 col-12 col-md-8 p-2 text-end">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="getGoodData()">
+                  Buscar
+                  <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form-field
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [control]="form.get('descripcion')"
+                label="Descripci&oacute;n del Bien">
+                <textarea
+                  rows="5"
+                  [readonly]="true"
+                  class="form-control"
+                  formControlName="descripcion"></textarea>
+              </form-field>
+              <form-field
+                class="col-sm-6 col-12 col-md-6 p-2"
+                [control]="form.get('tipoAdministrador')"
+                label="Tipo de Administrador">
+                <select
+                  class="form-control"
+                  formControlName="tipoAdministrador">
+                  <option value="">Seleccione una Opción</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Depositario">Depositario</option>
+                  <option value="Interventor">Interventor</option>
+                </select>
+              </form-field>
+              <form-field
+                class="col-sm-6 col-12 col-md-6 p-2"
+                [control]="form.get('tipoDepositaria')"
+                label="Tipo de Depositaria">
+                <select class="form-control" formControlName="tipoDepositaria">
+                  <option value="">Seleccione una Opción</option>
+                  <option value="Provisional">Provisional</option>
+                  <option value="Definitiva">Definitiva</option>
+                </select>
+              </form-field>
+            </div>
+            <div class="card-footer text-center">
+              <button
+                type="submit"
+                class="btn btn-primary ml-2 mr-2 active text-wrap p-2">
+                Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

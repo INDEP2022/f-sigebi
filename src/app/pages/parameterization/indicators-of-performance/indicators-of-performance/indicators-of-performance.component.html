@@ -1,0 +1,121 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Indicadores de Desempeño</h5>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <h5 class="title">Lista de Indicadores</h5>
+      <div class="table-responsive">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1"
+              (userRowSelect)="rowsSelected($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <form [formGroup]="indicatorsOfPerformanceForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field
+            [control]="indicatorsOfPerformanceForm.get('initialDate')"
+            label="Inicio">
+            <input
+              type="text"
+              formControlName="initialDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="D&iacute;as L&iacute;mite"
+            [control]="indicatorsOfPerformanceForm.get('daysLimNumber')">
+            <input
+              class="form-control"
+              formControlName="daysLimNumber"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Hora L&iacute;mite"
+            [control]="indicatorsOfPerformanceForm.get('hoursLimNumber')">
+            <input
+              type="text"
+              formControlName="hoursLimNumber"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Zona Contrato"
+            [control]="indicatorsOfPerformanceForm.get('contractZoneKey')">
+            <input
+              class="form-control"
+              formControlName="contractZoneKey"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="indicatorsOfPerformanceForm.get('initialDDate')"
+            label="Fecha Ind&#46; page">
+            <select class="form-control" formControlName="initialDDate">
+              <option [value]="0">Seleccione un Fecha Ind. Inicio</option>
+              <option *ngFor="let item of typeItem" [value]="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3 pt-4">
+          <form-field
+            [control]="indicatorsOfPerformanceForm.get('endDDate')"
+            label="Fecha Ind&#46; Término">
+            <select class="form-control" formControlName="endDDate">
+              <option [value]="0">Seleccione un Fecha Ind. Término</option>
+              <option *ngFor="let item of typeItem1" [value]="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3 pt-4">
+          <confirm-button
+            [disabled]="!indicatorsOfPerformanceForm.valid"
+            [loading]="loading"
+            (confirm)="confirm()">
+          </confirm-button>
+        </div>
+      </div>
+    </form>
+    <div class="row pt-4">
+      <div class="margin-input buttons">
+        <app-columns-select [(settings)]="settings2"></app-columns-select>
+      </div>
+      <div class="col-md-12">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params2"
+        [totalItems]="totalItems2"></app-pagination>
+    </div>
+  </div>
+</app-card>

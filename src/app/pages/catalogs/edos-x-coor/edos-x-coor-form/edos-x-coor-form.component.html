@@ -1,0 +1,61 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="edosXCoorForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="edosXCoorForm.get('id')" label="Id">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="edosXCoorForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="edosXCoorForm.get('noState')"
+            label="No estado">
+            <input type="text" class="form-control" formControlName="noState" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="edosXCoorForm.get('state')" label="Estado">
+            <input type="text" class="form-control" formControlName="state" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="edosXCoorForm.get('stage')" label="Etapa">
+            <input type="number" class="form-control" formControlName="stage" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="edosXCoorForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,6 @@
+/*:host ng2-smart-table table  { 
+    color: green !important;
+}*/
+::ng-deep ng2-smart-table tbody > tr:hover {
+  cursor: pointer;
+}/*# sourceMappingURL=request-list.component.css.map */

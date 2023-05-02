@@ -1,0 +1,61 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE FICHAS DE DEPOSITO SIN CONCILIAR</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('bank')" label="Banco">
+              <input formControlName="bank" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('currency')" label="Moneda">
+              <input formControlName="currency" class="form-control" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('date')" label="Fecha inicial:">
+              <input formControlName="date" class="form-control" bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('dateTo')" label="Fecha final:">
+              <input
+                formControlName="dateTo"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('searchImport')"
+              label="Importe a buscar:">
+              <input
+                type="number"
+                formControlName="searchImport"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <div>
+            <button type="button" class="btn btn-sm btn-primary active m-3">
+              IMPRIMIR
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

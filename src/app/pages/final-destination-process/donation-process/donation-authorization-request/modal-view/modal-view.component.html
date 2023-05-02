@@ -1,0 +1,41 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title" *ngIf="op === 1">
+      Selecci&oacute;n de Propuestas del Sistema de Donaciones a Incorporar
+    </h5>
+    <h5 class="title" *ngIf="op === 2">Propuestas</h5>
+  </div>
+
+  <div body>
+    <ng-scrollbar style="min-height: 400px" track="all">
+      <div *ngIf="op == 1">
+        <div class="row mt-3 justify-content-around">
+          <div class="col-12 col-md-6 text-center">
+            <button class="btn btn-primary btn-sm active">Consultar</button>
+          </div>
+          <div class="col-12 col-md-6 text-center">
+            <button class="btn btn-primary btn-sm active">Incorporar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-end mt-3">
+        <div class="col-md-5 buttons pt-3 text-right">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings">
+          </app-columns-select>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </ng-scrollbar>
+  </div>
+</app-card>

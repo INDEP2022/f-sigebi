@@ -1,0 +1,53 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Caracter&iacute;sticas del bien</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <form-field [control]="form.get('bien')" class="col-md-4">
+              <ngx-select
+                [form]="form"
+                control="bien"
+                [data]="select"
+                label="No&#46; Bien"></ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('actual')" class="col-md-4">
+              <ngx-select
+                [form]="form"
+                control="actual"
+                [data]="select"
+                label="Estatus Actual"></ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('nuevo')" class="col-md-4">
+              <ngx-select
+                [form]="form"
+                control="nuevo"
+                [data]="select"
+                label="Estatus Nuevo"></ngx-select>
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('motivo')"
+              class="col-md-8"
+              label="Motivo">
+              <textarea
+                formControlName="motivo"
+                rows="3"
+                class="form-control"></textarea>
+            </form-field>
+            <div class="col-md-4">
+              <button class="btn btn-primary active">Guardar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,43 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">Lista de cuentas de bancos</h5>
+      <div class="buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar [track]="'all'" style="min-height: 300px">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              class="table-responsive"
+              [settings]="settings"
+              [source]="dataCourt.data"
+              (edit)="formDataCourt($event.data)"
+              (delete)="deleteCourt($event.data.accountNumber)">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [filterParams]="filterParams"
+      [totalItems]="dataCourt.count">
+    </app-pagination>
+  </div>
+</app-modal>

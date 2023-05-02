@@ -1,0 +1,9 @@
+<div
+  [class]="loading || loadingExcel || goodsCant === 0 ? 'disabled' : ''"
+  (click)="exportExcel()">
+  <app-excel-report
+    [elementToExport]="elementToExport"
+    [externalClick]="flagDownload"
+    [nameExcel]="nameExcel()"
+    text="Exportar Excel"></app-excel-report>
+</div>

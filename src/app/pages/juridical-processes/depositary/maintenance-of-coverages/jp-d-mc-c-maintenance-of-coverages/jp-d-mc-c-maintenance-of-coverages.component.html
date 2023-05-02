@@ -1,0 +1,385 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de Amparos</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('flyerNumber')" label="No. Volante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="flyerNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('fileNumber')" label="No. Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fileNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateReception')"
+            label="Fecha Recepción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateReception"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('transferorsNumber')"
+            label="No Exp. Transferentes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferorsNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('cveOficioExt')"
+            label="Cve Oficio Externo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveOficioExt" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateOficioExt')"
+            label="Fecha Recepción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateOficioExt"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-5 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('externalSender')"
+            label="Remitente Externo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="externalSender" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('cveCoverages')" label="Cve Amparo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveCoverages" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('cveTouchesPenal')"
+            label="Cve Toca Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveTouchesPenal"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('detailedReport')"
+            label="Acta Circunstanciada">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="detailedReport" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('preliminaryInvestigation')"
+            label="Averiguación Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="preliminaryInvestigation" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('criminalCase')" label="Caso Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="criminalCase"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('subject')" label="Asunto">
+            <input type="text" class="form-control" formControlName="subject" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('subjectDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subjectDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('defendant')"
+            label="Averiguación Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="defendant" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('defendantDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="defendantDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('publicMinistry')"
+            label="Ministerio Público">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="publicMinistry" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('publicMinistryDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="publicMinistryDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('court')" label="Juzgado">
+            <input type="text" class="form-control" formControlName="court" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('courtDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="courtDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('delegation')" label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('delegationDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('federativeOrganization')"
+            label="Entidad Federativa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="federativeOrganization" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('federativeOrganizationDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="federativeOrganizationDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('cityDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cityDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('transferor')" label="Transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferor" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('transferorDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferorDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('broadcaster')" label="Emisora">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="broadcaster" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('broadcasterDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="broadcasterDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('authority')" label="Autoridad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authority" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('authorityDescription')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorityDescription"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button type="button" class="btn btn-primary btn-sm active">
+              Conocimiento
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button type="button" class="btn btn-secondary btn-sm active">
+              Aplicar
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button type="button" class="btn btn-success btn-sm active">
+              Envio de correo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button type="button" class="btn btn-info btn-sm active">
+              Mantto. correos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="row mt-5">
+      <app-scanning-foil></app-scanning-foil>
+    </div>
+  </div>
+</app-card>

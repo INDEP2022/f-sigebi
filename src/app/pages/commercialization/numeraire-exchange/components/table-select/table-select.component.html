@@ -1,0 +1,16 @@
+<form [formGroup]="selectForm" class="lower-select">
+  <div class="d-flex align-content-center justify-content-center">
+    <div class="w-100 overflow-x-scroll">
+      <ngx-select
+        #select
+        [form]="selectForm"
+        [data]="items"
+        bindLabel="description"
+        (fetchItems)="getItems($event)"
+        (change)="selectItem($event)"
+        control="item"
+        [placeholder]="cell.getTitle()">
+      </ngx-select>
+    </div>
+  </div>
+</form>

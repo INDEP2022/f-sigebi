@@ -1,0 +1,109 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="commissionsForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            label="id_comcalculada"
+            [control]="commissionsForm.get('comCalculatedId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="comCalculatedId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="id_evento"
+            [control]="commissionsForm.get('eventId')">
+            <input type="text" class="form-control" formControlName="eventId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="no_bien"
+            [control]="commissionsForm.get('goodNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="monto_comision"
+            [control]="commissionsForm.get('amountCommission')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="amountCommission" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="lote" [control]="commissionsForm.get('batch')">
+            <input type="text" class="form-control" formControlName="batch" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="cvman" [control]="commissionsForm.get('cvman')">
+            <input type="text" class="form-control" formControlName="cvman" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="venta" [control]="commissionsForm.get('sale')">
+            <input type="text" class="form-control" formControlName="sale" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="comentarios"
+            [control]="commissionsForm.get('comments')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="comments" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="seprocesa"
+            [control]="commissionsForm.get('processIt')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processIt" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="venta_tc"
+            [control]="commissionsForm.get('saleTc')">
+            <input type="text" class="form-control" formControlName="saleTc" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          (confirm)="confirm()"
+          [disabled]="!commissionsForm.valid">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

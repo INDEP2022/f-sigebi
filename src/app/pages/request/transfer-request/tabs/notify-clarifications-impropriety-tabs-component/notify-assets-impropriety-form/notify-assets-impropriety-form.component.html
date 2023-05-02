@@ -1,0 +1,273 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="clarificationForm" class="form-material">
+      <div *ngIf="withDocumentation">
+        <div class="row">
+          <div class="col-md-12">
+            <form-field
+              [control]="clarificationForm.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                maxlength="400"
+                formControlName="observations"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="clarificationForm.get('senderName')"
+              label="Nombre Remitente">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="senderName" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="clarificationForm.get('jobClarificationKey')"
+              label="Clave Oficio Aclaraci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="jobClarificationKey" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('senderCharge')"
+              label="Cargo Remitente">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="senderCharge" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('userAreaCaptures')"
+              label="&Aacute;rea del Usuario Captura">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="60"
+                formControlName="userAreaCaptures" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="clarificationForm.get('webMail')"
+              label="Correo Notificaci&oacute;n SAT">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="30"
+                formControlName="webMail" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+    <form [formGroup]="inappropriatenessForm" class="form-material">
+      <div *ngIf="!withDocumentation">
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('addresseeName')"
+              label="Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="addresseeName" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('positionAddressee')"
+              label="Cargo Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="positionAddressee" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('clarification')"
+              label="Aclaraci&oacute;n">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="clarification"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('jobClarificationKey')"
+              label="Clave Oficio Aclaraci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="jobClarificationKey" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('senderName')"
+              label="Nombre Remitente">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="senderName" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('positionSender')"
+              label="Cargo Remitente">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="50"
+                formControlName="positionSender" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <form-field
+              [control]="inappropriatenessForm.get('consistentIn')"
+              label="Consistente en">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="consistentIn"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('paragraphInitial')"
+              label="P&aacute;rrafo Inicial">
+              <textarea
+                class="form-control"
+                maxlength="500"
+                formControlName="paragraphInitial"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="inappropriatenessForm.get('paragraphFinal')"
+              label="P&aacute;rrafo Final">
+              <textarea
+                class="form-control"
+                maxlength="500"
+                formControlName="paragraphFinal"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-12">
+            <form-field
+              [control]="inappropriatenessForm.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                maxlength="100"
+                formControlName="observations"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="inappropriatenessForm.get('userAreaCaptures')"
+              label="&Aacute;rea del Usuario Captura">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="60"
+                formControlName="userAreaCaptures" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="inappropriatenessForm.get('transmitterId')"
+              label="ID Emisor">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="15"
+                formControlName="transmitterId" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="inappropriatenessForm.get('webMail')"
+              label="Correo Notificaci&oacute;n SAT">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="30"
+                formControlName="webMail" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3" *ngIf="!withDocumentation">
+        <confirm-button
+          [disabled]="inappropriatenessForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3" *ngIf="withDocumentation">
+        <confirm-button
+          [disabled]="clarificationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,242 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Componentes basicos form</h5>
+    <div class="add-select">
+      <button class="btn btn-primary btn-sm active" (click)="openModal()">
+        Nueva
+      </button>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <h5>Ejemplo de formulario tipado</h5>
+      <form [formGroup]="userExample" class="form-material">
+        <form-field
+          [control]="userExample.get('username')"
+          label="Input Usuario">
+          <input type="text" class="form-control" formControlName="username" />
+        </form-field>
+        <ng-container formGroupName="person">
+          <form-field
+            [control]="personForm.get('name')"
+            label="Input Nombre Persona">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+          <form-field
+            [control]="personForm.get('birthdate')"
+            label="Input Fecha Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="birthdate"
+              bsDatepicker />
+          </form-field>
+        </ng-container>
+        <div>
+          <button class="btn btn-primary" (click)="addRole()">
+            Agregar Rol
+          </button>
+        </div>
+        <ng-container
+          formArrayName="roles"
+          *ngFor="let role of roles.controls; index as i">
+          <br />
+          <div class="d-flex" [formGroupName]="i">
+            <form-field [control]="role.get('role')" label="Input Role">
+              <input type="text" class="form-control" formControlName="role" />
+            </form-field>
+            <div>
+              <button class="btn btn-danger" (click)="removeRole(i)">
+                Eliminar Role
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </form>
+      <button class="btn btn-success" (click)="saveRole()">Ver Data</button>
+      <div>
+        {{ user | json }}
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <h5>Carga masiva de archivos</h5>
+      <div class="col-md-12">
+        <file-upload
+          (onUploadFiles)="testFiles($event)"
+          [accept]="'image/*'"></file-upload>
+      </div>
+    </div>
+    <div>
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Basic title" id="tab1">Basic content</tab>
+          <tab heading="Basic Title 1">Basic content 1</tab>
+          <tab heading="Basic Title 2">Basic content 2</tab>
+        </tabset>
+      </div>
+    </div>
+    <br />
+    <form [formGroup]="formExample" class="form-material">
+      <form-field [control]="formExample.get('input')" label="Input Label">
+        <input type="text" class="form-control" formControlName="input" />
+      </form-field>
+      <form-field
+        [control]="formExample.get('textarea')"
+        label="Textarea Label">
+        <textarea class="form-control" formControlName="textarea"></textarea>
+      </form-field>
+      <form-field [control]="formExample.get('select')" label="Select Label">
+        <select class="form-control" formControlName="select">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">1</option>
+          <option [value]="2">2</option>
+        </select>
+      </form-field>
+      <form-check label="Checkbox" for="label">
+        <input id="label" type="checkbox" formControlName="check" />
+      </form-check>
+      <form-radio label="Radio Cat">
+        <input type="radio" formControlName="radio" value="cat" />
+      </form-radio>
+      <form-radio label="Radio Dog">
+        <input type="radio" formControlName="radio" value="dog" />
+      </form-radio>
+      <form-radio label="Radio Dog2">
+        <input type="radio" formControlName="radio" value="dog2" />
+      </form-radio>
+    </form>
+    <input type="file" (change)="chargeFile($event.target)" />
+    <br />
+    <button class="btn btn-secondary btn-sm active" (click)="openPrevImg()">
+      Prev. imagen
+    </button>
+    <button class="btn btn-secondary btn-sm active" (click)="openPrevPdf()">
+      Prev. pdf
+    </button>
+
+    <hr />
+    <div class="text-center">
+      <h1>Contador ejemplo basico ngrx</h1>
+      <h2>{{ counter }}</h2>
+      <div class="container">
+        <app-child></app-child>
+      </div>
+    </div>
+    <hr />
+
+    <div class="row">
+      <div class="col-md-12 d-flex">
+        <div>
+          <h5>Array a CSV / XLSX</h5>
+        </div>
+        <div>
+          <button class="btn btn-success btn-sm mx-2" (click)="exportXlsx()">
+            Exportar XLSX
+          </button>
+        </div>
+        <div>
+          <button class="btn btn-success btn-sm mx-2" (click)="exportCsv()">
+            Exportar CSV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12" style="height: 250px; overflow-y: auto">
+        <pre>{{ jsonToCsv | json }}</pre>
+      </div>
+    </div>
+
+    <hr />
+    <div class="row">
+      <div class="col-md-12">
+        <h5>XLSX / CSV a JSON (Usar el archivo generado arriba)</h5>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <button
+          class="btn btn-success btn-sm ml-2"
+          type="button"
+          (click)="file.click()">
+          Abrir archivo Excel / CSV
+        </button>
+        <input
+          type="file"
+          name="file"
+          #file
+          class="d-none"
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          (change)="onFileChange($event)" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </div>
+
+    <div class="row mb-3 mt-3">
+      <div class="col-md-12">
+        <h5>Cambiar estado Variables Globales</h5>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="newStateGlobalVars('allP')">
+          Cambiar Todo
+        </button>
+        <button
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="newStateGlobalVars('oneP')">
+          Cambiar 1 Var
+        </button>
+        <button
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="newStateGlobalVars('reset')">
+          Estado inicial
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" style="height: 250px; overflow-y: auto">
+        <pre>{{ globalVars | json }}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div footer class="d-flex justify-content-around">
+    <hr />
+    <div>
+      <button class="btn btn-primary btn-sm active">Primary</button>
+    </div>
+    <div>
+      <button class="btn btn-secondary btn-sm active">Secondary</button>
+    </div>
+    <div>
+      <button class="btn btn-success btn-sm active">Success</button>
+    </div>
+    <div>
+      <button class="btn btn-info btn-sm active">Info</button>
+    </div>
+    <div>
+      <button class="btn btn-warning btn-sm active">Warning</button>
+    </div>
+    <div>
+      <button class="btn btn-danger btn-sm active">Danger</button>
+    </div>
+    <div>
+      <button class="btn btn-pink btn-sm active">Pink</button>
+    </div>
+    <div>
+      <button class="btn btn-light btn-sm active">Light</button>
+    </div>
+    <div>
+      <button class="btn btn-dark btn-sm active">Dark</button>
+    </div>
+  </div>
+</app-card>

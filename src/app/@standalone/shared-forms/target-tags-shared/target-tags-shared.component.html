@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showTargetTags">
+    <div class="col-md-12">
+      <form-field [control]="form.get(targetTagField)">
+        <ngx-select
+          (fetchItems)="getTargetTags($event)"
+          [data]="targetTags"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Etiquetas de destino"
+          [control]="targetTagField"
+          (change)="onTargetTagsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

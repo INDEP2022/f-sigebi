@@ -1,0 +1,72 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">RESUMEN DE GASTOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('gasto')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getCostConcept($event)"
+              [data]="concepts"
+              value="id"
+              bindLabel="description"
+              label="Concepto Gasto"
+              [control]="'gasto'"
+              (change)="getCostConcept($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('al')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getCostConcept($event)"
+              [data]="concepts"
+              value="id"
+              bindLabel="description"
+              label="Al"
+              [control]="'al'"
+              (change)="getCostConcept($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('startDate')" label="Fecha page">
+            <input
+              type="text"
+              formControlName="startDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('finishDate')" label="Fecha Final">
+            <input
+              type="text"
+              formControlName="finishDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-1">
+          <confirm-button
+            text="IMPRIMIR"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

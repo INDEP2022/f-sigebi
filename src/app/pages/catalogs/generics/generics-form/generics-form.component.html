@@ -1,0 +1,88 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="genericsForm">
+      <div class="row">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="genericsForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="genericsForm.get('keyId')"
+            label="Identificador clave">
+            <input type="number" class="form-control" formControlName="keyId" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="genericsForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="2"
+              class="form-control pt-3"
+              formControlName="description">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="genericsForm.get('version')"
+            label="Versi&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="genericsForm.get('active')" label="Estado">
+            <ng-select
+              formControlName="active"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Y">Activo</ng-option>
+              <ng-option value="N">Inactivo</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="genericsForm.get('editable')" label="Editable">
+            <ng-select
+              formControlName="editable"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Y">Editabe</ng-option>
+              <ng-option value="N">No editable</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!genericsForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

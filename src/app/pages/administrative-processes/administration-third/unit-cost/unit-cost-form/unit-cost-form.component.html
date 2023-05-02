@@ -1,0 +1,90 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="unitCostForm">
+      <div class="row">
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostForm.get('processNumber')">
+            <ngx-select
+              (fetchItems)="getProcesses($event)"
+              [data]="processes"
+              [form]="unitCostForm"
+              value="processNumber"
+              bindLabel="description"
+              label="Proceso"
+              control="processNumber">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostForm.get('serviceNumber')">
+            <ngx-select
+              (fetchItems)="getProcesses($event)"
+              [data]="services"
+              [form]="unitCostForm"
+              value="serviceNumber"
+              bindLabel="description"
+              label="Servicio"
+              control="serviceNumber">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostForm.get('serviceTypeNumber')">
+            <ngx-select
+              (fetchItems)="getServicesTypes($event)"
+              [data]="servicesTypes"
+              [form]="unitCostForm"
+              value="serviceTypeNumber"
+              bindLabel="description"
+              label="Tipo de Servicio"
+              control="serviceTypeNumber">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostForm.get('shiftNumber')">
+            <ngx-select
+              (fetchItems)="getShifts($event)"
+              [data]="shifts"
+              [form]="unitCostForm"
+              value="shiftNumber"
+              bindLabel="description"
+              label="Turno/Tipo"
+              control="shiftNumber">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostForm.get('varCostNumber')">
+            <ngx-select
+              (fetchItems)="getVarCosts($event)"
+              [data]="variablesCosts"
+              [form]="unitCostForm"
+              value="varCostNumber"
+              bindLabel="description"
+              label="Variable costo"
+              control="varCostNumber">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,32 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar etiqueta bien' : 'Crear Etiqueta bien' }}
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="labelOkeyForm" class="form-material">
+      <form-field
+        [control]="labelOkeyForm.get('description')"
+        label="Descripci&oacute;n">
+        <textarea class="form-control" formControlName="description">
+        </textarea>
+      </form-field>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!labelOkeyForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

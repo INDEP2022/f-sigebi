@@ -1,0 +1,53 @@
+<form class="form-material" [formGroup]="form">
+  <div class="row" style="align-items: center">
+    <div class="row col-lg-6 mb-4" style="align-items: center">
+      <div class="col-md-6">
+        <form-field
+          class="col-12"
+          [control]="form.get('userName')"
+          label="Nombre Usuario">
+          <input
+            type="text"
+            formControlName="userName"
+            class="form-control"
+            readonly />
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <app-elaborate-users-shared
+          [form]="form"
+          label="Solicita"
+          [disabled]="statusActa !== 'ABIERTA'"></app-elaborate-users-shared>
+      </div>
+    </div>
+    <div class="row col-lg-6 mb-4">
+      <div class="col-md-8">
+        <form-field
+          [control]="form.get('justification')"
+          label="Justificación del cambio">
+          <textarea
+            rows="2"
+            class="form-control"
+            formControlName="justification"
+            [readOnly]="statusActa !== 'ABIERTA'"></textarea>
+        </form-field>
+      </div>
+      <div
+        class="col-md-4"
+        style="text-align: right"
+        [class]="loading || form.invalid ? 'disabled' : ''">
+        <button
+          style="width: 100%; height: 45px"
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          (click)="saveData()">
+          <i class="bx bx-save float-icon"></i>
+          Aplicar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="row justificationText">
+
+  </div> -->
+</form>

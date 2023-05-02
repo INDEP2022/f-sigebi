@@ -1,0 +1,154 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">ejecución de la conciliación</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="conciliationForm">
+      <div class="row mt-3 d-flex justify-content-center">
+        <div class="col-sm-6 col-lg-4">
+          <form-field [control]="conciliationForm.get('event')">
+            <ngx-select
+              [form]="conciliationForm"
+              [data]="eventItems"
+              value="id"
+              bindLabel="id"
+              label="Evento"
+              (fetchItems)="getEvents($event)"
+              control="event"
+              (change)="selectEvent($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <p class="mt-3" *ngIf="selectedEvent != null">
+            {{ selectedEvent.description }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5 d-flex justify-content-center">
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="conciliationForm.get('date')" label="Fecha">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="date"
+              [maxDate]="maxDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <form-field [control]="conciliationForm.get('phase')" label="Fase">
+            <ng-select
+              formControlName="phase"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="0">FASE 1</ng-option>
+              <ng-option value="1">FASE 2</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5 d-flex justify-content-center">
+        <div class="col-sm-6 col-lg-4">
+          <form-field [control]="conciliationForm.get('batch')">
+            <ngx-select
+              [form]="conciliationForm"
+              [data]="batchItems"
+              value="id"
+              bindLabel="id"
+              label="Lote"
+              (fetchItems)="getBatches($event)"
+              control="batch"
+              (change)="selectBatch($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-6" *ngIf="layout == 'immovable'">
+          <p class="mt-3" *ngIf="selectedBatch != null">
+            {{ selectedBatch.description }}
+          </p>
+        </div>
+      </div>
+      <div
+        class="row mt-5 d-flex justify-content-center"
+        *ngIf="layout == 'immovable'">
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="conciliationForm.get('price')" label="Precio">
+            <input type="number" class="form-control" formControlName="price" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5 d-flex justify-content-center">
+        <div class="col-sm-4 col-md-4 col-xl-3">
+          <button
+            class="btn btn-sm btn-block btn-primary active font-size-14"
+            (click)="execute()"
+            [disabled]=""
+            tooltip="Ejecutar para conciliar pagos"
+            containerClass="tooltip-style">
+            Ejecutar
+          </button>
+        </div>
+        <div class="col-sm-4 col-md-4 col-xl-3">
+          <button
+            class="btn btn-sm btn-block btn-info active font-size-14"
+            (click)="modify()"
+            [disabled]=""
+            tooltip="Modificar estatus de bienes"
+            containerClass="tooltip-style">
+            Modificar
+          </button>
+        </div>
+        <div class="col-sm-4 col-md-4 col-xl-3">
+          <button
+            class="btn btn-sm btn-block btn-danger active font-size-14"
+            (click)="cancel()"
+            [disabled]=""
+            tooltip="Eliminar toda la dispersión"
+            containerClass="tooltip-style">
+            Deshacer
+          </button>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-8 col-md-9">
+          <div class="d-flex align-items-center">
+            <h6 class="d-inline ms-3">Clientes del Evento</h6>
+          </div>
+        </div>
+      </div>
+      <hr class="mw-98 mt-n2" />
+      <div class="row mt-2">
+        <div class="col-sm-12 col-md-6">
+          <div class="form-material">
+            <search-bar [params]="params"></search-bar>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+          <div class="d-flex flex-row-reverse my-3">
+            <div>
+              <button
+                class="btn btn-sm btn-info active me-2 font-size-14"
+                (click)="getData()">
+                <i class="bx bx-revision text-light float-icon"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="movementTable"
+            [settings]="conciliationSettings"
+            [source]="conciliationColumns"
+            (userRowSelect)="selectClients($event.selected)">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </form>
+  </div>
+</app-card>

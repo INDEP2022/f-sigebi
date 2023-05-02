@@ -1,0 +1,143 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento a ministerios p&uacute;blicos</h5>
+    <div class="col-md-5 buttons">
+      <div>
+        <button
+          class="btn btn-primary active btn-sm ml-3"
+          (click)="openModal()">
+          Ministerios
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('manager')"
+            label="Responsable Ministerio P&uacute;blico">
+            <input type="text" class="form-control" formControlName="manager" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('outNumber')"
+            label="No&#46; Exterior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="outNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('insideNumber')"
+            label="No&#46; Interior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="insideNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('colony')" label="Colonia">
+            <input type="text" class="form-control" formControlName="colony" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('delegNunic')"
+            label="Delegaci&oacute;n Municipio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegNunic" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <app-cities-shared
+            [form]="form"
+            [cityField]="'idCity'"
+            (state)="updateEntity($event)"></app-cities-shared>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('entity')" label="Entidad Federativa">
+            <input type="text" class="form-control" formControlName="entity" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            label="Delegaci&oacute;n"
+            [control]="form.get('delegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            label="Sub Delegaci&oacute;n"
+            [control]="form.get('subDelegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [btnSmall]="true"
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="clean()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

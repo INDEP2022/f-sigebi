@@ -1,0 +1,91 @@
+<form [formGroup]="form" class="form-material">
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Carga masiva</h5>
+    </div>
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberGoodFather')"
+            label="No Bien Padre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGoodFather" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberDossier')"
+            label="No Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberDossier" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('fileLoad')" label="Archivo a cargar">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="fileLoad" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Registros correctos</h5>
+  </div>
+  <div body>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings"
+      [source]="data">
+    </ng2-smart-table>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Registros erroneos</h5>
+  </div>
+  <div body>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings1"
+      [source]="data1">
+    </ng2-smart-table>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>
+
+<app-card>
+  <div body>
+    <div class="col-md-3 col-sm-6 col-xs-12">
+      <button class="btn btn-success btn-sm active" (click)="fileLoadBtn()">
+        Cargar archivo
+      </button>
+    </div>
+
+    <div class="col-md-3 col-sm-6 col-xs-12">
+      <button class="btn btn-info btn-sm active" (click)="enterGoods()">
+        Ingresar Bien
+      </button>
+    </div>
+
+    <div class="col-md-3 col-sm-6 col-xs-12">
+      <button class="btn btn-danger btn-sm active" (click)="exit()">
+        Salir
+      </button>
+    </div>
+  </div>
+</app-card>

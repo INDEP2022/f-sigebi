@@ -1,0 +1,130 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nueva {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="structureForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('position')"
+            label="Posición">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="position" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('column')"
+            label="Nombre columna">
+            <input type="text" class="form-control" formControlName="column" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('type')"
+            label="Tipo de Dato">
+            <ng-select
+              formControlName="type"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="enableDecimals($event)">
+              <ng-option value="NUMBER">NUMBER</ng-option>
+              <ng-option value="CHAR">CHAR</ng-option>
+              <ng-option value="VARCHAR">VARCHAR</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="structureForm.get('length')" label="Longitud">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="length" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('constant')"
+            label="Constante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="constant" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('fillCharacter')"
+            label="Caracter de relleno">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fillCharacter" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('fillPosition')"
+            label="Relleno">
+            <ng-select
+              formControlName="fillPosition"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Izquierda">Izquierda</ng-option>
+              <ng-option value="Derecha">Derecha</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('decimals')"
+            label="Decimales">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="decimals" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="structureForm.get('dateFormat')"
+            label="Formato de Fecha">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateFormat" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!structureForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

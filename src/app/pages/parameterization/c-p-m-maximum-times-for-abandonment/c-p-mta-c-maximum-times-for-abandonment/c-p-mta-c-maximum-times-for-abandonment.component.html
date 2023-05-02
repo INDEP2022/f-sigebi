@@ -1,0 +1,36 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Tiempos Maximos para abandono</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="contentData.data"></ng2-smart-table>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="md-tabs">
+          <tabset>
+            <tab heading="NO MANIFESTADOS">
+              <app-fiel-set-unstated
+                [content]="contentData"
+                (loadData)="getAllGoodTypes()"></app-fiel-set-unstated>
+            </tab>
+            <tab heading="NO RECOGIDOS">
+              <app-fiel-set-uncollected
+                [content]="contentData"></app-fiel-set-uncollected>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+      <div class="col-12">
+        <app-pagination
+          [params]="params"
+          [totalItems]="contentData.count"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

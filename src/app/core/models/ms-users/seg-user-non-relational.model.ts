@@ -1,0 +1,29 @@
+export interface ISegUsersNonRelational {
+  id: string;
+  name?: string;
+  rfc?: string;
+  curp?: string;
+  street?: string;
+  insideNumber?: string;
+  suburb?: string;
+  zipCode?: number;
+  phone?: string;
+  profession?: string;
+  positionKey?: string;
+  firstTimeLoginDate?: string;
+  daysValidityPass?: number;
+  passLastChangeDate?: string;
+  passUpdate?: string;
+  registryNumber?: number;
+  email?: string;
+  userSirsae?: string;
+  sendEmail?: number;
+  attribAsign?: number;
+  clkdetSirsae?: number;
+  exchangeAlias?: string;
+  clkdet?: number;
+  clkid?: string;
+  profileMimKey?: string;
+  nameAd?: string;
+  posPrevKey?: string;
+}

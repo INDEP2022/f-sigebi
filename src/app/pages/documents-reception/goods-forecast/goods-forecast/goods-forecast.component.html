@@ -1,0 +1,43 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Previsi&oacute;n de Bienes</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div>
+        <span>No&#46; Expediente: <b>123456</b></span>
+      </div>
+    </div>
+
+    <hr />
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-12 d-flex">
+          <form-check
+            label="&iquest;Se Realiz&oacute; Previsi&oacute;n&#63;"
+            for="forecast">
+            <input type="checkbox" formControlName="prevision" id="forecast" />
+          </form-check>
+          <div class="col">
+            <button class="btn btn-info active btn-sm">
+              Aceptar Previsi&oacute;n
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <form-field
+          class="col-md-10"
+          [control]="form.get('observaciones')"
+          label="Observaciones">
+          <textarea
+            class="form-control"
+            rows="8"
+            formControlName="observaciones"></textarea>
+        </form-field>
+      </div>
+    </form>
+  </div>
+</app-card>

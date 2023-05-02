@@ -1,0 +1,116 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Carga de Archivos</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="fileForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('name')" label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('post')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="post"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="fileForm.get('pass')"
+            label="Contrase&ntilde;a">
+            <input
+              [type]="hide ? 'password' : 'text'"
+              class="form-control"
+              formControlName="pass"
+              maxlength="10" />
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="hide = !hide"
+              style="margin-top: 7px">
+              <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
+            </button>
+          </form-field>
+        </div>
+        <!-- *ngIf="!isRFCHided" -->
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('rfcUser')" label="RFC">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfcUser"
+              maxlength="13" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="fileForm.get('certificate')"
+            label="Certificado">
+            <input
+              type="file"
+              accept=".cer"
+              class="form-control"
+              #FileInputCert
+              formControlName="certificate"
+              (change)="chargeCertifications($event)" />
+          </form-field>
+          <!-- <input
+            type="file"
+            formControlName="certification"
+            placeholder="Seleccione un certificado"
+            (change)="chargeCertifications($event.target)" /> -->
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('keycertificate')" label="Key">
+            <input
+              type="file"
+              accept=".key"
+              class="form-control"
+              #FileInputKey
+              formControlName="keycertificate"
+              (change)="chargeKeyCertifications($event)" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4"></div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="fileForm.invalid"
+          (click)="confirm()">
+          Guardar
+        </button>
+        <!--<confirm-button
+          [disabled]="fileForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>-->
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

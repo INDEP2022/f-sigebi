@@ -1,0 +1,35 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      Selecciona el motivo de la reprogramaci&oacute;n
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="reschedulingForm" class="form-material">
+      <form-field [control]="reschedulingForm.get('reason')">
+        <ngx-select
+          [form]="reschedulingForm"
+          control="reason"
+          [data]="reasonData"
+          value="id"
+          bindLabel="id"
+          label="Selecciona una motivo"
+          (fetchItems)="getReasonSelect($event)"></ngx-select>
+      </form-field>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

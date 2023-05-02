@@ -1,0 +1,78 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="lockerForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            label="Cve Guardavalor"
+            [control]="lockerForm.get('saveValueKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="saveValueKey"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Bateria"
+            [control]="lockerForm.get('numBattery')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numBattery"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="No Estante" [control]="lockerForm.get('numShelf')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numShelf"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="No. Casillero" [control]="lockerForm.get('id')">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            label="Descripción"
+            [control]="lockerForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Estado" [control]="lockerForm.get('status')">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,23 @@
+<form class="form-material mb-0 pb-0" [formGroup]="selectForm">
+  <form-radio label="SI">
+    <input
+      type="radio"
+      formControlName="revision"
+      value="SI"
+      (click)="onClick($event)" />
+  </form-radio>
+  <form-radio label="NO">
+    <input
+      type="radio"
+      formControlName="revision"
+      value="NO"
+      (click)="onClick($event)" />
+  </form-radio>
+  <form-radio label="N&#47;A">
+    <input
+      type="radio"
+      formControlName="revision"
+      value="N/A"
+      (click)="onClick($event)" />
+  </form-radio>
+</form>

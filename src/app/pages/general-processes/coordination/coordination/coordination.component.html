@@ -1,0 +1,26 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Coordinaci&Oacute;n</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field [control]="form.get('coordinacion')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="coordinacion"
+            [data]="select"
+            label="Coordinaci&oacute;n"></ngx-select>
+        </form-field>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary active" (click)="openModal()">
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

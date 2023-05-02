@@ -1,0 +1,500 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Ejecutar recepci&oacute;n con folio&#58;
+      R&#45;NORESTE&#45;SAT&#45;650&#45;OS
+    </h5>
+  </div>
+  <div body>
+    <div class="row">
+      <h5 class="title">Informaci&oacute;n</h5>
+      <div class="form-group">
+        <label class="text-right"
+          >Usuario creaci&oacute;n de programaci&oacute;n&#58;</label
+        >
+        <span> {{ programming?.creationUser }} </span>
+      </div>
+    </div>
+
+    <div class="row pt-5">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Delegaci&oacute;n Regional&#58;</label
+          >
+          <span class="fs-4">
+            {{ programming?.regionalDelegationNumber }}
+          </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Correo transferente&#58;</label>
+          <span class="fs-4">{{ programming?.emailTransfer }}</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Ciudad&#58;</label>
+          <span class="fs-4"> {{ programming?.city }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Transferente&#58;</label>
+          <span class="fs-4"> {{ programming?.tranferId }} </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Fecha inicio operativo&#58;</label>
+          <span class="fs-4"> {{ programming?.startDate }} </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
+          <span class="fs-4"> {{ programming?.endDate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Emisora&#58;</label>
+          <span class="fs-4"> {{ programming?.stationId }} </span>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label class="col-lg-3 text-right">Dirección&#58;</label>
+          <span class="fs-4"> {{ programming?.address }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Autoridad&#58;</label>
+          <span class="fs-4"> {{ programming?.autorityId }} </span>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label class="col-lg-3 text-right">Observación&#58;</label>
+          <span class="fs-4"> {{ programming?.observation }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
+          <span class="fs-3"> {{ programming?.typeRelevantId }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Almac&eacute;n</h5>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label class="text-right">Almac&eacute;n&#58;</label>
+          <span> {{ programming?.storeId }} </span>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label class="text-right">Direcci&oacute;n almac&eacute;n&#58;</label>
+          <span>
+            {{ ubicationWarehouse }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Usuarios al operativo</h5>
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="usersData">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="row pt-5">
+      <h5 class="title">Bienes transportables</h5>
+
+      <div class="form-inline justify-content-end">
+        <div class="btn-group" dropdown>
+          <button type="button" class="btn btn-primary btn-sm active">
+            Acciones
+          </button>
+          <button
+            id="button-split"
+            type="button"
+            dropdownToggle
+            class="btn btn-primary btn-sm active dropdown-toggle dropdown-toggle-start"
+            aria-controls="dropdown-split">
+            <span class="caret"></span>
+          </button>
+          <ul
+            id="dropdown-split"
+            *dropdownMenu
+            class="dropdown-menu fix text-small shadow dropdown-menu-right"
+            role="menu"
+            aria-labelledby="button-split">
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                (click)="uploadDocuments()"
+                ><i class="fa fa-file-archive"></i> Adjuntar documentos</a
+              >
+            </li>
+
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                (click)="uploadPicture()"
+                ><i class="fa fa-camera"></i> Integrar fotograf&iacute;a</a
+              >
+            </li>
+
+            <li role="menuitem">
+              <a class="dropdown-item" style="cursor: pointer"
+                ><i class="fa fa-retweet"></i> Actualizar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" style="cursor: pointer"
+                ><i class="bx bx-notepad"></i> Validar</a
+              >
+            </li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                (click)="uploadPicture()"
+                ><i class="fa fa-save"></i> Guardar</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <search-bar placeholder="Número de gestión"> </search-bar>
+      </div>
+      <div class="row">
+        <div class="btn-toolbar justify-content-end">
+          <button
+            (click)="getReportGoods()"
+            class="btn btn-primary btn-sm active">
+            Buscar
+          </button>
+          <button class="btn btn-danger btn-sm active">Limpiar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="btn-toolbar pt-5">
+        <button (click)="assignReceipt()" class="btn btn-primary btn-sm active">
+          Asignar recibo
+        </button>
+        <button class="btn btn-info btn-sm active">Resguardo</button>
+        <button class="btn btn-pink btn-sm active">Almacén</button>
+        <button (click)="rescheduling()" class="btn btn-info btn-sm active">
+          Reprogramaci&oacute;n
+        </button>
+        <button class="btn btn-danger btn-sm active">Cancelaci&oacute;n</button>
+      </div>
+    </div>
+
+    <form [formGroup]="executeForm" class="form-material">
+      <div class="table-responsive text-nowrap">
+        <table class="table table-bordered">
+          <col style="width: 60%" />
+          <col style="width: 80%" />
+          <col style="width: 60%" />
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">
+                <input
+                  type="checkbox"
+                  class="form-control ng-pristine ng-valid ng-touched"
+                  ng-reflect-model="true" />
+              </th>
+              <th scope="col">N. gesti&oacute;n</th>
+              <th scope="col">Clave &uacute;nica</th>
+              <th scope="col">Expediente</th>
+              <th scope="col">Descripci&oacute;n transferente</th>
+              <th scope="col">Descripci&oacute;n INDEP</th>
+              <th scope="col">Cantidad transferente</th>
+              <th scope="col">Cantidad INDEP</th>
+              <th scope="col">Medida transferente</th>
+              <th scope="col">Medida INDEP</th>
+              <th scope="col">Estado f&iacute;sico transferente</th>
+              <th scope="col">Estado f&iacute;sico INDEP</th>
+              <th scope="col">Conservaci&oacute;n transferente</th>
+              <th scope="col">Estado conservaci&oacute;n INDEP</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let good of goods; let i = index">
+              <th scope="row" class="align-baseline">
+                <input
+                  type="checkbox"
+                  class="form-control ng-pristine ng-valid ng-touched"
+                  ng-reflect-model="true" />
+              </th>
+              <td scope="row" class="align-baseline">{{ good.googId }}</td>
+              <td class="align-baseline">{{ good.keyUnique }}</td>
+              <td class="align-baseline">{{ good.transferFile }}</td>
+              <td class="align-baseline">{{ good.descriptionGood }}</td>
+              <td>
+                <form-field [control]="executeForm.get('descriptionGoodSae')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="descriptionGoodSae" />
+                </form-field>
+              </td>
+              <td class="text-left align-baseline">
+                <div class="align-items">{{ good.quantity }}</div>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="quantitySae"
+                  style="width: 150px" />
+              </td>
+              <td class="text-left align-baseline">
+                {{ good.unitMeasurement }}
+              </td>
+              <td>
+                <select
+                  class="form-control"
+                  style="width: 150px; height: 40px; font-size: 13px !important"
+                  formControlName="saeMeasureUnit">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="'A'">A</option>
+                </select>
+              </td>
+              <td class="text-left align-baseline">{{ good.physicalState }}</td>
+
+              <td>
+                <select
+                  class="form-control"
+                  style="width: 150px; height: 40px; font-size: 13px !important"
+                  formControlName="saePhysicalState">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">BUENO</option>
+                  <option [value]="2">MALO</option>
+                </select>
+              </td>
+
+              <td class="text-left align-baseline">
+                {{ good.stateConservation }}
+              </td>
+              <td>
+                <select
+                  class="form-control"
+                  style="width: 150px; height: 40px; font-size: 13px !important"
+                  formControlName="stateConservationSae">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">BUENO</option>
+                  <option [value]="2">MALO</option>
+                </select>
+              </td>
+              <td class="text-center align-baseline">
+                <a class="text-center">
+                  <i
+                    (click)="showEstate()"
+                    class="fa fa-file mr-2"
+                    style="cursor: pointer"></i
+                ></a>
+
+                <a class="text-center">
+                  <i
+                    (click)="updateInfoGoodTransferent(good.goodNumber)"
+                    class="fa fa-pencil-alt mr-2"
+                    style="cursor: pointer"></i
+                ></a>
+
+                <a class="text-center">
+                  <i
+                    (click)="updateInfoGood(good.goodNumber, good.googId)"
+                    class="fa fa-retweet mr-2"
+                    style="cursor: pointer"></i
+                ></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+
+    <!--Bienes seleccionados-->
+    <div class="row pt-5">
+      <h5 class="title">Bienes seleccionados</h5>
+
+      <div class="md-tabs">
+        <tabset>
+          <!--Bien a resguardo-->
+          <tab [heading]="headingGuard">
+            <div class="justify-content-start">
+              <app-columns-select
+                [(settings)]="settingsGuardGoods"></app-columns-select>
+
+              <button
+                (click)="assingMinute()"
+                class="btn btn-primary btn-sm active ml-2">
+                Asignar Acta
+              </button>
+            </div>
+            <div class="row">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsGuardGoods"
+                [source]="guardGoods"
+                (userRowSelect)="goodsSelects($event.selected)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsGuard"
+                [totalItems]="totalItemsGuard"></app-pagination>
+            </div>
+
+            <div class="row pt-5">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards"
+                (edit)="showGoodsReceipt($event.data)"
+                (delete)="generateReceiptGuard($event.data)">
+              </ng2-smart-table>
+            </div>
+          </tab>
+
+          <!--Bien a almacén-->
+
+          <tab [heading]="headingWarehouse">
+            <div class="row d-flex justify-content-end">
+              <div class="btn-toolbar pt-5">
+                <app-columns-select
+                  [(settings)]="settingsWarehouseGoods"></app-columns-select>
+                <button class="btn btn-primary btn-sm active ml-2">
+                  Asignar Acta
+                </button>
+
+                <button class="btn btn-pink btn-sm active">
+                  Adjuntar documentos
+                </button>
+                <button class="btn btn-pink btn-sm active">
+                  Integrar fotografía
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsWarehouseGoods"
+                [source]="goodsWarehouse">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsGoodsWarehouse"
+                [totalItems]="totalItemsWarehouse"></app-pagination>
+            </div>
+
+            <div class="row pt-5">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceiptsGuards"
+                [source]="receiptGuards">
+              </ng2-smart-table>
+            </div>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+    <!--<div class="row pt-5">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Recibos" id="tab1">
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <app-columns-select [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsReceipt" [source]="receipts"
+                (edit)="createReceipt()" (delete)="delete()">
+              </ng2-smart-table>
+              <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+            </div>
+            <div class="row pt-5">
+              <div class="btn-toolbar pt-5">
+                <button (click)="uploadDocuments()" class="btn btn-primary btn-sm active">
+                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                </button>
+                <button (click)="uploadPicture()" class="btn btn-info btn-sm active">
+                  <i class="fa fa-camera"></i> Integrar fotograf&iacute;a
+                </button>
+
+                <button class="btn btn-danger btn-sm active">
+                  <i class="fa fa-trash"></i> Eliminar
+                </button>
+              </div>
+              <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab [heading]="headingGuard">
+            <div class="d-flex justify-content-end">
+              <app-columns-select [(settings)]="settingWarehouseGoods"></app-columns-select>
+            </div>
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="guardGoods">
+            </ng2-smart-table>
+            <app-pagination [params]="paramsGuard" [totalItems]="totalItemsGuard"></app-pagination>
+          </tab>
+          
+
+          <tab heading="Reprogramación(0)">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+          </tab>
+
+          <tab heading="Cancelación(0)">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settingsTranGoods" [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+          </tab>
+        </tabset>
+      </div>
+    </div> -->
+
+    <div class="d-flex justify-content-center">
+      <div class="m-3 btn-toolbar">
+        <button class="btn btn-primary active">Aprobar</button>
+        <button class="btn btn-danger active">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<!--Estado conservación sae-->
+<!--Estado conservación -->

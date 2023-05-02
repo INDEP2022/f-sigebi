@@ -1,0 +1,61 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="indicatorDeadlinesModalForm" class="form-material">
+      <div class="row">
+        <div class="col-md-10">
+          <form-field
+            [control]="indicatorDeadlinesModalForm.get('indicator')"
+            label="Indicador">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="indicator"
+              (click)="openParameters()" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2">
+          <form-field
+            [control]="indicatorDeadlinesModalForm.get('deadline')"
+            label="Plazo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="deadline" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="indicatorDeadlinesModalForm.get('formula')"
+            label="Formula">
+            <textarea
+              rows="2"
+              class="form-control pt-3"
+              formControlName="formula"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!indicatorDeadlinesModalForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

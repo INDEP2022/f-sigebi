@@ -1,0 +1,77 @@
+<div>
+  <div class="row">
+    <h5>Capturar datos del acuerdo</h5>
+  </div>
+  <div id="capture-data">
+    <form [formGroup]="dataForm" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('warehouseManager')"
+            label="Gerente Almac&eacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="warehouseManager"
+              [readOnly]="isReadOnly" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('relevantFacts')"
+            label="Hechos relevantes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="relevantFacts"
+              [readOnly]="isReadOnly" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('dateReposition')"
+            label="Fecha reposici&oacute;n de servicios">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateReposition"
+              [readOnly]="isReadOnly" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('dateNoncompliance')"
+            label="Fecha incumplimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateNoncompliance"
+              [readOnly]="isReadOnly" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="dataForm.get('agreeds')" label="Acuerdos">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="agreeds"
+              [readOnly]="isReadOnly" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('descriptionNoncompliance')"
+            label="Descripci&oacute;n incumplimiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionNoncompliance"
+              [readOnly]="isReadOnly" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

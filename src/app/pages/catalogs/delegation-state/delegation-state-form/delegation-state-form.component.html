@@ -1,0 +1,93 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="delegationStateForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationStateForm.get('regionalDelegation')"
+            label="ID">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="regionalDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationStateForm.get('stateCode')"
+            label="Código de Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="stateCode" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationStateForm.get('keyState')"
+            label="keyState">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="keyState" />
+          </form-field>
+        </div>
+        <!-- <div class="col-md-8">
+          <form-field [control]="delegationStateForm.get('stateCode')">
+            <ngx-select
+              [form]="delegationStateForm"
+              control="stateCode"
+              [data]="states"
+              value="codeCondition"
+              bindLabel="codeCondition"
+              label="Estado"
+              (fetchItems)="getStates($event)"
+              (change)="stateChange($event)"></ngx-select>
+          </form-field>
+        </div> -->
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="delegationStateForm.get('version')"
+            label="Versi&oacute;n">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="delegationStateForm.get('status')"
+            label="Status">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="status" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="delegationStateForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,184 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      Selecciona el motivo de la reprogramaci&oacute;n
+    </h5>
+  </div>
+  <div body style="margin-top: -40px">
+    <h5 class="title">
+      <p>
+        <a
+          class="text-color"
+          (click)="showInformationW = true"
+          *ngIf="!showInformationW">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Comentarios</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="showInformationW = false"
+          *ngIf="showInformationW">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Comentarios</a
+        >
+      </p>
+    </h5>
+    <form [formGroup]="form" class="form-material">
+      <div *ngIf="showInformationW">
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <div>
+              <form-field
+                [control]="form.get('presentationDate')"
+                label="Fecha presentaci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="presentationDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('presentationPlace')"
+                label="Lugar presentaci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="presentationPlace" />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('testerName')"
+                label="Nombre Proveedor">
+                <input class="form-control" formControlName="testerName" />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('renderingProcess')"
+                label="Proceso presentaci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="renderingProcess" />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('descriptionService')"
+                label="Descripci&oacute;n servicios">
+                <input
+                  class="form-control"
+                  formControlName="descriptionService" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <form-field
+                [control]="form.get('regionalRepresent')"
+                label="Representante regional">
+                <input
+                  class="form-control"
+                  formControlName="regionalRepresent" />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('dateRepresentRep')"
+                label="Fecha compromiso rep">
+                <input
+                  class="form-control"
+                  formControlName="dateRepresentRep"
+                  bsDatepicker />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('dateNotification')"
+                label="Fecha notificaci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="dateNotification"
+                  bsDatepicker />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('dateElaboration')"
+                label="Fecha elaboraci&oacute;n">
+                <input
+                  class="form-control"
+                  formControlName="dateElaboration"
+                  bsDatepicker />
+              </form-field>
+            </div>
+
+            <div class="pt-3">
+              <form-field
+                [control]="form.get('descriptionCumpliment')"
+                label="Descripci&oacute;n cumplimiento">
+                <input
+                  class="form-control"
+                  formControlName="descriptionCumpliment" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h5 class="title">
+        <p>
+          <a class="text-color" (click)="showSigner = true" *ngIf="!showSigner">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Firmante</a
+          >
+        </p>
+
+        <p>
+          <a class="text-color" (click)="showSigner = false" *ngIf="showSigner">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> Firmante</a
+          >
+        </p>
+      </h5>
+
+      <div *ngIf="showSigner" class="pt-3">
+        <div class="row">
+          <div>
+            <form-field
+              [control]="form.get('nameSignerSae')"
+              label="Nombre firmante INDEP">
+              <input class="form-control" formControlName="nameSignerSae" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="form.get('chargeSae')" label="Cargo INDEP">
+              <input class="form-control" formControlName="nameSignerSae" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,34 @@
+<app-search-requests (onSearch)="getFiles($event)"></app-search-requests>
+<div class="row mt-3">
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <div class="form-material">
+      <search-bar [params]="params"></search-bar>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <div class="d-flex flex-row-reverse">
+      <div class="">
+        <app-columns-select [(settings)]="fileSettings"></app-columns-select>
+      </div>
+      <div>
+        <button
+          class="btn btn-sm btn-primary active me-2 font-size-13"
+          (click)="openFileModal()">
+          <i class="bx bx-list-plus me-1 float-icon"></i>
+          Nuevo Expediente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+  <div [class]="loading ? 'table-loading' : ''">
+    <ng2-smart-table
+      id="eventTable"
+      [settings]="fileSettings"
+      [source]="fileColumns">
+    </ng2-smart-table>
+    <div class="table-padding"></div>
+  </div>
+</ng-scrollbar>
+<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>

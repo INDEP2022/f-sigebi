@@ -1,0 +1,15 @@
+<ng-container *ngIf="checkStateEditForm">
+  <form [formGroup]="checkForm" class="form-material">
+    <form-check label="" [for]="checkId">
+      <input
+        [id]="checkId"
+        type="checkbox"
+        formControlName="type"
+        (click)="change($event)" />
+    </form-check>
+  </form>
+</ng-container>
+<ng-container *ngIf="!checkStateEditForm">
+  <i *ngIf="value" class="bx bxs-check-square fs-1 check-icon"></i>
+  <i *ngIf="!value" class="bx bxs-x-circle fs-1 check-icon"></i>
+</ng-container>

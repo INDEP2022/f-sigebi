@@ -1,0 +1,47 @@
+<div>
+  <form [formGroup]="filterForm" class="form-material">
+    <div class="row pt-4">
+      <div class="col-md-2">
+        <form-field
+          [control]="filterForm.get('noServiceOrder')"
+          label="No&#46; Orden de Servicio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noServiceOrder" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="filterForm.get('folioServiseOrder')"
+          label="Folio Orden de Servicio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="folioServiseOrder" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field
+          [control]="filterForm.get('noRequest')"
+          label="No&#46; Solicitud">
+          <input type="text" class="form-control" formControlName="noRequest" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="search()">
+          <i class="bx bx-search-alt-2"></i> Buscar
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-danger btn-sm active" (click)="reset()">
+          <i class="bx bx-trash"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

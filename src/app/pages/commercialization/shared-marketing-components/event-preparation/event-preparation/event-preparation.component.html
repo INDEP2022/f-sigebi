@@ -1,0 +1,270 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">PREPARACI&Oacute;N DE EVENTO</h5>
+      <div class="col-md-5 buttons" *ngIf="event != null" @OnEventSelected>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="openModal2()">
+          Nuevo
+        </button>
+        <div *ngIf="event == null">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal()">
+            Abrir
+          </button>
+        </div>
+        <div *ngIf="event != null">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal()">
+            Cambiar Evento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div *ngIf="event == null" @OnEventSelected>
+      <div class="row">
+        <span>Preparando eventos de tipo REMESAS, PREPARACIÓN Y COMERCIAL</span>
+      </div>
+      <div class="row">
+        <span>Seleccione una opción</span>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-1 buttons">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal2()">
+            Crear Evento
+          </button>
+        </div>
+        <div class="col-md-1">
+          <div *ngIf="event == null">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-3"
+              (click)="openModal()">
+              Abrir Evento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="event != null" @OnEventSelected>
+      <div class="row">
+        <div class="col-md-1">
+          <h5 class="font-size-14">No. Evento</h5>
+          <p class="text-muted">{{ event.id_evento }}</p>
+        </div>
+        <div class="col-md-2">
+          <h5 class="font-size-14">Clave</h5>
+          <p class="text-muted">{{ event.cve_proceso }}</p>
+        </div>
+        <div class="col-md-2">
+          <h5 class="font-size-14">Tipo</h5>
+          <p class="text-muted">{{ event.tipo }}</p>
+        </div>
+        <div class="col-md-2">
+          <h5 class="font-size-14">Lugar</h5>
+          <p class="text-muted">{{ event.lugar }}</p>
+        </div>
+        <div class="col-md-3">
+          <h5 class="font-size-14">Observaciones</h5>
+          <p class="text-muted">{{ event.observaciones }}</p>
+        </div>
+        <div class="col-md-1">
+          <h5 class="font-size-14">Fecha</h5>
+          <p class="text-muted">{{ event.fecha }}</p>
+        </div>
+      </div>
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <form-check label="Mostrar contadores" for="label">
+            <input id="label" type="checkbox" formControlName="check" />
+          </form-check>
+        </div>
+      </form>
+
+      <div class="row" *ngIf="check.value">
+        <hr />
+        <div class="col-md-3">
+          <div class="row">
+            <h5 class="font-size-14">PAGADOS</h5>
+          </div>
+          <div class="col-md-4">
+            <p>Lotes: <b>0</b></p>
+            <p>Reg: <b>0</b></p>
+            <p>Base: <b>0</b></p>
+          </div>
+          <div class="col-md-4">
+            <p>Cant: <b>0</b></p>
+            <p>Vta.: <b>0</b></p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <h5 class="font-size-14">PENALIZADOS</h5>
+          </div>
+          <div class="col-md-4">
+            <p>Lotes: <b>0</b></p>
+            <p>Reg: <b>0</b></p>
+            <p>Base: <b>0</b></p>
+          </div>
+          <div class="col-md-4">
+            <p>Cant: <b>0</b></p>
+            <p>Vta.: <b>0</b></p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <h5 class="font-size-14">DESIERTOS</h5>
+          </div>
+          <div class="col-md-4">
+            <p>Lotes: <b>0</b></p>
+            <p>Reg: <b>0</b></p>
+            <p>Base: <b>0</b></p>
+          </div>
+          <div class="col-md-4">
+            <p>Cant: <b>0</b></p>
+            <p>Vta.: <b>0</b></p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <h5 class="font-size-14">TOTALES</h5>
+          </div>
+          <div class="col-md-4">
+            <p>Lotes: <b>0</b></p>
+            <p>Reg: <b>0</b></p>
+          </div>
+          <div class="col-md-4">
+            <p>Base: <b>0</b></p>
+            <p>Cant: <b>0</b></p>
+          </div>
+        </div>
+        <hr />
+      </div>
+
+      <div class="row pt-5">
+        <div class="ch-content">
+          <div class="col-md-2">
+            <div *ngIf="event != null">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-3"
+                (click)="openForm()">
+                Agregar Lote
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div *ngIf="event != null">
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm active ml-3"
+                (click)="openForm()"
+                disabled>
+                Generar oficio de Aval&uacute;o
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div *ngIf="event != null">
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm active ml-3"
+                (click)="openForm()"
+                disabled>
+                Publicar Evento
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm active ml-3"
+                (click)="groundsStatus()">
+                Valida bienes
+              </button>
+            </div>
+          </div>
+
+          <div class="justify-content-end m-4">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="data"
+              (delete)="delete($event.data)"
+              (edit)="openForm($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="ch-content">
+          <h5 class="title">Bienes</h5>
+          <div class="col-md-2 btn-group">
+            <button
+              id="btnGroupExcel"
+              type="button"
+              class="btn btn-success btn-sm active"
+              data-toggle="dropdown">
+              Excel
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupExcel">
+              <a class="dropdown-item" (click)="exportAsXLSX()"
+                >Exportar a Excel</a
+              >
+              <a class="dropdown-item" (click)="fileExcel.click()"
+                >Lotificar bienes desde Archivo Excel</a
+              >
+              <input
+                type="file"
+                (change)="ReadExcel($event)"
+                name="fileExcel"
+                #fileExcel
+                class="d-none"
+                accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+            </div>
+          </div>
+
+          <div class="row justify-content-end mr-3">
+            <app-columns-select [(settings)]="settings2"></app-columns-select>
+          </div>
+        </div>
+        <ng2-smart-table class="mt-3" [settings]="settings2" [source]="data2">
+        </ng2-smart-table>
+      </div>
+
+      <div class="row pt-5">
+        <div class="md-tabs">
+          <tabset [justified]="true">
+            <tab heading="CATÁLOGOS DE CLIENTES" id="tab1">
+              <app-customer-catalogs-table></app-customer-catalogs-table>
+            </tab>
+            <tab heading="BIENES RECHAZADOS">
+              <app-rejected-goods-table></app-rejected-goods-table>
+            </tab>
+            <tab heading="BIENES DISPONIBLES">
+              <app-available-goods-table></app-available-goods-table>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,82 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="emailForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="emailForm.get('email')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="emailForm"
+              control="email"
+              [data]="users"
+              value="email"
+              bindLabel="email"
+              label="Para: "
+              (fetchItems)="getEmailIndep($event)"
+              (change)="onValuesChange($event)"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Usuario" [control]="emailForm.get('userSirsae')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userSirsae" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Nombre" [control]="emailForm.get('name')">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="CC Usuario" [control]="emailForm.get('ccUser')">
+            <input type="text" class="form-control" formControlName="ccUser" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="CC Nombre" [control]="emailForm.get('ccName')">
+            <input type="text" class="form-control" formControlName="ccName" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Email" [control]="emailForm.get('ccEmail')">
+            <input type="text" class="form-control" formControlName="ccEmail" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            label="Cuerpo del correo"
+            [control]="emailForm.get('body')">
+            <textarea
+              class="form-control"
+              formControlName="body"
+              rows="6"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [text]="'Continuar con el proceso'"
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

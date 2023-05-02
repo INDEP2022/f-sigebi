@@ -1,0 +1,103 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">cat&aacute;logo de proveedores</h5>
+  </div>
+  <div body>
+    <form class="form-material mb-0" [formGroup]="providerForm">
+      <div class="row">
+        <!-- <div class="col-sm-12 col-md-6">
+          <div class="form-material">
+            <search-bar
+              [filterParams]="filterParams"
+              [filterField]="searchFilter"></search-bar>
+          </div>
+        </div> -->
+        <div class="col-sm-12 col-md-12">
+          <div class="d-flex flex-row-reverse my-3">
+            <div class="">
+              <app-columns-select
+                [(settings)]="providerSettings"></app-columns-select>
+            </div>
+            <div>
+              <button
+                class="btn btn-sm btn-primary active me-2 font-size-14"
+                (click)="openFormProvider(false)">
+                Nuevo proveedor
+              </button>
+            </div>
+            <div>
+              <button
+                class="btn btn-sm btn-primary active me-2 font-size-14"
+                (click)="openClientsModal()">
+                Clientes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="providerTable"
+            [attr.class]="'table-bordered'"
+            [settings]="providerSettings"
+            [source]="data"
+            (userRowSelect)="selectProvider($event.data)"
+            (edit)="openFormProvider(true, $event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+        <div class="table-padding"></div>
+      </ng-scrollbar>
+      <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
+      </app-pagination>
+      <div class="row mt-4">
+        <div class="col-sm-6 col-md-4">
+          <form-field
+            [control]="providerForm.get('providerId')"
+            label="Id Proveedor">
+            <input
+              type="number"
+              class="form-control disabled"
+              formControlName="providerId" />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="providerForm.get('bank')" label="Banco">
+            <input type="text" class="form-control" formControlName="bank" />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="providerForm.get('branch')" label="Sucursal">
+            <input type="text" class="form-control" formControlName="branch" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row my-3">
+        <div class="col-sm-6 col-md-4">
+          <form-field
+            [control]="providerForm.get('checkingCta')"
+            label="No. Cuenta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="checkingCta" />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="providerForm.get('key')" label="Clabe">
+            <input type="text" class="form-control" formControlName="key" />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4" *ngIf="isSelected">
+          <button
+            class="btn btn-sm btn-primary active me-2 font-size-14"
+            [disabled]="!providerForm.valid"
+            (click)="saveBank()">
+            Guardar Datos
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

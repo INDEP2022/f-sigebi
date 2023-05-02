@@ -1,0 +1,80 @@
+<div>
+  <div>
+    <div class="row">
+      <!--CAN WORK1 TABLE-->
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (delete)="deleteGood($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="goodsNotChange.length > 0">
+      <p>
+        Los bienes N° <strong>{{ goodsNotChange }}</strong> no pueden estar en
+        un almacen
+      </p>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button (click)="goToGoodTracker()" class="btn btn-success active">
+              Rastreador de bienes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+        <form [formGroup]="form" class="form-material">
+          <form-radio label="Almacén">
+            <input type="radio" formControlName="radio" value="A" />
+          </form-radio>
+          <form-radio label="Bóveda">
+            <input type="radio" formControlName="radio" value="B" />
+          </form-radio>
+          <form-radio label="Nulo">
+            <input type="radio" formControlName="radio" [value]="null" />
+          </form-radio>
+        </form>
+      </div>
+      <div class="col-md-8 col-sm-12 col-xs-12">
+        <form
+          [formGroup]="form"
+          class="form-material"
+          *ngIf="radio.value != null">
+          <div class="row" *ngIf="radio.value === 'A'">
+            <app-warehouse-shared
+              [form]="form"
+              [showWarehouseType]="false"></app-warehouse-shared>
+          </div>
+          <div class="row" *ngIf="radio.value === 'B'">
+            <app-safe-shared [form]="form"></app-safe-shared>
+          </div>
+        </form>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                [disabled]="goods.length === 0"
+                class="btn btn-info active"
+                (click)="asigLocation()">
+                Asignar Ubicación
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

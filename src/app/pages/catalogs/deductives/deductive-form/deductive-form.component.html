@@ -1,0 +1,110 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="deductiveForm" class="form-material">
+      <div class="row">
+        <div class="col-md-8">
+          <form-field
+            [control]="deductiveForm.get('serviceType')"
+            label="Tipo de Servicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="serviceType" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="deductiveForm.get('weightedDeduction')"
+            label="Deducci&oacute;n Ponderada">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="weightedDeduction" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('startingRankPercentage')"
+            label="Rango de Porcentaje Inicial">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="startingRankPercentage" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('finalRankPercentage')"
+            label="Rango de Porcentaje Final">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="finalRankPercentage" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('contractNumber')"
+            label="No. Contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="contractNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('version')"
+            label="Versi&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-3 d-flex">
+          <form-radio label="Activo">
+            <input type="radio" formControlName="status" value="1" />
+          </form-radio>
+          <form-radio label="Inactivo">
+            <input type="radio" formControlName="status" value="0" />
+          </form-radio>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="deductiveForm.get('id')" label="ID">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="deductiveForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

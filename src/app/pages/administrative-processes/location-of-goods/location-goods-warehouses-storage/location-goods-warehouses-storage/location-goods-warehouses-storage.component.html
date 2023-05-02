@@ -1,0 +1,198 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Ubicacion de bienes en almacenes y bóvedas</h5>
+  </div>
+  <div body>
+    <div>
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Asignación individual" id="tab1">
+            <form [formGroup]="form" class="form-material">
+              <div class="row mt-5">
+                <div class="col-md-9 col-sm-12 col-xs-12">
+                  <div class="row">
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                      <form-field [control]="form.get('good')" label="Bien">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="good"
+                          (change)="loadGood()" />
+                      </form-field>
+                    </div>
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                      <form-field
+                        [control]="form.get('description')"
+                        label="Descripción">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="description" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                      <form-field
+                        [control]="form.get('statusGoods')"
+                        label="Estátus del bien">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="statusGoods" />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                  <form-radio label="Almacén" *ngIf="warehouseDisable">
+                    <input
+                      type="radio"
+                      formControlName="radio"
+                      value="A"
+                      (change)="onChangeType('A')" />
+                  </form-radio>
+                  <form-radio label="Bóveda" *ngIf="vaultDisable">
+                    <input
+                      type="radio"
+                      formControlName="radio"
+                      value="B"
+                      (change)="onChangeType('B')" />
+                  </form-radio>
+                  <form-radio label="Nulo">
+                    <input
+                      type="radio"
+                      formControlName="radio"
+                      [value]="null"
+                      (change)="onChangeType('')" />
+                  </form-radio>
+                </div>
+              </div>
+              <div class="row">
+                <div
+                  class="col-md-12 col-sm-12 col-xs-12"
+                  *ngIf="disableConsultLocation">
+                  <div class="d-flex justify-content-center">
+                    <div class="m-3">
+                      <button
+                        [disabled]="good === undefined"
+                        type="button"
+                        class="btn btn-info active"
+                        (click)="checkLocations()">
+                        Consultar Ubicaciones
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <!-- radio.value === null -->
+            <app-card [header]="true" *ngIf="radio.value === 'A'">
+              <div class="ch-content" header>
+                <h5 class="title">Almacén</h5>
+              </div>
+              <div body>
+                <form [formGroup]="formWarehouse" class="form-material">
+                  <div class="row">
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                      <form-field
+                        [control]="formWarehouse.get('currentLocationWare')"
+                        label="Ubicación Actual">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="currentLocationWare" />
+                      </form-field>
+                    </div>
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                      <form-field
+                        [control]="formWarehouse.get('currentDescriptionWare')"
+                        label="Descripción">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="currentDescriptionWare" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <app-warehouse-shared
+                      [form]="formWarehouse"
+                      [showWarehouseType]="false"></app-warehouse-shared>
+                  </div>
+                </form>
+                <div class="row">
+                  <div class="d-flex justify-content-center">
+                    <div class="m-3">
+                      <button
+                        class="btn btn-primary active"
+                        (click)="changeLocation()">
+                        Cambiar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-card>
+
+            <app-card [header]="true" *ngIf="radio.value === 'B'">
+              <div class="ch-content" header>
+                <h5 class="title">Bóveda</h5>
+              </div>
+              <div body>
+                <form [formGroup]="formVault" class="form-material">
+                  <div class="row">
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                      <form-field
+                        [control]="formVault.get('currentLocationVault')"
+                        label="Ubicación Actual">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="currentLocationVault" />
+                      </form-field>
+                    </div>
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                      <form-field
+                        [control]="formVault.get('currentDescriptionVault')"
+                        label="Descripción">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="currentDescriptionVault" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <app-safe-shared [form]="formVault"></app-safe-shared>
+                  </div>
+                </form>
+                <div class="row">
+                  <div class="d-flex justify-content-center">
+                    <div class="m-3">
+                      <button
+                        class="btn btn-primary active"
+                        (click)="changeLocation()">
+                        Cambiar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </app-card>
+          </tab>
+          <tab heading="Asignación masiva">
+            <app-modal-selects-goods></app-modal-selects-goods>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />

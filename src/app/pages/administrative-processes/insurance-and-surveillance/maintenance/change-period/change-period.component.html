@@ -1,0 +1,140 @@
+<div body>
+  <form [formGroup]="form" (ngSubmit)="changePeriod()" class="form-material">
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title">ORIGEN</h5>
+        </div>
+        <div class="col-md-12 mt-4">
+          <form-field [control]="form.get('year')" label="Año">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="year"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('period')" label="Periodo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="period"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <!-- <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegations"
+              bindLabel="name"
+              label="Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </form-field> -->
+          <form-field
+            [control]="form.get('delegation')"
+            label="Delegación"
+            class="form-group">
+            <ng-custom-select
+              class="form-control"
+              path="catalog/api/v1/delegation"
+              formControlName="delegation"
+              prefixSearch="$ilike"
+              paramSearch="filter.description">
+              <ng-template let-item>
+                {{ item.description }}
+              </ng-template>
+            </ng-custom-select>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            label="Proceso"
+            class="form-group"
+            [control]="form.get('process')">
+            <select class="form-control" formControlName="process">
+              <option value="1">Supervisión</option>
+              <option value="2">Validación</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title">DESTINO</h5>
+        </div>
+        <div class="col-md-12 mt-4">
+          <form-field [control]="form.get('year')" label="Año">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="year"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('period')" label="Periodo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="period"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <!-- <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegations"
+              bindLabel="name"
+              label="Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </form-field> -->
+          <form-field
+            [control]="form.get('delegationDestiny')"
+            label="Delegación"
+            class="form-group">
+            <ng-custom-select
+              class="form-control"
+              path="catalog/api/v1/delegation"
+              formControlName="delegationDestiny"
+              prefixSearch="$ilike"
+              paramSearch="filter.description">
+              <ng-template let-item>
+                {{ item.description }}
+              </ng-template>
+            </ng-custom-select>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            label="Proceso"
+            class="form-group"
+            [control]="form.get('processDestiny')">
+            <select class="form-control" formControlName="processDestiny">
+              <option value="1">Supervisión</option>
+              <option value="2">Validación</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4 float-right">
+      <div class="">
+        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+          CAMBIAR
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

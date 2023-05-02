@@ -1,0 +1,156 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="attribClassifGoodForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('classifGoodNumber')"
+            label="No. Clasificación bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="classifGoodNumber"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="attribClassifGoodForm.get('columnNumber')"
+            label="Clave">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="columnNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('attribute')"
+            label="Atributos">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="attribute" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="attribClassifGoodForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('required')"
+            label="¿Requerido?">
+            <ng-select
+              formControlName="required"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('dataType')"
+            label="Tipo de dato">
+            <ng-select
+              formControlName="dataType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="V">Alfanum&eacute;rico</ng-option>
+              <ng-option value="N">Num&eacute;rico</ng-option>
+              <ng-option value="F">Flotante</ng-option>
+              <ng-option value="D">Fecha</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('length')"
+            label="Longitud">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="length" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('update')"
+            label="¿Actualiza?">
+            <ng-select
+              formControlName="update"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('accessKey')"
+            label="¿LLave de acceso?">
+            <ng-select
+              formControlName="accessKey"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('tableCd')"
+            label="Tabla de soporte">
+            <input type="text" class="form-control" formControlName="tableCd" />
+          </form-field>
+        </div>
+        <!-- <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('typeAct')"
+            label="Tipo de acta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="typeAct" />
+          </form-field>
+        </div> -->
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="attribClassifGoodForm.invalid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,89 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CLAVES DE AUTORIZACIÓN PARA ENVÍO EXTEMPORÁNEO DE OIS</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="eventForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="eventForm.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="eventForm.get('processKey')" label="Evento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processKey"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="eventForm.get('observations')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!eventForm.valid"
+            (click)="getEventById()">
+            Buscar
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <form
+      class="form-material"
+      [formGroup]="form"
+      *ngIf="eventForm.get('processKey').value !== null">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('txtEncrip')" label="">
+            <input
+              type="hidden"
+              class="form-control"
+              formControlName="txtEncrip"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1">
+          <button
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="generateKey()">
+            Generar Encriptación
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('encrip')" label="">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="encrip"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-1 mt-3">
+          <button
+            class="btn btn-sm btn-inline btn-success mt-n2 py-2 px-3"
+            (click)="copy()">
+            <i class="bx bx-copy-alt mt-2"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

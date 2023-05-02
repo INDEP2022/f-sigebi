@@ -1,0 +1,73 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="zoneGeographicForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="zoneGeographicForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="zoneGeographicForm.get('contractNumber')"
+            label="No de contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="contractNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="zoneGeographicForm.get('thirdPartySpecialized')"
+            label="Tercero especializado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="thirdPartySpecialized" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="zoneGeographicForm.get('vat')" label="Iva">
+            <input type="number" class="form-control" formControlName="vat" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="zoneGeographicForm.get('status')"
+            label="Estatus">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="status" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="zoneGeographicForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

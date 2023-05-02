@@ -1,0 +1,19 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CONSULTA DE BIENES EN PROCESO COMERCIAL</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="VENTAS" id="tab1">
+          <app-consultation-goods-commercial-sales></app-consultation-goods-commercial-sales>
+        </tab>
+        <tab heading="GASTOS">
+          <app-consultation-goods-commercial-bills></app-consultation-goods-commercial-bills>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

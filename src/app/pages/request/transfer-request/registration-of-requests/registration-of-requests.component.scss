@@ -1,0 +1,23 @@
+:host ::ng-deep app-modal .modal-content .modal-body {
+  padding: 5px 5px 5px !important;
+}
+
+label {
+  color: black;
+  font-weight: 700;
+}
+
+/*label,
+span {
+  color: black;
+  font-size: 1em;
+  font-weight: 400;
+} */
+
+:host ::ng-deep .swal2-container.swal2-center > .swal2-popup {
+  background-color: red;
+  color: red;
+}
+/* .swal2-container.swal2-center>.swal2-popup {
+      width: 40rem !important;
+    } */

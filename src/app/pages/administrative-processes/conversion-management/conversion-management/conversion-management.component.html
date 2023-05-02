@@ -1,0 +1,161 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">ADMINISTRACION DE CONVERSION DE BIENES</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <!--Date Form-->
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('idConversion')"
+            label="Id Conversión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idConversion"
+              (change)="searchConversion()" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('noBien')"
+            label="No Bien a Convertir">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noBien"
+              (change)="onChangeGood()" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('date')" label="Fecha de creación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="date"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5 mb-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('tipo')" label="Tipo">
+            <select class="form-control" formControlName="tipo">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="1">Derivado</option>
+              <option value="2">Conversión</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('noExpediente')"
+            label="No Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('actaConversion')"
+            label="Cve Acta Conversión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="actaConversion" />
+          </form-field>
+        </div>
+      </div>
+      <app-card>
+        <div body>
+          <div class="row">
+            <h5 class="title mt-0">Datos del bien</h5>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-5 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('desStatus')"
+                label="Desc. Estatus">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="desStatus" />
+              </form-field>
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('actaER')" label="Acta E/R">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="actaER" />
+              </form-field>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('actaERDate')"
+                label="Fecha acta E/R">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="actaERDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripción">
+                <textarea
+                  type="text"
+                  class="form-control"
+                  formControlName="description"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </app-card>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary active"
+                (click)="generatePaswword()"
+                [disabled]="saved">
+                Generar PW
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-success active"
+                [disabled]="enableButton"
+                (click)="save()">
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5" *ngIf="generarPass">
+        <div class="d-flex justify-content-center">
+          <p>
+            Nueva contraseña: &nbsp; &nbsp; <strong>{{ password }}</strong>
+          </p>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

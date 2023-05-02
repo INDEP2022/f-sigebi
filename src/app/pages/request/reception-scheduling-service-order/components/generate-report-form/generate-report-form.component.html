@@ -1,0 +1,48 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Reporte de orden de servicio</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form [formGroup]="form" class="form-material">
+        <div>
+          <form-field [control]="form.get('responsible')" label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('charge')" label="Cargo">
+            <input type="text" class="form-control" formControlName="charge" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-check label="Firma electr&oacute;nica" for="label">
+            <input
+              id="label"
+              type="checkbox"
+              formControlName="electronicSignature" />
+          </form-check>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

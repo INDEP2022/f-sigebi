@@ -1,0 +1,65 @@
+<div class="pt-3">
+  <h5 class="title">
+    <p>
+      <a
+        class="text-color"
+        (click)="showAddressTransferent = true"
+        *ngIf="!showAddressTransferent">
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Direcci&oacute;n
+        transferente</a
+      >
+    </p>
+
+    <p>
+      <a
+        class="text-color"
+        (click)="showAddressTransferent = false"
+        *ngIf="showAddressTransferent">
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Direcci&oacute;n
+        transferente</a
+      >
+    </p>
+  </h5>
+
+  <div class="row" *ngIf="showAddressTransferent">
+    <div class="col-md-12" *ngIf="!claimRequest">
+      <form [formGroup]="form" class="form-material">
+        <div class="pt-3">
+          <form-field [control]="form.get('location')" label="Localidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location"
+              readonly />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="address"
+              readonly />
+          </form-field>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-12" *ngIf="claimRequest">
+      <form [formGroup]="form" class="form-material">
+        <div class="pt-3">
+          <form-field [control]="form.get('location')" label="Localidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location" />
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

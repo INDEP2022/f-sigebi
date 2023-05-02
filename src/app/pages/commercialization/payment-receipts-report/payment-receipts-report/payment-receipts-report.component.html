@@ -1,0 +1,312 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">REPORTE DE PAGOS RECIBIDOS</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('idEvent')" label="Evento">
+            <input type="text" class="form-control" formControlName="idEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('allotment')" label="Lote">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('amount')" label="Monto">
+            <input type="text" class="form-control" formControlName="amount" />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="row pt-5">
+        <div class="col-md-6 alert alert-info">
+          <div class="row">
+            <div class="col-md-6">
+              <form-field [control]="form.get('sender')" label="Recibimos de:">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="sender" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('domicile')" label="Domicilio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="domicile" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field [control]="form.get('suburb')" label="Colonia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="suburb" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <!-- <app-departments-shared [form]="form"></app-departments-shared> -->
+              <app-federative-shared [form]="form"></app-federative-shared>
+            </div>
+            <div class="col-md-4">
+              <app-delegation-shared
+                [showSubdelegation]="false"
+                [form]="form"></app-delegation-shared>
+            </div>
+
+            <div class="col-md-4">
+              <form-field [control]="form.get('cp')" label="CP">
+                <input type="text" class="form-control" formControlName="cp" />
+              </form-field>
+            </div>
+          </div>
+          <hr />
+
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('receivedAmount')"
+                label="Cant. Recibida">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="receivedAmount" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('price')"
+                label="Precio de venta del inmueble">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="price" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="form.get('iva')" label="IVA">
+                <input type="text" class="form-control" formControlName="iva" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('NoAppIva')"
+                label="% del valor del Inmueble, exento del I.V.A.">
+                <input
+                  type="text"
+                  class="form-control"
+                  (keyup)="priceTotal($event)"
+                  formControlName="NoAppIva" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('appIva')"
+                label="% del Valor del Inmueble, más el 100% del I.V.A.">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="appIva"
+                  readonly />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="form.get('total')" label="Total">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="total"
+                  readonly />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('remBalance')"
+                label="Saldo restante">
+                <input
+                  style="font-weight: bold"
+                  type="text"
+                  class="form-control"
+                  value="$saldo"
+                  formControlName="remBalance"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 alert alert-info">
+          <div class="row">
+            <div class="col-md-3">
+              <form-field [control]="form.get('receipt')" label="Recibo No.">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="receipt" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="form.get('date')" label="Fecha emisión">
+                <input
+                  type="text"
+                  placeholder=""
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="date"
+                  [bsConfig]="{ isAnimated: true }" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('buy')"
+                label="Por la compra venta de:">
+                <input type="text" class="form-control" formControlName="buy" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('transferee')"
+                label="Transferente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="transferee" />
+              </form-field>
+            </div>
+            <!-- table -->
+            <div class="row pt-2 scroll-table justify-content-center">
+              <!-- <div class="table-responsive"> -->
+              <ng2-smart-table
+                class="col-md-12"
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataGood"></ng2-smart-table>
+            </div>
+            <!-- </div> -->
+            <!--  -->
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('delivery')"
+            label="Entrega del inmueble">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delivery" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="ch-content mb-5">
+          <h5 class="title">Notario</h5>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('notary')" label="Nombre">
+            <input type="text" class="form-control" formControlName="notary" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field [control]="form.get('numberNotary')" label="Número">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberNotary" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('residence')" label="Domicilio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="residence" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('phone')" label="Teléfono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('penalty')" label="Pena">
+            <textarea class="form-control" formControlName="penalty"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('attorney')" label="Apoderado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="attorney" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('receiver')" label="Recibí">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="receiver" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6"></div>
+      </div>
+    </form>
+  </div>
+</app-card>
+<div footer>
+  <div class="d-flex justify-content-center">
+    <div class="m-3">
+      <confirm-button
+        text="Imprimir"
+        [disabled]="form.invalid"
+        [loading]="loading"
+        (confirm)="confirm()">
+      </confirm-button>
+    </div>
+    <div class="m-3">
+      <button type="button" class="btn btn-danger active" (click)="cleanForm()">
+        Limpiar
+      </button>
+    </div>
+  </div>
+</div>

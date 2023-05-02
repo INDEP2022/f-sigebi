@@ -1,0 +1,98 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE NUMERARIO VALORES POR EXPEDIENTE</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getSubdelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3 form-group mb-3">
+          <form-field [control]="form.get('fileFrom')" label="Expediente del">
+            <input
+              type="text"
+              formControlName="fileFrom"
+              placeholder="Expediente del"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 form-group mb-3">
+          <form-field [control]="form.get('fileTo')" label="Al">
+            <input
+              type="text"
+              formControlName="fileTo"
+              placeholder="Al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3 form-group mb-3">
+          <form-field [control]="form.get('from')" label="Fecha de recepción">
+            <input
+              type="text"
+              formControlName="from"
+              placeholder="Fecha de Recepción"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 form-group mb-3">
+          <form-field [control]="form.get('to')" label="Al">
+            <input
+              type="text"
+              formControlName="to"
+              placeholder="Al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            text="IMPRIMIR REPORTE"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

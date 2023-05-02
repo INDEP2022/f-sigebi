@@ -1,0 +1,76 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">b&uacute;squeda y procesamiento de pagos</h5>
+  </div>
+  <div body>
+    <div class="row mt-3">
+      <!-- <div class="col-sm-12 col-md-12 col-lg-6">
+        <div class="form-material">
+          <search-bar [params]="eventParams"></search-bar>
+        </div>
+      </div> -->
+      <!-- <div class="col-sm-12 col-md-12 col-lg-6">
+       
+      </div> -->
+      <div class="d-flex flex-row-reverse">
+        <div class="me-2 mb-4">
+          <button
+            class="btn btn-sm btn-primary active me-2 font-size-13"
+            (click)="execute()"
+            [disabled]="selectedEvent.length == 0">
+            <i class="bx bx-send text-light me-1 float-icon"></i>Ejecutar
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-scrollbar
+      [track]="'horizontal'"
+      [autoHeightDisabled]="false"
+      class="table-scrollbar">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="eventTable"
+          [settings]="eventSettings"
+          [source]="eventColumns"
+          (userRowSelect)="selectEvent($event.selected)">
+        </ng2-smart-table>
+      </div>
+      <div class="table-padding"></div>
+    </ng-scrollbar>
+    <app-pagination [params]="eventParams" [totalItems]="eventTotalItems">
+    </app-pagination>
+    <div class="row mt-5">
+      <!-- <div class="col-sm-12 col-md-12 col-lg-6">
+        <div class="form-material">
+          <search-bar [params]="clParams"></search-bar>
+        </div>
+      </div> -->
+      <!-- <div class="col-sm-12 col-md-12 col-lg-6"> -->
+      <div class="d-flex flex-row-reverse">
+        <div class="me-2 mb-4">
+          <button
+            class="btn btn-sm btn-success active me-2 font-size-13"
+            (click)="exportToExcel()"
+            [disabled]="clColumns.length == 0">
+            <i class="fas fa-file-excel text-light me-1"></i>Exportar
+          </button>
+        </div>
+      </div>
+      <!-- </div> -->
+    </div>
+    <ng-scrollbar
+      [track]="'horizontal'"
+      [autoHeightDisabled]="false"
+      class="table-scrollbar">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="clTable"
+          [settings]="clSettings"
+          [source]="clColumns">
+        </ng2-smart-table>
+      </div>
+    </ng-scrollbar>
+    <app-pagination [params]="clParams" [totalItems]="clTotalItems">
+    </app-pagination>
+  </div>
+</app-card>

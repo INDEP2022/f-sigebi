@@ -1,0 +1,87 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="authorityForm">
+      <!-- <div class="row">
+        <div class="col-md-3">
+          <form-field
+            label="No. Autoridad"
+            [control]="authorityForm.get('idAuthority')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idAuthority" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Transferente"
+            [control]="authorityForm.get('idTransferer')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idTransferer"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Emisora"
+            [control]="authorityForm.get('idStation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idStation"
+              readonly />
+          </form-field>
+        </div>
+      </div> -->
+      <div class="row">
+        <div class="col-md-2">
+          <form-field
+            label="Clave única"
+            [control]="authorityForm.get('cveUnique')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveUnique" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="No. Ciudad"
+            [control]="authorityForm.get('idCity')">
+            <input type="text" class="form-control" formControlName="idCity" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            label="Nombre autoridad"
+            [control]="authorityForm.get('authorityName')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorityName" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!authorityForm.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

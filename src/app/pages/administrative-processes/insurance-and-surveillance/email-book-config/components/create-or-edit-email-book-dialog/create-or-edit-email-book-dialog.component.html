@@ -1,0 +1,79 @@
+<ng-template #templateCreateOrEdit>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left font-size-16">
+      {{
+        oldData
+          ? 'EDITANDO LIBRETA DE DIRECCIONES ELECTRÓNICAS'
+          : 'AGREGANDO LIBRETA DE DIRECCIONES ELECTRÓNICAS'
+      }}
+    </h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="closeDialog()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <form class="modal-body form-material" [formGroup]="form">
+    <form-field
+      class="form-group"
+      [control]="form.get('delegationNumber')"
+      label="Delegación Regional">
+      <ng-custom-select
+        [initOption]="initOption"
+        value="delegationNumber"
+        class="form-control"
+        path="survillance/api/v1/views/v-vig-delegations"
+        paramSearch="filter.description"
+        prefixSearch="$ilike"
+        formControlName="delegationNumber">
+        <ng-template let-item>
+          {{ item.description }}
+        </ng-template>
+      </ng-custom-select>
+    </form-field>
+    <form-field [control]="form.get('bookName')" label="Nombre">
+      <input
+        required
+        type="text"
+        formControlName="bookName"
+        class="form-control" />
+    </form-field>
+    <form-field [control]="form.get('id')" label="ID">
+      <input type="text" formControlName="id" class="form-control" />
+    </form-field>
+    <form-field [control]="form.get('bookEmail')" label="Correo electrónico">
+      <input type="email" formControlName="bookEmail" class="form-control" />
+    </form-field>
+    <form-field [control]="form.get('bookType')" label="Tipo">
+      <select class="form-control" required formControlName="bookType">
+        <option value="C">CC</option>
+        <option value="P">Para</option>
+      </select>
+    </form-field>
+    <form-field [control]="form.get('bookStatus')" label="Status">
+      <select class="form-control" required formControlName="bookStatus">
+        <option value="0">Inactivo</option>
+        <option value="1">Activo</option>
+      </select>
+    </form-field>
+  </form>
+  <div class="modal-footer">
+    <button
+      [disabled]="isLoading"
+      type="button"
+      class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
+      (click)="saveInServer()">
+      Guardar
+      <i class="fas fa-paper-plane"></i>
+    </button>
+    <button
+      type="button"
+      class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
+      (click)="closeDialog()">
+      Cerrar
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</ng-template>

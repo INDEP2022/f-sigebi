@@ -1,0 +1,96 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Firmar dictamen</h5>
+  </div>
+  <div body>
+    <div *ngIf="isViewReport">
+      <div class="row">
+        <div class="d-flex justify-content-end">
+          <div class="p-2">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="signReport()">
+              Firmar reporte
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-danger btn-sm active" (click)="close()">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">mostrar el reporte</div>
+      </div>
+    </div>
+    <div *ngIf="!isViewReport">
+      <div class="row">
+        <div class="row">
+          <div class="d-flex justify-content-end">
+            <div class="p-2">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="sendReport()">
+                Enviar reporte
+              </button>
+            </div>
+            <div class="p-2">
+              <button
+                class="btn btn-danger btn-sm active"
+                (click)="previousStep()">
+                Paso Anterior
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <form [formGroup]="signForm" class="form-material">
+          <div class="row pt-4">
+            <div class="col-md-6">
+              <form-field [control]="signForm.get('cer')" label="*CER">
+                <input
+                  type="file"
+                  #FileInput
+                  formControlName="cer"
+                  class="form-control"
+                  (change)="selectCERFile($event)"
+                  accept="application/pdf" />
+              </form-field>
+              <span id="size" *ngIf="sizeCERMessage"
+                >Seleccione un archivo no mayor a 2 MB.</span
+              >
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="signForm.get('key')" label="*Key">
+                <input
+                  type="file"
+                  #FileInput
+                  formControlName="key"
+                  class="form-control"
+                  (change)="selectKEYFile($event)"
+                  accept="application/pdf" />
+              </form-field>
+              <span id="size2" *ngIf="sizeKEYMessage"
+                >Seleccione un archivo no mayor a 2 MB.</span
+              >
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="signForm.get('password')"
+                label="*Contraseña">
+                <input
+                  type="password"
+                  formControlName="password"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,83 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Control de las ordenes de servicio</h5>
+    <!-- <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div> -->
+  </div>
+  <div body>
+    <form [formGroup]="serviceOrdersForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field
+            [control]="serviceOrdersForm.get('regionalDelegation')"
+            label="Delegación Regional">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="regionalDelegation"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="serviceOrdersForm.get('process')"
+            label="Proceso">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="process"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('dateInitial')"
+            label="Fecha Inicial">
+            <input
+              type="text"
+              formControlName="dateInitial"
+              placeholder="Fecha Inicial"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('datefinal')"
+            label="Fecha Final">
+            <input
+              type="text"
+              formControlName="datefinal"
+              placeholder="Fecha Final"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-primary btn-sm active">
+              Refrescar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>

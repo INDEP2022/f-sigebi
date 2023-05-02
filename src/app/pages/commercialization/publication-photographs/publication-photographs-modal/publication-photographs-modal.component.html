@@ -1,0 +1,50 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="providerForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('route')" label="Fotografía">
+            <input type="file" class="form-control" formControlName="route" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            class="col-md-12"
+            [control]="providerForm.get('status')"
+            label="Status">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="">Seleccione un status</ng-option>
+              <ng-option value="inactivo">Inactivo</ng-option>
+              <ng-option value="activo">Activo</ng-option>
+              <ng-option value="activo">Favorito</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <!-- <confirm-button
+          [disabled]="!providerForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"
+          >Agregar
+        </confirm-button> -->
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

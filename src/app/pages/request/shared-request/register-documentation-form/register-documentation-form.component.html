@@ -1,0 +1,211 @@
+<form [formGroup]="registerForm" class="form-material pb-0 mb-0">
+  <div class="row mt-3">
+    <div class="col-md-6">
+      <h6>Datos de la Solicitud</h6>
+    </div>
+    <div class="col-md-6">
+      <div class="d-flex flex-row-reverse">
+        <div class="mx-1">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="register()"
+            [disabled]="!registerForm.touched || registerForm.invalid">
+            <i class="bx bx-save mr-1 float-icon"></i>Guardar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            class="btn btn-danger btn-sm active"
+            (click)="cancelRequest()">
+            <i class="bx bxs-x-circle mr-1 float-icon"></i>Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-6 d-flex align-items-end">
+          <label class="label" for="">Prioridad&#58;</label>
+        </div>
+        <div class="col-6">
+          <form-check label="" for="priority">
+            <input
+              id="priority"
+              type="checkbox"
+              class=""
+              formControlName="priority" />
+          </form-check>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('contributor')"
+        label="Contribuyente y&#47;o Indiciado">
+        <input type="text" formControlName="contributor" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('fileType')"
+        label="Tipo Expediente">
+        <ng-select
+          formControlName="fileType"
+          [searchable]="false"
+          class="form-control"
+          [clearable]="false">
+          <ng-option *ngFor="let t of fileTypes" value="t.id">{{
+            t.description
+          }}</ng-option>
+        </ng-select>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('infoOrigin')"
+        label="Procedencia Informaci&oacute;n">
+        <ng-select
+          formControlName="infoOrigin"
+          [searchable]="false"
+          class="form-control"
+          [clearable]="false">
+          <ng-option *ngFor="let o of infoOrigins" value="o.id">{{
+            o.description
+          }}</ng-option>
+        </ng-select>
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('receptionDate')"
+        label="&#42;Fecha Recepci&oacute;n">
+        <input
+          type="text"
+          formControlName="receptionDate"
+          class="form-control"
+          [maxDate]="maxDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('memorandumNo')"
+        label="&#42;No&#46; Oficio">
+        <input
+          type="number"
+          formControlName="memorandumNo"
+          class="form-control" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('transferFile')"
+        label="&#42;Expediente Transferente &#47; PAMA">
+        <input
+          type="text"
+          formControlName="transferFile"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('memorandumDate')"
+        label="&#42;Fecha de Oficio">
+        <input
+          type="text"
+          formControlName="memorandumDate"
+          class="form-control"
+          [maxDate]="maxDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('senderName')"
+        label="Nombre del Remitente">
+        <input type="text" formControlName="senderName" class="form-control" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('senderPosition')"
+        label="Cargo del Remitente">
+        <input
+          type="text"
+          formControlName="senderPosition"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('senderPhone')"
+        label="Tel&eacute;fono del Remitente">
+        <input type="text" formControlName="senderPhone" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('senderEmail')"
+        label="Email del Remitente">
+        <input type="text" formControlName="senderEmail" class="form-control" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Asunto&#58; </strong
+        >{{ registerForm.controls['subject'].value }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13"
+          >V&iacute;a de Recepci&oacute;n&#58; </strong
+        >{{ registerForm.controls['receptionMethod'].value }}
+      </p>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Tipo Transferencia&#58; </strong
+        >{{ registerForm.controls['transferType'].value }}
+      </p>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('judgementType')"
+        label="&#42;Tipo Juicio">
+        <input
+          type="text"
+          formControlName="judgementType"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="registerForm.get('judgement')" label="Juicio">
+        <input type="text" formControlName="judgement" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('observations')"
+        label="Observaciones">
+        <textarea
+          rows="2"
+          formControlName="observations"
+          class="form-control"></textarea>
+      </form-field>
+    </div>
+  </div>
+</form>

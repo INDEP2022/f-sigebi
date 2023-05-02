@@ -1,0 +1,80 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="contractForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            label="Contrato"
+            [control]="contractForm.get('contractKey')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="60"
+              formControlName="contractKey"
+              required />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="contractForm.get('zoneContractKey')">
+            <ngx-select
+              (fetchItems)="getZoneContracts($event)"
+              [data]="zoneContracts"
+              [form]="contractForm"
+              value="id"
+              bindLabel="description"
+              label="Zona"
+              control="zoneContractKey"
+              (change)="onValuesChange($event)"
+              required>
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Fecha inicial"
+            [control]="contractForm.get('startDate')">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              required
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Fecha final"
+            [control]="contractForm.get('endDate')">
+            <input
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker
+              required
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,185 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de implementacion</h5>
+  </div>
+  <div body>
+    <h5 class="title">Ordenes de Servicio</h5>
+    <form [formGroup]="serviceOrdersForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('serviceOrderKey')">
+            <ngx-select
+              (fetchItems)="getServiceOrderKey($event)"
+              [data]="serviceOrderKey"
+              [form]="serviceOrdersForm"
+              value="serviceOrderKey"
+              bindLabel="description"
+              label="Proceso"
+              control="serviceOrderKey">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="serviceOrdersForm.get('type')" label="Tipo">
+            <select class="form-control" formControlName="type">
+              <option [value]="null">Seleccione un tipo</option>
+              <option value="normal">normal</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="serviceOrdersForm.get('process')">
+            <ngx-select
+              (fetchItems)="getProcess($event)"
+              [data]="process"
+              [form]="serviceOrdersForm"
+              value="process"
+              bindLabel="description"
+              label="Proceso"
+              control="process">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="serviceOrdersForm.get('regionalCoordination')">
+            <ngx-select
+              (fetchItems)="getRegionalCoordination($event)"
+              [data]="regionalCoordination"
+              [form]="serviceOrdersForm"
+              value="regionalCoordination"
+              bindLabel="description"
+              label="Cordinación Regional"
+              control="regionalCoordination">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="serviceOrdersForm.get('reportKey')">
+            <ngx-select
+              (fetchItems)="getReportKey($event)"
+              [data]="reportKey"
+              [form]="serviceOrdersForm"
+              value="reportKey"
+              bindLabel="description"
+              label="Clave de Reporte"
+              control="reportKey">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="serviceOrdersForm.get('status')">
+            <ngx-select
+              (fetchItems)="getStatus($event)"
+              [data]="status"
+              [form]="serviceOrdersForm"
+              value="status"
+              bindLabel="description"
+              label="Estatus"
+              control="status">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('authorizationDate')"
+            label="Fecha de Autorización">
+            <input
+              type="text"
+              formControlName="authorizationDate"
+              placeholder="Fecha de Autorización"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="serviceOrdersForm.get('dateCapture')"
+            label="Fecha de Captura">
+            <input
+              type="text"
+              formControlName="dateCapture"
+              placeholder="Fecha de Captura"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="serviceOrdersForm.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              placeholder="Observaciones"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="openHistoric('')">
+          Genera
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm active">Bitacora</button>
+      </div>
+    </div>
+    <div class="margin-input">
+      <h5 class="title">Bienes del Reporte Implementación</h5>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm active">Incorpora</button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-danger btn-sm active">Elimina</button>
+      </div>
+    </div>
+    <div class="margin-input">
+      <h5 class="title">Reportes de Implementación</h5>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm active">Incorpora</button>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm active">Nuevos Costos</button>
+      </div>
+    </div>
+  </div>
+</app-card>

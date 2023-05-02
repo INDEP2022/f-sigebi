@@ -1,0 +1,113 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('serviceType')" label="Tipo Servicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="serviceType" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('startingPercentageRange')"
+            label="Rango Porcentaje Inicial">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="startingPercentageRange" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('finalPercentageRange')"
+            label="Rango Porcentaje Final">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="finalPercentageRange" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('contractualPenalty')"
+            label="Pena Convencional">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="contractualPenalty" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('contractNumber')"
+            label="N&uacute;mero de Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contractNumber" />
+          </form-field>
+        </div>
+        <!--
+                <div class="col-md-12">
+                    <form-field [control]="form.get('usuario_creacion')" label="Usuario Creacion">
+                        <input type="text" class="form-control" formControlName="usuario_creacion" placeholder="ejemplo" />
+                    </form-field>
+                </div>
+                <div class="col-md-12">
+                    <form-field [control]="form.get('fecha_creacion')" label="fecha Creacion">
+                        <input type="date" class="form-control" formControlName="fecha_creacion" placeholder="ejemplo" />
+                    </form-field>
+                </div>
+                <div class="col-md-12">
+                    <form-field [control]="form.get('usuario_modificacion')" label="Usuario Modificacion">
+                        <input type="text" class="form-control" formControlName="usuario_modificacion" placeholder="ejemplo" />
+                    </form-field>
+                </div>
+                <div class="col-md-12">
+                    <form-field [control]="form.get('fecha_modificacion')" label="fecha Modificaion">
+                        <input type="date" class="form-control" formControlName="fecha_modificacion" placeholder="ejemplo" />
+                    </form-field>
+                </div>
+                -->
+        <div class="col-md-4">
+          <form-field [control]="form.get('status')" label="Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('version')" label="Versi&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

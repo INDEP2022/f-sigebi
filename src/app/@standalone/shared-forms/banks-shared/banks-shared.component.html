@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showBanks">
+    <div class="col-md-12">
+      <form-field [control]="form.get(bankField)">
+        <ngx-select
+          (fetchItems)="getBanks($event)"
+          [data]="banks"
+          [form]="form"
+          value="bankCode"
+          bindLabel="name"
+          [label]="labelName"
+          [control]="bankField"
+          (change)="onBanksChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,370 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Realizar programaci&oacute;n</h5>
+  </div>
+  <div body>
+    <div class="form-inline justify-content-end btn-toolbar">
+      <button (click)="newWarehouse()" class="btn btn-info btn-sm active mr-2">
+        Reporte de bienes programables
+      </button>
+      <confirm-button
+        [disabled]="!performForm.valid"
+        [loading]="loading"
+        [btnSmall]="true"
+        (confirm)="confirm()"></confirm-button>
+      <button
+        (click)="newWarehouse()"
+        class="btn btn-success btn-sm active mr-2">
+        Enviar
+      </button>
+    </div>
+    <form [formGroup]="performForm" class="form-material">
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('regionalDelegationNumber')">
+            <ngx-select
+              [form]="performForm"
+              control="regionalDelegationNumber"
+              [data]="regionalsDelegations"
+              value="description"
+              bindLabel="description"
+              label="Selecciona una delegaci&oacute;n regional"
+              (change)="regionalDelegationSelect($event)"
+              (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('address')"
+            label="Direcci&oacute;n">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('stateKey')">
+            <ngx-select
+              [form]="performForm"
+              control="stateKey"
+              [data]="states"
+              [loading]="loading"
+              value="id"
+              bindLabel="descCondition"
+              label="Selecciona un estado"
+              (change)="stateSelect($event)"
+              (fetchItems)="getStateSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('startDate')"
+            label="Fecha inicio operativo">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('endDate')"
+            label="Fecha fin operativo">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="endDate" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('tranferId')"
+            *ngIf="showSelectTransferent">
+            <ngx-select
+              [form]="performForm"
+              control="tranferId"
+              [data]="transferences"
+              value="id"
+              bindLabel="nametransferent"
+              label="Selecciona transferente"
+              (change)="transferentSelect($event)"
+              (fetchItems)="getTransferentSelect($event)"></ngx-select>
+          </form-field>
+          <form-field
+            [control]="performForm.get('tranferId')"
+            *ngIf="!showSelectTransferent">
+            <ngx-select
+              [searchable]="showSelectTransferent"
+              [form]="performForm"
+              control="tranferId"
+              [data]="transferences"
+              value="id"
+              bindLabel="nametransferent"
+              label="Selecciona transferente"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('stationId')"
+            *ngIf="showSelectStation">
+            <ngx-select
+              [form]="performForm"
+              control="stationId"
+              [data]="stations"
+              [loading]="loading"
+              value="id"
+              bindLabel="stationName"
+              label="Selecciona emisora"
+              (change)="stationSelect($event)"
+              (fetchItems)="getStations($event)"></ngx-select>
+          </form-field>
+
+          <form-field
+            [control]="performForm.get('stationId')"
+            *ngIf="!showSelectStation">
+            <ngx-select
+              [searchable]="showSelectStation"
+              [form]="performForm"
+              control="stationId"
+              [data]="stations"
+              [loading]="loading"
+              value="id"
+              bindLabel="stationName"
+              label="Selecciona emisora"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('autorityId')"
+            *ngIf="showSelectAuthority">
+            <ngx-select
+              [form]="performForm"
+              control="autorityId"
+              [data]="authorities"
+              value="idAuthority"
+              bindLabel="authorityName"
+              label="Selecciona una autoridad"
+              (change)="authoritySelect($event)"
+              (fetchItems)="getAuthoritySelect($event)"></ngx-select>
+          </form-field>
+          <form-field
+            [control]="performForm.get('autorityId')"
+            *ngIf="!showSelectAuthority">
+            <ngx-select
+              [searchable]="showSelectAuthority"
+              [form]="performForm"
+              control="autorityId"
+              [data]="authorities"
+              value="idAuthority"
+              bindLabel="authorityName"
+              label="Selecciona una autoridad"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('typeRelevantId')">
+            <ngx-select
+              [form]="performForm"
+              control="typeRelevantId"
+              [data]="typeRelevant"
+              value="id"
+              bindLabel="description"
+              label="Selecciona un tipo relevante"
+              (change)="typeSchedule($event)"
+              (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('emailTransfer')"
+            label="Correo electronico transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="emailTransfer" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('observation')"
+            label="Observaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observation" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <h5 class="title">Almac&eacute;n</h5>
+        <div class="form-inline justify-content-end btn-toolbar">
+          <button
+            (click)="newWarehouse()"
+            class="btn btn-primary btn-sm active mr-2">
+            Solicitar alta almac&eacute;n
+          </button>
+        </div>
+        <div class="col-sm-12 pt-4">
+          <form-field
+            [control]="performForm.get('storeId')"
+            *ngIf="showWarehouseInfo">
+            <ngx-select
+              [form]="performForm"
+              control="storeId"
+              [data]="warehouse"
+              value="idWarehouse"
+              bindLabel="description"
+              (change)="showWarehouse($event)"
+              label="Selecciona un almac&eacute;n"
+              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </form-field>
+          <form-field
+            [control]="performForm.get('storeId')"
+            *ngIf="!showWarehouseInfo">
+            <ngx-select
+              [form]="performForm"
+              control="storeId"
+              [data]="warehouse"
+              [searchable]="showWarehouseInfo"
+              value="idWarehouse"
+              bindLabel="description"
+              label="Selecciona un almac&eacute;n"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3" *ngIf="showUbication">
+        <div class="col-md-12">
+          <label class="title"
+            >Direcci&oacute;n Almac&eacute;n&#58;
+            {{ warehouseUbication }}</label
+          >
+        </div>
+      </div>
+    </form>
+
+    <div class="row pt-5" *ngIf="showForm">
+      <h5 class="title">Usuarios al operativo</h5>
+
+      <div class="justify-content-end btn-toolbar">
+        <button (click)="listUsers()" class="btn btn-info btn-sm active">
+          Usuarios
+        </button>
+        <button (click)="openForm()" class="btn btn-primary btn-sm active">
+          Nuevo usuario
+        </button>
+      </div>
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settingUser"
+        [source]="usersToProgramming"
+        (edit)="openForm($event.data)"
+        (delete)="delete($event.data)">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="paramsUsers"
+        [totalItems]="totalItemsUsers"></app-pagination>
+    </div>
+
+    <div class="row pt-5" *ngIf="showForm">
+      <h5 class="title">Bienes seleccionados</h5>
+      <div class="form-inline justify-content-end">
+        <button
+          (click)="showGoodsProgramming()"
+          class="btn btn-primary btn-sm active mr-2">
+          Mostrar bienes
+        </button>
+        <button class="btn btn-danger btn-sm active">Limpiar</button>
+      </div>
+
+      <div class="justify-content-start btn-toolbar">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="sendTransportable()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Transportable
+        </button>
+        <button class="btn btn-primary btn-sm active" (click)="sendGuard()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Resguardo
+        </button>
+        <button class="btn btn-primary btn-sm active" (click)="sendWarehouse()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Almac&eacute;n
+        </button>
+      </div>
+      <div [class]="loadingGoods ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="tableGoods"
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="estatesList">
+        </ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+
+      <div>
+        <div class="md-tabs">
+          <tabset>
+            <tab [heading]="headingTransportable" id="tab1">
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="
+                    settingsTransportableGoods
+                  "></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTransportableGoods"
+                [source]="goodsTranportables"
+                (edit)="showGood($event.data)"
+                (delete)="removeGoodTrans($event.data)">
+              </ng2-smart-table>
+            </tab>
+            <tab [heading]="headingGuard">
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="settingGuardGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingGuardGoods"
+                [source]="goodsGuards"
+                (edit)="showGood($event.data)"
+                (delete)="removeGoodGuard($event.data)">
+              </ng2-smart-table>
+            </tab>
+            <tab [heading]="headingWarehouse">
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="settingWarehouseGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingWarehouseGoods"
+                [source]="goodsWarehouse"
+                (edit)="showGood($event.data)"
+                (delete)="removeGoodWarehouse($event.data)">
+              </ng2-smart-table>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,68 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="maximumTimesForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="maximumTimesForm.get('certificateType')"
+            label="Tipo&#58;">
+            <select class="form-control" formControlName="certificateType">
+              <option [value]="0">Seleccione un tipo acta</option>
+              <option *ngFor="let item of typeItem" [value]="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Plazo" [control]="maximumTimesForm.get('tmpMax')">
+            <input
+              class="form-control"
+              formControlName="tmpMax"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-check label="Activar" for="activatedBool">
+            <input
+              id="activatedBool"
+              type="checkbox"
+              formControlName="activatedBool" />
+          </form-check>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            label="Usuario"
+            [control]="maximumTimesForm.get('userName')">
+            <input
+              class="form-control"
+              formControlName="userName"
+              type="text"
+              (click)="openUsers()" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!maximumTimesForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

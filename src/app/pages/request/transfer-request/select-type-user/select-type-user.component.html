@@ -1,0 +1,135 @@
+<app-modal *ngIf="typeAnnex === 'commit-request'">
+  <div header>
+    <h5 class="modal-title">
+      Desea Turnar la Solicitud con el Folio:
+      <strong>{{ data.id }}</strong>
+    </h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="userForm" class="form-material">
+      <div class="row">
+        <h6>
+          Seleccione el tipo de usuario y el usuario al que será turnada la
+          Solicitud
+        </h6>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <form-radio label="T.E">
+            <input
+              type="radio"
+              formControlName="typeUser"
+              value="TE"
+              id="te"
+              [checked]="true" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="INDEP">
+            <input
+              type="radio"
+              formControlName="typeUser"
+              value="SAE"
+              id="indep" />
+          </form-radio>
+        </div>
+      </div>
+      <div class="row" *ngIf="warningTLP === true">
+        <p style="color: #9d2449">
+          Usted va a transferir una solicitud que no es comercio exterior a un
+          TE
+        </p>
+      </div>
+      <div class="row">
+        <div class="form-material col-md-5">
+          <search-bar [filterParams]="params"></search-bar>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              (rowSelect)="userSelected($event)"
+              [attr.class]="'table-bordered table-responsive '"
+              [settings]="settings"
+              [source]="paragraphs">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [filterParams]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="turnRequest()">
+          Turnar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<app-modal *ngIf="typeAnnex === 'returnado'">
+  <div header>
+    <h5 class="modal-title">USUARIOS A TURNAR</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="userForm" class="form-material">
+      <div class="row">
+        <div class="form-material col-md-5">
+          <search-bar [filterParams]="params"></search-bar>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              (rowSelect)="userSelected($event)"
+              [attr.class]="'table-bordered table-responsive '"
+              [settings]="settings"
+              [source]="paragraphs">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [filterParams]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="ReturnRequest()">
+          Returnar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,98 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title pull-left">
+          Búsqueda de bienes que se pueden estudiar
+        </h5>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="finish()">
+          Finalizar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body class="body">
+    <div id="assets">
+      <app-card [header]="false">
+        <div body>
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="title">
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showAssetsDetail = true"
+                    *ngIf="!showAssetsDetail">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    Detalles del Bien</a
+                  >
+                </p>
+
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showAssetsDetail = false"
+                    *ngIf="showAssetsDetail">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+                    del Bien</a
+                  >
+                </p>
+              </h5>
+            </div>
+          </div>
+          <div class="row pt-4" *ngIf="showAssetsDetail">
+            <app-assets-assigned [data]="data"></app-assets-assigned>
+          </div>
+        </div>
+      </app-card>
+    </div>
+    <div id="search">
+      <div class="row">
+        <div class="col-md-12">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showSearchFilter = true"
+                *ngIf="!showSearchFilter">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                Detalles del Bien</a
+              >
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showSearchFilter = false"
+                *ngIf="showSearchFilter">
+                <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles del
+                Bien</a
+              >
+            </p>
+          </h5>
+        </div>
+      </div>
+      <div class="row pt-4" *ngIf="showSearchFilter" style="padding: 15px">
+        <app-assets-filter
+          [data]="filterData"
+          (searchForm)="getSearch($event)"></app-assets-filter>
+      </div>
+    </div>
+    <div id="tabs">
+      <tabset class="md-tabs">
+        <tab heading="Bienes" id="tab1">
+          <app-assets-list [searchForm]="searchForm"></app-assets-list>
+        </tab>
+        <!--<tab heading="Verificaciones">
+
+        </tab>
+        <tab heading="Datos Anexo">
+
+        </tab>-->
+      </tabset>
+    </div>
+  </div>
+</app-card>

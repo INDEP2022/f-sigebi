@@ -1,0 +1,66 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('idParam')" label="Parámetro">
+            <input
+              type="text"
+              id="idP"
+              class="form-control disabled"
+              formControlName="idParam" />
+          </form-field>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('idValue')" label="Valor">
+            <input type="text" class="form-control" formControlName="idValue" />
+          </form-field>
+        </div>
+        <!--VALUE SELECT PROVISIONAL-->
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('idDirection')" label="Dirección">
+            <select class="form-control" formControlName="idDirection">
+              <option [value]="null">Selecciona un Valor</option>
+              <option value="M">Muebles</option>
+              <option value="C">Comercial</option>
+              <option value="D">Conciliaci&oacute;n</option>
+            </select>
+          </form-field>
+        </div>
+        <!--Event Types Component-->
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <app-event-type-shared [form]="form" [eventField]="'eventTypeId'">
+          </app-event-type-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

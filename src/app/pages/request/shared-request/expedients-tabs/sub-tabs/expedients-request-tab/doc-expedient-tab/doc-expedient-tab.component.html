@@ -1,0 +1,301 @@
+<ng-template #myTemplate>
+  <div class="pt-1">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- <h5 class="title">
+          <strong>Busqueda de Documentos de {{ title }}</strong>
+        </h5> -->
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = true"
+            *ngIf="!showSearchForm">
+            <i class="fa fa-angle-right" aria-hidden="true"></i>
+            <strong>B&uacute;squeda de Documentos de {{ title }}</strong></a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = false"
+            *ngIf="showSearchForm">
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+            <strong>B&uacute;squeda de Documento de {{ title }}</strong></a
+          >
+        </p>
+      </div>
+    </div>
+    <div class="pt-4">
+      <div *ngIf="showSearchForm">
+        <form [formGroup]="docRequestForm" class="form-material">
+          <div class="row pt-2">
+            <div class="col-md-6">
+              <form-field [control]="docRequestForm.get('text')" label="Texto">
+                <textarea
+                  class="form-control"
+                  type="text"
+                  row
+                  pt-5s="2"
+                  formControlName="text"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <!--<ngx-select
+                [form]="docRequestForm"
+                control="docType"
+                (fetchItems)="getDocType($event)"
+                [data]="selectDocType"
+                label="Tipo de Documento"
+                bindLabel="ddescription"
+                value="ddescription">
+              </ngx-select> -->
+              <div
+                [formGroup]="docRequestForm"
+                class="form-group form-secondary form-static-label">
+                <ng-select
+                  class="form-control"
+                  formControlName="docType"
+                  [clearable]="false"
+                  [items]="typesDocuments"
+                  [virtualScroll]="true"
+                  [loading]="loading"
+                  bindLabel="ddescription"
+                  bindValue="ddescription">
+                  <ng-template ng-option-tmp let-item="item" let-index="index">
+                    <div [title]="item.ddescription">
+                      {{ item.ddescription }}
+                    </div>
+                  </ng-template>
+                </ng-select>
+                <span class="form-bar"></span>
+                <label class="float-label">Tipo de documento</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('docTitle')"
+                label="T&iacute;tulo del Documento">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="70"
+                  formControlName="docTitle" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('dDocName')"
+                label="Nombre del Documento">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="70"
+                  formControlName="dDocName" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('typeTrasf')"
+                label="Tipo de Transferencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="70"
+                  formControlName="typeTrasf" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('contributor')"
+                label="Contribuyente">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="70"
+                  formControlName="contributor" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('author')"
+                label="Autor">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="60"
+                  formControlName="author" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('sender')"
+                label="Remitente">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="60"
+                  formControlName="sender" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('noOfice')"
+                label="No&#46; Oficio">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="60"
+                  formControlName="noOfice" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('senderCharge')"
+                label="Cargo Remitente">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="60"
+                  formControlName="senderCharge" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div
+              class="col-md-3"
+              *ngIf="typeDoc === 'good' || typeDoc === 'request-assets'">
+              <form-field
+                [control]="docRequestForm.get('noRequest')"
+                label="No&#46; Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noRequest" />
+              </form-field>
+            </div>
+
+            <div
+              class="col-md-3"
+              *ngIf="
+                typeDoc === 'doc-request' || typeDoc === 'request-expedient'
+              ">
+              <form-field
+                [control]="docRequestForm.get('noRequest')"
+                label="No&#46; Solicitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noRequest" />
+              </form-field>
+            </div>
+            <div class="col-md-3" *ngIf="typeDoc === 'doc-expedient'">
+              <form-field
+                [control]="docRequestForm.get('noRequest')"
+                label="No&#46; Expediente">
+                <input
+                  type="text"
+                  class="form-control"
+                  [readOnly]="true"
+                  formControlName="noRequest" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('comment')"
+                label="Comentarios">
+                <textarea
+                  class="form-control"
+                  type="text"
+                  row
+                  pt-5s="2"
+                  maxlength="100"
+                  formControlName="comment"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="docRequestForm.get('responsible')"
+                label="Responsable">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="70"
+                  formControlName="responsible" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col align-self-end">
+              <button
+                (click)="search()"
+                class="btn btn-primary active btn-sm ml-3"
+                style="height: 36px">
+                <i class="bx bx-search-alt-2"></i> Buscar
+              </button>
+              <button
+                (click)="cleanForm()"
+                class="btn btn-danger active btn-sm ml-3">
+                <i class="bx bx-reset"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row pt-4">
+        <div class="d-flex">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div class="ml-auto p-2">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="openNewDocument()">
+              Nuevo
+            </button>
+            <button
+              class="btn btn-info btn-sm active ml-2"
+              (click)="getRequestData()">
+              Actualizar
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+        <form-loader *ngIf="formLoading"></form-loader>
+      </div>
+      <div class="row pt-2" *ngIf="!formLoading">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="paragraphs"
+              (edit)="openDetail($event.data)"
+              (delete)="openDoc($event.data)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<app-modal *ngIf="typeDoc === 'good' || typeDoc === 'request-assets'">
+  <div body *ngTemplateOutlet="myTemplate"></div>
+  <div footer>
+    <div class="d-flex flex-row-reverse">
+      <div class="p-2 pt-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,137 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Comprobaci&oacute;n de requisitos documentales</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="requirementsForm" class="form-material">
+      <div class="row">
+        <form-field
+          class="col-md-3"
+          [control]="requirementsForm.get('expediente')"
+          label="Expediente">
+          <input
+            type="number"
+            formControlName="expediente"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="requirementsForm.get('causaPenal')"
+          label="Causa Penal">
+          <input formControlName="causaPenal" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="requirementsForm.get('tipoDicta')"
+          label="Tipo Dicta">
+          <input formControlName="tipoDicta" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="requirementsForm.get('oficio')"
+          label="Oficio Dictamen">
+          <input formControlName="oficio" class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          class="col-md-3"
+          [control]="requirementsForm.get('volante')"
+          label="Volante">
+          <input formControlName="volante" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="requirementsForm.get('averPrevia')"
+          label="Averiguación Previa">
+          <input formControlName="averPrevia" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-6"
+          [control]="requirementsForm.get('indiciado')"
+          label="Indiciado">
+          <input formControlName="indiciado" class="form-control" />
+        </form-field>
+      </div>
+      <hr />
+      <div class="row pt-4">
+        <form-field
+          class="col"
+          [control]="requirementsForm.get('bien')"
+          label="Bien">
+          <input formControlName="bien" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col"
+          [control]="requirementsForm.get('descripcion')"
+          label="Descripcion">
+          <input formControlName="descripcion" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col"
+          [control]="requirementsForm.get('bien')"
+          label="Estatus del Bien">
+          <input formControlName="bien" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col"
+          [control]="requirementsForm.get('bien')"
+          label="Estatus Dicaminación Jurídica">
+          <input formControlName="bien" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col"
+          [control]="requirementsForm.get('bien')"
+          label="Fecha. Aseguramiento">
+          <input formControlName="bien" class="form-control" />
+        </form-field>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-3 text-center">
+          <button type="button" class="btn btn-danger active">Rechazar</button>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            class="col"
+            [control]="requirementsForm.get('observaciones')"
+            label="Observaciones">
+            <textarea
+              rows="6"
+              formControlName="observaciones"
+              class="form-control"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-3 text-center">
+          <button class="btn btn-primary active">Aprobar</button>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-12 d-flex justify-content-center">
+          <div class="mr-5">
+            <button class="btn btn-info">Requisitos</button>
+          </div>
+          <div class="ml-5">
+            <button class="btn btn-info">Seleccionar Documentos</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

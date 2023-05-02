@@ -1,0 +1,93 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">TERCEROS COMERCIALIZADORES</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content" header>
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            (click)="openForm1()"
+            class="btn btn-primary active btn-sm ml-3">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="thirdPartyList"
+          (userRowSelect)="rowsSelected($event)"
+          (edit)="openForm1($event.data)"></ng2-smart-table>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">TIPOS DE EVENTOS QUE ATIENDE EL TERCERO</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content" header>
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            (click)="openForm2()"
+            class="btn btn-primary active btn-sm ml-3">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings2"
+          [source]="typeEventList"
+          (userRowSelect)="rowsSelected2($event)"
+          (edit)="openForm2($event.data)"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">MONTOS</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content" header>
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            (click)="openForm3()"
+            class="btn btn-primary active btn-sm ml-3">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings3"
+      [source]="amountList"
+      (edit)="openForm3($event.data)"></ng2-smart-table>
+  </div>
+</app-card>

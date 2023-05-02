@@ -1,0 +1,31 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Historial de reasignaci&oacute;n de turno</h5>
+  </div>
+  <div body>
+    <div class="row pt-0">
+      <div class="col-md-12">
+        <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [settings]="historySettings"
+              [source]="historyColumns"
+              [attr.class]="'table-bordered'">
+            </ng2-smart-table>
+            <div class="table-padding"></div>
+          </div>
+        </ng-scrollbar>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

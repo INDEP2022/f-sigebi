@@ -1,0 +1,125 @@
+<div class="pt-2">
+  <h5 class="title" *ngIf="screen == 'doc-goods'">
+    <p>
+      <a
+        class="text-color"
+        (click)="showSearchForm = true"
+        *ngIf="!showSearchForm">
+        <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+        bienes</a
+      >
+    </p>
+
+    <p>
+      <a
+        class="text-color"
+        (click)="showSearchForm = false"
+        *ngIf="showSearchForm">
+        <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+        bienes</a
+      >
+    </p>
+  </h5>
+  <div *ngIf="showSearchForm && screen == 'doc-goods'">
+    <form [formGroup]="searchForm" class="form-material">
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="searchForm.get('goodId')"
+            label="N&uacute;mero de gesti&oacute;n">
+            <input
+              type="string"
+              class="form-control"
+              maxlength="30"
+              formControlName="goodId"
+              min="0" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="searchForm.get('goodTypeId')">
+            <ngx-select
+              [form]="searchForm"
+              control="goodTypeId"
+              [data]="goodTypes"
+              value="id"
+              bindLabel="description"
+              label="Tipo Bien"
+              (fetchItems)="getGoodTypeSelect($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="searchForm.get('requestId')"
+            label="N&uacute;mero de solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="requestId"
+              [readOnly]="true"
+              min="0" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="searchForm.get('goodDescription')"
+            label="Descripci&oacute;n de bien transferente">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="goodDescription" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="form-inline justify-content-end btn-toolbar">
+      <button class="btn btn-primary btn-sm active" (click)="search()">
+        <i class="fa fa-search"></i> Buscar
+      </button>
+
+      <button class="btn btn-danger btn-sm active" (click)="clean()">
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <div>
+    <div class="row pt-4">
+      <div class="d-flex">
+        <div class="pt-2">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+        <div class="p-2">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="showDocuments()">
+            Ver Documento
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <!-- <ng-scrollbar tack="all" style="min-height: 170px; border: none"> -->
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            (userRowSelect)="selectTableColumns($event)"
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="paragraphs">
+          </ng2-smart-table>
+        </div>
+        <!-- </ng-scrollbar> -->
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>

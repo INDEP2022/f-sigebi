@@ -1,0 +1,183 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Notificaci&oacute;n al contribuyente &#40;Resarcimineto en
+      especie&#41;&#44; No&#46; Solicitud 1899&#44; Contribuyente&#58; Leticia
+      Garcia&#44; PAMA&#58; 235324SDA
+    </h5>
+  </div>
+
+  <div body style="margin-top: -10px">
+    <div class="row">
+      <div class="justify-content-end btn-toolbar">
+        <button (click)="notification()" class="btn btn-info active btn-sm">
+          <i class="fa fa-file"></i> Notificaci&oacute;n
+        </button>
+        <button (click)="save()" class="btn btn-success active btn-sm">
+          <i class="fa fa-save"></i> Guardar
+        </button>
+        <button (click)="turn()" class="btn btn-primary active btn-sm">
+          <i class="fa fa-check"></i> Turnar
+        </button>
+      </div>
+      <div class="col-sm-8 col-md-9">
+        <div class="d-flex align-items-center">
+          <h5 class="d-inline ms-3">Informaci&oacute;n de la solicitud</h5>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form class="form-horizontal" style="margin: 0 auto">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Fecha de solicitud&#58;</label>
+              <span> 17-Dic-2022 </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-5 text-right">No&#46; Solicitud&#58;</label>
+              <span> 1899 </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-5 text-right">No&#46; expediente&#58;</label>
+              <span> 81 </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-5 text-right">No&#46; oficio&#58;</label>
+              <span> 45435 </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-5 text-right"
+                >Delegaci&oacute;n regional&#58;</label
+              >
+              <span> Baja California </span>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-md-6">
+          <form class="form-horizontal" style="margin: 0 auto">
+            <div class="form-group">
+              <label class="col-lg-4 text-right">Estado&#58;</label>
+              <span> Baja California </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-4 text-right">Transferente&#58;</label>
+              <span> SAT - Comercio exterior </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-4 text-right">Emisora&#58;</label>
+              <span> ALAF </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-4 text-right">Autoridad&#58;</label>
+              <span
+                >Administraci&oacute;n local de auditoria fiscal de
+                Mexicali</span
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-4 text-right"
+                >No&#46; solicitud bienes similares&#58;</label
+              >
+              <span>1851</span>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-sm-8 col-md-9">
+        <div class="d-flex align-items-center">
+          <h5 class="d-inline ms-3">
+            Comentario de rechazo&#58;
+            <p class="d-inline ms-3 text-danger">
+              Se rechaza la validaci&oacute;n del dictamen
+            </p>
+          </h5>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div>
+        <div class="md-tabs">
+          <tabset>
+            <tab heading="Registro de documentaci&oacute;n" id="tab1">
+              <app-record-documentation-form></app-record-documentation-form>
+            </tab>
+            <tab heading="Seleccionar bienes">
+              <app-goods-selected-form></app-goods-selected-form>
+            </tab>
+            <tab heading="Lineamientos">
+              <app-guidelines-form></app-guidelines-form>
+            </tab>
+
+            <tab heading="Datos de dictamen">
+              <app-data-dictum-form></app-data-dictum-form>
+            </tab>
+            <tab heading="Expediente">
+              <div class="md-tabs">
+                <tabset>
+                  <tab heading="Búsqueda de Documentos solicitud" id="tab1">
+                    <app-documents-request-form></app-documents-request-form>
+                  </tab>
+                  <tab heading="Documentos Generales">
+                    <div class="md-tabs">
+                      <tabset>
+                        <tab heading="Documentos expediente" id="tab1">
+                          <app-documents-request-form></app-documents-request-form>
+                        </tab>
+                        <tab heading="Solicitudes del expediente">
+                          <h5 class="title">Solicitudes del expediente</h5>
+                          <div class="row">
+                            <div class="justify-content-left btn-toolbar">
+                              <app-columns-select
+                                [(settings)]="
+                                  settingsExpedientRequest
+                                "></app-columns-select>
+                              <button class="btn btn-primary active btn-sm">
+                                Actualizar
+                              </button>
+                            </div>
+                            <ng2-smart-table
+                              [attr.class]="'table-bordered'"
+                              [settings]="settingsExpedientRequest"
+                              [source]="expedientsRequest">
+                            </ng2-smart-table>
+                            <app-pagination
+                              [params]="paramsExpedientsRequest"
+                              [totalItems]="
+                                totalItemsExpedientsRequest
+                              "></app-pagination>
+                          </div>
+
+                          <div class="md-tabs">
+                            <tabset>
+                              <tab heading="Documentos de la solicitud">
+                                <app-documents-request-form></app-documents-request-form>
+                              </tab>
+                              <tab heading="Bienes de la solicitud">
+                                <app-goods-request-form></app-goods-request-form>
+                              </tab>
+                            </tabset>
+                          </div>
+                        </tab>
+                      </tabset>
+                    </div>
+                  </tab>
+                </tabset>
+              </div>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

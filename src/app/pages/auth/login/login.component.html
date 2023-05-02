@@ -1,0 +1,95 @@
+<div class="account-pages my-5 pt-sm-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card overflow-hidden">
+          <div class="bg-soft bg-primary">
+            <div class="row">
+              <div class="col-7">
+                <div class="text-primary p-4">
+                  <h5 class="text-primary">Bienvenido a SIGEBI</h5>
+                  <p>Inicia sesi&oacute;n para continuar</p>
+                </div>
+              </div>
+              <div class="col-5 align-self-end">
+                <img
+                  src="assets/images/profile-img.png"
+                  alt=""
+                  class="img-fluid" />
+              </div>
+            </div>
+          </div>
+          <div class="card-body pt-0">
+            <div>
+              <!-- <a routerLink="/"> -->
+              <div class="avatar-md profile-user-wid mb-4">
+                <span class="avatar-title rounded-circle bg-light">
+                  <img
+                    src="assets/images/logo.svg"
+                    alt=""
+                    class="rounded-circle"
+                    height="34" />
+                </span>
+              </div>
+              <!-- </a> -->
+            </div>
+            <div class="p-2">
+              <form
+                class="form-material form-horizontal"
+                [formGroup]="loginForm"
+                (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <form-field
+                    [showRequiredMark]="false"
+                    [control]="loginForm.get('username')"
+                    label="Usuario">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="username" />
+                  </form-field>
+                </div>
+                <div class="mb-3">
+                  <form-field
+                    [showRequiredMark]="false"
+                    [control]="loginForm.get('password')"
+                    label="Contraseña">
+                    <input
+                      [type]="showPassword ? 'text' : 'password'"
+                      class="form-control"
+                      formControlName="password" />
+                    <i
+                      (click)="showPassword = !showPassword"
+                      [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
+                      id="togglePassword"></i>
+                  </form-field>
+                </div>
+                <div class="mt-3 d-grid">
+                  <button
+                    class="btn btn-primary"
+                    type="submit"
+                    [disabled]="loginForm.invalid">
+                    {{
+                      loading
+                        ? 'Iniciando Sesi&oacute;n'
+                        : 'Iniciar Sesi&oacute;n'
+                    }}
+
+                    <img
+                      width="20 px"
+                      *ngIf="loading"
+                      src="assets/images/loader-button.gif"
+                      alt="loading" />
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- end container -->
+</div>
+<!-- end page -->

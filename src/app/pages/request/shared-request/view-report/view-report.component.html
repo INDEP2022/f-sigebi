@@ -1,0 +1,58 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">REPORTE</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <div class="d-flex justify-content-end">
+        <div>
+          <button
+            (click)="sign()"
+            class="btn btn-primary active btn-sm"
+            *ngIf="!isSigned">
+            <i class="fa fa-file-signature"></i>
+            Firmar
+          </button>
+        </div>
+      </div>
+      <tabset #tabsReport>
+        <tab heading="Vista Previa" id="previewTab">
+          <div class="row justify-content-end" *ngIf="isSignedReady">
+            <div class="col-md-3">
+              <button
+                (click)="attachDocument()"
+                class="btn btn-primary btn-sm active">
+                <i class="fa fa-check-circle"></i>
+                Adjuntar documento
+              </button>
+            </div>
+          </div>
+          <quill-view
+            [content]="documents[0].content"
+            [sanitize]="true"
+            [preserveWhitespace]="true"
+            format="html"></quill-view>
+          <!--<button (click)='pdfCreate()'>Vista previa</button>-->
+        </tab>
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="isSigned">
+          <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

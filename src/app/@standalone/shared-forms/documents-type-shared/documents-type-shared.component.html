@@ -1,0 +1,30 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showDocument">
+    <div class="col-md-12">
+      <form-field [control]="form.get(documentField)">
+        <ngx-select
+          (fetchItems)="getDocuments($event)"
+          [data]="documents"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Tipo Documento"
+          [control]="documentField"
+          [searchOnInit]="true"
+          (change)="onDocumentChange($event)"
+          termMaxLength="30"
+          [labelTemplate]="documentTypeLabel"
+          [optionTemplate]="documentTypeOption">
+        </ngx-select>
+        <ng-template #documentTypeLabel let-item="item">
+          {{ item.id }} - {{ item.description }}
+        </ng-template>
+        <ng-template #documentTypeOption let-item="item">
+          <div [title]="item.id + '-' + item.description">
+            {{ item.id }} - {{ item.description }}
+          </div>
+        </ng-template>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

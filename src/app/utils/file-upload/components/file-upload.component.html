@@ -1,0 +1,48 @@
+<div class="row dropzone-container">
+  <ngx-dropzone
+    (change)="onSelect($event)"
+    [expandable]="true"
+    [accept]="accept">
+    <ngx-dropzone-label>Selecciona o arrastra los archivos!</ngx-dropzone-label>
+    <ngx-dropzone-preview
+      ngProjectAs="ngx-dropzone-preview"
+      [file]="fileEvent.file"
+      *ngFor="let fileEvent of fileEvents; let i = index"
+      [removable]="true"
+      (removed)="onRemove(i)">
+      <ngx-dropzone-label>
+        <p class="filename py-0 my-0">
+          {{ fileEvent.file.name }}
+        </p>
+        <p class="filetype py-0 my-0">
+          <small>({{ fileEvent.file.type }})</small>
+        </p>
+        <p class="py-0 my-0">
+          <span
+            class="retry"
+            (click)="retry($event, i)"
+            *ngIf="fileEvent.status === statuses.FAILED">
+            <i class="fa fa-upload"></i
+          ></span>
+        </p>
+        <progressbar
+          class="py-0 my-0"
+          *ngIf="fileEvent.status != statuses.PENDING"
+          [max]="100"
+          [value]="fileEvent.progress"
+          [type]="fileEvent.status">
+          <span class="text-nowrap">{{ fileEvent.progress }}%</span>
+        </progressbar>
+      </ngx-dropzone-label>
+    </ngx-dropzone-preview>
+  </ngx-dropzone>
+</div>
+
+<div class="row pt-3">
+  <div class="col-md-12 text-center">
+    <button class="btn btn-primary" (click)="confirm()">
+      Subir Archivos
+      <i class="fa fa-upload"></i>
+    </button>
+  </div>
+</div>

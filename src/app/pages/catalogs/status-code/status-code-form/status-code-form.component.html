@@ -1,0 +1,48 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="statusCodeForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="statusCodeForm.get('id')" label="Clave">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="statusCodeForm.get('order')" label="Orden">
+            <input type="number" class="form-control" formControlName="order" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="statusCodeForm.get('descCode')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="descCode"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="statusCodeForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

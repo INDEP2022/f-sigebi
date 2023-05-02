@@ -1,0 +1,77 @@
+<div
+  [appPreviewFullscreen]="fullscreen"
+  class="img-container"
+  [style.backgroundColor]="config.containerBackgroundColor"
+  (wheel)="scrollZoom($event)"
+  (dragover)="onDragOver($event)">
+  <object
+    *ngIf="documento.type != 'img'"
+    [data]="documento.urlDoc"
+    [ngStyle]="style"
+    (dragstart)="onDragStart($event)"
+    (load)="onLoad()"
+    style="min-height: 500px !important; width: 100%">
+    <p>Document not found...</p>
+  </object>
+  <img
+    *ngIf="documento.type == 'img'"
+    [src]="documento.urlDoc"
+    [ngStyle]="style"
+    alt="Document not found..."
+    (dragstart)="onDragStart($event)"
+    (load)="onLoad()"
+    style="min-height: 500px !important; width: 100%" />
+  <div class="spinner-container" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+  <button
+    type="button"
+    [class]="config.btnClass"
+    *ngIf="config.btnShow.rotateCounterClockwise"
+    (click)="rotateCounterClockwise()">
+    <i [class]="config.btnIcons.rotateCounterClockwise"></i>
+  </button>
+  <button
+    type="button"
+    [class]="config.btnClass"
+    *ngIf="config.btnShow.rotateClockwise"
+    (click)="rotateClockwise()">
+    <i [class]="config.btnIcons.rotateClockwise"></i>
+  </button>
+  <button
+    type="button"
+    [class]="config.btnClass"
+    *ngIf="config.btnShow.zoomOut"
+    (click)="zoomOut()">
+    <i [class]="config.btnIcons.zoomOut"></i>
+  </button>
+  <button
+    type="button"
+    [class]="config.btnClass"
+    *ngIf="config.btnShow.zoomIn"
+    (click)="zoomIn()">
+    <i [class]="config.btnIcons.zoomIn"></i>
+  </button>
+  <button
+    type="button"
+    [class]="config.btnClass"
+    *ngFor="let cBtn of config.customBtns"
+    (click)="fireCustomEvent(cBtn.name, index)">
+    <i [class]="cBtn.icon"></i>
+  </button>
+  <button
+    type="button"
+    id="ngx-fs-btn"
+    [class]="config.btnClass"
+    (click)="toggleFullscreen()"
+    *ngIf="config.allowFullscreen">
+    <i [class]="config.btnIcons.fullscreen"></i>
+  </button>
+  <button
+    type="button"
+    id="ngx-close-btn"
+    [class]="config.btnClass"
+    (click)="modalRef.hide()">
+    <i [class]="config.btnIcons.close"></i>
+  </button>
+</div>

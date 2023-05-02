@@ -1,0 +1,73 @@
+<div [formGroup]="goodForm">
+  <ng-container *ngIf="!feature.cdTable; then textInput; else selectInput">
+  </ng-container>
+  <ng-template #selectInput>
+    <form-field [control]="goodForm.get('val' + feature.columnNumber)">
+      <ngx-select
+        (fetchItems)="getDynamicData($event)"
+        [data]="dynamicData"
+        [form]="goodForm"
+        value="otvalor"
+        bindLabel="otvalor"
+        (change)="test()"
+        [addTag]="feature.cdTable == 'CUENTAS'"
+        [label]="feature.dsAttribute"
+        [control]="'val' + feature.columnNumber"
+        [searchOnInit]="true"
+        [labelTemplate]="label"
+        [optionTemplate]="option">
+        <ng-template #label let-item="item">
+          <span
+            ><b>{{ item.otclave }}</b> - {{ item.otvalor }}</span
+          >
+        </ng-template>
+        <ng-template #option let-item="item">
+          <div [title]="item.otvalor + '-' + item.otclave">
+            <span
+              ><b>{{ item.otclave }}</b> - {{ item.otvalor }}</span
+            >
+          </div>
+        </ng-template>
+      </ngx-select>
+    </form-field>
+  </ng-template>
+  <ng-template #textInput>
+    <form-field
+      [showRequiredMark]="true"
+      [control]="goodForm.get('val' + feature.columnNumber)"
+      [label]="feature.dsAttribute"
+      [ngSwitch]="feature.dataType">
+      <input
+        type="number"
+        [max-length]="feature.length > 0 ? feature.length : 250"
+        [formControlName]="'val' + feature.columnNumber"
+        min="0"
+        class="form-control"
+        [placeholder]="feature.dsAttribute"
+        *ngSwitchCase="'N'" />
+      <input
+        type="number"
+        [max-length]="feature.length > 0 ? feature.length : 250"
+        [formControlName]="'val' + feature.columnNumber"
+        class="form-control"
+        min="0"
+        [placeholder]="feature.dsAttribute"
+        *ngSwitchCase="'F'" />
+      <input
+        type="text"
+        [max-length]="feature.length > 0 ? feature.length : 250"
+        [formControlName]="'val' + feature.columnNumber"
+        class="form-control"
+        [placeholder]="feature.dsAttribute"
+        *ngSwitchCase="'D'"
+        bsDatepicker />
+      <input
+        type="text"
+        [max-length]="feature.length > 0 ? feature.length : 250"
+        [formControlName]="'val' + feature.columnNumber"
+        class="form-control"
+        [placeholder]="feature.dsAttribute"
+        *ngSwitchDefault />
+    </form-field>
+  </ng-template>
+</div>

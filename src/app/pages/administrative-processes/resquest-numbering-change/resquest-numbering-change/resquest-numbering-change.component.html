@@ -1,0 +1,232 @@
+<form [formGroup]="form" class="form-material">
+  <app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Solicitud de cambio a numeración</h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <div class="col-md-full col-sm-12 col-xs-12">
+            <form-field
+              [control]="form.get('legalStatus')"
+              label="Situación Juridica">
+              <select class="form-control" formControlName="legalStatus">
+                <option [value]="null">Seleccione un valor</option>
+                <option value="asegurado">Asegurado</option>
+                <option value="decomisado">Decomisado</option>
+                <option value="abandonado">Abandonado</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12"></div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('delegation')" label="Delegación">
+            <select class="form-control" formControlName="delegation">
+              <option [value]="null">Seleccione un valor</option>
+              <option
+                value="{{ delegation.number }}"
+                *ngFor="let delegation of delegationArray">
+                {{ delegation.number }} {{ delegation.description }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('warehouse')" label="Almacén">
+            <select class="form-control" formControlName="warehouse">
+              <option [value]="null">Seleccione un valor</option>
+              <option
+                value="{{ delegation.number }}"
+                *ngFor="let delegation of warehouseArray">
+                {{ delegation.number }} {{ delegation.description }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('vault')" label="Bóveda">
+            <select class="form-control" formControlName="vault">
+              <option [value]="null">Seleccione un valor</option>
+              <option
+                value="{{ delegation.number }}"
+                *ngFor="let delegation of vaultArray">
+                {{ delegation.number }} {{ delegation.description }}
+              </option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>
+
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Bienes x Tipo</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>
+
+<form [formGroup]="formaplicationData" class="form-material">
+  <app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Datos de la Solicitud y sus Bienes</h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('dateRequest')"
+            label="Fecha Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateRequest"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('numberRequest')"
+            label="No. Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberRequest" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <form-field
+                [control]="formaplicationData.get('usrRequest')"
+                label="Usr. Solicita">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="usrRequest"
+                  placeholder="Rol" />
+              </form-field>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <form-field
+                [control]="formaplicationData.get('nameRequest')"
+                label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nameRequest"
+                  placeholder="Nombre" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('charge')"
+            label="Cargo">
+            <input type="text" class="form-control" formControlName="charge" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('proposedProcedure')"
+            label="Procedimiento Propuesto">
+            <select class="form-control" formControlName="proposedProcedure">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="asegurado">Procedimiento 1</option>
+              <option value="decomisado">Procedimiento 2</option>
+              <option value="abandonado">Procedimiento 3</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <form-field
+                [control]="formaplicationData.get('usrAuthorized')"
+                label="Usr. Autoriza">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="usrAuthorized" />
+              </form-field>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <form-field
+                [control]="formaplicationData.get('nameAuthorized')"
+                label="Nombre">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nameAuthorized" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('causeAuthorized')"
+            label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="causeAuthorized" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('dateAutorized')"
+            label="Fecha Autoriza">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateAutorized"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="container">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings1"
+            [source]="data1">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+
+        <div footer>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-danger btn-sm active">
+                Imprimir Cedula
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>

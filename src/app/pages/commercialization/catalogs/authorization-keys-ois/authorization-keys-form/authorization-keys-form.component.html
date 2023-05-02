@@ -1,0 +1,102 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      claves de autorizaci&oacute;n para envío extempor&aacute;neo de ois
+    </h5>
+  </div>
+
+  <div body>
+    <div class="row d-block" *ngIf="event == null">
+      <div class="d-flex justify-content-center">
+        <div>
+          <button
+            class="btn btn-sm btn-primary active font-size-15"
+            (click)="openModal()">
+            Seleccionar evento
+          </button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="event != null" @OnEventSelected>
+      <div class="row">
+        <div class="col-sm-6 col-md-2">
+          <div class="">
+            <h5 class="font-size-14 mb-2">
+              <i class="bx bx-list-ul me-1 text-success"></i>
+              Id Evento
+            </h5>
+            <p class="text-muted">{{ event.id }}</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <div class="">
+            <h5 class="font-size-14 mb-2">
+              <i class="bx bx-calendar me-1 text-success"></i>
+              Evento
+            </h5>
+            <p class="text-muted">{{ event.processKey }}</p>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-4">
+          <div class="">
+            <h5 class="font-size-14 mb-2">
+              <i class="bx bx-detail me-1 text-success"></i>
+              Descripci&oacute;n
+            </h5>
+            <p class="text-muted">{{ event.observations }}</p>
+          </div>
+        </div>
+        <div
+          class="col-sm-12 col-md-2 d-flex align-items-center justify-content-center">
+          <div>
+            <button
+              class="btn btn-sm btn-primary active font-size-12"
+              (click)="openModal()">
+              Cambiar evento
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5 d-block">
+        <div class="d-flex justify-content-center">
+          <div>
+            <button
+              class="btn btn-sm btn-primary active font-size-15"
+              (click)="generateKey()">
+              Generar Clave de Autorizaci&oacute;n
+            </button>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div @OnEventSelected *ngIf="authKey" class="row mt-3 d-block">
+        <div class="d-flex justify-content-center">
+          <div class="col-sm-12 col-md-8">
+            <div class="row">
+              <div class="col-4 d-flex align-content-center">
+                <h5 class="font-size-16">
+                  <i class="bx bx-key me-1 text-success"></i>
+                  Clave de Autorizaci&oacute;n:
+                </h5>
+              </div>
+              <div class="col-8 d-flex align-content-center">
+                <div class="mt-1">
+                  <div class="rounded bg-key px-0 py-0">
+                    <span class="d-inline-block font-size-18 py-2 mx-3">
+                      {{ authKey }}
+                    </span>
+                    <button
+                      class="btn btn-sm btn-inline btn-success mt-n2 py-2 px-3"
+                      (click)="copy()">
+                      <i class="bx bx-copy-alt mt-2"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

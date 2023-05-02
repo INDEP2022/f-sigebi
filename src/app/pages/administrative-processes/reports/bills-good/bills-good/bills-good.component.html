@@ -1,0 +1,95 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Gastos por Bien</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="billGoodForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="billGoodForm.get('dateExpensesof')"
+            label="Fecha de Gastos del">
+            <input
+              type="text"
+              formControlName="dateExpensesof"
+              placeholder="Fecha de Gastos del"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="billGoodForm.get('dateExpensesto')"
+            label="Fecha de Gastos al">
+            <input
+              type="text"
+              formControlName="dateExpensesto"
+              placeholder="Fecha de Gastos al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="billGoodForm.get('ofGood')" label="Del Bien">
+            <input type="text" class="form-control" formControlName="ofGood" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="billGoodForm.get('toGood')" label="Al Bien">
+            <input type="text" class="form-control" formControlName="toGood" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="billGoodForm.get('delegation')"
+            label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="billGoodForm.get('subDelegation')"
+            label="Sub Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="billGoodForm.get('service')" label="Servicio">
+            <input type="text" class="form-control" formControlName="service" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="billGoodForm.get('legalSituation')"
+            label="Situación Legal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="legalSituation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="billGoodForm.get('cost')" label="Costo">
+            <select class="form-control" formControlName="cost">
+              <option [value]="null">Seleccione un costo</option>
+              <option [value]="'SI'">prueba</option>
+              <option [value]="'NO'">prueba</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <button class="btn btn-primary btn-sm active">Guardar</button>
+  </div>
+</app-card>

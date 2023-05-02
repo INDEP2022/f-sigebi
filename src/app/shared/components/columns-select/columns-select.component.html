@@ -1,0 +1,43 @@
+<div class="btn-group" dropdown>
+  <button
+    id="button-basic"
+    dropdownToggle
+    type="button"
+    class="btn btn-sm btn-info dropdown-toggle active"
+    aria-controls="dropdown-basic">
+    Columnas
+  </button>
+  <ul
+    id="dropdown-basic"
+    *dropdownMenu
+    class="dropdown-menu"
+    role="menu"
+    aria-labelledby="button-basic">
+    <li
+      role="menuitem"
+      *ngFor="let column of getColumns()"
+      [class]="
+        (selectVal().length < 3 && column.show) || column.showAlways
+          ? 'dropdown-item disabled '
+          : 'dropdown-item '
+      "
+      (click)="
+        column.show = !column.show; selectColumn($event, column.id, column.show)
+      ">
+      <input
+        type="checkbox"
+        name=""
+        id=""
+        (click)="
+          column.show = !column.show;
+          selectColumn($event, column.id, column.show)
+        "
+        [disabled]="
+          (selectVal().length < 3 && column.show) || column.showAlways
+        "
+        [value]="column"
+        [checked]="column.show" />
+      {{ column.name }}
+    </li>
+  </ul>
+</div>

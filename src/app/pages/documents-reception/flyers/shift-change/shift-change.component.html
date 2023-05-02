@@ -1,0 +1,185 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reasignaci&oacute;n de turno</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="turnForm" class="form-material">
+      <div class="row">
+        <form-field
+          class="col-md-2"
+          [control]="turnForm.get('wheelNumber')"
+          label="No Volante">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="wheelNumber"
+            readonly />
+        </form-field>
+
+        <form-field
+          class="col-md-4"
+          [control]="turnForm.get('affair')"
+          label="Asunto">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="affair"
+            readonly />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="turnForm.get('receiptDate')"
+          label="Fec. Recepci&oacute;n">
+          <input
+            class="form-control"
+            formControlName="receiptDate"
+            bsDatepicker
+            [readonly]="true" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="turnForm.get('captureDate')"
+          label="Fec. Captura">
+          <input
+            class="form-control"
+            formControlName="captureDate"
+            bsDatepicker
+            readonly />
+        </form-field>
+      </div>
+      <div class="row pt-4 mb-3">
+        <form-field
+          class="col-md-6"
+          [control]="turnForm.get('externalRemitter')"
+          label="Remitente">
+          <input
+            class="form-control"
+            formControlName="externalRemitter"
+            readonly />
+        </form-field>
+      </div>
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-6">
+          <p class="font-weight-bold pb-5">Turno anterior</p>
+          <form-field [control]="turnForm.get('prevUser')">
+            <ngx-select
+              [form]="turnForm"
+              control="prevUser"
+              label="Atención"
+              [data]="users"
+              bindLabel="userAndName"
+              [readonly]="true">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <p class="font-weight-bold pb-5">Turno nuevo</p>
+          <form-field [control]="turnForm.get('newUser')">
+            <ngx-select
+              [form]="turnForm"
+              control="newUser"
+              (fetchItems)="getUsersCopy($event)"
+              label="Atención"
+              [data]="users"
+              bindLabel="userAndName"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <h5 class="text-center">Dictaminaciones</h5>
+          <div
+            [ngClass]="{
+              'height-limit': dictumColumns.length > 0,
+              'height-min': dictumColumns.length == 0
+            }">
+            <ng-scrollbar track="all" [autoHeightDisabled]="true">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  class="col-md-12"
+                  [settings]="dictumSettings"
+                  [source]="dictumColumns"
+                  [attr.class]="'table-bordered'"
+                  (userRowSelect)="selectDictums($event)"
+                  readonly>
+                </ng2-smart-table>
+              </div>
+            </ng-scrollbar>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5 class="text-center">Actas</h5>
+          <div
+            class="{{
+              proceedingColumns.length > 0 ? 'height-limit' : 'height-min'
+            }}">
+            <ng-scrollbar track="all" [autoHeightDisabled]="true">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  class="col-md-12"
+                  [settings]="proceedingSettings"
+                  [source]="proceedingColumns"
+                  [attr.class]="'table-bordered'"
+                  (userRowSelect)="selectProceedings($event)">
+                </ng2-smart-table>
+              </div>
+            </ng-scrollbar>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <form-field
+          [control]="turnForm.get('argument')"
+          label="Argumento"
+          class="col-md-8">
+          <textarea class="form-control" rows="3" formControlName="argument">
+          </textarea>
+        </form-field>
+
+        <div class="col-md-4">
+          <button
+            size="small"
+            class="btn btn-secondary active btn-sm"
+            type="button"
+            (click)="showHistory()">
+            Hist&oacute;rico
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active"
+              (click)="return()">
+              Regresar
+            </button>
+          </div>
+          <div class="m-3">
+            <confirm-button
+              text="Guardar"
+              loadingText="Cargando"
+              [loading]="loading"
+              (confirm)="save()"></confirm-button>
+          </div>
+        </div>
+        <!-- <div class="col-md-12 text-right">
+          <button type="submit" class="btn btn-primary active" status="success">
+            Guardar
+          </button>
+        </div> -->
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,0 +1,43 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Bienes exentos de verificación</h5>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar
+          [filterParams]="filterParams"
+          [filterField]="searchFilter"></search-bar>
+      </div>
+      <div [class]="loading ? 'table-loading' : ''">
+        <div class="table-responsive">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="goods"
+            (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+    <div class="row pt-5">
+      <div [class]="loading ? 'table-loading' : ''">
+        <div class="table-responsive">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="proccessList"
+            (edit)="openForm($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
+      </app-pagination>
+    </div>
+  </div>
+
+  <div footer></div>
+</app-card>

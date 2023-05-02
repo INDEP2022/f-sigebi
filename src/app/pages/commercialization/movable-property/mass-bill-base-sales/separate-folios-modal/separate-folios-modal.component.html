@@ -1,0 +1,79 @@
+<app-modal>
+  <div header>
+    <div header>
+      <h5 class="modal-title">Generar Folio</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('serie')" label="Serie">
+            <input type="text" class="form-control" formControlName="serie" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('folio')" label="Folio">
+            <input type="text" class="form-control" formControlName="folio" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('separate')" label="Apartado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="separate" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('userRegister')"
+            label="Usuario Registrado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userRegister" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('dateRegister')"
+            label="Fecha registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateRegister" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid">
+            Agregar
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="row pt-5">
+      <div class="ch-content">
+        <h5 class="title">Folios apartados</h5>
+        <!-- <div class="justify-content-end m-4">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div> -->
+      </div>
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Salir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,63 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="stateForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            label="Nombre transferente"
+            [control]="stateForm.get('nameTransferee')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameTransferee"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="stateForm.get('stateKey')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="stateForm"
+              control="stateKey"
+              [data]="states"
+              value="id"
+              bindLabel="descCondition"
+              label="Estado"
+              (fetchItems)="getStates($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row" *ngIf="stateForm.get('stateKey').value === 'oculto'">
+        <div class="col-md-6">
+          <form-field
+            label="ID Transferente"
+            [control]="stateForm.get('idTransferee')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idTransferee" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="stateForm.invalid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

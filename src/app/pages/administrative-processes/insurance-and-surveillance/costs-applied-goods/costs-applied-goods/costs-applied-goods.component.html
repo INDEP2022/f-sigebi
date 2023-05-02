@@ -1,0 +1,169 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE GASTOS APLICADOS A BIENES</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegation"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('file')" label="Expediente">
+            <input
+              type="number"
+              formControlName="file"
+              class="form-control"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('toFile')" label="Al Expediente">
+            <input
+              type="number"
+              formControlName="toFile"
+              class="form-control"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('noBien')">
+            <ngx-select
+              [form]="form"
+              [data]="good"
+              bindLabel="description"
+              label="No Bien"
+              value="goodId"
+              (fetchItems)="getGood($event)"
+              control="noBien"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('alGood')">
+            <ngx-select
+              [form]="form"
+              [data]="good"
+              bindLabel="description"
+              label="Al No Bien"
+              value="goodId"
+              (fetchItems)="getGood($event)"
+              control="alGood"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="ch-content">
+        <h5 class="title">TIPO DE GASTOS</h5>
+      </div>
+
+      <!-- <div class="row">
+        <div class="col-md-3">
+          <form-radio label="Directos">
+            <input type="radio" formControlName="costTypeDir" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-radio label="Indirectos">
+            <input type="radio" formControlName="costTypeIndi" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <form-radio label="Ambos">
+            <input type="radio" formControlName="costTypeAm" />
+          </form-radio>
+        </div>
+      </div> -->
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('goodType')">
+            <ngx-select
+              [form]="form"
+              [data]="goodTypes"
+              bindLabel="nameGoodType"
+              label="Tipo de Bien"
+              value="nameGoodType"
+              (fetchItems)="getGoodType($event)"
+              control="goodType"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('costConcept')">
+            <ngx-select
+              [form]="form"
+              [data]="concepts"
+              bindLabel="description"
+              label="Concepto Gasto"
+              value="id"
+              (fetchItems)="getCostConcept($event)"
+              control="costConcept"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('to')">
+            <ngx-select
+              [form]="form"
+              [data]="concepts"
+              bindLabel="description"
+              label="Al concepto gasto"
+              value="id"
+              (fetchItems)="getCostConcept($event)"
+              control="to"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('startDate')" label="Fecha page">
+            <input
+              type="text"
+              formControlName="startDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('finishDate')"
+            label="Fecha de Termino">
+            <input
+              type="text"
+              formControlName="finishDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4 float-right">
+        <div class="col-md-2">
+          <confirm-button
+            text="Enviar"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

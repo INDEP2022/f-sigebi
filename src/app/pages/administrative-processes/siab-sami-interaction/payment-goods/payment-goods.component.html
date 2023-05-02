@@ -1,0 +1,119 @@
+<!--Application Process-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <!--<h5 class="title">PAGO BIENES FALTANTES-DAÑADOS / ADMINISTRACIÓN DE INGRESOS</h5>-->
+    <h5 class="title">Proceso de Solicitud de Órdenes de Ingreso</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div body>
+    <div class="row mb-3 mt-3">
+      <form class="form-material" [formGroup]="form">
+        <!--Package type-->
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <label for="">Tipo de Paquete</label>
+          <div class="row justify-content-between">
+            <div class="col-md-4">
+              <form-radio label="Activos">
+                <input type="radio" formControlName="option" value="actives" />
+              </form-radio>
+            </div>
+            <div class="col-md-4">
+              <form-radio label="Procesados">
+                <input type="radio" formControlName="option" value="procces" />
+              </form-radio>
+            </div>
+            <div class="col-md-4">
+              <form-radio label="Todos">
+                <input type="radio" formControlName="option" value="all" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>
+<!--Application Details-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Detalle de Solicitud de Órdenes de Ingreso</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>
+<!--Goods on Details-->
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Bienes Solicitud de Órdenes de Ingreso</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings"></app-columns-select>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="edit($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <div class="row mb-3 mt-3 justify-content-end">
+      <!--Actions-->
+      <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
+        <button class="btn btn-primary btn-sm active w-100">
+          Proceso por Generar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,406 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CAPTURA DE GASTOS</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="ch-content">
+        <h5 class="title">Gastos del área comercial</h5>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('idSpent')" label="id Gastos">
+            <input type="text" class="form-control" formControlName="idSpent" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('concept')">
+            <ngx-select
+              typeToSearchText="Escriba 3 o más caracteres"
+              label="Concepto"
+              [form]="form"
+              control="concept">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('paymentResquest')"
+            label="Solicitud de pago">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="paymentResquest" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('exchange')" label="intercambio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="exchange" />
+          </form-field>
+        </div>
+      </div>
+      <br />
+      <div class="ch-content">
+        <h5 class="title">Datos del evento al cual se asociará el gasto</h5>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="form.get('idEvent')">
+            <ngx-select
+              typeToSearchText="Escriba 3 o más caracteres"
+              label="Evento"
+              [form]="form"
+              control="idEvent">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('idAllotment')">
+            <ngx-select
+              typeToSearchText="Escriba 3 o más caracteres"
+              label="Lote"
+              [form]="form"
+              control="idAllotment">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('idCtmFolio')"
+            label="Folio atn Clientes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idCtmFolio" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('datResol')"
+            label="Fecha de resolución">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="datResol"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+      </div>
+      <br />
+      <div class="ch-content">
+        <h5 class="title">Datos del beneficiario o proovedor</h5>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="form.get('idSupplier')">
+            <ngx-select
+              typeToSearchText="Escriba 3 o más caracteres"
+              label="Beneficiario"
+              [form]="form"
+              control="idSupplier">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('service')" label="Servicio">
+            <input type="text" class="form-control" formControlName="service" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('regCoor')"
+            label="Coordinación Regional">
+            <input type="text" class="form-control" formControlName="regCoor" />
+          </form-field>
+        </div>
+      </div>
+      <br />
+      <div class="ch-content">
+        <h5 class="title">Datos de la factura o recibo (Documento)</h5>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="form.get('noDoc')" label="No. Doc">
+            <input type="text" class="form-control" formControlName="noDoc" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('docDate')" label="Fecha Doc.">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="docDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('payDate')" label="Fecha de pago">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="payDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('capDate')" label="Fecha de captura">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="capDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('recDate')"
+            label="Fecha contrarecibo">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="recDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('noVoucher')" label="No. Comprobante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noVoucher" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('attDoc')"
+            label="Documentación Anexa">
+            <textarea
+              class="form-control"
+              formControlName="attDoc"
+              rows="3"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('month')" label="Del mes de">
+            <select class="form-control" formControlName="month">
+              <option value="Enero">Enero</option>
+              <option value="Febrero">Febrero</option>
+              <option value="Marzo">Marzo</option>
+              <option value="Abril">Abril</option>
+              <option value="Mayo">Mayo</option>
+              <option value="Junio">Junio</option>
+              <option value="Julio">Julio</option>
+              <option value="Agosto">Agosto</option>
+              <option value="Septiembre">Septiembre</option>
+              <option value="Octubre">Octubre</option>
+              <option value="Noviembre">Noviembre</option>
+              <option value="Diciembre">Diciembre</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('tc')" label="TC">
+            <input type="text" class="form-control" formControlName="tc" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('PayMeth')" label="Formas de pago">
+            <select class="form-control" formControlName="PayMeth">
+              <option value="Cheque">Cheque</option>
+              <option value="Transferencia">Transferencia</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('proofName')"
+            label="Comprobantes a nombre">
+            <select class="form-control" formControlName="proofName">
+              <option value="Mandato">Mandato</option>
+              <option value="SAE">SAE</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <div class="form-group row">
+            <div class="col-md-12">
+              <app-user-shared
+                [form]="form"
+                [userField]="'idCapture'"
+                [label]="'Captura'"></app-user-shared>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-12">
+              <app-user-shared
+                [form]="form"
+                [userField]="'idAuth'"
+                [label]="'Solicita'"></app-user-shared>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-12">
+              <app-user-shared
+                [form]="form"
+                [userField]="'idSol'"
+                [label]="'Solicita'"></app-user-shared>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-secondary btn-sm active">
+                Enviar solicitud de pagos a SIRSAE
+              </button>
+            </div>
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-secondary btn-sm active">
+                Notificar A:
+              </button>
+            </div>
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-secondary btn-sm active">
+                Actualizar Clasif
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group row">
+            <div class="col-md-12">
+              <form-field
+                [control]="form.get('dateAdmon')"
+                label="Datos AdmonParámentro">
+                <textarea
+                  class="form-control"
+                  formControlName="dateAdmon"
+                  rows="3"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <div class="ch-content">
+            <h5 class="title">Datos de ingreso</h5>
+            <!-- <app-columns-select [(settings)]="settings1"></app-columns-select> -->
+          </div>
+          <div class="row pt-3">
+            <ng2-smart-table [settings]="settings1" [source]="list1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <button class="btn btn-secondary btn-sm active" type="submit">
+                Obtener orden de ingreso
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <button class="btn btn-secondary btn-sm active" type="submit">
+                Escanear documentos
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <button class="btn btn-secondary btn-sm active" type="submit">
+                Imprimir documentos
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <button class="btn btn-secondary btn-sm active" type="submit">
+                Ver doc escaneados
+              </button>
+            </div>
+          </div>
+          <br />
+          <div class="form-group row">
+            <form-field
+              [control]="form.get('scanFol')"
+              label="Folio de escaneo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="scanFol" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="ch-content">
+        <h5 class="title">Composición de los Gastos</h5>
+        <div class="row justify-content-end mr-5">
+          <app-columns-select [(settings)]="settings2"></app-columns-select>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <ng2-smart-table [settings]="settings2" [source]="list2">
+        </ng2-smart-table>
+      </div>
+      <div class="col-md-12">
+        <div class="form-group row pt-5">
+          <div class="col-sm-2">
+            <button class="btn btn-secondary btn-sm active" type="submit">
+              Dispersa Gastos/Mand
+            </button>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-secondary btn-sm active" type="submit">
+              Cargar Bienes Excel
+            </button>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-secondary btn-sm active" type="submit">
+              Modificar estatus
+            </button>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-secondary btn-sm active" type="submit">
+              Aplicar TC
+            </button>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-secondary btn-sm active" type="submit">
+              Contabilidad Mand.
+            </button>
+          </div>
+          <div class="col-sm-1">
+            <button class="btn btn-secondary btn-sm active" type="submit">
+              Recargar
+            </button>
+          </div>
+          <div class="col-sm-1">
+            <button class="btn btn-secondary btn-sm active" type="submit">
+              Validados
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,0 +1,358 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CONSULTA DE PAGOS RELACIONADOS DEPOSITAR&Iacute;AS</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loadingAppointment || loadingGood || loadingSirsaeProcess">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+          <div class="card">
+            <form [formGroup]="form" class="container-fluid form-material p-0">
+              <div class="card-header text-dark">
+                <div class="col-12 col-sm-4 col-md-4 p-2">Depositaria</div>
+                <div class="col-12 col-sm-8 col-md-8 p-2">
+                  <form-field
+                    class="col-sm-12 col-12 col-md-8 p-2"
+                    [control]="form.get('noBien')"
+                    label="No&#46; Bien">
+                    <input class="form-control" formControlName="noBien" />
+                  </form-field>
+                  <div class="col-sm-12 col-12 col-md-4 p-2">
+                    <button
+                      type="button"
+                      [disabled]="
+                        loadingAppointment ||
+                        loadingGood ||
+                        loadingSirsaeProcess
+                      "
+                      class="btn btn-primary btn-sm active"
+                      (click)="validGoodNumberInDepositaryAppointment()">
+                      Buscar
+                      <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <form-field
+                  class="col-sm-12 col-12 col-md-4 p-2"
+                  [control]="form.get('nombramiento')"
+                  label="Nombramiento">
+                  <input
+                    class="form-control"
+                    formControlName="nombramiento"
+                    [readonly]="true" />
+                </form-field>
+                <form-field
+                  class="col-sm-12 col-12 col-md-4 p-2"
+                  [control]="form.get('fecha')"
+                  label="Fecha">
+                  <input
+                    class="form-control"
+                    formControlName="fecha"
+                    bsDatapicker
+                    [readonly]="true" />
+                </form-field>
+                <form-field
+                  class="col-sm-12 col-12 col-md-4 p-2"
+                  [control]="form.get('contraprestaciones')"
+                  label="Contraprestaciones">
+                  <input
+                    class="form-control"
+                    formControlName="contraprestaciones"
+                    [readonly]="true" />
+                </form-field>
+                <form-field
+                  class="col-sm-12 col-12 col-md-12 p-2"
+                  [control]="form.get('cveContrato')"
+                  label="Contrato">
+                  <input
+                    class="form-control"
+                    formControlName="cveContrato"
+                    [readonly]="true" />
+                </form-field>
+              </div>
+            </form>
+          </div>
+          <div class="card">
+            <form
+              [formGroup]="formDepositario"
+              class="container-fluid form-material p-0">
+              <div class="card-header text-dark">
+                <div class="col-12 col-sm-4 col-md-4 p-2">Depositario</div>
+                <form-field
+                  class="col-sm-12 col-12 col-md-offset-4 col-md-4 p-2"
+                  [control]="formDepositario.get('idDepositario')"
+                  label="Id Depositario">
+                  <input
+                    class="form-control"
+                    formControlName="idDepositario"
+                    [readonly]="true" />
+                </form-field>
+              </div>
+              <div class="card-body">
+                <form-field
+                  class="col-sm-12 col-12 col-md-12 p-2"
+                  [control]="formDepositario.get('depositario')"
+                  label="Depositario">
+                  <input
+                    class="form-control"
+                    formControlName="depositario"
+                    [readonly]="true" />
+                </form-field>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+          <div class="col-sm-12 col-12 p-2">
+            <div class="card">
+              <form
+                [formGroup]="formBienDetalle"
+                class="container-fluid form-material p-0">
+                <div class="card-header text-dark">
+                  <div class="col-12 col-sm-4 col-md-4 p-2">
+                    Detalle del Bien
+                  </div>
+                  <form-field
+                    class="col-sm-12 col-12 col-md-offset-4 col-md-4 p-2"
+                    [control]="formBienDetalle.get('idBien')"
+                    label="No. Bien">
+                    <input
+                      class="form-control"
+                      formControlName="idBien"
+                      [readonly]="true" />
+                  </form-field>
+                </div>
+                <div class="card-body">
+                  <form-field
+                    class="col-sm-12 col-12 col-md-4 p-2"
+                    [control]="formBienDetalle.get('cantidad')"
+                    label="Cantidad">
+                    <input
+                      class="form-control"
+                      formControlName="cantidad"
+                      [readonly]="true" />
+                  </form-field>
+                  <form-field
+                    class="col-sm-12 col-12 col-md-8 p-2"
+                    [control]="formBienDetalle.get('estatus')"
+                    label="Estatus">
+                    <input
+                      class="form-control"
+                      formControlName="estatus"
+                      [readonly]="true" />
+                  </form-field>
+                  <form-field
+                    class="col-sm-12 col-12 col-md-12 p-2"
+                    [control]="formBienDetalle.get('descripcion')"
+                    label="Descripci&oacute;n">
+                    <textarea
+                      rows="5"
+                      [readonly]="true"
+                      class="form-control"
+                      formControlName="descripcion"></textarea>
+                  </form-field>
+                </div>
+              </form>
+            </div>
+            <div class="card">
+              <form
+                [formGroup]="formBienDetalle"
+                class="container-fluid form-material p-0">
+                <div class="card-body">
+                  <div class="col-sm-12 col-12 col-md-6 text-center p-2">
+                    <div class="form-group">
+                      <button
+                        type="button"
+                        [disabled]="
+                          loadingAppointment ||
+                          loadingGood ||
+                          loadingSirsaeProcess
+                        "
+                        class="btn btn-success ml-2 mr-2 active text-wrap p-2"
+                        (click)="btnExportarExcel()">
+                        Exportar a Excel
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-6 text-center p-2">
+                    <div class="form-group">
+                      <button
+                        type="button"
+                        [disabled]="
+                          loadingAppointment ||
+                          loadingGood ||
+                          loadingSirsaeProcess
+                        "
+                        class="btn btn-info ml-2 mr-2 active text-wrap p-2"
+                        (click)="btnEnviarSIRSAE()">
+                        Env&iacute;ar a SIRSAE
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-6 text-center p-2">
+                    <div class="form-group">
+                      <button
+                        type="button"
+                        [disabled]="
+                          loadingAppointment ||
+                          loadingGood ||
+                          loadingSirsaeProcess
+                        "
+                        class="btn btn-primary ml-2 mr-2 active text-wrap p-2"
+                        (click)="btnImprimir()">
+                        Imprimir
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-6 text-center p-2">
+                    <div class="form-group">
+                      <button
+                        type="button"
+                        [disabled]="
+                          loadingAppointment ||
+                          loadingGood ||
+                          loadingSirsaeProcess
+                        "
+                        class="btn btn-warning ml-2 mr-2 active text-wrap p-2"
+                        (click)="btnActualizarPago()">
+                        Actualizar Pago
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 alert alert-info" *ngIf="loadingSirsaeProcess">
+        Realizando Proceso de Env&oacute; SIRSAE para el registro
+        <strong>
+          {{ currentItemSirsae }}
+        </strong>
+        de <strong> {{ totalItemsSirsae }}</strong
+        >, Espere un momento...
+      </div>
+      <div
+        class="col-md-12 alert alert-success"
+        *ngIf="errorsSirsae.length > 0 && !loadingSirsaeProcess">
+        Se T&eacute;rmino el Proceso de Env&oacute; SIRSAE, a continuación puede
+        descargar un resumen del Proceso. Se procesaron
+        <strong>
+          {{ currentItemSirsae }}
+        </strong>
+        de <strong> {{ totalItemsSirsae }}</strong> Registros.
+        <button
+          [disabled]="loadingSirsaeProcess"
+          type="button"
+          class="ml-2 mr-2 btn btn-success btn-sm m-4"
+          (click)="exportXlsx()">
+          Exportar Resultado de "Env&oacute; SIRSAE"<i
+            class="fa fa-file-excel ml-1"></i>
+        </button>
+      </div>
+      <!-- Pagos Recibidos en el Banco -->
+      <div class="col-12 col-sm-12 col-md-8">
+        <h6>Pagos Recibidos en el Banco</h6>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end">
+        <app-columns-select
+          [(settings)]="tableSettingsPagosBanco"></app-columns-select>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 table-responsive p-1 mt-4 mb-4"
+        style="max-height: 500px; overflow-y: scroll">
+        <div [class]="loadingTablePayBanks ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettingsPagosBanco"
+            [source]="dataPagosBanco"
+            (userRowSelect)="selectRow($event, $event.data)"></ng2-smart-table>
+        </div>
+      </div>
+      <div class="col-12">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <strong>DESCRIPCIÓN</strong>
+            <div class="badge badge-pill bg-light text-wrap ml-2 mr-2">
+              TOTALES
+            </div>
+          </li>
+          <li class="list-group-item">
+            <strong>Monto Total de los Depósitos:</strong>
+            <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+              ${{ formatTotalAmount(totalAmountPayBanks) }}
+            </div>
+          </li>
+        </ul>
+        <app-pagination
+          [params]="paramsPayBanks"
+          [totalItems]="totalItemsPayBanks"></app-pagination>
+      </div>
+      <!-- Pagos Recibidos en el Banco -->
+      <!-- Composicion de Pagos Recibidos -->
+      <div class="col-12 col-sm-12 col-md-8">
+        <h6>Composición de Pagos Recibidos</h6>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end">
+        <app-columns-select
+          [(settings)]="tableSettingsPagosRecibidos"></app-columns-select>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 table-responsive p-1 mt-4 mb-4"
+        style="max-height: 500px; overflow-y: scroll">
+        <div [class]="loadingTableReceivedPays ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettingsPagosRecibidos"
+            [source]="dataPagosRecibidos"></ng2-smart-table>
+        </div>
+      </div>
+      <div class="col-12">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <strong>DESCRIPCIÓN</strong>
+            <div class="badge badge-pill bg-light text-wrap ml-2 mr-2">
+              TOTALES
+            </div>
+          </li>
+          <li class="list-group-item">
+            <strong>Monto SIN IVA:</strong>
+            <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
+              ${{ formatTotalAmount(totalAmountWithoutIva) }}
+            </div>
+          </li>
+          <li class="list-group-item">
+            <strong>Monto CON IVA:</strong>
+            <div class="badge badge-pill bg-warning text-wrap ml-2 mr-2">
+              ${{ formatTotalAmount(totalAmountIva) }}
+            </div>
+          </li>
+          <li class="list-group-item">
+            <strong>Pago Actual:</strong>
+            <div class="badge badge-pill bg-success text-wrap ml-2 mr-2">
+              ${{ formatTotalAmount(totalAmountActualPay) }}
+            </div>
+          </li>
+        </ul>
+        <app-pagination
+          [params]="paramsReceivedPays"
+          [totalItems]="totalItemsReceivedPays"></app-pagination>
+      </div>
+      <!-- Composicion de Pagos Recibidos -->
+    </div>
+  </div>
+</app-card>

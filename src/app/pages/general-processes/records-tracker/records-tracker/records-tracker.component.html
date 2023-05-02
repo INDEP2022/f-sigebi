@@ -1,0 +1,174 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Rastreador de Expedientes</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material">
+          <h6>Criterios por Notificaci&oacute;n</h6>
+          <hr />
+          <div class="row pt-3">
+            <form-field [control]="form.get('noExpediente')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="noExpediente"
+                label="No&#46; Expediente"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('averPrevia')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="averPrevia"
+                label="Averiguaci&oacute;n Previa"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('causaPenal')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="causaPenal"
+                label="Causa Penal"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('noVolante')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="noVolante"
+                label="No&#46; Volante"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field [control]="form.get('indiciado')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="indiciado"
+                label="Nombre Indiciado"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('fechaRec')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="fechaRec"
+                label="Fecha Recepci&oacute;n"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('amparo')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="amparo"
+                label="Amparo"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('tocaPenal')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="tocaPenal"
+                label="Toca Penal"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field [control]="form.get('noJuzgado')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="noJuzgado"
+                label="No&#46; Juzgado"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('fechaOficio')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="fechaOficio"
+                label="Fecha Oficio Externo"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('minPub')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="minPub"
+                label="Ministerio P&uacute;blico"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('oficioExterno')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="oficioExterno"
+                label="Fecha Externo No&#46;"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field [control]="form.get('entFed')" class="col-md-3">
+              <ngx-select
+                [form]="form"
+                control="entFed"
+                label="Entidad Federativa"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <div class="col-md-12">
+              <button class="btn btn-primary active">Consultar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <h6>Notificaciones</h6>
+        <hr />
+        <p class="col-md-6">No&#46; Expediente&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Averiguaci&oacute;n Previa&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Causa Penal&#58; <b>Lorem</b></p>
+        <p class="col-md-6">No&#46; Volante&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Nombre Indiciado&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Fecha Recepci&oacute;n&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Amparo&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Toca Penal&#58; <b>Lorem</b></p>
+        <p class="col-md-6">No&#46; Juzgado&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Fecha Oficio Externo&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Ministerio P&uacute;blico&#58; <b>Lorem</b></p>
+        <p class="col-md-6">Fecha Externo No&#46; &#58; <b>Lorem</b></p>
+        <p class="col-md-6">Entidad Federativa&#58; <b>Lorem</b></p>
+      </div>
+      <div class="col-md-4">
+        <h6>Bienes Relacionados</h6>
+        <hr />
+        <p>Tipo&#58; <b>Lorem</b></p>
+        <p>Subtipo&#58; <b>Lorem</b></p>
+        <p>Ssubtipo&#58; <b>Lorem</b></p>
+        <p>Sssubtipo&#58; <b>Lorem</b></p>
+      </div>
+    </div>
+  </div>
+</app-card>

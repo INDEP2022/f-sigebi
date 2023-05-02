@@ -1,0 +1,31 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Concepto bancarios</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openForm()">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="bankConcepts"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

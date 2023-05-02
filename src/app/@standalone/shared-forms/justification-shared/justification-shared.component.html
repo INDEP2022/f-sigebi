@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showUsers">
+    <div class="col-md-12">
+      <form-field [control]="form.get(userField)">
+        <ngx-select
+          (fetchItems)="getJustification($event)"
+          [data]="justifications"
+          [form]="form"
+          value="value"
+          bindLabel="value"
+          [label]="label"
+          [control]="userField"
+          (change)="onJustificationChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

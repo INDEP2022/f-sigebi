@@ -1,0 +1,187 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Configuracion Layouts</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings6"></app-columns-select>
+      <!-- <div>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
+          Nuevo
+        </button>
+      </div> -->
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <!--    <div class="row">
+        <div class="col-md-6">
+          <label for="">Control de Devoluciones</label>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Archivo1
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Archivo2
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Archivo3
+          </button>
+        </div>
+      </div>
+
+      <div class="row mt-5 scroll-table">
+        <ng2-smart-table class="col-md-12" [settings]="settings1" [source]="data"></ng2-smart-table>
+      </div>
+      <div class="row d-flex justify-content-center">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="d-flex justify-content-center">
+            <div>
+              <form-radio label="En Proceso">
+                <input type="radio" class="d-inline" value="EN PROCESO" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="d-flex justify-content-center">
+            <div>
+              <form-radio label="Concluidos">
+                <input type="radio" class="d-inline" value="CONCLUIDO" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="d-flex justify-content-center">
+            <div>
+              <form-radio label="Todos">
+                <input type="radio" class="d-inline" value="TODOS" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-2">
+        <label for="">Eventos Relacionados</label>
+      </div>
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="data2"></ng2-smart-table>
+      </div>
+
+      <div class="row mt-5">
+        <label for="">Cuentas de Bancos Relacionadas</label>
+      </div>
+      <div class="row pt-2 scroll-table justify-content-center">
+        <ng2-smart-table class="col-md-6" [settings]="settings3" [source]="data3"></ng2-smart-table>
+      </div>
+
+      <div class="row">
+        <label for="">Pagos en Cuentas Bancarias</label>
+      </div>
+      <div class="row pt-2 scroll-table justify-content-center">
+        <ng2-smart-table class="col-md-6" [settings]="settings4" [source]="data4"></ng2-smart-table>
+      </div>
+      <div class="row d-flex justify-content-center">
+        <div class="col">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Crear Control
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Generar Solicitudes Gastos
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Enviar Solicitudes a SIRSAE
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Ejecutar
+          </button>
+        </div>
+      </div>
+
+      <div class="row mt-5 d-flex justify-content-center">
+        <div class="col-md-3">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Verificar Pagos SIRSAE
+          </button>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Mantenimiento de Layouts
+          </button>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16">
+            Permisos de Creaci&oacute;n
+          </button>
+        </div>
+      </div> -->
+
+      <div body>
+        <div class="row">
+          <label for="">LAYOUTS</label>
+        </div>
+
+        <div class="row pt-2 scroll-table justify-content-center">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings5"
+            [source]="layoutsList"
+            (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
+        </div>
+        <br /><br /><br /><br />
+        <!-- <div class="row mt-5 d-flex justify-content-center">
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        </div> -->
+      </div>
+
+      <div body>
+        <div class="row">
+          <label for="">ESTRUCTURA LAYOUTS {{ idLayout }}</label>
+        </div>
+        <div class="row w-100">
+          <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+            <span>
+              SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA PARA PROCEDER AL
+              APARTADO DE ACCIONES&#46;</span
+            >
+          </div>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings6"
+            [source]="layoutsList"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event)"
+            (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
+        </div>
+      </div>
+
+      <div class="row mt-5 d-flex justify-content-center">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+        <div class="col-md-2">
+          <confirm-button
+            text="Duplicar Layouts"
+            [disabled]="!valid"
+            [loading]="loading"
+            (confirm)="duplicar()"></confirm-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

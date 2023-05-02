@@ -1,0 +1,16 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CAPTURA DE ABOGADOS FORMALIZADORES</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

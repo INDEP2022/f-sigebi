@@ -1,0 +1,87 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('idTransferer')"
+            label="Id Transferencia">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idTransferer" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('keyTransferer')"
+            label="Clave Transferencia">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="keyTransferer" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('idCity')" label="Id City">
+            <input type="text" class="form-control" formControlName="idCity" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('keyEntityFederative')"
+            label="Clave Federativa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyEntityFederative" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,202 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Impresi&oacute;n de &Aacute;ctas de
+      Destrucci&oacute;n/Donaci&oacute;n/Destino
+    </h5>
+  </div>
+
+  <div body>
+    <div class="">
+      <form
+        class="form-material form-horizontal"
+        [formGroup]="actForm"
+        (ngSubmit)="onSubmit()">
+        <div class="row mt-5 align-items-center justify-content-center">
+          <div class="col-4">
+            <div *ngIf="father === 'return-acts-report'; else elseBlock">
+              <button
+                class="btn btn-primary active mw-100 pl-1 pr-1"
+                (click)="openModal('Delegaciones', 'DELEGATIONS-COLUMNS')">
+                Delegaci&oacute;n Ejecutora
+              </button>
+            </div>
+            <ng-template #elseBlock>
+              <button
+                class="btn btn-primary active mw-100 pl-1 pr-1"
+                (click)="openModal('Delegaciones', 'DELEGATIONS-COLUMNS')">
+                Delegaci&oacute;n
+              </button>
+            </ng-template>
+          </div>
+
+          <div class="col-4">
+            <div class="pl-4 pr-4 pt-4">
+              <form-field
+                [control]="actForm.get('delegation')"
+                label="{{ labelDelegation1 }}">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="delegation"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="pl-4 pr-4 pt-4">
+              <form-field
+                [control]="actForm.get('descripDelegation')"
+                label="{{ labelDescripDelegation1 }}">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="descripDelegation"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4 align-items-center justify-content-center">
+          <div class="col-4">
+            <div *ngIf="father == 'return-acts-report'; else elseBlock2">
+              <button
+                class="btn btn-primary active pl-1 pr-1 mw-100"
+                (click)="openModal('Delegaciones', 'SUBDELEGATIONS-COLUMNS')">
+                Delegaci&oacute;n Administra
+              </button>
+            </div>
+            <ng-template #elseBlock2>
+              <button
+                class="btn btn-primary active pl-1 pr-1 mw-100"
+                (click)="
+                  openModal('Sub-Delegaciones', 'SUBDELEGATIONS-COLUMNS')
+                ">
+                Sub-Delegaci&oacute;n
+              </button>
+            </ng-template>
+          </div>
+
+          <div class="col-4">
+            <div class="pl-4 pr-4 pt-4">
+              <form-field
+                [control]="actForm.get('subDelegation')"
+                label="{{ labelDelegation2 }}">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="subDelegation"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="pl-4 pr-4 pt-4">
+              <form-field
+                [control]="actForm.get('descripSubDelegation')"
+                label="{{ labelDescripDelegation1 }}">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="descripSubDelegation"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-6">
+            <div class="pl-4 pr-4 pt-4">
+              <form-field
+                [control]="actForm.get('initExpedient')"
+                label="No. Expediente Desde el:">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="initExpedient" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="pl-4 pr-4 pt-4">
+              <form-field
+                [control]="actForm.get('finalExpedient')"
+                label="Hasta el:">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="finalExpedient" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="actForm.get('statusAct')"
+                label="Estatus &Aacute;cta">
+                <select class="form-control" formControlName="statusAct">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">1</option>
+                  <option [value]="2">2</option>
+                </select>
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="actForm.get('typeAct')"
+                label="Tipo de &Aacute;cta">
+                <select class="form-control" formControlName="typeAct">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">1</option>
+                  <option [value]="2">2</option>
+                </select>
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="actForm.get('eventStartDate')"
+                label="{{ labelDate1 }}">
+                <input
+                  type="text"
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="eventStartDate" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="actForm.get('eventEndDate')"
+                label="labelDate2">
+                <input
+                  type="text"
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="eventEndDate" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4 justify-content-center">
+          <div class="col-4 text-center">
+            <button class="btn btn-primary active">Imprimir</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

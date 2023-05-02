@@ -1,0 +1,103 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Seguimiento de Revisi&oacute;n de Fichas T&eacute;cnicas
+    </h5>
+  </div>
+
+  <div body>
+    <div class="">
+      <form
+        class="form-material form-horizontal"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+        <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <div class="col-md-2">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('year')" label="Año">
+                <input
+                  type="text"
+                  class="form-control"
+                  [bsConfig]="bsConfigFromYear"
+                  #dp="bsDatepicker"
+                  bsDatepicker
+                  [(bsValue)]="bsValueFromYear"
+                  formControlName="year" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('month')" label="Mes">
+                <input
+                  type="text"
+                  class="form-control"
+                  [bsConfig]="bsConfigFromMonth"
+                  #dp="bsDatepicker"
+                  bsDatepicker
+                  [(bsValue)]="bsValueFromMonth"
+                  formControlName="month" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('user')" label="Usuario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="user" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('regionalCoord')"
+                label="Coord. Regional">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="regionalCoord" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-2 text-center text-md-right">
+            <button class="btn btn-primary btn-sm active">Buscar</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="row mt-5">
+        <app-divider></app-divider>
+      </div>
+      <div class="d-flex justify-content-end mt-5">
+        <app-columns-select
+          (settingsChange)="settingsChange($event)"
+          [settings]="settings">
+        </app-columns-select>
+      </div>
+      <ng-scrollbar
+        style="min-height: 300px; border: none"
+        class="mt-3"
+        track="all">
+        <div class="row mt-3">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+      <div class="row justify-content-center">
+        <div class="col-md-2 text-center">
+          <button class="btn btn-secondary btn-sm active">
+            Revisi&oacute;n de Fichas
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

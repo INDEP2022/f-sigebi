@@ -1,0 +1,113 @@
+<div>
+  <div class="row">
+    <div class="col-md-12">
+      <h5 class="title">
+        <p>
+          <a
+            class="text-color"
+            (click)="showSamplingDetail = true"
+            *ngIf="!showSamplingDetail">
+            <i class="fa fa-angle-right" aria-hidden="true"></i>
+            Detalles del Muestreo</a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showSamplingDetail = false"
+            *ngIf="showSamplingDetail">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles del
+            Muestreo</a
+          >
+        </p>
+      </h5>
+    </div>
+  </div>
+  <div *ngIf="showSamplingDetail">
+    <div class="row pt-4">
+      <h6>Captura datos</h6>
+    </div>
+    <div>
+      <form [formGroup]="searchForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('noWarehouse')"
+              label="No&#46; Almac&eacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noWarehouse" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="searchForm.get('postalCode')"
+              label="C&oacute;digo Postal">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="postalCode" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('warehouseName')"
+              label="Nombre Almac&eacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="warehouseName" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('description')"
+              label="Direcci&oacute;n">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="description"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row pt-2">
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active" (click)="search()">
+            <i class="bx bx-search-alt-2"></i> Buscar
+          </button>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-danger btn-sm active">
+            <i class="bx bx-reset"></i> Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="warehouse">
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <ng-scrollbar track="all" style="min-height: 170px; border: none">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              (userRowSelect)="rowSelect($event)"
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="paragraphs">
+            </ng2-smart-table>
+          </div>
+        </ng-scrollbar>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</div>

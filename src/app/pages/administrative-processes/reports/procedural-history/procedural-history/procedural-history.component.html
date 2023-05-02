@@ -1,0 +1,122 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Reporte historico de las situaciones procesales de los bienes
+    </h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="proceduralHistoryForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="proceduralHistoryForm.get('delegation')"
+            label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceduralHistoryForm.get('subdelegation')"
+            label="Sub Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subdelegation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="proceduralHistoryForm.get('modificationDateOf')"
+            label="Fecha modificación del">
+            <input
+              type="text"
+              formControlName="modificationDateOf"
+              placeholder="Fecha modificación del"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceduralHistoryForm.get('modificationDateTo')"
+            label="Fecha modificación al">
+            <input
+              type="text"
+              formControlName="modificationDateTo"
+              placeholder="Fecha modificación al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="proceduralHistoryForm.get('ofTheGood')"
+            label="Del Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ofTheGood" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceduralHistoryForm.get('toGood')"
+            label="Al Bien">
+            <input type="text" class="form-control" formControlName="toGood" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <!-- <form-field [control]="proceduralHistoryForm.get('users')" label="Usuario">
+            <input type="text" class="form-control" formControlName="users" />
+          </form-field> -->
+          <form-field class="mb-3 mt-3" [control]="filterForm.get('user')">
+            <ngx-select
+              [form]="filterForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="user"
+              label="Usuario"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+          <!-- <form-field
+            [control]="proceduralHistoryForm.get('users')"
+            label="Usuario">
+            <ngx-select
+              [form]="filterForm"
+              [data]="users$"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              label=""
+              control="user"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field> -->
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-primary btn-sm active">
+              Reporte
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,0 +1,365 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      &Aacute;ctas de Regularizaci&oacute;n por Inexistencia F&iacute;sica
+    </h5>
+  </div>
+
+  <div body>
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-12 col-md-6">
+        <search-bar-simple
+          (eventEmit)="search($event)"
+          [placeholder]="'N&uacute;mero de expediente'">
+        </search-bar-simple>
+      </div>
+    </div>
+
+    <div *ngIf="response">
+      <div class="row mt-5 justify-content-md-end">
+        <div class="col-md-4 text-center text-md-right mt-3 mt-md-0">
+          <button class="btn btn-secondary btn-sm active">Cerrar</button>
+        </div>
+      </div>
+      <div class="mt-5">
+        <form
+          class="form-material form-horizontal"
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()">
+          <div class="row mt-5">
+            <div class="col-md-6">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('preliminaryAscertainment')"
+                  label="Averiguaci&oacute;n Previa">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="preliminaryAscertainment" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-md-6 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('causePenal')"
+                  label="Causa Penal">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="causePenal" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-12 col-md-3">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('actSelect')"
+                  label="&Aacute;cta">
+                  <select class="form-control" formControlName="actSelect">
+                    <option [value]="null">Seleccione un valor</option>
+                    <option [value]="1">1</option>
+                    <option [value]="2">2</option>
+                  </select>
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="form.get('type')" label="Tipo">
+                  <select class="form-control" formControlName="type">
+                    <option [value]="null">Seleccione un valor</option>
+                    <option [value]="1">1</option>
+                    <option [value]="2">2</option>
+                  </select>
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="form.get('del')" label="Del">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="del" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="form.get('trans')" label="Trans">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="trans" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-12 col-md-3">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="form.get('folio')" label="Folio">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="folio" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-2 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="form.get('year')" label="Año">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [bsConfig]="bsConfigFromYear"
+                    #dp="bsDatepicker"
+                    bsDatepicker
+                    [(bsValue)]="bsValueFromYear"
+                    formControlName="year" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-2 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="form.get('month')" label="Mes">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [bsConfig]="bsConfigFromMonth"
+                    #dp="bsDatepicker"
+                    bsDatepicker
+                    [(bsValue)]="bsValueFromMonth"
+                    formControlName="month" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-2 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="form.get('act')" label="&Aacute;cta">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="act" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('elabDate')"
+                  label="Fecha Elab.">
+                  <input
+                    type="text"
+                    class="form-control"
+                    bsDatepicker
+                    formControlName="elabDate" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-12 col-md-3">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('authorization')"
+                  label="Autoriza">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="authorization" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('sessionNumb')"
+                  label="N&uacute;mero de Sesi&oacute;n">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="sessionNumb" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('caseNumb')"
+                  label="N&uacute;mero de Caso">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="caseNumb" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-3 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('folioScan')"
+                  label="Folio de Escaneo">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="folioScan" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-12 col-md-4">
+              <div class="mb-1 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('responsible')"
+                  label="Responsable">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="responsible" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 mb-2 mt-3 mt-md-0">
+              <div class="mb-1 pl-4 pr-4">
+                <form-field [control]="form.get('witness1')" label="Testigo 1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="witness1" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 mb-2 mt-3 mt-md-0">
+              <div class="mb-1 pl-4 pr-4">
+                <form-field [control]="form.get('witness2')" label="Testigo 2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="witness2" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 mt-3 mt-md-0">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="form.get('observations')"
+                  label="Observaciones">
+                  <textarea
+                    class="form-control"
+                    formControlName="observations"></textarea>
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <app-divider></app-divider>
+        <div class="row mt-5 justify-content-end mt-3">
+          <div class="col-md-5 buttons pt-3 text-right">
+            <app-columns-select
+              (settingsChange)="settingsChange($event, 1)"
+              [settings]="settings">
+            </app-columns-select>
+          </div>
+        </div>
+        <div class="row mt-5 scroll-table">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+        <div class="row">
+          <div class="d-flex align-items-center">
+            <div class="col-6 align-items-center">
+              <div class="mt-5">
+                <form
+                  class="form-material form-horizontal"
+                  [formGroup]="formTable1"
+                  (ngSubmit)="onSubmit()">
+                  <div
+                    class="row mt-5 justify-content-start justify-content-sm-end">
+                    <div class="mb-3 pl-4 pr-4">
+                      <form-field [control]="formTable1.get('detail')">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="detail"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="col-6 align-items-center">
+              <div class="row">
+                <div class="col-6">
+                  <span class="text-success mr-5"
+                    ><i class="fa fa-square"></i> Disponibles</span
+                  >
+                </div>
+                <div class="col-6">
+                  <span class="text-danger"
+                    ><i class="fa fa-square"></i> No disponibles</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-md-12 text-center">
+            <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+              <i class="fa fa-angle-up"></i>
+            </button>
+            <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+              <i class="fa fa-angle-down"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="row mt-5 justify-content-end mt-3">
+          <div class="col-md-5 buttons pt-3 text-right">
+            <app-columns-select
+              (settingsChange)="settingsChange($event, 1)"
+              [settings]="settings2">
+            </app-columns-select>
+          </div>
+        </div>
+
+        <div class="row mt-5 scroll-table">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data2">
+          </ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+
+        <div class="row mt-5">
+          <div class="col-12 text-center text-md-right">
+            <button class="btn btn-secondary btn-sm active">
+              Mantenimiento de Estatus
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

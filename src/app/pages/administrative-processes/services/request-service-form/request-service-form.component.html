@@ -1,0 +1,54 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nueva Solicitud</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-md-6">
+          <!--Service Component-->
+          <app-services-shared [form]="form"></app-services-shared>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 align-self-center">
+          <form-field
+            label="Fecha de Solicitud"
+            [control]="form.get('requestDate')">
+            <input
+              class="form-control"
+              formControlName="requestDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 align-self-center">
+          <form-field label="Importe" [control]="form.get('amount')">
+            <input
+              class="form-control"
+              formControlName="amount"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="close()">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

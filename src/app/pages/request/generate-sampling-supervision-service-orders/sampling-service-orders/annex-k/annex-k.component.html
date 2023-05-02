@@ -1,0 +1,94 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Anexo K</h5>
+  </div>
+  <div body class="body">
+    <div id="sign-data">
+      <div class="row">
+        <h5>Captura datos del firmante</h5>
+      </div>
+      <form [formGroup]="signDataForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-5">
+            <form-field [control]="signDataForm.get('name')" label="Nombre">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <form-field [control]="signDataForm.get('charge')" label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="charge" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="participants-data">
+      <div class="row pt-4">
+        <h5>Captura datos de los participantes</h5>
+      </div>
+      <form [formGroup]="participantsDataForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-5">
+            <form-field
+              [control]="participantsDataForm.get('name1')"
+              label="Nombre">
+              <input type="text" class="form-control" formControlName="name1" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <form-field
+              [control]="participantsDataForm.get('charge1')"
+              label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="charge1" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-5">
+            <form-field
+              [control]="participantsDataForm.get('name2')"
+              label="Nombre">
+              <input type="text" class="form-control" formControlName="name2" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <form-field
+              [control]="participantsDataForm.get('charge2')"
+              label="Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="charge2" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="signAnnex()">
+          Firmar Anexo
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

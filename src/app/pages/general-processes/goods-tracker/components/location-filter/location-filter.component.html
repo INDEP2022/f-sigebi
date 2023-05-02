@@ -1,0 +1,61 @@
+<form [formGroup]="form" class="form-material" (submit)="search()">
+  <div class="row">
+    <form-field [control]="form.get('warehouse')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        [multiple]="true"
+        control="warehouse"
+        value="idWarehouse"
+        bindLabel="description"
+        label="Almacén"
+        [data]="warehouses"
+        (fetchItems)="getWarehouses($event)"></ngx-select>
+    </form-field>
+    <form-field [control]="form.get('cordination')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        [multiple]="true"
+        control="cordination"
+        value="id"
+        bindLabel="description"
+        label="Coordinación Regional"
+        [data]="delegations"
+        (fetchItems)="getDelegations($event)"></ngx-select>
+    </form-field>
+    <form-field [control]="form.get('autorityState')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        [multiple]="true"
+        control="autorityState"
+        value="id"
+        bindLabel="descCondition"
+        label="Estado Donde Radica la Autoridad"
+        [data]="autorityStates"
+        (fetchItems)="getAutorityStates($event)"></ngx-select>
+    </form-field>
+  </div>
+  <div class="row pt-3">
+    <form-field [control]="form.get('goodState')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        [multiple]="true"
+        control="goodState"
+        value="id"
+        bindLabel="descCondition"
+        label="Estado Donde Radica el Bien"
+        [data]="goodStates"
+        (fetchItems)="getGoodStates($event)"></ngx-select>
+    </form-field>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary active">
+        Buscar<i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+</form>

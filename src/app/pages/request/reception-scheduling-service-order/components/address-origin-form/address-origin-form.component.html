@@ -1,0 +1,53 @@
+<div class="pt-3">
+  <h5 class="title">
+    <p>
+      <a
+        class="text-color"
+        (click)="showaddressOrigin = true"
+        *ngIf="!showaddressOrigin">
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Direcci&oacute;n
+        origen</a
+      >
+    </p>
+
+    <p>
+      <a
+        class="text-color"
+        (click)="showaddressOrigin = false"
+        *ngIf="showaddressOrigin">
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Direcci&oacute;n
+        origen</a
+      >
+    </p>
+  </h5>
+  <div class="row" *ngIf="showaddressOrigin">
+    <form [formGroup]="addressOriginForm" class="form-material">
+      <div class="pt-4">
+        <form-field
+          [control]="addressOriginForm.get('warehouse')"
+          label="Almac&eacute;n">
+          <input type="text" class="form-control" formControlName="warehouse" />
+        </form-field>
+      </div>
+      <div class="pt-3">
+        <form-field [control]="addressOriginForm.get('street')" label="Calle">
+          <input type="text" class="form-control" formControlName="street" />
+        </form-field>
+      </div>
+
+      <div class="pt-3">
+        <form-field
+          [control]="addressOriginForm.get('cp')"
+          label="C&oacute;digo postal">
+          <input type="text" class="form-control" formControlName="cp" />
+        </form-field>
+      </div>
+
+      <div class="pt-3">
+        <form-field [control]="addressOriginForm.get('colony')" label="Colonia">
+          <input type="text" class="form-control" formControlName="colony" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+</div>

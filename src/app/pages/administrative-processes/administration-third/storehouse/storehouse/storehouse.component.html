@@ -1,0 +1,181 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reportes de control de almacénes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="costStorehouseForm" class="form-material">
+      <h5 class="title">Reporte de Costos de Almacénes</h5>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('noStore')"
+            label="No de Almacén">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noStore"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('typeStore')"
+            label="Tipo de Almacén">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeStore" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('dateReport')"
+            label="Fecha de Reporte">
+            <input
+              type="text"
+              formControlName="dateReport"
+              placeholder="Fecha de Reporte"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('noGoods')"
+            label="No de Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noGoods"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('date1')"
+            label="Fecha 1">
+            <input
+              type="text"
+              formControlName="date1"
+              placeholder="Fecha 1"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('date2')"
+            label="Fecha 2">
+            <input
+              type="text"
+              formControlName="date2"
+              placeholder="Fecha 2"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="justify-content-center">
+      <button type="submit" class="btn btn-primary btn-sm active">
+        Reporte
+      </button>
+    </div>
+    <form
+      [formGroup]="assignmentStorehouseForm"
+      class="form-material margin-input">
+      <h5 class="title">Reporte de Asignación de Almacénes</h5>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="assignmentStorehouseForm.get('noStore')"
+            label="No de Almacén">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noStore"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="assignmentStorehouseForm.get('idTypeStore')"
+            label="Id Tipo Almacén">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idTypeStore"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="assignmentStorehouseForm.get('noGoods')"
+            label="No de Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noGoods"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="assignmentStorehouseForm.get('section')"
+            label="Sección">
+            <input type="text" class="form-control" formControlName="section" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="assignmentStorehouseForm.get('position')"
+            label="Pocisión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('date1')"
+            label="Fecha 1">
+            <input
+              type="text"
+              formControlName="date1"
+              placeholder="Fecha 1"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="costStorehouseForm.get('date2')"
+            label="Fecha 2">
+            <input
+              type="text"
+              formControlName="date2"
+              placeholder="Fecha 2"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="justify-content-center">
+      <button type="submit" class="btn btn-primary btn-sm active">
+        Reporte
+      </button>
+    </div>
+  </div>
+</app-card>

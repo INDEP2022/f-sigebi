@@ -1,0 +1,277 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Relación de decomiso</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-2">
+            <form-field
+              [control]="form.get('forfeitureKey')"
+              label="Clave Decomiso">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="forfeitureKey"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-radio label="M.N">
+              <input type="radio" formControlName="check" value="mn" />
+            </form-radio>
+            <form-radio label="U.S">
+              <input type="radio" formControlName="check" value="us" />
+            </form-radio>
+            <form-radio label="DLLS">
+              <input type="radio" formControlName="check" value="dlls" />
+            </form-radio>
+            <form-radio label="CONV_NUM">
+              <input type="radio" formControlName="check" value="convnum" />
+            </form-radio>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="form.get('pgr')" label="PGR">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="pgr"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="form.get('ssa')" label="SSA">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="ssa"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="form.get('pjf')" label="PJF">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="pjf"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="openPrevPdf()">
+              Impresión
+            </button>
+          </div>
+        </div>
+      </form>
+      <form action="" class="form-material" [formGroup]="file">
+        <div class="row mt-4">
+          <div class="col-md-2">
+            <button class="btn btn-secondary btn-sm active">
+              Abrir archivo de texto
+            </button>
+          </div>
+          <!-- <div class="col-md-2">
+          <form-field label="">
+            <input type="number" class="form-control" min="1" pattern="^[0-9]+" />
+          </form-field>
+        </div> -->
+          <div class="col-md-2">
+            <form-field
+              [control]="file.get('recordRead')"
+              label="Registros Leídos:">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="recordRead"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="file.get('recordsProcessed')"
+              label="Registros procesados:">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="recordsProcessed"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="file.get('processed')" label="Procesados:">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="processed"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="file.get('wrong')" label="Erroneos:">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="wrong"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <form action="" class="form-material" [formGroup]="data">
+        <div class="row mt-4 pt-4">
+          <div class="col-md-2">
+            <form-field [control]="data.get('noGood')" label="NO Bien">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="noGood"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="data.get('criminalCase')"
+              label="Causa Penal">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="criminalCase"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="data.get('preliminaryInvestigation')"
+              label="Averiguación Previa">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="preliminaryInvestigation"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="data.get('dateTesofe')" label="Fecha tesofe">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="dateTesofe"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="data.get('jobTesofe')"
+              label="Oficio a Tesofe">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="jobTesofe"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-2">
+            <form-field [control]="data.get('authority')" label="Autoridad">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="authority"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="data.get('dateTreasury')"
+              label="Fecha Tesoreria">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="dateTreasury"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="data.get('dateJudgment')"
+              label="Fecha Sentencia">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="dateJudgment"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="data.get('appraisalValue')"
+              label="Valor Avaluo">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="appraisalValue"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="data.get('interests')" label="Intereses">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="interests"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="data.get('results')" label="Resultado">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="results"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-8"></div>
+          <div class="col-md-4">
+            <form-field
+              [control]="data.get('totalSeizures')"
+              label="Total en Decomisos:">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="totalSeizures"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

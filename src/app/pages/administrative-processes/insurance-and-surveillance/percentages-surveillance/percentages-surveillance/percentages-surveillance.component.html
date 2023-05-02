@@ -1,0 +1,101 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">PORCENTAJES</h5>
+    <button
+      type="button"
+      class="btn btn-sm active btn-primary shadow-none"
+      (click)="openDialogPercentage()">
+      Agregar
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="sources"
+            (edit)="onEditConfirm($event)"
+            (delete)="onDeleteConfirm($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</app-card>
+
+<ng-template #dialogPercentage>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left font-size-16">
+      {{ editDialogData ? 'Editando Porcentajes' : 'Agregando Porcentajes' }}
+    </h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="closeDialogPercentage()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body form-material" [formGroup]="form">
+    <form-field [control]="form.get('cveProcess')" label="Proceso">
+      <ng-select formControlName="cveProcess" class="form-control">
+        <ng-option [value]="process.value" *ngFor="let process of processes">
+          {{ process.name }}
+        </ng-option>
+      </ng-select>
+    </form-field>
+    <form-field [control]="form.get('delegationNumber')" label="Delegación">
+      <ng-custom-select
+        class="form-control"
+        path="survillance/api/v1/views/v-vig-delegations"
+        value="delegationNumber"
+        formControlName="delegationNumber"
+        prefixSearch="$ilike"
+        paramSearch="filter.description"
+        [initOption]="editDialogData?.delegationView"
+        [isLoadInOnInit]="false">
+        <ng-template let-item>
+          {{ item.delegationNumber + '-' + item.description }}
+        </ng-template>
+      </ng-custom-select>
+    </form-field>
+    <form-field [control]="form.get('delegationType')" label="Tipo Delegación">
+      <ng-select formControlName="delegationType" class="form-control">
+        <ng-option [value]="type.value" *ngFor="let type of delegationTypes">{{
+          type.name
+        }}</ng-option>
+      </ng-select>
+    </form-field>
+    <form-field [control]="form.get('percentage')" label="Porcentaje">
+      <input
+        max="100"
+        type="number"
+        formControlName="percentage"
+        class="form-control" />
+    </form-field>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="loading"
+      type="button"
+      class="btn btn-primary active btn-sm font-weight-bold shadow-none"
+      (click)="saveInServerPercentage()">
+      Guardar
+      <i class="fas fa-paper-plane"></i>
+    </button>
+    <button
+      type="button"
+      class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
+      (click)="closeDialogPercentage()">
+      Cerrar
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</ng-template>

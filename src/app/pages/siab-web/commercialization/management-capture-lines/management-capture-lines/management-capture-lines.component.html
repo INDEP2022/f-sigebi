@@ -1,0 +1,173 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Buscar L&iacute;neas de Captura</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="formSearch">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="formSearch.get('idEvent')" label="ID Evento">
+            <input type="text" class="form-control" formControlName="idEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="formSearch.get('allotment')"
+            label="Lote p&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="formSearch.get('idClient')" label="ID Cliente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idClient" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="formSearch.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!formSearch.valid">
+              Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">ADMINISTRACI&Oacute;N DE L&Iacute;NEA DE CAPTURA</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="formAdm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field
+            [control]="formAdm.get('typeReference')"
+            label="Tipo de referencia">
+            <ng-select
+              formControlName="typeReference"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Garant&iacute;a de seriedad</ng-option>
+              <ng-option value="2">Garant&iacute;a de cumplimiento</ng-option>
+              <ng-option value="1"
+                >Garant&iacute;a de cumplimiento Extempor&aacute;nea</ng-option
+              >
+              <ng-option value="2">Liquidaci&oacute;n</ng-option>
+              <ng-option value="2"
+                >Liquidaci&oacute;n Extempor&aacute;nea</ng-option
+              >
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="formAdm.get('dateValidity')"
+            label="Fecha Vigencia">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="dateValidity"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="formAdm.get('allotment')"
+            label="Lote P&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="formAdm.get('client')" label="Cliente">
+            <input type="text" class="form-control" formControlName="client" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="formAdm.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="formAdm.get('amount')" label="Monto">
+            <input type="text" class="form-control" formControlName="amount" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            [control]="formAdm.get('amountPenality')"
+            label="Monto Pena">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="amountPenality" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!formAdm.valid">
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Actualizar l&iacute;nea de Captura</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content" header>
+      <h5 class="title">
+        &#42;Los clientes que se encuentran en lista negra no podr&aacute;n
+        visualizar sus líneas de captura en el Portal de Pagos
+      </h5>
+      <div class="col-md-4 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="mt-3 table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="data"
+        (edit)="openForm($event.data)"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

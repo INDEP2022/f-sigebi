@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showDepartments">
+    <div class="col-md-12">
+      <form-field [control]="form.get(departmentField)">
+        <ngx-select
+          (fetchItems)="getDepartments($event)"
+          [data]="departments"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          [label]="label"
+          [control]="departmentField"
+          (change)="onDepartmentsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

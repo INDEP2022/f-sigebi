@@ -1,0 +1,60 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">ZONAS DE VIGILANCIA</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="ch-content">
+        <h5 class="title">ZONAS</h5>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('zone')">
+            <ngx-select
+              [form]="form"
+              [data]="zones"
+              bindLabel="name"
+              label="Zona"
+              value="id"
+              (fetchItems)="getZones($event)"
+              control="zone"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('noSupervisors')"
+            label="No. Supervisores">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noSupervisors"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            CAMBIAR SUPERVISORES
+          </button>
+        </div>
+      </div>
+
+      <div class="ch-content">
+        <h5 class="title">ESTADOS POR ZONA</h5>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="zoneState">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

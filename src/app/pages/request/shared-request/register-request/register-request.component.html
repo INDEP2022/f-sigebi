@@ -1,0 +1,96 @@
+<app-card [header]="true">
+  <div class="ch-content justify-content-between" header>
+    <div class="">
+      <h5 class="title">
+        {{ title }}
+      </h5>
+    </div>
+    <div class="mt-2">
+      <div class="d-flex flex-row-reverse">
+        <div class="mx-1" *ngIf="layout == 'single'">
+          <button
+            type="button"
+            (click)="endRequest()"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Finalizar
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="layout == 'step'">
+          <button
+            type="button"
+            (click)="turnRequest()"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bx-save mr-1 float-icon"></i> Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <app-request-information [request]="requestInfo"></app-request-information>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Registro de Documentación" id="documentationTab">
+          <app-register-documentation-form
+            [requestId]="requestId"
+            [subject]="subject | async"
+            (onRegister)="
+              requestRegistered($event)
+            "></app-register-documentation-form>
+        </tab>
+        <tab heading="Buscar y Asociar al Expediente" id="associateTab">
+          <app-associate-file></app-associate-file>
+        </tab>
+        <tab heading="Seleccionar Bienes" id="selectTab">
+          <app-select-goods></app-select-goods>
+        </tab>
+        <tab heading="Expediente" id="fileTab">
+          <tabset class="md-tabs">
+            <tab
+              heading="Documentos Solicitud"
+              id="tab1"
+              (selectTab)="requestSelected(1)">
+              <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+            </tab>
+            <tab
+              heading="Documentos Generales"
+              (selectTab)="requestSelected(2)">
+              <tabset class="md-tabs">
+                <tab
+                  heading="Documento Expedientes"
+                  id="tab1"
+                  (selectTab)="requestSelected(2)">
+                  <app-doc-request-tab
+                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                </tab>
+                <tab
+                  heading="Solicitudes del Expediente"
+                  (selectTab)="requestSelected(3)">
+                  <app-expedients-request-tab
+                    [typeDoc]="typeDoc"></app-expedients-request-tab>
+                </tab>
+              </tabset>
+            </tab>
+          </tabset>
+        </tab>
+      </tabset>
+    </div>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Salir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

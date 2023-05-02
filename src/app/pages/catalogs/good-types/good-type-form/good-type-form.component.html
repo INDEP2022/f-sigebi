@@ -1,0 +1,140 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="goodTypeForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="goodTypeForm.get('id')" label="Identificador">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-md-offset-3">
+          <form-field
+            [control]="goodTypeForm.get('nameGoodType')"
+            label="Nombre Tipo Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameGoodType" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('maxAsseguranceTime')"
+            label="Tiempo m&aacute;ximo aseguramiento">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxAsseguranceTime" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('maxFractionTime')"
+            label="Tiempo m&aacute;ximo fracci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxFractionTime" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('maxExtensionTime')"
+            label="Tiempo m&aacute;ximo prorroga">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxExtensionTime" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('maxStatementTime')"
+            label="Tiempo m&aacute;ximo declaraci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxStatementTime" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('maxLimitTime1')"
+            label="Tiempo m&aacute;ximo de plazo 1">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxLimitTime1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('maxLimitTime2')"
+            label="Tiempo m&aacute;ximo de plazo 2">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxLimitTime2" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('maxLimitTime3')"
+            label="Tiempo m&aacute;ximo de plazo 3">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="maxLimitTime3" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('noRegister')"
+            label="No. Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noRegister" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="goodTypeForm.get('version')"
+            label="Versi&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!goodTypeForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

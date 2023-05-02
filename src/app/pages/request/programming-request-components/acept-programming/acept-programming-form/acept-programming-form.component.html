@@ -1,0 +1,177 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Aceptar programaci&oacute;n con folio&#58;
+      {{ programming?.folio }}
+    </h5>
+  </div>
+  <div body>
+    <div class="d-flex justify-content-end">
+      <div class="mt-3 btn-toolbar">
+        <button (click)="signOffice()" class="btn btn-info btn-sm active">
+          Firmar oficio
+        </button>
+        <button class="btn btn-primary btn-sm active">Aprobar</button>
+        <button
+          (click)="rejectProgramming()"
+          class="btn btn-danger btn-sm active">
+          Rechazar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right"
+            >Delegaci&oacute;n regional&#58;</label
+          >
+          <span class="fs-4">
+            {{ programming?.regionalDelegationNumber }}
+          </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Correo transferente&#58;</label>
+          <span class="fs-4">{{ programming?.emailTransfer }}</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Ciudad&#58;</label>
+          <span class="fs-4"> {{ programming?.city }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Transferente&#58;</label>
+          <span class="fs-4"> {{ programming?.tranferId }} </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-6 text-right">Fecha inicio operativo&#58;</label>
+          <span class="fs-4"> {{ programming?.startDate }} </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
+          <span class="fs-4"> {{ programming?.endDate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Emisora&#58;</label>
+          <span class="fs-4"> {{ programming?.stationId }} </span>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label class="col-lg-3 text-right">Dirección&#58;</label>
+          <span class="fs-4"> {{ programming?.address }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Autoridad&#58;</label>
+          <span class="fs-4"> {{ programming?.autorityId }} </span>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label class="col-lg-3 text-right">Observación&#58;</label>
+          <span class="fs-4"> {{ programming?.observation }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
+          <span class="fs-3"> {{ programming?.typeRelevantId }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Almac&eacute;n</h5>
+      <div class="form-group">
+        <label class="text-right">Nombre:</label>
+        <span> {{ programming?.storeId }} </span>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Usuarios al operativo</h5>
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="usersData">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="row pt-5">
+      <h5 class="title">Bienes seleccionados</h5>
+      <div class="md-tabs">
+        <tabset>
+          <tab [heading]="headingTransportable" id="tab1">
+            <div class="d-flex justify-content-end">
+              <app-columns-select
+                [(settings)]="settingsTransportableGoods"></app-columns-select>
+            </div>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingsTransportableGoods"
+              [source]="goodsTranportables"
+              (edit)="showGood($event.data)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItemsTransportable"></app-pagination>
+          </tab>
+          <tab [heading]="headingGuard">
+            <div class="d-flex justify-content-end">
+              <app-columns-select
+                [(settings)]="settingGuardGoods"></app-columns-select>
+            </div>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingGuardGoods"
+              [source]="goodsGuards"
+              (edit)="showGood($event.data)">
+            </ng2-smart-table>
+          </tab>
+          <tab [heading]="headingWarehouse">
+            <div class="d-flex justify-content-end">
+              <app-columns-select
+                [(settings)]="settingWarehouseGoods"></app-columns-select>
+            </div>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingWarehouseGoods"
+              [source]="goodsWarehouse"
+              (edit)="showGood($event.data)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItemsWarehouse"></app-pagination>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

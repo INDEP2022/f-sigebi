@@ -1,0 +1,224 @@
+<app-card [header]="false">
+  <!--  <div class="ch-content" header>-->
+  <!--    <div class="row mb-3">-->
+  <!--      <h5 class="title">Filtar solicitudes</h5>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+  <div body>
+    <div class="row">
+      <h5 class="title">
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = true"
+            *ngIf="!showSearchForm">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
+            solicitudes</a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = false"
+            *ngIf="showSearchForm">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
+            solicitudes</a
+          >
+        </p>
+      </h5>
+    </div>
+    <div class="row" *ngIf="showSearchForm">
+      <form [formGroup]="searchForm" class="form-material">
+        <!--<div class="row mb-2">
+          <div class="col-sm-2">
+            <span style="line-height: 3">Match</span>
+          </div>
+          <div class="col-sm-2">
+            <form-radio label="All">
+              <input
+                type="radio"
+                formControlName="typeMach"
+                value="all"
+                id="all"
+                [checked]="checked" />
+            </form-radio>
+          </div>
+          <div class="col-sm-2">
+            <form-radio label="Any">
+              <input
+                type="radio"
+                formControlName="typeMach"
+                value="any"
+                id="any" />
+            </form-radio>
+          </div>
+        </div>-->
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('dateRequest')"
+              label="Fecha de solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateRequest"
+                bsDaterangepicker
+                [bsConfig]="{ isAnimated: true }" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="searchForm"
+              control="station"
+              (fetchItems)="getStation($event)"
+              [data]="selectStation"
+              label="Emisora"
+              bindLabel="nameAndId"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('acta')"
+              label="Acta Circunstanciada">
+              <input type="text" class="form-control" formControlName="acta" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('dateJob')"
+              label="Fecha de oficio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateJob"
+                bsDaterangepicker
+                [bsConfig]="{ isAnimated: true }" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="searchForm"
+              control="authority"
+              (fetchItems)="getAuthority($event)"
+              [data]="selectAuthority"
+              bindLabel="nameAndId"
+              label="Autoridad"
+              value="idAuthority"></ngx-select>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('ascertainment')"
+              label="Averiguación previa">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ascertainment" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <ngx-select
+              [form]="searchForm"
+              control="regionalDelegationId"
+              (fetchItems)="getRegionalDelegationId($event)"
+              [data]="selectRegDele"
+              bindLabel="description"
+              label="Delegación Regional"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('expedient')"
+              label="Expediente transferente/PAMA">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="expedient" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field [control]="searchForm.get('cause')" label="Causa penal">
+              <input type="text" class="form-control" formControlName="cause" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <ngx-select
+              [form]="searchForm"
+              control="stateOfRepublic"
+              (fetchItems)="getStateOfRepublic($event)"
+              [data]="selectState"
+              bindLabel="descCondition"
+              label="Estado"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-6">
+            <ngx-select
+              [form]="searchForm"
+              control="affair"
+              (fetchItems)="getAffair($event)"
+              [data]="selectAffeir"
+              bindLabel="description"
+              label="Asunto"
+              value="id"></ngx-select>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <ngx-select
+              [form]="searchForm"
+              [data]="selectTransfer"
+              control="transfer"
+              bindLabel="nameAndId"
+              (fetchItems)="getTransferente($event)"
+              label="Transferente"
+              value="idTransferee"></ngx-select>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('contributor')"
+              label="Contribuyente y/o Indiciado">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="contributor" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="d-flex justify-content-end">
+            <div class="p-2">
+              <button
+                (click)="search()"
+                [disabled]="searchForm.invalid"
+                class="btn btn-primary active btn-sm ml-3"
+                style="height: 36px">
+                <i class="bx bx-search-alt-2"></i> Buscar
+              </button>
+            </div>
+            <div class="p-2">
+              <button
+                (click)="reset()"
+                class="btn btn-danger active btn-sm ml-3">
+                <i class="bx bx-reset"></i> Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

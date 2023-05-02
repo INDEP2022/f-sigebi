@@ -1,0 +1,37 @@
+<ng-container>
+  <div id="selectModalTable" class="row">
+    <div *ngIf="form" [formGroup]="form" class="row ml-4" style="padding: 0px">
+      <div class="col-md-5 row">
+        <button
+          [disabled]="disabled"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          style="width: 36px"
+          (click)="openModal()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+        <form-field
+          style="width: calc(100% - 36px)"
+          [control]="form.get(formField)"
+          [label]="label">
+          <input
+            type="text"
+            [formControlName]="formField"
+            class="form-control"
+            [readonly]="disabled" />
+        </form-field>
+      </div>
+
+      <form-field
+        class="row col-md-7 description"
+        [control]="form.get(formFieldName)"
+        [label]="labelName">
+        <textarea
+          rows="2"
+          class="form-control"
+          [formControlName]="formFieldName"
+          readonly></textarea>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

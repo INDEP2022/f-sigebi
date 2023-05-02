@@ -1,0 +1,176 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Impresi&oacute;n de Volantes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="flyersForm" class="form-material">
+      <div class="row">
+        <div class="col-md-2">
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('PN_VOLANTEINI')"
+              label="Del Volante: ">
+              <input
+                class="form-control"
+                type="number"
+                formControlName="PN_VOLANTEINI" />
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('PN_VOLANTEFIN')"
+              label="Hasta el Volante: ">
+              <input
+                class="form-control"
+                type="number"
+                formControlName="PN_VOLANTEFIN" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field [control]="flyersForm.get('PN_NODELEGACION')">
+                <ngx-select
+                  [form]="flyersForm"
+                  (fetchItems)="getDelegations($event)"
+                  [data]="delegations"
+                  value="id"
+                  bindLabel="description"
+                  label="Delegaci&oacute;n"
+                  [control]="'PN_NODELEGACION'"
+                  (change)="onDelegationsChange($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field [control]="flyersForm.get('PN_NOSUBDELEGACION')">
+                <ngx-select
+                  [form]="flyersForm"
+                  (fetchItems)="getSubDelegations($event)"
+                  [data]="subdelegations"
+                  value="id"
+                  bindLabel="description"
+                  label="Sub Delegaci&oacute;n"
+                  [control]="'PN_NOSUBDELEGACION'"
+                  (change)="onSubDelegationsChange($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div>
+          <!-- <app-delegation-shared [form]="flyersForm"></app-delegation-shared> -->
+        </div>
+
+        <div class="col-md-4">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field [control]="flyersForm.get('PN_AREADESTINO')">
+                <ngx-select
+                  (fetchItems)="getDepartments($event)"
+                  [data]="departments"
+                  [form]="flyersForm"
+                  value="id"
+                  bindLabel="description"
+                  label="&Aacute;rea de destino"
+                  [control]="'PN_AREADESTINO'">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div>
+          <!--<div class="row pt-3">
+            <form-field [control]="flyersForm.get('area')">
+              <ngx-select
+                [form]="flyersForm"
+                control="area"
+                label="&Aacute;rea de destino"
+                [data]="select"></ngx-select>
+            </form-field>
+          </div>-->
+          <!-- <app-departments-shared [form]="flyersForm" label="Área Destino">
+          </app-departments-shared> -->
+          <div class="row">
+            <form-field
+              [control]="flyersForm.get('PN_TIPOASUNTO')"
+              label="Tipo de Asunto">
+              <ng-select
+                formControlName="PN_TIPOASUNTO"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="A">ADMINISTRATIVO</ng-option>
+                <ng-option value="P">PROCESAL</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('PF_FECINI')"
+              label="Fecha desde: ">
+              <input
+                class="form-control"
+                formControlName="PF_FECINI"
+                (bsValueChange)="setMinDateEnd($event)"
+                [maxDate]="maxDateStart"
+                bsDatepicker />
+            </form-field>
+            <div></div>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('PF_FECFIN')" label="Hasta:">
+              <input
+                class="form-control"
+                formControlName="PF_FECFIN"
+                [maxDate]="maxDateEnd"
+                [minDate]="minDateEnd"
+                bsDatepicker />
+            </form-field>
+            <div></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('P_IDENTIFICADOR')"
+              label="Identificador">
+              <input
+                class="form-control"
+                type="number"
+                formControlName="P_IDENTIFICADOR" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="flyersForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

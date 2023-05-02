@@ -1,0 +1,195 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="form-group col-md-2">
+          <form-field [control]="form.get('noBien')" label="Número bien">
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Numero bien"
+              formControlName="noBien"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="form-group col-md-4">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              placeholder="Descripción"
+              formControlName="description"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="form-group col-md-2">
+          <form-field [control]="form.get('status')" label="Status">
+            <input
+              type="text"
+              formControlName="status"
+              placeholder="Status"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('noRecord')"
+            label="Número de Expediente">
+            <input
+              type="number"
+              placeholder="Numero de expediente"
+              class="form-control"
+              formControlName="noRecord"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('identifier')" label="Identificador">
+            <input
+              type="text"
+              placeholder="Identificador"
+              formControlName="identifier"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('processExtDom')"
+            label="Proceso ext dom">
+            <input
+              type="text"
+              placeholder="Procesos ext dom"
+              formControlName="processExtDom"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('noConversions')"
+            label="Número de conversiónes">
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Numero de conversiones"
+              formControlName="noConversions"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+
+      <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+        DETALLES NUMERARIO
+      </h5>
+
+      <div class="row mt-4">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('noBienNum')"
+            label="Número Bien Numerario">
+            <input
+              type="number"
+              placeholder="Numero bien numerario"
+              class="form-control"
+              formControlName="noBienNum"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="form-group col-md-4">
+          <form-field [control]="form.get('statusBien')" label="Status bien">
+            <input
+              type="text"
+              placeholder="Status bien"
+              formControlName="statusBien"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="form-group col-md-2">
+          <form-field [control]="form.get('date')" label="Fecha de cambio">
+            <input
+              formControlName="date"
+              placeholder="Fecha de Cambio"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-5"></div>
+        <div class="form-group col-md-3 d-flex justify-content-end">
+          <form-field [control]="form.get('price')" label="Precio">
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Precio"
+              formControlName="price"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5"></div>
+        <div class="form-group col-md-3 d-flex justify-content-end">
+          <form-field [control]="form.get('spend')" label="Gasto">
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Gasto"
+              formControlName="spend"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5"></div>
+        <div class="form-group col-md-3 d-flex justify-content-end">
+          <form-field [control]="form.get('totalIva')" label="Total IVA">
+            <input
+              type="number"
+              placeholder="Total IVA"
+              class="form-control"
+              formControlName="totalIva"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5"></div>
+        <div class="form-group col-md-3 d-flex justify-content-end">
+          <form-field [control]="form.get('total')" label="Total">
+            <input
+              type="number"
+              placeholder="Total"
+              class="form-control"
+              formControlName="total"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            text="IMPRIMIR REPORTE"
+            [disabled]="form.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

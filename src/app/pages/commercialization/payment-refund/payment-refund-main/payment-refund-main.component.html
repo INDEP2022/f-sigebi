@@ -1,0 +1,375 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">devolución de pagos</h5>
+  </div>
+  <div body>
+    <div *ngIf="layout == 'MAIN'" @OnInOut>
+      <div class="row d-flex">
+        <div class="col-sm-8 col-md-9">
+          <div class="d-flex align-items-center">
+            <h6 class="d-inline ms-3">Control de Devoluciones</h6>
+          </div>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <div class="d-flex flex-row-reverse">
+            <div>
+              <div
+                class="btn-group mt-0 me-2"
+                placement="bottom right"
+                dropdown
+                [isDisabled]="">
+                <button
+                  #actionsBtn
+                  dropdownToggle
+                  type="button"
+                  class="btn btn-sm btn-success btn-block active me-2 font-size-14 dropdown-toggle"
+                  aria-controls="dropdown-actions">
+                  Archivos CSV <span class="caret"></span>
+                </button>
+                <ul
+                  id="dropdown-csv"
+                  *dropdownMenu
+                  class="dropdown-menu dropdown-menu-right"
+                  role="menu"
+                  aria-labelledby="processBtn">
+                  <li role="menuitem">
+                    <a
+                      class="dropdown-item bg-success text-light"
+                      (click)="(true)"
+                      >Relaci&oacute;n de Devoluciones de Garant&iacute;a de
+                      Seguridad</a
+                    >
+                  </li>
+                  <li role="menuitem">
+                    <a
+                      class="dropdown-item bg-success text-light"
+                      (click)="(true)"
+                      >Archivos de Pagos y Transferencias</a
+                    >
+                  </li>
+                  <li role="menuitem">
+                    <a
+                      class="dropdown-item bg-success text-light"
+                      (click)="(true)"
+                      >Referencias de Solicitudes de Gastos y Pagos</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="mw-98 mt-n2" />
+      <div class="row mt-3">
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div class="form-material">
+            <search-bar [params]="controlParams"></search-bar>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div class="d-flex flex-row-reverse">
+            <div class="">
+              <app-columns-select
+                [(settings)]="controlSettings"></app-columns-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-scrollbar
+        [track]="'horizontal'"
+        [autoHeightDisabled]="false"
+        class="table-scrollbar mt-1">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="controlTable"
+            [settings]="controlSettings"
+            [source]="controlColumns"
+            (userRowSelect)="selectControl($event.selected)">
+          </ng2-smart-table>
+        </div>
+        <div class="table-padding"></div>
+      </ng-scrollbar>
+      <app-pagination [params]="controlParams" [totalItems]="controlTotalItems">
+      </app-pagination>
+      <div class="row mt-n4">
+        <form class="form-material" [formGroup]="controlForm">
+          <div class="row d-flex justify-content-center">
+            <div class="col-sm-6 col-md-4 col-lg-3">
+              <div class="d-flex justify-content-center">
+                <div>
+                  <form-radio label="En Proceso">
+                    <input
+                      type="radio"
+                      class="d-inline"
+                      formControlName="filter"
+                      (click)="filter($event)"
+                      value="EN PROCESO" />
+                  </form-radio>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3">
+              <div class="d-flex justify-content-center">
+                <div>
+                  <form-radio label="Concluidos">
+                    <input
+                      type="radio"
+                      class="d-inline"
+                      formControlName="filter"
+                      (click)="filter($event)"
+                      value="CONCLUIDO" />
+                  </form-radio>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3">
+              <div class="d-flex justify-content-center">
+                <div>
+                  <form-radio label="Todos">
+                    <input
+                      type="radio"
+                      class="d-inline"
+                      formControlName="filter"
+                      (click)="filter($event)"
+                      value="TODOS" />
+                  </form-radio>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row mt-4">
+        <div class="col-sm-12 col-md-12">
+          <div
+            class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
+            <div class="col">
+              <button
+                class="btn btn-sm btn-info btn-block active me-2 font-size-13"
+                (click)="openControlModal()">
+                Crear Control
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                (click)="changeLayout('EXPENSE REQUEST')"
+                [disabled]="">
+                Generar Solicitudes Gastos
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-success btn-block active me-2 font-size-13"
+                (click)="sendRequests()"
+                [disabled]="">
+                Enviar Solicitudes a SIRSAE
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
+                (click)="changeLayout('MAINTENANCE')">
+                Mantenimiento de Layouts
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                (click)="openCreationModal()">
+                Permisos de Creaci&oacute;n
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="md-tabs mt-n3" #tabsContainer>
+          <tabset #refundTabs>
+            <tab heading="Eventos Relacionados" id="eventsTab">
+              <div class="row mt-3">
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                  <div class="form-material">
+                    <search-bar [params]="eventParams"></search-bar>
+                  </div>
+                </div>
+              </div>
+              <ng-scrollbar
+                [track]="'horizontal'"
+                [autoHeightDisabled]="false"
+                class="table-scrollbar">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    id="eventTable"
+                    [settings]="eventSettings"
+                    [source]="eventColumns"
+                    (userRowSelect)="selectRelatedEvent($event.selected)">
+                  </ng2-smart-table>
+                </div>
+              </ng-scrollbar>
+              <div class="row d-flex justify-content-center mt-4">
+                <div class="col-sm-6 col-md-4 d-flex justify-content-center">
+                  <div>
+                    <p>
+                      <strong>Cantidad Total: </strong
+                      >{{ eventsTotalQuantity | number }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-4 d-flex justify-content-center">
+                  <div>
+                    <p>
+                      <strong>Monto Total: </strong
+                      >{{ eventsTotalAmount | number }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <app-pagination
+                [params]="eventParams"
+                [totalItems]="eventTotalItems">
+              </app-pagination>
+            </tab>
+            <tab heading="Cuentas de Banco Relacionadas" id="accountsTab">
+              <div class="row mt-3">
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                  <div class="form-material">
+                    <search-bar [params]="accountParams"></search-bar>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                  <div class="d-flex flex-row-reverse">
+                    <div class="">
+                      <app-columns-select
+                        [(settings)]="accountSettings"></app-columns-select>
+                    </div>
+                    <div>
+                      <button
+                        class="btn btn-sm btn-primary active me-2 font-size-13"
+                        (click)="refreshAccountsPayments()"
+                        [disabled]="selectedAccounts.length == 0">
+                        Verificar Pagos SIRSAE
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-scrollbar
+                [track]="'horizontal'"
+                [autoHeightDisabled]="false"
+                class="table-scrollbar">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    id="accountTable"
+                    [settings]="accountSettings"
+                    [source]="accountColumns"
+                    (userRowSelect)="selectAccounts($event.selected)">
+                  </ng2-smart-table>
+                </div>
+                <div class="table-padding"></div>
+              </ng-scrollbar>
+              <div class="row d-flex justify-content-center mt-4">
+                <div class="col-sm-6 col-md-4 d-flex justify-content-center">
+                  <div>
+                    <p>
+                      <strong>Cantidad Total: </strong
+                      >{{ accountsTotalQuantity | number }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-4 d-flex justify-content-center">
+                  <div>
+                    <p>
+                      <strong>Monto Total: </strong
+                      >{{ accountsTotalAmount | number }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <app-pagination
+                [params]="accountParams"
+                [totalItems]="accountTotalItems">
+              </app-pagination>
+            </tab>
+            <tab heading="Pagos en Cuentas Bancarias" id="paymentsTab">
+              <div class="row mt-3">
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                  <div class="form-material">
+                    <search-bar [params]="paymentParams"></search-bar>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                  <div class="d-flex flex-row-reverse">
+                    <div class="">
+                      <app-columns-select
+                        [(settings)]="paymentSettings"></app-columns-select>
+                    </div>
+                    <div class="me-2">
+                      <button
+                        class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
+                        (click)="openRfcModal()"
+                        [disabled]="selectedPayment.length == 0">
+                        Editar RFC o Nombre
+                      </button>
+                    </div>
+                    <div class="me-2">
+                      <button
+                        class="btn btn-sm btn-success btn-block active me-2 font-size-13"
+                        (click)="openTransferDateModal()"
+                        [disabled]="selectedPayment.length == 0">
+                        Fecha de Transferencia
+                      </button>
+                    </div>
+                    <div class="me-2">
+                      <button
+                        class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                        (click)="openKeyChangeModal()"
+                        [disabled]="selectedPayment.length == 0">
+                        Cambio de Clave
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-scrollbar
+                [track]="'horizontal'"
+                [autoHeightDisabled]="false"
+                class="table-scrollbar mt-3">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    id="paymentTable"
+                    [settings]="paymentSettings"
+                    [source]="paymentColumns"
+                    (userRowSelect)="selectPayment($event.selected)">
+                  </ng2-smart-table>
+                  <div class="table-padding"></div>
+                </div>
+              </ng-scrollbar>
+              <div class="row d-flex justify-content-center mt-4">
+                <div class="col-sm-6 col-md-4 d-flex justify-content-center">
+                  <div>
+                    <p>
+                      <strong>Monto Total: </strong
+                      >{{ paymentsTotalAmount | number }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <app-pagination
+                [params]="paymentParams"
+                [totalItems]="paymentTotalItems">
+              </app-pagination>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="layout == 'EXPENSE REQUEST'" @OnInOut>
+      <app-expenses-request (onReturn)="refresh()"></app-expenses-request>
+    </div>
+    <div *ngIf="layout == 'MAINTENANCE'" @OnInOut>
+      <app-layout-maintenance (onReturn)="refresh()"></app-layout-maintenance>
+    </div>
+  </div>
+</app-card>

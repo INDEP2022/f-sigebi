@@ -1,0 +1,92 @@
+<div class="row">
+  <div class="col-sm-6 col-md-8">
+    <div class="d-flex align-items-center">
+      <h5 class="d-inline ms-3">Datos de dictamen</h5>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <form [formGroup]="form" class="form-material">
+    <div class="col-md-6">
+      <div class="pt-4">
+        <form-field
+          [control]="form.get('dictamenNumber')"
+          label="N&uacute;mero dictamen">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="dictamenNumber" />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-field [control]="form.get('dictamenDate')" label="Fecha dictamen">
+          <input
+            class="form-control"
+            formControlName="dictamenDate"
+            bsDatepicker />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-field [control]="form.get('judged')" label="Juzgado / Sala">
+          <input type="number" class="form-control" formControlName="judged" />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-field [control]="form.get('nullityTrial')" label="Juicio nulidad">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="nullityTrial" />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-field
+          [control]="form.get('noResolutionAdmin')"
+          label="No&#46; resoluci&oacute;n administrativa">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="noResolutionAdmin" />
+        </form-field>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="pt-4">
+        <form-field
+          [control]="form.get('contributor')"
+          label="Contribuyente y/o indiciado">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="contributor" />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-field [control]="form.get('address1')" label="Domicilio 1">
+          <input class="form-control" formControlName="address1" bsDatepicker />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-field [control]="form.get('address2')" label="Domicilio 2">
+          <input type="text" class="form-control" formControlName="address2" />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-field
+          [control]="form.get('legalRepresent')"
+          label="Representante legal">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="legalRepresent" />
+        </form-field>
+      </div>
+      <div class="pt-4">
+        <form-check label="Require copia SAT" for="label">
+          <input id="label" type="checkbox" formControlName="copySatRequired" />
+        </form-check>
+      </div>
+    </div>
+  </form>
+</div>

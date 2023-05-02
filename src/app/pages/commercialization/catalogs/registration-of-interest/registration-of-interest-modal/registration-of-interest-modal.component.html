@@ -1,0 +1,102 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="providerForm">
+      <div class="row">
+        <!-- <div class="form-group">
+          <div class="col-sm-4 p-0">
+            <form-field
+              [control]="providerForm.get('user')"
+              label="Selecciona usuario&#58;">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="user"
+                placeholder="Ingrese el usuario" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <button
+              (click)="searchUser()"
+              class="btn btn-primary btn-sm active">
+              Buscar usuario
+            </button>
+          </div>
+        </div> -->
+        <div class="col-md-4">
+          <!-- <form-field [control]="providerForm.get('user')" label="Selecciona usuario&#58;">
+            <input type="number" class="form-control" formControlName="tiieDays" /> </form-field>-->
+          <ngx-select
+            [form]="providerForm"
+            control="user"
+            (fetchItems)="searchUser()"
+            [showTooltip]="true"
+            [data]="selectUser"
+            bindLabel="name"
+            label="User"
+            value="id"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('tiieDays')"
+            label="Días TIIE">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="tiieDays" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('tiieAverage')"
+            label="Promedio TIIE">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="tiieAverage" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="providerForm.get('tiieMonth')"
+            label="Mes TIIE">
+            <input
+              type="number"
+              class="form-control"
+              max="99"
+              formControlName="tiieMonth" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="providerForm.get('tiieYear')" label="Año TIIE">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="tiieYear" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!providerForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"
+          >Registrar</confirm-button
+        >
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

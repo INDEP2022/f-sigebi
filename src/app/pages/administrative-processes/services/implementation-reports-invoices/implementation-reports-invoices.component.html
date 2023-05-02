@@ -1,0 +1,211 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Datos de la Factura</h5>
+  </div>
+  <div body>
+    <form [formGroup]="invoiceDetailsForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="invoiceDetailsForm.get('invoice')"
+            label="Factura">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="invoice"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="invoiceDetailsForm.get('dateInvoice')"
+            label="Fecha Factura">
+            <input
+              type="text"
+              formControlName="dateInvoice"
+              placeholder="Fecha Factura"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="invoiceDetailsForm.get('quantity')"
+            label="Cantidad">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="quantity"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-4">
+            <form-field
+              [control]="invoiceDetailsForm.get('status')"
+              label="Estatus">
+              <select class="form-control" formControlName="status">
+                <option [value]="null">Seleccione un estatus</option>
+                <option value="NO">prueba</option>
+              </select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="invoiceDetailsForm.get('captureDate')"
+              label="Fecha Captura">
+              <input
+                type="text"
+                formControlName="captureDate"
+                placeholder="Fecha Captura"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="invoiceDetailsForm.get('observations')"
+              label="Observaciones">
+              <textarea
+                class="form-control"
+                type="text"
+                rows="2"
+                formControlName="observations"
+                placeholder="Observaciones"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <img
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAAAAXNSR0IArs4c6QAABPtJREFUeF7t10tLHFEQxfEbRBDxBT7QjSi6UNwJfv8PIOhCRBeCogtFVPCJIpJwG25zHTtmzoGQmdR/VolTNU6d+nm7+8fd3d3PxIsE+kzgB2D6TIqyJgHAAEFKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUfxfgHl8fEx7e3tpfHw87ezsfNrq1dVVOjo6ShMTE+17Z2dn6eTkpKnLPdvb22lsbKwvDYeHh+n6+jptbm6mxcXFTz35vcvLy7S+vp5WVlaa98rP8r+np6e/fL++fukAFQ09mALi4+OjcyG7u7vp/v6+fa/gmpubS8vLy7+F1rWj8lkjIyNfwJTPfX9/b8GU77a6utqAzHAXFhbS1tbWABHQvspQg6mxdP0F1ydJ+esuPyunQEbw8vLSnDLn5+ftCTE7O9tgGh0dbd47ODho4OVXF5iCKb9fPrs+jWZmZprPyy/lRNPW+ferhx5MvgQsLS19ueyUv/ipqan08PDQXq56LyldS82nRIby9vbWniT7+/vN77m4uEhPT0+fTpiM8PT0NGVk+XLVhXFycjLVOPP/h/E11GBK4F33KRnCzc1N2tjYSMfHx32ByfckXadSvdi89BrM6+trexLNz88390aAGfA/hV4w9b1DubSUG+LvTpgMpgCoT5fvwBSY+TJze3sLmAG30ny9XjD1k0n9/fN9zJ9Ogbq36wmqPmHKfUm+B+p95VPm+fm5faLiHmaAJHVdksrX633krp+S1tbW2stJfhyvPydjKfdH9VNN7yWpjqH3hrrrpMtPZzwl/WM8Cpj6RMqP4vUp0nV65BvgfLkpN6kKmPy7/nRP9I+jk3/9f3HTK09Ng50AYOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pAWNHF7MRMDH3bk8NGDu6mI2Aibl3e2rA2NHFbARMzL3bUwPGji5mI2Bi7t2eGjB2dDEbARNz7/bUgLGji9kImJh7t6cGjB1dzEbAxNy7PTVg7OhiNgIm5t7tqQFjRxezETAx925PDRg7upiNgIm5d3tqwNjRxWwETMy921MDxo4uZiNgYu7dnhowdnQxGwETc+/21ICxo4vZCJiYe7enBowdXcxGwMTcuz01YOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pfwEb/PimSFvoIQAAAABJRU5ErkJggg=="
+              alt="..."
+              class="img-rounded" />
+            <div class="justify-content-center margin-input">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Seleccionar imagen
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <img
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAAAAXNSR0IArs4c6QAABPtJREFUeF7t10tLHFEQxfEbRBDxBT7QjSi6UNwJfv8PIOhCRBeCogtFVPCJIpJwG25zHTtmzoGQmdR/VolTNU6d+nm7+8fd3d3PxIsE+kzgB2D6TIqyJgHAAEFKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUfxfgHl8fEx7e3tpfHw87ezsfNrq1dVVOjo6ShMTE+17Z2dn6eTkpKnLPdvb22lsbKwvDYeHh+n6+jptbm6mxcXFTz35vcvLy7S+vp5WVlaa98rP8r+np6e/fL++fukAFQ09mALi4+OjcyG7u7vp/v6+fa/gmpubS8vLy7+F1rWj8lkjIyNfwJTPfX9/b8GU77a6utqAzHAXFhbS1tbWABHQvspQg6mxdP0F1ydJ+esuPyunQEbw8vLSnDLn5+ftCTE7O9tgGh0dbd47ODho4OVXF5iCKb9fPrs+jWZmZprPyy/lRNPW+ferhx5MvgQsLS19ueyUv/ipqan08PDQXq56LyldS82nRIby9vbWniT7+/vN77m4uEhPT0+fTpiM8PT0NGVk+XLVhXFycjLVOPP/h/E11GBK4F33KRnCzc1N2tjYSMfHx32ByfckXadSvdi89BrM6+trexLNz88390aAGfA/hV4w9b1DubSUG+LvTpgMpgCoT5fvwBSY+TJze3sLmAG30ny9XjD1k0n9/fN9zJ9Ogbq36wmqPmHKfUm+B+p95VPm+fm5faLiHmaAJHVdksrX633krp+S1tbW2stJfhyvPydjKfdH9VNN7yWpjqH3hrrrpMtPZzwl/WM8Cpj6RMqP4vUp0nV65BvgfLkpN6kKmPy7/nRP9I+jk3/9f3HTK09Ng50AYOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pAWNHF7MRMDH3bk8NGDu6mI2Aibl3e2rA2NHFbARMzL3bUwPGji5mI2Bi7t2eGjB2dDEbARNz7/bUgLGji9kImJh7t6cGjB1dzEbAxNy7PTVg7OhiNgIm5t7tqQFjRxezETAx925PDRg7upiNgIm5d3tqwNjRxWwETMy921MDxo4uZiNgYu7dnhowdnQxGwETc+/21ICxo4vZCJiYe7enBowdXcxGwMTcuz01YOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pfwEb/PimSFvoIQAAAABJRU5ErkJggg=="
+              alt="..."
+              class="img-rounded" />
+            <div class="justify-content-center margin-input">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Seleccionar imagen
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <img
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAAAAXNSR0IArs4c6QAABPtJREFUeF7t10tLHFEQxfEbRBDxBT7QjSi6UNwJfv8PIOhCRBeCogtFVPCJIpJwG25zHTtmzoGQmdR/VolTNU6d+nm7+8fd3d3PxIsE+kzgB2D6TIqyJgHAAEFKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUfxfgHl8fEx7e3tpfHw87ezsfNrq1dVVOjo6ShMTE+17Z2dn6eTkpKnLPdvb22lsbKwvDYeHh+n6+jptbm6mxcXFTz35vcvLy7S+vp5WVlaa98rP8r+np6e/fL++fukAFQ09mALi4+OjcyG7u7vp/v6+fa/gmpubS8vLy7+F1rWj8lkjIyNfwJTPfX9/b8GU77a6utqAzHAXFhbS1tbWABHQvspQg6mxdP0F1ydJ+esuPyunQEbw8vLSnDLn5+ftCTE7O9tgGh0dbd47ODho4OVXF5iCKb9fPrs+jWZmZprPyy/lRNPW+ferhx5MvgQsLS19ueyUv/ipqan08PDQXq56LyldS82nRIby9vbWniT7+/vN77m4uEhPT0+fTpiM8PT0NGVk+XLVhXFycjLVOPP/h/E11GBK4F33KRnCzc1N2tjYSMfHx32ByfckXadSvdi89BrM6+trexLNz88390aAGfA/hV4w9b1DubSUG+LvTpgMpgCoT5fvwBSY+TJze3sLmAG30ny9XjD1k0n9/fN9zJ9Ogbq36wmqPmHKfUm+B+p95VPm+fm5faLiHmaAJHVdksrX633krp+S1tbW2stJfhyvPydjKfdH9VNN7yWpjqH3hrrrpMtPZzwl/WM8Cpj6RMqP4vUp0nV65BvgfLkpN6kKmPy7/nRP9I+jk3/9f3HTK09Ng50AYOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pAWNHF7MRMDH3bk8NGDu6mI2Aibl3e2rA2NHFbARMzL3bUwPGji5mI2Bi7t2eGjB2dDEbARNz7/bUgLGji9kImJh7t6cGjB1dzEbAxNy7PTVg7OhiNgIm5t7tqQFjRxezETAx925PDRg7upiNgIm5d3tqwNjRxWwETMy921MDxo4uZiNgYu7dnhowdnQxGwETc+/21ICxo4vZCJiYe7enBowdXcxGwMTcuz01YOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pfwEb/PimSFvoIQAAAABJRU5ErkJggg=="
+              alt="..."
+              class="img-rounded" />
+            <div class="justify-content-center margin-input">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Seleccionar imagen
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <img
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAAAAXNSR0IArs4c6QAABPtJREFUeF7t10tLHFEQxfEbRBDxBT7QjSi6UNwJfv8PIOhCRBeCogtFVPCJIpJwG25zHTtmzoGQmdR/VolTNU6d+nm7+8fd3d3PxIsE+kzgB2D6TIqyJgHAAEFKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUQwYDEgJAEaKi2LAYEBKADBSXBQDBgNSAoCR4qIYMBiQEgCMFBfFgMGAlABgpLgoBgwGpAQAI8VFMWAwICUAGCkuigGDASkBwEhxUfxfgHl8fEx7e3tpfHw87ezsfNrq1dVVOjo6ShMTE+17Z2dn6eTkpKnLPdvb22lsbKwvDYeHh+n6+jptbm6mxcXFTz35vcvLy7S+vp5WVlaa98rP8r+np6e/fL++fukAFQ09mALi4+OjcyG7u7vp/v6+fa/gmpubS8vLy7+F1rWj8lkjIyNfwJTPfX9/b8GU77a6utqAzHAXFhbS1tbWABHQvspQg6mxdP0F1ydJ+esuPyunQEbw8vLSnDLn5+ftCTE7O9tgGh0dbd47ODho4OVXF5iCKb9fPrs+jWZmZprPyy/lRNPW+ferhx5MvgQsLS19ueyUv/ipqan08PDQXq56LyldS82nRIby9vbWniT7+/vN77m4uEhPT0+fTpiM8PT0NGVk+XLVhXFycjLVOPP/h/E11GBK4F33KRnCzc1N2tjYSMfHx32ByfckXadSvdi89BrM6+trexLNz88390aAGfA/hV4w9b1DubSUG+LvTpgMpgCoT5fvwBSY+TJze3sLmAG30ny9XjD1k0n9/fN9zJ9Ogbq36wmqPmHKfUm+B+p95VPm+fm5faLiHmaAJHVdksrX633krp+S1tbW2stJfhyvPydjKfdH9VNN7yWpjqH3hrrrpMtPZzwl/WM8Cpj6RMqP4vUp0nV65BvgfLkpN6kKmPy7/nRP9I+jk3/9f3HTK09Ng50AYOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pAWNHF7MRMDH3bk8NGDu6mI2Aibl3e2rA2NHFbARMzL3bUwPGji5mI2Bi7t2eGjB2dDEbARNz7/bUgLGji9kImJh7t6cGjB1dzEbAxNy7PTVg7OhiNgIm5t7tqQFjRxezETAx925PDRg7upiNgIm5d3tqwNjRxWwETMy921MDxo4uZiNgYu7dnhowdnQxGwETc+/21ICxo4vZCJiYe7enBowdXcxGwMTcuz01YOzoYjYCJube7akBY0cXsxEwMfduTw0YO7qYjYCJuXd7asDY0cVsBEzMvdtTA8aOLmYjYGLu3Z4aMHZ0MRsBE3Pv9tSAsaOL2QiYmHu3pwaMHV3MRsDE3Ls9NWDs6GI2Aibm3u2pfwEb/PimSFvoIQAAAABJRU5ErkJggg=="
+              alt="..."
+              class="img-rounded" />
+            <div class="justify-content-center margin-input">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Seleccionar imagen
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="pt-4">
+      <h5 class="title">Delegación</h5>
+      <form [formGroup]="delegationForm" class="form-material">
+        <div class="row margin-input">
+          <div class="col-md-2">
+            <form-field [control]="delegationForm.get('number')" label="No.">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="number"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="delegationForm.get('description')"
+              label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Consultar
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h5 class="title pt-4">Reporte de Implementación</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h5 class="title pt-4">Reporte relacionados con la factura</h5>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-success">
+            <i class="bx bxs-circle me-1 text-success"></i>
+            Disponible
+          </h5>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-danger">
+            <i class="bx bxs-circle me-1 text-danger"></i>
+            No disponible
+          </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

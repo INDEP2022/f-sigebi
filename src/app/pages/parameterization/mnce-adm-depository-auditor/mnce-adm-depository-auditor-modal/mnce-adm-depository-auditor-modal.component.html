@@ -1,0 +1,77 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cve')"
+            label="Cve&#46; Depositar&iacute;a">
+            <input type="text" class="form-control" formControlName="cve" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="ch-content">
+        <h5 class="title">Datos Generales</h5>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-8">
+          <form-field [control]="form.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('noExt')" label="No&#46; Exterior">
+            <input type="text" class="form-control" formControlName="noExt" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('noInt')" label="No&#46; Interior">
+            <input type="text" class="form-control" formControlName="noInt" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-8">
+          <form-field [control]="form.get('suburb')" label="Colonia">
+            <input type="text" class="form-control" formControlName="suburb" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

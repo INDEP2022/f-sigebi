@@ -1,0 +1,224 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      {{
+        param === 'DD'
+          ? 'Donaciones Directas'
+          : 'Proceso del Sistema de Donaciones'
+      }}
+    </h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-12">
+        <h5 class="around-tag">
+          Propuestas de Inventarios para Donaci&oacute;n
+        </h5>
+      </div>
+    </div>
+
+    <form class="form-material p-2" [formGroup]="form">
+      <div class="row mt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('warehouseBus')"
+            label="No. Almac&eacute;n">
+            <input
+              type="number"
+              [min]="0"
+              class="form-control"
+              formControlName="warehouseBus"
+              (ngModelChange)="limit(10, 'warehouseBus', $event)" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('coordination')"
+            label="Coordinaci&oacute;n">
+            <input
+              type="number"
+              [min]="0"
+              class="form-control"
+              formControlName="coordination"
+              (ngModelChange)="limit(10, 'coordination', $event)" />
+          </form-field>
+        </div>
+        <div class="col-md-6 text-left">
+          <div class="d-flex justify-content-between flex-wrap">
+            <div class="mt-2">
+              <button
+                class="btn btn-primary btn-sm active mr-2"
+                (click)="searchGoodDonac()">
+                Consultar
+              </button>
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="inventory()">
+                Seleccionar
+              </button>
+            </div>
+            <div class="mt-2">
+              <button
+                class="btn btn-success btn-sm active mr-2"
+                (click)="exportInventory()">
+                Exportar Inventario
+              </button>
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="callReport()">
+                Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row mt-5">
+      <div class="ch-content mb-2">
+        <div class="col-12 buttons p-0">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="updateAdvance()">
+              Actualizar avance
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="dataTable"
+              (userRowSelect)="selectEvent($event)" (editConfirm)="onSaveConfirm($event)">
+            </ng2-smart-table> -->
+          <ng2-smart-table
+            (dblclick)="inventory()"
+            (rowSelect)="selectEvent($event)"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1.data">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params"
+            [totalItems]="data1.count"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <app-divider></app-divider>
+
+    <div class="row mt-5">
+      <div class="col-12">
+        <h5 class="around-tag">
+          Inventario de Bienes Relacionados a la Propuesta de Inventarios para
+          Donaci&oacute;n
+        </h5>
+      </div>
+    </div>
+    <form class="form-material form-horizontal p-2" [formGroup]="form">
+      <div class="row mt-5">
+        <div class="col-md-2">
+          <div class="p-3">
+            <form-field [control]="form.get('warehouse')" label="No. Almacen">
+              <input
+                type="number"
+                [min]="0"
+                class="form-control"
+                formControlName="warehouse"
+                (ngModelChange)="limit(10, 'warehouse', $event)" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="p-3">
+            <form-field [control]="form.get('warehouseDesc')" label="Almacén">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="warehouseDesc"
+                (ngModelChange)="limit(500, 'warehouseDesc', $event)" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="p-3">
+            <form-field [control]="form.get('doneeId')" label="Id. Donatario">
+              <input
+                type="number"
+                [min]="0"
+                class="form-control"
+                formControlName="doneeId"
+                (ngModelChange)="limit(10, 'doneeId', $event)" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="p-3">
+            <form-field [control]="form.get('donee')" label="Donatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="donee"
+                (ngModelChange)="limit(500, 'donee', $event)" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="p-3">
+            <form-field
+              [control]="form.get('delegationNumber')"
+              label="No. Coordinaci&oacute;n">
+              <input
+                type="number"
+                [min]="0"
+                class="form-control"
+                formControlName="delegationNumber"
+                (ngModelChange)="limit(2, 'delegationNumber', $event)" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="p-3">
+            <form-field
+              [control]="form.get('delegationDesc')"
+              label="Coordinaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="delegationDesc"
+                (ngModelChange)="limit(100, 'delegationDesc', $event)" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="row mt-5" #inventor>
+      <div class="ch-content mb-2">
+        <div class="col-12 buttons p-0">
+          <app-columns-select
+            (settingsChange)="settingsChange($event, 2)"
+            [settings]="settings2">
+          </app-columns-select>
+        </div>
+      </div>
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading2 ? 'table-loading' : ''">
+          <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="dataTable"
+                      (userRowSelect)="selectEvent($event)" (editConfirm)="onSaveConfirm($event)">
+                    </ng2-smart-table> -->
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data2.data">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="data2.count"></app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

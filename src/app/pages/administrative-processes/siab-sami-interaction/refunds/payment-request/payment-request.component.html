@@ -1,0 +1,405 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Solicitud de Pago</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field
+            label="Fecha de Solicitud"
+            [control]="form.get('requestDate')">
+            <input
+              class="form-control"
+              formControlName="requestDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field label="No. Folio" [control]="form.get('folioNumber')">
+            <input
+              class="form-control"
+              formControlName="folioNumber"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field label="No. Pago" [control]="form.get('paymentNumber')">
+            <input
+              class="form-control"
+              formControlName="paymentNumber"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field
+            label="No. Trámite"
+            [control]="form.get('procedureNumber')">
+            <input
+              class="form-control"
+              formControlName="procedureNumber"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Concepts Component-->
+        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+          <app-concepts-shared [form]="form"></app-concepts-shared>
+        </div>
+        <!--Areas Component-->
+        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+          <app-areas-shared [form]="form"></app-areas-shared>
+        </div>
+        <!--Addresses Component-->
+        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+          <app-addresses-shared [form]="form"></app-addresses-shared>
+        </div>
+        <!--Taxpayers Component-->
+        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+          <app-taxpayers-shared [form]="form"></app-taxpayers-shared>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field label="Fecha de Pago" [control]="form.get('paymentDate')">
+            <input
+              class="form-control"
+              formControlName="paymentDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field
+            label="Importe Solicitado"
+            [control]="form.get('amountRequested')">
+            <input
+              class="form-control"
+              formControlName="amountRequested"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <form-field
+            label="No. Contrato"
+            [control]="form.get('contractNumber')">
+            <input
+              class="form-control"
+              formControlName="contractNumber"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3 align-self-baseline">
+          <form-field
+            [control]="form.get('status')"
+            label="Estatus de la Solicitud">
+            <select class="form-control" formControlName="status">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="status1">Estatus 1</option>
+              <option value="status2">Estatus 2</option>
+              <option value="status3">Estatus 3</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Employees Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'capturingUser'"
+            [label]="'Usuario que Captura'"></app-user-shared>
+        </div>
+        <!--Employees Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'authorizingUser'"
+            [label]="'Usuario que Autoriza'"></app-user-shared>
+        </div>
+        <!--Employees Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'requestingUser'"
+            [label]="'Usuario que Solicita'"></app-user-shared>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Payment Type-->
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <label for="">Forma y Condiciones de Pago</label>
+          <div class="row justify-content-between">
+            <div class="col-md-4">
+              <form-radio label="Transferente">
+                <input
+                  type="radio"
+                  formControlName="paymentType"
+                  value="transferent" />
+              </form-radio>
+            </div>
+            <div class="col-md-4">
+              <form-radio label="Cheque">
+                <input
+                  type="radio"
+                  formControlName="paymentType"
+                  value="bankCheck" />
+              </form-radio>
+            </div>
+            <div class="col-md-4">
+              <form-radio label="Otros">
+                <input
+                  type="radio"
+                  formControlName="paymentType"
+                  value="other" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <div class="row justify-content-between">
+            <div class="col-12 mb-3 mt-3">
+              <form-field
+                label="Meses de Solicitud"
+                [control]="form.get('requestMonths')">
+                <input
+                  class="form-control"
+                  formControlName="requestMonths"
+                  [bsConfig]="{
+                    showPreviousMonth: false,
+                    minMode: 'month',
+                    adaptivePosition: true,
+                    dateInputFormat: 'MMMM YYYY',
+                    displayMonths: 1
+                  }"
+                  bsDaterangepicker
+                  [(bsValue)]="dateSelected"
+                  [minDate]="minDate"
+                  [maxDate]="maxDate" />
+              </form-field>
+            </div>
+            <div class="col-12 mb-3 mt-3">
+              <form-field
+                label="Instrucciones Especiales"
+                [control]="form.get('specialInstructions')">
+                <textarea
+                  class="form-control"
+                  formControlName="specialInstructions"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Attached Files-->
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <!--Request Docs-->
+          <div class="row mb-3 mt-3">
+            <label for="">Documentos que se Anexan a la Solicitud</label>
+            <div class="row justify-content-between">
+              <div class="col-md-12">
+                <form-radio label="Original y/o Copia">
+                  <input
+                    type="radio"
+                    formControlName="requestDocs"
+                    value="rbt_origin" />
+                </form-radio>
+              </div>
+              <div class="col-md-12">
+                <form-radio
+                  label="La comprobación la hará posteriormente el ministrado y/o comisionado, mientras tanto la mini.... permanecerá cargada en su cuenta personal">
+                  <input
+                    type="radio"
+                    formControlName="requestDocs"
+                    value="rbt_post" />
+                </form-radio>
+              </div>
+            </div>
+          </div>
+          <!--Tax Receipts-->
+          <div
+            class="row mb-3 mt-3"
+            *ngIf="form.get('requestDocs').value === 'rbt_post'">
+            <label for="">Comprobantes Fiscales</label>
+            <div class="row justify-content-between">
+              <div class="col-md-12">
+                <form-radio label="A Nombre del SAE-S">
+                  <input
+                    type="radio"
+                    formControlName="taxReceipts"
+                    value="rbt_comp_sae" />
+                </form-radio>
+              </div>
+              <div class="col-md-12">
+                <form-radio label="A Nombre de un Encargo">
+                  <input
+                    type="radio"
+                    formControlName="taxReceipts"
+                    value="rbt_comp_encargo" />
+                </form-radio>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <div class="row justify-content-between">
+            <div class="col-12 mb-3 mt-3">
+              <form-field
+                label="Descripción de los Documentos"
+                [control]="form.get('docsDescription')">
+                <textarea
+                  class="form-control"
+                  formControlName="docsDescription"></textarea>
+              </form-field>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3">
+              <form-field
+                label="Fecha Contra REC"
+                [control]="form.get('contractRecDate')">
+                <input
+                  class="form-control"
+                  formControlName="contractRecDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3">
+              <form-field
+                label="No. Contra REC"
+                [control]="form.get('contractRecNumber')">
+                <input
+                  class="form-control"
+                  formControlName="contractRecNumber"
+                  type="number" />
+              </form-field>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3">
+              <form-field
+                label="No. Comp Anexado"
+                [control]="form.get('voucherNumber')">
+                <input
+                  class="form-control"
+                  formControlName="voucherNumber"
+                  type="number" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!--CAN GLOBAL TABLE-->
+    <div class="row justify-content-end mr-1">
+      <div class="ch-content">
+        <h5 class="title">PARTIDAS</h5>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mr-1">
+      <div class="col-2">
+        <button
+          class="btn btn-primary active btn-sm w-100"
+          (click)="openModal()">
+          Nueva
+        </button>
+      </div>
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings">
+      </app-columns-select>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="updateItem($event.data)"
+            (delete)="removeItem($event.data.cabms)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!--Add Check-->
+    <div class="row justify-content-end mb-3 mt-3">
+      <div class="col-xs-12 col-12 col-md-2 mb-3 mt-3">
+        <button
+          class="btn btn-primary active btn-sm w-100"
+          (click)="openModalCheck()">
+          Registro Cheques
+        </button>
+      </div>
+    </div>
+    <!--Info Check-->
+    <div class="row mb-3 mt-3" *ngIf="check">
+      <label for="">Información Cheque</label>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 align-self-center">
+        <div class="row justify-content-between mb-3 mt-3">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-credit-card-alt me-1 text-primary"></i>
+                Número de Cheque
+              </h5>
+              <p class="text-muted mb-0">{{ check?.checkNumber }}</p>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bx-card me-1 text-primary"></i>
+                Número de Cuenta
+              </h5>
+              <p class="text-muted mb-0">{{ check?.accountNumber }}</p>
+            </div>
+          </div>
+          <div
+            class="col-lg-12 col-md-12 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+            <div class="mt-4">
+              <h5 class="font-size-14">
+                <i class="bx bxs-bank me-1 text-primary"></i>
+                Banco
+              </h5>
+              <p class="text-muted mb-0">{{ check?.bank }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 align-self-center">
+        <div class="row mb-3 mt-3">
+          <div class="col-3">
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              (click)="removeCheck()">
+              <i class="bx bx-trash"></i>
+            </button>
+          </div>
+          <div class="col-3">
+            <button
+              type="button"
+              class="btn btn-warning btn-sm"
+              (click)="updateCheck(check)">
+              <i class="bx bx-edit-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [disabled]="!form.valid" [loading]="loading">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,64 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Transferentes por estado</h5>
+    <div class="col-md-5 buttons"></div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (edit)="openForm($event.data)"
+              (userRowSelect)="rowsSelected($event)"
+              (rowSelect)="selectRow($event.data)"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-5" *ngIf="rowSelected">
+      <div class="ch-content">
+        <h5 class="title">Estados</h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openForm2()">
+              Nuevo
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="stateList"
+              (edit)="openForm2($event.data)"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div *ngIf="rowSelected">
+      <button
+        (click)="resetScreen()"
+        class="btn btn-primary active btn-sm ml-3">
+        Reiniciar
+      </button>
+    </div>
+  </div>
+</app-card>

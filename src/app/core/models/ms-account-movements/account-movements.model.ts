@@ -1,0 +1,32 @@
+import { IAccountNumber } from './account-number.model';
+import { ICategory } from './category.model';
+import { IGoodsNumber } from './gods.model';
+export interface IAccountMovements {
+  id: number;
+  movementDate: Date;
+  diversePayment: number;
+  deposit: number;
+  miscellaneousCharge: number;
+  transferCharge: number;
+  placeMovement: string;
+  insertionUser: string;
+  insertionDate: Date;
+  depositSheet: string;
+  folioTab: string;
+  withdrawal: number;
+  fileNumber: number;
+  goodsNumber: IGoodsNumber;
+  primary: true;
+  accountNumber: IAccountNumber;
+  transfer: string;
+  transferDate: Date;
+  interestCalculationDate: Date;
+  transferUser: string;
+  registerNumber: number;
+  category: ICategory;
+  cveConcept: string;
+  transferMovementNumber: number;
+  generatedTransfer: string;
+  parcialization: string;
+  returnPaymentCheckNumber: number;
+}

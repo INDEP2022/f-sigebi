@@ -1,0 +1,71 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Solicitud orden de servicio &#40;validaci&oacute;n de servicios&#41; con
+      folio&#58; METROPOLITANA&#45;SAT&#45;1340&#46;OS
+    </h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button
+        *ngIf="!claimRequest"
+        (click)="claimRequest = true"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-reply" aria-hidden="true"></i> Reclamar
+      </button>
+
+      <button *ngIf="claimRequest" class="btn btn-info btn-sm active">
+        <i class="fa fa-reply" aria-hidden="true"></i> Liberar
+      </button>
+
+      <button
+        (click)="generateReport()"
+        *ngIf="claimRequest"
+        class="btn btn-pink btn-sm active">
+        <i class="fa fa-file-pdf" aria-hidden="true"></i> Generar reporte de
+        orden de servicio
+      </button>
+      <button
+        (click)="declineOrderService()"
+        *ngIf="claimRequest && !aprobateService"
+        class="btn btn-danger btn-sm active">
+        <i class="fa fa-ban" aria-hidden="true"></i> Rechazar
+      </button>
+      <button
+        (click)="sendJustify()"
+        *ngIf="claimRequest && !aprobateService"
+        class="btn btn-pink btn-sm active">
+        <i class="fa fa-send" aria-hidden="true"></i> Enviar
+        justificaci&oacute;n
+      </button>
+      <button
+        (click)="approbateOrderService()"
+        *ngIf="aprobateService"
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-check" aria-hidden="true"></i> Aprobar
+      </button>
+      <button
+        (click)="saveService()"
+        *ngIf="claimRequest"
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-save" aria-hidden="true"></i> Guardar
+      </button>
+    </div>
+    <app-detail-service-order></app-detail-service-order>
+
+    <app-address-transferent-form></app-address-transferent-form>
+
+    <app-tranportable-goods-form></app-tranportable-goods-form>
+
+    <app-order-service-form></app-order-service-form>
+
+    <app-classificate-vehicle-form></app-classificate-vehicle-form>
+
+    <app-address-origin-form></app-address-origin-form>
+
+    <app-comments-form></app-comments-form>
+
+    <app-service-transportable-goods-form></app-service-transportable-goods-form>
+  </div>
+</app-card>

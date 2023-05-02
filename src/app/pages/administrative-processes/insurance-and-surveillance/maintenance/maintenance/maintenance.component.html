@@ -1,0 +1,28 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MANTENIMIENTO (SUPERVISIÓN DE BIENES)</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Eliminar periodos" id="tab1">
+          <app-delete-period
+            (eventDelete)="onClickDeletePeriod()"></app-delete-period>
+        </tab>
+        <tab heading="Cambiar periodos" id="tab2">
+          <app-change-period
+            (eventChangePeriod)="onClickChangePeriod()"></app-change-period>
+        </tab>
+        <tab heading="Cambiar bienes de numero aleatorio" id="tab2">
+          <app-change-goods-random
+            (eventChangeGoodsRandom)="
+              onClickChangeGoodsRandom()
+            "></app-change-goods-random>
+        </tab>
+        <tab heading="Información de correo" id="tab2">
+          <app-email-information></app-email-information>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

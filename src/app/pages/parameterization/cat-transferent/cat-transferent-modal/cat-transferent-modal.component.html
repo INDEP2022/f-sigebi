@@ -1,0 +1,319 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="transferentForm">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field label="ID" [control]="transferentForm.get('id')">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Nombre"
+            [control]="transferentForm.get('nameTransferent')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameTransferent" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Clave"
+            [control]="transferentForm.get('keyTransferent')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyTransferent" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Creación usuario"
+            [control]="transferentForm.get('userCreation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userCreation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Fecha creación"
+            [control]="transferentForm.get('dateCreation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateCreation"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Usuario actualizado"
+            [control]="transferentForm.get('userUpdate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userUpdate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha actualización"
+            [control]="transferentForm.get('dateUpdate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateUpdate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo"
+            [control]="transferentForm.get('typeTransferent')">
+            <ng-select
+              formControlName="typeTransferent"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="CE">Asegurado</ng-option>
+              <ng-option value="NO">No Obligatorio</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            label="Versión"
+            [control]="transferentForm.get('version')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Status" [control]="transferentForm.get('status')">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Activo</ng-option>
+              <ng-option value="0">Inactivo</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de pago autorización"
+            [control]="transferentForm.get('dateBegOperation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateBegOperation"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha final de operación"
+            [control]="transferentForm.get('dateFinalOperation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateFinalOperation"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Mandato cedente"
+            [control]="transferentForm.get('assignor')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="assignor" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Objeto encargo"
+            [control]="transferentForm.get('objectCharge')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="objectCharge" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Sector" [control]="transferentForm.get('sector')">
+            <input type="text" class="form-control" formControlName="sector" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Formalización"
+            [control]="transferentForm.get('formalization')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="formalization" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de formalización"
+            [control]="transferentForm.get('dateFormalization')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateFormalization"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Entidad" [control]="transferentForm.get('entity')">
+            <input type="text" class="form-control" formControlName="entity" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Convenio modificator"
+            [control]="transferentForm.get('amedingAgree')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="amedingAgree" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de convenio modificatorio"
+            [control]="transferentForm.get('dateAmeding')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateAmeding"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Tipo bien"
+            [control]="transferentForm.get('typeGoods')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeGoods" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Guardia custodia bien"
+            [control]="transferentForm.get('custodyGuardGoods')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="custodyGuardGoods" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Destino bien"
+            [control]="transferentForm.get('destinyGoods')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="destinyGoods" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Días admin bien"
+            [control]="transferentForm.get('daysAdminGoods')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="daysAdminGoods" />
+          </form-field>
+        </div>
+      </div>
+      <!-- <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="CVMAN" [control]="transferentForm.get('cvman')">
+            <input type="text" class="form-control" formControlName="cvman" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="INCAP" [control]="transferentForm.get('indcap')">
+            <input type="text" class="form-control" formControlName="indcap" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Activo" [control]="transferentForm.get('active')">
+            <input type="text" class="form-control" formControlName="active" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Riesgo" [control]="transferentForm.get('risk')">
+            <input type="text" class="form-control" formControlName="risk" />
+          </form-field>
+        </div>
+      </div> -->
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!transferentForm.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

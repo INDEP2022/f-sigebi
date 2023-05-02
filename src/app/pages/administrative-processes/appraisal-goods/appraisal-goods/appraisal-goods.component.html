@@ -1,0 +1,137 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">SOLICITUD DE AVALÚOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('delegation')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getDelegations($event)"
+                [data]="delegations"
+                value="id"
+                bindLabel="description"
+                label="Delegaci&oacute;n"
+                [control]="'delegation'"
+                (change)="getDelegations($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('subdelegation')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getSubdelegations($event)"
+                [data]="subdelegations"
+                value="id"
+                bindLabel="description"
+                label="Sub Delegaci&oacute;n"
+                [control]="'subdelegation'"
+                (change)="getSubdelegations($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('initialType')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getInitialType($event)"
+                [data]="initialType"
+                value="id"
+                bindLabel="nameGoodType"
+                label="Tipo Inicial"
+                [control]="'initialType'"
+                (change)="getInitialType($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('finalType')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getFinaltype($event)"
+                [data]="finalType"
+                value="id"
+                bindLabel="nameSubtypeGood"
+                label="Tipo Final"
+                [control]="'finalType'"
+                (change)="getFinaltype($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('initialSubtype')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getInitialSubtype($event)"
+                [data]="initialSubtype"
+                value="id"
+                bindLabel="description"
+                label="Subtipo Inicial"
+                [control]="'initialSubtype'"
+                (change)="getInitialSubtype($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('finalSubtype')">
+              <ngx-select
+                [form]="form"
+                (fetchItems)="getFinalSubtype($event)"
+                [data]="finalSubtype"
+                value="id"
+                bindLabel="description"
+                label="Subtipo Final"
+                [control]="'finalSubtype'"
+                (change)="getFinalSubtype($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('daysToFinish')"
+              label="Días por terminar">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="daysToFinish"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <div class="col-md-2">
+              <confirm-button
+                text="Enviar"
+                [disabled]="form.invalid"
+                [loading]="loading"
+                (confirm)="send()">
+              </confirm-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

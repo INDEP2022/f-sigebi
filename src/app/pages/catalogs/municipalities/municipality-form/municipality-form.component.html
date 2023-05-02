@@ -1,0 +1,56 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="municipalityForm">
+      <div class="row">
+        <div class="col-12 pt-4">
+          <form-field [control]="municipalityForm.get('key')" label="Clave">
+            <input type="number" class="form-control" formControlName="key" />
+          </form-field>
+        </div>
+        <div class="col-12 pt-4">
+          <form-field
+            [control]="municipalityForm.get('entity')"
+            label="Entidad">
+            <input type="text" class="form-control" formControlName="entity" />
+          </form-field>
+        </div>
+        <div class="col-12 pt-4">
+          <form-field
+            [control]="municipalityForm.get('municipalityName')"
+            label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="municipalityName" />
+          </form-field>
+        </div>
+        <div class="col-12 pt-4">
+          <form-field
+            [control]="municipalityForm.get('version')"
+            label="Versi&oacute;n">
+            <input type="text" class="form-control" formControlName="version" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!municipalityForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

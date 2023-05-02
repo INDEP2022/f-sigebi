@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showPackages">
+    <div class="col-md-12">
+      <form-field [control]="form.get(packageField)">
+        <ngx-select
+          (fetchItems)="getPackages($event)"
+          [data]="packages"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Paquetes"
+          [control]="packageField"
+          (change)="onPackagesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

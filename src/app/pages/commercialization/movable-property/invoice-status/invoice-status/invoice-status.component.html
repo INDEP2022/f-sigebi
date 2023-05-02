@@ -1,0 +1,22 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">ESTATUS DE LA FACTURACI&Oacute;N</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content">
+      <h5 class="title"></h5>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active ml-3"
+        (click)="openForm()">
+        Nuevo
+      </button>
+    </div>
+    <ng2-smart-table
+      [settings]="settings"
+      [source]="data"
+      (edit)="openForm($event.data)"></ng2-smart-table>
+  </div>
+</app-card>

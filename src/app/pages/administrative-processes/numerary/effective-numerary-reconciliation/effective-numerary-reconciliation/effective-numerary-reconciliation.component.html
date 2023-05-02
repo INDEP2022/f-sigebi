@@ -1,0 +1,107 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CONCILIACIÓN DE NUMERARIO EFECTIVO</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <!-- <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('delegation')" label="Delegación">
+              <input formControlName="delegation" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('subdelegation')"
+              label="Subdelegación">
+              <input formControlName="subdelegation" class="form-control" />
+            </form-field>
+          </div>
+        </div>-->
+        <app-delegation-shared [form]="form"></app-delegation-shared>
+        <div class="row mt-4">
+          <div class="col-md-6 pt-3">
+            <!-- <form-field [control]="form.get('currency')">
+              <ngx-select
+                (fetchItems)="getCurrency($event)"
+                [data]="currencies"
+                [form]="form"
+                value="otKey1"
+                bindLabel="otValue01"
+                label="Moneda"
+                control="currency"
+                (change)="onCurrencyChange($event)">
+              </ngx-select>
+            </form-field> -->
+            <app-currency-shared
+              [form]="form"
+              currencyField="currency"></app-currency-shared>
+          </div>
+          <div class="col-md-6">
+            <!-- <form-field [control]="form.get('bank')" label="Banco:">
+              <input formControlName="bank" class="form-control" />
+            </form-field> -->
+            <app-banks-shared [form]="form"></app-banks-shared>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('fileFrom')"
+              label="Del expediente:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="fileFrom"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('fileTo')" label="Al:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="fileTo"
+                class="form-control"
+                [minDate]="form.get('fileFrom').value"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('from')" label="Fecha del:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('to')" label="Al:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                [minDate]="form.get('from').value"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <div>
+            <button
+              (click)="print()"
+              type="button"
+              class="btn btn-sm btn-primary active m-3">
+              IMPRIMIR
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

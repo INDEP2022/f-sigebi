@@ -1,0 +1,91 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">IMPRESION MASIVA DE ESTADOS DE CUENTA</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('file')" label="Expediente">
+              <input formControlName="file" class="form-control" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('depositDate')"
+              label="Fecha de deposito:">
+              <input
+                formControlName="depositDate"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('depositDateTo')" label="Al:">
+              <input
+                formControlName="depositDateTo"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('transferenceDate')"
+              label="Fecha de transferencia:">
+              <input
+                formControlName="transferenceDate"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('transferenceDateTo')" label="Al:">
+              <input
+                formControlName="transferenceDateTo"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('receptionDate')"
+              label="Fecha de recepción fisica:">
+              <input
+                formControlName="receptionDate"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('receptionDateTo')" label="Al:">
+              <input
+                formControlName="receptionDateTo"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <div>
+            <button type="button" class="btn btn-sm btn-primary active m-3">
+              IMPRIMIR
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

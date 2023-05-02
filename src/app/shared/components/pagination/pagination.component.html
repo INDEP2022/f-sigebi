@@ -1,0 +1,35 @@
+<div class="paginator">
+  <div class="paginator-outer-container">
+    <div class="paginator-container">
+      <div class="paginator-page-size">
+        <div class="paginator-page-size-label">Registros por página :</div>
+        <div class="form-field paginator-page-size-select">
+          <div class="form-field-wrapper">
+            <div class="form-field-flex">
+              <div class="form-field-infix">
+                <select
+                  class="select"
+                  (change)="pageSizeChange()"
+                  [formControl]="limit">
+                  <option *ngFor="let limit of pageSizeOptions" [value]="limit">
+                    {{ limit }}
+                  </option>
+                </select>
+                <span class="form-field-label-wrapper"> </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="paginator-range-actions">
+        <div class="paginator-range-label">{{ getRangeLabel }}</div>
+        <paginate
+          [totalItems]="totalItems"
+          [itemsPerPage]="limit.value"
+          [currentPage]="params.getValue().page"
+          (changePage)="pageChanged($event)"
+          [maxSize]="maxSize"></paginate>
+      </div>
+    </div>
+  </div>
+</div>

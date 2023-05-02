@@ -1,0 +1,98 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DICTAMINACIONES</h5>
+  </div>
+
+  <div body>
+    <app-rulings (formValues)="rulingsData($event)"></app-rulings>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BIENES</h5>
+  </div>
+
+  <div body>
+    <app-goods
+      [loadingData]="loading1"
+      [data]="dataDictationXGood1"></app-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DOCUMENTOS BIEN</h5>
+  </div>
+
+  <div body>
+    <app-documentation-goods
+      [data]="dataDocumentDictumStateM"
+      [loadingData]="loading2"></app-documentation-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">OFICIO</h5>
+  </div>
+
+  <div body>
+    <app-document-trade
+      (formValues)="documentData($event)"></app-document-trade>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MÁS INFORMACIÓN</h5>
+  </div>
+
+  <div body>
+    <app-more-information
+      (formValues)="moreInformationData($event)"></app-more-information>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">COPIAS DE OFICIO</h5>
+  </div>
+
+  <div body>
+    <app-copy-documentation-goods
+      [data]="dataCopiesOfficialOpinion"
+      [loadingData]="loading3"></app-copy-documentation-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">JUSTIFICACIÓN</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" (ngSubmit)="send()" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('justificacion')"
+            label="Justificación">
+            <textarea
+              rows="6"
+              class="form-control"
+              formControlName="justificacion"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <button
+            [disabled]="form.invalid"
+            class="btn active btn-primary btn-sm"
+            type="submit">
+            Enviar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,0 +1,18 @@
+<link
+  href="https://framework-gb.cdn.gob.mx/gm/v4/css/main.css"
+  rel="stylesheet" />
+<div id="layout-wrapper">
+  <title></title>
+  <app-topbar
+    (settingsButtonClicked)="onSettingsButtonClicked()"
+    (mobileMenuButtonClicked)="onToggleMobileMenu()">
+  </app-topbar>
+
+  <app-sidebar [isCondensed]="isCondensed"></app-sidebar>
+
+  <div class="main-content">
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

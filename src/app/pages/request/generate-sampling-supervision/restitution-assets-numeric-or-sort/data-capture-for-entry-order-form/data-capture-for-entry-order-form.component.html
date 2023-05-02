@@ -1,0 +1,99 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Captura datos para orden de ingreso</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="dataForm" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="dataForm.get('concept')" label="&#42;Concepto">
+            <input type="text" class="form-control" formControlName="concept" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('wayPay')"
+            label="&#42;Forma de pago">
+            <input type="text" class="form-control" formControlName="wayPay" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="dataForm.get('import')" label="&#42;Importe">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="import" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('reference')"
+            label="&#42;Referencia">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="reference" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('reference')"
+            label="&#42;Referencia">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="reference" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('specializedThird')"
+            label="&#42;Tercero especializado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="specializedThird" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="dataForm.get('bank')"
+            label="&#42;Institución bancaria">
+            <input type="text" class="form-control" formControlName="bank" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="dataForm.get('unitAdministrative')">
+            <ngx-select
+              [form]="dataForm"
+              control="unitAdministrative"
+              [data]="typeUnitAdminSelected"
+              value="id"
+              bindLabel="id"
+              label="Tipo de Documento"
+              (fetchItems)="getUniAdminSelect($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-primary active" (click)="save()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

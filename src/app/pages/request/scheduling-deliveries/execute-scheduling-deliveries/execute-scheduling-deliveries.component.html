@@ -1,0 +1,252 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Ejecutar programaci&oacute;n de entrega</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <h5 class="title">
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = true"
+          *ngIf="!showSearchForm">
+          <i class="fa fa-angle-right" aria-hidden="true"></i> Detalles
+          programaci&oacute;n</a
+        >
+      </p>
+
+      <p>
+        <a
+          class="text-color"
+          (click)="showSearchForm = false"
+          *ngIf="showSearchForm">
+          <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+          programaci&oacute;n</a
+        >
+      </p>
+    </h5>
+
+    <div *ngIf="showSearchForm">
+      <div class="row">
+        <div class="col-md-5">
+          <form class="form-horizontal" style="margin: 0 auto">
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Tipo evento:</label>
+              <span> Ventas </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Folio:</label>
+              <span> E-NORESTE-417 </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Transferente:</label>
+              <span> IMSS Nuevo León </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-5 text-right">Fecha page entrega:</label>
+              <span> 28-abr-2022 00:00:00 </span>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-md-6">
+          <form class="form-horizontal" style="margin: 0 auto">
+            <div class="form-group">
+              <label class="col-lg-4 text-right">Fecha final entrega:</label>
+              <span> 29-abr-2022 00:00:00 </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-4 text-right">Almac&eacute;n:</label>
+              <span> Joyas boveda </span>
+            </div>
+
+            <div class="form-group">
+              <label class="col-lg-4 text-right">Cliente:</label>
+              <span> GVARGAS comercializadora S.A de C.V</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <h5 class="title">Ejecuci&oacute;n entrega de bienes</h5>
+      <div class="form-inline justify-content-end btn-toolbar">
+        <a
+          style="cursor: pointer"
+          (click)="certificateDelivery()"
+          class="link-primary"
+          ><i class="fa fa-folder-open" aria-hidden="true"></i> Constancia
+          entregados </a
+        >&nbsp;
+        <a
+          (click)="certificateDelivery()"
+          style="cursor: pointer"
+          class="link-primary"
+          ><i class="fa fa-folder-open" aria-hidden="true"></i> Constancia no
+          entregados</a
+        >&nbsp;
+        <a
+          (click)="certificateDelivery()"
+          style="cursor: pointer"
+          class="link-primary"
+          ><i class="fa fa-folder-open" aria-hidden="true"></i> Constancia no
+          aceptados </a
+        >&nbsp;
+        <a
+          (click)="certificateDelivery()"
+          style="cursor: pointer"
+          class="link-primary"
+          ><i class="fa fa-folder-open" aria-hidden="true"></i> Constancia no
+          retirados </a
+        >&nbsp;
+
+        <button class="btn btn-primary btn-sm active">
+          <i class="fa fa-save" aria-hidden="true"></i> Guardar
+        </button>
+      </div>
+
+      <div class="btn-toolbar pt-5">
+        <button class="btn btn-success btn-sm active">
+          <i class="fa fa-arrow-down" aria-hidden="true"></i> Descargar
+        </button>
+        <button class="btn btn-primary btn-sm active">
+          <i class="fa fa-check-circle" aria-hidden="true"></i> Entregados
+        </button>
+        <button class="btn btn-danger btn-sm active">
+          <i class="fa fa-times-circle" aria-hidden="true"></i> No entregados
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <col style="width: 60%" />
+          <col style="width: 80%" />
+          <col style="width: 60%" />
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">
+                <input
+                  type="checkbox"
+                  class="form-control ng-pristine ng-valid ng-touched"
+                  ng-reflect-model="true" />
+              </th>
+              <th scope="col">Item</th>
+              <th scope="col">N&uacute;mero inventario</th>
+              <th scope="col">N&uacute;mero gesti&oacute;n</th>
+              <th scope="col">Descripci&oacute;n bien</th>
+              <th scope="col">Cantidad bienes</th>
+              <th scope="col">Un. medida</th>
+              <th scope="col">IndFraccion</th>
+              <th scope="col">N&uacute;mero INDEP</th>
+              <th scope="col">Lote comercial</th>
+              <th scope="col">Evento comercial</th>
+              <th scope="col">Factura</th>
+              <th scope="col">Cantidad entregados</th>
+              <th scope="col">Entregados</th>
+              <th scope="col">Cantidad no entregados</th>
+              <th scope="col">No entregados</th>
+              <th scope="col">Cantidad no eceptados</th>
+              <th scope="col">No aceptados</th>
+              <th scope="col">Cantidad no retirados</th>
+              <th scope="col" style="width: 150px">No retirados</th>
+              <th scope="col" style="width: 150px">Faltante</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="align-baseline">
+                <input
+                  type="checkbox"
+                  class="form-control ng-pristine ng-valid ng-touched"
+                  ng-reflect-model="true" />
+              </th>
+              <td scope="row" class="align-baseline">8703.24.01-PZ</td>
+              <td class="align-baseline">0000089101</td>
+              <td class="align-baseline">8905184</td>
+              <td class="align-baseline">Vehículo</td>
+              <td class="align-baseline">1</td>
+              <td class="align-baseline">Pieza</td>
+              <td class="align-baseline">2</td>
+              <td class="align-baseline"></td>
+              <td class="align-baseline">2</td>
+              <td class="align-baseline">15230</td>
+              <td></td>
+              <td>
+                <input type="text" class="form-control" style="width: 150px" />
+              </td>
+              <td>0</td>
+              <td class="align-baseline">
+                <input type="text" class="form-control" style="width: 150px" />
+              </td>
+              <td class="align-baseline">0</td>
+              <td class="align-baseline">
+                <input type="text" class="form-control" style="width: 150px" />
+              </td>
+              <td class="align-baseline">0</td>
+              <td class="align-baseline">
+                <input type="text" class="form-control" style="width: 150px" />
+              </td>
+              <td class="align-baseline">0</td>
+              <td class="align-baseline">Faltante</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-responsive pt-5">
+        <div class="btn-toolbar">
+          <button (click)="newDocument()" class="btn btn-primary btn-sm active">
+            <i class="fa fa-folder" aria-hidden="true"></i> Documentos de la
+            constancia
+          </button>
+        </div>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Acciones</th>
+              <th scope="col">constancia</th>
+              <th scope="col">Folio</th>
+              <th scope="col">constancia</th>
+              <th scope="col">Identificaci&oacute;n</th>
+              <th scope="col">N&uacute;mero identificación</th>
+              <th scope="col">Nombre</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td scope="row" class="align-baseline text-center">
+                <i
+                  (click)="editConstancy($event)"
+                  class="fa fa-pencil-alt text-warning mx-2"></i>
+                <i
+                  (click)="deleteConstancy($event)"
+                  class="fa fa-trash text-danger mx-2"></i>
+              </td>
+              <td scope="row" class="align-baseline">956</td>
+              <td scope="row" class="align-baseline">45345</td>
+              <td scope="row" class="align-baseline">Entregados</td>
+              <td scope="row" class="align-baseline">Credencial</td>
+              <td scope="row" class="align-baseline">45654YD5GDF</td>
+              <td scope="row" class="align-baseline">Comercializadora</td>
+              <td scope="row" class="align-baseline text-center">
+                <button class="btn btn-info btn-sm active">
+                  <i class="fa fa-eye" aria-hidden="true"></i> Vista previa
+                </button>
+              </td>
+              <td scope="row" class="align-baseline text-center">
+                <button class="btn btn-primary btn-sm active">
+                  <i class="fa fa-folder" aria-hidden="true"></i> Cerrar
+                  constancia
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</app-card>

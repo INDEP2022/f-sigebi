@@ -1,0 +1,15 @@
+.btn-primary {
+  background-color: #9d2449;
+  border-color: #9d2449;
+
+  &:hover {
+    background-color: #ad4262;
+    border-color: #9d2449;
+  }
+}
+
+#togglePassword {
+  margin-left: -30px;
+  cursor: pointer;
+  font-size: 15px;
+}

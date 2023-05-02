@@ -1,0 +1,54 @@
+<form
+  [formGroup]="form"
+  (submit)="mostrarInfoDeclaratoria()"
+  class="container-fluid form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-2 pr-3">
+      <div class="col-sm-12 col-12 col-md-2 p-2">
+        <form-field [control]="form.get('noExpediente')" label="No Expediente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="noExpediente" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field [control]="form.get('cveOficio')" label="Cve&#46; Oficio">
+          <input class="form-control" formControlName="cveOficio" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field
+          [control]="form.get('averiPrevia')"
+          label="Averi&#46; Previa">
+          <input class="form-control" formControlName="averiPrevia" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+          <input class="form-control" formControlName="causaPenal" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <ngx-select
+          [data]="items"
+          bindLabel="tipoOficio"
+          label="Declaratoria Abandono Bienes"
+          value="id"
+          (fetchItems)="getFromSelect($event)"
+          [form]="form"
+          control="tipoOficio"></ngx-select>
+      </div>
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field [control]="form.get('remitente')" label="Remitente">
+          <input class="form-control" formControlName="remitente" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field [control]="form.get('destinatario')" label="Destinatario">
+          <input class="form-control" formControlName="destinatario" />
+        </form-field>
+      </div>
+    </div>
+  </div>
+</form>

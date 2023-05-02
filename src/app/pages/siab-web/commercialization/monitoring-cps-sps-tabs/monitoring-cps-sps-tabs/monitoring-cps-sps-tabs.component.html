@@ -1,0 +1,19 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CONSULTA DE BIENES EN PROCESO COMERCIAL</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Inconsistencias CPs" id="tab1">
+          <app-monitoring-cps></app-monitoring-cps>
+        </tab>
+        <tab heading="Afectaciones SPs">
+          <app-monitoring-sps></app-monitoring-sps>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

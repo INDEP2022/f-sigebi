@@ -1,0 +1,53 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nuevo testigo</h5>
+  </div>
+  <div body>
+    <form [formGroup]="witnessForm" class="form-material">
+      <div class="row">
+        <form-field
+          [control]="witnessForm.get('nameWitness')"
+          label="Nombre testigo">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="nameWitness" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="witnessForm.get('chargeWitness')"
+          label="Cargo testigo">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="chargeWitness" />
+        </form-field>
+      </div>
+      <div class="row pt-4">
+        <form-check label="Firma electr&oacute;nica" for="label">
+          <input
+            id="label"
+            type="checkbox"
+            formControlName="electronicSignature" />
+        </form-check>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!witnessForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

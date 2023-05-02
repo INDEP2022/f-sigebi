@@ -1,0 +1,25 @@
+<div class="row mt-4">
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="goods">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>
+
+<div class="row mt-4 float-right">
+  <div class="">
+    <button type="submit" class="btn btn-primary btn-sm active mx-4">
+      IMPORTA BIENES
+    </button>
+    <button type="submit" class="btn btn-secondary btn-sm active mx-4">
+      EFECTUA PRORRATEO
+    </button>
+  </div>
+</div>

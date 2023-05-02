@@ -1,0 +1,180 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">
+      Asignación de búsqueda de bienes candidatos
+    </h5>
+  </div>
+
+  <div body class="body">
+    <div class="row">
+      <h5>Programación de entrega</h5>
+    </div>
+    <div>
+      <form [formGroup]="programmingForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <label>Tipo de entrega</label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-radio label="Bien para estudio">
+              <input type="radio" formControlName="typeStudy" value="te" />
+            </form-radio>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="programmingForm.get('asignTo')">
+              <ngx-select
+                [form]="programmingForm"
+                control="asignTo"
+                [data]="asignToSelected"
+                value="id"
+                bindLabel="id"
+                label="*Tipo de estudio"
+                (fetchItems)="getAsignToSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="programmingForm.get('reasonStudy')"
+              label="*Motivo del estudio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="reasonStudy" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="programmingForm.get('responsableStudy')">
+              <ngx-select
+                [form]="programmingForm"
+                control="responsableStudy"
+                [data]="responsableStudySelected"
+                value="id"
+                bindLabel="id"
+                label="*Responsable del estudio"
+                (fetchItems)="getResponsableStudySelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <h5>Características de los bienes</h5>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="programmingForm.get('expedient')"
+              label="Motivo del estudio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="expedient" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="programmingForm.get('warehouse')">
+              <ngx-select
+                [form]="programmingForm"
+                control="warehouse"
+                [data]="warehouseSelected"
+                value="id"
+                bindLabel="id"
+                label="Almacén"
+                (fetchItems)="getWarehouseSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field
+              [control]="programmingForm.get('sampleSize')"
+              label="Tamaño de la muestra">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="sampleSize" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="programmingForm.get('assetsClassifer')">
+              <ngx-select
+                [form]="programmingForm"
+                control="assetsClassifer"
+                [data]="assetsClassiferSelected"
+                value="id"
+                bindLabel="id"
+                label="*Clasificador de bienes"
+                (fetchItems)="getAssetsClassiferSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="addClassifers()">
+              Agregar Clasificador
+            </button>
+          </div>
+        </div>
+        <p style="color: red" *ngIf="displayMsg">
+          Solo se pueden agregar máximo 3 clasificadores
+        </p>
+      </form>
+    </div>
+    <div class="row pt-4">
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button class="btn btn-danger btn-sm active" (click)="remove()">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 25px">Seleccionar</th>
+            <th scope="col">Nombre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let classifer of listClassifers; let i = index">
+            <th scope="row" style="text-align: center">
+              <input
+                type="checkbox"
+                id="selectOne"
+                (change)="rowsSelected($event, classifer)" />
+            </th>
+            <td>{{ classifer.name }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="programmingForm.invalid"
+          (click)="save()">
+          Guardar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

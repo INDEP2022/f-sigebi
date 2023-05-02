@@ -1,0 +1,114 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="calculatedForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            label="id_comcalculada"
+            [control]="calculatedForm.get('comCalculatedId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="comCalculatedId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="id_tercerocomer"
+            [control]="calculatedForm.get('thirdComerId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="thirdComerId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="usuario_creo"
+            [control]="calculatedForm.get('userBelieve')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userBelieve" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="fecha_creo"
+            [control]="calculatedForm.get('believeDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="believeDate" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="fecha_ini"
+            [control]="calculatedForm.get('startDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="startDate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="fecha_fin"
+            [control]="calculatedForm.get('endDate')">
+            <input type="text" class="form-control" formControlName="endDate" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="id_evento"
+            [control]="calculatedForm.get('eventId')">
+            <input type="text" class="form-control" formControlName="eventId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="comision_total"
+            [control]="calculatedForm.get('commissionTotal')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="commissionTotal" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="tipo_cambio"
+            [control]="calculatedForm.get('changeType')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="changeType" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          (confirm)="confirm()"
+          [disabled]="!calculatedForm.valid">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

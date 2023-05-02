@@ -1,0 +1,291 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="representativeForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field label="ID" [control]="representativeForm.get('id')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Nombre Razón"
+            [control]="representativeForm.get('reasonName')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reasonName" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Apellido paterno"
+            [control]="representativeForm.get('paternalSurname')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="paternalSurname" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Apellido materno"
+            [control]="representativeForm.get('maternalSurname')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maternalSurname" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Fecha de nacimiento"
+            [control]="representativeForm.get('dateBorn')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateBorn"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="RFC" [control]="representativeForm.get('rfc')">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="CURP" [control]="representativeForm.get('curp')">
+            <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de persona"
+            [control]="representativeForm.get('personType')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="personType" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de identificación"
+            [control]="representativeForm.get('identificationType')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="identificationType" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Aut. Emisión Identif."
+            [control]="representativeForm.get('autEmiIndentify')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="autEmiIndentify" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Identificación"
+            [control]="representativeForm.get('identificationNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="identificationNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No. Fideicomiso"
+            [control]="representativeForm.get('escrowNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="escrowNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            label="Cve Nacionalidad"
+            [control]="representativeForm.get('nationalityKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nationalityKey" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Cve País"
+            [control]="representativeForm.get('countryOriginKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="countryOriginKey" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Calle"
+            [control]="representativeForm.get('street')">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="No. Ext"
+            [control]="representativeForm.get('outsideNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="outsideNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="No. Int"
+            [control]="representativeForm.get('insisdeNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="insisdeNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="Ciudad" [control]="representativeForm.get('city')">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Colonia"
+            [control]="representativeForm.get('suburb')">
+            <input type="text" class="form-control" formControlName="suburb" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado"
+            [control]="representativeForm.get('delegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="CP" [control]="representativeForm.get('zipCode')">
+            <input type="text" class="form-control" formControlName="zipCode" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            label="Estado"
+            [control]="representativeForm.get('state')">
+            <input type="text" class="form-control" formControlName="state" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cve. País"
+            [control]="representativeForm.get('homeCountryKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="homeCountryKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Fax" [control]="representativeForm.get('fax')">
+            <input type="text" class="form-control" formControlName="fax" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cve Teléfono"
+            [control]="representativeForm.get('countryPhoneKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="countryPhoneKey" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            label="Teléfono"
+            [control]="representativeForm.get('phone')">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="E-mail"
+            [control]="representativeForm.get('mailWeb')">
+            <input type="text" class="form-control" formControlName="mailWeb" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cve. Act. Económica"
+            [control]="representativeForm.get('ecoActivityKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ecoActivityKey" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Cve Representante"
+            [control]="representativeForm.get('repAssociatedId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="repAssociatedId" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

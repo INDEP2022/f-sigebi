@@ -1,0 +1,140 @@
+<div>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <h5>Bienes</h5>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="uploadExpedient()">
+          <i class="bx bx-detail"></i> Expediente
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="uploadImages()">
+          <i class="bx bx-images"></i> Fotograf&iacute;a
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active">
+          <i class="bx bx-download"></i> Descargar Archivo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <p style="color: rgba(0, 0, 255, 0.8)">
+        Para los bienes de tipo Num&eacute;rico se generar&aacute; una orden de
+        ingreso&#46;
+      </p>
+    </div>
+    <div class="col-md-12">
+      <p style="color: rgba(0, 0, 255, 0.8)">
+        Para los bienes de tipo Especie ser&aacute;n enviados a
+        aprobaci&oacute;n&#46;
+      </p>
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="d-flex">
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="numeric()">
+          <i class="bx bx-check"></i> Num&eacute;rico
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="inSort()">
+          <i class="bx bx-check"></i> En Especie
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <!--    <form [formGroup]="assetsForm">-->
+      <!--      <div [class]="loading ? 'table-loading' : ''">-->
+      <ng-scrollbar track="all" style="min-height: 200px; border: none">
+        <table
+          class="table table-bordered"
+          style="white-space: nowrap; overflow-x: auto">
+          <thead>
+            <tr>
+              <th scope="col" style="text-align: center">
+                <input type="checkbox" name="" id="" />
+              </th>
+              <th scope="col">N&uacute;mero Gesti&oacute;n</th>
+              <th scope="col">N&uacute;mero Inventario</th>
+              <th scope="col" class="description">Descripci&oacute;n</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Tipo Restituci&oacute;n</th>
+              <th scope="col">Fecha Reposici&oacute;n</th>
+              <th scope="col">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let asset of assetsArray; let i = index">
+              <th scope="row" style="text-align: center">
+                <input
+                  type="checkbox"
+                  value="{{ asset.id }}"
+                  [(ngModel)]="asset.checked"
+                  id="selectOne"
+                  (change)="selectOne($event, asset)" />
+              </th>
+              <td>{{ asset.noManagement }}</td>
+              <td>{{ asset.noInventory }}</td>
+              <td>{{ asset.description }}</td>
+              <td>{{ asset.quantity }}</td>
+              <td>{{ asset.unity }}</td>
+              <td>
+                <select
+                  class="form-control"
+                  style="
+                    width: 150px;
+                    height: 3rem;
+                    font-size: 13px !important;
+                  ">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">Pieza</option>
+                </select>
+              </td>
+              <td>
+                <div class="form-group mb-3" style="display: flex">
+                  <input
+                    style="height: 3rem; padding-right: 3px"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="asset.dateRestitution"
+                    placeholder=""
+                    (ngModelChange)="updateMyDate($event)"
+                    bsDatepicker
+                    [bsConfig]="{
+                      adaptivePosition: true,
+                      dateInputFormat: 'MM/DD/YYYY'
+                    }" />
+                  <i class="bx bxs-calendar" style="color: blue"></i>
+                </div>
+              </td>
+              <td>
+                <input
+                  style="width: 70px; height: 3rem"
+                  type="number"
+                  value="{{ asset.quantityMissingDamaged }}"
+                  [(ngModel)]="asset.quantityMissingDamaged" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-scrollbar>
+      <!--    </form>-->
+    </div>
+  </div>
+</div>

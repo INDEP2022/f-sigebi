@@ -1,0 +1,133 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="regionalDelegationForm">
+      <div class="row">
+        <!-- <div class="col-md-4">
+          <form-field [control]="regionalDelegationForm.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div> -->
+        <div class="col-md-12">
+          <form-field
+            [control]="regionalDelegationForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <!--<div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('registerNumber')"
+            label="N&uacute;mero de registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registerNumber" />
+          </form-field>
+        </div>-->
+      </div>
+      <!-- ------ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('idGeographicZona')">
+            <!--  <input
+              type="text"
+              class="form-control"
+              formControlName="idGeographicZona" /> -->
+            <ngx-select
+              (fetchItems)="getGeoZone($event)"
+              [form]="regionalDelegationForm"
+              [data]="selectGeoZone"
+              bindLabel="id"
+              label="Id zona geogr&aacute;fica"
+              control="idGeographicZona">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="regionalDelegationForm.get('regionalDelegate')"
+            label="Delegado Regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="regionalDelegate" />
+          </form-field>
+        </div>
+      </div>
+      <!-- ------ -->
+      <div class="row pt-5">
+        <div class="col-md-8">
+          <form-field
+            [control]="regionalDelegationForm.get('officeAddress')"
+            label="Domicilio de la oficina">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="officeAddress" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('keyZone')"
+            label="Clave de la zona">
+            <input type="text" class="form-control" formControlName="keyZone" />
+          </form-field>
+        </div>
+      </div>
+      <!-- ------ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="regionalDelegationForm.get('iva')" label="IVA">
+            <input type="text" class="form-control" formControlName="iva" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="regionalDelegationForm.get('city')">
+            <ngx-select
+              (fetchItems)="getCity($event)"
+              [form]="regionalDelegationForm"
+              [data]="selectCity"
+              bindLabel="nameCity"
+              label="Ciudad"
+              control="city"
+              (change)="fillSelectCity()">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('keyState')"
+            label="Clave del estado">
+            <input
+              type="text"
+              class="form-control disabled"
+              formControlName="keyState" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="regionalDelegationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

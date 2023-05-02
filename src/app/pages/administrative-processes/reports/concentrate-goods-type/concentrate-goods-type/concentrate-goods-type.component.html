@@ -1,0 +1,106 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Concentrado de Bienes por Tipo</h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="concentrateGoodsTypeForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('delegation')"
+            label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('subDelegation')"
+            label="Sub Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('area')"
+            label="Área">
+            <input type="text" class="form-control" formControlName="area" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('type')"
+            label="Tipo">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('initialFile')"
+            label="No Expediente Inicial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="initialFile" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('finalFile')"
+            label="No Expendiente Final">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="finalFile" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('ReceptionDateOf')"
+            label="Fecha de Recepción del">
+            <input
+              type="text"
+              formControlName="ReceptionDateOf"
+              placeholder="Fecha de Recepción del"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="concentrateGoodsTypeForm.get('ReceptionDateTo')"
+            label="Fecha de Recepción al">
+            <input
+              type="text"
+              formControlName="ReceptionDateTo"
+              placeholder="Fecha de Recepción al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-primary btn-sm active">
+              Reporte
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

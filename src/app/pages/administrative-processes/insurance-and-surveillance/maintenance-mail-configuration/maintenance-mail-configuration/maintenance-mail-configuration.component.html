@@ -1,0 +1,73 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CONFIGURACIÓN DE CORREOS DE MANTENIMIENTO</h5>
+  </div>
+
+  <div body>
+    <div class="row mt-4">
+      <div class="ch-content">
+        <h5 class="title">CORREO DE RESPONSABLES DE ENVÍO</h5>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="emailsSend">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+
+    <div class="ch-content">
+      <h5 class="title">DATOS GENERALES DEL CORREO</h5>
+    </div>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-field [control]="form.get('identifier')" label="Identificador">
+            <input
+              type="number"
+              class="form-control"
+              readonly="true"
+              formControlName="identifier"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field [control]="form.get('asunto')" label="Asunto">
+            <textarea
+              type="text"
+              class="form-control"
+              rows="2"
+              formControlName="asunto"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <form-field [control]="form.get('body')" label="Cuerpo del correo">
+            <textarea
+              type="text"
+              class="form-control"
+              rows="2"
+              formControlName="body"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12" style="margin-left: 15px">
+          <form-check label="Estatus" for="status">
+            <input id="status" type="checkbox" formControlName="status" />
+          </form-check>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

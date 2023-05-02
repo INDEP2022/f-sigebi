@@ -1,0 +1,70 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de recepci&oacute;n documental</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="reportForm" class="form-material">
+      <div class="row justify-content-center">
+        <div class="col-md-5">
+          <app-delegation-shared [form]="reportForm"></app-delegation-shared>
+        </div>
+
+        <div class="col-md-5">
+          <div class="row pt-3">
+            <form-field [control]="reportForm.get('PF_MES')" label="Mes">
+              <!-- <input formControlName="PF_MES" class="form-control" bsDatepicker /> -->
+              <ng-select
+                formControlName="PF_MES"
+                [searchable]="true"
+                class="form-control"
+                [clearable]="true">
+                <ng-option value="1">Enero</ng-option>
+                <ng-option value="2">Febrero</ng-option>
+                <ng-option value="3">Marzo</ng-option>
+                <ng-option value="4">Abril</ng-option>
+                <ng-option value="5">Mayo</ng-option>
+                <ng-option value="6">Junio</ng-option>
+                <ng-option value="7">Julio</ng-option>
+                <ng-option value="8">Agosto</ng-option>
+                <ng-option value="9">Septiembre</ng-option>
+                <ng-option value="10">Octubre</ng-option>
+                <ng-option value="11">Noviembre</ng-option>
+                <ng-option value="12">Diciembre</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field [control]="reportForm.get('PF_ANIO')" label="Año">
+              <input
+                type="number"
+                formControlName="PF_ANIO"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="reportForm.invalid"
+          [loading]="loading"
+          (confirm)="Generar()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

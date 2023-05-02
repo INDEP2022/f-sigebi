@@ -1,0 +1,83 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="cityForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="cityForm.get('nameCity')"
+            label="Nombre de la Ciudad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameCity" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="cityForm.get('state')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="cityForm"
+              control="state"
+              [data]="states"
+              value="id"
+              bindLabel="descCondition"
+              label="Estado"
+              (fetchItems)="getStates($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="cityForm.get('noDelegation')"
+            label="Delegací&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="cityForm.get('noSubDelegation')"
+            label="Subdelegaci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noSubDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="cityForm.get('legendOffice')"
+            label="Leyenda de oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="legendOffice" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!cityForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

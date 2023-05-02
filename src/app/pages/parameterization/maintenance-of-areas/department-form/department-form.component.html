@@ -1,0 +1,132 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="departmentForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="departmentForm.get('id')" label="ID">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="departmentForm.get('numDelegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="departmentForm"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'numDelegation'"
+              (change)="onDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="departmentForm.get('numSubDelegation')">
+            <ngx-select
+              [form]="departmentForm"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'numSubDelegation'"
+              (change)="onSubDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="departmentForm.get('dsarea')"
+            label="Descripci&oacute;n de &aacute;rea">
+            <input type="text" class="form-control" formControlName="dsarea" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="departmentForm.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="departmentForm.get('lastOffice')"
+            label="&Uacute;ltimo oficio">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="lastOffice" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="departmentForm.get('level')" label="Nivel">
+            <input type="number" class="form-control" formControlName="level" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="departmentForm.get('depDelegation')"
+            label="Dependencia entre Delegaciones">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="depDelegation" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="departmentForm.get('depend')"
+            label="Departamento delegaci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="depend" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="departmentForm.get('phaseEdo')"
+            label="Fase EDO">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="phaseEdo" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="departmentForm.invalid"
+          [type]="'button'"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

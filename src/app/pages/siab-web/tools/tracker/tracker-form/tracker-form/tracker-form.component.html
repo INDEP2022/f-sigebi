@@ -1,0 +1,251 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Tipos de bienes</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="sm-3">
+            <form-field
+              [control]="form.get('numberGood')"
+              label="Número de bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="numberGood" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="sm-3">
+            <form-field
+              [control]="form.get('keyUniqueSat')"
+              label="Clave unica SAT">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="keyUniqueSat" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="sm-3">
+            <form-field [control]="form.get('expedient')" label="Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="expedient" />
+            </form-field>
+          </div>
+
+          <i class="fa fa-question-circle fa-2x"></i>
+        </div>
+
+        <div class="pt-3">
+          <div class="col-md-8">
+            <label class="title">Cargar un excel o archivo plano</label>
+            <form-field [control]="form.get('fileUpload')">
+              <input
+                type="file"
+                class="form-control"
+                formControlName="fileUpload" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="pt-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripción">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="description" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field
+                [control]="form.get('assetClassificationNumber')"
+                label="Número de clasificación de bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="assetClassificationNumber" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field [control]="form.get('minute')" label="Acta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="minute" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field [control]="form.get('noCourt')" label="No. juzgado">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noCourt" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <form-field
+                [control]="form.get('foreignOfficeNumber')"
+                label="Número oficio exterior">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="foreignOfficeNumber" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field
+                [control]="form.get('causePenal')"
+                label="Causa penal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="causePenal" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field [control]="form.get('expTrans')" label="Exp. trans">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="expTrans" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field
+                [control]="form.get('publicMinistry')"
+                label="Ministerio publico">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="publicMinistry" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <form-field
+                [control]="form.get('serialNumber')"
+                label="Número de serie">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="serialNumber" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field [control]="form.get('noWheel')" label="No. volante">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noWheel" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field
+                [control]="form.get('touchPenalty')"
+                label="Toca penal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="touchPenalty" />
+              </form-field>
+            </div>
+            <div class="pt-3 form-group">
+              <form-field
+                [control]="form.get('prelimiaryInvestigation')"
+                label="Averiguación previa">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="prelimiaryInvestigation" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="pt-3 form-group">
+              <form-field
+                [control]="form.get('receptionStartDate')"
+                label="Fecha page recepción">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="receptionStartDate" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="pt-3 form-group">
+              <form-field
+                [control]="form.get('receptionEndDate')"
+                label="Fecha fin recepción">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="receptionEndDate" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="justify-content-end btn-toolbar">
+        <button class="btn btn-info btn-sm active">Tipo estatus</button>
+        <button class="btn btn-primary btn-sm active">
+          <i class="fa fa-search"></i> Buscar
+        </button>
+      </div>
+    </form>
+
+    <div class="row pt-5">
+      <div class="col-md-6">
+        <p class="title text-center"><b>Bienes muebles</b></p>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="movables">
+          </ng2-smart-table>
+        </div>
+        <div class="justify-content-center btn-toolbar pt-3">
+          <button class="btn btn-primary btn-sm active">
+            Obtener bienes muebles
+          </button>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <p class="title text-center"><b>Bienes inmuebles</b></p>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settingsImmovable"
+            [source]="immovables">
+          </ng2-smart-table>
+        </div>
+        <div class="justify-content-center btn-toolbar pt-3">
+          <button class="btn btn-primary btn-sm active">
+            Obtener bienes inmuebles
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

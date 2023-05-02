@@ -1,0 +1,101 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="dateDocumentsModalForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="dateDocumentsModalForm.get('expedientNumber')"
+            label="Numero Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedientNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dateDocumentsModalForm.get('stateNumber')"
+            label="Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="stateNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dateDocumentsModalForm.get('typeDictum')"
+            label="Tipo dictamen">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeDictum"
+              (click)="openDictum()" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="dateDocumentsModalForm.get('key')"
+            label="Clave">
+            <input type="text" formControlName="key" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dateDocumentsModalForm.get('dateReceipt')"
+            label="Fecha insercion">
+            <input
+              type="text"
+              formControlName="dateReceipt"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="dateDocumentsModalForm.get('userReceipt')"
+            label="Usuario insercion">
+            <input
+              type="text"
+              formControlName="userReceipt"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="dateDocumentsModalForm.get('notificationDate')"
+            label="Fecha notificacion">
+            <input
+              type="text"
+              formControlName="notificationDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!dateDocumentsModalForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

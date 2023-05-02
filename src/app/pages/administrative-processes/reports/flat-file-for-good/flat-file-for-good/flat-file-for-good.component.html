@@ -1,0 +1,112 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Genera Archivo para Excel</h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="flatFileGoodForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="flatFileGoodForm.get('delegationReceives')"
+            label="Delegación Recibe">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationReceives" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="flatFileGoodForm.get('delegationManages')"
+            label="Delegación Administra">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationManages" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="flatFileGoodForm.get('type')" label="Tipo">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="flatFileGoodForm.get('area')" label="Área">
+            <input type="text" class="form-control" formControlName="area" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="flatFileGoodForm.get('initialDate')"
+            label="Fecha Inicial">
+            <input
+              type="text"
+              formControlName="initialDate"
+              placeholder="Fecha Inicial"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="flatFileGoodForm.get('finalDate')"
+            label="Fecha Final">
+            <input
+              type="text"
+              formControlName="finalDate"
+              placeholder="Fecha Final"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <button
+            class="btn btn-success btn-sm ml-2"
+            type="button"
+            (click)="file1.click()">
+            Nombre del Archivo Excel(Entrega)
+          </button>
+          <input
+            type="file"
+            name="file1"
+            #file1
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+        </div>
+        <div class="col-md-4">
+          <button
+            class="btn btn-success btn-sm ml-2"
+            type="button"
+            (click)="file2.click()">
+            Nombre del Archivo Excel(Decomiso)
+          </button>
+          <input
+            type="file"
+            name="file2"
+            #file2
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button type="submit" class="btn btn-primary btn-sm active">
+              Reporte
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

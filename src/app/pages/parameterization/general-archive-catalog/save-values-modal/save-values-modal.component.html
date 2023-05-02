@@ -1,0 +1,62 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="saveValuesForm">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            label="Cve Guardavalor"
+            [control]="saveValuesForm.get('id')">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Descripcipon"
+            [control]="saveValuesForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Locación"
+            [control]="saveValuesForm.get('location')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Responsable"
+            [control]="saveValuesForm.get('responsible')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

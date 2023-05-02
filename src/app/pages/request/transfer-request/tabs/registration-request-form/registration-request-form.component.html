@@ -1,0 +1,23 @@
+<h5 class="title">Asociar expediente</h5>
+<div class="md-tabls">
+  <tabset #staticTabs>
+    <tab heading="Documentos Generales">
+      <app-general-documents-form [requestForm]="requestForm">
+      </app-general-documents-form>
+    </tab>
+
+    <tab heading="Documentos de solicitud">
+      <app-request-document-form (changeTab)="changeTab($event)">
+      </app-request-document-form>
+    </tab>
+
+    <tab heading="Documentos de bienes">
+      <app-estate-document-form
+        [requestId]="docGoodRequestId"></app-estate-document-form>
+    </tab>
+
+    <tab heading="B&uacute;squeda de documentos">
+      <app-search-document-form></app-search-document-form>
+    </tab>
+  </tabset>
+</div>

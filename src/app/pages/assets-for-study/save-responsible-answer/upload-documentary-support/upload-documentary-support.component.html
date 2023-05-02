@@ -1,0 +1,95 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Respaldo ducumental de la solicitud</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-6">
+        <a id="download" (click)="downloadRequest()"
+          >Descargar solicitud de estudio de bienes</a
+        >
+      </div>
+    </div>
+    <div>
+      <form [formGroup]="supportForm" class="form-material">
+        <div class="row pt-4">
+          <h5>Respuesta del responsable del estudio</h5>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-radio label="Aceptar realizar el estudio">
+              <input
+                id="acceptStudy"
+                type="radio"
+                formControlName="typeAnswere"
+                value="aceptar" />
+            </form-radio>
+          </div>
+          <div class="col-md-6">
+            <form-radio label="Rechazar realizar el estudio">
+              <input
+                id="refuseStudy"
+                type="radio"
+                formControlName="typeAnswere"
+                value="rechazar" />
+            </form-radio>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="supportForm.get('observations')"
+              label="Obsercaciones">
+              <textarea
+                class="form-control"
+                formControlName="observations"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <h5>Oficio de respuesta</h5>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-8">
+            <input
+              type="file"
+              #FileInput
+              class="form-control"
+              (change)="selectFile($event)"
+              accept="application/pdf" />
+
+            <span id="size" *ngIf="sizeMessage"
+              >Seleccione un archivo no mayor a 100 MB.</span
+            >
+            <span id="stateFile">{{ stateFile }}</span>
+          </div>
+          <div class="col-md-2">
+            <a id="cleanFile" (click)="cleanFileInput()">
+              <img
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAnpJREFUWEetWFl2wyAMHG7WnMTJyWKfpLmZ+1gMEmhzXvloUiy0jEYSTkJeCcBZvvHvbeurfXo2ooeY147+w74eKX3C/F0elA1BXNMQdjsh4eyJWI41/flDWBHrjoEbaZpFYxyKGCBRXpQMB8wQ0tIUTodQCxGQW7XQVJKURTSoVGT80KXkYp6p38MzXZLZ72IYcW4oybxU1lCkuxk2FuYWkBbDAhIlx3X/B8DH7qBLhOTM9EyydYM5TwBvADuAl5urKpBltyafv7urpkxvqJeCHOUvERxO6RFdzlw6HgNd3a94Y0zYcZZor6UgVRrmfhZkurcHgIywOytXhGxQWdQJyIZL+ghQRKbsDme6bp3lIYSmjLboRaSmNKUDOCsywaWWvcytPr9mfuT/sy6a0gNIz9IKw/2hiorLbwe9gsb5cYinSXDI8tGtMq1JFg4lbLlJkXlEnIk0FY4HI7V83OzUM5+ydrX6xiSzsyikLBJZ2oGTcobq6U6F6XMVXvmM2OduF1KTY0fTs5ErYbijz305VpDj1FxhlMBz2WcUhTGj40aqbPZTfA2xnKEdfKulXv40pDT9lE/s+mGSN2fCd0ZHcQfSi5J69Dl+NyfXDzNzbbh2mWUcCOHM6XsAZ7u6BKvM4fYTSO8xmywe9Ned6lTCC2dB2F2sUy8mVps/CfjE3yiKAvGCpobzZdm7ka4Ckd4y3an9I77EfU+vjlh/X2Apk6bkOmmkhHGlvlNGRcuPWik6dky89LZj+qsgJOBiGribSkGeBN+tf2VTr365Dzr5rAi1Ult+LrlhzL/o6RI33+1jXsWkpLcOftLmkNCkzCJoIPiMovOLz7I/fFYPObWNDoAAAAAASUVORK5CYII=" />
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="row pt-4">
+      <div class="d-flex justify-content-center">
+        <div class="p-2">
+          <button
+            class="btn btn-primary btn-sm active"
+            [disabled]="supportForm.invalid"
+            (click)="save()">
+            Guardar
+          </button>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-danger btn-sm active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,93 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="notaryForm">
+      <div class="row">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="notaryForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="notaryForm.get('notaryNumber')"
+            label="N&uacute;mero Notaria">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="notaryNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="notaryForm.get('registryNumber')"
+            label="N&uacute;mero de registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registryNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="notaryForm.get('valid')" label="V&aacute;lido">
+            <input type="text" class="form-control" formControlName="valid" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="notaryForm.get('ubication')"
+            label="Ubicaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ubication" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="notaryForm.get('domicile')" label="Domicilio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="domicile" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-md-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="notaryForm.get('phone')"
+            label="Tel&eacute;fono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field [control]="notaryForm.get('email')" label="Correo">
+            <input type="text" class="form-control" formControlName="email" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!notaryForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

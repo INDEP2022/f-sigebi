@@ -1,0 +1,124 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">consulta de pagos sirsae</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form class="form-material mb-0" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <form-field
+                  [control]="form.get('reference')"
+                  label="Referencia">
+                  <input
+                    type="text"
+                    formControlName="reference"
+                    class="form-control" />
+                </form-field>
+              </div>
+              <div class="col-md-3 col-12">
+                <form-field
+                  [control]="form.get('startDate')"
+                  label="Fecha inicio">
+                  <input
+                    type="text"
+                    formControlName="startDate"
+                    class="form-control"
+                    bsDatepicker
+                    [maxDate]="form.get('endDate').value || maxDate" />
+                </form-field>
+              </div>
+              <div class="col-md-3 col-12">
+                <form-field [control]="form.get('endDate')" label="Fecha Fin">
+                  <input
+                    type="text"
+                    formControlName="endDate"
+                    class="form-control"
+                    bsDatepicker
+                    [maxDate]="maxDate"
+                    [minDate]="form.get('startDate').value" />
+                </form-field>
+              </div>
+              <div class="col-12 col-md-6">
+                <form-field [control]="form.get('bank')" label="Banco">
+                  <ng-custom-select
+                    formControlName="bank"
+                    class="form-control"
+                    path="interfacesirsae/api/v1/banks-sirsae"
+                    paramSearch="name_bank"
+                    prefixSearch="$ilike"
+                    value="name_bank">
+                    <ng-template let-item>{{ item.name_bank }}</ng-template>
+                  </ng-custom-select>
+                </form-field>
+              </div>
+              <div class="col-12 col-md-6">
+                <form-field
+                  class="form-group"
+                  [control]="form.get('status')"
+                  label="Estatus Mov.">
+                  <ng-custom-select
+                    formControlName="status"
+                    class="form-control"
+                    path="interfacesirsae/api/v1/statusmov-sirsae"
+                    [isLoadInOnInit]="true"
+                    paramSearch="statusDescription"
+                    prefixSearch="$ilike"
+                    value="id">
+                    <ng-template let-item>{{
+                      item.statusDescription
+                    }}</ng-template>
+                  </ng-custom-select>
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="col-12">
+              <button
+                class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
+                (click)="search()"
+                [disabled]="!form.valid">
+                Consultar
+              </button>
+            </div>
+            <div class="col-12">
+              <button
+                class="active btn btn-block btn-info btn-sm mt-4"
+                (click)="resetFilter()">
+                Resetear
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="mt-5">
+      <div class="d-flex justify-content-between">
+        <!-- <div class="form-material col-md-5">
+          <search-bar [params]="params"></search-bar>
+        </div> -->
+        <div>
+          <app-columns-select
+            [(settings)]="consultSettings"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="consultation-table"
+            [attr.class]="'table-bordered'"
+            [settings]="consultSettings"
+            [source]="tableSource">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

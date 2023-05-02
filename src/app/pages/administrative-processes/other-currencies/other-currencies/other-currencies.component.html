@@ -1,0 +1,92 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE NUMERARIO OTRAS MONEDAS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="currenciesForm" class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="currenciesForm.get('delegation')">
+            <ngx-select
+              [form]="currenciesForm"
+              (fetchItems)="getDelegations($event)"
+              [data]="delegations"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              [control]="'delegation'"
+              (change)="getDelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-field [control]="currenciesForm.get('subdelegation')">
+            <ngx-select
+              [form]="currenciesForm"
+              (fetchItems)="getSubdelegations($event)"
+              [data]="subdelegations"
+              value="id"
+              bindLabel="description"
+              label="Sub Delegaci&oacute;n"
+              [control]="'subdelegation'"
+              (change)="getSubdelegations($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-field [control]="currenciesForm.get('currencie')">
+            <ngx-select
+              [form]="currenciesForm"
+              [data]="currencies"
+              bindLabel="otKey1"
+              label="Monedas"
+              value="otKey1"
+              (fetchItems)="getCurrencies($event)"
+              control="currencie"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3 form-group mb-3">
+          <form-field
+            [control]="currenciesForm.get('from')"
+            label="Fecha de recepción">
+            <input
+              type="text"
+              formControlName="from"
+              placeholder="Fecha de Recepción"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 form-group mb-3">
+          <form-field [control]="currenciesForm.get('to')" label="Al">
+            <input
+              type="text"
+              formControlName="to"
+              placeholder="Al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            text="IMPRIMIR REPORTE"
+            [disabled]="currenciesForm.invalid"
+            [loading]="loading"
+            (confirm)="send()">
+          </confirm-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

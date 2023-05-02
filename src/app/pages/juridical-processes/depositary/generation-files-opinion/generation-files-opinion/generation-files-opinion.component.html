@@ -1,0 +1,114 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Generaci&oacute;n de archivos por dictamen</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberFlyer')"
+            label="No&#46; Volante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberFlyer" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberFile')"
+            label="No&#46; Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberFile" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberOpinion')"
+            label="No&#46; dictamen">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberOpinion" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('typeDictamination')"
+            label="Tipo Dictaminaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeDictamination" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateDictamination')"
+            label="Fecha Dictaminaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateDictamination"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('keyOficcioArmy')"
+            label="Clave Oficio Armada">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyOficcioArmy" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateInstructor')"
+            label="Fecha Instructora">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateInstructor"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('userDictates')"
+            label="Usuario Dictamina">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userDictates" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="generateReportFile()">
+                Generar archivo de dictamen
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

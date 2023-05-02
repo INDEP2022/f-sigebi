@@ -1,0 +1,47 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de evaluacion de desempeño de empresas</h5>
+  </div>
+  <div body>
+    <form [formGroup]="performanceEvaluationReportForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="performanceEvaluationReportForm.get('business')"
+            label="Empresa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="business" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="performanceEvaluationReportForm.get('ofMonth')"
+            label="Fecha del informe desde">
+            <input
+              type="text"
+              formControlName="ofMonth"
+              placeholder="Fecha del informe desde"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="performanceEvaluationReportForm.get('toMonth')"
+            label="Hasta el">
+            <input
+              type="text"
+              formControlName="toMonth"
+              placeholder="Hasta el"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

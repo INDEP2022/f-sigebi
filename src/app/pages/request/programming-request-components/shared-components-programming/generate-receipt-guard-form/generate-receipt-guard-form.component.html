@@ -1,0 +1,119 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Recibo resguardo</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('witness1')" label="Testigo 1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="witness1" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('identification')">
+            <ngx-select
+              [form]="form"
+              control="identification"
+              [data]="identifications"
+              value="id"
+              bindLabel="name"
+              label="Identificaci&oacute;n"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('numIdentification')"
+            label="No. identificaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numIdentification" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('issuedBy')" label="Expedida Por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="issuedBy" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="form.get('witness2')" label="Testigo 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="witness2" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('identification2')">
+            <ngx-select
+              [form]="form"
+              control="identification2"
+              [data]="identifications"
+              value="id"
+              bindLabel="name"
+              label="Identificaci&oacute;n"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('numIdentification2')"
+            label="No. identificaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numIdentification2" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('issuedBy2')" label="Expedida Por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="issuedBy2" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <form-field [control]="form.get('validity')" label="Vigencia">
+          <input type="text" class="form-control" formControlName="validity" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          [text]="'Aceptar'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

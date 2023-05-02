@@ -1,0 +1,382 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="additionalValuesForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-5">
+          <form-field [control]="additionalValuesForm.get('cdtabla')">
+            <ngx-select
+              (fetchItems)="getAditionalValues($event)"
+              [data]="values"
+              [form]="additionalValuesForm"
+              value="cdtabla"
+              bindLabel="name"
+              label="Tabla"
+              control="cdtabla"
+              (change)="onAditionalValuesChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field
+            [control]="additionalValuesForm.get('dstabla')"
+            label="Descripci&oacute;n">
+            <input type="text" formControlName="dstabla" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div *ngIf="additionalValuesForm.valid">
+      <form [formGroup]="tvalTableForm" class="form-material">
+        <div class="row margin-input">
+          <div class="col-md-2">
+            <form-field [control]="tvalTableForm.get('otKey1')" label="Clave1">
+              <input
+                type="text"
+                formControlName="otKey1"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="tvalTableForm.get('otKey2')" label="Clave2">
+              <input
+                type="text"
+                formControlName="otKey2"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="tvalTableForm.get('otKey3')" label="Clave3">
+              <input
+                type="text"
+                formControlName="otKey3"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="tvalTableForm.get('otKey4')" label="Clave4">
+              <input
+                type="text"
+                formControlName="otKey4"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="tvalTableForm.get('otKey5')" label="Clave5">
+              <input
+                type="text"
+                formControlName="otKey5"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-4">
+            <form-field
+              [control]="tvalTableForm.get('fromDate')"
+              label="Fecha Desde">
+              <input
+                type="text"
+                formControlName="fromDate"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="tvalTableForm.get('toDate')"
+              label="Fecha Hasta">
+              <input
+                type="text"
+                formControlName="toDate"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue01')"
+              label="Atributo1">
+              <input
+                type="text"
+                formControlName="otValue01"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue02')"
+              label="Atributo2">
+              <input
+                type="text"
+                formControlName="otValue02"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue03')"
+              label="Atributo3">
+              <input
+                type="text"
+                formControlName="otValue03"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue04')"
+              label="Atributo4">
+              <input
+                type="text"
+                formControlName="otValue04"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue05')"
+              label="Atributo5">
+              <input
+                type="text"
+                formControlName="otValue05"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue06')"
+              label="Atributo6">
+              <input
+                type="text"
+                formControlName="otValue06"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue07')"
+              label="Atributo7">
+              <input
+                type="text"
+                formControlName="otValue07"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue08')"
+              label="Atributo8">
+              <input
+                type="text"
+                formControlName="otValue08"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue09')"
+              label="Atributo9">
+              <input
+                type="text"
+                formControlName="otValue09"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue10')"
+              label="Atributo10">
+              <input
+                type="text"
+                formControlName="otValue10"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue11')"
+              label="Atributo11">
+              <input
+                type="text"
+                formControlName="otValue11"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue12')"
+              label="Atributo12">
+              <input
+                type="text"
+                formControlName="otValue12"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue13')"
+              label="Atributo13">
+              <input
+                type="text"
+                formControlName="otValue13"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue14')"
+              label="Atributo14">
+              <input
+                type="text"
+                formControlName="otValue14"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue15')"
+              label="Atributo15">
+              <input
+                type="text"
+                formControlName="otValue15"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue16')"
+              label="Atributo16">
+              <input
+                type="text"
+                formControlName="otValue16"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue17')"
+              label="Atributo17">
+              <input
+                type="text"
+                formControlName="otValue17"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue18')"
+              label="Atributo18">
+              <input
+                type="text"
+                formControlName="otValue18"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue19')"
+              label="Atributo19">
+              <input
+                type="text"
+                formControlName="otValue19"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue20')"
+              label="Atributo20">
+              <input
+                type="text"
+                formControlName="otValue20"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue21')"
+              label="Atributo21">
+              <input
+                type="text"
+                formControlName="otValue21"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue22')"
+              label="Atributo22">
+              <input
+                type="text"
+                formControlName="otValue22"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue23')"
+              label="Atributo23">
+              <input
+                type="text"
+                formControlName="otValue23"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue24')"
+              label="Atributo24">
+              <input
+                type="text"
+                formControlName="otValue24"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="tvalTableForm.get('otValue25')"
+              label="Atributo25">
+              <input
+                type="text"
+                formControlName="otValue25"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!tvalTableForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

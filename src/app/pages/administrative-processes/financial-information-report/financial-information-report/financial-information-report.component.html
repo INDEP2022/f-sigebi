@@ -1,0 +1,62 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE INFORMACION FINANCIERA</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="ch-content" header>
+          <h6 class="title">Comparativo de información financiera</h6>
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+          <form-field [control]="form.get('noBien')" label="No Bien">
+            <input type="text" class="form-control" formControlName="noBien" />
+          </form-field>
+        </div>
+        <div class="ch-content" header>
+          <h6>Fechas de comparación</h6>
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+          <form-field [control]="form.get('date1')" label="Fecha 1: ">
+            <input formControlName="date1" class="form-control" bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="form.get('date2')" label="Fecha 2:">
+            <input formControlName="date2" class="form-control" bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('date3')" label="Fecha 3:">
+            <input formControlName="date3" class="form-control" bsDatepicker />
+          </form-field>
+        </div>
+        <br /><br /><br /><br />
+        <div footer>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <confirm-button
+                text="Imprimir"
+                [disabled]="form.invalid"
+                [loading]="loading"
+                (confirm)="confirm()">
+              </confirm-button>
+            </div>
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-danger active"
+                (click)="cleanForm()">
+                Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

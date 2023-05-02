@@ -1,0 +1,29 @@
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Mantenimiento de Aprobaci&oacute;n para Donaci&oacute;n
+    </h5>
+  </div>
+
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="COM. EXTERIOR KG">
+          <app-data-table [type]="1"> </app-data-table>
+        </tab>
+
+        <tab heading="DELITOS FEDERALES">
+          <app-data-table [type]="2"> </app-data-table>
+        </tab>
+
+        <tab heading="OTROS TRANS.">
+          <app-data-table [type]="3"> </app-data-table>
+        </tab>
+
+        <tab heading="PERMISOS RASTREADOR">
+          <app-data-table [type]="4"> </app-data-table>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

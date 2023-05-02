@@ -1,0 +1,194 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="paymentForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('date')" label="Fecha">
+            <input
+              type="text"
+              formControlName="date"
+              class="form-control"
+              bsDatepicker
+              [maxDate]="maxDate" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('amount')" label="Monto">
+            <input
+              type="number"
+              formControlName="amount"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('originalReference')"
+            label="Referencia Original">
+            <input
+              type="text"
+              formControlName="originalReference"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('reference')"
+            label="Referencia">
+            <input
+              type="text"
+              formControlName="reference"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('cve')" label="Cve Banco">
+            <input type="text" formControlName="cve" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('code')" label="Código">
+            <input type="number" formControlName="code" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('publicBatch')"
+            label="Lote Público">
+            <input
+              type="number"
+              formControlName="publicBatch"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('event')">
+            <ngx-select
+              [form]="paymentForm"
+              [data]="eventItems"
+              value="id"
+              bindLabel="id"
+              label="Evento"
+              (fetchItems)="getEvents($event)"
+              control="event">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('systemValidity')"
+            label="Válido Sistema">
+            <ng-select
+              formControlName="systemValidity"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">NULO</ng-option>
+              <ng-option value="2">B</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('result')" label="Resultado">
+            <input type="text" formControlName="result" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('paymentId')" label="Id Pago">
+            <input
+              type="number"
+              formControlName="paymentId"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('batchId')">
+            <ngx-select
+              [form]="paymentForm"
+              [data]="batchItems"
+              value="id"
+              bindLabel="id"
+              label="Id Lote"
+              (fetchItems)="getBatches($event)"
+              control="batchId">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('entryOrderId')"
+            label="Id Orden Ingreso">
+            <input
+              type="number"
+              formControlName="entryOrderId"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('satDescription')"
+            label="Descripción Pago SAT">
+            <input
+              type="text"
+              formControlName="satDescription"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="paymentForm.get('type')" label="Tipo">
+            <ng-select
+              formControlName="type"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="L">Liquidaci&oacute;n</ng-option>
+              <ng-option value="G">Garant&iacute;a</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="paymentForm.get('inconsistencies')"
+            label="Inconsistencias">
+            <input
+              type="text"
+              formControlName="inconsistencies"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!paymentForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

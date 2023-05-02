@@ -1,0 +1,174 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BIENES POR DEPOSITAR&Iacute;A</h5>
+  </div>
+
+  <div body>
+    <!-- Forms Bienes DEPOSITARIA -->
+    <form [formGroup]="form" class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <div class="card">
+            <div class="card-body">
+              <form-field
+                [control]="form.get('delegacion')"
+                class="col-sm-12 col-12 col-md-6 p-2">
+                <ngx-select
+                  [data]="delegationData"
+                  bindLabel="description"
+                  label="Delegaci&oacute;n"
+                  value="id"
+                  (fetchItems)="getDelegations($event)"
+                  [form]="form"
+                  [showTooltip]="true"
+                  control="delegacion"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="form.get('subdelegacion')"
+                class="col-sm-12 col-12 col-md-6 p-2">
+                <ngx-select
+                  [data]="subDelegationData"
+                  bindLabel="description"
+                  label="SubDelegaci&oacute;n"
+                  value="id"
+                  (fetchItems)="getSubDelegations($event)"
+                  [form]="form"
+                  [showTooltip]="true"
+                  control="subdelegacion"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="form.get('depositaria')"
+                class="col-sm-12 col-12 col-md-6 p-2">
+                <ngx-select
+                  [data]="depositaryData"
+                  bindLabel="name"
+                  label="Depositar&iacute;a"
+                  value="id"
+                  (fetchItems)="getDepositary($event)"
+                  [form]="form"
+                  [showTooltip]="true"
+                  control="depositaria"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="form.get('entidadFederativa')"
+                class="col-sm-12 col-12 col-md-6 p-2">
+                <ngx-select
+                  [data]="federativeEntityData"
+                  bindLabel="descCondition"
+                  label="Entidad Federativa"
+                  value="id"
+                  (fetchItems)="getFederativeEntity($event)"
+                  [form]="form"
+                  [showTooltip]="true"
+                  control="entidadFederativa"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="form.get('tipoBien')"
+                class="col-sm-12 col-12 col-md-6 p-2">
+                <ngx-select
+                  [data]="goodTypeData"
+                  bindLabel="nameGoodType"
+                  label="Tipo de Bien"
+                  value="id"
+                  (fetchItems)="getGoodType($event)"
+                  [form]="form"
+                  [showTooltip]="true"
+                  control="tipoBien"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="form.get('subTipoBien')"
+                class="col-sm-12 col-12 col-md-6 p-2">
+                <ngx-select
+                  [data]="goodSubTypeData"
+                  bindLabel="nameGoodSubtype"
+                  label="Subtipo de Bien"
+                  value="id"
+                  (fetchItems)="getSubTypeGood($event)"
+                  [form]="form"
+                  [showTooltip]="true"
+                  control="subTipoBien"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="form.get('tipo')"
+                label="Tipo"
+                class="col-sm-12 col-12 col-md-6 p-2">
+                <select class="form-control" formControlName="tipo">
+                  <option value="">Seleccione un valor</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Depositaria">Depositar&iacute;a</option>
+                  <option value="Interventor">Interventor</option>
+                  <option value="Todos">Todos</option>
+                </select>
+              </form-field>
+              <form-field
+                class="col-sm-12 col-12 col-md-3 p-2"
+                [control]="form.get('from')"
+                label="Fecha Desde"
+                class="col-md-3">
+                <input
+                  class="form-control"
+                  formControlName="from"
+                  bsDatepicker />
+              </form-field>
+
+              <form-field
+                class="col-sm-12 col-12 col-md-3 p-2"
+                [control]="form.get('to')"
+                label="Fecha Hasta"
+                class="col-md-3">
+                <input class="form-control" formControlName="to" bsDatepicker />
+              </form-field>
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <form-radio
+                  class="col-sm-12 col-12 col-md-3 p-2"
+                  label="Fecha Nombramiento Provicional">
+                  <input
+                    type="radio"
+                    (change)="onChangeRadioDates($event)"
+                    formControlName="fechaRadio"
+                    value="P" />
+                </form-radio>
+                <form-radio
+                  class="col-sm-12 col-12 col-md-3 p-2"
+                  label="Fecha Remoci&oacute;n">
+                  <input
+                    type="radio"
+                    (change)="onChangeRadioDates($event)"
+                    formControlName="fechaRadio"
+                    value="R" />
+                </form-radio>
+                <form-radio
+                  class="col-sm-12 col-12 col-md-3 p-2"
+                  label="Fecha Nombramiento Definitivo">
+                  <input
+                    type="radio"
+                    (change)="onChangeRadioDates($event)"
+                    formControlName="fechaRadio"
+                    value="D" />
+                </form-radio>
+                <form-radio
+                  class="col-sm-12 col-12 col-md-3 p-2"
+                  label="Todas las Fechas">
+                  <input
+                    type="radio"
+                    (change)="onChangeRadioDates($event)"
+                    formControlName="fechaRadio"
+                    value="T" />
+                </form-radio>
+              </div>
+            </div>
+            <div class="card-footer text-center">
+              <button
+                type="submit"
+                class="btn btn-primary ml-2 mr-2 active text-wrap p-2"
+                (click)="btnImprimir()">
+                Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- Forms Bienes DEPOSITARIA -->
+  </div>
+</app-card>
