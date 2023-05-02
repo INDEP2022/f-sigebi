@@ -6,10 +6,12 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
+import { IDictamenSeq } from 'src/app/core/models/ms-goods-query/opinionDelRegSeq-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -44,16 +46,17 @@ export class NotifyAssetsImproprietyFormComponent
   //Parámetro con el id del tipo de la aclaración
   idAclara: any;
   idRequest: any;
-
   goodValue: any;
   rejectedID: any;
-
   dataClarifications2: ClarificationGoodRejectNotification;
-
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
   infoRequest: IRequest;
-
   params = new BehaviorSubject<ListParams>(new ListParams());
+
+  //Parámetros para generar el folio en el reporte
+  today: Date;
+  folio: IDictamenSeq;
+  folioReporte: string;
 
   constructor(
     private fb: FormBuilder,
@@ -64,13 +67,16 @@ export class NotifyAssetsImproprietyFormComponent
     private rejectedGoodService: RejectedGoodService,
     private authService: AuthService,
     private requestService: RequestService,
-    private chatClarificationsService: ChatClarificationsService
+    private chatClarificationsService: ChatClarificationsService,
+    private applicationGoodsQueryService: ApplicationGoodsQueryService
   ) {
     super();
+    this.today = new Date();
   }
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    //this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
 
     this.initForm1();
@@ -324,6 +330,13 @@ export class NotifyAssetsImproprietyFormComponent
 
   confirm() {
     if (!this.withDocumentation) {
+      //Verificar si ya el formulario tiene información
+
+      //Verificar si ya existe un folio armado
+
+      //Métodos para crear clave armado
+      this.dictamenSeq();
+
       //Formulario largo
 
       //Recupera información del usuario logeando para luego registrarlo como firmante
@@ -346,7 +359,7 @@ export class NotifyAssetsImproprietyFormComponent
           this.inappropriatenessForm.controls['paragraphFinal'].value,
         consistentIn: this.inappropriatenessForm.controls['consistentIn'].value,
         managedTo: this.inappropriatenessForm.controls['addresseeName'].value,
-        invoiceLearned: 'folio docto sin armar ',
+        invoiceLearned: this.folioReporte,
         //invoiceNumber: 1,
         positionAddressee:
           this.inappropriatenessForm.controls['positionAddressee'].value,
@@ -650,6 +663,44 @@ export class NotifyAssetsImproprietyFormComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(PrintReportModalComponent, config);
+  }
+
+  //Método para crear número secuencial según la no delegación del user logeado
+  dictamenSeq() {
+    let token = this.authService.decodeToken();
+
+    const pNumber = Number(token.department);
+
+    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+      next: response => {
+        // this.noFolio = response.data;
+        this.folio = response;
+        this.generateClave(this.folio.dictamenDelregSeq);
+        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
+      },
+      error: error => {
+        console.log('Error al generar secuencia de dictamen', error.error);
+      },
+    });
+  }
+
+  //Método para construir folio con información del usuario
+  generateClave(noDictamen?: string) {
+    //Trae información del usuario logeado
+    let token = this.authService.decodeToken();
+    console.log(token);
+
+    //Trae el año actuar
+    const year = this.today.getFullYear();
+    //Cadena final (Al final las siglas ya venian en el token xd)
+
+    if (token.siglasnivel4 != null) {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
+      console.log('Folio Armado final', this.folioReporte);
+    } else {
+      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
+      console.log('Folio Armado final', this.folioReporte);
+    }
   }
 
   close() {
