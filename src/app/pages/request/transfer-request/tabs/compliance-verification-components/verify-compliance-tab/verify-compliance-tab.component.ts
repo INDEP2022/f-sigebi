@@ -92,6 +92,8 @@ export class VerifyComplianceTabComponent
   clarificationData: any = [];
   clarifyRowSelected: any = [];
   confirmation: boolean = false;
+  task: any;
+  statusTask: any = '';
 
   constructor(
     private fb: FormBuilder,
@@ -113,6 +115,11 @@ export class VerifyComplianceTabComponent
   }
 
   ngOnInit(): void {
+    // DISABLED BUTTON - FINALIZED //
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     /* aclaraciones */
     this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
 
@@ -511,15 +518,22 @@ export class VerifyComplianceTabComponent
     }); */
   }
 
-  setDescriptionGoodSae(data: any) {
-    this.goodData.getElements().then(data => {
-      data.map((item: any) => {
-        if (item.id === data.data.id) {
-          item.descriptionGoodSae = data.text;
-        }
-      });
-      this.goodData.load(data);
+  setDescriptionGoodSae(descriptionInput: any) {
+    console.log(descriptionInput);
+    console.log(this.goodData['data']);
+    this.goodData['data'].map((item: any) => {
+      if (item.id === descriptionInput.data.id) {
+        item.descriptionGoodSae = descriptionInput.text;
+      }
     });
+    /*this.goodData.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === descriptionInput.data.id) {
+          item.descriptionGoodSae = descriptionInput.text;
+        }
+        this.goodData.load(data)
+      });
+    });*/
   }
 
   getData() {
@@ -593,7 +607,7 @@ export class VerifyComplianceTabComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
@@ -901,6 +915,7 @@ export class VerifyComplianceTabComponent
 
   updateGoods(body: any) {
     return new Promise((resolve, reject) => {
+      debugger;
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);
