@@ -92,10 +92,23 @@
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-5">
+        <div class="col-md-6">
           <label>Estado de Conservaci&oacute;n</label>
-          <span class="fs-4">{{ conservationState }}</span>
+          <div style="width: 20rem">
+            <ngx-select
+              style="width: 20rem"
+              [form]="goodForm"
+              control="stateConservation"
+              (fetchItems)="getConcervationState($event)"
+              [data]="selectConcervationState"
+              label=""
+              [searchable]="false"
+              bindLabel="description"
+              value="keyId"
+              [readonly]="false"></ngx-select>
+          </div>
         </div>
+
         <div class="col-md-5">
           <div class="form-group">
             <label>Aval&uacute;o</label>
@@ -328,9 +341,21 @@
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-5">
+        <div class="col-md-6">
           <label>Estado de Conservaci&oacute;n</label>
-          <span class="fs-4">{{ conservationState }}</span>
+          <div style="width: 20rem">
+            <ngx-select
+              style="width: 20rem"
+              [form]="goodForm"
+              control="stateConservation"
+              (fetchItems)="getConcervationState($event)"
+              [data]="selectConcervationState"
+              label=""
+              [searchable]="false"
+              bindLabel="description"
+              value="keyId"
+              [readonly]="false"></ngx-select>
+          </div>
         </div>
         <div class="col-md-5">
           <div class="form-group">
@@ -597,7 +622,19 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <label>Estado de Conservaci&oacute;n</label>
-          <span class="fs-4">{{ conservationState }}</span>
+          <div style="width: 20rem">
+            <ngx-select
+              style="width: 20rem"
+              [form]="goodForm"
+              control="stateConservation"
+              (fetchItems)="getConcervationState($event)"
+              [data]="selectConcervationState"
+              label=""
+              [searchable]="false"
+              bindLabel="description"
+              value="keyId"
+              [readonly]="false"></ngx-select>
+          </div>
         </div>
         <div class="col-md-6">
           <label>No. Norma</label>
