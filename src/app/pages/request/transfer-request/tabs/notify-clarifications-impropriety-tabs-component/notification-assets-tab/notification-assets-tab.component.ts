@@ -273,7 +273,7 @@ export class NotificationAssetsTabComponent
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
-
+        console.log('z', this.columns);
         this.data.load(this.columns);
         this.data.refresh();
         this.loadingGoods = false;
@@ -283,6 +283,7 @@ export class NotificationAssetsTabComponent
   }
 
   goodSelect(data: any) {
+    console.log(data);
     if (data.length > 0) {
       this.goodsReject.load(data);
       if (this.goodsReject.count() == 1) {
@@ -332,6 +333,7 @@ export class NotificationAssetsTabComponent
       if (this.selectedRow.answered == 'RECHAZADA') {
         this.message('Error', 'La notificación ya fue rechazada');
       }
+
       if (
         this.selectedRow.chatClarification.clarificationStatus ==
         'EN_ACLARACION'
@@ -351,6 +353,7 @@ export class NotificationAssetsTabComponent
           callback: (next: boolean) => {
             if (next) {
               this.getClarificationsByGood(refuseObj.goodId);
+              this.updateStatusGoodTmp(refuseObj.goodId);
             }
           },
         };
@@ -367,6 +370,7 @@ export class NotificationAssetsTabComponent
 
   showButton = true;
   selectRow(row?: any) {
+    console.log(row);
     if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
       this.showButton = true;
       // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
@@ -645,7 +649,7 @@ export class NotificationAssetsTabComponent
       if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
         if (this.selectedRow.answered == 'EN ACLARACION') {
           aclaration = true;
-        } else {
+        } else if (this.selectedRow.answered != 'RECHAZADA') {
           this.onLoadToast(
             'warning',
             'Acción Invalida',
@@ -680,6 +684,8 @@ export class NotificationAssetsTabComponent
             }
           });
         }
+      } else {
+        this.onLoadToast('error', 'Verificar', '');
       }
     }
   }
@@ -725,14 +731,14 @@ export class NotificationAssetsTabComponent
         answered: 'ACLARADA',
         rejectionDate: '2023-04-30',
       };
+      console.log('data', data);
       this.rejectedGoodService
         .update(this.selectedRow.rejectNotificationId, data)
         .subscribe({
           next: async data => {
             this.getClarificationsByGood(this.selectedRow.goodId);
-            this.validateStatusAclaration();
-
             this.updateStatusGoodTmp(this.selectedRow.goodId);
+            //this.validateStatusAclaration();
           },
           error: error => {
             this.onLoadToast(
@@ -1451,7 +1457,7 @@ export class NotificationAssetsTabComponent
           this.selectedRow.chatClarification.satClarify == null
         ) {
           this.updateChatClarificationsTmp();
-        } else if (this.selectedRow.answered != 'ACLARADA') {
+        } else if (this.selectedRow.answered != 'RECHAZADA') {
           this.onLoadToast(
             'info',
             'Acción no permitida',
