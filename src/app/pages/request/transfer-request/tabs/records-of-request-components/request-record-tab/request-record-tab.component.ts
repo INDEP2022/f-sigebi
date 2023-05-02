@@ -356,6 +356,13 @@ export class RequestRecordTabComponent
     this.loading = true;
     this.submitted = true;
     const request = this.requestForm.getRawValue() as IRequest;
+    console.log({ request });
+    Object.keys(request).forEach((key: any) => {
+      if ((request as any)[key] === '') {
+        console.log(key);
+        (request as any)[key] = null;
+      }
+    });
     request.transferEntNotes = request.transferEntNotes
       ? request.transferEntNotes
       : null;
