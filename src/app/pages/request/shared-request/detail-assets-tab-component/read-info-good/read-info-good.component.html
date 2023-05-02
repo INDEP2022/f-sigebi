@@ -83,7 +83,13 @@
       <div class="row pt-4">
         <div class="col-md-5">
           <label>Unidad de Medida Ligie</label>
-          <span class="fs-4">{{ unitMeasureLigie }}</span>
+          <select
+            class="form-control"
+            required
+            formControlName="unitMeasureLigie">
+            <option value="PZ">PIEZA</option>
+            <option value="null">DOCENA</option>
+          </select>
         </div>
         <div class="col-md-5">
           <label>Procedencia</label>
@@ -95,17 +101,13 @@
         <div class="col-md-6">
           <label>Estado de Conservaci&oacute;n</label>
           <div style="width: 20rem">
-            <ngx-select
-              style="width: 20rem"
-              [form]="goodForm"
-              control="stateConservation"
-              (fetchItems)="getConcervationState($event)"
-              [data]="selectConcervationState"
-              label=""
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"
-              [readonly]="false"></ngx-select>
+            <select
+              class="form-control"
+              required
+              formControlName="saeMeasureUnit">
+              <option value="bueno">Bueno</option>
+              <option value="malo">Malo</option>
+            </select>
           </div>
         </div>
 
@@ -321,7 +323,10 @@
       <div class="row pt-4">
         <div class="col-md-5">
           <label>Estado F&iacute;sico</label>
-          <span class="fs-4">{{ physicalStatus }}</span>
+          <select class="form-control" formControlName="physicalStatus">
+            <option value="bueno">Bueno</option>
+            <option value="malo">Malo</option>
+          </select>
         </div>
         <div class="col-md-5">
           <label>Tipo de Uso </label>
@@ -332,7 +337,13 @@
       <div class="row pt-4">
         <div class="col-md-5">
           <label>Unidad de Medida Ligie</label>
-          <span class="fs-4">{{ unitMeasureLigie }}</span>
+          <select
+            class="form-control"
+            required
+            formControlName="unitMeasureLigie">
+            <option value="PZ">PIEZA</option>
+            <option value="null">DOCENA</option>
+          </select>
         </div>
         <div class="col-md-5">
           <label>Procedencia</label>
@@ -344,17 +355,13 @@
         <div class="col-md-6">
           <label>Estado de Conservaci&oacute;n</label>
           <div style="width: 20rem">
-            <ngx-select
-              style="width: 20rem"
-              [form]="goodForm"
-              control="stateConservation"
-              (fetchItems)="getConcervationState($event)"
-              [data]="selectConcervationState"
-              label=""
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"
-              [readonly]="false"></ngx-select>
+            <select class="form-control" formControlName="stateConservation">
+              <option value="bueno">Bueno</option>
+              <option value="malo">Malo</option>
+            </select>
+            <!-- <ngx-select style="width: 20rem" [form]="goodForm" control="stateConservation"
+              (fetchItems)="getConcervationState($event)" [data]="selectConcervationState" label="" [searchable]="false"
+              bindLabel="description" value="keyId" [readonly]="false"></ngx-select> -->
           </div>
         </div>
         <div class="col-md-5">
@@ -496,11 +503,7 @@
 </div>
 
 <!-- TIPO TRANSFERENTE PGR_SAE PARA VERIFICAR CUMPLIMIENTO -->
-<div
-  *ngIf="
-    (typeOfRequest == 'PGR_SAE' || typeOfRequest == 'FGR_SAE') &&
-    process == 'verify-compliance'
-  ">
+<div *ngIf="typeOfRequest == 'PGR_SAE' || typeOfRequest == 'FGR_SAE'">
   <div>
     <form [formGroup]="goodForm" class="form-material">
       <div class="row">
@@ -587,7 +590,10 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <label>Estado F&iacute;sico</label>
-          <span class="fs-4">{{ physicalStatus }}</span>
+          <select class="form-control" formControlName="physicalStatus">
+            <option value="bueno">Bueno</option>
+            <option value="malo">Malo</option>
+          </select>
         </div>
         <div class="col-md-6">
           <label>Tipo de Uso </label>
@@ -598,7 +604,13 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <label>Unidad de Medida Ligie</label>
-          <span class="fs-4">{{ goodData?.ligieUnit }}</span>
+          <select
+            class="form-control"
+            required
+            formControlName="unitMeasureLigie">
+            <option value="PZ">PIEZA</option>
+            <option value="">PIEZA</option>
+          </select>
         </div>
         <div class="col-md-6">
           <label>Procedencia</label>
@@ -609,7 +621,7 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <label>Unidad de Medida Transferente</label>
-          <span class="fs-4">{{ goodData?.unitMeasure }}</span>
+          <span class="fs-4">{{ 'PIEZA' }}</span>
         </div>
         <div class="col-md-6">
           <div class="form-group">
@@ -623,17 +635,10 @@
         <div class="col-md-6">
           <label>Estado de Conservaci&oacute;n</label>
           <div style="width: 20rem">
-            <ngx-select
-              style="width: 20rem"
-              [form]="goodForm"
-              control="stateConservation"
-              (fetchItems)="getConcervationState($event)"
-              [data]="selectConcervationState"
-              label=""
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"
-              [readonly]="false"></ngx-select>
+            <select class="form-control" formControlName="stateConservation">
+              <option value="bueno">Bueno</option>
+              <option value="malo">Malo</option>
+            </select>
           </div>
         </div>
         <div class="col-md-6">
@@ -701,18 +706,19 @@
           <span class="fs-4">{{ goodType }}</span>
         </div>
         <div class="col-md-6">
+          <label>Clave Única</label>
+          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+        </div>
+        <div class="col-md-6">
           <div style="width: 20rem">
-            <label>Unidad medida INDEP</label>
-            <ngx-select
-              [form]="goodForm"
-              control="saeMeasureUnit"
-              (fetchItems)="getUnitMeasureSae($event)"
-              [data]="selectMeasureUnitSae"
-              label=""
-              [searchable]="false"
-              bindLabel="measureTlUnit"
-              value="uomCode"
-              [readonly]="false"></ngx-select>
+            <label>Unidad medida Ligie</label>
+            <select
+              class="form-control"
+              required
+              formControlName="unitMeasureLigie">
+              <option value="PZ">PIEZA</option>
+              <option value="null">DOCENA</option>
+            </select>
           </div>
         </div>
       </div>
@@ -812,10 +818,6 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <label>Clave Única</label>
-          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
-        </div>
-        <div class="col-md-6">
           <label>Volumen (m3)</label>
           <span class="fs-4">{{ goodData?.volume }}</span>
         </div>
@@ -861,17 +863,10 @@
         <div class="col-md-6">
           <label>Estado F&iacute;sico</label>
           <div style="width: 20rem">
-            <ngx-select
-              style="width: 20rem"
-              [form]="goodForm"
-              control="physicalStatus"
-              (fetchItems)="getPhysicalState($event)"
-              [data]="selectPhysicalState"
-              label=""
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"
-              [readonly]="false"></ngx-select>
+            <select class="form-control" formControlName="physicalStatus">
+              <option value="bueno">Bueno</option>
+              <option value="malo">Malo</option>
+            </select>
           </div>
         </div>
 
@@ -896,17 +891,13 @@
         <div class="col-md-6">
           <label>Estado de Conservaci&oacute;n</label>
           <div style="width: 20rem">
-            <ngx-select
-              style="width: 20rem"
-              [form]="goodForm"
-              control="stateConservation"
-              (fetchItems)="getConcervationState($event)"
-              [data]="selectConcervationState"
-              label=""
-              [searchable]="false"
-              bindLabel="description"
-              value="keyId"
-              [readonly]="false"></ngx-select>
+            <!-- <ngx-select style="width: 20rem" [form]="goodForm" control="stateConservation"
+              (fetchItems)="getConcervationState($event)" [data]="selectConcervationState" label="" [searchable]="false"
+              bindLabel="description" value="keyId" [readonly]="false"></ngx-select> -->
+            <select class="form-control" formControlName="stateConservation">
+              <option value="bueno">Bueno</option>
+              <option value="malo">Malo</option>
+            </select>
           </div>
         </div>
       </div>
