@@ -17,6 +17,7 @@ import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-a
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { TesofeMovementsModalComponent } from '../tesofe-movements-modal/tesofe-movements-modal.component';
 import { TESOFE_MOVEMENTS_COLUMNS } from './tesofe-movements-columns';
 
@@ -252,7 +253,7 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
   /**=======================================================
                   BORRAR UN REGISTRO
     =======================================================*/
-  /*deleteQuestion(event: IAccountMovement) {
+  deleteQuestion(event: IAccountMovement) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -263,9 +264,9 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
         Swal.fire('Borrado', '', 'success');
       }
     });
-  }*/
+  }
 
-  /*delete(event: IAccountMovement) {
+  delete(event: IAccountMovement) {
     let datosTest = {
       numberAccount: event.accountNumber.accountNumber,
       numberMotion: event.numberMotion,
@@ -276,7 +277,7 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
           Number(event.accountNumber.accountNumber).toString()
         );
       },
-      error: (err:any) => {
+      error: (err: any) => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -286,5 +287,5 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
         }
       },
     });
-  }*/
+  }
 }

@@ -19,8 +19,10 @@
             </form-field>
           </div>
           <div class="col-1">
-            <button class="btn btn-danger btn-sm">
-              <i class="fa fa-lock"></i>
+            <button class="btn btn-danger btn-sm" (click)="lock = !lock">
+              <i
+                class="fa"
+                [ngClass]="{ 'fa-lock': lock, 'fa-lock-open': !lock }"></i>
             </button>
           </div>
           <div class="col-md-2">
@@ -37,7 +39,7 @@
           <div class="col-md-7">
             <div class="row">
               <div class="col-1">
-                <button class="btn btn-danger btn-sm">
+                <button class="btn btn-danger btn-sm" (click)="callReport()">
                   <i class="fa fa-print"></i>
                 </button>
               </div>
@@ -56,7 +58,8 @@
                   <input
                     type="number"
                     class="form-control"
-                    formControlName="pgr" />
+                    formControlName="pgr"
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
                 </form-field>
               </div>
               <div class="col-6">
@@ -64,7 +67,8 @@
                   <input
                     type="number"
                     class="form-control"
-                    formControlName="ssa" />
+                    formControlName="ssa"
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
                 </form-field>
               </div>
               <div class="col-6">
@@ -72,7 +76,8 @@
                   <input
                     type="number"
                     class="form-control"
-                    formControlName="pjf" />
+                    formControlName="pjf"
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
                 </form-field>
               </div>
             </div>
@@ -87,9 +92,11 @@
             </button>
           </div>
           <div class="col-md-2">
-            <!-- <form-field label="">
-              <input type="file" class="form-control" />
-            </form-field> -->
+            <input
+              type="file"
+              #FileInput
+              class="form-control"
+              formControlName="recordRead" />
           </div>
           <div class="col-md-2">
             <form-field
@@ -98,17 +105,19 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="recordRead" />
+                formControlName="recordRead"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
           </div>
           <div class="col-md-2">
             <form-field
               [control]="file.get('recordsProcessed')"
-              label="Registros procesados:">
+              label="Registros Procesados:">
               <input
                 type="number"
                 class="form-control"
-                formControlName="recordsProcessed" />
+                formControlName="recordsProcessed"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -116,7 +125,8 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="processed" />
+                formControlName="processed"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -124,22 +134,31 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="wrong" />
+                formControlName="wrong"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
           </div>
         </div>
       </form>
       <form action="" class="form-material" [formGroup]="data">
         <div class="row mt-4 pt-4">
-          <div class="col-md-2">
-            <form-field [control]="data.get('noGood')" label="NO Bien">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="noGood" />
+          <div class="col-md-3">
+            <form-field [control]="data.get('noGood')">
+              <ngx-select
+                (fetchItems)="getGood($event)"
+                label="No. Bien"
+                [data]="goods"
+                [form]="data"
+                value="goodId"
+                bindLabel="goodDescription"
+                [control]="'noGood'"
+                (change)="(null)"
+                [searchOnInit]="true"
+                [showTooltip]="true">
+              </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <form-field
               [control]="data.get('criminalCase')"
               label="Causa Penal">
@@ -162,7 +181,7 @@
             </form-field>
           </div>
           <div class="col-md-2">
-            <form-field [control]="data.get('dateTesofe')" label="Fecha tesofe">
+            <form-field [control]="data.get('dateTesofe')" label="Fecha Tesofe">
               <input
                 type="number"
                 class="form-control"
