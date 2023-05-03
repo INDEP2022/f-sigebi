@@ -33,7 +33,7 @@
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
-                [searchable]="true"
+                [searchable]="false"
                 bindLabel="measureTlUnit"
                 value="uomCode"
                 [readonly]="false"></ngx-select>
@@ -121,10 +121,6 @@
             <label>No. Norma</label>
             <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
           </div>
-          <!-- <div class="col-md-5">
-            <label>Destino SAE</label>
-            <span class="fs-4">{{ goodData?.saeDestiny }}</span>
-          </div> -->
         </div>
 
         <div class="row pt-4">
@@ -133,7 +129,7 @@
               <label>Unidad medida Ligie</label>
               <ngx-select
                 [form]="goodForm"
-                control="saeMeasureUnit"
+                control="ligieUnit"
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
@@ -145,6 +141,30 @@
             <div class="col-md-5">
               <label>Capacidad</label>
               <span class="fs-4">{{ goodData?.capacity }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-5">
+            <label>Destino SAE</label>
+            <div style="width: 20rem">
+              <ngx-select
+                style="width: 20rem"
+                [form]="goodForm"
+                control="saeDestiny"
+                (fetchItems)="getDestiny($event)"
+                [data]="selectDestiny"
+                label=""
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"
+                [readonly]="false"></ngx-select>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="form-group">
+              <label>Aval&uacute;o</label>
+              <span class="fs-4">{{ avaluo }}</span>
             </div>
           </div>
         </div>
@@ -299,20 +319,35 @@
         <div class="row pt-4">
           <div class="col-md-5">
             <label>Destino SAE</label>
-            <span class="fs-4">{{ goodData?.saeDestiny }}</span>
+            <div style="width: 20rem">
+              <ngx-select
+                style="width: 20rem"
+                [form]="goodForm"
+                control="saeDestiny"
+                (fetchItems)="getDestiny($event)"
+                [data]="selectDestiny"
+                label=""
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"
+                [readonly]="false"></ngx-select>
+            </div>
           </div>
           <div class="col-md-5">
-            <label>Folio de Solicitud</label>
-            <span class="fs-4">{{ goodData?.requestFolio }}</span>
+            <div class="form-group">
+              <label>Aval&uacute;o</label>
+              <span class="fs-4">{{ avaluo }}</span>
+            </div>
           </div>
         </div>
+
         <div class="row pt-4">
           <div class="col-md-5">
             <div style="width: 20rem">
               <label>Unidad medida Ligie</label>
               <ngx-select
                 [form]="goodForm"
-                control="saeMeasureUnit"
+                control="ligieUnit"
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
@@ -352,6 +387,12 @@
               <label>Aval&uacute;o</label>
               <span class="fs-4">{{ avaluo }}</span>
             </div>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-5">
+            <label>Folio de Solicitud</label>
+            <span class="fs-4">{{ goodData?.requestFolio }}</span>
           </div>
         </div>
       </div>
@@ -395,7 +436,7 @@
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
-                [searchable]="true"
+                [searchable]="false"
                 bindLabel="measureTlUnit"
                 value="uomCode"
                 [readonly]="false"></ngx-select>
@@ -495,7 +536,7 @@
               <label>Unidad medida Ligie</label>
               <ngx-select
                 [form]="goodForm"
-                control="saeMeasureUnit"
+                control="ligieUnit"
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
@@ -507,6 +548,30 @@
             <div class="col-md-5">
               <label>Capacidad</label>
               <span class="fs-4">{{ goodData?.capacity }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-5">
+            <label>Destino SAE</label>
+            <div style="width: 20rem">
+              <ngx-select
+                style="width: 20rem"
+                [form]="goodForm"
+                control="saeDestiny"
+                (fetchItems)="getDestiny($event)"
+                [data]="selectDestiny"
+                label=""
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"
+                [readonly]="false"></ngx-select>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="form-group">
+              <label>Aval&uacute;o</label>
+              <span class="fs-4">{{ avaluo }}</span>
             </div>
           </div>
         </div>
@@ -525,12 +590,6 @@
           <div class="col-md-5">
             <label>Procedencia</label>
             <span class="fs-4">{{ goodData?.origin }}</span>
-          </div>
-          <div class="col-md-5">
-            <div class="form-group">
-              <label>Aval&uacute;o</label>
-              <span class="fs-4">{{ avaluo }}</span>
-            </div>
           </div>
         </div>
       </div>
