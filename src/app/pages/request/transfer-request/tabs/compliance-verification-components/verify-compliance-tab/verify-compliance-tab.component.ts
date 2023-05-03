@@ -461,6 +461,8 @@ export class VerifyComplianceTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       descriptionGoodSae: [null],
+      uniqueKey: [null],
+      duplicatedGood: [null],
     });
   }
 
