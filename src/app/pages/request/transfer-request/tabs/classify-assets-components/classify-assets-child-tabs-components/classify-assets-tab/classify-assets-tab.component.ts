@@ -100,6 +100,7 @@ export class ClassifyAssetsTabComponent
     //bienes selecionados
     //console.log(this.requestObject);
     this.good = changes['goodObject']?.currentValue;
+    console.log(this.good);
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
@@ -122,6 +123,8 @@ export class ClassifyAssetsTabComponent
       ligieLevel2: [null],
       ligieLevel3: [null],
       ligieLevel4: [null],
+      requestFolio: [null],
+      uniqueKey: [null],
       requestId: [requestId],
       goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       color: [
@@ -140,6 +143,7 @@ export class ClassifyAssetsTabComponent
           Validators.maxLength(13),
         ],
       ],
+      quantityy: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       duplicity: [
         'N',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
@@ -397,6 +401,9 @@ export class ClassifyAssetsTabComponent
         ],
       ],
       fractionId: [null],
+      duplicatedGood: [null],
+      admissionDate: [null],
+      federalEntity: [null],
     });
 
     if (this.goodObject != null) {
@@ -810,7 +817,7 @@ export class ClassifyAssetsTabComponent
 
             setTimeout(() => {
               this.refreshTable(false);
-            }, 5000);
+            }, 500);
             resolve(data);
           },
           error: error => {

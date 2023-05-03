@@ -1,15 +1,17 @@
+import { IFraccion } from 'src/app/core/models/ms-good/fraccion';
+
 export const ASSETS_COLUMNS = {
   goodId: {
     title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
-  descriptionGoodSae: {
+  goodDescription: {
     title: 'Descripción de Bien Transferente',
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  descriptionGoodSae: {
     title: 'Descripción de Bien INDEP',
     type: 'string',
     sort: false,
@@ -19,10 +21,12 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  fraction: {
+  fraccion: {
     title: 'Fracción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: IFraccion) =>
+      value ? value.description : '',
   },
   quantity: {
     title: 'Cantidad de la Transferente',

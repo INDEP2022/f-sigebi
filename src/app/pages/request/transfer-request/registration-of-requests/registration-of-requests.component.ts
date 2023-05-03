@@ -310,10 +310,11 @@ export class RegistrationOfRequestsComponent
           await this.getDictamen(data.id);
         }
 
+        this.verifyTransDelegaStatiAuthoExist(data);
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
-        console.log({ data });
         if (!data?.typeOfTransfer) {
           data.typeOfTransfer = 'MANUAL';
         }
@@ -330,6 +331,30 @@ export class RegistrationOfRequestsComponent
         console.log(error.error.message);
       },
     });
+  }
+
+  verifyTransDelegaStatiAuthoExist(data: any) {
+    if (
+      !data.transferenceId ||
+      !data.regionalDelegationId ||
+      !data.stationId ||
+      !data.authorityId
+    ) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Sin los campos de transferente, emisora y autoridad no se podran realizar las documentaciones requeridas! ',
+        icon: 'error',
+        width: 450,
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#b38e5d',
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+      }).then(async result => {
+        if (result.isConfirmed) {
+        }
+      });
+    }
   }
 
   setRequiredFields(data: any) {
@@ -537,7 +562,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'finish';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -548,7 +573,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'returnar';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -613,7 +638,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegúrese de tener guardado los formularios antes de turnar la solicitud',
+      'Asegúrese de haber guardado la información antes de turnar la solicitud',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -822,7 +847,7 @@ export class RegistrationOfRequestsComponent
   approveRequest() {
     this.msgSaveModal(
       'Aprobar',
-      'Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
+      '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -875,7 +900,7 @@ export class RegistrationOfRequestsComponent
   refuseRequest() {
     this.msgSaveModal(
       'Rechazar',
-      'Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
+      '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       'refuse'
@@ -1095,18 +1120,15 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'validar-destino-bien') {
           const clarification = await this.haveNotificacions();
-          console.log(clarification);
-          console.log(this.requestData.typeOfTransfer);
-          //debugger;
           if (clarification === true) {
+            await this.notifyClarificationsMethod();
+          } else {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
             body.rulingCreatorName = user.username;
             await this.updateRequest(body);
-            await this.notifyClarificationsMethod();
-          } else {
-            this.destinyDocumental();
+            await this.destinyDocumental();
           }
         }
         if (typeCommit === 'proceso-aprovacion') {

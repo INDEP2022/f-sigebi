@@ -111,7 +111,7 @@ export interface IGood {
   idGoodProperty?: number;
   requestFolio?: string;
   type?: string | number;
-  admissionDate?: Date;
+  admissionDate?: Date | string;
   locationId?: number;
   uniqueKey?: string;
   fileeNumber?: string;
@@ -360,6 +360,17 @@ export interface Estatus {
   fecVilidityFin?: any;
   observationShortStatus?: any;
   destiny: string;
+}
+
+export interface IVban {
+  array: [
+    {
+      screenKey: string;
+      goodNumber: number;
+      identificador: string;
+      typeAct: string;
+    }
+  ];
 }
 
 export interface GoodGetData {

@@ -19,7 +19,7 @@ export class PartializeFunctions {
     return this.service.bienesPar;
   }
   set bienesPar(value) {
-    this.bienesPar = value;
+    this.service.bienesPar = value;
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
@@ -57,6 +57,6 @@ export class PartializeFunctions {
   }
 
   protected validationClasif() {
-    return [1424, 1426, 62].includes(+this.good.goodCategory);
+    return [1424, 1426, 62].includes(+this.good.goodClassNumber);
   }
 }

@@ -461,6 +461,8 @@ export class VerifyComplianceTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       descriptionGoodSae: [null],
+      uniqueKey: [null],
+      duplicatedGood: [null],
     });
   }
 
@@ -727,6 +729,7 @@ export class VerifyComplianceTabComponent
   selectGood(event: any) {
     //if (event.isSelected === true) {
     this.formLoading = true;
+    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
@@ -735,14 +738,18 @@ export class VerifyComplianceTabComponent
       this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
+        //console.log("info del goodSELECTED v1", this.goodsSelected[0]); //henry
         this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
+        console.log('info del good v1', this.detailArray); //henry
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
         this.formLoading = false;
       }, 1000);
+
+      //console.log("Información de domicilio ",);
     } else {
       this.formLoading = false;
     }

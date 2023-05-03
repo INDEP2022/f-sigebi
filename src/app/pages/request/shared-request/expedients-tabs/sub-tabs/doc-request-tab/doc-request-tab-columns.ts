@@ -75,7 +75,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     sort: false,
   },
 
-  delegationName: {
+  /*delegationName: {
     title: 'Delegación Regional',
     type: 'string',
     sort: false,
@@ -91,7 +91,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     title: 'Transferente',
     type: 'string',
     sort: false,
-  },
+  }, */
 };
 
 export const DOC_GOODS_COLUMNS = {
@@ -177,7 +177,7 @@ export const DOC_GOODS_COLUMNS = {
     sort: false,
   },
 
-  delegationName: {
+  /*delegationName: {
     title: 'Delegación regional',
     type: 'string',
     sort: false,
@@ -193,7 +193,7 @@ export const DOC_GOODS_COLUMNS = {
     title: 'Transferente',
     type: 'string',
     sort: false,
-  },
+  }, */
 };
 
 export const DOC_EXPEDIENT_COLUMNS = {
