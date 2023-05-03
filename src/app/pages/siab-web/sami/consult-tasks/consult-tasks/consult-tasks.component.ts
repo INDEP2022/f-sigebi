@@ -98,6 +98,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
       State: [''],
+      typeOfTrasnfer: [null],
     });
 
     this.params
@@ -120,8 +121,13 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    const user = this.authService.decodeToken() as any;
+    this.filterParams
+      .getValue()
+      .addFilter('assignees', user.username, SearchFilter.ILIKE);
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
+
     if (filterStatus) {
       isfilterUsed = true;
       if (filterStatus === 'null') {
@@ -130,6 +136,30 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         this.filterParams.getValue().addFilter('State', filterStatus);
       }
     }
+
+    if (this.consultTasksForm.value.typeOfTrasnfer) {
+      isfilterUsed = true;
+      const value = this.consultTasksForm.value.typeOfTrasnfer;
+
+      if (value == 'FGR_SAE') {
+        this.filterParams
+          .getValue()
+          .addFilter(
+            'request.typeOfTransfer',
+            'PGR_SAE,FGR_SAE',
+            SearchFilter.IN
+          );
+      } else {
+        this.filterParams
+          .getValue()
+          .addFilter(
+            'request.typeOfTransfer',
+            this.consultTasksForm.value.typeOfTrasnfer,
+            SearchFilter.EQ
+          );
+      }
+    }
+
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
       this.filterParams
@@ -230,10 +260,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (
-      this.consultTasksForm.value.txtFecAsigDesde &&
-      this.consultTasksForm.value.txtFecAsigHasta
-    ) {
+    if (this.consultTasksForm.value.txtFecAsigDesde) {
       isfilterUsed = true;
       const fechaInicio = this.consultTasksForm.value.txtFecAsigDesde;
       const fechaFin = this.consultTasksForm.value.txtFecAsigHasta;
@@ -242,9 +269,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         fechaInicio instanceof Date
           ? fechaInicio.toISOString().split('T')[0]
           : fechaInicio;
-      const final = fechaFin
-        ? fechaFin.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0];
+      const final = fechaFin ? fechaFin.toISOString().split('T')[0] : inicio;
 
       this.filterParams
         .getValue()
@@ -269,9 +294,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         fechaInicio instanceof Date
           ? fechaInicio.toISOString().split('T')[0]
           : fechaInicio;
-      const final = fechaFin
-        ? fechaFin.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0];
+      const final = fechaFin ? fechaFin.toISOString().split('T')[0] : inicio;
 
       this.filterParams
         .getValue()
@@ -335,7 +358,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
     this.taskService
-      .getTasksByUser(this.filterParams.getValue().getParams())
+      .getTasksByUser(
+        this.filterParams.getValue().getParams().concat('&sortBy=id:DESC')
+      )
       .subscribe({
         next: response => {
           console.log('Response: ', response);
@@ -383,7 +408,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
 
-    if (selected.requestId !== null || selected.urlNb !== null) {
+    if (selected.requestId !== null && selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
       console.log(url);
       this.router.navigateByUrl(url);
