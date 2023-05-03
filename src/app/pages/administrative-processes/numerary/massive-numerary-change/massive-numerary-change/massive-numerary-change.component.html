@@ -5,21 +5,35 @@
   <div body>
     <div class="row mt-4">
       <div class="col-md-2">
-        <button
+        <!-- <input
+          type="file"
           class="btn btn-secondary btn-sm active"
-          (click)="onClickBtnFileExcel()">
-          Abrir archivo de MS Excel 4.0
-        </button>
+          (change)="onClickBtnFileExcel($event)" /> -->
+
+        <a
+          class="btn btn-secondary btn-sm active"
+          (click)="btnFileExcel.click()"
+          >Abrir archivo de MS Excel 4.0<input
+            #btnFileExcel
+            hidden
+            type="file"
+            accept=".xlsx,.xls"
+            (change)="onClickBtnFileExcel($event)" />
+        </a>
+      </div>
+      <div class="col-md-2">
+        <a class="btn btn-secondary btn-sm active" (click)="btnFileCsv.click()"
+          >Abrir archivo de Texto CSV<input
+            #btnFileCsv
+            hidden
+            type="file"
+            accept=".csv"
+            (change)="onClickBtnFileExcel($event)" />
+        </a>
       </div>
       <div class="col-md-2">
         <button
-          class="btn btn-secondary btn-sm active"
-          (click)="onClickBtnFileExcel()">
-          Abrir archivo de Texto CSV
-        </button>
-      </div>
-      <div class="col-md-2">
-        <button
+          [disabled]="isLoadingProcessExtraction"
           (click)="onClickBtnProcessExtraction()"
           class="btn btn-secondary btn-sm active">
           Proceso de extracción
@@ -62,6 +76,7 @@
             </form-field>
           </div>
           <div class="col-md-3">
+            Erróneos
             <form-field [control]="form.get('wrong')" label="Erroneos">
               <input
                 type="number"

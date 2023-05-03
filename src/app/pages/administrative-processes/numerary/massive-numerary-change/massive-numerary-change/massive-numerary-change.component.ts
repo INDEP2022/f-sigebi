@@ -9,13 +9,15 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { showToast } from 'src/app/common/helpers/helpers';
+import { readFile, showToast } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MassiveNumeraryChangeModalComponent } from '../massive-numerary-change-modal/massive-numerary-change-modal.component';
 import {
@@ -57,7 +59,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalService: BsModalService,
     private goodService: GoodService,
-    private accountMovementService: AccountMovementService
+    private accountMovementService: AccountMovementService,
+    private spentService: SpentService,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
@@ -90,16 +94,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   }
   getAttributes() {
     this.loading = true;
-    // this.attributesInfoFinancialService
-    //   .getAll(this.params.getValue())
-    //   .subscribe({
-    //     next: response => {
-    //       this.attributes = response.data;
-    //       this.totalItems = response.count;
-    //       this.loading = false;
-    //     },
-    //     error: error => (this.loading = false),
-    //   });
   }
   openForm(data?: any) {
     const modalConfig = MODAL_CONFIG;
@@ -124,15 +118,16 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   }
 
   //#region On click Button Process Extraction
-  onClickBtnProcessExtraction() {
-    // _onClickBtnProcessExtraction(this.columns, this.formTips, this.formGas);
+  isLoadingProcessExtraction = false;
+  async onClickBtnProcessExtraction() {
+    this.isLoadingProcessExtraction = true;
     let colB = 0;
     let banB = 0;
 
     let colI = 0;
     let banI = 0;
 
-    let colG = '';
+    let colG: any = null;
     let banG = false;
     let colV = 0;
     let banV = 0;
@@ -201,65 +196,183 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         text: messages.join('\n'),
       });
     }
-    // console.log(colB);
-    if (ban) return;
-
+    if (ban) {
+      this.isLoadingProcessExtraction = false;
+      return;
+    }
+    // declare service
     const params = new ListParams();
     params.limit = 10000000000000;
-    // this.service.getDataExcel(params).subscribe(res: any) => {
-    //   if (!Array.isArray(res)){
-    //     showAlert({
-    //       icon: 'error',
-    //       text: 'Ups! ocurrió un error al procesar los datos vuelve a intentarlo'
-    //     })
-    //     return;
-    //   }
-    //   this.processExtraction(res, colB)
-    // });
+
+    const excelData: any[] = /* await firstValueFrom(
+      this.service.getDataExcel(params).pipe()
+    ); */ [];
+    this.processExtraction(excelData, colB, colI, colV, colG);
   }
 
-  async processExtraction(res: any[], colB: number) {
+  async processExtraction(
+    res: any[],
+    colB: number,
+    colI: number,
+    colV: number,
+    colG: string
+  ) {
+    let dataTableSpent = [];
     let indNume;
     let contm = 0;
     let cveProcess;
+    let actaOk = false;
+    let vItem = null;
     res.map(async item => {
-      const typeValue = item[`F${colB}`];
-      if (typeValue) {
+      vItem = 'F' + colB;
+      const numberGood = item[vItem];
+      if (numberGood) {
         const good = await this.getGoodById([
-          { filter: 'filter.id', value: typeValue },
+          { filter: 'filter.id', value: numberGood },
         ]);
         cveProcess = null;
-        const goodStatus = await this.getGoodById([
-          { filter: 'filter.goodReferenceNumber', value: typeValue },
-          { filter: 'filter.id', value: `${SearchFilter.NEQ}:${typeValue}` },
-        ]);
+        try {
+          const goodStatus = await this.getGoodById(
+            [
+              { filter: 'filter.goodReferenceNumber', value: numberGood },
+              {
+                filter: 'filter.id',
+                value: `${SearchFilter.NEQ}:${numberGood}`,
+              },
+            ],
+            true
+          );
+          if (Array.isArray(goodStatus) && goodStatus.length > 1) {
+            throw new Error('Más de una ref.');
+          }
 
-        if (goodStatus?.status !== 'ADM') {
-          indNume = 0;
-          contm++;
-          cveProcess = 'Numerario <> ADM.';
-        } else {
-          try {
-            const movement = await firstValueFrom(
-              this.accountMovementService.getAllFiltered(
-                `filter.numberGood=${goodStatus.id}`
-              )
-            );
-            indNume = 3;
+          if (goodStatus?.status !== 'ADM') {
+            indNume = 0;
             contm++;
-            cveProcess = 'Numerario conciliado.';
-          } catch (ex) {
-            indNume = 2;
+            cveProcess = 'Numerario <> ADM.';
+          } else {
+            try {
+              const movement = await firstValueFrom(
+                this.accountMovementService.getAllFiltered(
+                  `filter.numberGood=${goodStatus.id}`
+                )
+              );
+              indNume = 3;
+              contm++;
+              cveProcess = 'Numerario conciliado.';
+            } catch (ex) {
+              indNume = 2;
+            }
+          }
+          cveProcess = this.pufSearchEvent(numberGood);
+        } catch (ex: any) {
+          if (ex?.error?.message === 'Más de una ref.') {
+            indNume = 0;
+            contm++;
+            cveProcess = 'Más de una ref.';
+          } else {
+            if (
+              good.identifier === 'TRANS' &&
+              ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(good.state)
+            ) {
+              indNume = 2;
+              cveProcess = await this.pufSearchEvent(numberGood);
+            } else {
+              indNume = 0;
+              if (good.identifier === 'TRANS') {
+                indNume = 4;
+              }
+              actaOk = await this.pufValidActaReception(numberGood);
+              if (
+                !actaOk &&
+                this.nvl(good?.goodsPartializationFatherNumber) > 0
+              ) {
+                actaOk = await this.pufValidActaReception(
+                  good.goodsPartializationFatherNumber
+                );
+              }
+              if (!actaOk) {
+                indNume = 5;
+                contm++;
+                cveProcess = 'Bien sin Acta.';
+              }
+            }
+          }
+        }
+        vItem = 'F' + colI;
+        let vTipo = item[vItem];
+        let income;
+        let viva;
+        let colG1;
+        let totSpent;
+        let colGu;
+        let spent;
+        let dSpent;
+        let descriptionG;
+        if (vTipo) {
+          income = vTipo?.replace(',', '.');
+          vItem = 'F' + colV;
+          vTipo = item[vItem];
+          if (vTipo) {
+            viva = vTipo?.replace(',', '.');
+            colG1 = colG;
+            totSpent = 0;
+            while (colG1) {
+              colGu = colG1.substring(0, colG1.indexOf(','));
+              vItem = 'F' + colGu;
+              vTipo = item[vItem];
+              try {
+                spent = this.nvl(
+                  parseFloat(vTipo?.replace(',', '.')).toFixed(2),
+                  0
+                );
+                vItem = 'GAS' + colGu;
+                dSpent = this.formGas.get(vItem)?.value;
+                totSpent += spent;
+                vItem = 'GAD' + colGu;
+                descriptionG = this.formGad.get(vItem)?.value;
+                if (descriptionG) {
+                  try {
+                    const conceptSpent = await this.getConceptSpend(dSpent);
+                    descriptionG = conceptSpent?.description;
+                  } catch (e: any) {
+                    descriptionG = 'Gasto: ' + dSpent;
+                  }
+                }
+              } catch (e: any) {}
+            }
           }
         }
       }
     });
   }
 
-  pufSearchEvent(goodNumber: number | string) {}
+  nvl(valor: any, def: any = 0) {
+    return valor || def;
+  }
+
+  getConceptSpend(id: number): Promise<any> {
+    //TODO: implementar PUF_CONCEPTO_GASTO
+    return firstValueFrom(this.spentService.getExpensesConceptById(id));
+  }
+
+  pufSearchEvent(goodNumber: number | string): Promise<boolean> {
+    //TODO: implementar PUF_BUSCA_EVENTO
+    return new Promise(resolve => {
+      resolve(true);
+    });
+  }
+
+  pufValidActaReception(goodNumber: number | string): Promise<boolean> {
+    //TODO: implementar PUF_VALIDA_ACTA_RECEP
+    return new Promise(resolve => {
+      resolve(true);
+    });
+  }
 
   async getGoodById(
-    paramsValues: { filter: string; value: any }[]
+    paramsValues: { filter: string; value: any }[],
+    returnAll = false
   ): Promise<any> {
     const params = new ListParams();
     paramsValues.forEach(item => {
@@ -269,6 +382,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     const good = await firstValueFrom(
       this.goodService.getAll(params).pipe(
         map((res: any) => {
+          if (returnAll) {
+            return res;
+          }
           if (Array.isArray(res) && res.length > 0) {
             return res[0];
           }
@@ -280,21 +396,24 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   }
   //#endregion On click Button Process Extraction
 
-  onClickBtnFileExcel() {
-    _onClickBtnFileExcel();
+  onClickBtnFileExcel(e: Event) {
+    const file = (e.target as HTMLInputElement).files[0];
+    try {
+      readFile(file).then(data => {
+        console.log({ data });
+        const dataExcel = this.excelService.getData(data.result);
+        console.log({ dataExcel });
+      });
+    } catch (ex) {
+      console.log({ ex });
+    }
+    // _onClickBtnFileExcel();
   }
 
   loadTablePreviewData(params: ListParams): void {}
 }
 
 function _onClickBtnFileExcel() {
-  const newWindow = window.open('file:///C:/siabexcelpath.pth');
-  console.log({ newWindow });
-  if (newWindow) {
-    newWindow.opener = null;
-    newWindow.close();
-  }
-
   // if (newWindow.opener)
 }
 
