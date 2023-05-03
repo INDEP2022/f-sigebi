@@ -148,9 +148,7 @@ export class ReadInfoGoodComponent
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
       next: (resp: any) => {
-        console.log(resp);
         this.relevantTypeName = resp.data[0].siabClasification.typeDescription;
-        // this.getSubTypeGood(this.goodData.fractionId);
       },
       error: error => {
         console.log(error);

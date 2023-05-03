@@ -133,7 +133,6 @@ export class RegistrationOfRequestsComponent
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
-    console.log('task', this.task);
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
