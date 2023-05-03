@@ -36,7 +36,7 @@ export class ReadInfoGoodComponent
   @Input() typeOfRequest: string = '';
   @Output() saveDetailInfo: EventEmitter<any> = new EventEmitter();
   goodData: any = {};
-  relevantTypeName: string = 'buscar';
+  relevantTypeName: string = '';
   goodForm: ModelForm<any>;
   destiniSaeSelected = new DefaultSelect();
   selectPhysicalState = new DefaultSelect();
@@ -87,20 +87,15 @@ export class ReadInfoGoodComponent
       this.getUnitMeasureLigie(new ListParams(), this.goodData.ligieUnit);
       //destino sae
       this.getDestinoSAE(new ListParams(), this.goodData.saeDestiny);
-      if (
-        // this.typeOfRequest == 'PGR_SAE' &&
-        this.process == 'classify-assets'
-      ) {
-        this.getUnitMeasureSae(new ListParams());
+      //destino transferente
+      this.getDestinyTransferent(this.goodData.transferentDestiny);
+      if (this.process == 'classify-assets') {
+        this.getUnitMeasureSae(new ListParams(), this.goodData.saeMeasureUnit);
 
         this.getConcervationState(new ListParams());
       }
 
-      if (
-        // this.typeOfRequest == 'PGR_SAE' &&
-        this.process == 'verify-compliance'
-      ) {
-        this.getDestinyTransferent(this.goodData.transferentDestiny);
+      if (this.process == 'verify-compliance') {
         this.getConcervationState(
           new ListParams(),
           this.goodData.stateConservation
@@ -108,10 +103,7 @@ export class ReadInfoGoodComponent
         this.getDestinoSAE(new ListParams());
       }
 
-      if (
-        // this.typeOfRequest == 'MANUAL' &&
-        this.process == 'verify-compliance'
-      ) {
+      if (this.process == 'verify-compliance') {
         this.getConcervationState(
           new ListParams(),
           this.goodData.stateConservation
@@ -164,14 +156,6 @@ export class ReadInfoGoodComponent
           }
         }
         this.destinySAE = resp.data[0].description;
-        /* if (
-          this.typeOfRequest == 'PGR_SAE' &&
-          this.process == 'verify-compliance'
-        ) {
-          this.destinySAE = resp.data[0].description;
-        } else {
-          this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
-        } */
       },
       error: error => {
         console.log('destinoSae ', error);
@@ -181,7 +165,7 @@ export class ReadInfoGoodComponent
 
   getPhysicalState(params: ListParams, id?: string) {
     params['filter.name'] = '$eq:Estado Fisico';
-    if (id) {
+    if (id && this.process != 'classify-assets') {
       params['filter.keyId'] = `$eq:${id}`;
     }
     this.genericService
@@ -189,19 +173,21 @@ export class ReadInfoGoodComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          console.log('estado fisico', data.data);
-          if (
-            (this.typeOfRequest == 'MANUAL' ||
-              this.typeOfRequest == 'PGR_SAE') &&
-            this.process == 'verify-compliance'
-          ) {
-            this.physicalStatus = data.data[0].description;
-          } else {
-            this.selectPhysicalState = new DefaultSelect(data.data, data.count);
-            this.goodForm.controls['physicalStatus'].setValue(
-              this.goodData.physicalStatus
-            );
+          if (this.process == 'classify-assets') {
+            if (id) {
+              this.selectPhysicalState = new DefaultSelect(
+                data.data,
+                data.count
+              );
+              this.goodForm.controls['physicalStatus'].setValue(id);
+            } else {
+              this.selectPhysicalState = new DefaultSelect(
+                data.data,
+                data.count
+              );
+            }
           }
+          this.physicalStatus = data.data[0].description;
         },
       });
   }
@@ -277,7 +263,6 @@ export class ReadInfoGoodComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log(resp);
           if (this.process == 'classify-assets') {
             if (id) {
               this.selectMeasureUnitSae = new DefaultSelect(
@@ -347,8 +332,21 @@ export class ReadInfoGoodComponent
   }
 
   unidMediIndep(event: any) {
-    console.log(event);
-    this.dataToSend.saeMeasureUnit = event.saeMeasureUnit;
+    this.dataToSend.saeMeasureUnit = event.uomCode;
+  }
+
+  destinySae(event: any) {
+    this.dataToSend.saeDestiny = event.keyId;
+  }
+
+  physicalState(event: any) {
+    this.dataToSend.physicalStatus = event.keyId;
+    this.dataToSend.physicstateName = event.description;
+  }
+
+  concervationState(event: any) {
+    this.dataToSend.stateConservation = event.keyId;
+    this.dataToSend.stateConservationName = event.description;
   }
 
   save() {
@@ -378,7 +376,8 @@ export class ReadInfoGoodComponent
             body.stateConservation = resp.stateConservation;
             body.saeMeasureUnit = resp.saeMeasureUnit;
 
-            this.saveDetailInfo.emit(body);
+            this.dataToSend.id = resp.id;
+            this.saveDetailInfo.emit(this.dataToSend);
             this.onLoadToast(
               'success',
               'Actualizado',
