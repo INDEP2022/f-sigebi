@@ -1203,14 +1203,14 @@ export class RegistrationOfRequestsComponent
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
-            body.rulingCreatorName = user.username;
+            body.rulingCreatorName = user.name;
             await this.updateRequest(body);
             await this.closeValidateDocumentation();
           } else if (clarification === 'SIN_ACLARACIONES') {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
-            body.rulingCreatorName = user.username;
+            body.rulingCreatorName = user.name;
             await this.updateRequest(body);
             await this.destinyDocumental();
           }
