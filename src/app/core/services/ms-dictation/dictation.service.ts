@@ -34,9 +34,13 @@ export class DictationService extends HttpService {
 
   getById(body: {
     id: string | number;
-    typeDict: string;
+    typeDict?: string;
   }): Observable<IDictation> {
     return this.get(this.route.Dictation, body);
+  }
+
+  findByIds(body: { id: string | number }): Observable<IDictation> {
+    return this.post(this.route.FindByIds, body);
   }
 
   create(body: IDictation) {
