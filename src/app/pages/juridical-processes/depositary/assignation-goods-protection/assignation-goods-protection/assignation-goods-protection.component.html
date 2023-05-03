@@ -83,11 +83,11 @@
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="formTipoSuspersion.get('previous_report_date')"
+            [control]="formTipoSuspersion.get('reportPreviousDate')"
             label="Fecha Informe Previo">
             <input
               class="form-control"
-              formControlName="previous_report_date"
+              formControlName="reportPreviousDate"
               bsDatepicker />
           </form-field>
         </div>
@@ -145,30 +145,30 @@
             [data]="minItems"
             bindLabel="description"
             label="Min&#46; Pub&#46;"
-            value="id"
+            value="minpubNumber"
             (fetchItems)="getFromSelect($event)"
             [form]="formAmparo"
-            control="no_minpub"></ngx-select>
+            control="minpubNumber"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
             [data]="courtItems"
             bindLabel="description"
             label="No&#46; Juzgado"
-            value="id"
+            value="courtNumber"
             (fetchItems)="getFromSelect($event)"
             [form]="formAmparo"
-            control="court_number"></ngx-select>
+            control="courtNumber"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
-            [data]="items"
-            bindLabel="delegacionName"
+            [data]="delegationItems"
+            bindLabel="description"
             label="Delegaci&oacute;n"
-            value="id"
+            value="delegationId"
             (fetchItems)="getFromSelect($event)"
             [form]="formAmparo"
-            control="delegacion"></ngx-select>
+            control="delegationNumber"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-5 p-2">
           <form-field
@@ -181,11 +181,11 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
-            [control]="formAmparo.get('act_claimed')"
+            [control]="formAmparo.get('actReclaimed')"
             label="Acto Reclamado">
             <textarea
               class="form-control"
-              formControlName="act_claimed"></textarea>
+              formControlName="actReclaimed"></textarea>
           </form-field>
         </div>
       </form>
