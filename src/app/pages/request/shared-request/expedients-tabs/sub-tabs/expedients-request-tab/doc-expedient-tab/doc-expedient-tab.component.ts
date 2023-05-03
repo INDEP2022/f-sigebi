@@ -63,8 +63,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   formLoading: boolean = false;
   allDocumentExpedient: any[] = [];
   typesDocuments: any = [];
-  task: any;
-  statusTask: any = '';
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -104,11 +102,6 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // DISABLED BUTTON - FINALIZED //
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     this.typeDoc = this.type ? this.type : this.typeDoc;
     if (this.typeDoc === 'doc-request') {
       //hacer visible la vista principal y no el ng-template

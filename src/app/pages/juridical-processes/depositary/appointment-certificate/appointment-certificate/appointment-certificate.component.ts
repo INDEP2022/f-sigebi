@@ -150,7 +150,6 @@ export class AppointmentCertificateComponent
             this.loading = false;
           },
           error: err => {
-            this.loading = false;
             console.log(err);
             this.alert(
               'warning',

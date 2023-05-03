@@ -30,8 +30,6 @@ export class ExpedientsRequestTabComponent
   paragraphs: any[] = [];
   requestId: number = 0;
   screen: 'expedient-tab';
-  task: any;
-  statusTask: any;
   constructor(
     private activatedRoute: ActivatedRoute,
     private requestService: RequestService
@@ -49,11 +47,6 @@ export class ExpedientsRequestTabComponent
   }
 
   ngOnInit(): void {
-    // DISABLED BUTTON - FINALIZED //
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     this.getIdExpediente();
   }
 

@@ -6,13 +6,8 @@ import {
   ITotalIvaPaymentsGens,
 } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
-import {
-  NumBienShare,
-  valorBien,
-} from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { MsMassivecapturelineService } from 'src/app/core/services/ms-massivecaptureline/ms-massivecaptureline.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +16,7 @@ export class QueryRelatedPaymentsService {
   constructor(
     private msMsDepositaryPaymentService: MsDepositaryPaymentService,
     private msDepositaryService: MsDepositaryService,
-    private msGoodService: GoodService,
-    private msMsMassivecapturelineService: MsMassivecapturelineService,
-    private svNumBienShare: NumBienShare
+    private msGoodService: GoodService
   ) {}
 
   sendSirsae(params: ISendSirSaeBody) {
@@ -56,21 +49,6 @@ export class QueryRelatedPaymentsService {
   getRefPayDepositoriesTotals(params: ITotalAmountRefPayments) {
     return this.msMsDepositaryPaymentService.getRefPayDepositoriesTotals(
       params
-    );
-  }
-  getExportExcell(goodNumber: number) {
-    return this.msMsMassivecapturelineService.getRefPayDepositories(goodNumber);
-  }
-  setGoodParamGood(goodNumber: number, screenKey: string) {
-    let valGood: valorBien = {
-      nomPantall: screenKey,
-      numBien: goodNumber,
-    };
-    this.svNumBienShare.SharingNumbienData = valGood;
-    console.log(
-      this.svNumBienShare.SharingNumbien,
-      valGood,
-      this.svNumBienShare.SharingNumbienData
     );
   }
 }

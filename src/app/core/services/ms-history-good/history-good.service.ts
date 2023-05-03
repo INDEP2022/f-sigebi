@@ -4,10 +4,7 @@ import { HistoryGoodEndpoints } from 'src/app/common/constants/endpoints/ms-hist
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import {
-  IHistoryGood,
-  ISentSirsae,
-} from '../../models/administrative-processes/history-good.model';
+import { IHistoryGood } from '../../models/administrative-processes/history-good.model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,10 +40,6 @@ export class HistoryGoodService extends HttpService {
       HistoryGoodEndpoints.HistoryStatusGood,
       documents
     );
-  }
-
-  sentSirsae(data: ISentSirsae) {
-    return this.post<ISentSirsae>(HistoryGoodEndpoints.SentSirsae, data);
   }
 
   update(id: string | number, documents: IHistoryGood) {

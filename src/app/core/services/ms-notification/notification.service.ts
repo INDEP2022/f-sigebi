@@ -4,13 +4,11 @@ import { NotificationEndpoints } from 'src/app/common/constants/endpoints/ms-not
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationRepository } from 'src/app/common/repository/repositories/ms-notification-repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from './../../interfaces/list-response.interface';
-
+import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   INotification,
   INotificationInquiry,
   INotificationTransferentIndiciadoCityGetData,
-  INotificationXProperty,
   ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
 
@@ -160,34 +158,5 @@ export class NotificationService extends HttpService {
     return this.httpClient.get<
       IListResponse<ItVolanteNotificacionesByNoExpedient>
     >('notification/notification/find-count-by-expedient/' + expedient);
-  }
-
-  getNotificationxPropertyFilter(
-    body: any
-  ): Observable<IListResponse<INotificationXProperty>> {
-    return this.post<IListResponse<INotificationXProperty>>(
-      this.route.NotificationxPropertyFilter,
-      body
-    );
-  }
-
-  postNotificationxPropertyFilterDates(
-    body: any
-  ): Observable<IListResponse<INotificationXProperty>> {
-    return this.post<IListResponse<INotificationXProperty>>(
-      this.route.NotificationxPropertyFilterSort,
-      body
-    );
-  }
-
-  updateObservacion(
-    bienNumber: number,
-    notificationDate: string,
-    observation: any
-  ): Observable<{ statusCode: number; message: string[] }> {
-    return this.put(
-      `${this.route.NotificationxPropertyPut}/${bienNumber}/notification/${notificationDate}`,
-      observation
-    );
   }
 }

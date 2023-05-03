@@ -1,5 +1,5 @@
 export interface IUsrRelBitacora {
-  sessionId?: number;
+  sessionId: number;
   sidId: string;
   user: string;
   detiUser: string;

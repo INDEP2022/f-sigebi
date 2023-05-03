@@ -36,8 +36,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   showSearchForm: boolean = false;
   searchForm: FormGroup = new FormGroup({});
   goodTypes = new DefaultSelect();
-  statusTask: any = '';
-  task: any;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -54,11 +52,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // DISABLED BUTTON - FINALIZED //
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     this.getGoodTypeSelect(new ListParams());
     this.initForm();
     this.params
@@ -239,7 +232,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
       const idRequest = this.idRequest;
       let config: ModalOptions = {
         initialState: {
-          statusTask: this.statusTask,
           idGood,
           idRequest,
           parameter: '',

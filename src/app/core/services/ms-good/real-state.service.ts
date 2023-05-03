@@ -24,7 +24,7 @@ export class RealStateService extends HttpService {
     return this.get<IListResponse<IGoodRealState>>(route);
   }
 
-  create(good: IGoodRealState): Observable<IGoodRealState> {
+  create(good: IGoodRealState) {
     return this.post('real-state', good);
   }
 

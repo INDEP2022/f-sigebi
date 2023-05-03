@@ -5,7 +5,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
-import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -27,15 +26,13 @@ export class DocumentationGoodsDialogComponent
   edit: boolean = false;
   selectExpedient = new DefaultSelect();
   selectGood = new DefaultSelect();
-  selectDictNumber = new DefaultSelect();
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private documentService: DocumentsDictumStatetMService,
     private expedientsService: ExpedientService,
-    private goodService: GoodService,
-    private dictationService: DictationService
+    private goodService: GoodService
   ) {
     super();
   }
@@ -44,14 +41,6 @@ export class DocumentationGoodsDialogComponent
     this.prepareForm();
     this.getExpedients(new ListParams());
     this.getGoods(new ListParams());
-    this.getDictNumbers(new ListParams());
-  }
-
-  getDictNumbers(params: ListParams) {
-    this.dictationService.getAll(params).subscribe({
-      next: data =>
-        (this.selectDictNumber = new DefaultSelect(data.data, data.count)),
-    });
   }
 
   getExpedients(params: ListParams) {

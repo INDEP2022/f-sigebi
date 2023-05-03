@@ -14,10 +14,7 @@
         </button>
       </div>
       <div class="p-2 buttons">
-        <button
-          [disabled]="statusTask == 'FINALIZADA'"
-          class="btn btn-primary btn-sm active"
-          (click)="saveRequest()">
+        <button class="btn btn-primary btn-sm active" (click)="saveRequest()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
@@ -211,7 +208,6 @@
         [detailAssets]="classiGoodsForm"
         [domicilieObject]="domicilieObject"
         [process]="process"
-        [childSaveAction]="childSaveAction"
         [typeDoc]="typeDoc"></app-detail-assets-tab-component>
     </div>
   </div>

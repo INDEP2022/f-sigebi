@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { WContentEndpoint } from 'src/app/common/constants/endpoints/ms-wcontent-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpWContentService } from 'src/app/common/services/http-wcontet.service';
+import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDocTypes, IWContent } from '../../models/ms-wcontent/wcontent.model';
 
@@ -11,6 +12,7 @@ import { IDocTypes, IWContent } from '../../models/ms-wcontent/wcontent.model';
   providedIn: 'root',
 })
 export class WContentService extends HttpWContentService {
+  private Path = environment.API_URL;
   private http = inject(HttpClient);
 
   constructor() {
