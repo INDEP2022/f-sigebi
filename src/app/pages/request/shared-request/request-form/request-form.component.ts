@@ -381,7 +381,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   save() {
     Swal.fire({
       title: 'Guardar Solicitud',
-      text: '¿Desea Guardar la solicitud?',
+      text: '¿Desea guardar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -461,14 +461,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Información',
-        `Seleccione un usuario para poder turnar la solicitud!`
+        `Seleccione un usuario para poder turnar la solicitud`
       );
       return;
     }
 
     Swal.fire({
       title: 'Turnar Solicitud',
-      text: '¿Desea Turnar la solicitud?',
+      text: '¿Desea turnar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -521,7 +521,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           if (taskResult) {
             this.loadingTurn = false;
             this.msgModal(
-              'Se turnar la solicitud con el Folio Nº '
+              'Se turnó la solicitud con el Folio Nº '
                 .concat(`<strong>${idRequest}</strong>`)
                 .concat(` al usuario ${this.userName}`),
               'Solicitud Creada',
