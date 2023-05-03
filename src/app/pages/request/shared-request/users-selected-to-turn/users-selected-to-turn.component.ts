@@ -2,7 +2,10 @@ import { Component, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -69,7 +72,15 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.typeUser = this.request.targetUserType;
     this.storeData = this.authService.decodeToken();
+
     this.deleRegionalId = this.storeData.delegacionreg;
+
+    // let str = "DELEGACIÓN REGIONAL METROPOLITANA";
+    // let arr = str.split(" "); // Divide la cadena en un array utilizando el espacio como separador
+    // arr.splice(arr.indexOf("DELEGACIÓN"), 1); // Elimina la palabra "DELEGACIÓN" del array
+    // let nuevaCadena = arr.join(" "); // Convierte el array en una nueva cadena utilizando el espacio como separador
+    // console.log(nuevaCadena);
+
     console.log('aaa', this.deleRegionalId);
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getAllUsers();
@@ -78,8 +89,13 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
   getAllUsers() {
     this.loading = true;
+
     this.params.value.addFilter('employeeType', this.typeUser);
-    // this.params.value.addFilter('deleRegionalId', this.deleRegionalId);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalId.substring(11),
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
 
     this.userProcessService.getAll(filter).subscribe({
