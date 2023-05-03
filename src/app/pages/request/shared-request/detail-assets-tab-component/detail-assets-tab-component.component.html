@@ -297,7 +297,8 @@
       *ngIf="process != 'registration-request'"
       [detailAssets]="detailAssets"
       [process]="process"
-      [typeOfRequest]="typeOfRequest"></app-read-info-good>
+      [typeOfRequest]="typeOfRequest"
+      (saveDetailInfo)="getDetailInfo($event)"></app-read-info-good>
   </tab>
 
   <tab>
