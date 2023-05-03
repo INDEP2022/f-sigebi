@@ -930,17 +930,35 @@ export class RegistrationOfRequestsComponent
   async approveRequestMethod() {
     this.loader.load = true;
     const existDictamen = await this.getDictamen(this.requestData.id);
+    //no tiene aclaraciones
+    const haveClarifications = await this.haveNotificacions();
+    if (haveClarifications === 'POR_ACLARAR') {
+      this.onLoadToast(
+        'info',
+        'No se puede aprobar la solicitud',
+        'La solicitud aun cuenta con bienes por aclarar!'
+      );
+      this.loader.load = false;
+      return;
+    }
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
-        'No se puede aprobar',
+        'No se puede aprobar la solicitud',
         'Es requerido previamente tener firmado el dictamen'
       );
       this.loader.load = false;
       return;
     }
 
-    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+    this.loader.load = false;
+    this.msgGuardado(
+      'success',
+      'Turnado Exitoso',
+      `Se guardó la solicitud con el folio: ${this.requestData.id}`
+    );
+    this.close();
+    /*const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
     const url = 'pages/request/programming-request/schedule-reception';
     const from = 'SOLICITAR_APROBACION';
     const to = 'APROBADO';
@@ -965,7 +983,7 @@ export class RegistrationOfRequestsComponent
         'Turnado Exitoso',
         `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
-    }
+    }*/
   }
   /** fin de proceso */
 
@@ -981,6 +999,16 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
+    const haveClarifications = await this.haveNotificacions();
+    if (haveClarifications === 'POR_ACLARAR') {
+      this.onLoadToast(
+        'info',
+        'No se puede rechazar la solicitud',
+        'La solicitud aun cuenta con bienes por aclarar!'
+      );
+      this.loader.load = false;
+      return;
+    }
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
@@ -1231,7 +1259,6 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      //params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
@@ -1282,12 +1309,6 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  /* dinamyCallFrom() {
-    this.registRequestForm.valueChanges.subscribe(data => {
-      this.requestData = data;
-    });
-  }
- */
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,

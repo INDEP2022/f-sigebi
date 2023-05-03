@@ -368,6 +368,7 @@ export class RequestRecordTabComponent
     request.transferEntNotes = request.transferEntNotes
       ? request.transferEntNotes
       : null;
+    request.court = request.court ? request.court : null;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
