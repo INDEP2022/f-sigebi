@@ -194,10 +194,8 @@ export class NotificationAssetsTabComponent
       next: response => {
         this.dataTask = response.data[0];
         if (this.dataTask.State == 'FINALIZADA') {
-          console.log('LA TAREA YA ESTA FINALIZADA');
           this.hideButtons();
         } else {
-          console.log('LA TAREA NO ESTA FINLAIZADA');
         }
       },
     });
@@ -206,7 +204,6 @@ export class NotificationAssetsTabComponent
   dataRequest() {
     this.requestService.getById(this.idRequest).subscribe({
       next: data => {
-        console.log('request', data);
         this.transferentName(data?.transferenceId);
         this.regDelName(data?.regionalDelegationId);
         this.stationName(data?.stationId);
@@ -276,7 +273,6 @@ export class NotificationAssetsTabComponent
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
-
         this.data.load(this.columns);
         this.data.refresh();
         this.loadingGoods = false;
@@ -286,7 +282,6 @@ export class NotificationAssetsTabComponent
   }
 
   goodSelect(data: any) {
-    console.log('select', data);
     if (data.length > 0) {
       this.goodsReject.load(data);
       if (this.goodsReject.count() == 1) {
@@ -311,11 +306,6 @@ export class NotificationAssetsTabComponent
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
         this.notificationsList.load(response.data);
-        console.log(
-          this.notificationsList.getElements().then(data => {
-            console.log('notificaciones', data);
-          })
-        );
         this.totalItems2 = response.count;
         this.formLoading = false;
       },
@@ -341,6 +331,7 @@ export class NotificationAssetsTabComponent
       if (this.selectedRow.answered == 'RECHAZADA') {
         this.message('Error', 'La notificación ya fue rechazada');
       }
+
       if (
         this.selectedRow.chatClarification.clarificationStatus ==
         'EN_ACLARACION'
@@ -360,6 +351,7 @@ export class NotificationAssetsTabComponent
           callback: (next: boolean) => {
             if (next) {
               this.getClarificationsByGood(refuseObj.goodId);
+              this.updateStatusGoodTmp(refuseObj.goodId);
             }
           },
         };
@@ -376,7 +368,6 @@ export class NotificationAssetsTabComponent
 
   showButton = true;
   selectRow(row?: any) {
-    console.log(row);
     if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
       this.showButton = true;
       // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
@@ -389,8 +380,6 @@ export class NotificationAssetsTabComponent
   }
 
   verifyClarification() {
-    console.log('seleccio', this.goodsReject.count());
-    console.log('se tiene', this.columns.length);
     if (this.goodsReject.count() < this.columns.length) {
       this.onLoadToast(
         'warning',
@@ -399,38 +388,37 @@ export class NotificationAssetsTabComponent
       );
     } else {
       this.goodsReject.getElements().then(data => {
-        data.map((bien: IGoodresdev) => {
+        const good = data.map((bien: any) => {
           if (
             bien.clarificationstatus == 'ACLARADO' ||
             bien.clarificationstatus == 'CANCELADO'
           ) {
-            if ([bien].length < this.goodsReject.count()) {
-              this.onLoadToast(
-                'info',
-                'Acción no permitida',
-                'El estatus de la notificación de todos los bienes debe de estar en aclarado'
-              );
-            } else {
-              this.alertQuestion(
-                'question',
-                'Confirmación',
-                'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
-              ).then(async question => {
-                if (question.isConfirmed) {
-                  const updateData = await this.verifyGoodCompliance();
-                  if (updateData == true) {
-                    this.createTaskVerifyCompliance();
-                    /*
-            if (user.employeetype == 'TE') {
-              //Se actualiza el orden de servicio
-            }
-           */
-                  }
-                }
-              });
-            }
+            return bien;
           }
         });
+        const filterGood = good.filter((good: any) => {
+          return good;
+        });
+        if (filterGood.length < this.goodsReject.count()) {
+          this.onLoadToast(
+            'info',
+            'Acción no permitida',
+            'El estatus de la notificación de todos los bienes debe de estar en aclarado'
+          );
+        } else {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              const updateData = await this.verifyGoodCompliance();
+              if (updateData == true) {
+                this.createTaskVerifyCompliance();
+              }
+            }
+          });
+        }
       });
     }
   }
@@ -440,7 +428,7 @@ export class NotificationAssetsTabComponent
       this.goodsReject.getElements().then(data => {
         data.map((bien: IGoodresdev) => {
           this.updateStatusGood(
-            null,
+            'ACLARADO',
             'VERIFICAR_CUMPLIMIENTO',
             bien.goodid,
             bien.goodresdev,
@@ -640,6 +628,8 @@ export class NotificationAssetsTabComponent
   }
 
   FinishClariImpro() {
+    let aclaration: boolean = false;
+    let impro: boolean = false;
     if (this.rowSelected == false) {
       this.message('Error', 'Seleccione notificación a Finalizar');
     } else {
@@ -652,18 +642,109 @@ export class NotificationAssetsTabComponent
         return;
       }
 
-      if (
-        this.selectedRow.chatClarification.clarificationStatus ==
-        'IMPROCEDENCIA'
+      if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
+        if (this.selectedRow.answered == 'EN ACLARACION') {
+          aclaration = true;
+        } else if (this.selectedRow.answered != 'RECHAZADA') {
+          this.onLoadToast(
+            'warning',
+            'Acción Invalida',
+            'El estatus de la aclaración debe ser igual a EN ACLARACIÓN'
+          );
+        }
+      } else if (
+        this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
       ) {
-        this.onLoadToast(
-          'warning',
-          'Atención:',
-          'Aún se desconoce la funcionalidad de este botón'
-        );
-      } else {
-        this.getRequest();
+        impro = true;
       }
+
+      if (aclaration || impro) {
+        if (aclaration) {
+          this.alertQuestion(
+            'question',
+            'Finalizar',
+            '¿Desea Finalizar la Aclaración?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.endAclaration();
+            }
+          });
+        } else if (impro) {
+          this.alertQuestion(
+            'question',
+            'Finalizar',
+            '¿Desea Finalizar la Improcedencia?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.endImpinappropriateness();
+            }
+          });
+        }
+      } else {
+        this.onLoadToast('error', 'Verificar', '');
+      }
+    }
+  }
+
+  endAclaration() {
+    if (
+      this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION' &&
+      this.selectedRow.answered == 'EN ACLARACION'
+    ) {
+      const data: ClarificationGoodRejectNotification = {
+        rejectNotificationId: this.selectedRow.rejectNotificationId,
+        answered: 'ACLARADA',
+        rejectionDate: '2023-04-30',
+      };
+      this.rejectedGoodService
+        .update(this.selectedRow.rejectNotificationId, data)
+        .subscribe({
+          next: async data => {
+            this.getClarificationsByGood(this.selectedRow.goodId);
+            const update = await this.validateStatusAclaration();
+            if (update) {
+              await this.updateStatusGoodTmp(this.selectedRow.goodId);
+            }
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al actualizar el status de la notifiación'
+            );
+          },
+        });
+    }
+  }
+
+  endImpinappropriateness() {
+    if (
+      this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
+      this.selectedRow.answered == 'EN ACLARACION'
+    ) {
+      const data: ClarificationGoodRejectNotification = {
+        rejectNotificationId: this.selectedRow.rejectNotificationId,
+        answered: 'ACLARADA',
+        rejectionDate: '2023-04-30',
+      };
+      this.rejectedGoodService
+        .update(this.selectedRow.rejectNotificationId, data)
+        .subscribe({
+          next: async data => {
+            this.getClarificationsByGood(this.selectedRow.goodId);
+            const update = await this.validateStatusAclaration();
+            if (update) {
+              this.updateStatusGoodTmp(this.selectedRow.goodId);
+            }
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al actualizar el status de la notifiación'
+            );
+          },
+        });
     }
   }
 
@@ -1105,7 +1186,6 @@ export class NotificationAssetsTabComponent
     this.paramsReject.getValue()['filter.id'] = this.task.id;
     this.taskService.getAll(this.paramsReject.getValue()).subscribe({
       next: response => {
-        console.log('información de task', response.data[0]);
         this.dataTask = response.data[0];
         this.updateStatusTask(this.dataTask);
       },
@@ -1130,7 +1210,6 @@ export class NotificationAssetsTabComponent
     //Actualizar State a FINALIZADA
     this.taskService.update(dataTask.id, model).subscribe({
       next: response => {
-        console.log('Información actualizada', response.data);
         //Desahabilita los botones
         this.hideButtons();
 
@@ -1138,7 +1217,6 @@ export class NotificationAssetsTabComponent
         this.endProcess();
       },
       error: error => {
-        console.log('No se actualizó', error.error);
         this.buttonsFinish = true;
       },
     });
@@ -1195,7 +1273,7 @@ export class NotificationAssetsTabComponent
                     if (notify.answered != 'ACLARADA') {
                       this.updateStatusGood(
                         'ACLARADO',
-                        '',
+                        'SOLICITAR_ACLARACION',
                         notify.goodId,
                         notify.goodResDevId,
                         item.typeorigin
@@ -1208,7 +1286,7 @@ export class NotificationAssetsTabComponent
                     if (notify.answered != 'ACLARADA') {
                       this.updateStatusGood(
                         'ACLARADO',
-                        '',
+                        'SOLICITAR_ACLARACION',
                         notify.goodId,
                         notify.goodResDevId,
                         item.typeorigin
@@ -1258,20 +1336,6 @@ export class NotificationAssetsTabComponent
         });
       }
 
-      if (statusGood == null) {
-        const good: IGood = {
-          id: idGood,
-          goodId: idGood,
-          processStatus: statusProcess,
-        };
-        this.goodService.update(good).subscribe({
-          next: data => {},
-          error: error => {
-            console.log(error);
-          },
-        });
-      }
-
       if (statusProcess) {
         const good: IGood = {
           id: idGood,
@@ -1286,23 +1350,6 @@ export class NotificationAssetsTabComponent
           },
         });
       }
-
-      if (statusProcess == null) {
-        const good: IGood = {
-          id: idGood,
-          goodId: idGood,
-          goodStatus: statusGood,
-        };
-
-        this.goodService.update(good).subscribe({
-          next: data => {},
-          error: error => {
-            console.log(error);
-          },
-        });
-      }
-
-      /**/
     } else if (typeOrigin == 'DOC_COMPLEMENTARIA') {
       if (statusGood) {
         const goodReject: ClarificationGoodRejectNotification = {
@@ -1314,30 +1361,12 @@ export class NotificationAssetsTabComponent
           next: response => {},
           error: error => {},
         });
-      } else {
-        const goodReject: ClarificationGoodRejectNotification = {
-          statusProcess: statusProcess,
-        };
-
-        this.rejectedGoodService.update(idGoodResDev, goodReject).subscribe({
-          next: response => {},
-          error: error => {},
-        });
       }
 
       if (statusProcess) {
         const goodReject: ClarificationGoodRejectNotification = {
           statusGood: statusGood,
           statusProcess: statusProcess, // Verificar porque se tiene id
-        };
-
-        this.rejectedGoodService.update(idGoodResDev, goodReject).subscribe({
-          next: response => {},
-          error: error => {},
-        });
-      } else {
-        const goodReject: ClarificationGoodRejectNotification = {
-          statusGood: statusGood,
         };
 
         this.rejectedGoodService.update(idGoodResDev, goodReject).subscribe({
@@ -1376,7 +1405,7 @@ export class NotificationAssetsTabComponent
           this.selectedRow.chatClarification.satClarify == null
         ) {
           this.updateChatClarificationsTmp();
-        } else if (this.selectedRow.answered != 'ACLARADA') {
+        } else if (this.selectedRow.answered != 'RECHAZADA') {
           this.onLoadToast(
             'info',
             'Acción no permitida',
@@ -1440,38 +1469,45 @@ export class NotificationAssetsTabComponent
   }
 
   updateStatusGoodTmp(idGood: number) {
-    this.paramsCheckAclaration.getValue()['filter.goodId'] = `$eq:${idGood}`;
+    return new Promise((resolve, reject) => {
+      this.paramsCheckAclaration.getValue()['filter.goodId'] = `$eq:${idGood}`;
 
-    this.rejectedGoodService
-      .getAllFilter(this.paramsCheckAclaration.getValue())
-      .subscribe({
-        next: data => {
-          this.notificationsList.load(data.data);
-          const filterAclaration = data.data.filter((item: any) => {
-            if (item.answered == 'ACLARADA' || item.answered == 'RECHAZADA') {
-              return item;
-            }
-          });
-
-          if (filterAclaration.length == this.notificationsList.count()) {
-            const valuesClarifications = { ...this.valuesNotifications };
-            const good: IGood = {
-              id: valuesClarifications.goodId,
-              goodId: valuesClarifications.goodId,
-              goodStatus: 'ACLARADO',
-            };
-            this.goodService.update(good).subscribe({
-              next: data => {
-                this.getGoodsByRequest();
-                this.notificationsList = new LocalDataSource();
-              },
-              error: error => {
-                console.log(error);
-              },
+      this.rejectedGoodService
+        .getAllFilter(this.paramsCheckAclaration.getValue())
+        .subscribe({
+          next: data => {
+            this.notificationsList.load(data.data);
+            const filterAclaration = data.data.filter((item: any) => {
+              if (
+                item.answered == 'ACLARADA' ||
+                item.answered == 'RECHAZADA'
+                //item.answered == 'EN ACLARACION'
+              ) {
+                return item;
+              }
             });
-          }
-        },
-      });
+
+            if (filterAclaration.length == this.notificationsList.count()) {
+              const valuesClarifications = { ...this.valuesNotifications };
+              const good: IGood = {
+                id: valuesClarifications.goodId,
+                goodId: valuesClarifications.goodId,
+                goodStatus: 'ACLARADO',
+              };
+              this.goodService.update(good).subscribe({
+                next: data => {
+                  this.getGoodsByRequest();
+                  this.notificationsList = new LocalDataSource();
+                },
+                error: error => {
+                  console.log(error);
+                },
+              });
+            }
+          },
+        });
+      resolve(true);
+    });
   }
 
   msgGuardado(icon: any, title: string, message: string) {

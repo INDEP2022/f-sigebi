@@ -10,7 +10,9 @@ export enum NotificationEndpoints {
   //post
   NotifyRatification = `notify-ratification`,
   //post
-  NotificationxPropertyFilter = `notification/notification-x-property/filter`,
+  NotificationxPropertyFilter = `notification-x-property/filter`,
+  //post calculo de días
+  NotificationxPropertyFilterSort = `notification-x-property/filter?sortBy=notificationDate:ASC`,
   //get, post
   TmpNotification = `tmp-notification`,
   //get

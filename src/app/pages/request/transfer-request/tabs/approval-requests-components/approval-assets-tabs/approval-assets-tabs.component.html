@@ -25,5 +25,13 @@
         <!--  </ng-scrollbar> -->
       </div>
     </div>
+    <div class="row pt-4" *ngIf="open === true">
+      <app-detail-assets-tab-component
+        [requestObject]="requestObject"
+        [detailAssets]="goodForm"
+        [domicilieObject]="domicilieObject"
+        [process]="process"
+        [typeDoc]="typeDoc"></app-detail-assets-tab-component>
+    </div>
   </div>
 </div>

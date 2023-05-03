@@ -76,6 +76,8 @@ export class ClassificationAssetsTabComponent
   goodSelect: any = [];
   idGood: string | number;
   formLoading: boolean = false;
+  settingsGood = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  isGoodSelected: boolean = false;
   constructor(
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
@@ -96,12 +98,7 @@ export class ClassificationAssetsTabComponent
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
-    this.settings = {
-      ...TABLE_SETTINGS,
-      actions: false,
-      selectMode: '',
-      columns: REQUEST_OF_ASSETS_COLUMNS,
-    };
+    this.settingsGood.columns = REQUEST_OF_ASSETS_COLUMNS;
     this.initForm();
     this.request = this.requestObject.getRawValue();
   }
@@ -137,7 +134,7 @@ export class ClassificationAssetsTabComponent
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: resp => {
-        console.log(resp.data);
+        //console.log(resp.data);
         var result = resp.data.map(async (item: any) => {
           item['quantity'] = Number(item.quantity);
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
@@ -208,7 +205,7 @@ export class ClassificationAssetsTabComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
@@ -288,19 +285,23 @@ export class ClassificationAssetsTabComponent
 
   selectGood(event: any) {
     this.formLoading = true;
+    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
     this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
+        //console.log("info del goodSELECTED v1", this.goodSelect[0]); //henry|
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
-      }, 1000);
-      setTimeout(() => {
+        console.log('infor del good v1', this.goodSelect[0] as IGood); //henry
+        if (this.detailArray.controls['id'].value !== null) {
+          this.isGoodSelected = true;
+        }
         this.formLoading = false;
-      }, 4000);
+      }, 1000);
     } else {
       // this.goodSelect[0].quantity = 0;
       this.detailArray.patchValue(null);
@@ -593,279 +594,11 @@ export class ClassificationAssetsTabComponent
       description: [null],
       fileNumber: [null],
       fractionId: [null],
+      saeMeasureUnit: [null],
     });
   }
 
-  /*initForm() {
-    this.goodsForm = this.fb.group({
-      id: [null],
-      goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieSection: [null, , [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      color: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      goodDescription: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-      ],
-      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      duplicity: [
-        'N',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      capacity: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      volume: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      fileeNumber: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
-      ],
-      useType: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      origin: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieUnit: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      appraisal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
-      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      compliesNorm: [
-        'N',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ], //cumple norma
-      notesTransferringEntity: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
-      ],
-      unitMeasure: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ], // preguntar Unidad Medida Transferente
-      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      brand: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(350),
-        ],
-      ],
-      subBrand: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(300),
-        ],
-      ],
-      armor: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      model: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(300),
-        ],
-      ],
-      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      axesNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      engineNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], //numero motor
-      tuition: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      serie: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      chassis: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      cabin: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      fitCircular: [
-        'N',
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
-      theftReport: [
-        'N',
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
-      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      operationalState: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      manufacturingYear: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      enginesNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], // numero de motores
-      flag: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      openwork: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      sleeve: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      length: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
-        ],
-      ],
-      shipName: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      publicRegistry: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], //registro public
-      ships: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      dgacRegistry: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], //registro direccion gral de aereonautica civil
-      airplaneType: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      caratage: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
-        ],
-      ], //kilatage
-      material: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
-        ],
-      ],
-      weight: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-    });
-  } */
+  updateTableInfo(event: any) {
+    console.log('clasifications assets ', event);
+  }
 }

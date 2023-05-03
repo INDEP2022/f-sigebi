@@ -97,7 +97,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
-      State: [''],
+      State: ['null'],
     });
 
     this.params
@@ -120,6 +120,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
     if (filterStatus) {
       isfilterUsed = true;
@@ -301,7 +302,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.filterParams
         .getValue()
         .addFilter(
-          'transferenceId',
+          'request.transferenceId',
           this.consultTasksForm.value.txtNoTransferente,
           SearchFilter.ILIKE
         );
@@ -373,11 +374,13 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   openTask(selected: any): void {
+    console.log('SELEC', selected);
     let obj2Storage = {
       assignees: selected.assignees,
       displayName: this.userName,
       taskId: selected.requestId,
       id: selected.id,
+      status: selected.State,
     };
 
     localStorage.setItem(`Task`, JSON.stringify(obj2Storage));

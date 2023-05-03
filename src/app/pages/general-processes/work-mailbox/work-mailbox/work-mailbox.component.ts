@@ -6,6 +6,7 @@ import {
   BehaviorSubject,
   catchError,
   debounceTime,
+  firstValueFrom,
   map,
   of,
   switchMap,
@@ -428,6 +429,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                   NUM_POSITIVE,
                   11
                 );
+                searchFilter = SearchFilter.EQ;
                 filter.search = valueProceedingsNumber.validValue;
                 break;
               case 'issue':
@@ -583,13 +585,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             this.getData();
           }
         }
-
-        // this.workService.getStatus().subscribe({
-        //   next: (resp: any) => {
-        //     //console.log(resp);
-        //
-        //   }
-        // })
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -600,32 +595,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.getData();
       }
     });
-
-    //this.getAreas();
-    //this.getGroupWork();
-
-    //this.loadPermissions();
-    /*this.workService.getView().subscribe({
-      next: (resp: any) => {
-        //console.log(resp);
-        if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.data.push({
-              columname: item.royalProceesDate,
-              columname2: item.naturalDays,
-              columname3: item.processEntryDate,
-              columname4: item.processStatus,
-              columname5: item.flierNumber,
-              columname6: item.turnadoiUser,
-              columname7: item.priority,
-              idOffice: item.officeNumber,
-            });
-          });
-
-          this.dataTable.load(this.data);
-        }
-      },
-    });*/
   }
 
   getUser(): void {
@@ -966,9 +935,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //console.log(params);
     this.workService.getView(params).subscribe({
       next: (resp: any) => {
-        //console.log(resp);
         if (resp.data) {
-          this.data = resp.data;
+          this.data = resp.data.map((elem: any) => {
+            elem.turnSelect = false;
+            return elem;
+          });
           this.totalItems = resp.count || 0;
           this.dataTable.load(resp.data);
           this.dataTable.refresh();
@@ -987,21 +958,20 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   insertIntoTmp(body: any) {
-    //console.log(body);
     return this.tmpManagementProcedureService.create(body);
   }
 
   deleteFromTmp(id: string | number) {
-    //console.log(id);
     return this.tmpManagementProcedureService.remove(id);
   }
 
   selectEvent(e: any) {
+    console.log(e);
+    e.data.turnSelect = !e.data.turnSelect;
+    this.dataTable.update(e.data, e.data);
     this.showPGRDocs = false;
     this.showScan = false;
     this.showValDoc = false;
-    //console.log(e);
-    //console.log(e.data);
 
     const { processNumber, folioRep, turnadoiUser } = e.data;
     this.dataSelect = {};
@@ -1083,6 +1053,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         },
         error: error => (this.loading = false),
       });
+    } else {
+      this.selectedRow = null;
     }
   }
 
@@ -1598,40 +1570,69 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   turnPaperwork() {
-    if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
-      return;
-    }
+    this.dataTable.getAll().then(data => {
+      const turnSelects = data.filter((elem: any) => elem.turnSelect);
+      const promises = turnSelects.map(async (elem: any) => {
+        const tmp = {
+          id: elem.processNumber,
+          InvoiceRep: elem.folioRep,
+          usrturned: elem.turnadoiUser,
+        };
 
-    const tmp = {
-      id: this.selectedRow.processNumber,
-      InvoiceRep: this.selectedRow.folioRep,
-      usrturned: this.selectedRow.turnadoiUser,
-    };
-    this.insertIntoTmp(tmp).subscribe();
+        let promise = await firstValueFrom(this.insertIntoTmp(tmp));
+        return promise;
+      });
+
+      Promise.allSettled(promises)
+        .then(dataP => {
+          //TODO: ADVERTIR CUANDO ALGUN TRÁMITE NO SE HA GUARDADO EN LA TABLA TEMPORAL
+          //console.log(dataP);
+          const isSaveTmp = dataP.filter(elem => elem.status === 'fulfilled');
+          if (isSaveTmp.length === turnSelects.length) {
+            const config: any = {
+              ...MODAL_CONFIG,
+              class: 'modal-dialog-centered',
+              initialState: {
+                callback: (refresh: boolean) => {
+                  this.afterTurn(refresh, turnSelects);
+                },
+                paperworks: turnSelects,
+              },
+            };
+            this.modalService.show(TurnPaperworkComponent, config);
+          } else {
+            this.alertQuestion(
+              'warning',
+              'No disponible',
+              'Los trámites seleccionados se encuentran en proceso de turnado en este momento'
+            );
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    });
+
     // TODO: descomentar cuando los permisos esten habilitados
     // if(!this.turnar) {
     //   this.onLoadToast('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
     //   return
     // }
-    const config: any = {
-      ...MODAL_CONFIG,
-      class: 'modal-dialog-centered',
-      initialState: {
-        callback: (refresh: boolean) => {
-          this.afterTurn(refresh);
-        },
-        paperwork: this.selectedRow,
-      },
-    };
-    this.modalService.show(TurnPaperworkComponent, config);
   }
 
-  afterTurn(refresh: boolean) {
-    this.deleteFromTmp(this.selectedRow.processNumber).subscribe();
-    if (refresh) {
-      this.getData();
-    }
+  afterTurn(refresh: boolean, turnSelects: any) {
+    const promises = turnSelects.map(async (elem: any) => {
+      let promise = await firstValueFrom(
+        this.deleteFromTmp(elem.processNumber)
+      );
+      return promise;
+    });
+
+    Promise.allSettled(promises).then(data => {
+      if (refresh) {
+        this.getData();
+      }
+    });
   }
 
   async onCancelPaperwork() {
@@ -2380,77 +2381,169 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   workFunction(action: string): void {
-    if (this.selectedRow !== null) {
-      switch (action) {
-        case 'work':
-          this.work();
-          break;
-        case 'acptionAntecedente':
-          this.acptionAntecedente();
-          break;
-        case 'acptionBienes':
-          this.acptionBienes();
-          break;
-        case 'viewFlyerHistory':
-          this.viewFlyerHistory();
-          break;
-        case 'viewIndicatorsHistory':
-          this.viewIndicatorsHistory();
-          break;
-        case 'replicate':
-          this.replicate();
-          break;
-        case 'turnPaperwork':
-          this.turnPaperwork();
-          break;
-        case 'viewPictures':
-          this.viewPictures();
-          break;
-        case 'onFinishPaperwork':
-          this.onFinishPaperwork();
-          break;
-        case 'onCancelPaperwork':
-          this.onCancelPaperwork();
-          break;
-        case 'onSavePaperwork':
-          this.onSavePaperwork();
-          break;
-        case 'validDoc':
-          this.validDoc();
-          break;
-        case 'viewDoc':
-          this.viewDoc();
-          break;
-        case 'scanDocuments':
-          this.scanDocuments();
-          break;
-        case 'getSolicitud':
-          this.getSolicitud();
-          break;
-        case 'getNotificationsReport':
-          this.getNotificationsReport();
-          break;
-        case 'getIdentifier':
-          this.getIdentifier();
-          break;
-        case 'updateObservations':
-          this.updateObservations();
-          break;
-        default:
-          this.alertQuestion(
-            'info',
-            'No disponible',
-            'Funcionalidad no disponible en este momento'
-          );
-          break;
+    this.dataTable.getAll().then(data => {
+      const turnSelects = data.filter((elem: any) => elem.turnSelect);
+      if (this.selectedRow !== null) {
+        switch (action) {
+          case 'work':
+            turnSelects.length === 1
+              ? this.work()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.work();
+                });
+            break;
+          case 'acptionAntecedente':
+            turnSelects.length === 1
+              ? this.acptionAntecedente()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.acptionAntecedente();
+                });
+            break;
+          case 'acptionBienes':
+            turnSelects.length === 1
+              ? this.acptionBienes()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.acptionBienes();
+                });
+            break;
+          case 'viewFlyerHistory':
+            turnSelects.length === 1
+              ? this.viewFlyerHistory()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.viewFlyerHistory();
+                });
+            break;
+          case 'viewIndicatorsHistory':
+            turnSelects.length === 1
+              ? this.viewIndicatorsHistory()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.viewIndicatorsHistory();
+                });
+            break;
+          case 'replicate':
+            turnSelects.length === 1
+              ? this.replicate()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.replicate();
+                });
+            break;
+          case 'turnPaperwork':
+            this.turnPaperwork();
+            break;
+          case 'viewPictures':
+            turnSelects.length === 1
+              ? this.viewPictures()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.viewPictures();
+                });
+            break;
+          case 'onFinishPaperwork':
+            turnSelects.length === 1
+              ? this.onFinishPaperwork()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.onFinishPaperwork();
+                });
+            break;
+          case 'onCancelPaperwork':
+            turnSelects.length === 1
+              ? this.onCancelPaperwork()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.onCancelPaperwork();
+                });
+            break;
+          case 'onSavePaperwork':
+            turnSelects.length === 1
+              ? this.onSavePaperwork()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.onSavePaperwork();
+                });
+            break;
+          case 'validDoc':
+            turnSelects.length === 1
+              ? this.validDoc()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.validDoc();
+                });
+            break;
+          case 'viewDoc':
+            turnSelects.length === 1
+              ? this.viewDoc()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.viewDoc();
+                });
+            break;
+          case 'scanDocuments':
+            turnSelects.length === 1
+              ? this.scanDocuments()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.scanDocuments();
+                });
+            break;
+          case 'getSolicitud':
+            turnSelects.length === 1
+              ? this.getSolicitud()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.getSolicitud();
+                });
+            break;
+          case 'getNotificationsReport':
+            turnSelects.length === 1
+              ? this.getNotificationsReport()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  this.getNotificationsReport();
+                });
+            break;
+          case 'getIdentifier':
+            this.getIdentifier();
+            /*turnSelects.length === 1 ? 
+              this.getIdentifier():
+              this.takeOneProcess(turnSelects).then(()=>{
+                this.getIdentifier();
+              });*/
+            break;
+          case 'updateObservations':
+            turnSelects.length === 1
+              ? this.updateObservations()
+              : this.takeOneProcess(turnSelects).then(() => {
+                  console.log('return');
+                  this.updateObservations();
+                });
+            break;
+          default:
+            this.alertQuestion(
+              'info',
+              'No disponible',
+              'Funcionalidad no disponible en este momento'
+            );
+            break;
+        }
+      } else {
+        this.alertQuestion(
+          'info',
+          'No ha seleccionado ningún registro',
+          'Por favor seleccione un registro, para poder ejecutar la acción'
+        );
       }
-    } else {
-      this.alertQuestion(
-        'info',
-        'No ha seleccionado ningún registro',
-        'Por favor seleccione un registro, para poder ejecutar la acción'
+    });
+  }
+
+  async takeOneProcess(turnSelects: any) {
+    return this.alertInfo(
+      'info',
+      'Más de un trámite seleccionado',
+      'Se tomará el último registro seleccionado'
+    ).then(data => {
+      console.log(this.selectedRow);
+      const notSelected = turnSelects.filter(
+        (elem: any) => elem.processNumber !== this.selectedRow.processNumber
       );
-    }
+      console.log(notSelected);
+      const polls = notSelected.map(async (elem: any) => {
+        elem.turnSelect = false;
+        return await this.dataTable.update(elem, elem);
+      });
+      return polls;
+    });
   }
 
   getSolicitud() {
@@ -2545,7 +2638,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  getIdentifier(): void {
+  getIdentifier2(): void {
     this.loading = true;
     //Get NextVal SEQ_RASTREADOR
     //console.log(this.selectedRow.flierNumber);
@@ -2597,6 +2690,80 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
+  getIdentifier(): void {
+    this.loading = true;
+    //Get NextVal SEQ_RASTREADOR
+    this.goodTrackerService.getIdentifier().subscribe({
+      next: (resp: any) => {
+        //console.log(resp);
+        if (resp.nextval) {
+          this.dataTable.getAll().then(data => {
+            const turnSelects = data.filter((elem: any) => elem.turnSelect);
+            const promises = turnSelects.map(async (elem: any) => {
+              if (elem?.flierNumber) {
+                const flierNumber = elem?.flierNumber;
+                console.log(elem.flierNumber);
+                const tmpTracker = {
+                  identificator: resp.nextval,
+                  goodNumber: flierNumber,
+                };
+                let promise = await firstValueFrom(
+                  this.goodTrackerService.createTmpTracker(tmpTracker)
+                );
+                return promise;
+              } else {
+                throw new Error('false');
+              }
+            });
+            Promise.allSettled(promises).then(polls => {
+              console.log(polls);
+              this.loading = false;
+              const isSaveTmp = polls.filter(
+                elem => elem.status === 'fulfilled'
+              );
+
+              console.log(isSaveTmp.length, turnSelects.length);
+              if (isSaveTmp.length === turnSelects.length) {
+                this.getFlyersReport(resp.nextval);
+              } else if (isSaveTmp.length > 0) {
+                this.alertInfo(
+                  'info',
+                  'Aviso',
+                  'Solo se visualizará el reporte de los Oficios con volantes relacionados'
+                );
+                this.getFlyersReport(resp.nextval);
+              } else {
+                this.alertInfo(
+                  'info',
+                  'Aviso',
+                  'El Oficio no tiene volante relacionado, el reporte no puede generarse'
+                );
+              }
+            });
+          });
+        }
+      },
+      error: error => {
+        this.loading = false;
+        this.alertInfo(
+          'warning',
+          'Ocurrió un error',
+          'No se pudo generar un identificador, solo se visualizará el primer volante'
+        );
+        if (this.selectedRow?.flierNumber) {
+          const flierNumber = this.selectedRow?.flierNumber;
+          this.getFlyersReport(null, flierNumber);
+        } else {
+          this.loading = false;
+          this.alertInfo(
+            'info',
+            'Aviso',
+            'El Oficio no tiene volante relacionado, el reporte no puede generarse'
+          );
+        }
+      },
+    });
+  }
   getFlyersReport(identificator?: number, flierNumber?: number): void {
     this.loading = true;
     let params = {};
