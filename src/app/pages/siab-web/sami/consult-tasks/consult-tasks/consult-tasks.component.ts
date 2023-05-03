@@ -30,6 +30,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   loadingText = '';
   userName = '';
   consultTasksForm: FormGroup;
+  department = '';
 
   constructor(
     private taskService: TaskService,
@@ -49,6 +50,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.userName = this.authService.decodeToken().preferred_username;
+    this.department = this.authService.decodeToken().department;
 
     this.consultTasksForm = this.fb.group({
       unlinked: [null, Validators.required],
@@ -120,8 +122,20 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
+
+    if (this.userName) {
+      this.filterParams
+        .getValue()
+        .addFilter('assignees', this.userName, SearchFilter.ILIKE);
+    }
+
+    // if (this.department) {
+    //   this.filterParams.getValue().addFilter('regionalDelegationId', this.department, SearchFilter.EQ);
+    // }
+
     if (filterStatus) {
       isfilterUsed = true;
       if (filterStatus === 'null') {
