@@ -413,7 +413,9 @@ export class ApprovalAssetsTabsComponent
               item.transferentDestiny
             );
             item['transferentDestinyName'] = transferentDestiny;
-            item['destinyLigieName'] = transferentDestiny;
+
+            const destiny = await this.getDestinyLigie(item.destiny);
+            item['destinyLigieName'] = destiny;
 
             const goodMenaje = await this.getMenaje(item.id);
             item['goodMenaje'] = goodMenaje;
@@ -473,6 +475,23 @@ export class ApprovalAssetsTabsComponent
         var params = new ListParams();
         params['filter.keyId'] = `$eq:${stateConcervation}`;
         params['filter.name'] = `$eq:Estado Conservacion`;
+        this.genericService.getAll(params).subscribe({
+          next: data => {
+            resolve(data.data.length > 0 ? data.data[0].description : '');
+          },
+        });
+      } else {
+        resolve('');
+      }
+    });
+  }
+
+  getDestinyLigie(id: any) {
+    return new Promise((resolve, reject) => {
+      if (id !== null) {
+        var params = new ListParams();
+        params['filter.keyId'] = `$eq:${id}`;
+        params['filter.name'] = `$eq:Destino`;
         this.genericService.getAll(params).subscribe({
           next: data => {
             resolve(data.data.length > 0 ? data.data[0].description : '');
