@@ -35,7 +35,7 @@ export class ReadInfoGoodComponent
   @Input() process: string = '';
   @Input() typeOfRequest: string = '';
   @Output() saveDetailInfo: EventEmitter<any> = new EventEmitter();
-  goodData: any = {};
+  goodData: any;
   relevantTypeName: string = '';
   goodForm: ModelForm<any>;
   destiniSaeSelected = new DefaultSelect();
@@ -71,8 +71,6 @@ export class ReadInfoGoodComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('proceso', this.process);
-    //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
     if (this.goodData) {
       this.getTypeGood();
@@ -129,10 +127,10 @@ export class ReadInfoGoodComponent
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
-      next: resp => {
+      next: (resp: any) => {
         console.log(resp);
         this.fraction = resp.data[0].code;
-        this.relevantTypeName = resp.data[0].description;
+        this.relevantTypeName = resp.data[0].siabClasification.typeDescription;
       },
       error: error => {
         console.log(error);

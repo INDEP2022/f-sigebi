@@ -408,6 +408,7 @@ export class ClassifyAssetsTabComponent
       ],
       fractionId: [null],
       duplicatedGood: [3434343],
+      uniqueKey: [null],
     });
 
     if (this.goodObject != null) {
