@@ -124,9 +124,9 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.satForm = this.fb.group({
       from: [null],
       to: [null],
-      issue: [null, [Validators.maxLength(30)]],
+      issue: [null, [Validators.maxLength(400)]],
       delegationNumber: [null],
-      officeNumber: [null, [Validators.maxLength(30)]],
+      officeNumber: [null, [Validators.maxLength(50)]],
       processStatus: [null],
     });
 

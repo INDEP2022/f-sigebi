@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -29,7 +30,10 @@ export class MoreInformationComponent
 
   public form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private jobDictumTextsService: JobDictumTextsService
+  ) {
     super();
   }
 
@@ -40,11 +44,26 @@ export class MoreInformationComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      numberOfDict: '',
-      typeDict: '',
+      dictatesNumber: [null, Validators.required],
+      rulingType: ['', Validators.required],
       textX: ['', [Validators.pattern(STRING_PATTERN)]],
       textY: ['', [Validators.pattern(STRING_PATTERN)]],
       textZ: ['', [Validators.pattern(STRING_PATTERN)]],
+    });
+  }
+
+  send() {
+    this.jobDictumTextsService.create(this.form.value).subscribe({
+      next: data => {
+        this.alert(
+          'success',
+          'Se ha agregado la información correctamente',
+          ''
+        );
+      },
+      error: err => {
+        this.alert('error', 'No se ha podido agregar la información', '');
+      },
     });
   }
 

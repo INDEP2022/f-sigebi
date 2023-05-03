@@ -26,6 +26,11 @@ import { IGetGoodResVe } from 'src/app/core/models/ms-rejectedgood/get-good-good
 import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
@@ -95,7 +100,12 @@ export class NotificationAssetsTabComponent
   task: any = null;
   dataTask: ITask;
   buttonsFinish: boolean = false;
-
+  nameTransferent: string = '';
+  delRegName: string = '';
+  nameStation: string = '';
+  nameState: string = '';
+  nameAuthority: string = '';
+  priority: any = null;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -106,7 +116,12 @@ export class NotificationAssetsTabComponent
     private requestService: RequestService,
     private authService: AuthService,
     private taskService: TaskService,
-    private router: Router
+    private router: Router,
+    private transferentService: TransferenteService,
+    private regionalDelegationService: RegionalDelegationService,
+    private stationService: StationService,
+    private stateOfRepublicService: StateOfRepublicService,
+    private authorityService: AuthorityService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -128,7 +143,7 @@ export class NotificationAssetsTabComponent
     this.settings2 = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
+
       columns: { ...NOTIFY_ASSETS_COLUMNS },
     };
 
@@ -179,10 +194,8 @@ export class NotificationAssetsTabComponent
       next: response => {
         this.dataTask = response.data[0];
         if (this.dataTask.State == 'FINALIZADA') {
-          console.log('LA TAREA YA ESTA FINALIZADA');
           this.hideButtons();
         } else {
-          console.log('LA TAREA NO ESTA FINLAIZADA');
         }
       },
     });
@@ -191,7 +204,56 @@ export class NotificationAssetsTabComponent
   dataRequest() {
     this.requestService.getById(this.idRequest).subscribe({
       next: data => {
+        this.transferentName(data?.transferenceId);
+        this.regDelName(data?.regionalDelegationId);
+        this.stationName(data?.stationId);
+        this.stateName(data?.keyStateOfRepublic);
+        this.authorityName(data?.authorityId);
         this.requestData = data;
+      },
+      error: error => {},
+    });
+  }
+
+  transferentName(idTransference: number) {
+    this.transferentService.getById(idTransference).subscribe({
+      next: response => {
+        this.nameTransferent = response.nameTransferent;
+      },
+      error: error => {},
+    });
+  }
+
+  regDelName(idRegDel: number) {
+    this.regionalDelegationService.getById(idRegDel).subscribe({
+      next: data => {
+        this.delRegName = data.description;
+      },
+      error: error => {},
+    });
+  }
+  stationName(idStation: number) {
+    this.stationService.getById(idStation).subscribe({
+      next: data => {
+        this.nameStation = data.stationName;
+      },
+      error: error => {},
+    });
+  }
+
+  stateName(stateId: number) {
+    this.stateOfRepublicService.getById(stateId).subscribe({
+      next: data => {
+        this.nameState = data.descCondition;
+      },
+      error: error => {},
+    });
+  }
+
+  authorityName(authorityId: number) {
+    this.authorityService.getById(authorityId).subscribe({
+      next: data => {
+        this.nameAuthority = data.authorityName;
       },
       error: error => {},
     });
@@ -221,7 +283,6 @@ export class NotificationAssetsTabComponent
   }
 
   goodSelect(data: any) {
-    console.log('select', data);
     if (data.length > 0) {
       this.goodsReject.load(data);
       if (this.goodsReject.count() == 1) {
@@ -246,11 +307,6 @@ export class NotificationAssetsTabComponent
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
         this.notificationsList.load(response.data);
-        console.log(
-          this.notificationsList.getElements().then(data => {
-            console.log('notificaciones', data);
-          })
-        );
         this.totalItems2 = response.count;
         this.formLoading = false;
       },
@@ -309,14 +365,20 @@ export class NotificationAssetsTabComponent
     }
   }
 
+  showButton = true;
   selectRow(row?: any) {
+    if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
+      this.showButton = true;
+      // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;
+      // btn8?.setAttribute('disabled', '');
+    } else {
+      this.showButton = true;
+    }
     this.selectedRow = row;
     this.rowSelected = true;
   }
 
   verifyClarification() {
-    console.log('seleccio', this.goodsReject.count());
-    console.log('se tiene', this.columns.length);
     if (this.goodsReject.count() < this.columns.length) {
       this.onLoadToast(
         'warning',
@@ -562,6 +624,124 @@ export class NotificationAssetsTabComponent
       } else {
         this.getRequest();
       }
+    }
+  }
+
+  FinishClariImpro() {
+    let aclaration: boolean = false;
+    let impro: boolean = false;
+    if (this.rowSelected == false) {
+      this.message('Error', 'Seleccione notificación a Finalizar');
+    } else {
+      if (this.selectedRow.answered == 'RECHAZADA') {
+        this.message('Error', 'La notificación ya fue rechazada');
+      }
+
+      if (this.selectedRow.clarification.type < 1) {
+        this.message('Error', 'Seleccione almenos un registro!');
+        return;
+      }
+
+      if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
+        if (this.selectedRow.answered == 'EN ACLARACION') {
+          aclaration = true;
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Acción Invalida',
+            'El estatus de la aclaración debe ser igual a EN ACLARACIÓN'
+          );
+        }
+      } else if (
+        this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
+      ) {
+        impro = true;
+      }
+
+      if (aclaration || impro) {
+        if (aclaration) {
+          this.alertQuestion(
+            'question',
+            'Finalizar',
+            '¿Desea Finalizar la Aclaración?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.endAclaration();
+            }
+          });
+        } else if (impro) {
+          this.alertQuestion(
+            'question',
+            'Finalizar',
+            '¿Desea Finalizar la Improcedencia?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.endImpinappropriateness();
+            }
+          });
+        }
+      }
+    }
+  }
+
+  endAclaration() {
+    if (
+      this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION' &&
+      this.selectedRow.answered == 'EN ACLARACION'
+    ) {
+      const data: ClarificationGoodRejectNotification = {
+        rejectNotificationId: this.selectedRow.rejectNotificationId,
+        answered: 'ACLARADA',
+        rejectionDate: '2023-04-30',
+      };
+      this.rejectedGoodService
+        .update(this.selectedRow.rejectNotificationId, data)
+        .subscribe({
+          next: async data => {
+            this.getClarificationsByGood(this.selectedRow.goodId);
+            const update = await this.validateStatusAclaration();
+            if (update) {
+              this.updateStatusGoodTmp(this.selectedRow.goodId);
+            }
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al actualizar el status de la notifiación'
+            );
+          },
+        });
+    }
+  }
+
+  endImpinappropriateness() {
+    if (
+      this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
+      this.selectedRow.answered == 'EN ACLARACION'
+    ) {
+      const data: ClarificationGoodRejectNotification = {
+        rejectNotificationId: this.selectedRow.rejectNotificationId,
+        answered: 'ACLARADA',
+        rejectionDate: '2023-04-30',
+      };
+      this.rejectedGoodService
+        .update(this.selectedRow.rejectNotificationId, data)
+        .subscribe({
+          next: async data => {
+            this.getClarificationsByGood(this.selectedRow.goodId);
+            this.validateStatusAclaration();
+
+            this.updateStatusGoodTmp(this.selectedRow.goodId);
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al actualizar el status de la notifiación'
+            );
+          },
+        });
     }
   }
 
@@ -1003,7 +1183,6 @@ export class NotificationAssetsTabComponent
     this.paramsReject.getValue()['filter.id'] = this.task.id;
     this.taskService.getAll(this.paramsReject.getValue()).subscribe({
       next: response => {
-        console.log('información de task', response.data[0]);
         this.dataTask = response.data[0];
         this.updateStatusTask(this.dataTask);
       },
@@ -1028,7 +1207,6 @@ export class NotificationAssetsTabComponent
     //Actualizar State a FINALIZADA
     this.taskService.update(dataTask.id, model).subscribe({
       next: response => {
-        console.log('Información actualizada', response.data);
         //Desahabilita los botones
         this.hideButtons();
 
@@ -1036,7 +1214,6 @@ export class NotificationAssetsTabComponent
         this.endProcess();
       },
       error: error => {
-        console.log('No se actualizó', error.error);
         this.buttonsFinish = true;
       },
     });
@@ -1346,7 +1523,11 @@ export class NotificationAssetsTabComponent
         next: data => {
           this.notificationsList.load(data.data);
           const filterAclaration = data.data.filter((item: any) => {
-            if (item.answered == 'ACLARADA' || item.answered == 'RECHAZADA') {
+            if (
+              item.answered == 'ACLARADA' ||
+              item.answered == 'RECHAZADA' ||
+              item.answered == 'EN ACLARACION'
+            ) {
               return item;
             }
           });

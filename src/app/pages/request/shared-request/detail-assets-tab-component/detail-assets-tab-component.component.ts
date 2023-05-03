@@ -64,18 +64,6 @@ export class DetailAssetsTabComponentComponent
   @Input() requestObject: any; //solicitud
   @Input() assetsId: any; //id del bien
   @Input() detailAssets: ModelForm<any>;
-
-  // set detailAssets(value: ModelForm<any>) {
-  //   this.initForm();
-  //   this.getBrand(new ListParams(), () => {
-  //     this._detailAssets = value;
-  //     return {};
-  //   });
-  // }
-  // get detailAssets() {
-  //   return this._detailAssets;
-  // }
-  // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   @Input() process: string = '';
@@ -170,6 +158,8 @@ export class DetailAssetsTabComponentComponent
   isGoodInfReadOnly: boolean = false;
   isGoodTypeReadOnly: boolean = false;
   ligieUnit: string = '';
+  typeOfRequest: string = '';
+  detailAssetsInfo: any;
 
   constructor(
     private fb: FormBuilder,
@@ -193,8 +183,10 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    //console.log({ process: this.process });
-    console.log('goods ', this.detailAssets);
+
+    this.typeOfRequest = this.requestObject.typeOfTransfer
+      ? this.requestObject.typeOfTransfer
+      : this.requestObject.controls['typeOfTransfer'].value;
     if (this.process == 'validate-document') {
       this.getDomicilieGood(
         parseInt(this.detailAssets.controls['addressId'].value)
@@ -202,31 +194,16 @@ export class DetailAssetsTabComponentComponent
     }
     if (this.process == 'classify-assets') {
       if (this.domicilieObject) {
-        // console.log(this.domicilieObject.warehouseAlias);
-        //console.log({ alias: this.domicilieObject.warehouseAlias });
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
+      // this.goodData = this.detailAssets.value;
 
-      /*  this.domicileForm
-        .get('warehouseAlias')
-        .setValue(this.domicilieObject.warehouseAlias);
-      this.getStateOfRepublic(new ListParams(), this.domicilieObject.statusKey); */
-      this.goodData = this.detailAssets.value;
-      /*if (this.goodData.fractionId) {
-        this.relevantTypeService
-          .getById(this.goodData.fractionId?.relevantTypeId)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: data => {
-              this.relevantTypeName = data.description;
-            },
-            error: error => {},
-          });
-      }*/
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
+        console.log(this.detailAssets.value);
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
+        console.log('inicia<>>>><<<<<>>>>>');
       }
       this.isGoodTypeReadOnly = true;
     }
@@ -235,6 +212,7 @@ export class DetailAssetsTabComponentComponent
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
+        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), brand);
       }
     }
@@ -273,7 +251,12 @@ export class DetailAssetsTabComponentComponent
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        this.getSubBrand(new ListParams(), brand);
+        console.log('inicia<>>>><<<<<>>>>>');
+        this.getSubBrand(
+          new ListParams(),
+          brand,
+          this.detailAssets.controls['subBrand'].value
+        );
       }
     }
     if (this.detailAssets.controls['brand'].value) {
@@ -313,6 +296,7 @@ export class DetailAssetsTabComponentComponent
     if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
       this.brandId = brand;
+      console.log('inicia<>>>><<<<<>>>>>');
       this.getSubBrand(new ListParams(), brand);
     }
 
@@ -349,6 +333,8 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
+    console.log('información del good v1', this.detailAssets.value); //Henry
+    this.detailAssetsInfo = this.detailAssets.value;
     this.initForm();
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
@@ -356,13 +342,14 @@ export class DetailAssetsTabComponentComponent
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
     this.isSavingData();
-    this.getBrand(new ListParams());
+
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
     }
+    this.getBrand(new ListParams(), this.detailAssets.controls['brand'].value);
   }
 
   initForm() {
@@ -643,6 +630,14 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
+      lien: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      gravPleaseTrans: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
     });
   }
 
@@ -716,9 +711,6 @@ export class DetailAssetsTabComponentComponent
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
-    /*if (municipalyId) {
-      params['filter.municipalityKey'] = `$eq:${municipalyId}`;
-    }*/
     this.goodsInvService
       .getAllMunipalitiesByFilter(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -959,15 +951,21 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          const result = resp.data.filter((x: any) => x.uomCode === id);
-          this.ligieUnit = result[0].measureTlUnit;
+          //const result = resp.data.filter((x: any) => x.uomCode === id);
+          this.ligieUnit = resp.data[0].measureTlUnit;
         },
       });
   }
   onValuesChange(data: any) {
     // this.brandId = data.flexValue;
-    this.getSubBrand(new ListParams(), data.flexValue);
-    this.detailAssets.controls['subBrand'].setValue(null);
+    console.log('ddddd' + data);
+
+    if (data != undefined) {
+      this.getSubBrand(new ListParams(), data.flexValue);
+      this.detailAssets.controls['subBrand'].setValue(null);
+    } else {
+      this.getBrand(new ListParams());
+    }
   }
   getBrand(params: ListParams, brandId?: string) {
     const filter = new FilterParams();
@@ -983,7 +981,9 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
+          console.log(resp);
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
+          console.log(this.selectBrand);
         },
         error: () => {
           this.selectBrand = new DefaultSelect();
@@ -991,13 +991,18 @@ export class DetailAssetsTabComponentComponent
       });
   }
 
-  getSubBrand(params: ListParams, brandId?: string) {
+  getSubBrand(params: ListParams, brandId?: string, description?: string) {
+    console.log(this.detailAssets.value);
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
     filter.limit = params.limit;
     filter['filter.carBrand'] = `$eq:${idBrand}`;
-    filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
+    if (description != null) {
+      filter['filter.flexValueMeaningDependent'] = `$ilike:${description}`;
+    } else {
+      filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
+    }
 
     this.goodsInvService
       .getAllSubBrandWithFilter(filter)
@@ -1292,7 +1297,7 @@ export class DetailAssetsTabComponentComponent
 
             if (data.id != null) {
               this.domicileForm.controls['id'].setValue(data.id);
-              resolve('Se actualizo el registro del domicilio del bien');
+              resolve(true);
             }
           },
           error: error => {
@@ -1407,6 +1412,7 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
+        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), data);
       }
     });
@@ -1542,15 +1548,13 @@ export class DetailAssetsTabComponentComponent
   }
 
   isSavingData() {
-    this.requestHelperService.currentRefresh
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          if (data) {
-            this.save();
-          }
-        },
-      });
+    this.requestHelperService.currentRefresh.subscribe({
+      next: data => {
+        if (data) {
+          this.save();
+        }
+      },
+    });
   }
 
   setGoodDomicilieSelected(domicilie: any) {
