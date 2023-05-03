@@ -6,11 +6,11 @@
 
     <div class="row pt-2">
       <div class="d-flex justify-content-end">
-        <!-- <div class="p-2">
+        <div class="p-2">
           <button (click)="saveData()" class="btn btn-primary btn-sm active">
             <i class="fa-thin fa-repeat"></i> Guardar
           </button>
-        </div> -->
+        </div>
 
         <div class="p-2">
           <button
@@ -36,7 +36,7 @@
           <div class="col-md-4">
             <div>
               <label for="">Fecha de Solicitud&#58;</label>
-              {{ requestData?.applicationDate | date: 'dd/MM/yyyy' }}
+              {{ requestData?.applicationDate | date : 'dd/MM/yyyy' }}
             </div>
           </div>
           <div class="col-md-4">
@@ -106,96 +106,109 @@
           </div>
 
           <div class="col-md-6">
-            <label for="">Causa Penal&#58;</label>
-            <span> {{ requestData?.lawsuit }}</span>
+            <label for="">Causa Penal&#58; {{ requestData?.lawsuit }}</label>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label for="">Fecha recepci&oacute;n&#58; </label>
-            <span> {{ requestData?.receptionDate }}</span>
+            <label for=""
+              >Fecha recepci&oacute;n&#58;
+              {{ requestData?.receptionDate }}</label
+            >
           </div>
           <div class="col-md-6">
-            <label for="">No. Amparo&#58; </label>
-            <span> {{ requestData?.protectNumber }}</span>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <label for="">Tipo expediente&#58; </label>
-            <span> {{ requestData?.typeRecord }}</span>
-          </div>
-          <div class="col-md-6">
-            <label for="">Toca Penal&#58; </label>
-            <span> {{ requestData?.tocaPenal }}</span>
+            <label for=""
+              >No. Amparo&#58; {{ requestData?.protectNumber }}</label
+            >
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label for="">Nombre MP&#58; </label>
-            <span> {{ requestData?.nameOfOwner }}</span>
+            <label for=""
+              >Tipo expediente&#58; {{ requestData?.typeRecord }}</label
+            >
           </div>
           <div class="col-md-6">
-            <label for="">Fecha de oficio&#58; </label>
-            <span> {{ requestData?.paperDate }}</span>
+            <label for="">Toca Penal&#58; {{ requestData?.tocaPenal }}</label>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label for="">Cargo y/o Adscripci&oacute;n&#58; </label>
-            <span> {{ requestData?.holderCharge }}</span>
+            <label for="">nombre MP&#58; {{ requestData?.nameOfOwner }}</label>
           </div>
           <div class="col-md-6">
-            <label for="">Ministerio Público&#58; </label>
-            <span> {{ requestData?.publicMinistry }}</span>
+            <label for=""
+              >Fecha de oficio&#58; {{ requestData?.paperDate }}</label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Cargo y/o Adscripci&oacute;n&#58;
+              {{ requestData?.holderCharge }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Ministerio publico&#58; {{ requestData?.publicMinistry }}</label
+            >
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label for="">Teléfono MP&#58; </label>
-            <span> {{ requestData?.phoneOfOwner }}</span>
+            <label for=""
+              >Telefono MP&#58; {{ requestData?.phoneOfOwner }}</label
+            >
           </div>
           <div class="col-md-6">
-            <label for="">Juzgado&#58; </label>
-            <span> {{ requestData?.court }}</span>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <label for="">Correo MP&#58; </label>
-            <span> {{ requestData?.emailOfOwner }}</span>
-          </div>
-          <div class="col-md-6">
-            <label for="">Delito&#58; </label>
-            <span> {{ requestData?.crime }}</span>
+            <label for="">Juzgado&#58; {{ requestData?.court }}</label>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label for="">Contribuyente y/o indiciado&#58; </label>
-            <span> {{ requestData?.indicatedTaxpayer }}</span>
+            <label for="">Email MP&#58; {{ requestData?.emailOfOwner }}</label>
           </div>
           <div class="col-md-6">
-            <label for="">V&iacute;a de Recepci&oacute;n&#58; </label>
-            <span> {{ requestData?.receiptRoute }}</span>
+            <label for="">Delito&#58; {{ requestData?.crime }}</label>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label for="">Expediente Transferente / PAMA&#58; </label>
-            <span> {{ requestData?.transferenceFile }}</span>
+            <label for=""
+              >Contribuyente y/o indiciado&#58;
+              {{ requestData?.indicatedTaxpayer }}</label
+            >
           </div>
           <div class="col-md-6">
-            <label for="">Gesti&oacute;n de Destino&#58; </label>
-            <span> {{ requestData?.destinationManagement }}</span>
+            <label for=""
+              >V&iacute;a de Recepci&oacute;n&#58;
+              {{ requestData?.receiptRoute }}</label
+            >
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label for="">Notas Entidad Transferente&#58; </label>
-            <span> {{ requestData?.transferEntNotes }}</span>
+            <label for=""
+              >Expediente Transferente / PAMA&#58;
+              {{ requestData?.transferenceFile }}</label
+            >
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Gesti&oacute;n de Destino&#58;
+              {{ requestData?.destinationManagement }}</label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for=""
+              >Notas Entidad Transferente&#58;
+              {{ requestData?.transferEntNotes }}</label
+            >
           </div>
           <div class="col-md-6">
             <label for="">Asunto&#58;</label>
@@ -207,7 +220,7 @@
             <label for="">Procedencia Informaci&oacute;n </label>
           </div>
           <div class="col-md-6">
-            <label for="">Extinción Dominio&#58;</label>
+            <label for="">Extincion Dominio&#58;</label>
           </div>
         </div>
         <div class="row pt-4">
@@ -224,8 +237,9 @@
             <label for="">Averiguaci&oacute;n Previa&#58;</label>
           </div>
           <div class="col-md-6">
-            <label for="">Observaciones&#58; </label>
-            <span>{{ requestData?.observations }}</span>
+            <label for=""
+              >Observaciones&#58; {{ requestData?.observations }}</label
+            >
           </div>
         </div>
       </tab>
@@ -265,7 +279,7 @@
               <div class="table-responsive">
                 <div [class]="loadingGoods ? 'table-loading' : ''">
                   <ng2-smart-table
-                    [attr.class]="'table-bordered table-responsive'"
+                    [attr.class]="'table-bordered'"
                     [settings]="settings"
                     [source]="data"
                     (userRowSelect)="goodSelect($event.selected)">
@@ -341,7 +355,7 @@
               <div class="table-responsive" *ngIf="!formLoading">
                 <div [class]="loading ? 'table-loading' : ''">
                   <ng2-smart-table
-                    [attr.class]="'table-bordered table-responsive'"
+                    [attr.class]="'table-bordered'"
                     [settings]="settings2"
                     [source]="notificationsList"
                     (userRowSelect)="notifyAssetRowSelected($event)"

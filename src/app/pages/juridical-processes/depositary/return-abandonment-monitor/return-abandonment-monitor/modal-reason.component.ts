@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -42,10 +41,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
           <div class="col-md-6 col-sm-12 col-xs-12">
             <div class="d-flex justify-content-center">
               <div class="m-3">
-                <button
-                  type="button"
-                  class="btn btn-success btn-sm active"
-                  (click)="insertReason()">
+                <button type="button" class="btn btn-success btn-sm active">
                   Registrar motivo
                 </button>
               </div>
@@ -59,17 +55,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class ModalReasonComponent extends BasePage implements OnInit {
   form: FormGroup;
-  num: number;
-  formatted: string;
 
   get reason() {
     return this.form.get('reason');
   }
-  constructor(
-    private fb: FormBuilder,
-    private bsModalRef: BsModalRef,
-    private notificationService: NotificationService
-  ) {
+  constructor(private fb: FormBuilder, private bsModalRef: BsModalRef) {
     super();
   }
 
@@ -79,29 +69,7 @@ export class ModalReasonComponent extends BasePage implements OnInit {
     });
   }
 
-  insertReason() {
-    this.notificationService
-      .updateObservacion(
-        this.num,
-        this.formatted,
-        this.form.get('reason').value
-      )
-      .subscribe({
-        next: resp => {
-          this.onLoadToast('success', 'Se actualizo', 'resp.message');
-        },
-        error: err => {
-          let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-            this.onLoadToast('error', 'Error', error);
-          } else {
-            this.onLoadToast('error', 'Error', err.error.message);
-          }
-        },
-      });
-    this.return();
-  }
+  mostrar() {}
 
   return() {
     this.bsModalRef.hide();

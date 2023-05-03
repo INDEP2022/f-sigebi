@@ -169,4 +169,6 @@ export enum ENDPOINT_LINKS {
   StrategyContract = 'contract/strategy-contract',
   ZoneContract = 'catalog/zones-contract',
   Process = 'strategy/strategy-process',
+  SubTypeGood = 'fractions?search=&filter.id=',
+  FractionS = 'catalog',
 }

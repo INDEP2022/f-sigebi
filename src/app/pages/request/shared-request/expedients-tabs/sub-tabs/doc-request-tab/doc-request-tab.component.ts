@@ -77,8 +77,6 @@ export class DocRequestTabComponent
   typesDocuments: any = [];
   idDelegation: number = 0;
   idState: string = '';
-  statusTask: any = '';
-  task: any;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -98,11 +96,6 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
-    // DISABLED BUTTON - FINALIZED //
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     this.prepareForm();
     this.getRegDelegation(new ListParams());
     this.getState(new ListParams());

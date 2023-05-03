@@ -44,8 +44,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   //idGood: number = 0;
   request: any;
   haveGoodResDevRegister: boolean = false;
-  task: any;
-  statusTask: any = '';
 
   constructor(
     private fb: FormBuilder,
@@ -62,12 +60,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.task = JSON.parse(localStorage.getItem('Task'));
-
-    // DISABLED BUTTON - FINALIZED //
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     console.log('good', this.goodTransfer);
     this.getGoodResDev(Number(this.goodTransfer.id));
     this.initForm();
@@ -302,7 +294,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       //body.goodResdevId = Number(id);
       body.processStatus = 'SOLICITAR_ACLARACION';
       body.goodStatus = 'SOLICITUD DE ACLARACION';
-      debugger;
+      // debugger;
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);

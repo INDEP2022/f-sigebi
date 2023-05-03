@@ -64,8 +64,6 @@ export class ClassifyAssetsTabComponent
   noItemsFoundMessage = 'No se encontraron elementos';
   fractionCode: string = null;
   goodResDev: IPostGoodResDev = {};
-  task: any;
-  statusTask: any = '';
 
   constructor(
     private fb: FormBuilder,
@@ -81,12 +79,6 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnInit(): void {
-    this.task = JSON.parse(localStorage.getItem('Task'));
-
-    // DISABLED BUTTON - FINALIZED //
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     this.showHideErrorInterceptorService.showHideError(false);
     this.initForm();
     if (!this.goodObject) {

@@ -65,8 +65,6 @@ export class ClarificationsComponent
   articleColumns = CLARIFICATION_COLUMNS;
   haveNotification: boolean = false;
   isLoadingTable2 = false;
-  task: any;
-  statusTask: any = '';
 
   constructor(
     private modalService: BsModalService,
@@ -90,13 +88,6 @@ export class ClarificationsComponent
   }
 
   ngOnInit(): void {
-    this.task = JSON.parse(localStorage.getItem('Task'));
-    console.log('task', this.task);
-
-    // DISABLED BUTTON - FINALIZED //
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
