@@ -1,10 +1,9 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { IDictamenSeq } from 'src/app/core/models/ms-goods-query/opinionDelRegSeq-model';
+import { IGenerateClave } from 'src/app/core/models/ms-security/generate-clave-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -28,11 +27,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   pdfurl: string = '';
   public event: EventEmitter<any> = new EventEmitter();
   dictumForm: ModelForm<IRequest>;
-
-  //Parámetros para generar el folio en el reporte
-  today: Date;
-  folio: IDictamenSeq;
-  folioReporte: string;
+  folio: IGenerateClave;
 
   constructor(
     private bsModelRef: BsModalRef,
@@ -41,23 +36,97 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private requestService: RequestService,
     private authService: AuthService,
-    private generateCveService: GenerateCveService,
-    private applicationGoodsQueryService: ApplicationGoodsQueryService
+    private generateCveService: GenerateCveService
   ) {
     super();
-    this.today = new Date();
   }
 
   ngOnInit(): void {
+    //Construir objeto para enviarlo por el body al servicio
+    const user = this.authService.decodeToken();
+    let userId = user.preferred_username;
+    const model: IGenerateClave = {
+      // sender: userId,
+      sender: 'MAPEREZ',
+    };
+
     //Crea la clave armada o el folio
-    this.dictamenSeq();
+    this.generateCveService.generateCve(model).subscribe({
+      next: response => {
+        this.folio = response;
+        console.log('Se creado clave armada', response);
+      },
+      error: error => {
+        console.log('Error al crear clave armada', error.message);
+      },
+    });
     this.initForm();
   }
 
   initForm(): void {
     this.dictumForm = this.fb.group({
       id: [null],
-      //rejectionNumber: [null],
+      /*recordId: [null],
+      applicationDate: [null],
+      receptionDate: [null],
+      nameOfOwner: [null],
+      holderCharge: [null],
+      phoneOfOwner: [null],
+      emailOfOwner: [null],
+      transferenceId: [null],
+      stationId: [null],
+      authorityId: [null],
+      regionalDelegationId: [null],
+      sender: [null],
+      observations: [null],
+      targetUser: [null],
+      urgentPriority: [null],
+      indicatedTaxpayer: [null],
+      transferenceFile: [null],
+      transferEntNotes: [null],
+      idAddress: [null],
+      originInfo: [null],
+      circumstantialRecord: [null],
+      previousInquiry: [null],
+      lawsuit: [null],
+      protectNumber: [null],
+      tocaPenal: [null],
+      paperNumber: [null],
+      paperDate: [null],
+      indicated: [null],
+      publicMinistry: [null],
+      court: [null],
+      crime: [null],
+      receiptRoute: [null],
+      destinationManagement: [null],
+      affair: [null],
+      satDeterminant: [null],
+      satDirectory: [null],
+      satZoneCoordinator: [null],
+      userCreated: [null],
+      creationDate: [null],
+      userModification: [null],
+      modificationDate: [null],
+      typeOfTransfer: [null],
+      domainExtinction: [null],
+      version: [null],
+      targetUserType: [null],
+      trialType: [null],
+      typeRecord: [null],
+      requestStatus: [null],
+      fileLeagueType: [null],
+      fileLeagueDate: [null],
+      rejectionComment: [null],
+      authorityOrdering: [null],
+      instanceBpm: [null],
+      trial: [null],
+      compensationType: [null],
+      stateRequestId: [null],
+      searchSiab: [null],
+      priorityDate: [null],
+      rejectionNumber: [null],
+      rulingDocumentId: [null],*/
+      rejectionNumber: [null],
       reportSheet: [null], //Se agrega información del que elabora
       nameRecipientRuling: [null, [Validators.maxLength(100)]],
       postRecipientRuling: [null, [Validators.maxLength(100)]],
@@ -66,34 +135,39 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       nameSignatoryRuling: [null],
       postSignatoryRuling: [null],
       ccpRuling: [null, [Validators.maxLength(200)]],
+      /*rulingCreatorName: [null],
+      rulingSheetNumber: [null],
+      registrationCoordinatorSae: [null],
+      emailNotification: [null],
+      keyStateOfRepublic: [null],
+      instanceBpel: [null],
+      verificationDateCump: [null],
+      recordTmpId: [null],
+      coordregsae_ktl: [null],*/
     });
     if (this.response != null) {
-      this.edit = true;
       this.dictumForm.patchValue(this.response);
     }
   }
 
-  update() {
-    //Objeto para actualizar el reporte con datos del formulario
-    const obj: IRequest = {
-      ccpRuling: this.dictumForm.controls['ccpRuling'].value,
-      id: this.dictumForm.controls['id'].value,
-      nameRecipientRuling:
-        this.dictumForm.controls['nameRecipientRuling'].value,
-      nameSignatoryRuling:
-        this.dictumForm.controls['nameSignatoryRuling'].value,
-      paragraphOneRuling: this.dictumForm.controls['paragraphOneRuling'].value,
-      paragraphTwoRuling: this.dictumForm.controls['paragraphTwoRuling'].value,
-      postRecipientRuling:
-        this.dictumForm.controls['postRecipientRuling'].value,
-      postSignatoryRuling:
-        this.dictumForm.controls['postSignatoryRuling'].value,
-      reportSheet: this.folioReporte,
-    };
-    console.log('Actualizar reporte', this.folioReporte);
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
 
+  create() {
+    this.requestService.create(this.dictumForm.value).subscribe({
+      next: data => (this.handleSuccess(), this.signDictum()),
+      error: error => (this.loading = false),
+    });
+  }
+
+  update() {
+    if (this.folio != null) {
+      this.dictumForm.controls['reportSheet'].setValue(this.folio);
+    }
+    console.log(this.dictumForm.value);
     const idDoc = this.idDoc;
-    this.requestService.update(idDoc, obj).subscribe({
+    this.requestService.update(idDoc, this.dictumForm.value).subscribe({
       next: data => {
         this.handleSuccess(), (this.requestData = data), this.signDictum();
       },
@@ -141,43 +215,11 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
-  }
 
-  //Método para crear número secuencial según la no delegación del user logeado
-  dictamenSeq() {
-    let token = this.authService.decodeToken();
-    const pNumber = Number(token.department);
-
-    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
-      next: response => {
-        // this.noFolio = response.data;
-        this.folio = response;
-        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
-        this.generateClave(this.folio.dictamenDelregSeq);
-      },
-      error: error => {
-        console.log('Error al generar secuencia de dictamen', error.error);
-      },
-    });
-  }
-
-  //Método para construir folio con información del usuario
-  generateClave(noDictamen?: string) {
-    //Trae información del usuario logeado
-    let token = this.authService.decodeToken();
-    console.log(token);
-
-    //Trae el año actuar
-    const year = this.today.getFullYear();
-    //Cadena final (Al final las siglas ya venian en el token xd)
-
-    if (token.siglasnivel4 != null) {
-      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
-    } else {
-      this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
-    }
+    /*this.bsModelRef.content.event.subscribe((res: any) => {
+      // cargarlos en el formulario
+      console.log(res);
+    });*/
   }
 
   handleSuccess() {

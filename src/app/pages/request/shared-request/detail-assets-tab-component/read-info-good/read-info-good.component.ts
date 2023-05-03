@@ -14,6 +14,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -35,7 +36,7 @@ export class ReadInfoGoodComponent
   @Input() process: string = '';
   @Input() typeOfRequest: string = '';
   @Output() saveDetailInfo: EventEmitter<any> = new EventEmitter();
-  goodData: any = {};
+  goodData: any;
   relevantTypeName: string = '';
   goodForm: ModelForm<any>;
   destiniSaeSelected = new DefaultSelect();
@@ -58,6 +59,7 @@ export class ReadInfoGoodComponent
   saeMeasureUnit: string = '';
   dataToSend: any = {};
   showButton = true;
+  subType: string;
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);
@@ -66,14 +68,16 @@ export class ReadInfoGoodComponent
   private readonly goodsQueryService = inject(GoodsQueryService);
   private readonly typeRelevantSevice = inject(TypeRelevantService);
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private fractionService: FractionsService
+  ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('proceso', this.process);
-    //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
+    console.log(this.goodData);
     if (this.goodData) {
       this.getTypeGood();
 
@@ -125,14 +129,40 @@ export class ReadInfoGoodComponent
     });
   }
 
+  // getTypeGood() {
+  //   const params = new ListParams();
+  //   params['filter.id'] = `$eq:${this.goodData.fractionId}`;
+  //   this.fractionsService.getAll(params).subscribe({
+  //     next: resp => {
+  //       console.log(resp);
+  //       this.fraction = resp.data[0].code;
+  //       this.relevantTypeName = resp.data[0].description;
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //     },
+  //   });
+  // }
   getTypeGood() {
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
-      next: resp => {
+      next: (resp: any) => {
         console.log(resp);
-        this.fraction = resp.data[0].code;
-        this.relevantTypeName = resp.data[0].description;
+        this.relevantTypeName = resp.data[0].siabClasification.typeDescription;
+        // this.getSubTypeGood(this.goodData.fractionId);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  getSubTypeGood(fractionId: number) {
+    this.fractionService.findByFraction(fractionId).subscribe({
+      next: resp => {
+        this.subType = resp.data[0].siabClasification.typeDescription;
+        console.log(this.subType);
       },
       error: error => {
         console.log(error);

@@ -381,6 +381,9 @@ export class ApprovalAssetsTabsComponent
         ],
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      duplicatedGood: [null],
+      admissionDate: [null],
+      federalEntity: [null],
     });
   }
 
@@ -413,9 +416,7 @@ export class ApprovalAssetsTabsComponent
               item.transferentDestiny
             );
             item['transferentDestinyName'] = transferentDestiny;
-
-            const destiny = await this.getDestinyLigie(item.destiny);
-            item['destinyLigieName'] = destiny;
+            item['destinyLigieName'] = transferentDestiny;
 
             const goodMenaje = await this.getMenaje(item.id);
             item['goodMenaje'] = goodMenaje;
@@ -460,7 +461,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Estado Fisico`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {
@@ -477,24 +478,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Estado Conservacion`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getDestinyLigie(id: any) {
-    return new Promise((resolve, reject) => {
-      if (id !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${id}`;
-        params['filter.name'] = `$eq:Destino`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {
@@ -511,7 +495,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Destino`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {

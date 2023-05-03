@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="dictationXGoodForm">
@@ -11,7 +11,7 @@
               (fetchItems)="getDictNumbers($event)"
               [data]="selectDictNumber"
               [form]="dictationXGoodForm"
-              value="id"
+              value="ofDictNumber"
               bindLabel="id"
               label="No. Dictaminación"
               control="ofDictNumber">
@@ -38,7 +38,7 @@
               (fetchItems)="getExpedients($event)"
               [data]="selectExpedient"
               [form]="dictationXGoodForm"
-              value="id"
+              value="proceedingsNumber"
               bindLabel="id"
               label="No. Expediente"
               control="proceedingsNumber">
@@ -65,7 +65,6 @@
             label="Descripción"
             [control]="dictationXGoodForm.get('descriptionDict')">
             <input
-              required
               type="text"
               class="form-control"
               maxlength="1250"
@@ -91,7 +90,6 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="dictationXGoodForm.invalid"
           [type]="'button'"
           (confirm)="confirm()"></confirm-button>
       </div>

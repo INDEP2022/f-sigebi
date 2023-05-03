@@ -5,11 +5,10 @@
         <h5 class="title">{{ title }}</h5>
       </div>
       <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
-        111
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          [disabled]="registRequestForm.invalid || statusTask == 'FINALIZADA'"
+          [disabled]="registRequestForm.invalid"
           (click)="saveClarification()">
           <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
         </button>
@@ -18,7 +17,6 @@
       <div class="p-2" *ngIf="approvalProcess && haveDictamen == false">
         <button
           type="button"
-          [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-primary btn-sm active"
           (click)="signDictum()">
           <i class="bx bxs-pencil"></i> Firmar Dictamen
@@ -32,7 +30,6 @@
             requestData?.typeOfTransfer === 'PGR_SAE')
         ">
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-secondary btn-sm active"
           (click)="finish()">
@@ -48,7 +45,6 @@
         ">
         <button
           type="button"
-          [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-secondary btn-sm active"
           (click)="returnar()">
           <i class="bx bxs-right-arrow-square"></i> Returnar
@@ -56,7 +52,6 @@
       </div>
       <div class="p-2" *ngIf="!approvalProcess">
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
@@ -65,7 +60,6 @@
       </div>
       <div class="p-2" *ngIf="approvalProcess">
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="approveRequest()">
@@ -74,7 +68,6 @@
       </div>
       <div class="p-2" *ngIf="approvalProcess">
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="refuseRequest()">

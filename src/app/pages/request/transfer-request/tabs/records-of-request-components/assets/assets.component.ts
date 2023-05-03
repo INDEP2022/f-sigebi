@@ -196,7 +196,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         params['filter.name'] = `$eq:Estado Fisico`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {
@@ -213,7 +213,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         params['filter.name'] = `$eq:Estado Conservacion`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {
@@ -230,7 +230,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         params['filter.name'] = `$eq:Destino`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {

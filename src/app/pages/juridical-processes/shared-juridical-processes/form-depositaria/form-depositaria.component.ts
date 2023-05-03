@@ -12,21 +12,17 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   @Input() formDepositario: FormGroup;
   @Input() nombrePantalla: string;
   @Input() btnDeshacerParam: string;
-  @Input() deleteDateOption?: boolean = false;
 
   @Output() formValues = new EventEmitter<any>();
   @Output() formDepositariaValues = new EventEmitter<any>();
   @Output() formValuesValidacion = new EventEmitter<any>();
-  @Output() searchGoodNumber = new EventEmitter<number>();
 
-  @Output() eliminarDispersionPagos = new EventEmitter<any>();
+  @Output() eliminarDispersionPagos = new EventEmitter<boolean>();
   constructor() {
     super();
   }
 
-  ngOnInit(): void {
-    this.deleteDateOption = false;
-  }
+  ngOnInit(): void {}
 
   btnEjecutar() {
     console.log('Ejecutar');
@@ -36,11 +32,9 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
 
   btnDeshacer() {
     console.log('Deshacer');
-    this.form.get(this.btnDeshacerParam).reset();
-    this.deleteDateOption = true;
-    // this.eliminarDispersionPagos.emit(
-    //   this.form.get(this.btnDeshacerParam).valid
-    // );
+    this.eliminarDispersionPagos.emit(
+      this.form.get(this.btnDeshacerParam).valid
+    );
   }
 
   btnRecargaDepositario() {
@@ -51,24 +45,6 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
 
   btnValidacionPagos() {
     console.log('Validacion');
-    console.log(this.formDepositario.value);
-    this.formValuesValidacion.emit(this.formDepositario);
-  }
-
-  btnSearchGood() {
-    console.log(this.form.get('noBien').value, this.form.value);
-    this.searchGoodNumber.emit(this.form.get('noBien').value);
-  }
-
-  btnExit() {
-    this.deleteDateOption = false;
-  }
-
-  btnDeleteDispersalPay() {
-    let resp = {
-      validDate: this.form.get(this.btnDeshacerParam).valid,
-      dateValue: this.form.get(this.btnDeshacerParam).value,
-    };
-    this.eliminarDispersionPagos.emit(resp);
+    this.formValuesValidacion.emit(this.form);
   }
 }

@@ -7,6 +7,8 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -69,11 +71,23 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   setFormData() {
+    const typeDict = this.form.get('typeDict').value;
     const dictationNumber = this.form.get('id').value;
 
-    this.dictationService.findByIds({ id: dictationNumber }).subscribe({
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+
+    if (typeDict) {
+      data.addFilter('typeDict', this.form.get('typeDict').value);
+    }
+
+    if (dictationNumber) {
+      data.addFilter('id', dictationNumber);
+    }
+
+    this.dictationService.getAll(data.getParams()).subscribe({
       next: data => {
-        this.form.patchValue(data);
+        this.form.patchValue(data.data[0]);
         const value = this.form.value;
         this.form
           .get('dictDate')

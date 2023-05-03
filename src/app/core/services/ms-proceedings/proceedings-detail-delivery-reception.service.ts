@@ -6,9 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { formatForIsoDate } from 'src/app/shared/utils/date';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IGoodsByProceeding } from '../../models/ms-indicator-goods/ms-indicator-goods-interface';
 import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceeding-delivery-reception';
-import { PBDelete } from '../../models/ms-proceedings/proceeding-aplication.model';
 import {
   IDeleted,
   INotDeleted,
@@ -42,18 +40,13 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     }>(this.endpoint, model);
   }
 
-  deleteMasive(
-    selecteds: IGoodsByProceeding[],
-    processingArea: string,
-    numberProceedings: number
-  ) {
+  deleteMasive(selecteds: { no_bien: string }[], numberProceedings: number) {
     return forkJoin(
       selecteds.map(selected => {
-        return this.deleteByIdBP(
+        return this.delete(this.endpoint, {
+          numberGood: selected.no_bien,
           numberProceedings,
-          processingArea,
-          selected
-        ).pipe(
+        }).pipe(
           map(item => {
             return { deleted: selected.no_bien } as IDeleted;
           }),
@@ -95,24 +88,6 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
 
   getById(numberGood: number, numberProceedings: number) {
     return this.post(this.endpoint + '/id', { numberGood, numberProceedings });
-  }
-
-  deleteByIdBP(
-    actaNumber: number,
-    processingArea: string,
-    detail: IGoodsByProceeding
-  ) {
-    const body: PBDelete = {
-      actaNumber,
-      goodNumber: +detail.no_bien,
-      states: detail.estatus,
-      processingArea,
-      user: localStorage.getItem('username'),
-    };
-    return this.post(
-      this.endpoint + '/' + ProceedingsEndpoints.DeleteProceedinGood,
-      { body }
-    );
   }
 
   deleteById(numberGood: number, numberProceedings: number) {

@@ -20,7 +20,6 @@ export class OpinionComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    alert('DICTAMENT');
   }
 
   /**

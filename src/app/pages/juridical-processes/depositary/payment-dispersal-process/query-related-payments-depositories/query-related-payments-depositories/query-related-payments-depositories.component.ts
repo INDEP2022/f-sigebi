@@ -91,7 +91,6 @@ export class QueryRelatedPaymentsDepositoriesComponent
   // Loading
   loadingAppointment: boolean = false;
   loadingGood: boolean = false;
-  loadingGoodAccount: boolean = false;
   loadingSirsaeProcess: boolean = false;
   // Send Sirsae
   totalItemsSirsae: number = 0;
@@ -115,7 +114,6 @@ export class QueryRelatedPaymentsDepositoriesComponent
   ngOnInit(): void {
     this.errorsSirsae = [];
     this.loadingSirsaeProcess = false;
-    this.loadingGoodAccount = false;
     this.prepareForm();
     const id = this.activateRoute.snapshot.paramMap.get('id');
     if (id) {
@@ -216,51 +214,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
 
   btnExportarExcel(): any {
     console.log('Exportar Excel');
-    // SE MANDA AL BACK PARA OBTENER EL REPORTE
-    if (this.form.get('noBien').valid) {
-      if (!this.noBienReadOnly) {
-        this.alert(
-          'warning',
-          'Carga la Información del Bien primero para Continuar',
-          ''
-        );
-        return;
-      }
-      this.loadingGoodAccount = true;
-      this.svQueryRelatedPaymentsService
-        .getExportExcell(this.noBienReadOnly)
-        .subscribe({
-          next: res => {
-            this.downloadFile(
-              res,
-              `ESTADO_DE_CUENTA_DEL_BIEN_${
-                this.noBienReadOnly
-              }_${new Date().getTime()}`
-            );
-          },
-          error: err => {
-            this.loadingGoodAccount = false;
-            this.alert(
-              'warning',
-              'Número de Bien',
-              NOT_FOUND_GOOD(err.error.message)
-            );
-          },
-        });
-    } else {
-      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
-    }
-  }
-
-  downloadFile(base64: any, fileName: any) {
-    const linkSource = `data:file/csv;base64,${base64}`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = linkSource;
-    downloadLink.download = fileName + '.csv';
-    downloadLink.target = '_blank';
-    this.loadingGoodAccount = false;
-    downloadLink.click();
-    downloadLink.remove();
+    // FUNCION PENDIENTE DE DESARROLLO
   }
 
   btnEnviarSIRSAE(): any {
@@ -290,18 +244,6 @@ export class QueryRelatedPaymentsDepositoriesComponent
     // PASAR SOLO EL NÚMERO DE BIEN
     // this.alert('info', 'LLAMAR PANTALLA FCONDEPOREPINGXBIEN', '');
     if (this.form.get('noBien').valid) {
-      if (!this.noBienReadOnly) {
-        this.alert(
-          'warning',
-          'Carga la Información del Bien primero para Continuar',
-          ''
-        );
-        return;
-      }
-      this.svQueryRelatedPaymentsService.setGoodParamGood(
-        this.noBienReadOnly,
-        this.screenKey
-      ); // Set good param
       this.router.navigate(
         ['/pages/juridical/depositary/income-orders-depository-goods'],
         {

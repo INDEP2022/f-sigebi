@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
-import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-copy-documentation-goods-dialog',
@@ -24,27 +21,16 @@ export class CopyDocumentationGoodsDialogComponent
   title: string = 'Copia de Oficio';
   edit: boolean = false;
 
-  selectDictNumber = new DefaultSelect();
-
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private copiesOfficialService: CopiesOfficialOpinionService,
-    private dictationService: DictationService
+    private copiesOfficialService: CopiesOfficialOpinionService
   ) {
     super();
   }
 
-  getDictNumbers(params: ListParams) {
-    this.dictationService.getAll(params).subscribe({
-      next: data =>
-        (this.selectDictNumber = new DefaultSelect(data.data, data.count)),
-    });
-  }
-
   ngOnInit(): void {
     this.prepareForm();
-    this.getDictNumbers(new ListParams());
   }
 
   private prepareForm() {

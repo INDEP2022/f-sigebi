@@ -100,7 +100,7 @@ export class RegistrationOfRequestsComponent
   question: boolean = false;
   verifyResp: string = null;
   task: any = null;
-  statusTask: any = '';
+
   pgr: boolean = false;
 
   constructor(
@@ -134,10 +134,6 @@ export class RegistrationOfRequestsComponent
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
     console.log('task', this.task);
-
-    // DISABLED BUTTON - FINALIZED //
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -813,75 +809,6 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
 
-  /* Metodo para crear solo aprovacion de solicitud */
-  createApprovalProcessOnly() {
-    return new Promise((resolve, reject) => {
-      const user: any = this.authService.decodeToken();
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = this.task.assignees;
-      task['assigneesDisplayname'] = this.task.displayName;
-      task['creator'] = user.username;
-      task['taskNumber'] = Number(this.requestData.id);
-      task[
-        'title'
-      ] = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
-      task['programmingId'] = 0;
-      task['requestId'] = this.requestData.id;
-      task['expedientId'] = this.requestData.recordId;
-      task['urlNb'] = 'pages/request/transfer-request/process-approval';
-
-      this.taskService.createTask(task).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          console.log(error);
-          reject(false);
-          this.onLoadToast(
-            'error',
-            'Error',
-            'No se pudo crear la tarea de Aprovación de Solicitud'
-          );
-        },
-      });
-    });
-  }
-  /* FIN CREAR SOLO TAREA APROVACION DE SOLICITUD */
-
-  /* Cerrar la tarea de validacion documental */
-  async closeValidateDocumentation() {
-    const title = `Cerrar tarea de (Destino-Documental), No. Solicitud: ${this.requestData.id}`;
-    const url =
-      'pages/request/transfer-request/notify-clarification-inadmissibility';
-    const from = 'VERIFICAR_CUMPLIMIENTO';
-    const to = 'NOTIFICAR_ACLARACIONES';
-    const user: any = this.authService.decodeToken();
-    const taskRes = await this.createTaskOrderService(
-      this.requestData,
-      title,
-      url,
-      from,
-      to,
-      true,
-      this.task.id,
-      user.username,
-      'SOLICITUD_TRANSFERENCIA',
-      'Destino_Documental',
-      'APROBAR_SOLICITUD_AA'
-    );
-    if (taskRes) {
-      this.loader.load = false;
-      this.msgGuardado(
-        'success',
-        'Turnado Exitoso',
-        `Se Turno la solicitud con el folio: ${this.requestData.id}`
-      );
-      console.log('Tarea Cerrada');
-    }
-  }
-  /* FIN CERRAR VALIDACION DOCUMENTAL */
-
   close() {
     this.registRequestForm.reset();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
@@ -930,35 +857,17 @@ export class RegistrationOfRequestsComponent
   async approveRequestMethod() {
     this.loader.load = true;
     const existDictamen = await this.getDictamen(this.requestData.id);
-    //no tiene aclaraciones
-    const haveClarifications = await this.haveNotificacions();
-    if (haveClarifications === 'POR_ACLARAR') {
-      this.onLoadToast(
-        'info',
-        'No se puede aprobar la solicitud',
-        'La solicitud aun cuenta con bienes por aclarar!'
-      );
-      this.loader.load = false;
-      return;
-    }
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
-        'No se puede aprobar la solicitud',
+        'No se puede aprobar',
         'Es requerido previamente tener firmado el dictamen'
       );
       this.loader.load = false;
       return;
     }
 
-    this.loader.load = false;
-    this.msgGuardado(
-      'success',
-      'Turnado Exitoso',
-      `Se guardó la solicitud con el folio: ${this.requestData.id}`
-    );
-    this.close();
-    /*const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
+    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
     const url = 'pages/request/programming-request/schedule-reception';
     const from = 'SOLICITAR_APROBACION';
     const to = 'APROBADO';
@@ -983,7 +892,7 @@ export class RegistrationOfRequestsComponent
         'Turnado Exitoso',
         `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
-    }*/
+    }
   }
   /** fin de proceso */
 
@@ -999,16 +908,6 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
-    const haveClarifications = await this.haveNotificacions();
-    if (haveClarifications === 'POR_ACLARAR') {
-      this.onLoadToast(
-        'info',
-        'No se puede rechazar la solicitud',
-        'La solicitud aun cuenta con bienes por aclarar!'
-      );
-      this.loader.load = false;
-      return;
-    }
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
@@ -1220,25 +1119,14 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
-          this.loader.load = true;
           const clarification = await this.haveNotificacions();
-          if (clarification === 'POR_ACLARAR') {
-            const result = await this.createApprovalProcessOnly();
-            if (result) {
-              await this.notifyClarificationsMethod();
-            }
-          } else if (clarification === 'ACLARADO') {
+          if (clarification === true) {
+            await this.notifyClarificationsMethod();
+          } else {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
-            body.rulingCreatorName = user.name;
-            await this.updateRequest(body);
-            await this.closeValidateDocumentation();
-          } else if (clarification === 'SIN_ACLARACIONES') {
-            const user: any = this.authService.decodeToken();
-            const body: any = {};
-            body.id = this.requestData.id;
-            body.rulingCreatorName = user.name;
+            body.rulingCreatorName = user.username;
             await this.updateRequest(body);
             await this.destinyDocumental();
           }
@@ -1259,21 +1147,19 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
+      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
+      //debugger;
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
-          const goodsClarified = resp.data.filter(
-            (x: any) => x.good.goodStatus === 'ACLARADO'
-          );
-          if (goodsClarified.length > 0) {
-            resolve('ACLARADO');
+          if (resp.data) {
+            resolve(true);
           } else {
-            resolve('POR_ACLARAR');
+            resolve(false);
           }
-          console.log(goodsClarified);
         },
         error: (error: any) => {
-          resolve('SIN_ACLARACIONES');
+          resolve(false);
           /*this.onLoadToast(
             'error',
             'Error interno',
@@ -1309,6 +1195,12 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
+  /* dinamyCallFrom() {
+    this.registRequestForm.valueChanges.subscribe(data => {
+      this.requestData = data;
+    });
+  }
+ */
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,

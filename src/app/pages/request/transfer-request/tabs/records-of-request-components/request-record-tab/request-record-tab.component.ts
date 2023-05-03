@@ -55,7 +55,6 @@ export class RequestRecordTabComponent
   transfe: string = '';
   paperDateLabel: any = '';
   rem: string = 'del Remitente';
-  maxDate = new Date();
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
@@ -357,18 +356,9 @@ export class RequestRecordTabComponent
     this.loading = true;
     this.submitted = true;
     const request = this.requestForm.getRawValue() as IRequest;
-    Object.keys(request).forEach((key: any) => {
-      if (
-        typeof (request as any)[key] === 'string' &&
-        (request as any)[key]?.trim() === ''
-      ) {
-        (request as any)[key] = null;
-      }
-    });
     request.transferEntNotes = request.transferEntNotes
       ? request.transferEntNotes
       : null;
-    request.court = request.court ? request.court : null;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
@@ -378,7 +368,7 @@ export class RequestRecordTabComponent
         'Se guardó la solicitud correctamente'
       );
     } else {
-      this.message('error', 'Error', 'No se guardó la solicitud');
+      this.message('error', 'Error', '¡No se guardó la solicitud!');
     }
   }
 
@@ -392,7 +382,7 @@ export class RequestRecordTabComponent
 
           if (resp.statusCode != 200) {
             resolve(false);
-            this.message('error', 'Error', `No se guardó la solicitud.`);
+            this.message('error', 'Error', `¡No se guardó la solicitud!.`);
           }
           this.formLoading = false;
           this.loading = false;
@@ -403,7 +393,7 @@ export class RequestRecordTabComponent
           this.message(
             'error',
             'Error',
-            `No se guardó la solicitud. ${error.error.message}`
+            `¡No se guardó la solicitud!. ${error.error.message}`
           );
           reject(false);
         },

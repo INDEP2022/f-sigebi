@@ -7,12 +7,7 @@
     <div class="row w-100">
       <div
         class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-        *ngIf="
-          loadingAppointment ||
-          loadingGood ||
-          loadingSirsaeProcess ||
-          loadingGoodAccount
-        ">
+        *ngIf="loadingAppointment || loadingGood || loadingSirsaeProcess">
         <div class="d-flex justify-content-center">
           <div class="d-flex justify-content-center">
             <div class="loader"></div>
@@ -39,8 +34,7 @@
                       [disabled]="
                         loadingAppointment ||
                         loadingGood ||
-                        loadingSirsaeProcess ||
-                        loadingGoodAccount
+                        loadingSirsaeProcess
                       "
                       class="btn btn-primary btn-sm active"
                       (click)="validGoodNumberInDepositaryAppointment()">
@@ -185,8 +179,7 @@
                         [disabled]="
                           loadingAppointment ||
                           loadingGood ||
-                          loadingSirsaeProcess ||
-                          loadingGoodAccount
+                          loadingSirsaeProcess
                         "
                         class="btn btn-success ml-2 mr-2 active text-wrap p-2"
                         (click)="btnExportarExcel()">
@@ -201,8 +194,7 @@
                         [disabled]="
                           loadingAppointment ||
                           loadingGood ||
-                          loadingSirsaeProcess ||
-                          loadingGoodAccount
+                          loadingSirsaeProcess
                         "
                         class="btn btn-info ml-2 mr-2 active text-wrap p-2"
                         (click)="btnEnviarSIRSAE()">
@@ -217,8 +209,7 @@
                         [disabled]="
                           loadingAppointment ||
                           loadingGood ||
-                          loadingSirsaeProcess ||
-                          loadingGoodAccount
+                          loadingSirsaeProcess
                         "
                         class="btn btn-primary ml-2 mr-2 active text-wrap p-2"
                         (click)="btnImprimir()">
@@ -233,8 +224,7 @@
                         [disabled]="
                           loadingAppointment ||
                           loadingGood ||
-                          loadingSirsaeProcess ||
-                          loadingGoodAccount
+                          loadingSirsaeProcess
                         "
                         class="btn btn-warning ml-2 mr-2 active text-wrap p-2"
                         (click)="btnActualizarPago()">
@@ -247,9 +237,6 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-12 alert alert-info" *ngIf="loadingGoodAccount">
-        Generando el Reporte de Estado de Cuenta, Espere un momento...
       </div>
       <div class="col-md-12 alert alert-info" *ngIf="loadingSirsaeProcess">
         Realizando Proceso de Env&oacute; SIRSAE para el registro

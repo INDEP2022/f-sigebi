@@ -218,7 +218,7 @@ export class EstateDocumentFormComponent
         params['filter.name'] = `$eq:Estado Fisico`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data.length > 0 ? resp.data[0].description : '');
+            resolve(resp.data[0].description);
           },
         });
       } else {
@@ -235,7 +235,7 @@ export class EstateDocumentFormComponent
         params['filter.name'] = `$eq:Destino`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data.length > 0 ? resp.data[0].description : '');
+            resolve(resp.data[0].description);
           },
         });
       } else {

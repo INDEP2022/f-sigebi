@@ -966,8 +966,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   selectEvent(e: any) {
-    console.log(e);
     e.data.turnSelect = !e.data.turnSelect;
+    //this.dataTable.refresh();
     this.dataTable.update(e.data, e.data);
     this.showPGRDocs = false;
     this.showScan = false;
@@ -1053,8 +1053,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         },
         error: error => (this.loading = false),
       });
-    } else {
-      this.selectedRow = null;
     }
   }
 

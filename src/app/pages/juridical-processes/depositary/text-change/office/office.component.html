@@ -1,12 +1,8 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="proceedingsNumber"
-          (keyup.enter)="onNumberGoodEnter()" />
+      <form-field [control]="form.get('numberGood')" label="Expediente">
+        <input type="text" class="form-control" formControlName="numberGood" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
@@ -16,26 +12,17 @@
         <input
           type="text"
           class="form-control"
-          formControlName="numberGestion"
-          (keyup.enter)="onNumberGestionEnter()" />
+          formControlName="numberGestion" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field [control]="form.get('flywheel')" label="Volante">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="flywheel"
-          (keyup.enter)="onFlywheelEnter()" />
+        <input type="text" class="form-control" formControlName="flywheel" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field [control]="form.get('officio')" label="Oficio">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="officio"
-          (keyup.enter)="onOfficioEnter()" />
+        <input type="text" class="form-control" formControlName="officio" />
       </form-field>
     </div>
   </div>
@@ -45,8 +32,7 @@
       <app-user-shared
         [form]="form"
         [userField]="'senderUser'"
-        [label]="'Remitente'">
-      </app-user-shared>
+        [label]="'Remitente'"></app-user-shared>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
@@ -163,7 +149,10 @@
       <div class="row mt-3">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('key_I')" label="Clave">
-            <input type="text" class="form-control" formControlName="key_I" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood" />
           </form-field>
         </div>
         <div class="col-md-8 col-sm-12 col-xs-12">

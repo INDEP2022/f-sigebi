@@ -10,13 +10,11 @@ import {
 import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
-import compareDesc from 'date-fns/compareDesc';
 import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -25,7 +23,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsDepositaryService } from './services/goods-depositary.service';
 import {
   ERROR_FORM,
-  ERROR_FORM_FECHA,
   ERROR_REPORT,
   ERROR_SUBTYPE_DELEGATIONS,
   ERROR_SUBTYPE_GOOD,
@@ -56,8 +53,7 @@ export class GoodsDepositaryComponent
     private svGoodsDepositaryService: GoodsDepositaryService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService,
-    private datePipe: DatePipe
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -82,67 +78,45 @@ export class GoodsDepositaryComponent
 
   btnImprimir(): any {
     if (this.form.valid) {
-      let validDate = null;
-      if (!this.form.get('from').value && !this.form.get('to').value) {
-        validDate = 0;
-      } else {
-        validDate = compareDesc(
-          this.form.get('from').value,
-          this.form.get('to').value
-        );
-      }
-      if (this.form.get('from').value && !this.form.get('to').value) {
-        validDate = 0;
-      }
-      if (validDate >= 0) {
-        console.log(this.form.value);
-        let params = {
-          PARAMFORM: 'NO',
-          PC_ADMIN: this.form.get('tipo').value,
-          PC_DEPOSITARIO: this.form.get('depositaria').value,
-          PC_ENTFED: this.form.get('entidadFederativa').value,
-          PN_DELEGACION: this.form.get('delegacion').value,
-          PN_SUBDELEGACION: this.form.get('subdelegacion').value,
-          PC_TIPO: this.form.get('tipoBien').value,
-          PC_STIPO: this.form.get('subTipoBien').value,
-          PF_FECINI: this.datePipe.transform(
-            this.form.get('from').value,
-            'dd-MM-yyyy'
-          ),
-          PF_FECFIN: this.datePipe.transform(
-            this.form.get('to').value,
-            'dd-MM-yyyy'
-          ),
-        };
+      console.log(this.form.value);
+      let params = {
+        PARAMFORM: 'NO',
+        PC_ADMIN: this.form.get('tipo').value,
+        PC_DEPOSITARIO: this.form.get('depositaria').value,
+        PC_ENTFED: this.form.get('entidadFederativa').value,
+        PN_DELEGACION: this.form.get('delegacion').value,
+        PN_SUBDELEGACION: this.form.get('subdelegacion').value,
+        PC_TIPO: this.form.get('tipoBien').value,
+        PC_STIPO: this.form.get('subTipoBien').value,
+        PF_FECINI: this.form.get('from').value,
+        PF_FECFIN: this.form.get('to').value,
+      };
 
-        this.siabService
-          .fetchReport(
-            this.getReportName(this.form.get('fechaRadio').value),
-            params
-          )
-          .subscribe(response => {
-            if (response !== null) {
-              const blob = new Blob([response], { type: 'application/pdf' });
-              const url = URL.createObjectURL(blob);
-              let config = {
-                initialState: {
-                  documento: {
-                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                    type: 'pdf',
-                  },
-                  callback: (data: any) => {},
-                }, //pasar datos por aca
-                class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-                ignoreBackdropClick: true, //ignora el click fuera del modal
-              };
-              this.modalService.show(PreviewDocumentsComponent, config);
-            } else {
-              this.alert('warning', ERROR_REPORT, '');
-            }
-          });
-      } else {
-        this.onLoadToast('warning', 'Fechas incorrectas', ERROR_FORM_FECHA);
-      }
+      this.siabService
+        .fetchReport(
+          this.getReportName(this.form.get('fechaRadio').value),
+          params
+        )
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert('warning', ERROR_REPORT, '');
+          }
+        });
     } else {
       this.form.markAllAsTouched();
       this.alert('warning', ERROR_FORM, '');

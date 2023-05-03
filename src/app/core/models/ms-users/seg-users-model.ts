@@ -1,7 +1,6 @@
 import { IUserAccessAreas } from './users-access-areas-model';
 export interface ISegUsers {
   id: string;
-  users?: string;
   name?: string;
   rfc?: string;
   curp?: string;
@@ -29,6 +28,5 @@ export interface ISegUsers {
   nameAd?: string;
   posPrevKey?: string;
   userAndName?: string;
-  keyPosition?: string;
   usuario?: IUserAccessAreas;
 }

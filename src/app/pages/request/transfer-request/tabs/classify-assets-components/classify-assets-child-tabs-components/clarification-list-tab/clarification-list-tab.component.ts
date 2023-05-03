@@ -39,8 +39,6 @@ export class ClarificationListTabComponent
   totalItems: number = 0;
   idClarification: number = 0;
   clarificationsLength: any;
-  task: any;
-  statusTask: any = '';
   constructor(
     private modalService: BsModalService,
     private rejectedGoodService: RejectedGoodService,
@@ -56,12 +54,6 @@ export class ClarificationListTabComponent
   }
 
   ngOnInit(): void {
-    this.task = JSON.parse(localStorage.getItem('Task'));
-
-    // DISABLED BUTTON - FINALIZED //
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
-
     this.settings = {
       ...TABLE_SETTINGS,
       columns: CLARIFICATION_COLUMNS,
