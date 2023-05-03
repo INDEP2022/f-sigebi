@@ -57,6 +57,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   deleteMasive(selecteds: IProceedingDeliveryReception[]) {
+    // return this.post(this.endpoint + '/' + ProceedingsEndpoints.DeleteMassiveProceeding, {pbDelete});
     return forkJoin(
       selecteds.map(selected => {
         return this.delete(this.endpoint + '/' + selected.id).pipe(
