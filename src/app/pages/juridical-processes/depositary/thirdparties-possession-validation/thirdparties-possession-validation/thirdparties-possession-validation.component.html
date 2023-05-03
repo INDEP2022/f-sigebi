@@ -209,7 +209,10 @@
                 maxlength="40"
                 [control]="formGood.get('closingDate')"
                 label="Fecha de Cierre">
-                <input class="form-control" formControlName="closingDate" />
+                <input
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="closingDate" />
               </form-field>
             </div>
           </div>

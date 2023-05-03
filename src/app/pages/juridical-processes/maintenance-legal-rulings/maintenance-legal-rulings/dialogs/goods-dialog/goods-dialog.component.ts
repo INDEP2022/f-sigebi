@@ -70,11 +70,11 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.dictationXGoodForm = this.fb.group({
       amountDict: [null],
-      descriptionDict: [''],
+      descriptionDict: ['', Validators.required],
       id: [null, Validators.required],
       ofDictNumber: [null, Validators.required],
       proceedingsNumber: [null, Validators.required],
-      typeDict: [''],
+      typeDict: ['', Validators.required],
     });
 
     if (this.dictationXGood != null) {
@@ -93,6 +93,7 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    console.log(this.dictationXGoodForm.value);
     this.dictationXGoodService.create(this.dictationXGoodForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
