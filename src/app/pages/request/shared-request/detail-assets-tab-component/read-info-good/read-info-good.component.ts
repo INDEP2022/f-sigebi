@@ -41,7 +41,7 @@ export class ReadInfoGoodComponent
   selectPhysicalState = new DefaultSelect();
   selectConcervationState = new DefaultSelect();
   selectMeasureUnitSae = new DefaultSelect();
-
+  selectUnit = new DefaultSelect();
   duplicity: string = '';
   avaluo: string = '';
   cumplyNorma: string = '';
@@ -185,9 +185,8 @@ export class ReadInfoGoodComponent
         next: (data: any) => {
           console.log('estado fisico', data.data);
           if (
-            (this.typeOfRequest == 'MANUAL' ||
-              this.typeOfRequest == 'PGR_SAE') &&
-            this.process == 'verify-compliance'
+            this.typeOfRequest == 'MANUAL' ||
+            this.typeOfRequest == 'PGR_SAE'
           ) {
             this.physicalStatus = data.data[0].description;
           } else {
@@ -211,9 +210,8 @@ export class ReadInfoGoodComponent
       .subscribe({
         next: (data: any) => {
           if (
-            (this.typeOfRequest == 'MANUAL' ||
-              this.typeOfRequest == 'PGR_SAE') &&
-            this.process == 'verify-compliance'
+            this.typeOfRequest == 'MANUAL' ||
+            this.typeOfRequest == 'PGR_SAE'
           ) {
             this.conservationState = data.data[0].description;
           } else {
@@ -272,19 +270,12 @@ export class ReadInfoGoodComponent
       .getCatMeasureUnitView(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: resp => {
-          if (
-            (this.typeOfRequest == 'MANUAL' ||
-              this.typeOfRequest == 'PGR_SAE') &&
-            this.process == 'verify-compliance'
-          ) {
-            this.unitMeasureLigie = resp.data[0].municipality;
-          } else {
-            this.selectMeasureUnitSae = new DefaultSelect(
-              resp.data,
-              resp.count
-            );
-          }
+        next: data => {
+          this.unitMeasureLigie = data.data[0].municipality;
+          this.selectMeasureUnitSae = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.selectMeasureUnitSae = new DefaultSelect();
         },
       });
   }
