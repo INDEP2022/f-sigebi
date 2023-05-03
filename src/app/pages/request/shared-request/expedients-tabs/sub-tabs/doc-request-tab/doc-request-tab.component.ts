@@ -772,7 +772,7 @@ export class DocRequestTabComponent
         this.title = 'Expedientes';
         break;
       case 'request-expedient':
-        this.title = '';
+        this.title = 'Solicitud';
         break;
       default:
         break;

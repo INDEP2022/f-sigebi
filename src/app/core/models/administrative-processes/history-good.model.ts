@@ -8,3 +8,16 @@ export interface IHistoryGood {
   registryNum?: string | number;
   extDomProcess?: string;
 }
+
+export interface ISentSirsae {
+  armyJobKey: string;
+  dictNumber?: number;
+  userDictates?: string;
+  delegationNumOpinion: number;
+  dictType?: string;
+  rulingStatus?: string;
+  rulingType?: string;
+  date: string;
+  user?: string;
+  expedientNumber: number;
+}
