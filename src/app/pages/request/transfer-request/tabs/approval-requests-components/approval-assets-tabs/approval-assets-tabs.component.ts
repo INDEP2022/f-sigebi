@@ -381,6 +381,9 @@ export class ApprovalAssetsTabsComponent
         ],
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      duplicatedGood: [null],
+      admissionDate: [null],
+      federalEntity: [null],
     });
   }
 

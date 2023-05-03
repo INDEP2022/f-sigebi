@@ -196,7 +196,7 @@ export class DetailAssetsTabComponentComponent
       if (this.domicilieObject) {
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
-      this.goodData = this.detailAssets.value;
+      // this.goodData = this.detailAssets.value;
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
