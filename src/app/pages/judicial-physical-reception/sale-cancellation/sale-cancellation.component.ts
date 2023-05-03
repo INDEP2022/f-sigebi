@@ -262,7 +262,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   //*Traer bienes
   goodsByExpediente() {
     this.serviceGood
-      .getAllFilter(
+      .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.form.get('expediente').value
         }&filter.status=$eq:VXP&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`

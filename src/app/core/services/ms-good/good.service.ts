@@ -106,6 +106,12 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
 
+  getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(
+      `${GoodEndpoints.Good}/getAllGoodWDetail?${params}`
+    );
+  }
+
   getMeasurementUnits(unit: string) {
     return this.get<
       IResponse<{
