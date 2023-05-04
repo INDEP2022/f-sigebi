@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -15,9 +15,10 @@ import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dyn
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
+import { BankAccount } from '../list-banks/bank';
+import { ListBanksComponent } from '../list-banks/list-banks.component';
 import { TesofeMovementsModalComponent } from '../tesofe-movements-modal/tesofe-movements-modal.component';
 import { TESOFE_MOVEMENTS_COLUMNS } from './tesofe-movements-columns';
 
@@ -87,34 +88,42 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
+  getBanks() {
+    this.service.getBankAndAccount().subscribe({
+      next: resp => {
+        this.banks = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
+
+  onBanksChange(data: any) {
+    console.log(data);
+  }
+
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      account: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      currency: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      cveBank: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      nameBank: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      accountNumberTransfer: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      cuentasAsociadas: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      cve_banco: [null],
+      nombre: [{ value: null, disabled: true }],
+      cve_cuenta: [{ value: null, disabled: true }],
+      no_cuenta: [{ value: null, disabled: true }],
+      cve_moneda: [{ value: null, disabled: true }],
+      desc_moneda: [{ value: null, disabled: true }],
     });
+  }
+
+  openList() {
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+    modalConfig.initialState = {
+      callback: (next: boolean, data: BankAccount) => {
+        if (next) {
+          this.form.patchValue(data);
+        }
+      },
+    };
+    this.modalService.show(ListBanksComponent, modalConfig);
   }
 
   getBankCode() {
