@@ -30,6 +30,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   loadingText = '';
   userName = '';
   consultTasksForm: FormGroup;
+  department = '';
 
   constructor(
     private taskService: TaskService,
@@ -49,6 +50,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.userName = this.authService.decodeToken().preferred_username;
+    this.department = this.authService.decodeToken().department;
 
     this.consultTasksForm = this.fb.group({
       unlinked: [null, Validators.required],
