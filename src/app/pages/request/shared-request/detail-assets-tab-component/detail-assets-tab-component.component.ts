@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import {
@@ -1150,9 +1151,8 @@ export class DetailAssetsTabComponentComponent
 
   changeDateEvaluoEvent(event: any) {
     this.bsEvaluoDate = event;
-
     if (this.bsEvaluoDate) {
-      let date = this.bsEvaluoDate.toISOString(); //new Date(this.bsEvaluoDate);
+      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsEvaluoDate.toISOString();
       this.goodDomicilieForm.controls['appraisalDate'].setValue(date);
     }
   }
@@ -1160,7 +1160,7 @@ export class DetailAssetsTabComponentComponent
     this.bsCertifiDate = event;
 
     if (this.bsCertifiDate) {
-      let date = this.bsCertifiDate.toISOString(); //new Date(this.bsCertifiDate);
+      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsCertifiDate.toISOString();
       this.goodDomicilieForm.controls['certLibLienDate'].setValue(date);
     }
   }
@@ -1169,7 +1169,7 @@ export class DetailAssetsTabComponentComponent
     this.bsPffDate = event;
 
     if (this.bsPffDate) {
-      let date = this.bsPffDate.toISOString(); //new Date(this.bsPffDate);
+      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsPffDate.toISOString();
       this.goodDomicilieForm.controls['pffDate'].setValue(date);
     }
   }
@@ -1424,7 +1424,6 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
-        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), data);
       }
     });
@@ -1541,18 +1540,29 @@ export class DetailAssetsTabComponentComponent
               /* establece las fechas  */
               const dateEvaluo =
                 this.goodDomicilieForm.controls['appraisalDate'].value;
-              this.bsEvaluoDate = dateEvaluo ? new Date(dateEvaluo) : null;
+              this.bsEvaluoDate = dateEvaluo
+                ? this.parseDateNoOffset(dateEvaluo)
+                : null;
               const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
-              this.bsPffDate = datePFF ? new Date(datePFF) : null;
+              this.bsPffDate = datePFF ? this.parseDateNoOffset(datePFF) : null;
               const dateCerti =
                 this.goodDomicilieForm.controls['certLibLienDate'].value;
-              this.bsCertifiDate = dateCerti ? new Date(dateCerti) : null;
+              this.bsCertifiDate = dateCerti
+                ? this.parseDateNoOffset(dateCerti)
+                : null;
             },
           });
       } catch (error) {
         console.log(error);
       }
     }
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   message(header: any, title: string, body: string) {
