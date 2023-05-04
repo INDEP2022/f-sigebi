@@ -1,9 +1,11 @@
 import {
   Component,
+  ElementRef,
   Input,
   OnChanges,
   OnInit,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -55,6 +57,7 @@ const defaultData = [
 export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() requestObject: any; //solicitudes
   @Input() process: string = '';
+  @ViewChild('uploadFile') fileUploaded: ElementRef<any>;
   goodObject: any; //bienes
   goodDomiciliesMasive: any = []; // domicilios masivo
   listgoodObjects: any[] = [];
@@ -262,7 +265,31 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     const user = this.authService.decodeToken().preferred_username;
     this.uploadFile(file, this.requestObject.id, user);
   }
-
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      let correcto = true;
+      this.data = this.excelService.getData<any>(binaryExcel);
+      for (let i = 0; i < this.data.length; i++) {
+        const element: any = this.data[i];
+        //|| element['FRACCIÓN ARANCELARIA'] === undefined
+        if (element['CLAVE ARANCELARIA'] === undefined) {
+          this.onLoadToast(
+            'error',
+            'Carga de archivo',
+            'Todos los bienes deben tener una clave arancelaria!'
+          );
+          correcto = false;
+          this.loader.load = false;
+          break;
+        }
+      }
+      return correcto;
+    } catch (error) {
+      this.loader.load = false;
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      return false;
+    }
+  }
   uploadFile(file: File, request: string, user: string) {
     this.procedureManagementService
       .uploadExcelMassiveChargeGoods(file, request, user)
@@ -277,7 +304,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.closeCreateGoodWIndows();
         },
         error: error => {
-          this.message('error', 'Error al guardar', `${error.error.message}`);
+          this.loader.load = false;
+          this.message(
+            'error',
+            'Error al subir el file',
+            `No se pudo cargar el archivo excel ${error.error.message}`
+          );
         },
       });
   }
@@ -321,12 +353,18 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   setQuantyy() {
     const typeOfTransferent = this.requestObject.typeOfTransfer;
-    if (typeOfTransferent === 'PGR_SAE' || typeOfTransferent === 'FGR_SAE') {
+    if (
+      typeOfTransferent === 'PGR_SAE' ||
+      typeOfTransferent === 'FGR_SAE' ||
+      typeOfTransferent === 'SAT_SAE'
+    ) {
       if (
         !this.listgoodObjects[0].quantity ||
         this.listgoodObjects[0].quantity <= this.listgoodObjects[0].quantityy
       ) {
         this.listgoodObjects[0].quantity = this.listgoodObjects[0].quantityy;
+      } else if (this.listgoodObjects[0].quantity === null) {
+        this.listgoodObjects[0].quantity <= this.listgoodObjects[0].quantityy;
       }
     }
   }
