@@ -41,6 +41,7 @@ export class CopyDocumentationGoodsDialogComponent
       recipientCopy: [''],
       namePersonExt: [''],
       personExtInt: ['', Validators.required],
+      id: [null],
     });
 
     if (this.copiesOfficial != null) {
@@ -68,7 +69,7 @@ export class CopyDocumentationGoodsDialogComponent
 
   update() {
     this.loading = true;
-
+    console.log(this.copiesOfficialForm.value);
     this.copiesOfficialService.update(this.copiesOfficialForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

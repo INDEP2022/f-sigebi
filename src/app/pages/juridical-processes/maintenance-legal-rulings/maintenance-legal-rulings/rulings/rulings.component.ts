@@ -32,6 +32,7 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
   params: any;
 
   public form: FormGroup;
+  public searchForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -49,11 +50,11 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
     this.form = this.fb.group({
       id: '',
       passOfficeArmy: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      expedientNumber: '',
+      expedientNumber: ['', [Validators.required]],
       typeDict: '',
       statusDict: ['', [Validators.pattern(STRING_PATTERN)]],
       dictDate: '',
-      userDict: ['', [Validators.pattern(STRING_PATTERN)]],
+      userDict: ['', [Validators.pattern(STRING_PATTERN), Validators.required]],
       observations: ['', [Validators.pattern(STRING_PATTERN)]],
       delegationDictNumber: '',
       areaDict: ['', [Validators.pattern(STRING_PATTERN)]],
@@ -67,6 +68,11 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
       entryDate: '',
       dictHcDAte: '',
       entryHcDate: '',
+    });
+
+    this.searchForm = this.fb.group({
+      id: ['', Validators.required],
+      typeDict: '',
     });
   }
 
@@ -128,6 +134,7 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
         this.emitChange();
       },
       error: err => {
+        this.form.reset();
         console.log(err);
       },
     });
@@ -135,5 +142,25 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
 
   public emitChange() {
     this.formValues.emit(this.form.value);
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.searchForm.reset();
+  }
+
+  send() {
+    this.dictationService.update(this.form.value).subscribe({
+      next: data => {
+        this.alert(
+          'success',
+          'Se ha agregado la información correctamente',
+          ''
+        );
+      },
+      error: err => {
+        this.alert('error', 'No se ha podido agregar la información', '');
+      },
+    });
   }
 }
