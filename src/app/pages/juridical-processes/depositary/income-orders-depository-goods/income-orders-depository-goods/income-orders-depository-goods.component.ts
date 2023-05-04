@@ -94,51 +94,11 @@ export class IncomeOrdersDepositoryGoodsComponent
         this.interfasValorBienes = res;
       },
       error: err => {
-        alert('SharingNumbien' + err);
+        //alert('SharingNumbien' + err);
       },
     });
     this.buildForm();
-
-    /*
-this.form.get('numberGood')?.valueChanges.subscribe(data => {
-      if(this.itemsPass!=null){
-
-       }else{
-           this.objJsonInterfaz = this.itemsJsonInterfaz.filter(X => X.goodNumber == data);
-       }
-        this.form.get('depositary').setValue('');
-        this.form.get('description').setValue('');
-
-       if (data || this.itemsPass) {
-           console.log("SharingNumbien 23 " +  this.objJsonInterfaz[0].depositaryType);
-
-         }
-    });
-
-
-
-        console.log("SharingNumbien" +  this.objJsonInterfaz[0].contractKey);
-*/
   }
-
-  /*
-    this.getUserDepositary();
-    this.form.get('user')?.valueChanges.subscribe(data => {
-      this.form.get('username').setValue('');
-      this.form.get('charge').setValue('');
-      let v:ISegUsers;
-      if (data) {
-        this.objJsonInterfazUser = this.itemsJsonInterfazUser.filter(
-          X => X.id === data
-        );
-        console.log("USUARIOS\n=============\n " + JSON.stringify(this.objJsonInterfazUser));
-        this.form.get('username').setValue(this.objJsonInterfazUser[0].name);
-        this.form
-          .get('charge')
-          .setValue(this.objJsonInterfazUser[0].keyPosition);
-
-      }
-    });*/
 
   getUserDepositary() {
     console.log('====================================');
@@ -209,27 +169,12 @@ this.form.get('numberGood')?.valueChanges.subscribe(data => {
       username: [null, [Validators.required]],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
-    this.form.get('userId').setValue(this.datosUser.puesto);
+    this.form.get('userId').setValue(this.datosUser.username);
     this.form.get('username').setValue(this.datosUser.name);
-    this.form.get('charge').setValue(this.datosUser.username);
+    this.form.get('charge').setValue(this.datosUser.puesto);
     this.form.get('numberGood').setValue(this.interfasValorBienes.numBien);
     this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
     this.form.get('depositary').setValue(this.interfasValorBienes.depositario);
     this.form.get('description').setValue(this.interfasValorBienes.desc);
-
-    /*
-                                    this.objJsonInterfaz = this.itemsJsonInterfaz.filter(X => X.goodNumber == this.itemsPass);
-   console.log("this.itemsPass => " + this.itemsPass +  "\n\n\n" +JSON.stringify(this.objJsonInterfaz[0]) );
-  this.form.get('depositary').setValue(this.objJsonInterfaz[0].depositaryType);
-        this.form.get('date')
-                 .setValue(this.objJsonInterfaz[0].good.fecRegInsert);
-
-        this.form.get('description')
-                 .setValue(this.objJsonInterfaz[0].good.description);
-        console.log("SharingNumbien" +  this.objJsonInterfaz[0].good.description);
-
-        this.form.get('contractKey')
-                 .setValue(this.objJsonInterfaz[0].contractKey);
-*/
   }
 }

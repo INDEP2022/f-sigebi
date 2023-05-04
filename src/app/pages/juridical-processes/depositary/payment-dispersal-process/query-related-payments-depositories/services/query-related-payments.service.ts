@@ -69,7 +69,7 @@ export class QueryRelatedPaymentsService {
       depositario: '',
       desc: '',
     };
-    this.svNumBienShare.SharingNumbienData = valGood;
+    //this.svNumBienShare.SharingNumbienData = valGood;
     console.log(
       this.svNumBienShare.SharingNumbien,
       valGood,
