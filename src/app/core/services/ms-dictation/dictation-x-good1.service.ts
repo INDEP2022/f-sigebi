@@ -24,8 +24,8 @@ export class DictationXGood1Service extends HttpService {
 
   getById(body: {
     ofDictNumber: string | number;
-    id: string | number;
-    typeDict: string;
+    id?: string | number;
+    typeDict?: string;
   }): Observable<IDictationXGood1> {
     return this.post(this.route.FindIdsDictationXGood1, body);
   }

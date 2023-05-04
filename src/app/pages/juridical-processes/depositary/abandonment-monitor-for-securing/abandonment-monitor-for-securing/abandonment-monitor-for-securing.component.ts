@@ -152,4 +152,14 @@ export class AbandonmentMonitorForSecuringComponent
         },
       });
   }
+
+  send() {
+    this.loading = true;
+    const pdfurl = `pages/juridical/depositary/notice-abandonment-for-securing`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    this.loading = false;
+  }
 }

@@ -37,7 +37,6 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
 
   ngOnInit(): void {
     this.buildForm();
-    this.loandData();
   }
 
   /**
@@ -93,4 +92,5 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     }
   }
   loadDescription() {}
+  loadData() {}
 }
