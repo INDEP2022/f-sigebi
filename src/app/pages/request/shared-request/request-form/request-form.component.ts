@@ -144,7 +144,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(50),
         ],
       ],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
