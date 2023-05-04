@@ -15,31 +15,32 @@
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-6">
-            <app-banks-shared
-              [labelName]="'Clave Banco'"
-              [form]="form"
-              [bankField]="'cveBank'"
-              (stringBank)="getBankCode()">
-            </app-banks-shared>
+          <div class="col-md-4">
+            <form-field [control]="form.get('cve_banco')" label="Banco">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cve_banco"
+                (click)="openList()" />
+            </form-field>
           </div>
-          <div class="col-md-6" style="margin-top: 4px">
-            <ng-select
-              [items]="listaDatos"
-              bindLabel="accountNumber"
-              bindValue="cveAccount"
-              placeholder="Seleccione una cuenta..."
-              (change)="loadInfo($event)">
-            </ng-select>
+          <div class="col-md-8">
+            <form-field [control]="form.get('nombre')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nombre"
+                (click)="openList()" />
+            </form-field>
           </div>
           <div class="col-md-9">
-            <form-field [control]="form.get('account')" label="Cuenta">
-              <input formControlName="account" class="form-control" />
+            <form-field [control]="form.get('cve_cuenta')" label="Cuenta">
+              <input formControlName="cve_cuenta" class="form-control" />
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('currency')" label="Moneda">
-              <input formControlName="currency" class="form-control" />
+            <form-field [control]="form.get('desc_moneda')" label="Moneda">
+              <input formControlName="desc_moneda" class="form-control" />
             </form-field>
           </div>
         </div>

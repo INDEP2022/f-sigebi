@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IBankAccount } from '../../models/catalogs/bank-account.model';
 
@@ -15,6 +16,8 @@ export class BankAccountService
   implements ICrudMethods<IBankAccount>
 {
   private readonly api = 'bank-account';
+
+  private readonly apiBank = 'account-movements/getBankAndAccount';
 
   constructor(private repository: Repository<IBankAccount>) {
     super();
@@ -38,6 +41,10 @@ export class BankAccountService
 
   getAllWithFilters(params?: string): Observable<IListResponse<IBankAccount>> {
     return this.get<IListResponse<IBankAccount>>(this.api, params);
+  }
+
+  getBankAndAccount() {
+    return this.post<IListResponse<BankAccount>>(this.apiBank, {});
   }
 
   create(model: IBankAccount): Observable<IBankAccount> {
