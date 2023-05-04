@@ -344,7 +344,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
-    console.log('información del good v1', this.detailAssets.value); //Henry
     this.detailAssetsInfo = this.detailAssets.value;
     this.initForm();
     this.getDestinyTransfer(new ListParams());
@@ -352,7 +351,6 @@ export class DetailAssetsTabComponentComponent
     this.getConcervationState(new ListParams());
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
-    //this.isSavingData();
 
     if (
       this.requestObject != undefined &&
@@ -785,7 +783,6 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
-    // debugger;
     if (municipalityId === null || stateKey === null) {
       return;
     }
@@ -968,9 +965,6 @@ export class DetailAssetsTabComponentComponent
       });
   }
   onValuesChange(data: any) {
-    // this.brandId = data.flexValue;
-    console.log('ddddd' + data);
-
     if (data != undefined) {
       this.getSubBrand(new ListParams(), data.flexValue);
       this.detailAssets.controls['subBrand'].setValue(null);
@@ -992,9 +986,7 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log(resp);
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
-          console.log(this.selectBrand);
         },
         error: () => {
           this.selectBrand = new DefaultSelect();
@@ -1146,7 +1138,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
-    //debugger;
     this.typeRelevantSevice
       .getById(id)
       .pipe(takeUntil(this.$unSubscribe))
@@ -1227,7 +1218,6 @@ export class DetailAssetsTabComponentComponent
 
   async save() {
     const domicilie = this.domicileForm.getRawValue();
-
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
@@ -1369,8 +1359,7 @@ export class DetailAssetsTabComponentComponent
 
       domicilio.userCreation = username;
       domicilio.userModification = username;
-
-      this.goodEstateService.update(domicilio.id, domicilio).subscribe({
+      this.goodEstateService.update(domicilio).subscribe({
         next: resp => {
           resolve(true);
         },
@@ -1463,7 +1452,6 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
-        // debugger;
         if (data === null) {
           this.combineMunicipalityId = true;
         }
@@ -1542,25 +1530,28 @@ export class DetailAssetsTabComponentComponent
 
   getGoodEstate() {
     if (this.detailAssets.controls['id'].value !== null) {
-      const id = this.detailAssets.controls['id'].value;
-      this.goodEstateService
-        .getById(id)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            this.goodDomicilieForm.patchValue(resp);
-            /* establece las fechas  */
-            //debugger;
-            const dateEvaluo =
-              this.goodDomicilieForm.controls['appraisalDate'].value;
-            this.bsEvaluoDate = dateEvaluo ? new Date(dateEvaluo) : null;
-            const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
-            this.bsPffDate = datePFF ? new Date(datePFF) : null;
-            const dateCerti =
-              this.goodDomicilieForm.controls['certLibLienDate'].value;
-            this.bsCertifiDate = dateCerti ? new Date(dateCerti) : null;
-          },
-        });
+      try {
+        const id = this.detailAssets.controls['id'].value;
+        this.goodEstateService
+          .getById(id)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: resp => {
+              this.goodDomicilieForm.patchValue(resp);
+              /* establece las fechas  */
+              const dateEvaluo =
+                this.goodDomicilieForm.controls['appraisalDate'].value;
+              this.bsEvaluoDate = dateEvaluo ? new Date(dateEvaluo) : null;
+              const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
+              this.bsPffDate = datePFF ? new Date(datePFF) : null;
+              const dateCerti =
+                this.goodDomicilieForm.controls['certLibLienDate'].value;
+              this.bsCertifiDate = dateCerti ? new Date(dateCerti) : null;
+            },
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
