@@ -352,7 +352,7 @@ export class DetailAssetsTabComponentComponent
     this.getConcervationState(new ListParams());
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
-    this.isSavingData();
+    //this.isSavingData();
 
     if (
       this.requestObject != undefined &&
@@ -1365,9 +1365,11 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       let domicilio = this.goodDomicilieForm.getRawValue();
       domicilio.modificationDate = new Date().toISOString();
-
       domicilio.creationDate = new Date().toISOString();
-      //domicilio.modificationDate = new Date().toISOString();
+
+      domicilio.userCreation = username;
+      domicilio.userModification = username;
+
       this.goodEstateService.update(domicilio.id, domicilio).subscribe({
         next: resp => {
           resolve(true);
@@ -1568,7 +1570,7 @@ export class DetailAssetsTabComponentComponent
     }, 2000);
   }
 
-  isSavingData() {
+  /*isSavingData() {
     this.requestHelperService.currentRefresh.subscribe({
       next: data => {
         if (data) {
@@ -1576,7 +1578,7 @@ export class DetailAssetsTabComponentComponent
         }
       },
     });
-  }
+  }*/
 
   setGoodDomicilieSelected(domicilie: any) {
     domicilie.localityKey = Number(domicilie.localityKey);
