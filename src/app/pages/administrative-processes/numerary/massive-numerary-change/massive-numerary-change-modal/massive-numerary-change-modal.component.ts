@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -21,7 +22,7 @@ export class MassiveNumeraryChangeModalComponent
   title: string = 'Win Bienes';
   form: FormGroup;
   settings2 = { ...this.settings, actions: false };
-  data1: any[] = [];
+  data1 = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 

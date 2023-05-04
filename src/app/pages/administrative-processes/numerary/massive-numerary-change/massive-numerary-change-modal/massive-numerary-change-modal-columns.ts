@@ -34,7 +34,7 @@ export const MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  iva: {
+  tax: {
     title: 'I.V.A',
     type: 'number',
     sort: false,

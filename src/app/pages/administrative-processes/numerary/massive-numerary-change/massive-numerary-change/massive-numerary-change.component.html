@@ -5,17 +5,37 @@
   <div body>
     <div class="row mt-4">
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active" (click)="openForm()">
-          Abrir archivo de MS Excel 4.0
-        </button>
+        <!-- <input
+          type="file"
+          class="btn btn-secondary btn-sm active"
+          (change)="onClickBtnFileExcel($event)" /> -->
+
+        <a
+          class="btn btn-secondary btn-sm active"
+          (click)="btnFileExcel.click()"
+          >Abrir archivo de MS Excel 4.0<input
+            #btnFileExcel
+            hidden
+            type="file"
+            accept=".xlsx,.xls"
+            (change)="onClickBtnFileExcel($event)" />
+        </a>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active">
-          Abrir archivo de Texto CSV
-        </button>
+        <a class="btn btn-secondary btn-sm active" (click)="btnFileCsv.click()"
+          >Abrir archivo de Texto CSV<input
+            #btnFileCsv
+            hidden
+            type="file"
+            accept=".csv"
+            (change)="onClickBtnFileExcel($event)" />
+        </a>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active">
+        <button
+          [disabled]="isLoadingProcessExtraction"
+          (click)="onClickBtnProcessExtraction()"
+          class="btn btn-secondary btn-sm active">
           Proceso de extracción
         </button>
       </div>
@@ -56,6 +76,7 @@
             </form-field>
           </div>
           <div class="col-md-3">
+            Erróneos
             <form-field [control]="form.get('wrong')" label="Erroneos">
               <input
                 type="number"
@@ -73,9 +94,9 @@
               class="selects-origin-data"
               *ngFor="let item of columns; let i = index">
               <label>{{ item }}:</label>
-              <select formControlName="TIP{{ i }}">
+              <select formControlName="TIP{{ i + 1 }}">
                 <option selected>Opción {{ item }}</option>
-                <option value="0">Otro</option>
+                <option value="O">Otro</option>
                 <option value="B">No. Bien</option>
                 <option value="G">Gasto</option>
                 <option value="I">Ingreso neto</option>
@@ -91,25 +112,22 @@
         </div>
         <div class="row mt-4 mx-0">
           <h5 class="title">Gastos</h5>
-          <div [formGroup]="formGas" class="d-flex">
-            <div *ngFor="let item of columns; let i = index">
-              <label>Concepto {{ item }}:</label>
-              <!-- <form-field [control]="form.get('concept')" label="Concepto"> -->
-              <input
-                formControlName="GADS{{ i }}"
-                type="text"
-                class="form-control" />
-              <!-- </form-field> -->
+          <div class="overflow-auto">
+            <div [formGroup]="formGas" class="d-flex spent-inputs">
+              <div *ngFor="let item of columns; let i = index">
+                <label>Concepto {{ item }}:</label>
+                <!-- <form-field [control]="form.get('concept')" label="Concepto"> -->
+                <input formControlName="GAS{{ i + 1 }}" type="text" class="" />
+                <!-- </form-field> -->
+              </div>
             </div>
-          </div>
-          <div class="d-flex">
-            <div *ngFor="let item of columns; let i = index">
-              <!-- <form-field [control]="form.get('description')" label="Descripción"> -->
-              <input
-                type="text"
-                class="form-control"
-                formControlName="GAD{{ i }}" />
-              <!-- </form-field> -->
+            <div [formGroup]="formGad" class="d-flex spent-inputs">
+              <div *ngFor="let item of columns; let i = index">
+                <!-- <form-field [control]="form.get('description')" label="Descripción"> -->
+                <label>Descripción {{ item }}:</label>
+                <input type="text" class="" formControlName="GAD{{ i + 1 }}" />
+                <!-- </form-field> -->
+              </div>
             </div>
           </div>
         </div>
