@@ -107,12 +107,13 @@ export class ReadInfoGoodComponent
         this.getDestinoSAE(new ListParams());
       }
 
-      if (this.process == 'verify-compliance') {
+      if (this.process == 'validate-document') {
         this.getConcervationState(
           new ListParams(),
           this.goodData.stateConservation
         );
       }
+
       this.getUnitMeasureTransferent(
         new ListParams(),
         this.goodData.unitMeasure
@@ -129,20 +130,6 @@ export class ReadInfoGoodComponent
     });
   }
 
-  // getTypeGood() {
-  //   const params = new ListParams();
-  //   params['filter.id'] = `$eq:${this.goodData.fractionId}`;
-  //   this.fractionsService.getAll(params).subscribe({
-  //     next: resp => {
-  //       console.log(resp);
-  //       this.fraction = resp.data[0].code;
-  //       this.relevantTypeName = resp.data[0].description;
-  //     },
-  //     error: error => {
-  //       console.log(error);
-  //     },
-  //   });
-  // }
   getTypeGood() {
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
@@ -233,7 +220,8 @@ export class ReadInfoGoodComponent
           if (
             (this.typeOfRequest == 'MANUAL' ||
               this.typeOfRequest == 'PGR_SAE') &&
-            this.process == 'verify-compliance'
+            (this.process == 'verify-compliance' ||
+              this.process == 'validate-document')
           ) {
             this.conservationState = data.data[0].description;
           } else {
