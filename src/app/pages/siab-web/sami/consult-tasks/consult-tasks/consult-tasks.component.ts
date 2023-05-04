@@ -150,19 +150,14 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       if (value == 'FGR_SAE') {
         this.filterParams
           .getValue()
-          .addFilter(
-            'request.typeOfTransfer',
-            'PGR_SAE,FGR_SAE',
-            SearchFilter.IN
-          );
+          .addFilter('request.typeOfTransfer', 'PGR_SAE', SearchFilter.EQ);
+        this.filterParams
+          .getValue()
+          .addFilter('request.typeOfTransfer', value, SearchFilter.OR);
       } else {
         this.filterParams
           .getValue()
-          .addFilter(
-            'request.typeOfTransfer',
-            this.consultTasksForm.value.typeOfTrasnfer,
-            SearchFilter.EQ
-          );
+          .addFilter('request.typeOfTransfer', value, SearchFilter.EQ);
       }
     }
 
@@ -307,14 +302,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         .addFilter('endDate', inicio + ',' + final, SearchFilter.BTW);
     }
 
-    if (this.consultTasksForm.value.txtNoDelegacionRegional) {
+    if (
+      typeof this.consultTasksForm.value.txtNoDelegacionRegional == 'number'
+    ) {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
-          'regionalDelegationId',
+          'request.regionalDelegationId',
           this.consultTasksForm.value.txtNoDelegacionRegional,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
@@ -327,24 +324,24 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtNoTransferente) {
+    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
           'request.transferenceId',
           this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
-    if (this.consultTasksForm.value.txtNoProgramacion) {
+    if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
           'programmingId',
           this.consultTasksForm.value.txtNoProgramacion,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
 
