@@ -22,7 +22,7 @@ export interface IAppointmentDepositary {
   feeAmount: string;
   provisionalOfficialNumber: string;
   annexed: string;
-
+  goodNumber: number;
   governmentMeetingOfficialDate: string;
   governmentMeetingOfficialNumber: string;
   shippingDateGeneralAddress: string;

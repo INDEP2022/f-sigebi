@@ -14,6 +14,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -35,8 +36,8 @@ export class ReadInfoGoodComponent
   @Input() process: string = '';
   @Input() typeOfRequest: string = '';
   @Output() saveDetailInfo: EventEmitter<any> = new EventEmitter();
-  goodData: any = {};
-  relevantTypeName: string = 'buscar';
+  goodData: any;
+  relevantTypeName: string = '';
   goodForm: ModelForm<any>;
   destiniSaeSelected = new DefaultSelect();
   selectPhysicalState = new DefaultSelect();
@@ -58,6 +59,7 @@ export class ReadInfoGoodComponent
   saeMeasureUnit: string = '';
   dataToSend: any = {};
   showButton = true;
+  subType: string;
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);
@@ -66,14 +68,16 @@ export class ReadInfoGoodComponent
   private readonly goodsQueryService = inject(GoodsQueryService);
   private readonly typeRelevantSevice = inject(TypeRelevantService);
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private fractionService: FractionsService
+  ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('proceso', this.process);
-    //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
+    console.log(this.goodData);
     if (this.goodData) {
       this.getTypeGood();
 
@@ -87,20 +91,15 @@ export class ReadInfoGoodComponent
       this.getUnitMeasureLigie(new ListParams(), this.goodData.ligieUnit);
       //destino sae
       this.getDestinoSAE(new ListParams(), this.goodData.saeDestiny);
-      if (
-        // this.typeOfRequest == 'PGR_SAE' &&
-        this.process == 'classify-assets'
-      ) {
-        this.getUnitMeasureSae(new ListParams());
+      //destino transferente
+      this.getDestinyTransferent(this.goodData.transferentDestiny);
+      if (this.process == 'classify-assets') {
+        this.getUnitMeasureSae(new ListParams(), this.goodData.saeMeasureUnit);
 
         this.getConcervationState(new ListParams());
       }
 
-      if (
-        // this.typeOfRequest == 'PGR_SAE' &&
-        this.process == 'verify-compliance'
-      ) {
-        this.getDestinyTransferent(this.goodData.transferentDestiny);
+      if (this.process == 'verify-compliance') {
         this.getConcervationState(
           new ListParams(),
           this.goodData.stateConservation
@@ -108,10 +107,7 @@ export class ReadInfoGoodComponent
         this.getDestinoSAE(new ListParams());
       }
 
-      if (
-        // this.typeOfRequest == 'MANUAL' &&
-        this.process == 'verify-compliance'
-      ) {
+      if (this.process == 'verify-compliance') {
         this.getConcervationState(
           new ListParams(),
           this.goodData.stateConservation
@@ -133,14 +129,38 @@ export class ReadInfoGoodComponent
     });
   }
 
+  // getTypeGood() {
+  //   const params = new ListParams();
+  //   params['filter.id'] = `$eq:${this.goodData.fractionId}`;
+  //   this.fractionsService.getAll(params).subscribe({
+  //     next: resp => {
+  //       console.log(resp);
+  //       this.fraction = resp.data[0].code;
+  //       this.relevantTypeName = resp.data[0].description;
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //     },
+  //   });
+  // }
   getTypeGood() {
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
+      next: (resp: any) => {
+        this.relevantTypeName = resp.data[0].siabClasification.typeDescription;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  getSubTypeGood(fractionId: number) {
+    this.fractionService.findByFraction(fractionId).subscribe({
       next: resp => {
-        console.log(resp);
-        this.fraction = resp.data[0].code;
-        this.relevantTypeName = resp.data[0].description;
+        this.subType = resp.data[0].siabClasification.typeDescription;
+        console.log(this.subType);
       },
       error: error => {
         console.log(error);
@@ -164,14 +184,6 @@ export class ReadInfoGoodComponent
           }
         }
         this.destinySAE = resp.data[0].description;
-        /* if (
-          this.typeOfRequest == 'PGR_SAE' &&
-          this.process == 'verify-compliance'
-        ) {
-          this.destinySAE = resp.data[0].description;
-        } else {
-          this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
-        } */
       },
       error: error => {
         console.log('destinoSae ', error);
@@ -181,7 +193,7 @@ export class ReadInfoGoodComponent
 
   getPhysicalState(params: ListParams, id?: string) {
     params['filter.name'] = '$eq:Estado Fisico';
-    if (id) {
+    if (id && this.process != 'classify-assets') {
       params['filter.keyId'] = `$eq:${id}`;
     }
     this.genericService
@@ -189,19 +201,21 @@ export class ReadInfoGoodComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          console.log('estado fisico', data.data);
-          if (
-            (this.typeOfRequest == 'MANUAL' ||
-              this.typeOfRequest == 'PGR_SAE') &&
-            this.process == 'verify-compliance'
-          ) {
-            this.physicalStatus = data.data[0].description;
-          } else {
-            this.selectPhysicalState = new DefaultSelect(data.data, data.count);
-            this.goodForm.controls['physicalStatus'].setValue(
-              this.goodData.physicalStatus
-            );
+          if (this.process == 'classify-assets') {
+            if (id) {
+              this.selectPhysicalState = new DefaultSelect(
+                data.data,
+                data.count
+              );
+              this.goodForm.controls['physicalStatus'].setValue(id);
+            } else {
+              this.selectPhysicalState = new DefaultSelect(
+                data.data,
+                data.count
+              );
+            }
           }
+          this.physicalStatus = data.data[0].description;
         },
       });
   }
@@ -277,7 +291,6 @@ export class ReadInfoGoodComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log(resp);
           if (this.process == 'classify-assets') {
             if (id) {
               this.selectMeasureUnitSae = new DefaultSelect(
@@ -347,8 +360,21 @@ export class ReadInfoGoodComponent
   }
 
   unidMediIndep(event: any) {
-    console.log(event);
-    this.dataToSend.saeMeasureUnit = event.saeMeasureUnit;
+    this.dataToSend.saeMeasureUnit = event.uomCode;
+  }
+
+  destinySae(event: any) {
+    this.dataToSend.saeDestiny = event.keyId;
+  }
+
+  physicalState(event: any) {
+    this.dataToSend.physicalStatus = event.keyId;
+    this.dataToSend.physicstateName = event.description;
+  }
+
+  concervationState(event: any) {
+    this.dataToSend.stateConservation = event.keyId;
+    this.dataToSend.stateConservationName = event.description;
   }
 
   save() {
@@ -378,7 +404,8 @@ export class ReadInfoGoodComponent
             body.stateConservation = resp.stateConservation;
             body.saeMeasureUnit = resp.saeMeasureUnit;
 
-            this.saveDetailInfo.emit(body);
+            this.dataToSend.id = resp.id;
+            this.saveDetailInfo.emit(this.dataToSend);
             this.onLoadToast(
               'success',
               'Actualizado',

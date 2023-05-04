@@ -93,7 +93,6 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    console.log(this.dictationXGoodForm.value);
     this.dictationXGoodService.create(this.dictationXGoodForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -102,7 +101,6 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-
     this.dictationXGoodService.update(this.dictationXGoodForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

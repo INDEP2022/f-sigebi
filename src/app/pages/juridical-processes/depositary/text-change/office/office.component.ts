@@ -125,6 +125,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       );
 
       if (this.objOffice.length > 0) {
+        this.cleanFilters();
         this.form
           .get('numberGestion')
           .setValue(this.objOffice[0].managementNumber);
@@ -132,13 +133,10 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.form.get('officio').setValue(this.objOffice[0].cveManagement);
         this.form.get('senderUser').setValue(this.objOffice[0].sender);
         this.form.get('addressee').setValue(this.objOffice[0].addressee);
-        this.form
-          .get('descriptionSender')
-          .setValue(this.objOffice[0].desSenderpa);
+        this.form.get('charge').setValue(this.objOffice[0].cveChargeRem);
         this.form.get('paragraphInitial').setValue(this.objOffice[0].text1);
         this.form.get('paragraphFinish').setValue(this.objOffice[0].text2);
         this.form.get('paragraphOptional').setValue(this.objOffice[0].text3);
-        console.log(JSON.stringify(this.objOffice));
       } else {
         this.onLoadToast(
           'error',
@@ -184,7 +182,9 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.form.get('numberGestion').setValue('');
     this.form.get('flywheel').setValue('');
     this.form.get('officio').setValue('');
+    this.form.get('senderUser').setValue('');
     this.form.get('addressee').setValue('');
+    this.form.get('charge').setValue('');
     this.form.get('paragraphInitial').setValue('');
     this.form.get('paragraphFinish').setValue('');
     this.form.get('paragraphOptional').setValue('');

@@ -3,9 +3,9 @@ export interface IProceduremanagement {
   status: string;
   situation: number;
   userTurned: string;
-  actualDate: Date;
+  actualDate: Date | string;
   dailyConsecutiveNumber: number;
-  admissionDate: Date;
+  admissionDate: Date | string;
   flierNumber: number;
   expedient: number;
   affair: string;

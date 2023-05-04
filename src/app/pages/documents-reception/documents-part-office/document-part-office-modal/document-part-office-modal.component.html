@@ -1,0 +1,148 @@
+<app-modal class="app-modal">
+  <div header>
+    <h5 class="modal-title">Actualizar datos</h5>
+  </div>
+  <div body>
+    <form [formGroup]="documentForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            class="mb-3 mt-3"
+            [control]="documentForm.get('descentfed')">
+            <ngx-select
+              [form]="documentForm"
+              [data]="Edos$"
+              value="descCondition"
+              (fetchItems)="getEdos($event)"
+              bindLabel="descCondition"
+              control="descentfed"
+              label="Estado"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            class="mb-3 mt-3"
+            [control]="documentForm.get('affairType')">
+            <ngx-select
+              [form]="documentForm"
+              [data]="tasuntos$"
+              value="id"
+              bindLabel="descripcion"
+              control="affairType"
+              [searchOnInit]="true"
+              termMaxLength="30"
+              label="Tipo Asunto">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="documentForm.get('affair')" label="Asunto">
+            <input
+              type="text"
+              class="form-control"
+              (click)="mayus($event)"
+              formControlName="affair"
+              maxlength="400" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field
+            [control]="documentForm.get('officeNumber')"
+            label="No. Oficio">
+            <input
+              type="text"
+              class="form-control"
+              style="text-transform: uppercase"
+              formControlName="officeNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            class="mb-3 mt-3"
+            [control]="documentForm.get('userTurned')">
+            <ngx-select
+              [form]="documentForm"
+              [data]="users$"
+              value="userAndName"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="userTurned"
+              label="Turnado a"
+              [searchOnInit]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="documentForm.get('sheet')" label="Hojas">
+            <input
+              type="number"
+              min="0"
+              class="form-control"
+              formControlName="sheet" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <div class="col-md-12">
+            <form-field
+              [control]="documentForm.get('admissionDate')"
+              label="Fecha">
+              <input
+                formControlName="admissionDate"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <!---------------------------------------------------------------------------------------------------------------->
+        <div class="col-md-4">
+          <form-field
+            [control]="documentForm.get('flierNumber')"
+            label="Volante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="flierNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="documentForm.get('status')" label="Estatus">
+            <input
+              type="text"
+              class="form-control"
+              style="text-transform: uppercase"
+              formControlName="status" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="documentForm.get('id')" label="No.Trámite">
+            <input
+              type="number"
+              min="0"
+              class="form-control disabled"
+              formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

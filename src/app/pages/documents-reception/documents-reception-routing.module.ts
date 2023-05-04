@@ -14,6 +14,21 @@ const routes: Routes = [
     ],
   },
   {
+    path: 'documents-part-office',
+    data: {
+      screen: 'FOFPRECEPDOCUM_OFC',
+      title: 'Recepción de Documentos (Oficialia de Partes)',
+    },
+    children: [
+      {
+        path: '',
+        loadChildren: async () =>
+          (await import('./documents-part-office/documents-part-office.module'))
+            .DocumentsPartOfficeModule,
+      },
+    ],
+  },
+  {
     path: 'goods-capture',
     data: { screen: 'FACTOFPCAPTURABIE', title: 'Captura de Bienes' },
     loadChildren: async () =>

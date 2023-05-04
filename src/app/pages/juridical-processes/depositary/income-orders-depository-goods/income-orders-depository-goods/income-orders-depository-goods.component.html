@@ -9,13 +9,18 @@
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberGood')" label="No Bien">
-            <ng-select
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood"
+              [readonly]="true" />
+            <!--ng-select
               [items]="itemsJsonInterfaz"
               bindLabel="goodNumber"
               bindValue="appointmentNumber"
               formControlName="numberGood"
               class="form-control">
-            </ng-select>
+            </ng-select-->
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -23,7 +28,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="contractKey" />
+              formControlName="contractKey"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-5 col-sm-12 col-xs-12">
@@ -31,7 +37,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="depositary" />
+              formControlName="depositary"
+              [readonly]="true" />
           </form-field>
         </div>
       </div>
@@ -43,7 +50,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="description"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -61,7 +69,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
-                (click)="print()">
+                (click)="print()"
+                [disabled]="form.invalid">
                 Imprimir
               </button>
             </div>
@@ -76,8 +85,12 @@
 
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('user')" label="Usuario">
-            <input type="text" class="form-control" formControlName="user" />
+          <form-field [control]="form.get('userId')" label="Usuario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userId"
+              [readonly]="true" />
             <!--ng-select
               [items]="itemsJsonInterfazUser"
               bindLabel="usuario.user"
@@ -92,12 +105,17 @@
             <input
               type="text"
               class="form-control"
-              formControlName="username" />
+              formControlName="username"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('charge')" label="Puesto">
-            <input type="text" class="form-control" formControlName="charge" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="charge"
+              [readonly]="true" />
           </form-field>
         </div>
       </div>
