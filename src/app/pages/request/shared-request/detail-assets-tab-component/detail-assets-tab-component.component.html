@@ -212,9 +212,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div
-              class="col-md-5"
-              *ngIf="typeOfRequest == 'SAT_SAE' || typeOfRequest == 'MANUAL'">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('destiny')"
                 label="Destino Ligie">
@@ -290,30 +288,6 @@
                 value="id"
                 bindLabel="saeDestiny"
                 [readonly]="isGoodInfReadOnly"></ngx-select>
-            </div>
-          </div>
-          <div class="row pt-4" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <div class="col-md-5">
-              <form-field
-                [control]="detailAssets.get('requestFolio')"
-                label="Folio de Solicitud">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="requestFolio"
-                  [readOnly]="true" />
-              </form-field>
-            </div>
-            <div class="col-md-5">
-              <form-field
-                [control]="detailAssets.get('uniqueKey')"
-                label="Clave &Uacute;nica">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="uniqueKey"
-                  [readOnly]="true" />
-              </form-field>
             </div>
           </div>
         </div>

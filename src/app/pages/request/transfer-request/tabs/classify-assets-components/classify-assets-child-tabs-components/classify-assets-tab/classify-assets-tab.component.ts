@@ -64,6 +64,9 @@ export class ClassifyAssetsTabComponent
   noItemsFoundMessage = 'No se encontraron elementos';
   fractionCode: string = null;
   goodResDev: IPostGoodResDev = {};
+  task: any;
+  statusTask: any = '';
+  childSaveAction: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -79,6 +82,12 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnInit(): void {
+    this.task = JSON.parse(localStorage.getItem('Task'));
+
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     this.showHideErrorInterceptorService.showHideError(false);
     this.initForm();
     if (!this.goodObject) {
@@ -100,7 +109,6 @@ export class ClassifyAssetsTabComponent
     //bienes selecionados
     //console.log(this.requestObject);
     this.good = changes['goodObject']?.currentValue;
-    console.log(this.good);
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
         this.getSection(new ListParams(), this.good?.ligieSection);
@@ -747,17 +755,20 @@ export class ClassifyAssetsTabComponent
     }
 
     //se modifica el estadus del bien
-    if (goods.transferType === 'PGR_SAE' || goods.transferType === 'PGR_SAE') {
-      goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-    }
+    goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
 
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      const newGood = await this.createGood(goods);
+      const newGood: any = await this.createGood(goods);
+      this.childSaveAction = newGood;
     } else {
-      const updateGood = await this.updateGood(goods);
+      const updateGood: any = await this.updateGood(goods);
+      this.childSaveAction = updateGood;
     }
+    setTimeout(() => {
+      this.refreshTable(true);
+    }, 5000);
   }
 
   createGood(good: any) {
@@ -774,13 +785,7 @@ export class ClassifyAssetsTabComponent
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            this.refreshTable(true);
-
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 5000);
-
-            resolve(data);
+            resolve(true);
           },
           error: error => {
             this.onLoadToast(
@@ -813,12 +818,13 @@ export class ClassifyAssetsTabComponent
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            this.refreshTable(true);
+            //this.childSaveAction = true
+            //this.refreshTable(true);
 
-            setTimeout(() => {
-              this.refreshTable(false);
-            }, 500);
-            resolve(data);
+            /* setTimeout(() => {
+              this.refreshTable(true);
+            }, 500); */
+            resolve(true);
           },
           error: error => {
             this.onLoadToast(

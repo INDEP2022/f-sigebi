@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -67,6 +69,8 @@ export class DetailAssetsTabComponentComponent
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   @Input() process: string = '';
+  @Input() childSaveAction: boolean = false;
+  @Output() sendDetailInfoEvent?: EventEmitter<any> = new EventEmitter();
 
   goodData: IGood;
   bsModalRef: BsModalRef;
@@ -287,7 +291,10 @@ export class DetailAssetsTabComponentComponent
     }
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
-    if (this.detailAssets.controls['goodTypeId'].value != null) {
+    if (
+      this.detailAssets.controls['goodTypeId'].value != null &&
+      this.childSaveAction === false
+    ) {
       const data = this.detailAssets.controls['goodTypeId'].value;
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(data));
@@ -305,6 +312,10 @@ export class DetailAssetsTabComponentComponent
       if (destiny) {
         this.getDestiny(destiny);
       }
+    }
+
+    if (this.childSaveAction === true) {
+      this.save();
     }
   }
 
@@ -1230,7 +1241,11 @@ export class DetailAssetsTabComponentComponent
           `Se reguiqere ingresar el domicilio del bien`
         );
       } else {
-        await this.saveGoodRealState();
+        if (!this.goodDomicilieForm.controls['id'].value) {
+          await this.saveGoodRealState();
+        } else {
+          await this.updateGoodRealState();
+        }
       }
     }
 
@@ -1323,44 +1338,50 @@ export class DetailAssetsTabComponentComponent
       domicilio.userCreation = username;
       domicilio.userModification = username;
 
-      if (domicilio.id === null) {
-        domicilio.id = this.detailAssets.controls['id'].value;
-        this.goodEstateService
-          .create(domicilio)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: resp => {
-              resolve(true);
-            },
-            error: error => {
-              reject(false);
-              console.log('inmueble ', error);
-              this.message(
-                'error',
-                'Error',
-                `El registro del inmueble no se guardo!\n. ${error.error.message}`
-              );
-            },
-          });
-      } else {
-        this.goodEstateService
-          .update(domicilio.id, domicilio)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: resp => {
-              resolve(true);
-            },
-            error: error => {
-              reject(false);
-              console.log('inmueble ', error);
-              this.message(
-                'error',
-                'Error',
-                `El registro del inmueble no se actualizo!\n. ${error.error.message}`
-              );
-            },
-          });
-      }
+      domicilio.id = this.detailAssets.controls['id'].value;
+      this.goodEstateService.create(domicilio).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.goodDomicilieForm.controls['id'].setValue(resp.id);
+          this.goodDomicilieForm.controls['userCreation'].setValue(
+            resp.userCreation
+          );
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          console.log('inmueble crear', error);
+          this.message(
+            'error',
+            'Error',
+            `El registro del inmueble no se guardo!\n. ${error.error.message}`
+          );
+        },
+      });
+    });
+  }
+  updateGoodRealState() {
+    return new Promise((resolve, reject) => {
+      const username = this.authService.decodeToken().preferred_username;
+      let domicilio = this.goodDomicilieForm.getRawValue();
+      domicilio.modificationDate = new Date().toISOString();
+
+      domicilio.creationDate = new Date().toISOString();
+      //domicilio.modificationDate = new Date().toISOString();
+      this.goodEstateService.update(domicilio.id, domicilio).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          console.log('inmueble actualizar', error);
+          this.message(
+            'error',
+            'Error',
+            `El registro del inmueble no se actualizo!\n. ${error.error.message}`
+          );
+        },
+      });
     });
   }
 
@@ -1575,5 +1596,10 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
+  }
+
+  getDetailInfo(event: any) {
+    console.log(event);
+    this.sendDetailInfoEvent.emit(event);
   }
 }
