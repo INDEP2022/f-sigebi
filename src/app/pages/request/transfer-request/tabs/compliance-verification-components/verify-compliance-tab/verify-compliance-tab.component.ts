@@ -468,6 +468,8 @@ export class VerifyComplianceTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       descriptionGoodSae: [null],
+      uniqueKey: [null],
+      duplicatedGood: [null],
     });
   }
 
@@ -915,7 +917,6 @@ export class VerifyComplianceTabComponent
 
   updateGoods(body: any) {
     return new Promise((resolve, reject) => {
-      debugger;
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);

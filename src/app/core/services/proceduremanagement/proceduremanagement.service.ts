@@ -32,7 +32,7 @@ export class ProcedureManagementService extends HttpService {
   }
 
   getAllFiltered(
-    params?: string
+    params?: string | ListParams
   ): Observable<IListResponse<IProceduremanagement>> {
     return this.get<IListResponse<IProceduremanagement>>(
       ProcedureManagementEndPoints.ProcedureManagement,
@@ -44,6 +44,10 @@ export class ProcedureManagementService extends HttpService {
     return this.get(
       `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`
     );
+  }
+  getFolioMax(del: number | string): Observable<any> {
+    //return this.httpClient.get(`http://localhost:3000/api/v1/proceduremanagement/FolioMax/${del}`);
+    return this.get(`${ProcedureManagementEndPoints.FolioMax}/${del}`);
   }
 
   getManagamentProcessSat(

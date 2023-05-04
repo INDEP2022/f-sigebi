@@ -1,0 +1,300 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Buz&oacute;n de Trabajo</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-12 col-md-12 col-lg-12 col-xl-5 align-self-center">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <button
+                  [disabled]="managementAreaF.value == null"
+                  [ngClass]="priority$ === 'toDo' ? 'btn-primary' : 'btn-light'"
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'toDo'; buildFilters()">
+                  Ingresados
+                </button>
+              </div>
+              <div>
+                <button
+                  [disabled]="managementAreaF.value == null"
+                  [ngClass]="
+                    priority$ === 'inProgress' ? 'btn-info' : 'btn-light'
+                  "
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'inProgress'; buildFilters()">
+                  En Proceso
+                </button>
+              </div>
+              <div>
+                <button
+                  [disabled]="managementAreaF.value == null"
+                  [ngClass]="priority$ === 'done' ? 'btn-success' : 'btn-light'"
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'done'; buildFilters()">
+                  Salida
+                </button>
+              </div>
+              <div>
+                <button
+                  [disabled]="managementAreaF.value == null"
+                  [ngClass]="
+                    priority$ === 'delayed' ? 'btn-warning' : 'btn-light'
+                  "
+                  class="btn btn-sm active"
+                  (click)="priority$ = 'delayed'; buildFilters()">
+                  Destiempo
+                </button>
+              </div>
+              <div>
+                <button
+                  class="btn btn-secondary btn-sm active"
+                  (click)="priority$ = null; buildFilters()">
+                  Todos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-12 col-lg-12 col-xl-7">
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="filterForm" class="form-material">
+              <div class="row pt-4">
+                <div class="col-12 col-md-12 col-lg-12 col-xl-5">
+                  <form-field
+                    class="mb-3 mt-3"
+                    [control]="filterForm.get('user')">
+                    <ngx-select
+                      [form]="filterForm"
+                      [data]="users$"
+                      (fetchItems)="getUsers($event)"
+                      bindLabel="userAndName"
+                      control="user"
+                      label="Usuario"
+                      [searchOnInit]="true"
+                      termMaxLength="30">
+                    </ngx-select>
+                  </form-field>
+                  <form-field
+                    class="mb-3 mt-3"
+                    [control]="filterForm.get('managementArea')">
+                    <ngx-select
+                      [form]="filterForm"
+                      [data]="areas$"
+                      (fetchItems)="getGroupWork($event)"
+                      bindLabel="description"
+                      control="managementArea"
+                      [searchOnInit]="true"
+                      termMaxLength="30"
+                      label="Buz&oacute;n de &Aacute;rea">
+                    </ngx-select>
+                  </form-field>
+                </div>
+                <div class="col-12 col-md-12 col-lg-12 col-xl-7">
+                  <form-check label="Ver tr&aacute;mites del grupo" for="1">
+                    <input
+                      id="1"
+                      type="checkbox"
+                      class="form-control"
+                      formControlName="verTramiteG" />
+                  </form-check>
+                  <form-check
+                    label="Actualizar buz&oacute;n autom&aacute;ticamente"
+                    for="2">
+                    <input
+                      id="2"
+                      type="checkbox"
+                      class="form-control"
+                      formControlName="actualizarBuzon" />
+                  </form-check>
+                  <form-check label="Pendientes de digitalizar" for="3">
+                    <input
+                      id="3"
+                      type="checkbox"
+                      class="form-control"
+                      formControlName="pendientes" />
+                  </form-check>
+                  <form-check label="Condiciones predeterminadas" for="4">
+                    <input
+                      id="4"
+                      type="checkbox"
+                      class="form-control"
+                      formControlName="predetermined" />
+                  </form-check>
+                </div>
+              </div>
+              <div class="row pt-4">
+                <div class="col-md-12 mt-3 mb-3">
+                  <label>Fecha Ingreso Trámite</label>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="filterForm.get('startDate')"
+                    label="Desde">
+                    <input
+                      formControlName="startDate"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="filterForm.get('endDate')"
+                    label="Hasta">
+                    <input
+                      formControlName="endDate"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <div>
+                  <button
+                    class="btn btn-danger btn-sm active"
+                    (click)="resetFilters()">
+                    Borrar Filtros
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-primary btn-sm active"
+                    (click)="buildFilters()">
+                    Filtrar
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-end">
+      <div class="col">
+        <div class="btn-group" dropdown>
+          <button
+            id="button-basic"
+            dropdownToggle
+            type="button"
+            class="btn btn-primary btn-sm active dropdown-toggle"
+            aria-controls="dropdown-basic">
+            Acciones <span class="caret"></span>
+          </button>
+          <ul
+            id="dropdown-basic"
+            *dropdownMenu
+            class="dropdown-menu"
+            role="menu"
+            aria-labelledby="button-basic">
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="workFunction('work')"
+                >Trabajar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="replicate()">Replicar</a>
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                (click)="workFunction('acptionAntecedente')"
+                >Antecedente</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="turnPaperwork()">Turnar</a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Observaciones</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item disabled" (click)="notAvailable()"
+                >Volante</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="getSolicitud()">Solicitud</a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="viewPictures()"
+                >Im&aacute;genes</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="acptionBienes()">Bienes</a>
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                (click)="workFunction('viewFlyerHistory')"
+                >Historial</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                (click)="workFunction('viewIndicatorsHistory')"
+                >Hist&oacute;rico Indicadores</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="onFinishPaperwork()"
+                >Finalizar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="onCancelPaperwork()"
+                >Cancelar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="validDoc()"
+                >Validar documentación</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="scanDocuments()">Escaneo</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-3 text-end">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="row pt-4 mb-3 mt-3">
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="dataTable"
+            (userRowSelect)="selectEvent($event)"
+            (editConfirm)="onSaveConfirm($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+
+    <form [formGroup]="form" class="form-material">
+      <div class="row justify-content-end">
+        <div class="col-md-6">
+          <button class="btn btn-info btn-sm active mx-1" disabled>
+            Reporte de notificaciones
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

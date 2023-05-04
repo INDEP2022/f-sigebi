@@ -381,6 +381,9 @@ export class ApprovalAssetsTabsComponent
         ],
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      duplicatedGood: [null],
+      admissionDate: [null],
+      federalEntity: [null],
     });
   }
 
@@ -458,7 +461,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Estado Fisico`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {
@@ -475,7 +478,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Estado Conservacion`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {
@@ -492,7 +495,7 @@ export class ApprovalAssetsTabsComponent
         params['filter.name'] = `$eq:Destino`;
         this.genericService.getAll(params).subscribe({
           next: data => {
-            resolve(data.data.length > 0 ? data.data[0].description : '');
+            resolve(data.data[0].description);
           },
         });
       } else {
