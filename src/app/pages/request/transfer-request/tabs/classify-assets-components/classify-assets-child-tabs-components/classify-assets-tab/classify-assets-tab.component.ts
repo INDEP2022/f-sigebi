@@ -536,69 +536,78 @@ export class ClassifyAssetsTabComponent
   }
 
   getLevel1(params: ListParams, id?: number) {
-    if (this.advSearch === false) {
-      params['filter.parentId'] = '$eq:' + id.toString();
-    } else {
-      params['filter.id'] = '$eq:' + id.toString();
+    try {
+      if (this.advSearch === false) {
+        params['filter.parentId'] = '$eq:' + id.toString();
+      } else {
+        params['filter.id'] = '$eq:' + id.toString();
+      }
+      delete params.text;
+      delete params.inicio;
+      delete params.pageSize;
+      delete params.take;
+      params.limit = 50;
+      this.fractionService
+        .getAll(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: (data: any) => {
+            this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
+
+            if (this.advSearch === true) {
+              this.listAdvancedFractions.push(data.data[0].id);
+              this.getChapter(new ListParams(), data.data[0].parentId);
+            }
+
+            if (this.goodObject) {
+              this.classiGoodsForm.controls['ligieLevel1'].setValue(
+                this.good.ligieLevel1
+              );
+            }
+          },
+          error: error => {
+            this.formLoading = false;
+          },
+        });
+    } catch (error) {
+      console.log(error);
     }
-    delete params.text;
-    delete params.inicio;
-    delete params.pageSize;
-    delete params.take;
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: (data: any) => {
-          this.selectLevel1 = data.data; //= new DefaultSelect(data.data, data.count);
-
-          if (this.advSearch === true) {
-            this.listAdvancedFractions.push(data.data[0].id);
-            this.getChapter(new ListParams(), data.data[0].parentId);
-          }
-
-          if (this.goodObject) {
-            this.classiGoodsForm.controls['ligieLevel1'].setValue(
-              this.good.ligieLevel1
-            );
-          }
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
   }
 
   getLevel2(params: ListParams, id?: number) {
-    if (this.advSearch === false) {
-      params['filter.parentId'] = '$eq:' + id.toString();
-    } else {
-      params['filter.id'] = '$eq:' + id.toString();
+    try {
+      if (this.advSearch === false) {
+        params['filter.parentId'] = '$eq:' + id.toString();
+      } else {
+        params['filter.id'] = '$eq:' + id.toString();
+      }
+      params.limit = 50;
+      this.fractionService
+        .getAll(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: data => {
+            this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
+
+            if (this.advSearch === true) {
+              this.listAdvancedFractions.push(data.data[0].id);
+              this.getLevel1(new ListParams(), data.data[0].parentId);
+            }
+
+            if (this.goodObject) {
+              this.classiGoodsForm.controls['ligieLevel2'].setValue(
+                this.good.ligieLevel2
+              );
+            }
+          },
+          error: error => {
+            this.formLoading = false;
+          },
+        });
+    } catch (error) {
+      this.formLoading = false;
+      console.log(error);
     }
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
-
-          if (this.advSearch === true) {
-            this.listAdvancedFractions.push(data.data[0].id);
-            this.getLevel1(new ListParams(), data.data[0].parentId);
-          }
-
-          if (this.goodObject) {
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(
-              this.good.ligieLevel2
-            );
-          }
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
   }
 
   getLevel3(params: ListParams, id?: number) {
@@ -740,7 +749,7 @@ export class ClassifyAssetsTabComponent
       this.message(
         'error',
         'Codigo de fraccion',
-        'Todos los bienes deben tener una fracción de 8 números'
+        'Todos los bienes deben tener una fracción de 8 números Ej: 8574.20.00'
       );
       return;
     }
@@ -818,12 +827,6 @@ export class ClassifyAssetsTabComponent
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            //this.childSaveAction = true
-            //this.refreshTable(true);
-
-            /* setTimeout(() => {
-              this.refreshTable(true);
-            }, 500); */
             resolve(true);
           },
           error: error => {

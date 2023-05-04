@@ -463,7 +463,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
         if (requestResult) {
           const actualUser: any = this.authService.decodeToken();
           let body: any = {};
-          debugger;
           body['idTask'] = this.taskId;
           body['userProcess'] = actualUser.username;
 
@@ -538,7 +537,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.receiptRoute = 'FISICA';
       form.affair = 37;
       form.typeOfTransfer = 'MANUAL';
-      //form.originInfo = 'SOL_TRANSFERENCIA'
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
 
