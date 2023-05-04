@@ -125,7 +125,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     //filtra por el username
 
-    this.filterParams.getValue().addFilter('assignees', user.username);
+    this.filterParams
+      .getValue()
+      .addFilter('assignees', user.username, SearchFilter.ILIKE);
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     //filtra por el estatdo de la tarea
     const filterStatus = this.consultTasksForm.get('State').value;
