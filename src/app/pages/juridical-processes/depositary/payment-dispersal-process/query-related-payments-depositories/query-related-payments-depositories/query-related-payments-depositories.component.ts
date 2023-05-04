@@ -22,6 +22,10 @@ import {
   ITotalIvaPaymentsGens,
 } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import {
+  NumBienShare,
+  valorBien,
+} from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
@@ -101,13 +105,16 @@ export class QueryRelatedPaymentsDepositoriesComponent
   errorsSirsae: any[] = [];
   screenKey: string = 'FCONDEPODISPAGOS';
 
+  datos: valorBien;
+
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
     private svQueryRelatedPaymentsService: QueryRelatedPaymentsService,
     private datePipe: DatePipe,
     private excelService: ExcelService,
-    private router: Router
+    private router: Router,
+    private servce: NumBienShare
   ) {
     super();
   }
@@ -290,6 +297,16 @@ export class QueryRelatedPaymentsDepositoriesComponent
     // PASAR SOLO EL NÚMERO DE BIEN
     // this.alert('info', 'LLAMAR PANTALLA FCONDEPOREPINGXBIEN', '');
     if (this.form.get('noBien').valid) {
+      this.datos = {
+        numBien: this.form.get('noBien').value,
+        cveContrato: this.formBienDetalle.get('idBien').value,
+        depositario: this.formBienDetalle.get('descripcion').value,
+        desc: this.formBienDetalle.get('estatus').value,
+        nomPantall: 'null',
+      };
+
+      this.servce.SharingNumbienData = this.datos;
+
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
