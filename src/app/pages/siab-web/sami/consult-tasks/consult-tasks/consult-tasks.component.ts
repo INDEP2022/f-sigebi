@@ -124,8 +124,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     const user = this.authService.decodeToken() as any;
 
     //filtra por el username
-    this.filterParams.getValue().addFilter('assignees', user.username);
 
+    this.filterParams.getValue().addFilter('assignees', user.username);
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     //filtra por el estatdo de la tarea
     const filterStatus = this.consultTasksForm.get('State').value;
@@ -134,8 +134,10 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       isfilterUsed = true;
       if (filterStatus === 'null') {
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+        // this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
       } else {
-        this.filterParams.getValue().addFilter('State', filterStatus);
+        // this.filterParams.getValue().addFilter('State', filterStatus);
+        this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
       }
     }
 
