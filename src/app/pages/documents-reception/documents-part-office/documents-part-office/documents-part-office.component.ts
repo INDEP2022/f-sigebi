@@ -430,7 +430,7 @@ export class DocumentsPartOfficeComponent extends BasePage implements OnInit {
     //console.log(event);
     this.procedureManagementService.getFolioMax(this.userDel).subscribe({
       next: data => {
-        this.newFolio_rep = Number(data.data[0].foliomax);
+        this.newFolio_rep = Number(data.folioMax);
         //console.log(this.newFolio_rep + 1);
       },
       error: () => {

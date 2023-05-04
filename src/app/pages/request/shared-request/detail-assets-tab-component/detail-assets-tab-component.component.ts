@@ -1323,44 +1323,50 @@ export class DetailAssetsTabComponentComponent
       domicilio.userCreation = username;
       domicilio.userModification = username;
 
-      if (domicilio.id === null) {
-        domicilio.id = this.detailAssets.controls['id'].value;
-        this.goodEstateService
-          .create(domicilio)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: resp => {
-              resolve(true);
-            },
-            error: error => {
-              reject(false);
-              console.log('inmueble ', error);
-              this.message(
-                'error',
-                'Error',
-                `El registro del inmueble no se guardo!\n. ${error.error.message}`
-              );
-            },
-          });
-      } else {
-        this.goodEstateService
-          .update(domicilio.id, domicilio)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: resp => {
-              resolve(true);
-            },
-            error: error => {
-              reject(false);
-              console.log('inmueble ', error);
-              this.message(
-                'error',
-                'Error',
-                `El registro del inmueble no se actualizo!\n. ${error.error.message}`
-              );
-            },
-          });
-      }
+      domicilio.id = this.detailAssets.controls['id'].value;
+      this.goodEstateService.create(domicilio).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.goodDomicilieForm.controls['id'].setValue(resp.id);
+          this.goodDomicilieForm.controls['userCreation'].setValue(
+            resp.userCreation
+          );
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          console.log('inmueble crear', error);
+          this.message(
+            'error',
+            'Error',
+            `El registro del inmueble no se guardo!\n. ${error.error.message}`
+          );
+        },
+      });
+    });
+  }
+  updateGoodRealState() {
+    return new Promise((resolve, reject) => {
+      const username = this.authService.decodeToken().preferred_username;
+      let domicilio = this.goodDomicilieForm.getRawValue();
+      domicilio.modificationDate = new Date().toISOString();
+
+      domicilio.creationDate = new Date().toISOString();
+      //domicilio.modificationDate = new Date().toISOString();
+      this.goodEstateService.update(domicilio.id, domicilio).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          console.log('inmueble actualizar', error);
+          this.message(
+            'error',
+            'Error',
+            `El registro del inmueble no se actualizo!\n. ${error.error.message}`
+          );
+        },
+      });
     });
   }
 

@@ -39,9 +39,15 @@
                 [control]="consultTasksForm.get('State')"
                 label="Estatus">
                 <ng-select class="form-control" formControlName="State">
+                  <<<<<<< HEAD
                   <ng-option value="">Todos</ng-option>
                   <ng-option value="FINALIZADA">Finalizados</ng-option>
                   <ng-option value="null">Asignados</ng-option>
+                  =======
+                  <ng-option value="null">Asignados</ng-option>
+                  <ng-option value="FINALIZADA">Todos</ng-option>
+                  <ng-option value="FINALIZADA">Finalizados</ng-option>
+                  >>>>>>> 273dfd69f280a21d6fe095dbc741d80433af335c
                 </ng-select>
               </form-field>
             </div>
