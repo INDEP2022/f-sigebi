@@ -200,7 +200,7 @@ export class DetailAssetsTabComponentComponent
       if (this.domicilieObject) {
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
-      this.goodData = this.detailAssets.value;
+      // this.goodData = this.detailAssets.value;
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
@@ -303,6 +303,7 @@ export class DetailAssetsTabComponentComponent
     if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
       this.brandId = brand;
+      console.log('inicia<>>>><<<<<>>>>>');
       this.getSubBrand(new ListParams(), brand);
     }
 
@@ -351,6 +352,7 @@ export class DetailAssetsTabComponentComponent
     this.getConcervationState(new ListParams());
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
+    this.isSavingData();
 
     if (
       this.requestObject != undefined &&
@@ -783,6 +785,7 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
+    // debugger;
     if (municipalityId === null || stateKey === null) {
       return;
     }
@@ -1143,6 +1146,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
+    //debugger;
     this.typeRelevantSevice
       .getById(id)
       .pipe(takeUntil(this.$unSubscribe))
@@ -1333,6 +1337,7 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       domicilio.userCreation = username;
       domicilio.userModification = username;
+
       domicilio.id = this.detailAssets.controls['id'].value;
       this.goodEstateService.create(domicilio).subscribe({
         next: resp => {
@@ -1355,7 +1360,6 @@ export class DetailAssetsTabComponentComponent
       });
     });
   }
-
   updateGoodRealState() {
     return new Promise((resolve, reject) => {
       const username = this.authService.decodeToken().preferred_username;
@@ -1378,29 +1382,6 @@ export class DetailAssetsTabComponentComponent
           );
         },
       });
-    });
-  }
-
-  createInmueble(realState: any) {
-    return new Promise((resolve, reject) => {
-      this.goodEstateService
-        .create(realState)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            this.goodDomicilieForm.controls['id'].setValue(resp.id);
-            resolve(true);
-          },
-          error: error => {
-            reject(false);
-            console.log('inmueble ', error);
-            this.message(
-              'error',
-              'Error',
-              `El registro del inmueble no se guardo!\n. ${error.error.message}`
-            );
-          },
-        });
     });
   }
 
@@ -1452,6 +1433,7 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
+        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), data);
       }
     });
@@ -1576,14 +1558,6 @@ export class DetailAssetsTabComponentComponent
               this.goodDomicilieForm.controls['certLibLienDate'].value;
             this.bsCertifiDate = dateCerti ? new Date(dateCerti) : null;
           },
-          error: error => {
-            console.log(error);
-            this.onLoadToast(
-              'error',
-              'Error',
-              'No se cargaron lo bienes inmuebles'
-            );
-          },
         });
     }
   }
@@ -1592,6 +1566,16 @@ export class DetailAssetsTabComponentComponent
     setTimeout(() => {
       this.onLoadToast(header, title, body);
     }, 2000);
+  }
+
+  isSavingData() {
+    this.requestHelperService.currentRefresh.subscribe({
+      next: data => {
+        if (data) {
+          this.save();
+        }
+      },
+    });
   }
 
   setGoodDomicilieSelected(domicilie: any) {

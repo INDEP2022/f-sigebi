@@ -1,10 +1,12 @@
 /** BASE IMPORT */
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -50,6 +52,8 @@ export class GoodsComponent
     this.dataTable = value;
   }
 
+  @Output() loadingDialog = new EventEmitter<boolean>();
+
   constructor(
     private modalService: BsModalService,
     private dictationService: DictationXGood1Service
@@ -57,18 +61,7 @@ export class GoodsComponent
     super();
   }
 
-  ngOnInit(): void {
-    // this.loading = true;
-    // this.data
-    //   .onChanged()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(change => {
-    //     this.getGoods();
-    //   });
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getGoods());
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes && changes['data']) {
@@ -78,28 +71,13 @@ export class GoodsComponent
     }
   }
 
-  getGoods() {
-    // this.dictationService.getAll().subscribe({
-    //   next: data => {
-    //     this.dataTable = data.data;
-    //     this.data.load(this.dataTable);
-    //     this.totalItems = data.count || 0;
-    //     this.data.refresh();
-    //     this.loading = false;
-    //   },
-    //   error: err => {
-    //     this.loading = false;
-    //   },
-    // });
-  }
-
   openForm(dictationXGood?: IDictationXGood1) {
     console.log(dictationXGood);
     let config: ModalOptions = {
       initialState: {
         dictationXGood,
         callback: (next: boolean) => {
-          //if (next) this.getGoods();
+          if (next) this.loadingDialog.emit(next);
         },
       },
       class: 'modal-lg modal-dialog-centered',

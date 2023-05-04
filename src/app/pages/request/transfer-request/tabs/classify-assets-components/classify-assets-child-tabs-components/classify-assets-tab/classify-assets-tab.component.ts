@@ -131,6 +131,8 @@ export class ClassifyAssetsTabComponent
       ligieLevel2: [null],
       ligieLevel3: [null],
       ligieLevel4: [null],
+      requestFolio: [null],
+      uniqueKey: [null],
       requestId: [requestId],
       goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       color: [
@@ -407,7 +409,9 @@ export class ClassifyAssetsTabComponent
         ],
       ],
       fractionId: [null],
-      duplicatedGood: [3434343],
+      duplicatedGood: [null],
+      admissionDate: [null],
+      federalEntity: [null],
     });
 
     if (this.goodObject != null) {

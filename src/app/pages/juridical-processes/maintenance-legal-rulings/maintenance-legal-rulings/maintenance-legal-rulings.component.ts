@@ -1,4 +1,3 @@
-/** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
@@ -8,21 +7,17 @@ import { IUsrRelBitacora } from 'src/app/core/models/ms-audit/usr-rel-bitacora.m
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
+import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
+import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { UsrRelLogService } from 'src/app/core/services/ms-audit/usrrel-log.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-/** LIBRERÍAS EXTERNAS IMPORTS */
-
-/** SERVICE IMPORTS */
-
-/** ROUTING MODULE */
-
-/** COMPONENTS IMPORTS */
 
 @Component({
   selector: 'app-maintenance-legal-rulings',
@@ -39,19 +34,24 @@ export class MaintenanceLegalRulingComponent
   dataDocumentDictumStateM: IDocumentsDictumXStateM[] = [];
   dataDictationXGood1: IDictationXGood1[] = [];
   dataCopiesOfficialOpinion: ICopiesOfficialOpinion[] = [];
-
+  dataJobDictumTexts: IJobDictumTexts;
+  dataOfficialDictation: IOfficialDictation;
   loading1: boolean = false;
   loading2: boolean = false;
   loading3: boolean = false;
 
+  dictNumber: number | string = null;
+  typeDict: string = '';
+
   constructor(
     private usrRelLogService: UsrRelLogService,
     private fb: FormBuilder,
-    private usersService: UsersService,
     private authService: AuthService,
     private documentsDictumStatetMService: DocumentsDictumStatetMService,
     private dictationXGood1Service: DictationXGood1Service,
-    private copiesOfficialOpinionService: CopiesOfficialOpinionService
+    private copiesOfficialOpinionService: CopiesOfficialOpinionService,
+    private jobDictumTextService: JobDictumTextsService,
+    private officialDictationService: OficialDictationService
   ) {
     super();
   }
@@ -64,8 +64,6 @@ export class MaintenanceLegalRulingComponent
 
   getUser() {
     this.user = this.authService.decodeToken();
-
-    console.log(this.user);
   }
 
   private prepareForm() {
@@ -75,9 +73,65 @@ export class MaintenanceLegalRulingComponent
   }
 
   rulingsData(value: IDictation) {
+    this.typeDict = value.typeDict;
+    this.dictNumber = value.id;
     this.getDocumentsDictumStateM(value.id, value.typeDict);
     this.getCopiesOfficialOpinion(value.id, value.typeDict);
     this.getDictationXGood1(value.id, value.typeDict);
+    this.getJobDictumTexts(value.id, value.typeDict);
+    this.getOfficialDictation(value.id, value.typeDict);
+  }
+
+  getJobDictumTexts(dictationNumber: number | string, typeDict: string) {
+    if (!dictationNumber && !typeDict) {
+      return;
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+
+    if (dictationNumber) {
+      data.addFilter('dictatesNumber', dictationNumber);
+    }
+
+    if (typeDict) {
+      data.addFilter('rulingType', typeDict);
+    }
+
+    this.jobDictumTextService.getAll(data.getParams()).subscribe({
+      next: data => {
+        this.dataJobDictumTexts = data.data[0];
+      },
+      error: err => {
+        this.dataJobDictumTexts = null;
+      },
+    });
+  }
+
+  getOfficialDictation(dictationNumber: number | string, typeDict: string) {
+    if (!dictationNumber && !typeDict) {
+      return;
+    }
+
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+
+    if (dictationNumber) {
+      data.addFilter('officialNumber', dictationNumber);
+    }
+
+    if (typeDict) {
+      data.addFilter('typeDict', typeDict);
+    }
+
+    this.officialDictationService.getAll(data.getParams()).subscribe({
+      next: data => {
+        this.dataOfficialDictation = data.data[0];
+      },
+      error: err => {
+        this.dataOfficialDictation = null;
+      },
+    });
   }
 
   getDocumentsDictumStateM(dictationNumber: number | string, typeDict: string) {
@@ -159,6 +213,7 @@ export class MaintenanceLegalRulingComponent
     this.dictationXGood1Service.getAll(data.getParams()).subscribe({
       next: data => {
         this.dataDictationXGood1 = data.data;
+        console.log(data.data);
       },
       error: err => {
         this.dataDictationXGood1 = [];
@@ -173,6 +228,18 @@ export class MaintenanceLegalRulingComponent
 
   documentData(value: any) {
     console.log(value);
+  }
+
+  loadCopy(value: boolean) {
+    if (value) this.getCopiesOfficialOpinion(this.dictNumber, this.typeDict);
+  }
+
+  loadGood(value: boolean) {
+    if (value) this.getDictationXGood1(this.dictNumber, this.typeDict);
+  }
+
+  loadDocumentGood(value: boolean) {
+    if (value) this.getDocumentsDictumStateM(this.dictNumber, this.typeDict);
   }
 
   send() {

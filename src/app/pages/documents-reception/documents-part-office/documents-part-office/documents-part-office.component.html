@@ -1,0 +1,344 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Recepción de Documentos (Oficialia de Partes)</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="md-tabs">
+        <tabset>
+          <tab
+            *ngIf="regDocForm"
+            heading="Recepciones del día"
+            id="tabRecepcion">
+            <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+              <div class="card">
+                <div class="card-body">
+                  <form [formGroup]="filterForm" class="form-material">
+                    <div class="row pt-4">
+                      <div class="col-md-3">
+                        <form-field
+                          class="mb-3 mt-3"
+                          [control]="filterForm.get('descentfed')">
+                          <ngx-select
+                            [form]="filterForm"
+                            [data]="Edos$"
+                            value="descCondition"
+                            (fetchItems)="getEdos($event)"
+                            bindLabel="descCondition"
+                            control="descentfed"
+                            label="Estado"
+                            [searchOnInit]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                      <div class="col-md-3">
+                        <form-field
+                          class="mb-3 mt-3"
+                          [control]="filterForm.get('issueType')">
+                          <ngx-select
+                            [form]="filterForm"
+                            [data]="tasuntos$"
+                            value="id"
+                            style="text-transform: uppercase"
+                            bindLabel="descripcion"
+                            control="issueType"
+                            [searchOnInit]="true"
+                            termMaxLength="30"
+                            label="Tipo Asunto">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                      <div class="col-md-4">
+                        <form-field
+                          class="mb-3 mt-3"
+                          [control]="filterForm.get('issue')"
+                          label="Asunto">
+                          <input
+                            type="text"
+                            formControlName="issue"
+                            class="form-control"
+                            style="text-transform: uppercase"
+                            maxlength="400" />
+                        </form-field>
+                      </div>
+                      <div class="col-md-2">
+                        <form-check label="Desalojo" for="1">
+                          <input
+                            id="1"
+                            type="checkbox"
+                            class="form-control"
+                            formControlName="desalojo" />
+                        </form-check>
+                      </div>
+                      <!--Fila 2-->
+                      <div class="col-md-3">
+                        <form-field
+                          class="mb-3 mt-3"
+                          [control]="filterForm.get('officeNumber')"
+                          label="No. Oficio">
+                          <input
+                            type="text"
+                            formControlName="officeNumber"
+                            maxlength="50"
+                            style="text-transform: uppercase"
+                            class="form-control" />
+                        </form-field>
+                      </div>
+                      <div class="col-md-3">
+                        <form-field
+                          class="mb-3 mt-3"
+                          [control]="filterForm.get('sheets')"
+                          label="No. Hojas">
+                          <input
+                            type="number"
+                            min="0"
+                            pattern="^[0-9]+"
+                            formControlName="sheets"
+                            class="form-control" />
+                        </form-field>
+                      </div>
+                      <div class="col-md-4">
+                        <!--<form-field class="mb-3 mt-3" [control]="filterForm.get('turnadoiUser')"
+                                                    label="Turnado a:">
+                                                    <input type="text" formControlName="turnadoiUser"
+                                                        class="form-control" />
+                                                </form-field>-->
+                        <form-field
+                          class="mb-3 mt-3"
+                          [control]="filterForm.get('turnadoiUser')">
+                          <ngx-select
+                            [form]="filterForm"
+                            [data]="users$"
+                            value="userAndName"
+                            (fetchItems)="getUsers($event)"
+                            bindLabel="userAndName"
+                            control="turnadoiUser"
+                            label="Usuario"
+                            [searchOnInit]="true"
+                            termMaxLength="30"
+                            (change)="getDelegacion($event)">
+                          </ngx-select>
+                        </form-field>
+                      </div>
+                      <div class="col-md-2">
+                        <form-check label="Folio" for="2">
+                          <input
+                            id="2"
+                            type="checkbox"
+                            class="form-control"
+                            formControlName="office" />
+                        </form-check>
+                      </div>
+                      <div class="col-md-12" style="text-align: right">
+                        <button
+                          class="btn btn-danger btn-sm active"
+                          [disabled]="disableReg"
+                          (click)="register()">
+                          Registrar</button
+                        >&nbsp;
+                        <button
+                          class="btn btn-danger btn-sm active"
+                          (click)="limpiar()">
+                          Depurar</button
+                        >&nbsp;
+                        <button
+                          class="btn btn-danger btn-sm active"
+                          [disabled]="disableUpd"
+                          (click)="udpateReg()">
+                          Actualizar</button
+                        >&nbsp;
+                        <button
+                          class="btn btn-primary btn-sm active"
+                          (click)="saveGestion()">
+                          Enviar
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-end">
+              <div class="col-3 text-end">
+                <app-columns-select
+                  [(settings)]="settings"
+                  [defaultColumns]="9"></app-columns-select>
+              </div>
+            </div>
+            <div class="row pt-4 mb-3 mt-3">
+              <div class="col-md-12 table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="dataTable"
+                    (edit)="editarOP($event)"
+                    (delete)="cdeleteOP($event)">
+                  </ng2-smart-table>
+                </div>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </tab>
+          <tab
+            *ngIf="regDocView"
+            heading="Registrados y Turnados en Sistema"
+            id="tabRegistros">
+            <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+              <div class="card">
+                <div class="card-body">
+                  <form [formGroup]="filterForm2" class="form-material">
+                    <div class="row pt-4">
+                      <div class="col-md-4">
+                        <strong>Trámites de:</strong>
+                        <div class="col-md-12">
+                          <form-radio label="Hoy">
+                            <input
+                              type="radio"
+                              id="rdoD"
+                              formControlName="rdoD"
+                              value="1"
+                              [checked]="rdoD"
+                              (click)="changeRadio($event)" />
+                          </form-radio>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="col-md-12">
+                          <form-field
+                            class="mb-3 mt-3"
+                            [control]="filterForm2.get('folio')"
+                            label="Folio:">
+                            <input
+                              type="text"
+                              formControlName="folio"
+                              value=""
+                              class="form-control" />
+                          </form-field>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="col-md-12"></div>
+                      </div>
+                      <!--<div class="col-md-6">
+                                                <br>
+                                                <form-check label="Habilitar modificaciones" for="2">
+                                                    <input id="2" type="checkbox" class="form-control"
+                                                        formControlName="office" />
+                                                </form-check>
+                                            </div>-->
+                      <!--------------------------------Inicia segunda fila-------------------------------------------------------->
+
+                      <div class="col-md-12">
+                        <div class="col-md-8">
+                          <form-radio label="Todos los dias">
+                            <input
+                              type="radio"
+                              id="rdoT"
+                              formControlName="rdoT"
+                              [checked]="rdoT"
+                              value="2"
+                              (click)="changeRadio($event)" />
+                          </form-radio>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <div class="col-md-12">
+                          <form-radio label="Reango de fechas de:">
+                            <input
+                              type="radio"
+                              id="rdoR"
+                              formControlName="rdoR"
+                              value="3"
+                              [checked]="rdoR"
+                              (click)="changeRadio($event)" />
+                          </form-radio>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="col-md-12">
+                          <form-field
+                            [control]="filterForm2.get('startDate')"
+                            label="Desde">
+                            <input
+                              formControlName="startDate"
+                              class="form-control"
+                              bsDatepicker />
+                          </form-field>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="col-md-12">
+                          <form-field
+                            [control]="filterForm2.get('endDate')"
+                            label="Hasta">
+                            <input
+                              formControlName="endDate"
+                              class="form-control"
+                              bsDatepicker />
+                          </form-field>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                      <!-- <div>
+                                                                        <button class="btn btn-danger btn-sm active" (click)="resetFilters()">
+                                                                            Borrar Filtros
+                                                                        </button>
+                                                                    </div>-->
+                      <div>
+                        <!-- <button class="btn btn-primary btn-sm active" [disabled]="disableUpd"
+                                                    (click)="udpateReg()">
+                                                    Modificar
+                                                </button>&nbsp;
+                                                &nbsp;
+                                                <button class="btn btn-danger btn-sm active" [disabled]="disableUpd"
+                                                    (click)="udpateReg()">
+                                                    Reporte
+                                                </button>-->
+                        <button
+                          class="btn btn-primary btn-sm active"
+                          (click)="getProceduraManagment(1)">
+                          Consultar
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-end">
+              <div class="col-3 text-end">
+                <app-columns-select
+                  [(settings)]="settings2"
+                  [defaultColumns]="11"></app-columns-select>
+              </div>
+            </div>
+            <div class="row pt-4 mb-3 mt-3">
+              <div class="col-md-12 table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings2"
+                    [source]="dataTaC"
+                    (edit)="openForm($event.data)"
+                    (delete)="cdeleteOP($event)">
+                  </ng2-smart-table>
+                </div>
+              </div>
+            </div>
+            <app-pagination
+              [params]="params2"
+              [totalItems]="totalOP"></app-pagination>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>
