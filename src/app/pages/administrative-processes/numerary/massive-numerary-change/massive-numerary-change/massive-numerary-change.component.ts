@@ -432,6 +432,7 @@ function _onClickBtnProcessExtraction(
   let banG = false;
   let colV = 0;
   let banV = 0;
+
   columns.forEach((column, index) => {
     index++;
     console.log(`TIP${index}`);
