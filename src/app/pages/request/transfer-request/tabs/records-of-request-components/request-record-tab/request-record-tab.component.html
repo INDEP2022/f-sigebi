@@ -36,6 +36,7 @@
               class="form-control"
               #dp="bsDatepicker"
               bsDatepicker
+              [maxDate]="maxDate"
               [bsValue]="bsPriorityDate"
               (bsValueChange)="changePriorityDateEvent($event)" />
           </form-field>
@@ -51,6 +52,7 @@
               class="form-control"
               #dp="bsDatepicker"
               bsDatepicker
+              [maxDate]="maxDate"
               [bsValue]="bsReceptionValue"
               [disabled]="true"
               required />
@@ -66,6 +68,7 @@
               [bsValue]="bsPaperValue"
               #dp="bsDatepicker"
               bsDatepicker
+              [maxDate]="maxDate"
               (bsValueChange)="changeDateEvent($event)" />
             <!-- <span class="text-danger bg-white border-0 ui-inputgroup-addon">*</span>
             <div *ngIf="submitted && requestForm.value.paperDate.length == 0" class="invalid-feedback">

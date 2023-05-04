@@ -30,6 +30,7 @@
         <button
           type="button"
           class="btn btn-primary active"
+          [disabled]="validBtn == false"
           (click)="confirm()">
           Aceptar
         </button>
