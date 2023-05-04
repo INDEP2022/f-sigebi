@@ -81,6 +81,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.withDocumentation = this.idAclara === '1' ? true : false;
     console.log('info request', this.infoRequest);
     console.log('info not', this.dataClarifications2);
+    this.dictamenSeq();
     this.initForm1();
     this.initForm2();
     const applicationId = this.idRequest;
@@ -433,7 +434,6 @@ export class NotifyAssetsImproprietyFormComponent
       //Verificar si ya existe un folio armado
 
       //Métodos para crear clave armado
-      this.dictamenSeq();
 
       //Formulario largo
 

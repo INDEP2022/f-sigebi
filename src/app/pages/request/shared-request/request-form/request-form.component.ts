@@ -144,7 +144,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(50),
         ],
       ],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
@@ -280,27 +280,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       },
     });
   }
-
-  // getTransferent(params?: ListParams) {
-  //   params['filter.status'] = `$eq:${1}`;
-  //   params['filter.nameTransferent'] = `$ilike:${params.text}`;
-  //   // delete params.limit;
-  //   //delete params.page;
-  //   delete params['search'];
-  //   delete params.text;
-  //   this.transferentService.getAll(params).subscribe({
-  //     next: data => {
-  //       data.data.map(data => {
-  //         data.nameAndId = `${data.id} - ${data.nameTransferent}`;
-  //         return data;
-  //       });
-  //       this.transferents$ = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.transferents$ = new DefaultSelect();
-  //     },
-  //   });
-  // }
 
   replaceAccents(text: string) {
     return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');

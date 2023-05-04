@@ -133,11 +133,9 @@ export class RegistrationOfRequestsComponent
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
-    console.log('task', this.task);
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -929,19 +927,31 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     this.loader.load = true;
+    //no tiene aclaraciones
+    const haveClarifications = await this.haveNotificacions();
+    if (haveClarifications === 'POR_ACLARAR') {
+      this.onLoadToast(
+        'info',
+        'No se puede aprobar la solicitud',
+        'La solicitud aun cuenta con bienes por aclarar!'
+      );
+      this.loader.load = false;
+      return;
+    }
+
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
-        'No se puede aprobar',
+        'No se puede aprobar la solicitud',
         'Es requerido previamente tener firmado el dictamen'
       );
       this.loader.load = false;
       return;
     }
 
-    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
-    const url = 'pages/request/programming-request/schedule-reception';
+    const title = ``;
+    const url = '';
     const from = 'SOLICITAR_APROBACION';
     const to = 'APROBADO';
     const user: any = this.authService.decodeToken();
@@ -981,6 +991,17 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
+    const haveClarifications = await this.haveNotificacions();
+    if (haveClarifications === 'POR_ACLARAR') {
+      this.onLoadToast(
+        'info',
+        'No se puede rechazar la solicitud',
+        'La solicitud aun cuenta con bienes por aclarar!'
+      );
+      this.loader.load = false;
+      return;
+    }
+
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
@@ -1203,14 +1224,14 @@ export class RegistrationOfRequestsComponent
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
-            body.rulingCreatorName = user.username;
+            body.rulingCreatorName = user.name;
             await this.updateRequest(body);
             await this.closeValidateDocumentation();
           } else if (clarification === 'SIN_ACLARACIONES') {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
-            body.rulingCreatorName = user.username;
+            body.rulingCreatorName = user.name;
             await this.updateRequest(body);
             await this.destinyDocumental();
           }

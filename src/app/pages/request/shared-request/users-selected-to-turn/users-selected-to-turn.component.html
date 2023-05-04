@@ -28,8 +28,10 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="validBtn == false"
           type="button"
           class="btn btn-primary active"
+          [disabled]="validBtn == false"
           (click)="confirm()">
           Aceptar
         </button>
