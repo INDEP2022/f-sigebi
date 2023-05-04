@@ -156,18 +156,6 @@ export class ReadInfoGoodComponent
     });
   }
 
-  getSubTypeGood(fractionId: number) {
-    this.fractionService.findByFraction(fractionId).subscribe({
-      next: resp => {
-        this.subType = resp.data[0].siabClasification.typeDescription;
-        console.log(this.subType);
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
-  }
-
   getDestinoSAE(params: ListParams, id?: string | number) {
     params['filter.name'] = '$eq:Destino';
     if (id && this.process != 'classify-assets') {

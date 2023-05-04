@@ -521,8 +521,6 @@ export class VerifyComplianceTabComponent
   }
 
   setDescriptionGoodSae(descriptionInput: any) {
-    console.log(descriptionInput);
-    console.log(this.goodData['data']);
     this.goodData['data'].map((item: any) => {
       if (item.id === descriptionInput.data.id) {
         item.descriptionGoodSae = descriptionInput.text;
