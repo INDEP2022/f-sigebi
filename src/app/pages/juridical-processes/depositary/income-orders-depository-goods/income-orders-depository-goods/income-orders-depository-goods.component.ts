@@ -6,8 +6,10 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { NumBienShare } from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -54,6 +56,7 @@ export class IncomeOrdersDepositoryGoodsComponent
     return this.form.get('description');
   }
 
+  itemsPass: number;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   jsonInterfaz: IAppointmentDepositary;
@@ -65,60 +68,60 @@ export class IncomeOrdersDepositoryGoodsComponent
   objJsonInterfazUser: ISegUsers[] = [];
   itemsJsonInterfazUser: ISegUsers[] = [];
   itemsDepositaryUser = new DefaultSelect<ISegUsers>();
+  datosUser: TokenInfoModel;
 
+  interfasValorBienes: {
+    numBien: number;
+    cveContrato: string;
+    depositario: string;
+    desc: string;
+    nomPantall: string;
+  };
   constructor(
     private fb: FormBuilder,
     private depositaryService: MsDepositaryService,
     private usersService: UsersService,
     private valorBien: NumBienShare,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.buildForm();
-
     this.valorBien.SharingNumbien.subscribe({
       next: res => {
-        this.form.get('numberGood').patchValue(res.numBien);
+        this.interfasValorBienes = res;
+      },
+      error: err => {
+        alert('SharingNumbien' + err);
       },
     });
+    this.buildForm();
 
-    this.getItemsNumberBienes();
+    /*
+this.form.get('numberGood')?.valueChanges.subscribe(data => {
+      if(this.itemsPass!=null){
 
-    this.form.get('numberGood')?.valueChanges.subscribe(data => {
-      if (data) {
-        this.objJsonInterfaz = this.itemsJsonInterfaz.filter(
-          X => X.appointmentNumber === data
-        );
+       }else{
+           this.objJsonInterfaz = this.itemsJsonInterfaz.filter(X => X.goodNumber == data);
+       }
         this.form.get('depositary').setValue('');
         this.form.get('description').setValue('');
-        console.log('this.objJsonInterfaz[0]');
-        console.log('<=>=>=>=>=>=>==>=>==>=>=>==>=>=>=>=>==>=>=>=>=>=>=<');
-        console.log(JSON.stringify(this.objJsonInterfaz[0]));
-        this.form
-          .get('depositary')
-          .setValue(this.objJsonInterfaz[0].depositaryType);
-        this.form
-          .get('date')
-          .setValue(this.objJsonInterfaz[0].good.fecRegInsert);
 
-        this.form
-          .get('description')
-          .setValue(this.objJsonInterfaz[0].good.description);
-        this.form
-          .get('contractKey')
-          .setValue(this.objJsonInterfaz[0].contractKey);
-        this.form.get('user').setValue(this.objJsonInterfaz[0].user.users);
-        this.form.get('username').setValue(this.objJsonInterfaz[0].user.name);
-        this.form
-          .get('charge')
-          .setValue(this.objJsonInterfaz[0].user.profession);
-        this.form.patchValue(this.objJsonInterfaz[0]);
-      }
+       if (data || this.itemsPass) {
+           console.log("SharingNumbien 23 " +  this.objJsonInterfaz[0].depositaryType);
+
+         }
     });
-    /*
+
+
+
+        console.log("SharingNumbien" +  this.objJsonInterfaz[0].contractKey);
+*/
+  }
+
+  /*
     this.getUserDepositary();
     this.form.get('user')?.valueChanges.subscribe(data => {
       this.form.get('username').setValue('');
@@ -136,14 +139,13 @@ export class IncomeOrdersDepositoryGoodsComponent
 
       }
     });*/
-  }
 
   getUserDepositary() {
     console.log('====================================');
     let params = new FilterParams();
     this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: resp => {
-        console.log(JSON.stringify(resp.data));
+        // console.log(JSON.stringify(resp.data));
         this.itemsJsonInterfazUser = [...resp.data];
       },
       error: err => {
@@ -161,9 +163,6 @@ export class IncomeOrdersDepositoryGoodsComponent
   getItemsNumberBienes() {
     this.depositaryService.getGoodAppointmentDepositaryByNoGood().subscribe({
       next: resp => {
-        console.log('1.-  getItemsNumberBienes  ');
-        console.log(JSON.stringify(resp.data));
-        console.log('===========1.-  getItemsNumberBienes=====');
         this.itemsJsonInterfaz = [...resp.data];
       },
       error: err => {
@@ -188,6 +187,9 @@ export class IncomeOrdersDepositoryGoodsComponent
     @since: 27/09/2022
   */
   private buildForm() {
+    this.datosUser = this.authService.decodeToken();
+    this.getItemsNumberBienes();
+
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
       contractKey: [
@@ -203,9 +205,31 @@ export class IncomeOrdersDepositoryGoodsComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       date: [null, [Validators.required]],
-      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      userId: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       username: [null, [Validators.required]],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
+    this.form.get('userId').setValue(this.datosUser.puesto);
+    this.form.get('username').setValue(this.datosUser.name);
+    this.form.get('charge').setValue(this.datosUser.username);
+    this.form.get('numberGood').setValue(this.interfasValorBienes.numBien);
+    this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
+    this.form.get('depositary').setValue(this.interfasValorBienes.depositario);
+    this.form.get('description').setValue(this.interfasValorBienes.desc);
+
+    /*
+                                    this.objJsonInterfaz = this.itemsJsonInterfaz.filter(X => X.goodNumber == this.itemsPass);
+   console.log("this.itemsPass => " + this.itemsPass +  "\n\n\n" +JSON.stringify(this.objJsonInterfaz[0]) );
+  this.form.get('depositary').setValue(this.objJsonInterfaz[0].depositaryType);
+        this.form.get('date')
+                 .setValue(this.objJsonInterfaz[0].good.fecRegInsert);
+
+        this.form.get('description')
+                 .setValue(this.objJsonInterfaz[0].good.description);
+        console.log("SharingNumbien" +  this.objJsonInterfaz[0].good.description);
+
+        this.form.get('contractKey')
+                 .setValue(this.objJsonInterfaz[0].contractKey);
+*/
   }
 }
