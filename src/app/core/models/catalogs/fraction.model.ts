@@ -8,7 +8,6 @@ export interface IFraction {
   description: string;
   parentId?: number;
   normId: INorm | number;
-  unit: string;
   clasificationId: number;
   siabClasification?: string | ISiabClasification;
   userCreation?: string;
