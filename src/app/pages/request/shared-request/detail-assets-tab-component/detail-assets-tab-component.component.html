@@ -13,7 +13,6 @@
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
     <div *ngIf="process == 'registration-request'">
-      <!-- <p>{{ typeOfRequest }}</p> -->
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
@@ -212,9 +211,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div
-              class="col-md-5"
-              *ngIf="typeOfRequest == 'SAT_SAE' || typeOfRequest == 'MANUAL'">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('destiny')"
                 label="Destino Ligie">
@@ -292,30 +289,6 @@
                 [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
           </div>
-          <div class="row pt-4" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <div class="col-md-5">
-              <form-field
-                [control]="detailAssets.get('requestFolio')"
-                label="Folio de Solicitud">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="requestFolio"
-                  [readOnly]="true" />
-              </form-field>
-            </div>
-            <div class="col-md-5">
-              <form-field
-                [control]="detailAssets.get('uniqueKey')"
-                label="Clave &Uacute;nica">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="uniqueKey"
-                  [readOnly]="true" />
-              </form-field>
-            </div>
-          </div>
         </div>
       </form>
     </div>
@@ -324,7 +297,8 @@
       *ngIf="process != 'registration-request'"
       [detailAssets]="detailAssets"
       [process]="process"
-      [typeOfRequest]="typeOfRequest"></app-read-info-good>
+      [typeOfRequest]="typeOfRequest"
+      (saveDetailInfo)="getDetailInfo($event)"></app-read-info-good>
   </tab>
 
   <tab>
