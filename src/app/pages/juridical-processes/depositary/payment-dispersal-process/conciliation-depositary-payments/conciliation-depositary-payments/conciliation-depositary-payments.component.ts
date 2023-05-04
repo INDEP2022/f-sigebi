@@ -3,11 +3,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  TABLE_SETTINGS_DISPERSION_PAGOS,
-  TABLE_SETTINGS_FACT_GEN,
-} from './conciliation-depositary-payments-columns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
+import { DatePipe } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { DEPOSITARY_ROUTES_1 } from 'src/app/common/constants/juridical-processes/depositary-routes-1';
 import {
@@ -15,8 +12,24 @@ import {
   baseMenuDepositaria,
   baseMenuProcesoDispercionPagos,
 } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import Swal from 'sweetalert2';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ConciliationDepositaryPaymentsService } from '../services/conciliation-depositary-payments.service';
+import {
+  ERROR_DATE_DISPERSAL_NULL,
+  ERROR_GOOD_NULL,
+  NOT_FOUND_GOOD,
+  NOT_FOUND_GOOD_APPOINTMENT,
+} from '../utils/conciliation-depositary-payments.messages';
+import {
+  TABLE_SETTINGS_DISPERSION_PAGOS,
+  TABLE_SETTINGS_FACT_GEN,
+} from './conciliation-depositary-payments-columns';
 
 /** SERVICE IMPORTS */
 
@@ -33,6 +46,7 @@ export class ConciliationDepositaryPaymentsComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  // DISPERSIÓN DE PAGOS DEPOSITARIAS
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   tableFactGenSettings = TABLE_SETTINGS_FACT_GEN;
@@ -68,10 +82,13 @@ export class ConciliationDepositaryPaymentsComponent
       reconocimientoGastos: '5 -- 50', // % -- Valor
     },
   ];
-
+  // CONCILIACIÓN DE PAGOS
   public form: FormGroup;
   public formDepositario: FormGroup;
+  public noBienReadOnly: number = null;
   dispersionPagos: boolean = false;
+  depositaryAppointment: IAppointmentDepositary;
+  good: IGood;
 
   public rutaValidacionPagos: string =
     baseMenu +
@@ -79,29 +96,47 @@ export class ConciliationDepositaryPaymentsComponent
     baseMenuProcesoDispercionPagos +
     DEPOSITARY_ROUTES_1[2].link;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private datePipe: DatePipe,
+    private svConciliationDepositaryPaymentsService: ConciliationDepositaryPaymentsService
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    this.prepareForm();
     this.loading = true;
+    this.prepareForm();
   }
   private prepareForm() {
     this.form = this.fb.group({
       noBien: ['', [Validators.required]], //*
-      nombramiento: ['', [Validators.required]], //*
-      fecha: ['', [Validators.required]], //*
+      nombramiento: [{ value: '', disabled: false }, [Validators.maxLength(6)]], //*
+      fecha: [{ value: '', disabled: true }, [Validators.maxLength(11)]], //*
       fechaEliminarDispersion: [
-        '',
-        [Validators.minLength(2), Validators.maxLength(10)],
+        { value: '', disabled: false },
+        [Validators.required, Validators.maxLength(10)],
+      ], //*
+      descripcion: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
       ], //*
     });
     this.formDepositario = this.fb.group({
-      idDepositario: ['', [Validators.required]], //*
-      depositario: ['', [Validators.required]], //*
-      procesar: ['', [Validators.required]], //* SI/NO
-      fechaEjecucion: ['', [Validators.required]], //*
+      idDepositario: [
+        { value: '', disabled: false },
+        [Validators.required, Validators.maxLength(30)],
+      ], //*
+      depositario: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      ], //*
+      procesar: [{ value: '', disabled: true }, [Validators.required]], //* SI/NO
+      fechaEjecucion: [
+        { value: '', disabled: true },
+        [Validators.maxLength(11)],
+      ], //*
     });
   }
 
@@ -113,8 +148,13 @@ export class ConciliationDepositaryPaymentsComponent
     console.log('btnSalirDispersion');
     this.dispersionPagos = false;
   }
-  btnDispersar(dispersar: boolean) {
+  btnDispersar(dispersar: any) {
     console.log('btnDispersar', dispersar);
+    if (dispersar.validDate) {
+      console.log(dispersar);
+    } else {
+      this.alert('warning', 'Número de Bien', ERROR_DATE_DISPERSAL_NULL);
+    }
   }
   btnAplicarPagos() {
     console.log('btnAplicarPagos');
@@ -134,22 +174,86 @@ export class ConciliationDepositaryPaymentsComponent
         this.rutaValidacionPagos + '/' + this.form.get('noBien').value
       );
     } else {
-      this.message('Faltan datos', 'El No. Bien es obligatorio.', 'warning');
+      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
     }
   }
 
-  message(title: string, text: string, type: any) {
-    Swal.fire({
-      title: title,
-      text: text,
-      icon: type,
-      showCancelButton: false,
-      confirmButtonColor: '#9D2449',
-      confirmButtonText: 'Aceptar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        console.log('OK');
-      }
-    });
+  async btnSearchGood(goodNumber: number) {
+    console.log(goodNumber);
+    if (this.form.get('noBien').valid) {
+      this.loading = true;
+      this.noBienReadOnly = this.form.get('noBien').value;
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter('goodNumber', this.noBienReadOnly);
+      params.addFilter('revocation', 'N');
+      await this.svConciliationDepositaryPaymentsService
+        .getGoodAppointmentDepositaryByNoGood(params.getParams())
+        .subscribe({
+          next: res => {
+            console.log(res.data);
+            this.depositaryAppointment = res.data[0];
+            this.form
+              .get('nombramiento')
+              .setValue(this.depositaryAppointment.appointmentNumber);
+            this.formDepositario
+              .get('idDepositario')
+              .setValue(this.depositaryAppointment.personNumber.id);
+            this.formDepositario
+              .get('depositario')
+              .setValue(this.depositaryAppointment.personNumber.nombre);
+            let fecha = this.datePipe.transform(
+              this.depositaryAppointment.appointmentDate,
+              'dd-MMM-yyyy'
+            );
+            this.form.get('fecha').setValue(fecha);
+            // this.formDepositario
+            //   .get('procesar')
+            //   .setValue(this.depositaryAppointment.personNumber.nombre);
+            this.form
+              .get('noBien')
+              .setValue(this.depositaryAppointment.good.goodId);
+            this.form
+              .get('descripcion')
+              .setValue(this.depositaryAppointment.good.description);
+            this.getGoodData();
+          },
+          error: err => {
+            this.loading = false;
+            this.alert(
+              'warning',
+              'Número de Bien',
+              NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
+            );
+          },
+        });
+    } else {
+      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+    }
+  }
+
+  async getGoodData() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('goodId', this.noBienReadOnly);
+    await this.svConciliationDepositaryPaymentsService
+      .getGoodDataByFilter(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log(res.data);
+          // this.good = res.data[0]; // Set data good
+          // this.form.get('noBien').setValue(this.good.goodId);
+          // this.form.get('descripcion').setValue(this.good.description);
+          this.loading = false;
+        },
+        error: err => {
+          this.loading = false;
+          this.alert(
+            'warning',
+            'Número de Bien',
+            NOT_FOUND_GOOD(err.error.message)
+          );
+        },
+      });
   }
 }

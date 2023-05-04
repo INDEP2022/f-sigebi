@@ -41,6 +41,8 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   columns = LIST_ASSETS_COLUMNS;
   formLoading: boolean = false;
   allDataGood: IGood[] = [];
+  task: any;
+  statusTask: any;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -57,6 +59,13 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    console.log('task', this.task);
+
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     this.showHideErrorInterceptorService.showHideError(false);
     this.settings = {
       ...TABLE_SETTINGS,
@@ -217,6 +226,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     const idRequest = this.idRequest;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
+      statusTask: this.statusTask,
       data,
       idRequest,
       callBack: (next: boolean) => {

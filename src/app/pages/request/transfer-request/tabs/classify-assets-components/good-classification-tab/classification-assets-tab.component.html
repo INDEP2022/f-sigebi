@@ -55,8 +55,9 @@
             [requestObject]="requestObject"
             [detailAssets]="detailArray"
             [process]="process"
-            [domicilieObject]="
-              domicilieObject
+            [domicilieObject]="domicilieObject"
+            (sendDetailInfoEvent)="
+              updateTableInfo($event)
             "></app-detail-assets-tab-component>
         </div>
       </tab>

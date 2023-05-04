@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -33,6 +35,7 @@ export class ReadInfoGoodComponent
   @Input() detailAssets: any;
   @Input() process: string = '';
   @Input() typeOfRequest: string = '';
+  @Output() saveDetailInfo: EventEmitter<any> = new EventEmitter();
   goodData: any = {};
   relevantTypeName: string = 'buscar';
   subType: string;
@@ -53,7 +56,10 @@ export class ReadInfoGoodComponent
   conservationState: string = '';
   destinySAE: string = '';
   unitMeasureLigie: string = '';
+  fraction: string = '';
   unitMeasureTransferent: string = '';
+  saeMeasureUnit: string = '';
+  dataToSend: any = {};
   showButton = true;
 
   private readonly fractionsService = inject(FractionService);
@@ -68,10 +74,9 @@ export class ReadInfoGoodComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log('proceso', this.process);
+    console.log('proceso', this.process);
     //console.log('type of request', this.typeOfRequest);
     this.goodData = this.detailAssets.value;
-    // console.log('bien', this.goodData);
     if (this.goodData) {
       this.getTypeGood();
 
@@ -104,6 +109,8 @@ export class ReadInfoGoodComponent
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
       next: resp => {
+        console.log(resp);
+        this.fraction = resp.data[0].code;
         this.relevantTypeName = resp.data[0].description;
         this.getSubTypeGood(this.goodData.fractionId);
       },
@@ -127,7 +134,7 @@ export class ReadInfoGoodComponent
 
   getDestinoSAE(params: ListParams, id?: string | number) {
     params['filter.name'] = '$eq:Destino';
-    if (id) {
+    if (id && this.process != 'classify-assets') {
       params['filter.keyId'] = `$eq:${id}`;
     }
     this.genericService.getAll(params).subscribe({
@@ -233,6 +240,9 @@ export class ReadInfoGoodComponent
   }
 
   getUnitMeasureSae(params: ListParams, id?: string | number) {
+    if (id && this.process != 'classify-assets') {
+      params['filter.uomCode'] = `$eq:${id}`;
+    }
     this.goodsQueryService
       .getCatMeasureUnitView(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -257,6 +267,7 @@ export class ReadInfoGoodComponent
     const id = this.goodData.goodTypeId;
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.goodType = data.description;
       },
     });
@@ -272,6 +283,11 @@ export class ReadInfoGoodComponent
 
   achiveNorma() {
     this.cumplyNorma = this.goodData.compliesNorm === 'Y' ? 'Si' : 'No';
+  }
+
+  unidMediIndep(event: any) {
+    console.log(event);
+    this.dataToSend.saeMeasureUnit = event.saeMeasureUnit;
   }
 
   save() {
@@ -291,10 +307,17 @@ export class ReadInfoGoodComponent
         good.goodId = this.goodData.goodId;
         good.userModification = user.username;
         good.modificationDate = new Date().toISOString();
-        console.log(good);
 
         this.goodService.update(good).subscribe({
           next: resp => {
+            const body: any = {};
+            body.id = resp.id;
+            body.saeDestiny = resp.saeDestiny;
+            body.physicalStatus = resp.physicalStatus;
+            body.stateConservation = resp.stateConservation;
+            body.saeMeasureUnit = resp.saeMeasureUnit;
+
+            this.saveDetailInfo.emit(body);
             this.onLoadToast(
               'success',
               'Actualizado',

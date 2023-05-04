@@ -265,7 +265,8 @@
             </form-radio>
           </div>
         </div>
-        <div class="col-md-6">
+        <!--TODO: Confirmar si es necesario habilitar estos campos Desalojo-DirGeneral-->
+        <!--<div class="col-md-6">
           <form-check
             *ngIf="initialCondition != 'A'"
             class="col-md-6"
@@ -288,7 +289,7 @@
               formControlName="addressGeneral"
               value="1" />
           </form-check>
-        </div>
+        </div>-->
       </div>
       <hr />
       <div class="row pt-5">
@@ -569,6 +570,7 @@
               class="col-md-6"
               [control]="documentsReceptionForm.get('minpubNumber')">
               <ngx-select
+                [readonly]="true"
                 [form]="documentsReceptionForm"
                 [data]="publicMinistries"
                 (fetchItems)="getPublicMinistries($event)"
@@ -603,6 +605,7 @@
               class="col-md-6"
               [control]="documentsReceptionForm.get('courtNumber')">
               <ngx-select
+                [readonly]="true"
                 [form]="documentsReceptionForm"
                 [data]="courts"
                 (fetchItems)="getCourts($event)"

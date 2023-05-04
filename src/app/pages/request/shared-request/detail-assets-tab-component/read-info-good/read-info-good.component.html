@@ -195,6 +195,7 @@
     </form>
   </div>
 </div>
+<!-- FIN DESTINO VERIFICAR CUMPLIMIENTO -->
 
 <div *ngIf="typeOfRequest == 'SAT_SAE'">
   <div>
@@ -394,6 +395,22 @@
             <label>Folio de Solicitud</label>
             <span class="fs-4">{{ goodData?.requestFolio }}</span>
           </div>
+        </div>
+        <div
+          class="col-md-6"
+          *ngIf="typeOfRequest == 'MANUAL' || typeOfRequest == 'SAT_SAE'">
+          <label>Folio de solicitud&#58;</label>
+          <span class="fs-4">{{ goodData?.requestFolio }}</span>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
+          <label>Clave Única</label>
+          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+        </div>
+        <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
+          <label>Destino Ligie</label>
+          <span class="fs-4">{{ destinyLigie }}</span>
         </div>
       </div>
     </form>
@@ -596,4 +613,128 @@
     </form>
   </div>
 </div>
-<!-- FIN CLASIFICACION DEL BIEN PGR -->
+<!-- FIN CLASIFICACION DEL BIEN -->
+<!-- TIPO TRANSFERENTE PGR SAE PARA DEL APROBAR SOLICITUD  -->
+<div *ngIf="process == 'process-approval'">
+  <div>
+    <form [formGroup]="goodForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <label>No&#46; Gesti&oacute;n</label>
+          <span class="fs-4">{{ goodData?.id }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Cantidad de la Transferente</label>
+          <span class="fs-4">{{ goodData?.quantity | number }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Tipo Bien</label>
+          <span class="fs-4">{{ relevantTypeName }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Destino transferente&#58;</label>
+          <span class="fs-4">{{ transferentDestiny }}</span>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Descripci&oacute;n de Bien Transferente</label>
+          <span class="fs-4">{{ goodData?.goodDescription }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Capacidad (lts)</label>
+          <span class="fs-4">{{ goodData?.capacity }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>No&#46; Expediente de la Transferente</label>
+          <span class="fs-4">{{ goodData?.fileNumber }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Estado F&iacute;sico</label>
+          <span class="fs-4">{{ physicalStatus }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Unidad de Medida Ligie</label>
+          <span class="fs-4">{{ unitMeasureLigie }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Duplicidad</label>
+          <span class="fs-4">{{ duplicity }}</span>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Unidad de Medida Transferente</label>
+          <span class="fs-4">{{ unitMeasureTransferent }}</span>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Aval&uacute;o</label>
+            <span class="fs-4">{{ avaluo }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Estado de Conservaci&oacute;n</label>
+          <span class="fs-4">{{ conservationState }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>No. Norma</label>
+          <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Clave Única</label>
+          <span class="fs-4">{{ goodData?.uniqueKey }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Destino Ligie</label>
+          <span class="fs-4">{{ destinyLigie }}</span>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Fracci&oacute;n</label>
+          <span class="fs-4">{{ fraction }}</span>
+        </div>
+        <div class="col-md-6">
+          <label>Bien Duplicado</label>
+          <span class="fs-4"> </span>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Fecha ingreso</label>
+          <span class="fs-4"></span>
+        </div>
+        <div class="col-md-6">
+          <label>Notas</label>
+          <span class="fs-4"></span>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label>Entidad Federativa</label>
+          <span class="fs-4"></span>
+        </div>
+        <div class="col-md-6">
+          <label>Cumple Norma</label>
+          <span class="fs-4">{{ cumplyNorma }}</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

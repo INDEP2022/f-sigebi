@@ -374,11 +374,13 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   openTask(selected: any): void {
+    console.log('SELEC', selected);
     let obj2Storage = {
       assignees: selected.assignees,
       displayName: this.userName,
       taskId: selected.requestId,
       id: selected.id,
+      status: selected.State,
     };
 
     localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
