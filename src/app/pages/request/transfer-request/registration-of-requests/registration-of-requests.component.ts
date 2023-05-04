@@ -133,11 +133,9 @@ export class RegistrationOfRequestsComponent
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
-    console.log('task', this.task);
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -952,8 +950,8 @@ export class RegistrationOfRequestsComponent
       return;
     }
 
-    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
-    const url = 'pages/request/programming-request/schedule-reception';
+    const title = ``;
+    const url = '';
     const from = 'SOLICITAR_APROBACION';
     const to = 'APROBADO';
     const user: any = this.authService.decodeToken();
