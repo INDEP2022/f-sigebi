@@ -52,12 +52,13 @@ export class NotifyAssetsImproprietyFormComponent
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
   infoRequest: IRequest;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
 
   //Parámetros para generar el folio en el reporte
   today: Date;
   folio: IDictamenSeq;
   folioReporte: string;
-
+  typeDoc: string = '';
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -78,7 +79,8 @@ export class NotifyAssetsImproprietyFormComponent
   ngOnInit(): void {
     //this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
-
+    console.log('info request', this.infoRequest);
+    console.log('info not', this.dataClarifications2);
     this.initForm1();
     this.initForm2();
     const applicationId = this.idRequest;
@@ -100,17 +102,25 @@ export class NotifyAssetsImproprietyFormComponent
 
   initForm1(): void {
     //Trae información de la solicitud para precargar información en los formularios
-    this.requestService.getById(this.idRequest).subscribe({
+    this.paramsRequest.getValue()['filter.id'] = this.idRequest;
+    this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
       next: response => {
-        this.infoRequest = response;
+        this.infoRequest = response.data[0];
       },
     });
 
     this.clarificationForm = this.fb.group({
-      observations: [
-        this.dataClarifications2.observations,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      addresseeName: [' ', [Validators.required, Validators.maxLength(50)]],
+
+      positionAddressee: [
+        ' ',
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
       ],
+
       senderName: [
         this.infoRequest.nameOfOwner,
         [
@@ -119,10 +129,7 @@ export class NotifyAssetsImproprietyFormComponent
           Validators.maxLength(50),
         ],
       ],
-      jobClarificationKey: [
-        this.dataClarifications2.chatClarification.keyClarificationPaper,
-        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
-      ],
+
       senderCharge: [
         this.infoRequest.holderCharge,
         [
@@ -131,6 +138,68 @@ export class NotifyAssetsImproprietyFormComponent
           Validators.maxLength(50),
         ],
       ],
+
+      consistentIn: [
+        ' ',
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(1000),
+        ],
+      ],
+
+      paragraphInitial: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
+      paragraphFinal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
+
+      clarification: [
+        ' ',
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(1000),
+        ],
+      ],
+
+      observations: [
+        this.dataClarifications2?.observations,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      ],
+
+      foundation: [
+        ' ',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(4000),
+        ],
+      ],
+
+      transmitterId: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
+      ],
+
+      invoiceLearned: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+
+      worthAppraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+
+      /*jobClarificationKey: [
+        this.dataClarifications2.chatClarification.keyClarificationPaper,
+        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
+      ], */
+
       userAreaCaptures: [
         this.dataClarifications2?.chatClarification?.areaUserCapture,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
@@ -138,7 +207,11 @@ export class NotifyAssetsImproprietyFormComponent
 
       webMail: [
         this.dataClarifications2?.chatClarification?.emailWeb,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.required,
+          Validators.pattern(EMAIL_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
     });
   }
@@ -328,8 +401,33 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
-  confirm() {
-    if (!this.withDocumentation) {
+  async confirm() {
+    console.log('Aclaración', this.clarificationForm.value);
+    const typeTransference = this.infoRequest.typeOfTransfer;
+    let generaXML: boolean = false;
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.dataClarifications2.chatClarification.idClarificationType == '2'
+    ) {
+      generaXML = true;
+    }
+
+    console.log(generaXML);
+    console.log(typeTransference);
+
+    if (typeTransference != 'SAT_SAE' || generaXML) {
+      const obtainTypeDocument = await this.obtainTypeDocument(
+        false,
+        this.infoRequest
+      );
+      if (obtainTypeDocument) {
+        console.log('Tipo', this.typeDoc);
+        //Manda a llamar la firma donde le manda el tipo de doc y la palabra Aclaración
+      }
+    }
+
+    this.saveClarificationsAcept();
+    /*if (!this.withDocumentation) {
       //Verificar si ya el formulario tiene información
 
       //Verificar si ya existe un folio armado
@@ -403,8 +501,69 @@ export class NotifyAssetsImproprietyFormComponent
         this.updateNotify(id, observations);
       }
 
-      this.chatClarifications1(); //PARA FORMULARIO CORTO
+    } */
+    //this.chatClarifications1(); //PARA FORMULARIO CORTO
+  }
+
+  saveClarificationsAcept() {
+    console.log('Se va a guardar', this.dataClarifications2);
+    const typeTransferent = this.infoRequest.typeOfTransfer;
+
+    if (this.dataClarifications2.answered == 'NUEVA') {
+      //Se tiene que guardar el id del documento generado
+      //Se guardan las observaciones
+
+      if (
+        this.dataClarifications2.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
+      ) {
+      } else {
+        this.updateNotify(
+          this.dataClarifications2.rejectNotificationId,
+          this.dataClarifications2.chatClarification.idClarification,
+          this.dataClarifications2.goodId,
+          this.dataClarifications2.observations
+        );
+      }
     }
+  }
+
+  obtainTypeDocument(improcedencia: boolean, request: IRequest) {
+    const typeTransference = this.infoRequest.typeOfTransfer;
+    let generaXML: boolean = false;
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.dataClarifications2.chatClarification.idClarificationType == '2'
+    ) {
+      generaXML = true;
+    }
+
+    return new Promise((resolve, reject) => {
+      if (generaXML && !improcedencia) {
+        this.typeDoc = 'OficioAclaracionTransferente';
+      }
+
+      if (this.infoRequest.transferent?.type == 'A') {
+        if (improcedencia) {
+          this.typeDoc = 'OficioImprocedencia';
+        } else {
+          this.typeDoc = 'AclaracionAsegurados';
+        }
+      } else if (this.infoRequest.transferent?.type == 'CE') {
+        if (improcedencia) {
+          this.typeDoc = 'OficioImprocedencia';
+        } else {
+          this.typeDoc = 'AclaracionComercioExterior';
+        }
+      } else if (this.infoRequest.transferent?.type == 'NO') {
+        if (improcedencia) {
+          this.typeDoc = 'ImprocedenciaTransferentesVoluntarias';
+        } else {
+          this.typeDoc = 'AclaracionTransferentesVoluntarias';
+        }
+      }
+
+      resolve(true);
+    });
   }
 
   dataChatClarifications: IChatClarifications[];
@@ -567,7 +726,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   updateNotify(
     id?: number,
-    chatClarId?: number,
+    chatClarId?: number | string,
     goodId?: number,
     observations?: string
   ) {
@@ -575,6 +734,42 @@ export class NotifyAssetsImproprietyFormComponent
       rejectionDate: new Date(),
       rejectNotificationId: id,
       answered: 'EN ACLARACION',
+      observations: observations,
+    };
+
+    console.log(data);
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {
+        const updateInfo: IChatClarifications = {
+          requestId: this.idRequest,
+          goodId: goodId,
+          clarificationStatus: 'EN_ACLARACION',
+        };
+        this.chatClarificationsService
+          .update(chatClarId, updateInfo)
+          .subscribe({
+            next: data => {
+              this.modalRef.content.callback(true, data.goodId);
+              this.modalRef.hide();
+            },
+            error: error => {
+              console.log(error);
+            },
+          });
+      },
+    });
+  }
+
+  updateNotifyInapro(
+    id?: number,
+    chatClarId?: number,
+    goodId?: number,
+    observations?: string
+  ) {
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'IMPROCEDENTE',
       observations: observations,
     };
 
