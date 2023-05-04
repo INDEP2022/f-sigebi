@@ -604,10 +604,7 @@ export class ClassifyAssetsTabComponent
             this.formLoading = false;
           },
         });
-    } catch (error) {
-      this.formLoading = false;
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   getLevel3(params: ListParams, id?: number) {
