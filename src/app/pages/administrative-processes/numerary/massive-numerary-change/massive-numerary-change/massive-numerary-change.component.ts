@@ -93,10 +93,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       concept: [null, Validators.nullValidator],
       description: [null, Validators.nullValidator],
     });
-
-    const arr = Object.keys(MASSIVE_NUMERARY_CHANGE_COLUMNS).map(key => key);
-    console.log(arr);
   }
+
   getAttributes() {
     this.loading = true;
   }
@@ -120,6 +118,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       this.formGas.addControl(`GAS${index + 1}`, new FormControl(''));
       this.formGad.addControl(`GAD${index + 1}`, new FormControl(''));
     });
+
+    // let test = await this.getGoodById([{ value: 143503, filter: 'filter.id' }]);
+    // console.log({ test });
   }
 
   //#region On click Button Process Extraction
@@ -240,7 +241,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     let cveProcess: string | null = null;
     let actaOk = false;
     let vItem = null;
-    dataTablePreview.map(async item => {
+    // dataTablePreview.map(
+    const test = async (item: any) => {
       vItem = 'COL' + colB;
       const numberGood = item[vItem];
       if (numberGood) {
@@ -248,7 +250,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
           const good = await this.getGoodById([
             { filter: 'filter.id', value: numberGood },
           ]);
+          console.log({ good });
           cveProcess = null;
+
           try {
             const goodStatus = await this.getGoodById(
               [
@@ -260,6 +264,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
               ],
               true
             );
+
             if (Array.isArray(goodStatus) && goodStatus.length > 1) {
               throw new Error('Más de una ref.');
             }
@@ -296,7 +301,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                 indNume = 2;
                 cveProcess = await this.pufSearchEvent(numberGood);
               } else {
-                indNume = 0;
+                indNume = 1;
                 if (good.identifier === 'TRANS') {
                   indNume = 4;
                 }
@@ -317,7 +322,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
               }
             }
           }
-          vItem = 'F' + colI;
+          vItem = 'COL' + colI;
           let vTipo = item[vItem];
           let income;
           let viva;
@@ -329,7 +334,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
           let descriptionG;
           if (vTipo) {
             income = vTipo?.replace(',', '.');
-            vItem = 'F' + colV;
+            vItem = 'COL' + colV;
             vTipo = item[vItem];
             if (vTipo) {
               viva = vTipo?.replace(',', '.');
@@ -400,20 +405,21 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
               if (indNume !== 1) {
                 switch (indNume) {
                   case 0:
-                    prevDataTableSpent['color'] = 'red';
+                    prevDataTableSpent['color'] = 'bg-custom-red';
                     break;
                   case 2:
-                    prevDataTableSpent['color'] = 'green';
+                    prevDataTableSpent['color'] = 'bg-custom-green';
                     break;
                   case 4:
-                    prevDataTableSpent['color'] = 'cyan';
+                    prevDataTableSpent['color'] = 'bg-custom-cyan';
                     break;
                   case 5:
-                    prevDataTableSpent['color'] = 'orange';
+                    prevDataTableSpent['color'] = 'bg-custom-orange';
                     break;
                   default:
-                    prevDataTableSpent['color'] = 'yellow';
+                    prevDataTableSpent['color'] = 'bg-custom-yellow';
                 }
+                dataTableSpent.push(prevDataTableSpent);
               }
             }
           }
@@ -423,8 +429,22 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       } else {
         contm++;
       }
+    };
+
+    await test({ COL1: '2732892', COL2: '10', COL3: '10', COL4: '10' });
+    this.isLoadingProcessExtraction = false;
+    this.modalService.show(MassiveNumeraryChangeModalComponent, {
+      initialState: {
+        dataTableMain: new LocalDataSource(dataTableSpent),
+        dataTableSecond: new LocalDataSource(dataTableTableSmall),
+      },
+      class: 'modal-lg',
     });
   }
+
+  // async loopProcessExtraction(item) {
+
+  // }
 
   nvl(valor: any, def: any = 0) {
     return valor || def;
@@ -462,10 +482,10 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       this.goodService.getAll(params).pipe(
         map((res: any) => {
           if (returnAll) {
-            return res;
+            return res?.data;
           }
-          if (Array.isArray(res) && res.length > 0) {
-            return res[0];
+          if (Array.isArray(res?.data) && res.data.length > 0) {
+            return res.data[0];
           }
           return null;
         })
@@ -477,11 +497,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   //#region On click Button File Excel
   onClickBtnFileExcel(e: Event) {
-    console.log({ e });
     const file = (e.target as HTMLInputElement).files[0];
     try {
       readFile(file).then(data => {
-        console.log({ data });
         const dataExcel = this.excelService.getData(data.result);
         if (dataExcel.length < 1 || !this.validatorFileExcel()) {
           showAlert({
@@ -506,7 +524,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
         this.dataPrevious.load(dataPreviewTable);
 
-        console.log({ dataPreviewTable, dataExcel });
+        // console.log({ dataPreviewTable, dataExcel });
       });
     } catch (ex) {
       console.log({ ex });
@@ -526,10 +544,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   //#endregion On click Button File Excel
 
   loadTablePreviewData(params: ListParams): void {}
-}
-
-function _onClickBtnFileExcel() {
-  // if (newWindow.opener)
 }
 
 // function _onClickBtnProcessExtraction(

@@ -1,29 +1,34 @@
 export interface IMassiveNumeraryChangeSpent {
-  noGood: number;
-  npNUm: number;
-  description: string;
-  cveEvent: string;
-  status: string;
-  entry: number;
-  costs: number;
-  tax: number;
-  impNumerary: number;
-  noExpAssociated: string;
-  noExpedient: string;
-  quantity: number;
-  noDelegation: string;
-  noSubDelegation: string;
-  identifier: string;
-  noFlier: string;
-  indNume: number;
-  color?: 'red' | 'green' | 'cyan' | 'orange' | 'yellow';
+  noGood: number; // NO_BIEN
+  npNUm: number; // NO_BIEN_NUME
+  description: string; // DESCRIPCION
+  cveEvent: string; // CVE_PROCESO
+  status: string; // ESTATUS
+  entry: number; // INGRESO
+  costs: number; // GASTO
+  tax: number; // IVA
+  impNumerary: number; // VALOR_AVALUO
+  noExpAssociated: string; // NO_EXP_ASOCIADO
+  noExpedient: string; // NO_EXPEDIENTE
+  quantity: number; // CANTIDAD
+  noDelegation: string; // NO_DELEGACION
+  noSubDelegation: string; // NO_SUBDELEGACION
+  identifier: string; // IDENTIFICADOR
+  noFlier: string; // NO_VOLANTE
+  indNume: number; // IND_NUME
+  color?:
+    | 'bg-custom-red'
+    | 'bg-custom-green'
+    | 'bg-custom-cyan'
+    | 'bg-custom-orange'
+    | 'bg-custom-yellow';
 }
 
 export interface IMassiveNumeraryTableSmall {
-  noGood: number;
-  cveie: number;
-  amount: number;
-  description?: string;
-  status?: string;
-  type?: string;
+  noGood: number; // NO_BIEN
+  cveie: number; // NO_CONCEPTO_GASTO
+  amount: number; // IMPORTE
+  description?: string; // DESCRIPCION
+  status?: string; // ESTATUS
+  type?: string; // TIPO
 }
