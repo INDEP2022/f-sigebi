@@ -30,6 +30,7 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
   params: any;
 
   public form: FormGroup;
+  public searchForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -47,11 +48,11 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
     this.form = this.fb.group({
       id: '',
       passOfficeArmy: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      expedientNumber: '',
+      expedientNumber: ['', [Validators.required]],
       typeDict: '',
       statusDict: ['', [Validators.pattern(STRING_PATTERN)]],
       dictDate: '',
-      userDict: ['', [Validators.pattern(STRING_PATTERN)]],
+      userDict: ['', [Validators.pattern(STRING_PATTERN), Validators.required]],
       observations: ['', [Validators.pattern(STRING_PATTERN)]],
       delegationDictNumber: '',
       areaDict: ['', [Validators.pattern(STRING_PATTERN)]],
@@ -66,14 +67,24 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
       dictHcDAte: '',
       entryHcDate: '',
     });
+
+    this.searchForm = this.fb.group({
+      id: ['', Validators.required],
+      typeDict: '',
+    });
   }
 
   setFormData() {
-    const dictationNumber = this.form.get('id').value;
+    const dictationNumber = this.searchForm.get('id').value;
 
     this.dictationService.findByIds({ id: dictationNumber }).subscribe({
       next: data => {
         this.form.patchValue(data);
+        console.log(this.form.value);
+        console.log(this.searchForm.value);
+        this.form.get('id').patchValue(this.searchForm.get('id').value);
+        this.form.get('typeDict').patchValue(data.typeDict);
+        this.searchForm.get('typeDict').patchValue(data.typeDict);
         const value = this.form.value;
         this.form
           .get('dictDate')
@@ -114,6 +125,7 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
         this.emitChange();
       },
       error: err => {
+        this.form.reset();
         console.log(err);
       },
     });
@@ -121,5 +133,25 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
 
   public emitChange() {
     this.formValues.emit(this.form.value);
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.searchForm.reset();
+  }
+
+  send() {
+    this.dictationService.update(this.form.value).subscribe({
+      next: data => {
+        this.alert(
+          'success',
+          'Se ha agregado la información correctamente',
+          ''
+        );
+      },
+      error: err => {
+        this.alert('error', 'No se ha podido agregar la información', '');
+      },
+    });
   }
 }

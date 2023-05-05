@@ -144,7 +144,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
+          Validators.maxLength(50),
         ],
       ],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
@@ -281,27 +281,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  // getTransferent(params?: ListParams) {
-  //   params['filter.status'] = `$eq:${1}`;
-  //   params['filter.nameTransferent'] = `$ilike:${params.text}`;
-  //   // delete params.limit;
-  //   //delete params.page;
-  //   delete params['search'];
-  //   delete params.text;
-  //   this.transferentService.getAll(params).subscribe({
-  //     next: data => {
-  //       data.data.map(data => {
-  //         data.nameAndId = `${data.id} - ${data.nameTransferent}`;
-  //         return data;
-  //       });
-  //       this.transferents$ = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.transferents$ = new DefaultSelect();
-  //     },
-  //   });
-  // }
-
   replaceAccents(text: string) {
     return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
@@ -381,7 +360,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   save() {
     Swal.fire({
       title: 'Guardar Solicitud',
-      text: '¿Desea guardar la solicitud?',
+      text: '¿Desea Guardar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -461,14 +440,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Información',
-        `Seleccione un usuario para poder turnar la solicitud`
+        `Seleccione un usuario para poder turnar la solicitud!`
       );
       return;
     }
 
     Swal.fire({
       title: 'Turnar Solicitud',
-      text: '¿Desea turnar la solicitud?',
+      text: '¿Desea Turnar la solicitud?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
@@ -521,7 +500,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           if (taskResult) {
             this.loadingTurn = false;
             this.msgModal(
-              'Se turnó la solicitud con el Folio Nº '
+              'Se turnar la solicitud con el Folio Nº '
                 .concat(`<strong>${idRequest}</strong>`)
                 .concat(` al usuario ${this.userName}`),
               'Solicitud Creada',

@@ -468,6 +468,8 @@ export class VerifyComplianceTabComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       descriptionGoodSae: [null],
+      uniqueKey: [null],
+      duplicatedGood: [null],
     });
   }
 
@@ -519,8 +521,6 @@ export class VerifyComplianceTabComponent
   }
 
   setDescriptionGoodSae(descriptionInput: any) {
-    console.log(descriptionInput);
-    console.log(this.goodData['data']);
     this.goodData['data'].map((item: any) => {
       if (item.id === descriptionInput.data.id) {
         item.descriptionGoodSae = descriptionInput.text;
@@ -915,7 +915,6 @@ export class VerifyComplianceTabComponent
 
   updateGoods(body: any) {
     return new Promise((resolve, reject) => {
-      debugger;
       this.goodServices.update(body).subscribe({
         next: resp => {
           resolve(true);
