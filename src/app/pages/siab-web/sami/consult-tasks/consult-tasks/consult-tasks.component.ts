@@ -99,7 +99,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
-      State: [''],
+      State: ['null'],
       typeOfTrasnfer: [null],
     });
 
@@ -135,7 +135,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       if (filterStatus === 'null') {
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
       } else {
-        this.filterParams.getValue().addFilter('State', filterStatus);
+        this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
       }
     }
 
