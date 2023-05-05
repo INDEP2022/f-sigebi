@@ -30,6 +30,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   units: any;
   files: any;
   dispositions: any;
+  maxDate: Date;
   functionarys = new DefaultSelect();
 
   idUser: number;
@@ -62,6 +63,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     this.formsChanges();
     this.getTransferent();
     this.getRegionalDelegation();
+    this.maxDate = new Date();
+    this.maxDate.setDate(this.maxDate.getDate());
     //this.call();
   }
 
