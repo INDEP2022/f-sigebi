@@ -74,7 +74,16 @@ export class FormFieldsToParamsService {
           }
           if (key != 'from' && key != 'to') {
             // Agregar campos a filtrar
-            clearObj[pref + '.' + key] = `${prefEqual}${encodeURI(element)}`;
+
+            //clearObj[pref + '.' + key] = `${prefEqual}${encodeURI(element)}`;
+            clearObj[pref + '.' + key] = `${prefEqual}${
+              key == 'officeNumber' ? element : encodeURI(element)
+            }`;
+            console.log(
+              `${prefEqual}${
+                key == 'officeNumber' ? element : encodeURI(element)
+              }`
+            );
           }
         }
       }
