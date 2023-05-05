@@ -16,8 +16,7 @@ import { PreviewDocumentsComponent } from '../preview-documents/preview-document
 
 const Tiff = require('tiff.js');
 const LOADING_GIF = 'assets/images/loader-button.gif  ';
-const NO_IMAGE_FOUND =
-  'https://samyak.co.in/wp-content/uploads/2021/04/image.jpg';
+const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
 @Component({
   selector: 'tiff-viewer',
   standalone: true,
@@ -118,8 +117,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     if (ext == 'pdf') {
       mimeType = 'application/pdf';
       this.isDocument = true;
-      this.imgDocument =
-        'https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/27_Pdf_File_Type_Adobe_logo_logos-512.png';
+      this.imgDocument = 'assets/images/documents-icons/pdf.png';
     } else {
       this.isDocument = false;
     }

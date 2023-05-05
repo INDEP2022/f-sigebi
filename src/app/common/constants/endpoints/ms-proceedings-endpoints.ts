@@ -12,4 +12,5 @@ export enum ProceedingsEndpoints {
   UpdateVaultByKeyProceeding = 'updateSafeByAct',
   UpdateWarehouseByProceedingNumber = 'updateWarehouse',
   UpdateWarehouseByKeyProceeding = 'updateWarehouseByAct',
+  DeleteProceedinGood = 'aplication/pbDelete',
 }
