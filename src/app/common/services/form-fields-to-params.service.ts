@@ -77,13 +77,10 @@ export class FormFieldsToParamsService {
 
             //clearObj[pref + '.' + key] = `${prefEqual}${encodeURI(element)}`;
             clearObj[pref + '.' + key] = `${prefEqual}${
-              key == 'officeNumber' ? element : encodeURI(element)
+              key == 'officeNumber' || key == 'issue'
+                ? element
+                : encodeURI(element)
             }`;
-            console.log(
-              `${prefEqual}${
-                key == 'officeNumber' ? element : encodeURI(element)
-              }`
-            );
           }
         }
       }
