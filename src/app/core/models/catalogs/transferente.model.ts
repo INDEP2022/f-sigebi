@@ -9,6 +9,7 @@ export interface ITransferente {
   typeTransferent?: string;
   version?: number;
   status?: string;
+  type?: string;
   dateBegOperation?: string;
   dateFinalOperation?: string;
   assignor?: string;
