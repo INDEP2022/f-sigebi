@@ -380,7 +380,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       requestId: this.request.id,
       goodId: good.goodId,
       senderName: this.request.nameOfOwner,
-      clarificationStatus: null,
+      clarificationStatus: 'IMPROCEDENCIA',
       clarificationTypeId: 2,
     };
 
