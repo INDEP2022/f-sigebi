@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -57,7 +58,7 @@ export class ClassificationAssetsTabComponent
   paramsLvl2 = new BehaviorSubject<ListParams>(new ListParams());
   paramsLvl3 = new BehaviorSubject<ListParams>(new ListParams());
   paramsLvl4 = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: any[] = [];
+  paragraphs = new LocalDataSource();
   assetsId: string | number;
   detailArray: IFormGroup<IGood>;
   goodObject: any;
@@ -172,7 +173,7 @@ export class ClassificationAssetsTabComponent
         });
 
         Promise.all(result).then(data => {
-          this.paragraphs = resp.data;
+          this.paragraphs.load(resp.data);
           this.totalItems = resp.count;
           this.loading = false;
         });
@@ -235,50 +236,27 @@ export class ClassificationAssetsTabComponent
     });
   }
 
-  /*getData() {
-    if (this.idRequest) {
-      this.loading = true;
-      this.params.getValue()['filter.requestId'] = this.idRequest;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          const info = data.data.map(items => {
-            const fraction: any = items.fractionId;
-            this.idFraction = fraction.code;
-            items.fractionId = fraction.description;
-            return items;
-          });
-
-          const filtergoodType = info.map(async item => {
-            const goodType: any = await this.getGoodType(item.goodTypeId);
-            item['goodTypeId'] = goodType;
-            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-            if (item['stateConservation'] == 1)
-              item['stateConservation'] = 'BUENO';
-            if (item['stateConservation'] == 2)
-              item['stateConservation'] = 'MALO';
-            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-            return item;
-          });
-
-          Promise.all(filtergoodType).then(data => {
-            this.paragraphs = data;
-            this.totalItems = this.paragraphs.length;
-            this.loading = false;
-          });
-        },
-        error: error => {
-          this.loading = false;
-        },
-      });
-    }
-  } */
-
   getGoodType(goodTypeId: string | number) {
     this.showHideErrorInterceptorService.showHideError(false);
     return new Promise((resolve, reject) => {
       this.typeRelevantSevice.getById(goodTypeId).subscribe(data => {
         resolve(data.description);
+      });
+    });
+  }
+
+  updateTableInfo(event: any) {
+    this.paragraphs.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === event.id) {
+          for (const key in event) {
+            console.log(key);
+            if (key != 'id') {
+              item[key] = event[key];
+            }
+          }
+        }
+        this.paragraphs.load(data);
       });
     });
   }
@@ -596,9 +574,5 @@ export class ClassificationAssetsTabComponent
       fractionId: [null],
       saeMeasureUnit: [null],
     });
-  }
-
-  updateTableInfo(event: any) {
-    console.log('clasifications assets ', event);
   }
 }

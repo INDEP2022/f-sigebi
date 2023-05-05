@@ -24,6 +24,8 @@ export interface TokenInfoModel {
   email: string;
   department: string;
   employeetype: string;
+  puesto: string;
+  username: string;
   cargonivel1: string;
   cargonivel2: string;
   cargonivel3: string;

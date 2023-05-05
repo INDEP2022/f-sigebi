@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -49,6 +51,8 @@ export class DocumentationGoodsComponent
     this.dataTable = value;
   }
 
+  @Output() loadingDialog = new EventEmitter<boolean>();
+
   constructor(
     private documentService: DocumentsDictumStatetMService,
     private modalService: BsModalService
@@ -56,18 +60,7 @@ export class DocumentationGoodsComponent
     super();
   }
 
-  ngOnInit(): void {
-    // this.loading = true;
-    // this.data1
-    //   .onChanged()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(change => {
-    //     this.getDocuments();
-    //   });
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getDocuments());
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes && changes['data']) {
@@ -77,27 +70,12 @@ export class DocumentationGoodsComponent
     }
   }
 
-  // getDocuments() {
-  //   this.documentService.getAll(new ListParams()).subscribe({
-  //     next: data => {
-  //       this.dataTable = data.data;
-  //       this.data.load(this.dataTable);
-  //       this.totalItems = data.count || 0;
-  //       this.data.refresh();
-  //       this.loading = false;
-  //     },
-  //     error: data => {
-  //       this.loading = false;
-  //     },
-  //   });
-  // }
-
   openForm(documentsDictumXStateM?: IDocumentsDictumXStateM) {
     let config: ModalOptions = {
       initialState: {
         documentsDictumXStateM,
         callback: (next: boolean) => {
-          // if (next) this.getDocuments();
+          if (next) this.loadingDialog.emit(next);
         },
       },
       class: 'modal-lg modal-dialog-centered',

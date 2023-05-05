@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -49,6 +51,8 @@ export class CopyDocumentationGoodsComponent
     this.dataTable = value;
   }
 
+  @Output() loadingDialog = new EventEmitter<boolean>();
+
   constructor(
     private modalService: BsModalService,
     private copiesOfficialOpinionService: CopiesOfficialOpinionService
@@ -64,40 +68,14 @@ export class CopyDocumentationGoodsComponent
     }
   }
 
-  ngOnInit(): void {
-    // this.loading = true;
-    // this.data
-    //   .onChanged()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(x => {
-    //     this.getData();
-    //   });
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getData());
-  }
-
-  getData() {
-    // this.copiesOfficialOpinionService.getAll(new ListParams()).subscribe({
-    //   next: data => {
-    //     this.dataTable = data.data;
-    //     this.data.load(this.dataTable);
-    //     this.totalItems = data.count || 0;
-    //     this.data.refresh();
-    //     this.loading = false;
-    //   },
-    //   error: err => {
-    //     this.loading = false;
-    //   },
-    // });
-  }
+  ngOnInit(): void {}
 
   openForm(copiesOfficial?: ICopiesOfficialOpinion) {
     let config: ModalOptions = {
       initialState: {
         copiesOfficial,
         callback: (next: boolean) => {
-          // if (next) this.getData();
+          if (next) this.loadingDialog.emit(true);
         },
       },
       class: 'modal-lg modal-dialog-centered',
