@@ -160,7 +160,10 @@ export class RegistrationOfRequestsComponent
     this.requestHelperService.currentExpedient.subscribe({
       next: async resp => {
         if (resp === true) {
-          const expedient = await this.getAsyncRequestById();
+          const request: any = await this.getAsyncRequestById();
+          this.registRequestForm.controls['recordId'].setValue(
+            request.recordId
+          );
           this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }
