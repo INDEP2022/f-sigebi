@@ -24,14 +24,14 @@ import { LIST_REPORTS_COLUMN } from './list-reports-column';
 })
 export class PrintReportModalComponent extends BasePage implements OnInit {
   idDoc: any;
-  idTypeDoc: any;
+  idTypeDoc: any; //ID Tipo de documento
   idReportAclara: any; //ID del reporte de Oficio_Aclaracion
   sign: boolean = true;
   date: string = '';
   signatories: ISignatories[] = [];
   valuesSign: ISignatories;
   requestInfo: IRequest;
-  dataClarifications: IChatClarifications;
+  dataClarifications2: IChatClarifications;
 
   src = '';
   isPdfLoaded = false;
@@ -123,15 +123,63 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
     this.signParams();
 
-    if (this.idReportAclara != null) {
-      let linkDoc2: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
-      this.src = linkDoc2;
-      console.log('ID del reporte Oficio_Aclaracion', this.idReportAclara);
-      console.log('url del reporte', linkDoc2);
-      return;
-    } else {
-      let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
-      this.src = linkDoc1;
+    //Condición para saber que ID tipo de documento lelga
+    switch (this.idTypeDoc) {
+      case 50: {
+        console.log('Tipo 50, Aclaración');
+        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+        break;
+      }
+      case 104: {
+        console.log('Tipo 104, OficioAclaracionTransferente');
+        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=OficioAclaracionTransferente.jasper&ID_DOCUMENTO=24`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+        break;
+      }
+      case 111: {
+        console.log('Tipo 111, OficioImprocedencia');
+        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+        break;
+      }
+      case 211: {
+        console.log('Tipo 211, AclaracionAsegurados');
+        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AclaracionAsegurados.jasper&ID_DOCUMENTO=2`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+
+        break;
+      }
+      case 212: {
+        console.log('Tipo 212, AclaracionComercioExterior');
+        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AclaracionComercioExterior.jasper&ID_DOCUMENTO=2`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+        break;
+      }
+      case 216: {
+        console.log('Tipo 216, ImprocedenciaTransferentesVoluntarias');
+        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=ImprocedenciaTransferentesVoluntarias.jasper&ID_DOCUMENTO=3`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+        break;
+      }
+      case 213: {
+        console.log('Tipo 213, AclaracionTransferentesVoluntarias');
+        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=2`;
+        this.src = linkDoc;
+        console.log('URL reporte ', linkDoc);
+        break;
+      }
+
+      default: {
+        console.log('No hay tipo de documento');
+        break;
+      }
     }
   }
 
@@ -433,10 +481,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     );
   }
 
+  //Modificar
   firm() {
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
-      const id = this.idDoc; //ID solicitud
+      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'DictamenProcendecia';
       const formData: Object = {
         id: this.idDoc,
@@ -445,25 +494,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       };
       console.log(formData);
 
-      this.gelectronicFirmService
-        .firmDocument(id, nameTypeReport, formData)
-        .subscribe({
-          next: data => (console.log('correcto', data), this.handleSuccess()),
-          error: error => {
-            if (error.status == 200) {
-              this.msjCheck = true;
-              console.log('correcto');
-              this.alert('success', 'Firmado correctamente', '');
-            } else {
-              this.alert(
-                'info',
-                'Error al generar firma electrónica',
-                error.error + '. Verificar datos del firmante'
-              );
-              this.updateStatusSigned();
-            }
-          },
-        });
+      this.firmReport(requestInfo, nameTypeReport, formData);
     }
     //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
     if (this.idTypeDoc == 111) {
@@ -476,38 +507,47 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       };
       console.log(formData);
 
-      this.gelectronicFirmService
-        .firmDocument(requestInfo.id, nameTypeReport, formData)
-        .subscribe({
-          next: data => (console.log('correcto', data), this.handleSuccess()),
-          error: error => {
-            if (error.status == 200) {
-              this.msjCheck = true;
-              console.log('correcto');
-              this.alert('success', 'Firmado correctamente', '');
-              this.updateStatusclarifications();
-            } else {
-              this.alert(
-                'info',
-                'Error al generar firma electrónic',
-                error.error + '. Verificar datos del firmante'
-              );
-              this.updateStatusSigned();
-            }
-          },
-        });
+      this.firmReport(requestInfo, nameTypeReport, formData);
     }
   }
 
+  //Método para plasmar firma en reporte generado
+  firmReport(
+    requestInfo?: IRequest,
+    nameTypeReport?: string,
+    formData?: Object
+  ) {
+    this.gelectronicFirmService
+      .firmDocument(requestInfo.id, nameTypeReport, formData)
+      .subscribe({
+        next: data => (console.log('correcto', data), this.handleSuccess()),
+        error: error => {
+          if (error.status == 200) {
+            this.msjCheck = true;
+            console.log('correcto');
+            this.alert('success', 'Firmado correctamente', '');
+            this.updateStatusclarifications();
+          } else {
+            this.alert(
+              'info',
+              'Error al generar firma electrónic',
+              error.error + '.2 Verificar datos del firmante'
+            );
+            this.updateStatusSigned();
+          }
+        },
+      });
+  }
+
   updateStatusclarifications() {
-    console.log('Información de la notificacion: ', this.dataClarifications);
+    console.log('Información de la notificacion: ', this.dataClarifications2);
     const formData: Object = {
-      id: this.dataClarifications.id,
+      id: this.dataClarifications2.id,
       clarificationStatus: 'A_ACLARACION',
     };
 
     this.chatClarificationsService
-      .update(this.dataClarifications.id, formData)
+      .update(this.dataClarifications2.id, formData)
       .subscribe({
         next: data => {
           //this.onLoadToast('success', 'Aclaración guardada correctamente', '');

@@ -335,7 +335,7 @@ export class ReadInfoGoodComponent
             this.onLoadToast(
               'error',
               'Error',
-              `El formulario no se puedo actualizar ${error.error.message}`
+              `El formulario no se puede actualizar ${error.error.message}`
             );
           },
         });

@@ -76,6 +76,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    console.log('información de request', this.infoRequest);
     //this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.dictamenSeq();
@@ -695,4 +696,7 @@ export class NotifyAssetsImproprietyFormComponent
   close() {
     this.modalRef.hide();
   }
+
+  tipoTransferente = 'SAT_SAE';
+  tipoNotificacion = 2;
 }
