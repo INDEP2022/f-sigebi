@@ -62,7 +62,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   msjCheck: boolean = false;
   formLoading: boolean = true;
   urlBaseReport =
-    'http://sigebimsdev.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=';
+    'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=';
 
   constructor(
     public modalService: BsModalService,
@@ -137,7 +137,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       }
       case 104: {
         console.log('Tipo 104, OficioAclaracionTransferente');
-        let linkDoc: string = `${this.urlBaseReport}OficioAclaracionTransferente.jasper&ID_DOCUMENTO=24`;
+        let linkDoc: string = `${this.urlBaseReport}OficioAclaracionTransferente.jasper&ID_DOCUMENTO=${this.idDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
@@ -503,6 +503,70 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     if (this.idTypeDoc == 111) {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'OficioImprocedencia';
+      const formData: Object = {
+        id: requestInfo.id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+      console.log(formData);
+
+      this.firmReport(requestInfo, nameTypeReport, formData);
+    }
+    if (this.idTypeDoc == 104) {
+      const requestInfo = this.requestInfo; //ID solicitud
+      const nameTypeReport = 'OficioAclaracionTransferente';
+      const formData: Object = {
+        id: requestInfo.id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+      console.log(formData);
+
+      this.firmReport(requestInfo, nameTypeReport, formData);
+    }
+
+    if (this.idTypeDoc == 212) {
+      const requestInfo = this.requestInfo; //ID solicitud
+      const nameTypeReport = 'AclaracionComercioExterior';
+      const formData: Object = {
+        id: requestInfo.id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+      console.log(formData);
+
+      this.firmReport(requestInfo, nameTypeReport, formData);
+    }
+
+    if (this.idTypeDoc == 211) {
+      const requestInfo = this.requestInfo; //ID solicitud
+      const nameTypeReport = 'AclaracionAsegurados';
+      const formData: Object = {
+        id: requestInfo.id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+      console.log(formData);
+
+      this.firmReport(requestInfo, nameTypeReport, formData);
+    }
+
+    if (this.idTypeDoc == 213) {
+      const requestInfo = this.requestInfo; //ID solicitud
+      const nameTypeReport = 'AclaracionTransferentesVoluntarias';
+      const formData: Object = {
+        id: requestInfo.id,
+        firma: true,
+        tipoDocumento: nameTypeReport,
+      };
+      console.log(formData);
+
+      this.firmReport(requestInfo, nameTypeReport, formData);
+    }
+
+    if (this.idTypeDoc == 216) {
+      const requestInfo = this.requestInfo; //ID solicitud
+      const nameTypeReport = 'ImprocedenciaTransferentesVoluntarias';
       const formData: Object = {
         id: requestInfo.id,
         firma: true,
