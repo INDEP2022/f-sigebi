@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
@@ -150,6 +151,12 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
     filter: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
   issue: {
     title: 'Asunto',
@@ -224,6 +231,12 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
     filter: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
   observation: {
     title: 'Observaciones',
@@ -262,18 +275,36 @@ export const WORK_MAILBOX_COLUMNS2 = {
     sort: false,
     filter: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
   rebellionDate: {
     title: 'Fecha Rebelión',
     sort: false,
     filter: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
   takePressureDate: {
     title: 'Fecha Toma Poseción',
     sort: false,
     filter: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },
   },
   areaATurn: {
     title: 'Área a Turnar',
