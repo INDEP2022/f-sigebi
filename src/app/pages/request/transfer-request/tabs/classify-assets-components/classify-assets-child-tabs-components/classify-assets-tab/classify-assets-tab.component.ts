@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -44,6 +46,7 @@ export class ClassifyAssetsTabComponent
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
   @Input() goodSelect: any;
+  @Output() classifyChildSaveFraction?: EventEmitter<any> = new EventEmitter();
 
   classiGoodsForm: IFormGroup<IGood>; //bien
   private bsModalRef: BsModalRef;
@@ -106,8 +109,6 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    //bienes selecionados
-    //console.log(this.requestObject);
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
@@ -490,12 +491,13 @@ export class ClassifyAssetsTabComponent
             const listReverse = this.listAdvancedFractions.reverse();
             //estable los id para ser visualizados
             this.setFractions(listReverse);
-            this.advSearch = false;
           }
 
-          if (this.goodObject != null) {
+          if (this.goodObject != null && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieSection'].setValue(id);
           }
+
+          this.advSearch = false;
         },
         error: error => {},
       });
@@ -523,7 +525,11 @@ export class ClassifyAssetsTabComponent
             this.getSection(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && this.good.ligieChapter) {
+          if (
+            this.goodObject &&
+            this.good.ligieChapter &&
+            this.advSearch == false
+          ) {
             this.classiGoodsForm.controls['ligieChapter'].setValue(
               this.good.ligieChapter
             );
@@ -558,7 +564,7 @@ export class ClassifyAssetsTabComponent
             this.getChapter(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject) {
+          if (this.goodObject && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieLevel1'].setValue(
               this.good.ligieLevel1
             );
@@ -589,7 +595,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel1(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject) {
+          if (this.goodObject && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieLevel2'].setValue(
               this.good.ligieLevel2
             );
@@ -620,7 +626,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel2(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject) {
+          if (this.goodObject && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieLevel3'].setValue(
               this.good.ligieLevel3
             );
@@ -689,6 +695,12 @@ export class ClassifyAssetsTabComponent
 
   matchLevelFraction(res: any) {
     this.advSearch = true;
+    this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+    this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+    this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+    this.classiGoodsForm.controls['ligieSection'].setValue(null);
     this.listAdvancedFractions = [];
     switch (Number(res.level)) {
       case 5:
@@ -756,16 +768,26 @@ export class ClassifyAssetsTabComponent
 
     //se modifica el estadus del bien
     goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-
+    let goodResult: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      const newGood: any = await this.createGood(goods);
-      this.childSaveAction = newGood;
+      goodResult = await this.createGood(goods);
+      //manda a guardar los campos de los bienes, domicilio, inmueble
+      if (this.process != 'classify-assets') {
+        this.childSaveAction = goodResult.saved;
+      }
     } else {
-      const updateGood: any = await this.updateGood(goods);
-      this.childSaveAction = updateGood;
+      goodResult = await this.updateGood(goods);
+      //manda a actualizar los campos de los bienes, domicilio, inmueble
+      if (this.process != 'classify-assets') {
+        this.childSaveAction = goodResult.saved;
+      }
     }
+
+    /*if(this.process === 'classify-assets'){
+      this.classifyChildSaveFraction.emit(goodResult)
+    }*/
     setTimeout(() => {
       this.refreshTable(true);
     }, 5000);
@@ -785,9 +807,10 @@ export class ClassifyAssetsTabComponent
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            resolve(true);
+            resolve({ saved: true, result: data });
           },
           error: error => {
+            resolve({ saved: false });
             this.onLoadToast(
               'error',
               'Bien no creado',
@@ -818,15 +841,10 @@ export class ClassifyAssetsTabComponent
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            //this.childSaveAction = true
-            //this.refreshTable(true);
-
-            /* setTimeout(() => {
-              this.refreshTable(true);
-            }, 500); */
-            resolve(true);
+            resolve({ saved: true, result: data });
           },
           error: error => {
+            resolve({ saved: false });
             this.onLoadToast(
               'error',
               'Bien no creado',
