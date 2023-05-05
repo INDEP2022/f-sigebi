@@ -234,7 +234,9 @@
             <input
               class="form-control"
               formControlName="expedientDate"
-              bsDatepicker />
+              bsDatepicker
+              ngModel
+              [maxDate]="maxDate" />
           </form-field>
         </div>
 
