@@ -23,6 +23,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 //Services
+import { format } from 'date-fns';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -181,33 +182,44 @@ export class QuarterlyAccumulatedAssetsComponent
   }
 
   confirm(): void {
-    this.siabService.fetchReportBlank('blank').subscribe({
-      next: response => {
-        console.log('información del blob', response);
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (response: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
-      },
-    });
+    const { delegation, subdelegation, fromMonth, toMonth } = this.form.value;
+    this.loading = true;
+    this.siabService
+      .fetchReport('RGERDIRBIACUMTRIM', {
+        pf_anioini: format(fromMonth, 'yyyy-MM-dd'),
+        pf_anio_fin: format(toMonth, 'yyyy-MM-dd'),
+        pn_deleg: delegation,
+        pn_subdeleg: subdelegation,
+      })
+      .subscribe({
+        next: response => {
+          this.loading = false;
+          console.log('información del blob', response);
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (response: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        },
+        error: err => {
+          this.loading = false;
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          this.onLoadToast('error', 'Error', error);
+        },
+      });
   }
 }
