@@ -25,8 +25,7 @@ export const ASSETS_COLUMNS = {
     title: 'Fracción',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: IFraccion) =>
-      value ? value.description : '',
+    valuePrepareFunction: (value: IFraccion) => (value ? value.code : ''),
   },
   quantity: {
     title: 'Cantidad de la Transferente',

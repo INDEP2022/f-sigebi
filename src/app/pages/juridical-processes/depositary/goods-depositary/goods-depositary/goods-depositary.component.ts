@@ -165,7 +165,7 @@ export class GoodsDepositaryComponent
   async getDelegations(paramsData: ListParams) {
     const params = new FilterParams();
     params.removeAllFilters();
-    params['sortBy'] = 'description:DESC';
+    params['sortBy'] = 'description:ASC';
     let subscription = this.svGoodsDepositaryService
       .getDelegations(paramsData)
       .subscribe({
@@ -197,7 +197,7 @@ export class GoodsDepositaryComponent
     paramsData['filter.delegationNumber'] =
       '$eq:' + this.form.get('delegacion').value;
     paramsData['filter.description'] = '$ilike:' + paramsData['search'];
-    paramsData['sortBy'] = 'description:DESC';
+    paramsData['sortBy'] = 'description:ASC';
     delete paramsData['text'];
     let subscription = this.svGoodsDepositaryService
       .getSubDelegations(paramsData)
@@ -275,7 +275,7 @@ export class GoodsDepositaryComponent
 
   async getGoodType(paramsData: ListParams) {
     paramsData['filter.nameGoodType'] = '$ilike:' + paramsData['search'];
-    paramsData['sortBy'] = 'nameGoodType:DESC';
+    paramsData['sortBy'] = 'nameGoodType:ASC';
     delete paramsData['text'];
     let subscription = this.svGoodsDepositaryService
       .getGoodType(paramsData)
@@ -307,7 +307,7 @@ export class GoodsDepositaryComponent
     }
     paramsData['filter.idGoodType'] = '$eq:' + this.form.get('tipoBien').value;
     paramsData['filter.nameGoodType'] = '$ilike:' + paramsData['search'];
-    paramsData['sortBy'] = 'nameGoodType:DESC';
+    paramsData['sortBy'] = 'nameGoodType:ASC';
     delete paramsData['text'];
     let subscription = this.svGoodsDepositaryService
       .getSubTypeGood(paramsData)

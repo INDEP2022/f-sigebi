@@ -61,7 +61,7 @@ export class RequestDetailTabComponent
   contribuyenteLabel: string = 'Contribuyente y/o Indiciado';
   asuntoLabel: string = 'Asunto';
   expedienteTransLabel: string = 'Expediente Transferente/PAMA';
-  extincionDomicile: string = 'Extinción de Domicilio';
+  extincionDomicile: string = 'Extinción de Dominio';
   tipoTransferenteLabel: string = 'Tipo Transferente';
   notasLabel: string = 'Notas Entidad Transferente';
   observaciones: string = 'Observaciones';
