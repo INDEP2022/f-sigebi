@@ -660,8 +660,8 @@ export class NotificationAssetsTabComponent
               this.typeClarification = 2;
               this.initializeFormclarification(notification);
             }
-
-            this.getRequest();
+            //Empieza a llamar modal de ACLARACIONES
+            this.getRequest(this.typeClarification);
           } else {
             this.onLoadToast(
               'info',
@@ -676,23 +676,29 @@ export class NotificationAssetsTabComponent
             this.requestData.transferent.type == 'A' ||
             this.requestData.transferent.type == 'CE'
           ) {
+            const type = this.requestData.transferent.type;
+            const request = this.requestData;
+
+            //Abre formulario improcedencias corta para SAT_SAE y PGR_SAR
             let config = {
               ...MODAL_CONFIG,
               class: 'modal-lg modal-dialog-centered',
             };
-            const request = this.requestData;
+
             config.initialState = {
               notification,
               request,
+              type,
               callback: (next: boolean) => {},
             };
-
             this.modalService.show(
               InappropriatenessPgrSatFormComponent,
               config
             );
           } else {
             const request = this.requestData;
+
+            //Abre formulario para improcedencia MANUAL(NO)
             let config = {
               ...MODAL_CONFIG,
               class: 'modal-lg modal-dialog-centered',
@@ -898,17 +904,23 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  getRequest() {
+  getRequest(typeClarification?: number) {
+    const typeClarifications = typeClarification;
     this.paramsRequest.getValue()['filter.id'] = this.idRequest;
     this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
       next: response => {
         const infoRequest = response.data[0];
-        this.openModal(infoRequest);
+        this.openModal(infoRequest, typeClarifications, typeClarification);
       },
     });
   }
 
-  openModal(infoRequest?: IRequest, idClarification?: number): void {
+  openModal(
+    infoRequest?: IRequest,
+    idClarification?: number,
+    typeClarification?: number
+  ): void {
+    const typeClarifications = this.typeClarification;
     const dataClarifications2 = this.dataNotificationSelected;
     const rejectedID = this.valueRejectNotificationId;
     const goodValue = this.valueGood;
@@ -929,6 +941,7 @@ export class NotificationAssetsTabComponent
         isInterconnection: this.byInterconnection,
         idRequest: this.idRequest,
         infoRequest,
+        typeClarifications,
         callback: (next: boolean, idGood: number) => {
           if (next) {
             this.checkInfoNotification(idGood);

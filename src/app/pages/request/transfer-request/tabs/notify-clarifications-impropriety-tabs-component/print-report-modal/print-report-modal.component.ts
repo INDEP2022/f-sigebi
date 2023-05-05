@@ -61,6 +61,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   msjCheck: boolean = false;
   formLoading: boolean = true;
+  urlBaseReport =
+    'http://sigebimsdev.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=';
 
   constructor(
     public modalService: BsModalService,
@@ -99,6 +101,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
+    console.log('ID tipo de documento', this.idTypeDoc);
     console.log('idReportAclara', this.idReportAclara);
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
@@ -127,28 +130,28 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     switch (this.idTypeDoc) {
       case 50: {
         console.log('Tipo 50, Aclaración');
-        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 104: {
         console.log('Tipo 104, OficioAclaracionTransferente');
-        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=OficioAclaracionTransferente.jasper&ID_DOCUMENTO=24`;
+        let linkDoc: string = `${this.urlBaseReport}OficioAclaracionTransferente.jasper&ID_DOCUMENTO=24`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 111: {
         console.log('Tipo 111, OficioImprocedencia');
-        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Oficio_Aclaracion.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
+        let linkDoc: string = `${this.urlBaseReport}OficioImprocedencia.jasper&ID_DOCUMENTO=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
-        console.log('URL reporte ', linkDoc);
+        console.log('URL reporte -> ', linkDoc);
         break;
       }
       case 211: {
         console.log('Tipo 211, AclaracionAsegurados');
-        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AclaracionAsegurados.jasper&ID_DOCUMENTO=2`;
+        let linkDoc: string = `${this.urlBaseReport}AclaracionAsegurados.jasper&ID_DOCUMENTO=${this.idDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
 
@@ -156,28 +159,28 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       }
       case 212: {
         console.log('Tipo 212, AclaracionComercioExterior');
-        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AclaracionComercioExterior.jasper&ID_DOCUMENTO=2`;
+        let linkDoc: string = `${this.urlBaseReport}AclaracionComercioExterior.jasper&ID_DOCUMENTO=${this.idDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 216: {
         console.log('Tipo 216, ImprocedenciaTransferentesVoluntarias');
-        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=ImprocedenciaTransferentesVoluntarias.jasper&ID_DOCUMENTO=3`;
+        let linkDoc: string = `${this.urlBaseReport}ImprocedenciaTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 213: {
         console.log('Tipo 213, AclaracionTransferentesVoluntarias');
-        let linkDoc: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=2`;
+        let linkDoc: string = `${this.urlBaseReport}AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
 
       default: {
-        console.log('No hay tipo de documento');
+        console.log('No hay ID tipo de documento');
         break;
       }
     }

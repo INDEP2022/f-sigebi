@@ -226,20 +226,17 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3" *ngIf="!withDocumentation">
-        <confirm-button
-          [disabled]="inappropriatenessForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+      <div class="m-3">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
-      <div class="m-3" *ngIf="withDocumentation">
+      <!-- <div class="m-3" *ngIf="withDocumentation">
         <confirm-button
           [disabled]="clarificationForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
-      </div>
+      </div> -->
 
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
