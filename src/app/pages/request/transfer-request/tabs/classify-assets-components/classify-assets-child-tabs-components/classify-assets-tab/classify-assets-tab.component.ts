@@ -774,25 +774,26 @@ export class ClassifyAssetsTabComponent
 
     //se modifica el estadus del bien
     goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-
+    let goodResult: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
-      const newGood: any = await this.createGood(goods);
+      goodResult = await this.createGood(goods);
       //manda a guardar los campos de los bienes, domicilio, inmueble
       if (this.process != 'classify-assets') {
-        this.childSaveAction = newGood;
+        this.childSaveAction = goodResult.saved;
       }
     } else {
-      const updateGood: any = await this.updateGood(goods);
+      goodResult = await this.updateGood(goods);
       //manda a actualizar los campos de los bienes, domicilio, inmueble
       if (this.process != 'classify-assets') {
-        this.childSaveAction = updateGood;
+        this.childSaveAction = goodResult.saved;
       }
     }
-    /* if(this.process === 'classify-assets'){
-      this.classifyChildSaveFraction.emit(goods)
-    } */
+
+    /*if(this.process === 'classify-assets'){
+      this.classifyChildSaveFraction.emit(goodResult)
+    }*/
     setTimeout(() => {
       this.refreshTable(true);
     }, 5000);
@@ -812,9 +813,10 @@ export class ClassifyAssetsTabComponent
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            resolve(true);
+            resolve({ saved: true, result: data });
           },
           error: error => {
+            resolve({ saved: false });
             this.onLoadToast(
               'error',
               'Bien no creado',
@@ -845,9 +847,10 @@ export class ClassifyAssetsTabComponent
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
-            resolve(true);
+            resolve({ saved: true, result: data });
           },
           error: error => {
+            resolve({ saved: false });
             this.onLoadToast(
               'error',
               'Bien no creado',

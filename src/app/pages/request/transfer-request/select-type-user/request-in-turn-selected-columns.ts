@@ -1,5 +1,5 @@
 export const TURN_SELECTED_COLUMNS = {
-  firstName: {
+  fullName: {
     title: 'Usuario',
     type: 'string',
     sort: false,
@@ -8,12 +8,12 @@ export const TURN_SELECTED_COLUMNS = {
     title: 'Correo electrónico',
     type: 'string',
     sort: false,
-  },
+  } /*,
   employeeType: {
     title: 'Tipo Usuario',
     type: 'string',
     sort: false,
-  },
+  },*/,
 };
 
 export const RETURN_USER_SELECTED_COLUMNS = {
@@ -22,7 +22,7 @@ export const RETURN_USER_SELECTED_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  firstName: {
+  fullName: {
     title: 'Nombre de Usuario',
     type: 'string',
     sort: false,

@@ -100,6 +100,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
+        resp.data.map((item: any) => {
+          const fullName = item.firstName + ' ' + item.lastName;
+          item['fullName'] = fullName;
+        });
+
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
         this.loading = false;
@@ -153,6 +158,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     this.userProcessService.getAllUsersWithRol(filter).subscribe({
       next: resp => {
         console.log(resp);
+        resp.data.map((item: any) => {
+          const fullName = item.firstName + ' ' + item.lastName;
+          item['fullName'] = fullName;
+        });
+
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
         this.loading = false;
