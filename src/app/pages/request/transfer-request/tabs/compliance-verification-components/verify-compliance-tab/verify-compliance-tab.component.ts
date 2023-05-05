@@ -467,6 +467,7 @@ export class VerifyComplianceTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      fractionId: [null],
       descriptionGoodSae: [null],
       uniqueKey: [null],
       duplicatedGood: [null],
