@@ -100,24 +100,35 @@ export class QueryRelatedPaymentsDepositoriesComponent
   // Errores de Sirsae
   errorsSirsae: any[] = [];
   screenKey: string = 'FCONDEPODISPAGOS';
+  origin: string = null;
+  noBienParams: number = null;
 
   constructor(
     private fb: FormBuilder,
-    private activateRoute: ActivatedRoute,
     private svQueryRelatedPaymentsService: QueryRelatedPaymentsService,
     private datePipe: DatePipe,
     private excelService: ExcelService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.noBienParams = params['goodNumber']
+          ? Number(params['goodNumber'])
+          : null;
+        this.origin = params['origin'] ?? null;
+        console.log(params);
+      });
     this.errorsSirsae = [];
     this.loadingSirsaeProcess = false;
     this.loadingGoodAccount = false;
     this.prepareForm();
-    const id = this.activateRoute.snapshot.paramMap.get('id');
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (id) {
       if (!isNaN(Number(id))) {
         this.noBienReadOnly = Number(id);
@@ -741,5 +752,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
       dataSet.push(newObj);
     });
     return dataSet;
+  }
+
+  goBack() {
+    if (this.origin == 'FCONDEPOCONCILPAG') {
+      this.router.navigate([
+        '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments/' +
+          this.noBienParams,
+      ]);
+    }
   }
 }
