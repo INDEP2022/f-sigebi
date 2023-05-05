@@ -566,6 +566,7 @@ export interface IGood {
   color?: string;
   doorsNumber?: number;
   destinationRedress?: number;
+  fractionCode?: string;
   val1?: string;
   val2?: string;
   val3?: string;

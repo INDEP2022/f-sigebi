@@ -65,8 +65,11 @@ export class QueryRelatedPaymentsService {
     let valGood: valorBien = {
       nomPantall: screenKey,
       numBien: goodNumber,
+      cveContrato: '',
+      depositario: '',
+      desc: '',
     };
-    this.svNumBienShare.SharingNumbienData = valGood;
+    //this.svNumBienShare.SharingNumbienData = valGood;
     console.log(
       this.svNumBienShare.SharingNumbien,
       valGood,
