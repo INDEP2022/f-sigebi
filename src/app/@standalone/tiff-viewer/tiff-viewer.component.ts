@@ -16,8 +16,7 @@ import { PreviewDocumentsComponent } from '../preview-documents/preview-document
 
 const Tiff = require('tiff.js');
 const LOADING_GIF = 'assets/images/loader-button.gif  ';
-const NO_IMAGE_FOUND =
-  'https://samyak.co.in/wp-content/uploads/2021/04/image.jpg';
+const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
 @Component({
   selector: 'tiff-viewer',
   standalone: true,
