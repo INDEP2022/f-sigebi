@@ -28,8 +28,8 @@ export class RealStateService extends HttpService {
     return this.post('real-state', good);
   }
 
-  update(id: string | number, good: IGoodRealState) {
-    const route = `real-state/${id}`;
+  update(good: IGoodRealState) {
+    const route = `real-state`;
     return this.put(route, good);
   }
 
