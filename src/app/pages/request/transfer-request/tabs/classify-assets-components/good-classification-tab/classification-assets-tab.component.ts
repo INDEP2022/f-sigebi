@@ -296,6 +296,24 @@ export class ClassificationAssetsTabComponent
     });
   }
 
+  updateTableEvent(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map((item: IGood) => {
+        /*if (item.id === event.id) {
+          console.log('bien encontrado', item);
+          item.ligieSection = event.ligiesSection;
+          item.ligieChapter = event.ligieChapter;
+          item.ligieLevel1 = event.ligieLevel1;
+          item.ligieLevel2 = event.ligieLevel2;
+          item.ligieLevel3 = event.ligieLevel3;
+          item.ligieLevel4 = event.ligieLevel4;
+          item.fractionId = event.fractionId;
+          item.fractionCode = event.fractionCode
+        }*/
+      });
+    });
+  }
+
   initForm() {
     this.detailArray = this.fb.group({
       id: [null],

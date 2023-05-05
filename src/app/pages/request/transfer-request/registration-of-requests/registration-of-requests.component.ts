@@ -158,8 +158,9 @@ export class RegistrationOfRequestsComponent
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
   associateExpedientListener() {
     this.requestHelperService.currentExpedient.subscribe({
-      next: resp => {
+      next: async resp => {
         if (resp === true) {
+          const expedient = await this.getAsyncRequestById();
           this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }

@@ -304,7 +304,6 @@ export class DetailAssetsTabComponentComponent
     if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
       this.brandId = brand;
-      console.log('inicia<>>>><<<<<>>>>>');
       this.getSubBrand(new ListParams(), brand);
     }
 
