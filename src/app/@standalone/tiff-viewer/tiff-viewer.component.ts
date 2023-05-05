@@ -118,8 +118,7 @@ export class TiffViewerComponent extends BasePage implements OnInit, OnChanges {
     if (ext == 'pdf') {
       mimeType = 'application/pdf';
       this.isDocument = true;
-      this.imgDocument =
-        'https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/27_Pdf_File_Type_Adobe_logo_logos-512.png';
+      this.imgDocument = 'assets/images/documents-icons/pdf.png';
     } else {
       this.isDocument = false;
     }
