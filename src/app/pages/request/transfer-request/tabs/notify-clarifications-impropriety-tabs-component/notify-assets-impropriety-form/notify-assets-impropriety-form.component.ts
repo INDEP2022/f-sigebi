@@ -216,7 +216,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
       console.log('Soy tipo Aclaración,', typeTransference);
-      if (this.typeClarifications == 2) {
+      if (this.typeClarifications == 2 && typeTransference != 'SAT_SAE') {
         console.log(
           'Aclaracipon tipo 2, ImprocedenciaTransferentesVoluntarias tipo 216'
         );
@@ -321,6 +321,7 @@ export class NotifyAssetsImproprietyFormComponent
         this.openReport(data); //Falta verificar información que se envia...
         //this.modalRef.content.callback(true);
         this.loading = false;
+        this.saveClarificationsAcept();
         this.close();
       },
       error: error => {
@@ -374,6 +375,7 @@ export class NotifyAssetsImproprietyFormComponent
         //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
         this.openReport(data); //Falta verificar información que se envia...
         //this.modalRef.content.callback(true);
+        this.saveClarificationsAcept();
         this.loading = false;
         this.close();
       },
@@ -430,6 +432,7 @@ export class NotifyAssetsImproprietyFormComponent
         //this.modalRef.content.callback(true);
         this.loading = false;
         this.close();
+        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
@@ -484,6 +487,7 @@ export class NotifyAssetsImproprietyFormComponent
         //this.modalRef.content.callback(true);
         this.loading = false;
         this.close();
+        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
@@ -539,6 +543,7 @@ export class NotifyAssetsImproprietyFormComponent
         //this.modalRef.content.callback(true);
         this.loading = false;
         this.close();
+        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
@@ -592,8 +597,10 @@ export class NotifyAssetsImproprietyFormComponent
         //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
         this.openReport(data); //Falta verificar información que se envia...
         //this.modalRef.content.callback(true);
+
         this.loading = false;
         this.close();
+        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
