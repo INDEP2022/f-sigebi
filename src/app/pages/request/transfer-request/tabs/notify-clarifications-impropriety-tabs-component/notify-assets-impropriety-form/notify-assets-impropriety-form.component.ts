@@ -15,11 +15,7 @@ import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquer
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  EMAIL_PATTERN,
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
 @Component({
@@ -33,8 +29,6 @@ export class NotifyAssetsImproprietyFormComponent
 {
   title: string = 'Aclaración';
   clarificationForm: FormGroup = new FormGroup({});
-  //procedenceForm: ModelForm<any>;
-  inappropriatenessForm: FormGroup = new FormGroup({});
   clarification: any;
 
   //en el caso de que una aclaracion llege sin documentacion
@@ -52,12 +46,16 @@ export class NotifyAssetsImproprietyFormComponent
   paramsReload = new BehaviorSubject<ListParams>(new ListParams());
   infoRequest: IRequest;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
 
   //Parámetros para generar el folio en el reporte
   today: Date;
   folio: IDictamenSeq;
   folioReporte: string;
+  typeDoc: string = '';
 
+  //Parámetro para detectar que tipo de aclaración es
+  typeClarifications: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -76,61 +74,118 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    //this.generateClave();
+    console.log('Tipo de aclaración... ', this.typeClarifications);
+    console.log('información de request', this.infoRequest);
+    this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
+    console.log('info request', this.infoRequest);
+    console.log('info not', this.dataClarifications2);
     this.dictamenSeq();
     this.initForm1();
-    this.initForm2();
     const applicationId = this.idRequest;
     const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
-
-    //Verifica si la solicitud tiene guardado un formulario largo en documents
-    /*this.documentService
-      .getAllfilter(applicationId, rejectNoticeId, this.params.getValue())
-      .subscribe({
-        next: res => {
-          const dataDocumentsImpro = res.data[0];
-          this.initForm2(dataDocumentsImpro); //Manda a llamar el formulario largo para asignarle valores guardados
-        },
-        error: error => {
-          this.initForm3(); //Se agregó para parchar un error deúltimo momento
-        },
-      }); */
   }
 
   initForm1(): void {
     //Trae información de la solicitud para precargar información en los formularios
-    this.requestService.getById(this.idRequest).subscribe({
+    this.paramsRequest.getValue()['filter.id'] = this.idRequest;
+    this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
       next: response => {
-        this.infoRequest = response;
+        this.infoRequest = response.data[0];
       },
     });
 
     this.clarificationForm = this.fb.group({
-      observations: [
-        this.dataClarifications2.observations,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      addresseeName: ['', [Validators.required, Validators.maxLength(50)]],
+
+      positionAddressee: [
+        '',
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(50),
+        ],
       ],
+
       senderName: [
         this.infoRequest.nameOfOwner,
         [
           Validators.pattern(STRING_PATTERN),
-          Validators.required,
+          //Validators.required,
           Validators.maxLength(50),
         ],
       ],
-      jobClarificationKey: [
-        this.dataClarifications2.chatClarification.keyClarificationPaper,
-        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
-      ],
+
       senderCharge: [
         this.infoRequest.holderCharge,
         [
           Validators.pattern(STRING_PATTERN),
-          Validators.required,
+          //Validators.required,
           Validators.maxLength(50),
         ],
       ],
+
+      consistentIn: [
+        '',
+        [
+          Validators.pattern(STRING_PATTERN),
+          //Validators.required,
+          Validators.maxLength(1000),
+        ],
+      ],
+
+      paragraphInitial: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
+      paragraphFinal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
+      ],
+
+      clarification: [
+        '',
+        [
+          Validators.pattern(STRING_PATTERN),
+          //Validators.required,
+          Validators.maxLength(1000),
+        ],
+      ],
+
+      observations: [
+        this.dataClarifications2?.observations,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+      ],
+
+      foundation: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(4000),
+        ],
+      ],
+
+      transmitterId: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
+      ],
+
+      invoiceLearned: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+
+      worthAppraisal: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
+
+      /*jobClarificationKey: [
+        this.dataClarifications2.chatClarification.keyClarificationPaper,
+        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
+      ], */
+
       userAreaCaptures: [
         this.dataClarifications2?.chatClarification?.areaUserCapture,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
@@ -138,272 +193,283 @@ export class NotifyAssetsImproprietyFormComponent
 
       webMail: [
         this.dataClarifications2?.chatClarification?.emailWeb,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.required,
+          Validators.pattern(EMAIL_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
     });
   }
 
-  initForm2(dataDocumentsImpro?: IClarificationDocumentsImpro): void {
-    this.inappropriatenessForm = this.fb.group({
-      addresseeName: [
-        dataDocumentsImpro?.managedTo,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      positionSender: [
-        dataDocumentsImpro?.positionSender,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      positionAddressee: [
-        dataDocumentsImpro?.positionAddressee,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      //Aclaración
-      jobClarificationKey: [
-        dataDocumentsImpro?.invoiceLearned,
-        [
-          Validators.pattern(KEYGENERATION_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      senderName: [
-        dataDocumentsImpro?.sender,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      clarification: [
-        dataDocumentsImpro?.clarification,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(100),
-        ],
-      ],
+  async confirm() {
+    console.log('Aclaración', this.clarificationForm.value);
+    const typeTransference = this.infoRequest.typeOfTransfer;
+    let generaXML: boolean = false;
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.dataClarifications2.chatClarification.idClarificationType == '2'
+    ) {
+      console.log('Soy tipo Aclaración de SAT_SAE y 2');
+      generaXML = true;
+    }
 
-      consistentIn: [
-        dataDocumentsImpro?.consistentIn,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(100),
-        ],
-      ],
-      paragraphInitial: [
-        dataDocumentsImpro?.paragraphInitial,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
-      paragraphFinal: [
-        dataDocumentsImpro?.paragraphFinal,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
-      //Aclaración
-      observations: [
-        this.dataClarifications2?.observations,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
-      ],
+    if (typeTransference != 'SAT_SAE' || generaXML) {
+      console.log('Soy tipo Aclaración,', typeTransference);
+      const obtainTypeDocument = await this.obtainTypeDocument(
+        false,
+        this.infoRequest
+      );
+      if (obtainTypeDocument) {
+        console.log('Tipo', this.typeDoc);
+        //Depende del tipo de documento, envia al método correspondiente
+        switch (this.typeDoc) {
+          case 'AclaracionAsegurados': {
+            console.log('Método para: ', this.typeDoc);
+            this.AclaracionAsegurados();
+            break;
+          }
+          case 'AclaracionTransferentesVoluntarias': {
+            console.log('Método para: ', this.typeDoc);
+            this.AclaracionTransferentesVoluntarias();
+            break;
+          }
+        }
+      }
+    }
 
-      userAreaCaptures: [
-        dataDocumentsImpro?.modificationUser,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
-      transmitterId: [
-        dataDocumentsImpro?.transmitterId,
-        [Validators.maxLength(15)],
-      ], // request emisora?
-      webMail: [
-        dataDocumentsImpro?.mailNotification,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
-      ],
-      senderCharge: [this.infoRequest?.holderCharge, []],
-      applicationId: [this.idRequest],
-      documentTypeId: [111],
-      clarificationStatus: 'EN_ACLARACION',
+    console.log(generaXML);
+    console.log(typeTransference);
+    if (typeTransference == 'SAT_SAE') {
+      console.log('Aclaración comercio exterior?'); //Duda
+      this.AclaracionComercioExterior();
+    }
+
+    //this.saveClarificationsAcept();
+  }
+
+  AclaracionComercioExterior() {
+    //Recupera información del usuario logeando para luego registrarlo como firmante
+    let token = this.authService.decodeToken();
+
+    //Crear objeto para generar el reporte
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.dataClarifications2.clarificationType,
+      sender: this.clarificationForm.controls['senderName'].value,
+      //foundation: ",",
+      //id: 1, //ID primaria
+      version: 1,
+      //transmitterId: ",",
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: this.folioReporte,
+      //invoiceNumber: 1,
+      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '212',
+      modificationUser: token.name,
+      //worthAppraisal: 1,
+      creationDate: new Date(),
+      //rejectNoticeId: 1,
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
+
+    this.loading = true;
+    this.documentService.createClarDocImp(modelReport).subscribe({
+      next: data => {
+        //this.onLoadToast('success','Aclaración guardada correctamente','' );
+        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+        this.openReport(data); //Falta verificar información que se envia...
+        //this.modalRef.content.callback(true);
+        this.loading = false;
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
+
+        //this.onLoadToast('error', 'No se pudo guardar', '');
+      },
     });
   }
 
-  initForm3(): void {
-    //Se agregó para parchar un error deúltimo momento
+  AclaracionAsegurados() {
+    //Recupera información del usuario logeando para luego registrarlo como firmante
+    let token = this.authService.decodeToken();
 
-    this.inappropriatenessForm = this.fb.group({
-      addresseeName: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      positionSender: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      positionAddressee: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      //Aclaración
-      jobClarificationKey: [
-        null,
-        [
-          Validators.pattern(KEYGENERATION_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      senderName: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(50),
-        ],
-      ],
-      clarification: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(100),
-        ],
-      ],
+    //Crear objeto para generar el reporte
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.dataClarifications2.clarificationType,
+      sender: this.clarificationForm.controls['senderName'].value,
+      //foundation: ",",
+      //id: 1, //ID primaria
+      version: 1,
+      //transmitterId: ",",
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: this.folioReporte,
+      //invoiceNumber: 1,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '211',
+      modificationUser: token.name,
+      //worthAppraisal: 1,
+      creationDate: new Date(),
+      //rejectNoticeId: 1,
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
 
-      consistentIn: [
-        null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-          Validators.maxLength(100),
-        ],
-      ],
-      paragraphInitial: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
-      paragraphFinal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
-      //Aclaración
-      observations: [
-        this.dataClarifications2.observations,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
-      ],
+    this.loading = true;
+    this.documentService.createClarDocImp(modelReport).subscribe({
+      next: data => {
+        //this.onLoadToast('success','Aclaración guardada correctamente','' );
+        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+        this.openReport(data); //Falta verificar información que se envia...
+        //this.modalRef.content.callback(true);
+        this.loading = false;
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
 
-      userAreaCaptures: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
-      transmitterId: [null, [Validators.maxLength(15)]], // request emisora?
-      webMail: [
-        null,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
-      ],
-      senderCharge: [this.infoRequest.holderCharge, []],
-      applicationId: [this.idRequest],
-      documentTypeId: [111],
-      clarificationStatus: 'EN_ACLARACION',
+        //this.onLoadToast('error', 'No se pudo guardar', '');
+      },
     });
   }
 
-  confirm() {
-    if (!this.withDocumentation) {
-      //Verificar si ya el formulario tiene información
+  AclaracionTransferentesVoluntarias() {
+    //Recupera información del usuario logeando para luego registrarlo como firmante
+    let token = this.authService.decodeToken();
 
-      //Verificar si ya existe un folio armado
+    //Crear objeto para generar el reporte
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.dataClarifications2.clarificationType,
+      sender: this.clarificationForm.controls['senderName'].value,
+      //foundation: ",",
+      //id: 1, //ID primaria
+      version: 1,
+      //transmitterId: ",",
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: this.folioReporte,
+      //invoiceNumber: 1,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '213',
+      modificationUser: token.name,
+      //worthAppraisal: 1,
+      creationDate: new Date(),
+      //rejectNoticeId: 1,
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
 
-      //Métodos para crear clave armado
+    this.loading = true;
+    this.documentService.createClarDocImp(modelReport).subscribe({
+      next: data => {
+        //this.onLoadToast('success','Aclaración guardada correctamente','' );
+        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+        this.openReport(data); //Falta verificar información que se envia...
+        //this.modalRef.content.callback(true);
+        this.loading = false;
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
 
-      //Formulario largo
+        //this.onLoadToast('error', 'No se pudo guardar', '');
+      },
+    });
+  }
 
-      //Recupera información del usuario logeando para luego registrarlo como firmante
-      let token = this.authService.decodeToken();
+  saveClarificationsAcept() {
+    const typeTransferent = this.infoRequest.typeOfTransfer;
 
-      //Crear objeto para generar el reporte
-      const modelReport: IClarificationDocumentsImpro = {
-        clarification: this.dataClarifications2.clarificationType,
-        sender: this.inappropriatenessForm.controls['senderName'].value,
-        //foundation: ",",
-        //id: 1, //ID primaria
-        version: 1,
-        //transmitterId: ",",
-        paragraphInitial:
-          this.inappropriatenessForm.controls['paragraphInitial'].value,
-        applicationId: this.idRequest,
-        positionSender:
-          this.inappropriatenessForm.controls['positionSender'].value,
-        paragraphFinal:
-          this.inappropriatenessForm.controls['paragraphFinal'].value,
-        consistentIn: this.inappropriatenessForm.controls['consistentIn'].value,
-        managedTo: this.inappropriatenessForm.controls['addresseeName'].value,
-        invoiceLearned: this.folioReporte,
-        //invoiceNumber: 1,
-        positionAddressee:
-          this.inappropriatenessForm.controls['positionAddressee'].value,
-        modificationDate: new Date(),
-        creationUser: token.name,
-        documentTypeId: '111',
-        modificationUser: token.name,
-        //worthAppraisal: 1,
-        creationDate: new Date(),
-        //rejectNoticeId: 1,
-        assignmentInvoiceDate: new Date(),
-        mailNotification: this.inappropriatenessForm.controls['webMail'].value,
-        areaUserCapture:
-          this.inappropriatenessForm.controls['userAreaCaptures'].value,
-        rejectNoticeId: this.dataClarifications2.rejectNotificationId,
-      };
+    if (this.dataClarifications2.answered == 'NUEVA') {
+      //Se tiene que guardar el id del documento generado
+      //Se guardan las observaciones
 
-      this.loading = true;
-      this.documentService.createClarDocImp(modelReport).subscribe({
-        next: data => {
-          //this.onLoadToast('success','Aclaración guardada correctamente','' );
-          this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-          this.openReport(data); //Falta verificar información que se envia...
-          //this.modalRef.content.callback(true);
-          this.loading = false;
-          this.close();
-        },
-        error: error => {
-          this.loading = false;
+      if (
+        this.dataClarifications2.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
+      ) {
+      } else {
+        this.updateNotify(
+          this.dataClarifications2.rejectNotificationId,
+          this.dataClarifications2.chatClarification.idClarification,
+          this.dataClarifications2.goodId,
+          this.dataClarifications2.observations
+        );
+      }
+    }
+  }
 
-          //this.onLoadToast('error', 'No se pudo guardar', '');
-        },
-      });
-    } else {
-      //Si el input de observaciones tiene información, se va a guardar en "bienesRechaNoti"
-      const observations =
-        this.clarificationForm.controls['observations'].value;
-      const id = this.dataClarifications2.rejectNotificationId;
+  obtainTypeDocument(improcedencia: boolean, request: IRequest) {
+    const typeTransference = this.infoRequest.typeOfTransfer;
+    let generaXML: boolean = false;
+    if (
+      typeTransference == 'SAT_SAE' &&
+      this.dataClarifications2.chatClarification.idClarificationType == '2'
+    ) {
+      generaXML = true;
+    }
 
-      if (observations != null) {
-        this.updateNotify(id, observations);
+    return new Promise((resolve, reject) => {
+      if (generaXML && !improcedencia) {
+        this.typeDoc = 'OficioAclaracionTransferente';
       }
 
-      this.chatClarifications1(); //PARA FORMULARIO CORTO
-    }
+      if (this.infoRequest.transferent?.type == 'A') {
+        if (improcedencia) {
+          this.typeDoc = 'OficioImprocedencia';
+        } else {
+          this.typeDoc = 'AclaracionAsegurados';
+        }
+      } else if (this.infoRequest.transferent?.type == 'CE') {
+        if (improcedencia) {
+          this.typeDoc = 'OficioImprocedencia';
+        } else {
+          this.typeDoc = 'AclaracionComercioExterior';
+        }
+      } else if (this.infoRequest.transferent?.type == 'NO') {
+        if (improcedencia) {
+          this.typeDoc = 'ImprocedenciaTransferentesVoluntarias';
+        } else {
+          this.typeDoc = 'AclaracionTransferentesVoluntarias';
+        }
+      }
+
+      resolve(true);
+    });
   }
 
   dataChatClarifications: IChatClarifications[];
@@ -470,43 +536,6 @@ export class NotifyAssetsImproprietyFormComponent
       });
   }
 
-  //Método para crear un nuevo chatClarifications PARA FORMULARIO CORTO
-  /*chatClarificationCreate1() {
-    //Creando objeto nuevo para ChatClarifications
-    const modelChatClarifications: IChatClarifications = {
-      //id: , //ID primaria
-      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
-      requestId: this.idRequest,
-      goodId: this.dataClarifications2.goodId,
-      senderName: this.clarificationForm.get('senderName').value, //Nueva información que se inserta por el formulario
-      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
-        .value, //Nueva información que se inserta por el formulario
-      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value, //Nueva información que se inserta por el formulario
-      webMail: this.clarificationForm.get('webMail').value, //Nueva información que se inserta por el formulario
-      clarificationStatus: 'A_ACLARACION',
-    };
-
-    //Servicio para crear registro de ChatClariffications
-    this.chatService.create(modelChatClarifications).subscribe({
-      next: async data => {
-        this.onLoadToast(
-          'success',
-          'Notificación contestada correctamente',
-          ''
-        );
-        this.loading = false;
-        this.modalRef.content.callback(true, data.goodId);
-        this.updateNotify(data.clarifiNewsRejectId);
-        this.modalRef.hide();
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No se pudo crear', error.error);
-        this.modalRef.hide();
-      },
-    });
-  } */
-
   //------------------------------------ PARA FORMULARIO LARGO -----------------------------------
   chatClarifications2() {
     this.loading = true;
@@ -535,10 +564,10 @@ export class NotifyAssetsImproprietyFormComponent
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
       requestId: this.idRequest,
       goodId: this.dataClarifications2.goodId,
-      addresseeName: this.inappropriatenessForm.get('addresseeName').value,
-      jobClarificationKey: this.inappropriatenessForm.get('jobClarificationKey')
+      addresseeName: this.clarificationForm.get('addresseeName').value,
+      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
         .value,
-      senderName: this.inappropriatenessForm.get('senderName').value,
+      senderName: this.clarificationForm.get('senderName').value,
       userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
       webMail: this.clarificationForm.get('webMail').value,
       clarificationStatus: 'A_ACLARACION',
@@ -566,7 +595,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   updateNotify(
     id?: number,
-    chatClarId?: number,
+    chatClarId?: number | string,
     goodId?: number,
     observations?: string
   ) {
@@ -574,6 +603,42 @@ export class NotifyAssetsImproprietyFormComponent
       rejectionDate: new Date(),
       rejectNotificationId: id,
       answered: 'EN ACLARACION',
+      observations: observations,
+    };
+
+    console.log(data);
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {
+        const updateInfo: IChatClarifications = {
+          requestId: this.idRequest,
+          goodId: goodId,
+          clarificationStatus: 'EN_ACLARACION',
+        };
+        this.chatClarificationsService
+          .update(chatClarId, updateInfo)
+          .subscribe({
+            next: data => {
+              this.modalRef.content.callback(true, data.goodId);
+              this.modalRef.hide();
+            },
+            error: error => {
+              console.log(error);
+            },
+          });
+      },
+    });
+  }
+
+  updateNotifyInapro(
+    id?: number,
+    chatClarId?: number,
+    goodId?: number,
+    observations?: string
+  ) {
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'IMPROCEDENTE',
       observations: observations,
     };
 
@@ -607,10 +672,10 @@ export class NotifyAssetsImproprietyFormComponent
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
       requestId: this.idRequest,
       goodId: this.dataClarifications2.goodId,
-      addresseeName: this.inappropriatenessForm.get('addresseeName').value,
-      jobClarificationKey: this.inappropriatenessForm.get('jobClarificationKey')
+      addresseeName: this.clarificationForm.get('addresseeName').value,
+      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
         .value,
-      senderName: this.inappropriatenessForm.get('senderName').value,
+      senderName: this.clarificationForm.get('senderName').value,
       userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
       webMail: this.clarificationForm.get('webMail').value,
       clarificationStatus: 'A_ACLARACION',
@@ -636,9 +701,9 @@ export class NotifyAssetsImproprietyFormComponent
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
     const idDoc = data.id;
-    const idTypeDoc = 111;
+    const idTypeDoc = Number(data.documentTypeId);
     const requestInfo = data;
-
+    console.log('ID tipo de documento', idTypeDoc);
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -695,4 +760,7 @@ export class NotifyAssetsImproprietyFormComponent
   close() {
     this.modalRef.hide();
   }
+
+  tipoTransferente = 'SAT_SAE';
+  tipoNotificacion = 2;
 }

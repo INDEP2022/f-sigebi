@@ -13,7 +13,6 @@
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
     <div *ngIf="process == 'registration-request'">
-      <!-- <p>{{ typeOfRequest }}</p> -->
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
@@ -298,7 +297,8 @@
       *ngIf="process != 'registration-request'"
       [detailAssets]="detailAssets"
       [process]="process"
-      [typeOfRequest]="typeOfRequest"></app-read-info-good>
+      [typeOfRequest]="typeOfRequest"
+      (saveDetailInfo)="getDetailInfo($event)"></app-read-info-good>
   </tab>
 
   <tab>

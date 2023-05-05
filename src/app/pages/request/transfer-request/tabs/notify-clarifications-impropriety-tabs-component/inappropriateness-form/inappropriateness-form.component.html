@@ -1,19 +1,19 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ title }}</h5>
+    <h5 class="modal-title">ACEPTAR IMPROCEDENCIA</h5>
   </div>
   <div body class="body">
-    <form [formGroup]="clarificationForm" class="form-material">
-      <div class="row">
-        <div
-          class="col-md-6"
-          *ngIf="
-            infoRequest.typeOfTransfer != 'SAT_SAE' ||
-            (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
-          ">
+    <form [formGroup]="form" class="form-material">
+      <div
+        class="row"
+        *ngIf="
+          request.typeOfTransfer != 'SAT_SAE' ||
+          (request.typeOfTransfer == 'SAT_SAE' &&
+            notification.chatClarification.idClarificationType == '2')
+        ">
+        <div class="col-md-6">
           <form-field
-            [control]="clarificationForm.get('addresseeName')"
+            [control]="form.get('addresseeName')"
             label="Destinatario">
             <input
               type="text"
@@ -22,15 +22,9 @@
               formControlName="addresseeName" />
           </form-field>
         </div>
-        <div
-          class="col-md-6"
-          *ngIf="
-            infoRequest.typeOfTransfer != 'SAT_SAE' ||
-            (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
-          ">
+        <div class="col-md-6">
           <form-field
-            [control]="clarificationForm.get('positionAddressee')"
+            [control]="form.get('positionAddressee')"
             label="Cargo Destinatario">
             <input
               type="text"
@@ -44,7 +38,7 @@
       <div class="row pt-3">
         <div class="col-md-6">
           <form-field
-            [control]="clarificationForm.get('senderName')"
+            [control]="form.get('senderName')"
             label="Nombre Remitente">
             <input
               type="text"
@@ -56,7 +50,7 @@
 
         <div class="col-md-6">
           <form-field
-            [control]="clarificationForm.get('senderCharge')"
+            [control]="form.get('senderCharge')"
             label="Cargo Remitente">
             <input
               type="text"
@@ -67,16 +61,29 @@
         </div>
       </div>
 
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('clarification')"
+            label="Aclaraci&oacute;n">
+            <textarea
+              class="form-control"
+              maxlength="800"
+              formControlName="clarification"></textarea>
+          </form-field>
+        </div>
+      </div>
+
       <div
         class="row pt-3"
         *ngIf="
-          infoRequest.typeOfTransfer != 'SAT_SAE' ||
-          (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-            dataClarifications2.chatClarification.idClarificationType == '2')
+          request.typeOfTransfer != 'SAT_SAE' ||
+          (request.typeOfTransfer == 'SAT_SAE' &&
+            notification.chatClarification.idClarificationType == '2')
         ">
         <div class="col-md-12">
           <form-field
-            [control]="clarificationForm.get('consistentIn')"
+            [control]="form.get('consistentIn')"
             label="Consistente en">
             <textarea
               class="form-control"
@@ -86,15 +93,10 @@
         </div>
       </div>
 
-      <div
-        class="row pt-3"
-        *ngIf="
-          infoRequest.typeOfTransfer == 'SAT_SAE' &&
-          dataClarifications2.chatClarification.idClarificationType == '2'
-        ">
+      <div class="row pt-3">
         <div class="col-md-6">
           <form-field
-            [control]="clarificationForm.get('paragraphInitial')"
+            [control]="form.get('paragraphInitial')"
             label="P&aacute;rrafo Inicial">
             <textarea
               class="form-control"
@@ -104,7 +106,7 @@
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="clarificationForm.get('paragraphFinal')"
+            [control]="form.get('paragraphFinal')"
             label="P&aacute;rrafo Final">
             <textarea
               class="form-control"
@@ -114,33 +116,14 @@
         </div>
       </div>
 
-      <div
-        class="row pt-3"
-        *ngIf="
-          infoRequest.typeOfTransfer != 'SAT_SAE' ||
-          (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-            dataClarifications2.chatClarification.idClarificationType == '2')
-        ">
-        <div class="col-md-12">
-          <form-field
-            [control]="clarificationForm.get('clarification')"
-            label="Aclaraci&oacute;n">
-            <textarea
-              class="form-control"
-              maxlength="1000"
-              formControlName="clarification"></textarea>
-          </form-field>
-        </div>
-      </div>
-
       <div class="row pt-3">
         <div class="col-md-12">
           <form-field
-            [control]="clarificationForm.get('observations')"
+            [control]="form.get('observations')"
             label="Observaciones">
             <textarea
               class="form-control"
-              maxlength="400"
+              maxlength="1000"
               formControlName="observations"></textarea>
           </form-field>
         </div>
@@ -149,7 +132,7 @@
       <div class="row pt-3">
         <div class="col-md-12">
           <form-field
-            [control]="clarificationForm.get('foundation')"
+            [control]="form.get('foundation')"
             label="Fundamentaci&oacute;n">
             <textarea
               class="form-control"
@@ -160,10 +143,8 @@
       </div>
 
       <div class="row pt-3">
-        <div class="col-md-6">
-          <form-field
-            [control]="clarificationForm.get('transmitterId')"
-            label="ID Emisor">
+        <div class="col-md-4">
+          <form-field [control]="form.get('transmitterId')" label="ID Emisor">
             <input
               type="text"
               class="form-control"
@@ -171,10 +152,9 @@
               formControlName="transmitterId" />
           </form-field>
         </div>
-
-        <div class="col md-6">
+        <div class="col-md-4">
           <form-field
-            [control]="clarificationForm.get('invoiceLearned')"
+            [control]="form.get('invoiceLearned')"
             label="Folio Documento">
             <input
               type="text"
@@ -183,12 +163,9 @@
               formControlName="invoiceLearned" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-3">
         <div class="col-md-4">
           <form-field
-            [control]="clarificationForm.get('worthAppraisal')"
+            [control]="form.get('worthAppraisal')"
             label="Valor Aval&uacute;o">
             <input
               type="text"
@@ -197,46 +174,20 @@
               formControlName="worthAppraisal" />
           </form-field>
         </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="clarificationForm.get('userAreaCaptures')"
-            label="&Aacute;rea del Usuario Captura">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="userAreaCaptures" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="clarificationForm.get('webMail')"
-            label="Correo Notificaci&oacute;n Respuesta SAT">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="30"
-              formControlName="webMail" />
-          </form-field>
-        </div>
       </div>
     </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [loading]="loading" (confirm)="confirm()">
-        </confirm-button>
-      </div>
-      <!-- <div class="m-3" *ngIf="withDocumentation">
         <confirm-button
-          [disabled]="clarificationForm.invalid"
+          [disabled]="form.invalid"
           [loading]="loading"
+          [text]="'Aceptar'"
           (confirm)="confirm()">
         </confirm-button>
-      </div> -->
+      </div>
 
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
