@@ -216,22 +216,37 @@ export class NotifyAssetsImproprietyFormComponent
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
       console.log('Soy tipo Aclaración,', typeTransference);
+      if (this.typeClarifications == 2) {
+        console.log(
+          'Aclaracipon tipo 2, ImprocedenciaTransferentesVoluntarias tipo 216'
+        );
+        this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      }
       const obtainTypeDocument = await this.obtainTypeDocument(
         false,
         this.infoRequest
       );
       if (obtainTypeDocument) {
-        console.log('Tipo', this.typeDoc);
+        //console.log('Tipo', this.typeDoc);
         //Depende del tipo de documento, envia al método correspondiente
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
-            console.log('Método para: ', this.typeDoc);
-            this.AclaracionAsegurados();
+            if (this.typeClarifications == 2) {
+              console.log('Aclaracipon tipo 2, OficioImprocedencia tipo 111');
+              this.oficioImprocedencia(); //Aclaración PGR tipo 2
+            } else {
+              console.log('Método para: ', this.typeDoc);
+              this.aclaracionAsegurados(); //Aclaración PGR tipo 1
+            }
+
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
-            console.log('Método para: ', this.typeDoc);
-            this.AclaracionTransferentesVoluntarias();
+            if (this.typeClarifications == 1) {
+              console.log('Método para: ', this.typeDoc);
+              this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
+            }
+
             break;
           }
         }
@@ -240,15 +255,137 @@ export class NotifyAssetsImproprietyFormComponent
 
     console.log(generaXML);
     console.log(typeTransference);
-    if (typeTransference == 'SAT_SAE') {
-      console.log('Aclaración comercio exterior?'); //Duda
-      this.AclaracionComercioExterior();
+
+    if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
+      console.log(
+        'Soy: ',
+        typeTransference,
+        'documento: OficioAclaracionTransferente'
+      ); //Duda
+      this.oficioAclaracionTransferente();
+    }
+
+    if (typeTransference == 'SAT_SAE' && this.typeClarifications == 1) {
+      console.log(
+        'Soy: ',
+        typeTransference,
+        'documento: AclaracionComercioExterior '
+      ); //Duda
+      this.aclaracionComercioExterior();
     }
 
     //this.saveClarificationsAcept();
   }
 
-  AclaracionComercioExterior() {
+  improcedenciaTransferentesVoluntarias() {
+    //Recupera información del usuario logeando para luego registrarlo como firmante
+    let token = this.authService.decodeToken();
+
+    //Crear objeto para generar el reporte
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.dataClarifications2.clarificationType,
+      sender: this.clarificationForm.controls['senderName'].value,
+      //foundation: ",",
+      //id: 1, //ID primaria
+      version: 1,
+      //transmitterId: ",",
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: this.folioReporte,
+      //invoiceNumber: 1,
+      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '216',
+      modificationUser: token.name,
+      //worthAppraisal: 1,
+      creationDate: new Date(),
+      //rejectNoticeId: 1,
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
+
+    this.loading = true;
+    this.documentService.createClarDocImp(modelReport).subscribe({
+      next: data => {
+        //this.onLoadToast('success','Aclaración guardada correctamente','' );
+        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+        this.openReport(data); //Falta verificar información que se envia...
+        //this.modalRef.content.callback(true);
+        this.loading = false;
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
+
+        //this.onLoadToast('error', 'No se pudo guardar', '');
+      },
+    });
+  }
+
+  oficioImprocedencia() {
+    //Recupera información del usuario logeando para luego registrarlo como firmante
+    let token = this.authService.decodeToken();
+
+    //Crear objeto para generar el reporte
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.dataClarifications2.clarificationType,
+      sender: this.clarificationForm.controls['senderName'].value,
+      //foundation: ",",
+      //id: 1, //ID primaria
+      version: 1,
+      //transmitterId: ",",
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: this.folioReporte,
+      //invoiceNumber: 1,
+      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '111',
+      modificationUser: token.name,
+      //worthAppraisal: 1,
+      creationDate: new Date(),
+      //rejectNoticeId: 1,
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
+
+    this.loading = true;
+    this.documentService.createClarDocImp(modelReport).subscribe({
+      next: data => {
+        //this.onLoadToast('success','Aclaración guardada correctamente','' );
+        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+        this.openReport(data); //Falta verificar información que se envia...
+        //this.modalRef.content.callback(true);
+        this.loading = false;
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
+
+        //this.onLoadToast('error', 'No se pudo guardar', '');
+      },
+    });
+  }
+
+  aclaracionComercioExterior() {
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -302,7 +439,61 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
-  AclaracionAsegurados() {
+  oficioAclaracionTransferente() {
+    //Recupera información del usuario logeando para luego registrarlo como firmante
+    let token = this.authService.decodeToken();
+
+    //Crear objeto para generar el reporte
+    const modelReport: IClarificationDocumentsImpro = {
+      clarification: this.dataClarifications2.clarificationType,
+      sender: this.clarificationForm.controls['senderName'].value,
+      //foundation: ",",
+      //id: 1, //ID primaria
+      version: 1,
+      //transmitterId: ",",
+      paragraphInitial:
+        this.clarificationForm.controls['paragraphInitial'].value,
+      applicationId: this.idRequest,
+      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      invoiceLearned: this.folioReporte,
+      //invoiceNumber: 1,
+      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      modificationDate: new Date(),
+      creationUser: token.name,
+      documentTypeId: '104',
+      modificationUser: token.name,
+      //worthAppraisal: 1,
+      creationDate: new Date(),
+      //rejectNoticeId: 1,
+      assignmentInvoiceDate: new Date(),
+      mailNotification: this.clarificationForm.controls['webMail'].value,
+      areaUserCapture:
+        this.clarificationForm.controls['userAreaCaptures'].value,
+      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+    };
+
+    this.loading = true;
+    this.documentService.createClarDocImp(modelReport).subscribe({
+      next: data => {
+        //this.onLoadToast('success','Aclaración guardada correctamente','' );
+        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
+        this.openReport(data); //Falta verificar información que se envia...
+        //this.modalRef.content.callback(true);
+        this.loading = false;
+        this.close();
+      },
+      error: error => {
+        this.loading = false;
+
+        //this.onLoadToast('error', 'No se pudo guardar', '');
+      },
+    });
+  }
+
+  aclaracionAsegurados() {
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -357,7 +548,7 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
-  AclaracionTransferentesVoluntarias() {
+  aclaracionTransferentesVoluntarias() {
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
