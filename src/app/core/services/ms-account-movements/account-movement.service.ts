@@ -30,7 +30,6 @@ export class AccountMovementService extends HttpService {
   }
 
   eliminar(movement: any) {
-    alert(movement);
     return this.delete('account-movements', movement);
   }
   create(movement: any) {

@@ -584,8 +584,8 @@ export class ClarificationsComponent
   } */
 
   clarifiRowSelected(event: any) {
+    console.log(event);
     this.clariArraySelected = event.selected;
-    console.log(event.target.value);
   }
 
   newClarification() {
@@ -633,8 +633,10 @@ export class ClarificationsComponent
     });
   }
   editForm() {
-    let data = this.clariArraySelected[0];
-    if (data === 1) {
+    console.log(this.clariArraySelected);
+    let data = this.clariArraySelected;
+    console.log(data);
+    if (data.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');

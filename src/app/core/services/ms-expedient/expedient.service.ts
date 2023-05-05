@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExpedientRepository } from 'src/app/common/repository/repositories/ms-expedient-repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ExpedientEndpoints } from '../../../common/constants/endpoints/ms-expedient-endpoints';
@@ -23,7 +22,7 @@ export class ExpedientService extends HttpService {
   getById(id: string | number): Observable<IExpedient> {
     return this.expedientRepository.getById(this.route.FindIdentificator, id);
   }
-  getAll(params?: ListParams): Observable<IListResponse<IExpedient>> {
+  getAll(params?: _Params): Observable<IListResponse<IExpedient>> {
     return this.get<IListResponse<IExpedient>>(this.route.BasePath, params);
   }
 

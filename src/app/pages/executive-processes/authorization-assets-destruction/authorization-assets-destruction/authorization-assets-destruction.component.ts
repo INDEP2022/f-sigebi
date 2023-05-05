@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 //XLSX
 import { DatePipe } from '@angular/common';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import * as XLSX from 'xlsx';
@@ -22,6 +20,7 @@ import * as XLSX from 'xlsx';
 import { LocalDataSource } from 'ng2-smart-table';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthorizationAssetsDestructionForm } from '../utils/authorization-assets-destruction-form';
 
 @Component({
   selector: 'app-authorization-assets-destruction',
@@ -32,7 +31,7 @@ export class AuthorizationAssetsDestructionComponent
   extends BasePage
   implements OnInit
 {
-  form: FormGroup = new FormGroup({});
+  form = new FormGroup(new AuthorizationAssetsDestructionForm());
   show = false;
   ExcelData: any;
   table: boolean = false;
@@ -50,6 +49,9 @@ export class AuthorizationAssetsDestructionComponent
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
 
+  get controls() {
+    return this.form.controls;
+  }
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -74,43 +76,38 @@ export class AuthorizationAssetsDestructionComponent
     };
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-  }
+  ngOnInit(): void {}
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      idExpedient: [
-        null,
-        [
-          Validators.required,
-          // Validators.maxLength(10),
-          // Validators.minLength(1),
-          // Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
-      preliminaryInquiry: [null, Validators.pattern(STRING_PATTERN)],
-      criminalCase: [null, Validators.pattern(STRING_PATTERN)],
-      circumstantialRecord: [null, Validators.pattern(STRING_PATTERN)],
-      keyPenalty: [null, Validators.pattern(STRING_PATTERN)],
-      noAuth: [null, Validators.pattern(STRING_PATTERN)],
-      authNotice: [null, Validators.pattern(STRING_PATTERN)],
-      fromDate: [null, maxDate(new Date())],
-      scanFolio: [null, Validators.pattern(KEYGENERATION_PATTERN)],
-      cancelSheet: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+  expedientChange() {
+    const expedientId = this.controls.idExpedient.value;
+    if (!expedientId) {
+      return;
+    }
+    this.findExpedientById(expedientId).subscribe({
+      next: expedient => {
+        this.form.patchValue(expedient);
+      },
+      error: error => {
+        if (error.status <= 500) {
+          this.onLoadToast('error', 'Error', 'No se encontró el expediente');
+          this.form.reset();
+        }
+      },
     });
   }
 
-  getExpedients() {
-    // params['filter.indicatedName'] = `$ilike:${params.text}`;
-    // params['filter.id'] = `$eq:${this.idExpedient}`;
-    this.expedientService.getAll(this.params.getValue()).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.indicatedName = `${data.id}- ${data.indicatedName}`;
-          return data;
-        });
-        this.selectExpedient = new DefaultSelect(data.data, data.count);
+  findExpedientById(expedientId: number) {
+    return this.expedientService.getById(expedientId);
+  }
+
+  getExpedients(params: ListParams) {
+    const _params = new FilterParams();
+    _params.page = params.page;
+    _params.limit = params.limit;
+    _params.addFilter('id', params.text);
+    this.expedientService.getAll(_params.getParams()).subscribe({
+      next: response => {
+        this.selectExpedient = new DefaultSelect(response.data, response.count);
         this.getExpedientById();
       },
       error: () => {
