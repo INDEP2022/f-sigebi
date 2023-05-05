@@ -1,4 +1,5 @@
 export interface ICopiesOfficialOpinion {
+  id?: number | string;
   numberOfDicta: number;
   typeDictamination: string;
   recipientCopy: string;

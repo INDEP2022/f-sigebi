@@ -1,17 +1,25 @@
-<form [formGroup]="form" class="form-material">
+<form [formGroup]="form" class="form-material" (ngSubmit)="send()">
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
         [control]="form.get('officialNumber')"
         label="No&#46; Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="officialNumber" />
+        <input
+          required
+          type="number"
+          class="form-control"
+          formControlName="officialNumber" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
         [control]="form.get('typeDict')"
         label="Tipo Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="typeDict" />
+        <input
+          maxlength="15"
+          required
+          class="form-control"
+          formControlName="typeDict" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -26,7 +34,10 @@
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('notaryNumber')" label="No. Notario">
-        <input class="form-control" formControlName="notaryNumber" />
+        <input
+          type="number"
+          class="form-control"
+          formControlName="notaryNumber" />
       </form-field>
     </div>
 
@@ -87,6 +98,7 @@
         [control]="form.get('delegacionRecipientNumber')"
         label="No&#46; Delegaci&oacute;n Destinatario">
         <input
+          type="number"
           class="form-control"
           formControlName="delegacionRecipientNumber" />
       </form-field>
@@ -107,6 +119,15 @@
         label="Destinatario ESXT">
         <input class="form-control" formControlName="recipientEsxt" />
       </form-field>
+    </div>
+
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <button
+        class="btn btn-sm btn-primary active"
+        type="submit"
+        [disabled]="form.invalid">
+        Guardar
+      </button>
     </div>
   </div>
 </form>

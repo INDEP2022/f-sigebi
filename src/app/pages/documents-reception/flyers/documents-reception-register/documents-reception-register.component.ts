@@ -2572,13 +2572,14 @@ export class DocumentsReceptionRegisterComponent
             field: 'referralNoteType',
             value: this.wheelType.value,
           },
-          {
+          /*{
             field: 'id',
-          },
+          },*/
         ],
-        searchFilterCompatible: false,
+        searchFilterCompatible: true,
         selectOnClick: true,
-        placeholder: 'Buscar por Número de Asunto...',
+        placeholder: 'Buscar tipo de asunto...',
+        type: 'text',
       },
       this.selectAffair
     );
