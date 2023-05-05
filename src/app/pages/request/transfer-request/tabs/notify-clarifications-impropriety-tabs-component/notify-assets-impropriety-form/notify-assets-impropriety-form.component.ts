@@ -413,7 +413,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   saveClarificationsAcept() {
-    console.log('Se va a guardar', this.dataClarifications2);
     const typeTransferent = this.infoRequest.typeOfTransfer;
 
     if (this.dataClarifications2.answered == 'NUEVA') {
