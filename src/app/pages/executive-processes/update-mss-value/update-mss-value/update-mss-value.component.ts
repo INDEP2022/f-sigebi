@@ -32,7 +32,7 @@ export class UpdateMssValueComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getPagination();
+    //this.getPagination();
   }
 
   private prepareForm() {
@@ -52,6 +52,8 @@ export class UpdateMssValueComponent extends BasePage implements OnInit {
       var workbook = XLSX.read(fileReader.result, { type: 'binary' });
       var sheetNames = workbook.SheetNames;
       this.ExcelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
+      this.columns = this.ExcelData;
+      this.totalItems = this.columns.length || 0;
       console.log(this.ExcelData);
     };
   }
