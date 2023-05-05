@@ -29,6 +29,8 @@ import { SelectInputComponent } from './tabs/compliance-verification-components/
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
 import { GeneralDocumentsFormComponent } from './tabs/general-documents-form/general-documents-form.component';
+import { InappropriatenessFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/inappropriateness-form/inappropriateness-form.component';
+import { InappropriatenessPgrSatFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/inappropriateness-pgr-sat-form/inappropriateness-pgr-sat-form.component';
 import { InputFieldComponent } from './tabs/notify-clarifications-impropriety-tabs-component/input-field/input-field.component';
 import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notification-assets-tab/notification-assets-tab.component';
 import { NotifyAssetsImproprietyFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notify-assets-impropriety-form/notify-assets-impropriety-form.component';
@@ -89,6 +91,8 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     FulfillmentComponent,
     PrintSatAnswerComponent,
     SelectInputComponent,
+    InappropriatenessPgrSatFormComponent,
+    InappropriatenessFormComponent,
   ],
   imports: [
     CommonModule,
