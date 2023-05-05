@@ -2,7 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">MOVIMIENTOS TESOFE</h5>
     <div class="col-md-5 buttons">
-      <div *ngIf="showBtnAdd">
+      <div>
         <button
           class="btn btn-primary active btn-sm ml-3"
           (click)="loadModal()">
@@ -29,8 +29,7 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="nombre"
-                (click)="openList()" />
+                formControlName="nombre" />
             </form-field>
           </div>
           <div class="col-md-9">
@@ -51,15 +50,14 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
-                [source]="ArregloDatosTabla"
-                (edit)="edit($event.data)"
+                [source]="dataAcount.data"
                 (delete)="deleteQuestion($event.data)">
               </ng2-smart-table>
             </div>
           </div>
           <app-pagination
             [filterParams]="filterParams"
-            [totalItems]="totalItems">
+            [totalItems]="dataAcount.count">
           </app-pagination>
         </div>
       </form>

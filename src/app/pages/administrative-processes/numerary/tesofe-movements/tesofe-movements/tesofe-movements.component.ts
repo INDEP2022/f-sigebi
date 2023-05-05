@@ -1,22 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IBankAccount } from 'src/app/core/models/catalogs/bank-account.model';
-import { IBank } from 'src/app/core/models/catalogs/bank.model';
-import { TvalTable1Data } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
-import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { BankAccount } from '../list-banks/bank';
 import { ListBanksComponent } from '../list-banks/list-banks.component';
 import { TesofeMovementsModalComponent } from '../tesofe-movements-modal/tesofe-movements-modal.component';
@@ -29,46 +24,25 @@ import { TESOFE_MOVEMENTS_COLUMNS } from './tesofe-movements-columns';
 })
 export class TesofeMovementsComponent extends BasePage implements OnInit {
   form: FormGroup;
-  data1: any[] = [];
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-
-  //filterParams = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems: number = 0;
-  @Input() bankField: string = 'bank';
-  @Output() cveBank: string;
-
-  @Input() objDeposito: IAccountMovement;
-  @Input() modalDone: boolean;
-  @Input() refresh: boolean;
-
-  private Value: string;
-
-  private cuentaBank$: Subject<string>;
-
-  banks = new DefaultSelect<IBank>();
-  @Output() stringBank: Observable<string> = new Observable();
-  @Output() properties: EventEmitter<IBankAccount> =
-    new EventEmitter<IBankAccount>();
-  listaDatos: IBankAccount[];
-  ArregloDatosTabla: IAccountMovement[] = [];
-  showBtnAdd: boolean = false;
-  objBankToModal: IBankAccount;
+  no_cuenta: number;
+  dataAcount: IListResponse<IAccountMovement> =
+    {} as IListResponse<IAccountMovement>;
+  dataSelect: BankAccount;
 
   constructor(
     private fb: FormBuilder,
     private service: BankAccountService,
-    private currencyService: DynamicTablesService,
     private movementService: AccountMovementService,
     private modalService: BsModalService
   ) {
     super();
-    this.cuentaBank$ = new Subject();
 
     this.settings = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: true,
         position: 'right',
       },
@@ -77,27 +51,12 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cuentaBank$.subscribe(X => {
-      this.Value = X;
-      this.ArregloDatosTabla = [];
-    });
-
-    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      if (this.Value) this.loadTableInfo(this.Value);
-    });
     this.prepareForm();
-  }
-
-  getBanks() {
-    this.service.getBankAndAccount().subscribe({
-      next: resp => {
-        this.banks = new DefaultSelect(resp.data, resp.count);
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => {
+        if (this.no_cuenta) this.getMovementsAccount();
       },
     });
-  }
-
-  onBanksChange(data: any) {
-    console.log(data);
   }
 
   prepareForm() {
@@ -120,171 +79,82 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
       callback: (next: boolean, data: BankAccount) => {
         if (next) {
           this.form.patchValue(data);
+          this.no_cuenta = data.no_cuenta;
+          this.dataSelect = data;
+          this.dataAcount = {} as IListResponse<IAccountMovement>;
+          this.filterParams.getValue().removeAllFilters();
+          this.filterParams.getValue().page = 1;
+          this.filterParams
+            .getValue()
+            .addFilter('numberAccount', this.no_cuenta, SearchFilter.EQ);
+          this.getMovementsAccount();
         }
       },
     };
     this.modalService.show(ListBanksComponent, modalConfig);
   }
 
-  getBankCode() {
-    let s: IBankAccount[];
-    this.listaDatos = s;
-    this.ArregloDatosTabla = [];
-    let params = new FilterParams();
-    params.addFilter('cveBank', this.form.value.cveBank, SearchFilter.EQ);
-    this.service.getCveBank(params.getParams()).subscribe({
-      next: resp => {
-        this.listaDatos = [...resp.data];
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-          this.onLoadToast('error', 'Error', error);
-        } else {
-          this.onLoadToast('error', 'Error', err.error.message);
-        }
-      },
-    });
-  }
-  /**=======================================================
-     EJECUTA LA CARGA DE LA CUENTA DEL BANCO Y LA MONEDA
-    =======================================================*/
-  loadInfo(account: IBankAccount) {
+  getMovementsAccount() {
     this.loading = true;
-    this.form.get('account').setValue('');
-    this.form.get('currency').setValue('');
-    this.objBankToModal = account;
-
-    this.form
-      .get('account')
-      .setValue(
-        '     Núm. de Cuenta:     ' +
-          account.cveAccount +
-          '     ||     Clave del Banco:     ' +
-          account.cveBank +
-          '     ||     Tipo:     ' +
-          account.accountType
-      );
-
-    this.monedas(account.cveCurrency);
-    this.loadTableInfo(account.accountNumber);
-  }
-
-  /**=======================================================
-     OBTIENE LA DESCRIPCIÓN DEL TIPO DE MONEDA
-    =======================================================*/
-  monedas(moneda: string) {
-    let movement: TvalTable1Data[] = [];
-    let tipoMoneda: TvalTable1Data[] = [];
-    let moned: string = '';
-    this.currencyService.getTvalTable5ByTable(3).subscribe(data => {
-      movement = data.data;
-      tipoMoneda = movement.filter(x => x.otKey1 === moneda);
-      if (tipoMoneda[0] !== null && tipoMoneda.length > 0) {
-        this.form.get('currency').setValue(tipoMoneda[0].otValue01);
-      }
-    });
-  }
-
-  /**==================================================================
-     OBTIENE TODOS LOS REGISTROS PRA LLENAR LA TABLA DE MOVIEMIENTOS
-    =================================================================*/
-  loadTableInfo(numCuenta: string) {
-    this.cuentaBank$.next(numCuenta);
-    this.ArregloDatosTabla = [];
-
-    // this.filterParams.getValue().removeAllFilters();
-    this.filterParams
-      .getValue()
-      .addFilter('numberAccount', numCuenta, SearchFilter.EQ);
-
-    this.showBtnAdd = true;
-
-    this.movementService
-      .getAllFiltered(this.filterParams.getValue().getParams())
+    this.service
+      .getAllWithFiltersAccount(
+        this.filterParams
+          .getValue()
+          .getParams()
+          .concat('&sortBy=dateMotion:DESC')
+      )
       .subscribe({
         next: resp => {
-          this.ArregloDatosTabla = [...resp.data];
-          this.totalItems = resp.count;
+          this.dataAcount = resp;
           this.loading = false;
         },
-        error: err => {
-          let error = '';
-          if (err.status === 0) {
-            error = 'Revise su conexión de Internet.';
-            this.showBtnAdd = false;
-            this.loading = false;
-            this.onLoadToast('error', 'Error', error);
-          } else {
-            this.onLoadToast('error', 'Error', err.error.message);
-            this.showBtnAdd = false;
-            this.loading = false;
-          }
+        error: () => {
+          this.loading = false;
         },
       });
   }
-  /**=======================================================
-     ABRE LA VENTANA MODAL PARA AGREGAR UN NUEVO REGISTRO
-    =======================================================*/
+
   loadModal() {
-    let movimiento: IAccountMovement;
-    this.openModal(false, this.objBankToModal, movimiento);
+    this.openModal(false, this.dataSelect);
   }
 
-  /**=======================================================
-     ABRE LA VENTANA MODAL PARA INSERTAR O EDITAR
-    =======================================================*/
-  openModal(
-    newOrEdit: boolean,
-    objBank: IBankAccount,
-    movimiento: IAccountMovement
-  ) {
+  openModal(newOrEdit: boolean, bank: BankAccount) {
     const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
     modalConfig.initialState = {
       newOrEdit,
-      objBank,
-      movimiento,
+      bank,
       callback: (next: boolean) => {
-        if (next) this.loadTableInfo(objBank.cveAccount);
+        if (next) this.getMovementsAccount();
       },
     };
     this.modalService.show(TesofeMovementsModalComponent, modalConfig);
   }
 
-  /**=======================================================
-     ABRE LA VENTANA MODAL PARA ACTUALIZAR UN REGISTRO
-    =======================================================*/
-  edit(filaCuenta: IAccountMovement) {
-    this.openModal(true, this.objBankToModal, filaCuenta);
-  }
-
-  /**=======================================================
-                  BORRAR UN REGISTRO
-    =======================================================*/
   deleteQuestion(event: IAccountMovement) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(event);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(event: IAccountMovement) {
-    let datosTest = {
-      numberAccount: event.accountNumber.accountNumber,
+    let data = {
+      numberAccount: event.numberAccount,
       numberMotion: event.numberMotion,
     };
-    this.movementService.eliminar(datosTest).subscribe({
+    this.movementService.eliminar(data).subscribe({
       next: () => {
-        this.loadTableInfo(
-          Number(event.accountNumber.accountNumber).toString()
+        this.onLoadToast(
+          'success',
+          'Movimiento cuenta eliminado correctamente',
+          ''
         );
+        this.getMovementsAccount();
       },
       error: (err: any) => {
         let error = '';

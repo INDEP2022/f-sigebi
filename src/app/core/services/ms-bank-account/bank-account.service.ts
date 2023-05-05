@@ -7,6 +7,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IBankAccount } from '../../models/catalogs/bank-account.model';
+import { IAccountMovement } from '../../models/ms-account-movements/account-movement.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,8 @@ export class BankAccountService
   private readonly api = 'bank-account';
 
   private readonly apiBank = 'account-movements/getBankAndAccount';
+
+  private readonly apiAccount = 'account-movements';
 
   constructor(private repository: Repository<IBankAccount>) {
     super();
@@ -41,6 +44,12 @@ export class BankAccountService
 
   getAllWithFilters(params?: string): Observable<IListResponse<IBankAccount>> {
     return this.get<IListResponse<IBankAccount>>(this.api, params);
+  }
+
+  getAllWithFiltersAccount(
+    params?: string
+  ): Observable<IListResponse<IAccountMovement>> {
+    return this.get<IListResponse<IAccountMovement>>(this.apiAccount, params);
   }
 
   getBankAndAccount() {
