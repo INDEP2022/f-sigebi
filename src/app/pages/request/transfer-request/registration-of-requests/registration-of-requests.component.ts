@@ -182,7 +182,7 @@ export class RegistrationOfRequestsComponent
         [
           Validators.required,
           Validators.minLength(1),
-          Validators.maxLength(30),
+          Validators.maxLength(50),
         ],
       ],
       regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],

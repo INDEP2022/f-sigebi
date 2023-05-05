@@ -809,7 +809,7 @@ export class ClassifyAssetsTabComponent
             this.message(
               'success',
               'Guardado',
-              `¡El registro se guardó exitosamente!`
+              `El registro se guardó exitosamente`
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
@@ -843,7 +843,7 @@ export class ClassifyAssetsTabComponent
             this.message(
               'success',
               'Guardado',
-              `El registro se actualizo exitosamente!`
+              `El registro se actualizo exitosamente`
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
