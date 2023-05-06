@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
   Input,
@@ -80,6 +81,7 @@ export class ClarificationListTabComponent
       this.params.getValue()['filter.goodId'] = this.good.id;
       this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
         next: async (data: any) => {
+          console.log(data.data);
           const length = data.count;
           this.clarificationsLength = length;
           const info = data.data.map(async (item: any) => {
@@ -88,6 +90,13 @@ export class ClarificationListTabComponent
               item.clarificationId
             );
             item['clarificationName'] = clarification;
+            const date = new Date(item.rejectionDate);
+            const datePipe = new DatePipe('en-US');
+            item['rejectionDate'] = datePipe.transform(
+              date,
+              'dd/MM/yyyy',
+              'UTC'
+            );
           });
 
           Promise.all(info).then(() => {

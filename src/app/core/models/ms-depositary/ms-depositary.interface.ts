@@ -22,7 +22,7 @@ export interface IAppointmentDepositary {
   feeAmount: string;
   provisionalOfficialNumber: string;
   annexed: string;
-  goodNumber: number;
+
   governmentMeetingOfficialDate: string;
   governmentMeetingOfficialNumber: string;
   shippingDateGeneralAddress: string;
@@ -94,4 +94,21 @@ export interface IRequestDepositary {
   attentionUser: string;
   registerNumber: number;
   proposedCandidate: string;
+}
+export interface IPersonsModDepositary {
+  appointmentNum: number;
+  personNum: string;
+  process: string;
+  dateExecution: Date;
+  sentSirsae: string;
+  modifyStatus: string;
+  indicted: string;
+  dateShipment: Date;
+  sendSirsae: string;
+  nbOrigin: string;
+}
+
+export interface IPaymendtDepParamsDep {
+  name: number;
+  address: string;
 }

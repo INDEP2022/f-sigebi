@@ -50,6 +50,7 @@
               [form]="clarificationForm"
               control="clarificationId"
               (fetchItems)="getClarification($event)"
+              (change)="clarificationSelect($event)"
               [data]="selectClarification"
               label="Aclaraci&oacute;n"
               value="id"
