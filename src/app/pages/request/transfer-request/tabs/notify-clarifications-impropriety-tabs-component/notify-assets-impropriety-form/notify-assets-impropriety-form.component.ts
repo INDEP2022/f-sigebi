@@ -65,7 +65,6 @@ export class NotifyAssetsImproprietyFormComponent
     private rejectedGoodService: RejectedGoodService,
     private authService: AuthService,
     private requestService: RequestService,
-    private chatClarificationsService: ChatClarificationsService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService
   ) {
     super();
@@ -316,12 +315,8 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.onLoadToast('success','Aclaración guardada correctamente','' );
-        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-        this.openReport(data); //Falta verificar información que se envia...
-        //this.modalRef.content.callback(true);
+        this.changeStatusAnswered();
         this.loading = false;
-        this.saveClarificationsAcept();
         this.close();
       },
       error: error => {
@@ -371,11 +366,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.onLoadToast('success','Aclaración guardada correctamente','' );
-        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-        this.openReport(data); //Falta verificar información que se envia...
-        //this.modalRef.content.callback(true);
-        this.saveClarificationsAcept();
+        this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -426,13 +417,9 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.onLoadToast('success','Aclaración guardada correctamente','' );
-        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-        this.openReport(data); //Falta verificar información que se envia...
-        //this.modalRef.content.callback(true);
+        this.changeStatusAnswered();
         this.loading = false;
         this.close();
-        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
@@ -481,13 +468,9 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.onLoadToast('success','Aclaración guardada correctamente','' );
-        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-        this.openReport(data); //Falta verificar información que se envia...
-        //this.modalRef.content.callback(true);
+        this.changeStatusAnswered();
         this.loading = false;
         this.close();
-        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
@@ -537,13 +520,9 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.onLoadToast('success','Aclaración guardada correctamente','' );
-        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-        this.openReport(data); //Falta verificar información que se envia...
-        //this.modalRef.content.callback(true);
+        this.changeStatusAnswered();
         this.loading = false;
         this.close();
-        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
@@ -593,19 +572,130 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.onLoadToast('success','Aclaración guardada correctamente','' );
-        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-        this.openReport(data); //Falta verificar información que se envia...
-        //this.modalRef.content.callback(true);
-
+        this.changeStatusAnswered();
         this.loading = false;
         this.close();
-        this.chatClarifications2();
       },
       error: error => {
         this.loading = false;
+        this.onLoadToast('error', 'No se pudo guardar', '');
+      },
+    });
+  }
 
-        //this.onLoadToast('error', 'No se pudo guardar', '');
+  changeStatusAnswered() {
+    this.loading = true;
+    this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
+      this.dataClarifications2.rejectNotificationId;
+
+    this.chatService.getAll(this.paramsReload.getValue()).subscribe({
+      next: data => {
+        this.dataChatClarifications = data.data;
+        this.updateChatClarification(this.dataChatClarifications[0]);
+      },
+      error: error => {},
+    });
+  }
+
+  updateChatClarification(chatClarifications: IChatClarifications) {
+    const modelChatClarifications: IChatClarifications = {
+      id: chatClarifications.id, //ID primaria
+      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      requestId: this.idRequest,
+      goodId: this.dataClarifications2.goodId,
+      //clarificationStatus: 'EN_ACLARACION', //Valor a cambiar
+    };
+
+    this.chatService
+      .update(chatClarifications.id, modelChatClarifications)
+      .subscribe({
+        next: async data => {
+          if (data.clarificationTypeId == 1) {
+            this.updateAnsweredAcla(
+              data.clarifiNewsRejectId,
+              chatClarifications.id,
+              modelChatClarifications.goodId
+            );
+          } else if (data.clarificationTypeId == 2) {
+            this.updateAnsweredImpro(
+              data.clarifiNewsRejectId,
+              chatClarifications.id,
+              modelChatClarifications.goodId
+            );
+          }
+        },
+        error: error => {
+          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+        },
+      });
+  }
+
+  updateAnsweredAcla(
+    id?: number,
+    chatClarId?: number | string,
+    goodId?: number,
+    observations?: string
+  ) {
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'ACLARADA', // ??
+      observations: observations,
+    };
+
+    console.log(data);
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {
+        const updateInfo: IChatClarifications = {
+          requestId: this.idRequest,
+          goodId: goodId,
+          clarificationStatus: 'EN_ACLARACION',
+        };
+        this.chatService.update(chatClarId, updateInfo).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Actualizado', '');
+            this.modalRef.content.callback(true, data.goodId);
+            this.modalRef.hide();
+          },
+          error: error => {
+            this.loading = false;
+            console.log(error);
+          },
+        });
+      },
+    });
+  }
+
+  updateAnsweredImpro(
+    id?: number,
+    chatClarId?: number,
+    goodId?: number,
+    observations?: string
+  ) {
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'IMPROCEDENTE',
+      observations: observations,
+    };
+
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {
+        const updateInfo: IChatClarifications = {
+          requestId: this.idRequest,
+          goodId: goodId,
+          clarificationStatus: 'IMPROCEDENTE',
+        };
+        this.chatService.update(chatClarId, updateInfo).subscribe({
+          next: data => {
+            this.modalRef.content.callback(true, data.goodId);
+            this.modalRef.hide();
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
       },
     });
   }
@@ -621,7 +711,7 @@ export class NotifyAssetsImproprietyFormComponent
         this.dataClarifications2.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
       ) {
       } else {
-        this.updateNotify(
+        this.updateAnsweredAcla(
           this.dataClarifications2.rejectNotificationId,
           this.dataClarifications2.chatClarification.idClarification,
           this.dataClarifications2.goodId,
@@ -671,229 +761,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   dataChatClarifications: IChatClarifications[];
-
-  //------------------------------------ PARA FORMULARIO CORTO -----------------------------------
-  chatClarifications1() {
-    this.loading = true;
-    this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
-      this.dataClarifications2.rejectNotificationId;
-
-    //Trae lista de chat-clarifications con el filtrado, para verificar si ya existe un registro
-    this.chatService.getAll(this.paramsReload.getValue()).subscribe({
-      next: data => {
-        this.dataChatClarifications = data.data;
-        //Si ya existe un registro en chatClarificatios, entonces se va a actualizar ese mismo registro
-        this.chatClarificationUpdate1(this.dataChatClarifications[0]);
-      },
-      error: error => {
-        //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
-        //this.chatClarificationCreate1();
-      },
-    });
-  }
-
-  //Método que Actualiza ChatClarifications PARA FORMULARIO CORTO
-  chatClarificationUpdate1(chatClarifications: IChatClarifications) {
-    //Construyendo objeto/model para enviarle
-    const modelChatClarifications: IChatClarifications = {
-      id: chatClarifications.id, //ID primaria
-      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
-      requestId: chatClarifications.requestId,
-      goodId: chatClarifications.goodId,
-      senderName: this.clarificationForm.get('senderName').value, //Nueva información que se inserta por el formulario
-      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
-        .value, //Nueva información que se inserta por el formulario
-      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value, //Nueva información que se inserta por el formulario
-      webMail: this.clarificationForm.get('webMail').value, //Nueva información que se inserta por el formulario
-      clarificationStatus: 'A_ACLARACION', //Este estado cambia cuando se manda a guardar el formulario, tanto largo como corto
-      //id: this.idClarification, //Esta propiedad es importante, se le debe asignar a bienes_recha_notif_aclara
-    };
-
-    //Servicio para actualizar registro de ChatClariffications
-    this.chatService
-      .update(chatClarifications.id, modelChatClarifications)
-      .subscribe({
-        next: async data => {
-          this.onLoadToast(
-            'success',
-            'Notificación actualizada y guardada correctamente',
-            ''
-          );
-          this.loading = false;
-          this.updateNotify(
-            data.clarifiNewsRejectId,
-            chatClarifications.id,
-            modelChatClarifications.goodId
-          );
-        },
-        error: error => {
-          this.loading = false;
-          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
-          this.modalRef.hide();
-        },
-      });
-  }
-
-  //------------------------------------ PARA FORMULARIO LARGO -----------------------------------
-  chatClarifications2() {
-    this.loading = true;
-    this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
-      this.dataClarifications2.rejectNotificationId;
-
-    //Trae lista de chat-clarifications con el filtrado, para verificar si ya existe un registro
-    this.chatService.getAll(this.paramsReload.getValue()).subscribe({
-      next: data => {
-        this.dataChatClarifications = data.data;
-        //Si ya existe un registro en chatClarificatios, entonces se va a actualizar ese mismo registro
-        this.chatClarificationUpdate2(this.dataChatClarifications[0]);
-      },
-      error: error => {
-        //Si no hay un registro en chatClarifications, entonces se crea uno nuevo, con clarifiNewsRejectId establecido con id_recha_noti
-        //this.chatClarificationCreate2();
-      },
-    });
-  }
-
-  //Método que Actualiza ChatClarifications PARA FORMULARIO LARGO
-  chatClarificationUpdate2(chatClarifications: IChatClarifications) {
-    //Construyendo objeto/model para enviarle
-    const modelChatClarifications: IChatClarifications = {
-      id: chatClarifications.id, //ID primaria
-      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
-      requestId: this.idRequest,
-      goodId: this.dataClarifications2.goodId,
-      addresseeName: this.clarificationForm.get('addresseeName').value,
-      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
-        .value,
-      senderName: this.clarificationForm.get('senderName').value,
-      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
-      webMail: this.clarificationForm.get('webMail').value,
-      clarificationStatus: 'A_ACLARACION',
-    };
-
-    //Servicio para actualizar registro de ChatClariffications
-    this.chatService
-      .update(chatClarifications.id, modelChatClarifications)
-      .subscribe({
-        next: async data => {
-          this.onLoadToast('success', 'Actualizado', '');
-          this.loading = false;
-          this.updateNotify(
-            data.clarifiNewsRejectId,
-            chatClarifications.id,
-            modelChatClarifications.goodId
-          );
-        },
-        error: error => {
-          this.loading = false;
-          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
-        },
-      });
-  }
-
-  updateNotify(
-    id?: number,
-    chatClarId?: number | string,
-    goodId?: number,
-    observations?: string
-  ) {
-    const data: ClarificationGoodRejectNotification = {
-      rejectionDate: new Date(),
-      rejectNotificationId: id,
-      answered: 'EN ACLARACION',
-      observations: observations,
-    };
-
-    console.log(data);
-    this.rejectedGoodService.update(id, data).subscribe({
-      next: () => {
-        const updateInfo: IChatClarifications = {
-          requestId: this.idRequest,
-          goodId: goodId,
-          clarificationStatus: 'EN_ACLARACION',
-        };
-        this.chatClarificationsService
-          .update(chatClarId, updateInfo)
-          .subscribe({
-            next: data => {
-              this.modalRef.content.callback(true, data.goodId);
-              this.modalRef.hide();
-            },
-            error: error => {
-              console.log(error);
-            },
-          });
-      },
-    });
-  }
-
-  updateNotifyInapro(
-    id?: number,
-    chatClarId?: number,
-    goodId?: number,
-    observations?: string
-  ) {
-    const data: ClarificationGoodRejectNotification = {
-      rejectionDate: new Date(),
-      rejectNotificationId: id,
-      answered: 'IMPROCEDENTE',
-      observations: observations,
-    };
-
-    this.rejectedGoodService.update(id, data).subscribe({
-      next: () => {
-        const updateInfo: IChatClarifications = {
-          requestId: this.idRequest,
-          goodId: goodId,
-          clarificationStatus: 'EN_ACLARACION',
-        };
-        this.chatClarificationsService
-          .update(chatClarId, updateInfo)
-          .subscribe({
-            next: data => {
-              this.modalRef.content.callback(true, data.goodId);
-              this.modalRef.hide();
-            },
-            error: error => {
-              console.log(error);
-            },
-          });
-      },
-    });
-  }
-
-  //Método para crear un nuevo chatClarifications PARA FORMULARIO LARGO
-  chatClarificationCreate2() {
-    //Creando objeto nuevo para ChatClarifications
-    const modelChatClarifications: IChatClarifications = {
-      //id: , //ID primaria
-      clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
-      requestId: this.idRequest,
-      goodId: this.dataClarifications2.goodId,
-      addresseeName: this.clarificationForm.get('addresseeName').value,
-      jobClarificationKey: this.clarificationForm.get('jobClarificationKey')
-        .value,
-      senderName: this.clarificationForm.get('senderName').value,
-      userAreaCaptures: this.clarificationForm.get('userAreaCaptures').value,
-      webMail: this.clarificationForm.get('webMail').value,
-      clarificationStatus: 'A_ACLARACION',
-    };
-
-    //Servicio para crear registro de ChatClariffications
-    this.chatService.create(modelChatClarifications).subscribe({
-      next: async data => {
-        this.loading = false;
-        this.modalRef.content.callback(true, data.goodId);
-        this.modalRef.hide();
-        this.updateNotify(data.clarifiNewsRejectId);
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No se pudo crear', error.error);
-        this.modalRef.hide();
-      },
-    });
-  }
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
