@@ -42,6 +42,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { InappropriatenessFormComponent } from '../inappropriateness-form/inappropriateness-form.component';
 import { InappropriatenessPgrSatFormComponent } from '../inappropriateness-pgr-sat-form/inappropriateness-pgr-sat-form.component';
+
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintSatAnswerComponent } from '../print-sat-answer/print-sat-answer.component';
 import { RefuseClarificationModalComponent } from '../refuse-clarification-modal/refuse-clarification-modal.component';
@@ -1226,7 +1227,6 @@ export class NotificationAssetsTabComponent
       .subscribe({
         next: data => {
           this.notificationsList.load(data.data);
-
           data.data.map(notification => {
             if (notification.clarificationType == 'SOLICITAR_ACLARACION') {
               if (
