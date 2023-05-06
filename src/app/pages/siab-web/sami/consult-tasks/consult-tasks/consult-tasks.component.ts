@@ -99,7 +99,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
-      State: [''],
+      State: ['null'],
       typeOfTrasnfer: [null],
     });
 
@@ -110,32 +110,49 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       )
       .subscribe();
   }
-
+  searchTasks() {
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.params
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => this.getTasks())
+      )
+      .subscribe();
+  }
   exportToExcel() {
     const filename: string = this.userName + '-Tasks';
     // El type no es necesario ya que por defecto toma 'xlsx'
     this.excelService.export(this.tasks, { filename });
   }
 
-  getTasks() {
+  private getTasks() {
     let isfilterUsed = false;
     const params = this.params.getValue();
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
     const user = this.authService.decodeToken() as any;
+
+    this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue(
+      Number.parseInt(user.department)
+    );
+    console.log(this.consultTasksForm.value);
     this.filterParams
       .getValue()
       .addFilter('assignees', user.username, SearchFilter.ILIKE);
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
-
+    console.log(filterStatus);
     if (filterStatus) {
       isfilterUsed = true;
       if (filterStatus === 'null') {
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
-      } else {
-        this.filterParams.getValue().addFilter('State', filterStatus);
+      } else if (filterStatus === 'FINALIZADA') {
+        this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
+      }
+      if (filterStatus === 'TODOS') {
+        console.log('todos');
+        this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
       }
     }
 
@@ -146,19 +163,14 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       if (value == 'FGR_SAE') {
         this.filterParams
           .getValue()
-          .addFilter(
-            'request.typeOfTransfer',
-            'PGR_SAE,FGR_SAE',
-            SearchFilter.IN
-          );
+          .addFilter('request.typeOfTransfer', 'PGR_SAE', SearchFilter.EQ);
+        this.filterParams
+          .getValue()
+          .addFilter('request.typeOfTransfer', value, SearchFilter.OR);
       } else {
         this.filterParams
           .getValue()
-          .addFilter(
-            'request.typeOfTransfer',
-            this.consultTasksForm.value.typeOfTrasnfer,
-            SearchFilter.EQ
-          );
+          .addFilter('request.typeOfTransfer', value, SearchFilter.EQ);
       }
     }
 
@@ -302,14 +314,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         .getValue()
         .addFilter('endDate', inicio + ',' + final, SearchFilter.BTW);
     }
-    if (this.consultTasksForm.value.txtNoDelegacionRegional) {
+    if (
+      typeof this.consultTasksForm.value.txtNoDelegacionRegional == 'number'
+    ) {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
-          'regionalDelegationId',
+          'request.regionalDelegationId',
           this.consultTasksForm.value.txtNoDelegacionRegional,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
@@ -322,24 +336,24 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtNoTransferente) {
+    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
           'request.transferenceId',
           this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
-    if (this.consultTasksForm.value.txtNoProgramacion) {
+    if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
           'programmingId',
           this.consultTasksForm.value.txtNoProgramacion,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
 
@@ -392,12 +406,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.consultTasksForm.reset();
     this.consultTasksForm.updateValueAndValidity();
     this.consultTasksForm.controls['txtSearch'].setValue('');
-    this.getTasks();
+    this.searchTasks();
   }
 
   onKeydown(event: any) {
     console.log('Apreto enter event', event);
-    this.getTasks();
+    this.searchTasks();
   }
 
   openTask(selected: any): void {
