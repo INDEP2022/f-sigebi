@@ -689,7 +689,11 @@ export class NotificationAssetsTabComponent
               notification,
               request,
               type,
-              callback: (next: boolean) => {},
+              callback: (next: boolean, idGood: number) => {
+                if (next) {
+                  this.checkInfoNotification(idGood);
+                }
+              },
             };
             this.modalService.show(
               InappropriatenessPgrSatFormComponent,
@@ -706,7 +710,11 @@ export class NotificationAssetsTabComponent
             config.initialState = {
               notification,
               request,
-              callback: (next: boolean) => {},
+              callback: (next: boolean, idGood: number) => {
+                if (next) {
+                  this.checkInfoNotification(idGood);
+                }
+              },
             };
 
             this.modalService.show(InappropriatenessFormComponent, config);
