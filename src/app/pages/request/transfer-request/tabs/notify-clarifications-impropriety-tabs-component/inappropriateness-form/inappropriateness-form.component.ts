@@ -35,6 +35,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   dataChatClarifications: IChatClarifications[];
+  idSolicitud: any;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -127,8 +128,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
           'Con idDoc: ',
           response.documentTypeId
         );
+        this.changeStatusAnswered();
         this.openReport(response);
-        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -217,7 +218,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     const idReportAclara = data.id;
     const idDoc = data.id;
     const idTypeDoc = 216;
-    const requestInfo = data;
+    const requestInfo = this.request;
+    const idSolicitud = this.idSolicitud;
 
     //Modal que genera el reporte
     let config: ModalOptions = {
@@ -226,6 +228,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         idTypeDoc,
         idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',

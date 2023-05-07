@@ -56,6 +56,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Parámetro para detectar que tipo de aclaración es
   typeClarifications: any;
+  idSolicitud: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -320,8 +321,8 @@ export class NotifyAssetsImproprietyFormComponent
           'Con idDoc: ',
           data.documentTypeId
         );
+        this.changeStatusAnswered();
         this.openReport(data);
-        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -377,8 +378,8 @@ export class NotifyAssetsImproprietyFormComponent
           'Con idDoc: ',
           data.documentTypeId
         );
+        this.changeStatusAnswered();
         this.openReport(data);
-        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -408,10 +409,10 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: 'DIRIGIDO A EJEMPLO',
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee: 'CARGO DE EJEMPLO',
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '212',
@@ -434,8 +435,8 @@ export class NotifyAssetsImproprietyFormComponent
           'Con idDoc: ',
           data.id
         );
+        this.changeStatusAnswered();
         this.openReport(data);
-        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -492,8 +493,8 @@ export class NotifyAssetsImproprietyFormComponent
           'Con idDoc: ',
           data.documentTypeId
         );
+        this.changeStatusAnswered();
         this.openReport(data);
-        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -608,8 +609,8 @@ export class NotifyAssetsImproprietyFormComponent
           'Con idDoc: ',
           data.documentTypeId
         );
+        this.changeStatusAnswered();
         this.openReport(data);
-        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -804,7 +805,8 @@ export class NotifyAssetsImproprietyFormComponent
     const idReportAclara = data.id;
     const idDoc = data.id;
     const idTypeDoc = Number(data.documentTypeId);
-    const requestInfo = data;
+    const requestInfo = this.infoRequest;
+    const idSolicitud = this.idSolicitud;
     console.log('ID tipo de documento', idTypeDoc);
     //Modal que genera el reporte
     let config: ModalOptions = {
@@ -813,6 +815,7 @@ export class NotifyAssetsImproprietyFormComponent
         idTypeDoc,
         idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',

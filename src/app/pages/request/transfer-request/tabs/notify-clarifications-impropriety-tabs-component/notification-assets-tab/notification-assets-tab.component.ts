@@ -139,6 +139,7 @@ export class NotificationAssetsTabComponent
   }
 
   ngOnInit(): void {
+    console.log('ID SOLICITUD', this.idRequest);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -366,10 +367,12 @@ export class NotificationAssetsTabComponent
       } else if (this.selectedRow.answered != 'ACLARADA') {
         const refuseObj = { ...this.valuesNotifications }; //Info de sus notificaciones
         const modalConfig = MODAL_CONFIG;
+        const idSolicitud = this.idRequest;
         modalConfig.initialState = {
           refuseObj,
           dataClarifications2,
           clarification: this.notifyAssetsSelected,
+          idSolicitud,
           callback: (next: boolean) => {
             if (next) {
               this.getClarificationsByGood(refuseObj.goodId);
@@ -678,6 +681,7 @@ export class NotificationAssetsTabComponent
           ) {
             const type = this.requestData.transferent.type;
             const request = this.requestData;
+            const idSolicitud = this.idRequest;
 
             //Abre formulario improcedencias corta para SAT_SAE y PGR_SAR
             let config = {
@@ -689,6 +693,7 @@ export class NotificationAssetsTabComponent
               notification,
               request,
               type,
+              idSolicitud,
               callback: (next: boolean, idGood: number) => {
                 if (next) {
                   this.checkInfoNotification(idGood);
@@ -701,7 +706,7 @@ export class NotificationAssetsTabComponent
             );
           } else {
             const request = this.requestData;
-
+            const idSolicitud = this.idRequest;
             //Abre formulario para improcedencia MANUAL(NO)
             let config = {
               ...MODAL_CONFIG,
@@ -710,6 +715,7 @@ export class NotificationAssetsTabComponent
             config.initialState = {
               notification,
               request,
+              idSolicitud,
               callback: (next: boolean, idGood: number) => {
                 if (next) {
                   this.checkInfoNotification(idGood);
@@ -935,6 +941,7 @@ export class NotificationAssetsTabComponent
     const dataNotification = this.valueClarification;
     const idNotify = { ...this.notificationsGoods };
     const idAclara = this.selectedRow.clarification.type; //Id del tipo de aclaración
+    const idSolicitud = this.idRequest;
 
     let config: ModalOptions = {
       initialState: {
@@ -950,6 +957,7 @@ export class NotificationAssetsTabComponent
         idRequest: this.idRequest,
         infoRequest,
         typeClarifications,
+        idSolicitud,
         callback: (next: boolean, idGood: number) => {
           if (next) {
             this.checkInfoNotification(idGood);
@@ -1008,9 +1016,11 @@ export class NotificationAssetsTabComponent
           } else {
             const idNotify = { ...this.notificationsGoods };
             const idAclaracion = this.selectedRow.clarification.id; //ID de la aclaración para mandar al reporte del sat
+            const idSolicitud = this.idRequest;
             let config: ModalOptions = {
               initialState: {
                 idAclaracion,
+                idSolicitud,
                 callback: (next: boolean) => {
                   this.getClarificationsByGood(idNotify.goodId);
                 },

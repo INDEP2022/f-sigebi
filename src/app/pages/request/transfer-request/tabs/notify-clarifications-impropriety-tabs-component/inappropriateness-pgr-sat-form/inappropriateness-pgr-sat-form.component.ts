@@ -40,6 +40,7 @@ export class InappropriatenessPgrSatFormComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   dataChatClarifications: IChatClarifications[];
+  idSolicitud: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -110,8 +111,8 @@ export class InappropriatenessPgrSatFormComponent
           'Con idDoc: ',
           response.documentTypeId
         );
+        this.changeStatusAnswered();
         this.openReport(response);
-        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -200,7 +201,8 @@ export class InappropriatenessPgrSatFormComponent
     const idReportAclara = data.id;
     const idDoc = data.id;
     const idTypeDoc = Number(data.documentTypeId);
-    const requestInfo = data;
+    const requestInfo = this.request;
+    const idSolicitud = this.idSolicitud;
     console.log('ID tipo de documento', idTypeDoc);
     //Modal que genera el reporte
     let config: ModalOptions = {
@@ -209,6 +211,7 @@ export class InappropriatenessPgrSatFormComponent
         idTypeDoc,
         idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
