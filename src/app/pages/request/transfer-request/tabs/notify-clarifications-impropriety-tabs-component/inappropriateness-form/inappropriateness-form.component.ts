@@ -35,6 +35,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   dataChatClarifications: IChatClarifications[];
+  idSolicitud: any;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -107,7 +108,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       positionAddressee: this.form.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
-      documentTypeId: '216',
+      documentTypeId: '216', //Aclaración tipo 2 -> ImprocedenciaTransferentesVoluntarias
       modificationUser: token.name,
       worthAppraisal: this.form.controls['worthAppraisal'].value,
       creationDate: new Date(),
@@ -122,7 +123,13 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
+        console.log(
+          'Abriendo ImprocedenciaTransferentesVoluntarias1, ',
+          'Con idDoc: ',
+          response.documentTypeId
+        );
         this.changeStatusAnswered();
+        this.openReport(response);
         this.loading = false;
         this.close();
       },
@@ -161,61 +168,16 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       .update(chatClarifications.id, modelChatClarifications)
       .subscribe({
         next: async data => {
-          if (data.clarificationTypeId == 1) {
-            this.updateAnsweredAcla(
-              data.clarifiNewsRejectId,
-              chatClarifications.id,
-              modelChatClarifications.goodId
-            );
-          } else if (data.clarificationTypeId == 2) {
-            this.updateAnsweredImpro(
-              data.clarifiNewsRejectId,
-              chatClarifications.id,
-              modelChatClarifications.goodId
-            );
-          }
+          this.updateAnsweredImpro(
+            data.clarifiNewsRejectId,
+            chatClarifications.id,
+            modelChatClarifications.goodId
+          );
         },
         error: error => {
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
         },
       });
-  }
-
-  updateAnsweredAcla(
-    id?: number,
-    chatClarId?: number | string,
-    goodId?: number,
-    observations?: string
-  ) {
-    const data: ClarificationGoodRejectNotification = {
-      rejectionDate: new Date(),
-      rejectNotificationId: id,
-      answered: 'ACLARADA', // ??
-      observations: observations,
-    };
-
-    console.log(data);
-    this.rejectedGoodService.update(id, data).subscribe({
-      next: () => {
-        const updateInfo: IChatClarifications = {
-          requestId: this.request.id,
-          goodId: goodId,
-          clarificationStatus: 'EN_ACLARACION',
-        };
-        this.chatService.update(chatClarId, updateInfo).subscribe({
-          next: data => {
-            this.loading = false;
-            this.onLoadToast('success', 'Actualizado', '');
-            this.modalRef.content.callback(true, data.goodId);
-            this.modalRef.hide();
-          },
-          error: error => {
-            this.loading = false;
-            console.log(error);
-          },
-        });
-      },
-    });
   }
 
   updateAnsweredImpro(
@@ -256,7 +218,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     const idReportAclara = data.id;
     const idDoc = data.id;
     const idTypeDoc = 216;
-    const requestInfo = data;
+    const requestInfo = this.request;
+    const idSolicitud = this.idSolicitud;
 
     //Modal que genera el reporte
     let config: ModalOptions = {
@@ -265,6 +228,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         idTypeDoc,
         idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
