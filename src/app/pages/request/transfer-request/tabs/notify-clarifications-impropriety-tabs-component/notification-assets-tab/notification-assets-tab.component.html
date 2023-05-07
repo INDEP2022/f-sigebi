@@ -240,7 +240,7 @@
 
               <div class="p-2">
                 <button
-                  id="btn2a"
+                  id="btn2"
                   (click)="reloadData()"
                   class="btn btn-info btn-sm active">
                   <i class="fa-thin fa-repeat"></i> Actualizar
@@ -248,7 +248,7 @@
               </div>
               <div class="p-2">
                 <button
-                  id="btn1a"
+                  id="btn1"
                   class="btn btn-primary btn-sm active"
                   (click)="verifyClarification()">
                   <i class="bx bx-check"></i>Verificar Cumplimiento
@@ -285,7 +285,7 @@
               <div class="mr-auto p-2"></div>
               <div class="p-2" *ngIf="requestData?.typeOfTransfer == 'SAT_SAE'">
                 <button
-                  id="btn5a"
+                  id="btn5"
                   class="btn btn-success btn-sm active"
                   (click)="changeStatuesTmp()">
                   Simular respuesta
@@ -293,7 +293,7 @@
               </div>
               <div class="p-2">
                 <button
-                  id="btn6a"
+                  id="btn6"
                   class="btn btn-success btn-sm active"
                   (click)="acceptClarification()">
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
@@ -306,7 +306,7 @@
                   requestData?.typeOfTransfer == 'MANUAL'
                 ">
                 <button
-                  id="btn8a"
+                  id="btn8"
                   class="btn btn-success btn-sm active"
                   (click)="FinishClariImpro()">
                   Finalizar Aclaraci&oacute;n&#47;improcedencia
@@ -321,7 +321,7 @@
               </div>
               <div class="p-2">
                 <button
-                  id="btn7a"
+                  id="btn7"
                   class="btn btn-danger btn-sm active"
                   (click)="refuseClarification()">
                   Rechazar

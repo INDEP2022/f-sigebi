@@ -1696,7 +1696,6 @@ export class NotificationAssetsTabComponent
                     data.answered == 'ACLARADA' ||
                     data.answered == 'RECHAZADA'
                   ) {
-                    alert('update ll');
                     const good: IGood = {
                       id: data.goodId,
                       goodId: data.goodId,

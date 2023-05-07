@@ -35,7 +35,7 @@
         <form [formGroup]="filterForm" class="form-material">
           <div class="row">
             <div class="col-md-3">
-              <!-- <form-field
+              <form-field
                 [control]="filterForm.get('management')"
                 label="No&#46; Gesti&oacute;n">
                 <input
@@ -43,14 +43,20 @@
                   class="form-control"
                   maxlength="30"
                   formControlName="management" />
-              </form-field> -->
+              </form-field>
             </div>
             <div class="col-md-5">
-              <!-- <form-field [control]="filterForm.get('typeGood')">
-                <ngx-select [form]="filterForm" control="typeGood" [data]="typeGoods" value="description"
-                  bindLabel="description" label="Tipo de bien" (fetchItems)="getTypeRelevant($event)">
+              <form-field [control]="filterForm.get('typeGood')">
+                <ngx-select
+                  [form]="filterForm"
+                  control="typeGood"
+                  [data]="typeGoods"
+                  value="description"
+                  bindLabel="description"
+                  label="Tipo de bien"
+                  (fetchItems)="getTypeRelevant($event)">
                 </ngx-select>
-              </form-field> -->
+              </form-field>
             </div>
           </div>
         </form>
