@@ -315,7 +315,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        console.log(
+          'Abriendo improcedenciaTransferentesVoluntarias3, ',
+          'Con idDoc: ',
+          data.documentTypeId
+        );
+        this.openReport(data);
+        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -366,7 +372,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        console.log(
+          'Abriendo oficioImprocedencia, ',
+          'Con idDoc: ',
+          data.documentTypeId
+        );
+        this.openReport(data);
+        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -417,7 +429,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        console.log(
+          'Abriendo aclaracionComercioExterior, ',
+          'Con idDoc: ',
+          data.id
+        );
+        this.openReport(data);
+        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -447,10 +465,11 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '104',
@@ -468,7 +487,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        console.log(
+          'Abriendo oficioAclaracionTransferente, ',
+          'Con idDoc: ',
+          data.documentTypeId
+        );
+        this.openReport(data);
+        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -520,7 +545,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        console.log(
+          'Abriendo aclaracionAsegurados, ',
+          'Con idDoc: ',
+          data.documentTypeId
+        );
+        this.openReport(data);
+        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -572,7 +603,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        console.log(
+          'Abriendo aclaracionTransferentesVoluntarias, ',
+          'Con idDoc: ',
+          data.documentTypeId
+        );
+        this.openReport(data);
+        //this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -639,7 +676,7 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'ACLARADA', // ??
+      answered: 'EN ACLARACION', // ??
       observations: observations,
     };
 

@@ -36,7 +36,7 @@
           <div class="col-md-4">
             <div>
               <label for="">Fecha de Solicitud&#58;</label>
-              {{ requestData?.applicationDate | date: 'dd/MM/yyyy' }}
+              {{ requestData?.applicationDate | date : 'dd/MM/yyyy' }}
             </div>
           </div>
           <div class="col-md-4">
@@ -293,7 +293,7 @@
               </div>
               <div class="p-2">
                 <button
-                  id="btn6"
+                  id="btn6a"
                   class="btn btn-success btn-sm active"
                   (click)="acceptClarification()">
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia

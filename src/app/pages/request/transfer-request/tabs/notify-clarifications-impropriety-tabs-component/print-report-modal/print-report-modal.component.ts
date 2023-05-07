@@ -23,7 +23,7 @@ import { LIST_REPORTS_COLUMN } from './list-reports-column';
   styles: [],
 })
 export class PrintReportModalComponent extends BasePage implements OnInit {
-  idDoc: any;
+  idDoc: number;
   idTypeDoc: any; //ID Tipo de documento
   idReportAclara: any; //ID del reporte de Oficio_Aclaracion
   sign: boolean = true;
@@ -489,6 +489,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
       const requestInfo = this.requestInfo; //ID solicitud
+      console.log('ID de solicitud', this.requestInfo.id);
       const nameTypeReport = 'DictamenProcendecia';
       const formData: Object = {
         id: this.idDoc,
@@ -504,7 +505,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'OficioImprocedencia';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idDoc,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -516,7 +517,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'OficioAclaracionTransferente';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idDoc,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -529,7 +530,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionComercioExterior';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idDoc,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -542,7 +543,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionAsegurados';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idDoc,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -555,7 +556,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionTransferentesVoluntarias';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idDoc,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -568,7 +569,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'ImprocedenciaTransferentesVoluntarias';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idDoc,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
