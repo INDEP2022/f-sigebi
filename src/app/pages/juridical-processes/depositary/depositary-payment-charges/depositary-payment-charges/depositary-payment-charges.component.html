@@ -13,7 +13,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="numberGood" />
+              formControlName="numberGood"
+              (keyup.enter)="onSearch()" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -22,14 +23,20 @@
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('bank')" label="Banco">
-            <input type="text" class="form-control" formControlName="bank" />
+          <form-field [control]="form.get('cve_bank')" label="Banco">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cve_bank" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('loand')" label="Carga">
-            <input type="text" class="form-control" formControlName="loand" />
-          </form-field>
+          <!--form-field [control]="form.get('loand')" label="Carga archivo"-->
+          <button type="text" class="btn btn-sm btn-info active">
+            Carga archivo
+          </button>
+          <!--input type="text" class="form-control" formControlName="loand" /-->
+          <!--/form-field-->
         </div>
       </div>
     </form>
@@ -40,16 +47,17 @@
             type="button"
             class="btn btn-success active"
             (click)="paymentDispersion()">
-            Dispersi&#46;n de pagos
+            Dispersi&#243;n de pagos
           </button>
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="form-material col-md-8">
-        <search-bar [params]="params"></search-bar>
+      <div class="form-material col-md-10">
+        <!--search-bar [params]="params"></search-bar>
       </div>
-      <div class="col-md-2"></div>
+      <div class="col-md-2"-->
+      </div>
       <div class="col-md-2 buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>

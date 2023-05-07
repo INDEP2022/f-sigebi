@@ -95,3 +95,20 @@ export interface IRequestDepositary {
   registerNumber: number;
   proposedCandidate: string;
 }
+export interface IPersonsModDepositary {
+  appointmentNum: number;
+  personNum: string;
+  process: string;
+  dateExecution: Date;
+  sentSirsae: string;
+  modifyStatus: string;
+  indicted: string;
+  dateShipment: Date;
+  sendSirsae: string;
+  nbOrigin: string;
+}
+
+export interface IPaymendtDepParamsDep {
+  name: number;
+  address: string;
+}

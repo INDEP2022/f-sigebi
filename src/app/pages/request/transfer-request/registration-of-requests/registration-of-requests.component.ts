@@ -158,8 +158,12 @@ export class RegistrationOfRequestsComponent
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
   associateExpedientListener() {
     this.requestHelperService.currentExpedient.subscribe({
-      next: resp => {
+      next: async resp => {
         if (resp === true) {
+          const request: any = await this.getAsyncRequestById();
+          this.registRequestForm.controls['recordId'].setValue(
+            request.recordId
+          );
           this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }
@@ -178,7 +182,7 @@ export class RegistrationOfRequestsComponent
         [
           Validators.required,
           Validators.minLength(1),
-          Validators.maxLength(30),
+          Validators.maxLength(50),
         ],
       ],
       regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],

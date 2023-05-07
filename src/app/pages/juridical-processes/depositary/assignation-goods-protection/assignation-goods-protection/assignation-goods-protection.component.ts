@@ -3,7 +3,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
@@ -17,6 +21,7 @@ import { ICourt } from 'src/app/core/models/catalogs/court.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IDelegation } from 'src/app/core/models/ms-survillance/survillance';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProtectionService } from 'src/app/core/services/ms-protection/protection.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -75,6 +80,7 @@ export class AssignationGoodsProtectionComponent
   items = new DefaultSelect<Example>();
   minItems = new DefaultSelect<IMinpub>();
   courtItems = new DefaultSelect<ICourt>();
+  delegationItems = new DefaultSelect<IDelegation>();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems = 0;
   goodAdd: IGood;
@@ -106,7 +112,7 @@ export class AssignationGoodsProtectionComponent
     });
     this.formTipoSuspersion = this.fb.group({
       suspensionType: '', // Provisional, Definitiva, De plano
-      previous_report_date: [new Date()],
+      reportPreviousDate: [new Date()],
       justificado: ['', [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
@@ -114,16 +120,22 @@ export class AssignationGoodsProtectionComponent
       amparo: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
       protectionType: [null, [Validators.required]], //* Directo, Indirecto
       officialDate: [new Date()],
-      no_minpub: [null], // Detalle Min. Pub.
-      court_number: [null], // Detalle No Juzgado
+      minpubNumber: [null], // Detalle Min. Pub.
+      courtNumber: [null], // Detalle No Juzgado
       responsable: '',
-      delegacion: '', // 4 campos con el primero en id
+      delegationNumber: [null], // 4 campos con el primero en id
       complainers: [null, [Validators.pattern(STRING_PATTERN)]],
-      act_claimed: [null, [Validators.pattern(STRING_PATTERN)]],
+      actReclaimed: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   expedientSelect(expedient: IExpedient) {
+    console.log(expedient);
+    this.minItems = new DefaultSelect<IMinpub>([], 0, true);
+    this.courtItems = new DefaultSelect<ICourt>([], 0, true);
+    this.delegationItems = new DefaultSelect<IDelegation>([], 0, true);
+    this.formAmparo.reset();
+    this.formTipoSuspersion.reset();
     this.form.patchValue(expedient);
     if (expedient) {
       this.getData(this.form.value);
@@ -135,7 +147,6 @@ export class AssignationGoodsProtectionComponent
   }
 
   private getData(val: any) {
-    console.log(val);
     let params = new ListParams();
     params.limit = 5;
     params.page = 1;
@@ -145,27 +156,47 @@ export class AssignationGoodsProtectionComponent
         next: value => {
           this.dataTable = [...value.data];
           this.data = [...this.dataTable];
-          console.log(this.data);
         },
       });
     }
+    let filterParams = new FilterParams();
+    filterParams.limit = 10;
+    filterParams.page = 1;
+    filterParams.addFilter('cveProtection', val.protectionKey, SearchFilter.EQ);
     if (val.protectionKey) {
-      this.protectionService.getByIdNew(val.protectionKey).subscribe({
-        next: value => {
-          let amparo: any = value.data;
-          this.formAmparo.patchValue(amparo);
-          this.minItems = new DefaultSelect([amparo.no_minpub]);
-          this.formAmparo.get('no_minpub').patchValue(amparo.no_minpub.id);
-          this.courtItems = new DefaultSelect([amparo.court_number]);
-          this.formAmparo
-            .get('court_number')
-            .patchValue(amparo.court_number.id);
-          this.formTipoSuspersion.patchValue(amparo);
-          this.formTipoSuspersion
-            .get('suspensionType')
-            .patchValue(this.setSuspensionType(amparo));
-        },
-      });
+      this.protectionService
+        .getAllWithFilters(filterParams.getParams())
+        .subscribe({
+          next: value => {
+            console.log(value.data[0]);
+            let amparo: any = value.data[0];
+            this.formAmparo.patchValue(amparo);
+            if (amparo.minpubNumber) {
+              this.minItems = new DefaultSelect([amparo.minpubNumber]);
+              this.formAmparo
+                .get('minpubNumber')
+                .patchValue(amparo.minpubNumber.minpubNumber);
+            }
+            if (amparo.delegationNumber) {
+              this.delegationItems = new DefaultSelect([
+                amparo.delegationNumber,
+              ]);
+              this.formAmparo
+                .get('delegationNumber')
+                .patchValue(amparo.delegationNumber.delegationId);
+            }
+            if (amparo.courtNumber) {
+              this.courtItems = new DefaultSelect([amparo.courtNumber]);
+              this.formAmparo
+                .get('courtNumber')
+                .patchValue(amparo.courtNumber.courtNumber);
+            }
+            this.formTipoSuspersion.patchValue(amparo);
+            this.formTipoSuspersion
+              .get('suspensionType')
+              .patchValue(this.setSuspensionType(amparo));
+          },
+        });
     }
   }
 

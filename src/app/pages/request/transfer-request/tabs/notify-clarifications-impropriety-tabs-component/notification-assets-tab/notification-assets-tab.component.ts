@@ -6,6 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -39,6 +40,8 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
+import { InappropriatenessFormComponent } from '../inappropriateness-form/inappropriateness-form.component';
+import { InappropriatenessPgrSatFormComponent } from '../inappropriateness-pgr-sat-form/inappropriateness-pgr-sat-form.component';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintSatAnswerComponent } from '../print-sat-answer/print-sat-answer.component';
 import { RefuseClarificationModalComponent } from '../refuse-clarification-modal/refuse-clarification-modal.component';
@@ -64,6 +67,7 @@ export class NotificationAssetsTabComponent
   paramsSave = new BehaviorSubject<ListParams>(new ListParams());
   paramsCheckInfo = new BehaviorSubject<ListParams>(new ListParams());
   paramsCheckAclaration = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columns: IGetGoodResVe[] = [];
   columnFilters: any = [];
@@ -106,6 +110,7 @@ export class NotificationAssetsTabComponent
   nameState: string = '';
   nameAuthority: string = '';
   priority: any = null;
+  typeClarification: number = 0;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -202,20 +207,24 @@ export class NotificationAssetsTabComponent
   }
 
   dataRequest() {
-    this.requestService.getById(this.idRequest).subscribe({
-      next: data => {
-        this.transferentName(data?.transferenceId);
-        this.regDelName(data?.regionalDelegationId);
-        this.stationName(data?.stationId);
-        this.stateName(data?.keyStateOfRepublic);
-        this.authorityName(data?.authorityId);
-        this.requestData = data;
+    this.paramsRequest.getValue()['filter.id'] = this.idRequest;
+    this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
+      next: async data => {
+        console.log('data', data);
+        data.data.map(data => {
+          this.transferentName(data?.transferenceId);
+          this.regDelName(data?.regionalDelegationId);
+          this.stationName(data?.stationId);
+          this.stateName(data?.keyStateOfRepublic);
+          this.authorityName(data?.authorityId);
+        });
+        this.requestData = data.data[0];
       },
       error: error => {},
     });
   }
 
-  transferentName(idTransference: number) {
+  transferentName(idTransference: string | number) {
     this.transferentService.getById(idTransference).subscribe({
       next: response => {
         this.nameTransferent = response.nameTransferent;
@@ -224,7 +233,7 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  regDelName(idRegDel: number) {
+  regDelName(idRegDel: string | number) {
     this.regionalDelegationService.getById(idRegDel).subscribe({
       next: data => {
         this.delRegName = data.description;
@@ -232,7 +241,7 @@ export class NotificationAssetsTabComponent
       error: error => {},
     });
   }
-  stationName(idStation: number) {
+  stationName(idStation: string | number) {
     this.stationService.getById(idStation).subscribe({
       next: data => {
         this.nameStation = data.stationName;
@@ -250,7 +259,7 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  authorityName(authorityId: number) {
+  authorityName(authorityId: string | number) {
     this.authorityService.getById(authorityId).subscribe({
       next: data => {
         this.nameAuthority = data.authorityName;
@@ -305,7 +314,20 @@ export class NotificationAssetsTabComponent
     };
     this.rejectedGoodService.getAllFilter(params).subscribe({
       next: response => {
-        this.notificationsList.load(response.data);
+        const dataNotification = response.data.map(data => {
+          if (data.clarificationType == 'SOLICITAR_ACLARACION') {
+            data['clarificationTypeName'] = 'ACLARACIÓN';
+          }
+
+          if (data.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
+            data['clarificationTypeName'] = 'IMPROCEDENCIA';
+          }
+          const formatDate = moment(data.rejectionDate).format('DD-MM-YYYY');
+          data.rejectionDate = formatDate;
+          return data;
+        });
+        console.log(dataNotification);
+        this.notificationsList.load(dataNotification);
         this.totalItems2 = response.count;
         this.formLoading = false;
       },
@@ -602,29 +624,154 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  acceptClariImpro() {
-    if (this.rowSelected == false) {
-      this.message('Error', 'Seleccione notificación a aceptar');
-    } else {
-      if (this.selectedRow.answered == 'RECHAZADA') {
-        this.message('Error', 'La notificación ya fue rechazada');
+  acceptClarification() {
+    if (this.rowSelected) {
+      const notification = this.selectedRow;
+      let aclaration: boolean = false;
+      let impro: boolean = false;
+      let clarificationType1: boolean = false;
+      let clarificationType2: boolean = false;
+      let type: number = 0;
+
+      if (notification.clarificationType == 'SOLICITAR_ACLARACION') {
+        if (notification.answered == 'NUEVA') {
+          aclaration = true;
+          type = notification.clarification.type;
+          if (type == 1) {
+            clarificationType1 = true;
+          } else if (type == 2) {
+            clarificationType2 = true;
+          }
+        }
+      } else if (
+        notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA' &&
+        notification.answered == 'NUEVA'
+      ) {
+        impro = true;
       }
 
-      if (this.selectedRow.clarification.type < 1) {
-        this.message('Error', 'Seleccione almenos un registro!');
-        return;
-      }
+      if (aclaration || impro) {
+        if (aclaration) {
+          if (clarificationType1 || clarificationType2) {
+            if (clarificationType1) {
+              this.typeClarification = 1;
+              this.initializeFormclarification(notification);
+            } else if (clarificationType2) {
+              this.typeClarification = 2;
+              this.initializeFormclarification(notification);
+            }
+            //Empieza a llamar modal de ACLARACIONES
+            this.getRequest(this.typeClarification);
+          } else {
+            this.onLoadToast(
+              'info',
+              'Error',
+              'Seleccione aclaraciones del mismo tipo'
+            );
+          }
+        } else if (impro) {
+          this.initializeFormclarification(notification);
+          console.log('type', this.requestData.transferent.type);
+          if (
+            this.requestData.transferent.type == 'A' ||
+            this.requestData.transferent.type == 'CE'
+          ) {
+            const type = this.requestData.transferent.type;
+            const request = this.requestData;
 
-      if (this.selectedRow.answered == 'ACLARADA') {
+            //Abre formulario improcedencias corta para SAT_SAE y PGR_SAR
+            let config = {
+              ...MODAL_CONFIG,
+              class: 'modal-lg modal-dialog-centered',
+            };
+
+            config.initialState = {
+              notification,
+              request,
+              type,
+              callback: (next: boolean, idGood: number) => {
+                if (next) {
+                  this.checkInfoNotification(idGood);
+                }
+              },
+            };
+            this.modalService.show(
+              InappropriatenessPgrSatFormComponent,
+              config
+            );
+          } else {
+            const request = this.requestData;
+
+            //Abre formulario para improcedencia MANUAL(NO)
+            let config = {
+              ...MODAL_CONFIG,
+              class: 'modal-lg modal-dialog-centered',
+            };
+            config.initialState = {
+              notification,
+              request,
+              callback: (next: boolean, idGood: number) => {
+                if (next) {
+                  this.checkInfoNotification(idGood);
+                }
+              },
+            };
+
+            this.modalService.show(InappropriatenessFormComponent, config);
+          }
+        }
+      } else if (!aclaration && !impro) {
         this.onLoadToast(
-          'warning',
-          'Acción no valida',
-          'La notificación ya fue aclarada no se puede volver a aceptar'
+          'info',
+          'Advertencia',
+          'No se han seleccionado aclaraciones o improcedencias pendientes por aclarar'
         );
       } else {
-        this.getRequest();
+        this.onLoadToast(
+          'info',
+          'Advertencia',
+          'Seleccione solamente aclaraciones o improcedencias'
+        );
       }
+    } else {
+      this.onLoadToast('info', 'Error', 'Selecciona una notificación');
     }
+  }
+
+  async initializeFormclarification(
+    notification: ClarificationGoodRejectNotification
+  ) {
+    console.log('not', notification);
+    let inappropriateness: boolean = false;
+    if (notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA')
+      inappropriateness = true;
+    const typeDocument = await this.obtainTypeDocument(
+      inappropriateness,
+      notification
+    );
+
+    let userCreation = notification.creationUser;
+    let insertGood: boolean = null;
+    let idDocto = null;
+  }
+
+  obtainTypeDocument(
+    inappropriateness: boolean,
+    notification: ClarificationGoodRejectNotification
+  ) {
+    console.log('notification', notification);
+    console.log('solicitud', this.requestData);
+    let typeTransference = this.requestData.typeOfTransfer;
+    let generaXML: boolean = false;
+    let type: string = null;
+    if (
+      typeTransference == 'SAT_SAE' &&
+      notification.chatClarification.idClarificationType == '2'
+    )
+      generaXML = true;
+
+    console.log('generaXML', generaXML);
+    console.log('inprocedencía', inappropriateness);
   }
 
   FinishClariImpro() {
@@ -765,16 +912,23 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  getRequest() {
-    this.requestService.getById(this.idRequest).subscribe({
+  getRequest(typeClarification?: number) {
+    const typeClarifications = typeClarification;
+    this.paramsRequest.getValue()['filter.id'] = this.idRequest;
+    this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
       next: response => {
-        const infoRequest = response;
-        this.openModal(infoRequest);
+        const infoRequest = response.data[0];
+        this.openModal(infoRequest, typeClarifications, typeClarification);
       },
     });
   }
 
-  openModal(infoRequest?: IRequest, idClarification?: number): void {
+  openModal(
+    infoRequest?: IRequest,
+    idClarification?: number,
+    typeClarification?: number
+  ): void {
+    const typeClarifications = this.typeClarification;
     const dataClarifications2 = this.dataNotificationSelected;
     const rejectedID = this.valueRejectNotificationId;
     const goodValue = this.valueGood;
@@ -795,6 +949,7 @@ export class NotificationAssetsTabComponent
         isInterconnection: this.byInterconnection,
         idRequest: this.idRequest,
         infoRequest,
+        typeClarifications,
         callback: (next: boolean, idGood: number) => {
           if (next) {
             this.checkInfoNotification(idGood);
@@ -815,8 +970,23 @@ export class NotificationAssetsTabComponent
     this.rejectedGoodService
       .getAllFilter(this.paramsCheckInfo.getValue())
       .subscribe({
-        next: data => {
-          this.notificationsList.load(data.data);
+        next: response => {
+          const dataNotification = response.data.map(data => {
+            if (data.clarificationType == 'SOLICITAR_ACLARACION') {
+              data['clarificationTypeName'] = 'ACLARACIÓN';
+            }
+
+            if (data.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
+              data['clarificationTypeName'] = 'IMPROCEDENCIA';
+            }
+            const formatDate = moment(data.rejectionDate).format('DD-MM-YYYY');
+            data.rejectionDate = formatDate;
+            return data;
+          });
+          console.log(dataNotification);
+          this.notificationsList.load(dataNotification);
+          this.totalItems2 = response.count;
+          this.formLoading = false;
         },
         error: error => {},
       });
