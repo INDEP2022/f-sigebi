@@ -14,7 +14,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
 @Component({
@@ -73,7 +73,10 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       transmitterId: [null, [Validators.maxLength(15)]],
       foundation: [null, [Validators.maxLength(4000)]],
       invoiceLearned: [null, [Validators.maxLength(60)]],
-      worthAppraisal: [null, [Validators.maxLength(60)]],
+      worthAppraisal: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(NUMBERS_PATTERN)],
+      ],
       consistentIn: [
         null,
         [
@@ -189,7 +192,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENTE',
+      answered: 'EN ACLARACION',
       observations: observations,
     };
 
@@ -198,7 +201,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         const updateInfo: IChatClarifications = {
           requestId: this.request.id,
           goodId: goodId,
-          clarificationStatus: 'IMPROCEDENTE',
+          clarificationStatus: 'EN_ACLARACION',
         };
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {

@@ -163,6 +163,43 @@ export class InappropriatenessPgrSatFormComponent
       });
   }
 
+  updateAnsweredAcla(
+    id?: number,
+    chatClarId?: number | string,
+    goodId?: number,
+    observations?: string
+  ) {
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'EN ACLARACION', // ??
+      observations: observations,
+    };
+
+    console.log(data);
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {
+        const updateInfo: IChatClarifications = {
+          requestId: this.request.id,
+          goodId: goodId,
+          clarificationStatus: 'EN_ACLARACION',
+        };
+        this.chatService.update(chatClarId, updateInfo).subscribe({
+          next: data => {
+            this.loading = false;
+            this.onLoadToast('success', 'Actualizado', '');
+            this.modalRef.content.callback(true, data.goodId);
+            this.modalRef.hide();
+          },
+          error: error => {
+            this.loading = false;
+            console.log(error);
+          },
+        });
+      },
+    });
+  }
+
   updateAnsweredImpro(
     id?: number,
     chatClarId?: number,
@@ -172,7 +209,7 @@ export class InappropriatenessPgrSatFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENTE',
+      answered: 'EN ACLARACION',
       observations: observations,
     };
 
@@ -181,11 +218,16 @@ export class InappropriatenessPgrSatFormComponent
         const updateInfo: IChatClarifications = {
           requestId: this.request.id,
           goodId: goodId,
-          clarificationStatus: 'IMPROCEDENTE',
+          clarificationStatus: 'EN_ACLARACION',
         };
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.modalRef.content.callback(true, data.goodId);
+            this.onLoadToast(
+              'success',
+              'Actualizado',
+              'Notificación actualizada correctamente'
+            );
             this.modalRef.hide();
           },
           error: error => {
