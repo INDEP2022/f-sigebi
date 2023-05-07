@@ -40,6 +40,7 @@ export class InappropriatenessPgrSatFormComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   dataChatClarifications: IChatClarifications[];
+  idSolicitud: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -95,7 +96,7 @@ export class InappropriatenessPgrSatFormComponent
       //invoiceNumber: 1,
       modificationDate: new Date(),
       creationUser: token.name,
-      documentTypeId: '111',
+      documentTypeId: '111', //Aclaración tipo 2 e improcedencia -> OficioImprocedencia
       modificationUser: token.name,
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
@@ -105,7 +106,13 @@ export class InappropriatenessPgrSatFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
+        console.log(
+          'Abriendo oficioImprocedencia, ',
+          'Con idDoc: ',
+          response.documentTypeId
+        );
         this.changeStatusAnswered();
+        this.openReport(response);
         this.loading = false;
         this.close();
       },
@@ -144,19 +151,11 @@ export class InappropriatenessPgrSatFormComponent
       .update(chatClarifications.id, modelChatClarifications)
       .subscribe({
         next: async data => {
-          if (data.clarificationTypeId == 1) {
-            this.updateAnsweredAcla(
-              data.clarifiNewsRejectId,
-              chatClarifications.id,
-              modelChatClarifications.goodId
-            );
-          } else if (data.clarificationTypeId == 2) {
-            this.updateAnsweredImpro(
-              data.clarifiNewsRejectId,
-              chatClarifications.id,
-              modelChatClarifications.goodId
-            );
-          }
+          this.updateAnsweredImpro(
+            data.clarifiNewsRejectId,
+            chatClarifications.id,
+            modelChatClarifications.goodId
+          );
         },
         error: error => {
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
@@ -224,6 +223,11 @@ export class InappropriatenessPgrSatFormComponent
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.modalRef.content.callback(true, data.goodId);
+            this.onLoadToast(
+              'success',
+              'Actualizado',
+              'Notificación actualizada correctamente'
+            );
             this.modalRef.hide();
           },
           error: error => {
@@ -238,9 +242,10 @@ export class InappropriatenessPgrSatFormComponent
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
     const idDoc = data.id;
-    const idTypeDoc = 111;
-    const requestInfo = data;
-
+    const idTypeDoc = Number(data.documentTypeId);
+    const requestInfo = this.request;
+    const idSolicitud = this.idSolicitud;
+    console.log('ID tipo de documento', idTypeDoc);
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -248,6 +253,7 @@ export class InappropriatenessPgrSatFormComponent
         idTypeDoc,
         idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
