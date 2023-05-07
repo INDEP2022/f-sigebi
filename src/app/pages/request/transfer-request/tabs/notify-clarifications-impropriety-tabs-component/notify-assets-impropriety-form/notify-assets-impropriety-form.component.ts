@@ -95,10 +95,10 @@ export class NotifyAssetsImproprietyFormComponent
     });
 
     this.clarificationForm = this.fb.group({
-      addresseeName: ['', [Validators.required, Validators.maxLength(50)]],
+      addresseeName: [' ', [Validators.required, Validators.maxLength(50)]],
 
       positionAddressee: [
-        '',
+        ' ',
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -125,7 +125,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       consistentIn: [
-        '',
+        ' ',
         [
           Validators.pattern(STRING_PATTERN),
           //Validators.required,
@@ -143,7 +143,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       clarification: [
-        '',
+        null,
         [
           Validators.pattern(STRING_PATTERN),
           //Validators.required,
@@ -157,7 +157,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       foundation: [
-        '',
+        ' ',
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
@@ -191,7 +191,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       webMail: [
-        this.dataClarifications2?.chatClarification?.emailWeb,
+        ' ',
         [
           Validators.required,
           Validators.pattern(EMAIL_PATTERN),
@@ -639,7 +639,7 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'ACLARADA', // ??
+      answered: 'EN ACLARACION', // ??
       observations: observations,
     };
 
@@ -676,7 +676,7 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENTE',
+      answered: 'IMPROCEDENCIA',
       observations: observations,
     };
 
@@ -685,7 +685,7 @@ export class NotifyAssetsImproprietyFormComponent
         const updateInfo: IChatClarifications = {
           requestId: this.idRequest,
           goodId: goodId,
-          clarificationStatus: 'IMPROCEDENTE',
+          clarificationStatus: 'EN_ACLARACION',
         };
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {

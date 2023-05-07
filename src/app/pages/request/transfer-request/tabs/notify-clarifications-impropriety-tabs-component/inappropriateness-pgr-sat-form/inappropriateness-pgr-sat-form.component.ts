@@ -173,7 +173,7 @@ export class InappropriatenessPgrSatFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'ACLARADA', // ??
+      answered: 'EN ACLARACION', // ??
       observations: observations,
     };
 
@@ -210,7 +210,7 @@ export class InappropriatenessPgrSatFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENTE',
+      answered: 'EN ACLARACION',
       observations: observations,
     };
 
@@ -219,7 +219,7 @@ export class InappropriatenessPgrSatFormComponent
         const updateInfo: IChatClarifications = {
           requestId: this.request.id,
           goodId: goodId,
-          clarificationStatus: 'IMPROCEDENTE',
+          clarificationStatus: 'EN_ACLARACION',
         };
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
