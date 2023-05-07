@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { format, subDays } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -16,6 +16,7 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -121,30 +122,39 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
-  dataGoods = new LocalDataSource();
-  dataGoodAct = new LocalDataSource();
-  transferSelect = new DefaultSelect();
-  form: FormGroup;
-  records: string[] = ['A'];
-  recibeSelect = new DefaultSelect();
-  maxDatefecElab = subDays(new Date(), 1);
-  statusProceeding: string;
   act2Valid: boolean = false;
-  maxDate = new Date();
-  labelActa = 'Abrir acta';
   btnCSSAct = 'btn-success';
-  selectData: any = null;
-  selectActData: any = null;
+  dataGoodAct = new LocalDataSource();
+  dataGoods = new LocalDataSource();
+  form: FormGroup;
   goodData: any[] = [];
+  idProceeding: number;
+  initialBool = true;
+  labelActa = 'Abrir acta';
+  maxDate = new Date();
+  maxDatefecElab = subDays(new Date(), 1);
+  minDateFecElab: Date;
+  navigateProceedings = false;
+  nextProce = true;
+  numberProceeding = 0;
+  prevProce = false;
+  proceedingData: any[] = [];
+  recibeSelect = new DefaultSelect();
+  records: string[] = ['A'];
+  selectActData: any = null;
+  selectData: any = null;
+  statusProceeding: string;
+  transferSelect = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
+    private serviceDetailProc: DetailProceeDelRecService,
+    private serviceExpedient: ExpedientService,
     private serviceGood: GoodService,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
-    private serviceExpedient: ExpedientService,
     private serviceRNomencla: ParametersService,
-    private serviceSssubtypeGood: GoodSssubtypeService,
-    private router: Router
+    private serviceSssubtypeGood: GoodSssubtypeService
   ) {
     super();
   }
@@ -260,6 +270,112 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   //*Traer bienes
+  getTransfer() {
+    this.serviceExpedient
+      .getById(this.form.get('expediente').value)
+      .subscribe(res => {
+        console.log(res.expedientType);
+        let model: TransferProceeding = {
+          numFile: res.transferNumber as number,
+          typeProceedings: res.expedientType,
+        };
+        console.log(model);
+        this.serviceProcVal.getTransfer(model).subscribe(
+          res => {
+            console.log(res);
+            this.transferSelect = new DefaultSelect(res.data, res.count);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+        /* this.enableElement('acta'); */
+      });
+  }
+
+  fillIncomeProceeding(dataRes: any) {
+    const paramsF = new FilterParams();
+    this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
+    paramsF.addFilter('numberProceedings', dataRes.id);
+    paramsF.addFilter('keysProceedings', dataRes.keysProceedings);
+    this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
+      res => {
+        const data = this.dataGoods;
+        const incomeData = res.data;
+        for (let i = 0; i < incomeData.length; i++) {
+          const element = JSON.parse(JSON.stringify(incomeData[i]));
+          this.goodData.push(element.good);
+          this.dataGoods.load(
+            this.dataGoods['data'].map((e: any) => {
+              if (e.id == element.good.id) {
+                return { ...e, avalaible: false };
+              } else {
+                return e;
+              }
+            })
+          );
+        }
+        this.dataGoodAct.load(this.goodData);
+
+        this.form.get('acta2').setValue(dataRes.keysProceedings);
+        this.form.get('direccion').setValue(dataRes.address);
+        this.form.get('entrega').setValue(dataRes.witness1);
+        this.form
+          .get('fecElab')
+          .setValue(addDays(new Date(dataRes.elaborationDate), 1));
+        this.form
+          .get('fecRecepFisica')
+          .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
+        this.form
+          .get('fecCaptura')
+          .setValue(addDays(new Date(dataRes.captureDate), 1));
+        this.form.get('observaciones').setValue(dataRes.observations);
+        this.form.get('recibe2').setValue(dataRes.witness2);
+        this.form.get('testigo').setValue(dataRes.comptrollerWitness);
+        this.statusProceeding = dataRes.statusProceedings;
+        this.labelActa = 'Cerrar acta';
+        this.btnCSSAct = 'btn-primary';
+        this.act2Valid = true;
+        this.navigateProceedings = true;
+        this.idProceeding = dataRes.id;
+      },
+      err => console.log(err)
+    );
+  }
+
+  getGoodsByExpedient() {
+    //Validar si hay un acta abierta
+    const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'numFile',
+      this.form.get('expediente').value,
+      SearchFilter.EQ
+    );
+    paramsF.addFilter('typeProceedings', 'ENTREGA');
+    this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        if (res.data != null) {
+          this.proceedingData = res.data;
+          const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+          this.fillIncomeProceeding(dataRes);
+          console.log(typeof dataRes);
+        } else {
+          this.initialBool = false;
+          this.minDateFecElab = new Date();
+          this.checkChange();
+          this.getTransfer();
+        }
+      },
+      err => {
+        console.log(err);
+        this.initialBool = false;
+      }
+    );
+
+    this.goodsByExpediente();
+  }
+
   goodsByExpediente() {
     this.serviceGood
       .getAllFilterDetail(
@@ -299,36 +415,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               })
             );
             this.dataGoods.load(newData);
-
-            this.serviceExpedient
-              .getById(this.form.get('expediente').value)
-              .subscribe(res => {
-                console.log(res.expedientType);
-                if (
-                  res.expedientType != 'A' &&
-                  res.expedientType != 'N/A' &&
-                  res.expedientType != 'T'
-                ) {
-                  this.alert(
-                    'error',
-                    'Numero de expediente invalido',
-                    'El número de expediente ingresado tiene un tipo de expediente no valido'
-                  );
-                } else {
-                  let model: TransferProceeding = {
-                    numFile: res.transferNumber as number,
-                    typeProceedings: res.expedientType,
-                  };
-                  console.log(model);
-                  this.serviceProcVal.getTransfer(model).subscribe(res => {
-                    this.transferSelect = new DefaultSelect(
-                      res.data,
-                      res.count
-                    );
-                  });
-                  /* this.enableElement('acta'); */
-                }
-              });
           } else {
             this.alert(
               'warning',
@@ -349,61 +435,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         },
       });
   }
-
-  /*  getGoodsByExpedient() {
-    //Validar si hay un acta abierta
-    const paramsF = new FilterParams();
-    paramsF.addFilter(
-      'numFile',
-      this.form.get('expediente').value,
-      SearchFilter.EQ
-    );
-    paramsF.addFilter('statusProceedings', 'ABIERTA');
-    this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        if (res.data != null) {
-          const dataRes = JSON.parse(JSON.stringify(res.data[0]));
-          console.log(new Date(dataRes.captureDate));
-          console.log(dataRes.captureDate);
-
-          this.form.get('acta2').setValue(dataRes.keysProceedings);
-          this.form.get('direccion').setValue(dataRes.address);
-          this.form.get('entrega').setValue(dataRes.witness1);
-          this.form
-            .get('fecElabRec')
-            .setValue(addDays(new Date(dataRes.dateElaborationReceipt), 1));
-          this.form
-            .get('fecEntBien')
-            .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
-          this.form
-            .get('fecElab')
-            .setValue(addDays(new Date(dataRes.elaborationDate), 1));
-          this.form
-            .get('fecReception')
-            .setValue(addDays(new Date(dataRes.datePhysicalReception), 1));
-          this.form
-            .get('fecCaptura')
-            .setValue(addDays(new Date(dataRes.captureDate), 1));
-          this.form.get('observaciones').setValue(dataRes.observations);
-          this.form.get('recibe2').setValue(dataRes.witness2);
-          this.form.get('testigo').setValue(dataRes.comptrollerWitness);
-          this.statusProceeding = dataRes.statusProceedings;
-          this.labelActa = 'Cerrar acta';
-          this.btnCSSAct = 'btn-primary';
-          this.act2Valid = true;
-        } else {
-          this.initialdisabled = false;
-        }
-      },
-      err => {
-        console.log(err);
-        this.initialdisabled = false;
-      }
-    );
-
-    this.goodsByExpediente();
-  } */
 
   //Catalogs
   getRecibe(params: ListParams) {
@@ -671,5 +702,63 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.router.navigate([
       '/pages/judicial-physical-reception/partializes-general-goods-1',
     ]);
+  }
+
+  //NAVIGATE
+  //NAVIGATE PROCEEDING
+  nextProceeding() {
+    if (this.numberProceeding <= this.proceedingData.length - 1) {
+      this.numberProceeding += 1;
+      console.log(this.numberProceeding);
+      if (this.numberProceeding <= this.proceedingData.length - 1) {
+        this.prevProce = true;
+        const dataRes = JSON.parse(
+          JSON.stringify(this.proceedingData[this.numberProceeding])
+        );
+        this.fillIncomeProceeding(dataRes);
+      } else {
+        this.getTransfer();
+        this.checkChange();
+        this.minDateFecElab = new Date();
+        this.form.get('acta2').setValue('');
+        this.form.get('fecElab').setValue('');
+        this.form.get('fecCierreActa').setValue('');
+        this.form.get('fecCaptura').setValue('');
+        this.form.get('direccion').setValue('');
+        this.form.get('observaciones').setValue('');
+        this.form.get('autoridadCancela').setValue('');
+        this.form.get('elabora').setValue('');
+        this.form.get('testigo').setValue('');
+        this.statusProceeding = '';
+        this.labelActa = 'Abrir acta';
+        this.btnCSSAct = 'btn-info';
+        this.act2Valid = false;
+        this.navigateProceedings = true;
+        this.nextProce = false;
+        this.initialBool = false;
+        this.goodData = [];
+        this.dataGoodAct.load(this.goodData);
+      }
+    }
+  }
+
+  prevProceeding() {
+    if (
+      this.numberProceeding <= this.proceedingData.length &&
+      this.numberProceeding > 0
+    ) {
+      this.numberProceeding -= 1;
+      console.log(this.numberProceeding);
+      if (this.numberProceeding <= this.proceedingData.length - 1) {
+        this.nextProce = true;
+        const dataRes = JSON.parse(
+          JSON.stringify(this.proceedingData[this.numberProceeding])
+        );
+        this.fillIncomeProceeding(dataRes);
+        if (this.numberProceeding == 0) {
+          this.prevProce = false;
+        }
+      }
+    }
   }
 }
