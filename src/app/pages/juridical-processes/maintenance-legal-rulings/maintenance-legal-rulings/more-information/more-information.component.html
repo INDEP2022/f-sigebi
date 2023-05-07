@@ -23,27 +23,30 @@
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
-      <form-field [control]="form.get('textX')" label="Texto 1">
+      <form-field [control]="form.get('textx')" label="Texto 1">
         <textarea
+          rows="5"
           class="form-control"
           maxlength="4000"
-          formControlName="textX"></textarea>
+          formControlName="textx"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
-      <form-field [control]="form.get('textY')" label="Texto 2">
+      <form-field [control]="form.get('textoy')" label="Texto 2">
         <textarea
+          rows="5"
           class="form-control"
           maxlength="4000"
-          formControlName="textY"></textarea>
+          formControlName="textoy"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
-      <form-field [control]="form.get('textZ')" label="Texto 3">
+      <form-field [control]="form.get('textoz')" label="Texto 3">
         <textarea
+          rows="5"
           class="form-control"
           maxlength="4000"
-          formControlName="textZ"></textarea>
+          formControlName="textoz"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -51,7 +54,7 @@
         class="btn btn-sm btn-primary active"
         type="submit"
         [disabled]="form.invalid">
-        Agregar
+        Guardar
       </button>
     </div>
   </div>

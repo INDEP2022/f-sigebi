@@ -103,6 +103,7 @@ export class SelectListFilteredModalComponent
   }
 
   getData(): void {
+    console.log(this.filterParams.getValue().getParams());
     this.loading = true;
     let servicio = this.dataObservableFn
       ? this.dataObservableFn(
@@ -119,13 +120,17 @@ export class SelectListFilteredModalComponent
         next: data => {
           console.log(data);
           this.columns = data.data;
-          this.totalItems = data.count;
+          this.totalItems = data.count || 0;
           this.loading = false;
         },
         error: err => {
           console.log(err);
+          if (err.status == 400) {
+            if (this.showError) {
+              this.onLoadToast('error', 'Error', 'No se encontrarón registros');
+            }
+          }
           this.loading = false;
-          if (this.showError) this.onLoadToast('error', 'Error', err);
         },
       });
     }
@@ -135,8 +140,16 @@ export class SelectListFilteredModalComponent
     if (this.filters.length > 0) {
       const params = new FilterParams();
       this.filters.forEach(f => {
-        if (f.value !== null && f.value !== undefined)
+        if (f.value !== null && f.value !== undefined && this.type === 'text') {
           params.addFilter(f.field, f.value, f?.operator);
+        } else if (
+          f.value !== null &&
+          f.value !== undefined &&
+          f.value !== '' &&
+          this.type !== 'number'
+        ) {
+          params.addFilter(f.field, f.value, f?.operator);
+        }
       });
       this.filterParams.next(params);
     }
@@ -147,7 +160,6 @@ export class SelectListFilteredModalComponent
   }
 
   selectEvent(event: IUserRowSelectEvent<any>) {
-    console.log(event);
     if (this.settings.selectMode === 'multi') {
       this.selectRow(event.selected);
     } else {
@@ -156,7 +168,6 @@ export class SelectListFilteredModalComponent
   }
 
   private selectRow(row: any) {
-    console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
     if (this.selectOnClick) {

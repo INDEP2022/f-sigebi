@@ -460,7 +460,7 @@ export interface IGood {
   idGoodProperty?: number;
   requestFolio?: string;
   type?: string | number;
-  admissionDate?: Date;
+  admissionDate?: Date | string;
   locationId?: number;
   uniqueKey?: string;
   fileeNumber?: string;
@@ -566,6 +566,7 @@ export interface IGood {
   color?: string;
   doorsNumber?: number;
   destinationRedress?: number;
+  fractionCode?: string;
   val1?: string;
   val2?: string;
   val3?: string;

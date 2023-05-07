@@ -9,8 +9,8 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
-import { AlertButton } from '../../scheduled-maintenance-1/models/alert-button';
-import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
+import { AlertButton } from '../../../scheduled-maintenance-1/models/alert-button';
+import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
   selector: 'app-good-form',

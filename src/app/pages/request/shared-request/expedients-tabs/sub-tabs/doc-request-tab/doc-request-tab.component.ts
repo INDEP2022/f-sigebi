@@ -223,10 +223,15 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async data => {
+          console.log('docs', data);
           const transferent = await this.getInfoRequest();
           if (transferent == 1) {
             const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document' && item.xidTransferente == 1) {
+              if (
+                item.dDocType == 'Document' &&
+                item.xidTransferente == 1 &&
+                item.xidBien == '         '
+              ) {
                 return item;
               }
             });
@@ -265,7 +270,7 @@ export class DocRequestTabComponent
 
           if (transferent != 1) {
             const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document') {
+              if (item.dDocType == 'Document' && item.xidBien == '         ') {
                 return item;
               }
             });
@@ -772,7 +777,7 @@ export class DocRequestTabComponent
         this.title = 'Expedientes';
         break;
       case 'request-expedient':
-        this.title = '';
+        this.title = 'Solicitud';
         break;
       default:
         break;

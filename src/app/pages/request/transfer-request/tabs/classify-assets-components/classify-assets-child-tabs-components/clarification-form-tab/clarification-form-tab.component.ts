@@ -8,6 +8,7 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IClarification } from 'src/app/core/models/catalogs/clarification.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
@@ -46,7 +47,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   haveGoodResDevRegister: boolean = false;
   task: any;
   statusTask: any = '';
-
+  typeClarification: number = 0;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -302,7 +303,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       //body.goodResdevId = Number(id);
       body.processStatus = 'SOLICITAR_ACLARACION';
       body.goodStatus = 'SOLICITUD DE ACLARACION';
-      debugger;
+      // debugger;
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
@@ -321,19 +322,37 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
+  clarificationSelect(clarification: IClarification) {
+    console.log('aclaración seleccionada', clarification);
+    this.typeClarification = clarification.type;
+  }
+
   createChatClarificationsType1(val: ClarificationGoodRejectNotification) {
     console.log('info de request', this.request);
     let good = this.goodTransfer;
-    //Creando objeto nuevo para ChatClarifications
+
+    console.log('val', val);
+    if (this.typeClarification == 1) {
+      const modelChatClarifications: IChatClarifications = {
+        clarifiNewsRejectId: val.rejectNotificationId,
+        requestId: this.request.id,
+        goodId: good.goodId,
+        senderName: this.request.nameOfOwner,
+        clarificationStatus: null,
+        clarificationTypeId: 1,
+      };
+    }
+
     const modelChatClarifications: IChatClarifications = {
-      //id: , //ID primaria
-      clarifiNewsRejectId: val.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      clarifiNewsRejectId: val.rejectNotificationId,
       requestId: this.request.id,
       goodId: good.goodId,
       senderName: this.request.nameOfOwner,
       clarificationStatus: null,
+      clarificationTypeId: this.typeClarification,
     };
 
+    console.log('data', modelChatClarifications);
     //Servicio para crear registro de ChatClariffications
     this.chatService.create(modelChatClarifications).subscribe({
       next: async data => {
@@ -362,6 +381,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       goodId: good.goodId,
       senderName: this.request.nameOfOwner,
       clarificationStatus: 'IMPROCEDENCIA',
+      clarificationTypeId: 2,
     };
 
     //Servicio para crear registro de ChatClariffications

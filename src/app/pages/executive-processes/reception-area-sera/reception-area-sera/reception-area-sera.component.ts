@@ -20,6 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 //Services
+import { endOfDay, format, startOfDay } from 'date-fns';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
@@ -185,111 +186,49 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
+    const { delegation, subdelegation, departamentDes, rangeDate } =
+      this.form.value;
+
+    const from = startOfDay(rangeDate[0]);
+    const to = endOfDay(rangeDate[1]);
     this.loading = true;
-
-    const { rangeDate, delegation, subdelegation } = this.form.value;
-
-    const startTemp = `${rangeDate[0].getFullYear()}-${
-      rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
-    }${rangeDate[0].getUTCMonth() + 1}-${
-      rangeDate[0].getDate() <= 9 ? 0 : ''
-    }${rangeDate[0].getDate()}`;
-
-    const endTemp = `${rangeDate[1].getFullYear()}-${
-      rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
-    }${rangeDate[1].getUTCMonth() + 1}-${
-      rangeDate[1].getDate() <= 9 ? 0 : ''
-    }${rangeDate[1].getDate()}`;
-
-    const reportParams = {
-      PF_FECINI: startTemp,
-      PF_FECFIN: endTemp,
-      PARAM_DELEGACION: delegation,
-      PARAM_SUBDELEGACION: subdelegation,
-    };
-    console.log(reportParams);
-    //Todo: Get Real Report
-    /*this.getReport('RCONDIRREPORBIERE', reportParams);*/
-    this.getReportBlank('blank');
-    /*this.siabService.fetchReportBlank('blank').subscribe({
-      next: response => {
-        console.log('información del blob', response);
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (response: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
-      },
-    });*/
-  }
-
-  getReport(report: string, params: any): void {
-    this.siabService.fetchReport(report, params).subscribe({
-      next: response => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
-      },
-    });
-  }
-
-  getReportBlank(report: string): void {
-    this.siabService.fetchReportBlank(report).subscribe({
-      next: response => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
-      },
-    });
+    this.siabService
+      .fetchReport('RCONDIRRECEPDOCTO', {
+        PDELEGACION: delegation,
+        PSUBDELEGACION: subdelegation,
+        PDPTO: departamentDes,
+        PFECHARECINI: format(from, 'yyyy-MM-dd'),
+        PFECHARECFIN: format(to, 'yyyy-MM-dd'),
+      })
+      .subscribe({
+        next: response => {
+          this.loading = false;
+          console.log('información del blob', response);
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (response: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        },
+        error: err => {
+          this.loading = false;
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          this.onLoadToast('error', 'Error', error);
+        },
+      });
   }
 }

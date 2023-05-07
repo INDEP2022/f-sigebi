@@ -13,7 +13,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./deposit-tokens/deposit-tokens.module'))
             .DepositTokensModule,
-        data: { title: 'Fichas de depósito', screen: 'FACTADBFICASDEPO' },
+        data: { title: 'Fichas de depósito', screen: 'FACTADBFICHASDEPO' },
       },
       {
         path: 'numerary-calc',

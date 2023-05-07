@@ -9,4 +9,5 @@ export enum DictationEndpoints {
   FindIdsOfficialDictation = 'official-dictation/find-by-ids',
   DictationXGood = 'dictation-x-good',
   CopiesOfficialOpinion = 'copies-official-opinion',
+  FindByIds = 'dictation/find-by-ids',
 }
