@@ -43,6 +43,7 @@ export class ReadInfoGoodComponent
   selectPhysicalState = new DefaultSelect();
   selectConcervationState = new DefaultSelect();
   selectMeasureUnitSae = new DefaultSelect();
+  formLoading: boolean = false;
 
   duplicity: string = '';
   avaluo: string = '';
@@ -76,6 +77,7 @@ export class ReadInfoGoodComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.formLoading = true;
     this.goodData = this.detailAssets.value;
     console.log(this.goodData);
     if (this.goodData) {
@@ -119,6 +121,9 @@ export class ReadInfoGoodComponent
         this.goodData.unitMeasure
       );
     }
+    setTimeout(() => {
+      this.formLoading = false;
+    }, 3000);
   }
 
   ngOnInit(): void {

@@ -766,6 +766,9 @@ export class VerifyComplianceTabComponent
 
       //console.log("Información de domicilio ",);
     } else {
+      this.clarificationData = [];
+      this.isGoodSelected = false;
+      this.detailArray.reset();
       this.formLoading = false;
     }
   }
