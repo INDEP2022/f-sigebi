@@ -1,5 +1,3 @@
-import { TypesDocuments } from './documents-type';
-
 export class IDocument {
   id: number;
   natureDocument: string;
@@ -33,5 +31,5 @@ export class IDocument {
   dateRequestScanningHc: Date;
   goodNumber: number | null;
   file?: null;
-  typeDocument: TypesDocuments;
+  selectedDate?: string;
 }

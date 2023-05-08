@@ -57,11 +57,7 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    console.log('tipoTransferente', this.type);
     this.generateClave();
-    console.log('notification', this.notification);
-    //console.log('dateclar', this.notification);
-    console.log('request', this.request);
     this.prepareForm();
   }
 
@@ -106,11 +102,6 @@ export class InappropriatenessPgrSatFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        console.log(
-          'Abriendo oficioImprocedencia, ',
-          'Con idDoc: ',
-          response.documentTypeId
-        );
         this.changeStatusAnswered();
         this.openReport(response);
         this.loading = false;
@@ -175,8 +166,6 @@ export class InappropriatenessPgrSatFormComponent
       answered: 'EN ACLARACION', // ??
       observations: observations,
     };
-
-    console.log(data);
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {
         const updateInfo: IChatClarifications = {
@@ -245,7 +234,6 @@ export class InappropriatenessPgrSatFormComponent
     const idTypeDoc = Number(data.documentTypeId);
     const requestInfo = this.request;
     const idSolicitud = this.idSolicitud;
-    console.log('ID tipo de documento', idTypeDoc);
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -273,7 +261,6 @@ export class InappropriatenessPgrSatFormComponent
         // this.noFolio = response.data;
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
-        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
       },
       error: error => {
         console.log('Error al generar secuencia de dictamen', error.error);
@@ -285,18 +272,14 @@ export class InappropriatenessPgrSatFormComponent
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
-    console.log(token);
-
     //Trae el año actuar
     const year = this.today.getFullYear();
     //Cadena final (Al final las siglas ya venian en el token xd)
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     }
   }
 }
