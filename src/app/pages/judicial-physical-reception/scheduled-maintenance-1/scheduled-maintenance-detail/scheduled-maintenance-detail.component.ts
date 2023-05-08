@@ -17,6 +17,7 @@ import { IParametersIndicators } from './../../../../core/models/catalogs/parame
 import { IProceedingDeliveryReception } from './../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { GOOD_TRACKER_ORIGINS } from './../../../general-processes/goods-tracker/utils/constants/origins';
 import { columnsGoods, settingsGoods } from './const';
+
 @Component({
   selector: 'app-scheduled-maintenance-detail',
   templateUrl: './scheduled-maintenance-detail.component.html',
@@ -351,8 +352,8 @@ export class ScheduledMaintenanceDetailComponent
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.service
-          .deleteById(item.no_bien, this.actaId)
+        this.detailService
+          .deleteByIdBP(this.actaId, this.typeProceeding, item)
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe({
             next: response => {

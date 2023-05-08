@@ -42,7 +42,8 @@
           <div class="col-md-6">
             <div class="row">
               <div class="form-group">
-                <button
+                <app-partialize-button></app-partialize-button>
+                <!-- <button
                   class="mx-1"
                   size="small"
                   (click)="partialize()"
@@ -53,17 +54,18 @@
                     loading
                   ">
                   Parcializa
-                </button>
+                </button> -->
                 <button class="mx-1" size="small" (click)="cleanBlock()">
                   Limpia Bloque
                 </button>
-                <button
+                <app-apply-button></app-apply-button>
+                <!-- <button
                   class="mx-1 my-1"
                   size="small"
                   (click)="apply()"
                   [disabled]="formGood.invalid || loading">
                   Aplica
-                </button>
+                </button> -->
               </div>
             </div>
           </div>

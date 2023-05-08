@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS } from './columns';
+import { LegalOpinionsOfficeService } from './services/legal-opinions-office.service';
 
 @Component({
   selector: 'app-legal-opinions-office',
@@ -52,69 +58,16 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   ];
 
   form: FormGroup;
-
-  get file() {
-    return this.form.get('file');
-  }
-  get numberOfficeDic() {
-    return this.form.get('numberOfficeDic');
-  }
-  get typeOffice() {
-    return this.form.get('typeOffice');
-  }
-  get passwordArmedOffice() {
-    return this.form.get('passwordArmedOffice');
-  }
-  get authorizedDic() {
-    return this.form.get('authorizedDic');
-  }
-  get name() {
-    return this.form.get('name');
-  }
-  get addressee() {
-    return this.form.get('addressee');
-  }
-  get nameAddressee() {
-    return this.form.get('nameAddressee');
-  }
-  get city() {
-    return this.form.get('city');
-  }
-  get descriptionCity() {
-    return this.form.get('descriptionCity');
-  }
-  get introductoryParagraph() {
-    return this.form.get('introductoryParagraph');
-  }
-  get finalParagraph() {
-    return this.form.get('finalParagraph');
-  }
-  get numberNotary() {
-    return this.form.get('numberNotary');
-  }
-  /////////////////////////////////////////
-  get ccp_person() {
-    return this.form.get('ccp_person');
-  }
-  get ccp_addressee() {
-    return this.form.get('ccp_addressee');
-  }
-  get ccp_TiPerson() {
-    return this.form.get('ccp_TiPerson');
-  }
-  get ccp_person_I() {
-    return this.form.get('ccp_person_I');
-  }
-  get ccp_addressee_I() {
-    return this.form.get('ccp_addressee_I');
-  }
-  get ccp_TiPerson_I() {
-    return this.form.get('ccp_TiPerson_I');
-  }
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  cityData = new DefaultSelect();
+  issuingUser = new DefaultSelect();
+  addressee = new DefaultSelect();
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private svLegalOpinionsOfficeService: LegalOpinionsOfficeService
+  ) {
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
@@ -131,47 +84,184 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      file: [null, [Validators.required]],
-      numberOfficeDic: [null, [Validators.required]],
-      typeOffice: [null],
-      passwordArmedOffice: [null, [Validators.required]],
+      file: [{ value: '', disabled: false }, [Validators.required]],
+      numberOfficeDic: [{ value: '', disabled: false }, [Validators.required]],
+      typeOffice: [{ value: '', disabled: false }],
+      cveOfficeGenerate: [
+        { value: '', disabled: false },
+        [Validators.required],
+      ],
       authorizedDic: [
-        null,
+        { value: '', disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       issuingUser: [
-        null,
+        { value: null, disabled: false },
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ], // SELECT
+      name: [
+        { value: '', disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       addressee: [
-        null,
+        { value: null, disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      ], // SELECT
       nameAddressee: [
-        null,
+        { value: '', disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      city: [
+        { value: null, disabled: false },
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ], // SELECT
       descriptionCity: [
-        null,
+        { value: '', disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      introductoryParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
-      finalParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
-      numberNotary: [null, [Validators.required]],
-      ccp_person: [null, [Validators.required]],
+      introductoryParagraph: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      finalParagraph: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
+      numberNotary: [{ value: '', disabled: false }, [Validators.required]],
+      ccp_person: [{ value: '', disabled: false }, [Validators.required]],
       ccp_addressee: [
-        null,
+        { value: null, disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      ], // SELECT
       ccp_TiPerson: [
-        null,
+        { value: '', disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      ccp_person_I: [null, [Validators.required]],
-      ccp_addressee_I: [null, [Validators.pattern(STRING_PATTERN)]],
-      ccp_TiPerson_I: [null, [Validators.pattern(STRING_PATTERN)]],
+      ccp_person_1: [{ value: '', disabled: false }, [Validators.required]],
+      ccp_addressee_1: [
+        { value: null, disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ], // SELECT
+      ccp_TiPerson_1: [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
     });
+  }
+  btnSearchAppointment() {}
+
+  getCityByDetail(paramsData: ListParams) {
+    console.log(paramsData);
+    // const params: any = new FilterParams();
+    // params.removeAllFilters();
+    // params['sortBy'] = 'townshipKey:DESC';
+    // if (this.delegationSelectValue) {
+    //   params.addFilter('municipalityKey', this.delegationSelectValue);
+    // }
+    // if (this.stateSelectValue) {
+    //   params.addFilter('stateKey', this.stateSelectValue);
+    // }
+    // if (this.localitySelectValue && !paramsData['search']) {
+    //   params.addFilter('townshipKey', this.localitySelectValue);
+    // } else {
+    //   if (paramsData['search'] || paramsData['search'] == '0') {
+    //     params.addFilter('township', paramsData['search'], SearchFilter.LIKE);
+    //   }
+    // }
+    // let subscription = this.appointmentsService
+    //   .getLocalityByFilter(params.getParams())
+    //   .subscribe({
+    //     next: data => {
+    //       if (this.localitySelectValue && !paramsData['search']) {
+    //         if (data.data) {
+    //           let dataSet = data.data.find((item: any) => {
+    //             return (
+    //               Number(item.townshipKey) == Number(this.localitySelectValue)
+    //             );
+    //           });
+    //           if (dataSet) {
+    //             this.localitySelectValue = dataSet.townshipKey.toString();
+    //             this.locality = new DefaultSelect(
+    //               [dataSet].map((i: any) => {
+    //                 i.township = '#' + i.townshipKey + ' -- ' + i.township;
+    //                 return i;
+    //               }),
+    //               1
+    //             );
+    //             this.form
+    //               .get('colonia')
+    //               .setValue(Number(this.localitySelectValue));
+    //           }
+    //         }
+    //       } else {
+    //         this.locality = new DefaultSelect(
+    //           data.data.map((i: any) => {
+    //             i.township = '#' + i.townshipKey + ' -- ' + i.township;
+    //             return i;
+    //           }),
+    //           data.count
+    //         );
+    //       }
+    //       subscription.unsubscribe();
+    //     },
+    //     error: error => {
+    //       this.locality = new DefaultSelect();
+    //       subscription.unsubscribe();
+    //     },
+    //   });
+  }
+  getIssuingUserByDetail(paramsData: ListParams) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+    params['sortBy'] = 'name:ASC';
+    let subscription = this.svLegalOpinionsOfficeService
+      .getIssuingUserByDetail(params.getParams())
+      .subscribe({
+        next: data => {
+          this.issuingUser = new DefaultSelect(
+            data.data.map(i => {
+              i.name = '#' + i.id + ' -- ' + i.name;
+              return i;
+            }),
+            data.count
+          );
+          console.log(data, this.issuingUser);
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.issuingUser = new DefaultSelect();
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  changeAddreseeDetail(event: any) {
+    console.log(event);
+  }
+  // DELEGACION Y DEPARTAMENTO EN DESTINATARIO
+  getAddresseeByDetail(paramsData: ListParams) {
+    paramsData['filter.userDetail.name'] = '$ilike:' + paramsData['search'];
+    delete paramsData['text'];
+    paramsData['sortBy'] = 'userDetail.name:ASC';
+    let subscription = this.svLegalOpinionsOfficeService
+      .getAddresseeByDetail(paramsData)
+      .subscribe({
+        next: data => {
+          this.addressee = new DefaultSelect(
+            data.data.map(i => {
+              i['description'] = '#' + i.user + ' -- ' + i.userDetail.name;
+              return i;
+            }),
+            data.count
+          );
+          console.log(data, this.addressee);
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.addressee = new DefaultSelect();
+          subscription.unsubscribe();
+        },
+      });
   }
 }

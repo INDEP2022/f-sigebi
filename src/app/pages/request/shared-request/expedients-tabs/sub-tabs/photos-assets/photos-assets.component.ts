@@ -151,10 +151,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   initFilterForm() {
     this.filterForm = this.fb.group({
       management: [
-        null,
+        'null',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeGood: ['null', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

@@ -1,0 +1,7 @@
+<button
+  class="mx-1"
+  size="small"
+  (click)="partialize()"
+  [disabled]="form.invalid || formGood.invalid || vsum >= vimporte || loading">
+  Parcializa
+</button>
