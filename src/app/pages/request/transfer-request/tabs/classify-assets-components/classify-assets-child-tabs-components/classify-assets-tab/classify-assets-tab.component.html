@@ -8,6 +8,7 @@
       </div>
       <div class="p-2 buttons">
         <button
+          [disabled]="isClassifyAsset == true"
           class="btn btn-secondary btn-sm active"
           (click)="openSearchModal()">
           B&uacute;squeda Avanzada
@@ -15,14 +16,17 @@
       </div>
       <div class="p-2 buttons">
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
+          [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset == true"
           class="btn btn-primary btn-sm active"
           (click)="saveRequest()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
       <div class="p-2 buttons">
-        <button class="btn btn-danger btn-sm active" (click)="cleanLvl()">
+        <button
+          [disabled]="isClassifyAsset == true"
+          class="btn btn-danger btn-sm active"
+          (click)="cleanLvl()">
           Cancelar
         </button>
       </div>
@@ -46,7 +50,8 @@
             [virtualScroll]="true"
             [loading]="loading"
             bindLabel="description"
-            bindValue="id">
+            bindValue="id"
+            [readonly]="isClassifyAsset">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -70,7 +75,8 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id">
+            bindValue="id"
+            [readonly]="isClassifyAsset">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -96,7 +102,8 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id">
+            bindValue="id"
+            [readonly]="isClassifyAsset">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -130,7 +137,8 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id">
+            bindValue="id"
+            [readonly]="isClassifyAsset">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -166,7 +174,8 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id">
+            bindValue="id"
+            [readonly]="isClassifyAsset">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -190,7 +199,8 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id">
+            bindValue="id"
+            [readonly]="isClassifyAsset">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}

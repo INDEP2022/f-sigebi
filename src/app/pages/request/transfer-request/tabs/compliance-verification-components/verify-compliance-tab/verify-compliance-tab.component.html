@@ -86,20 +86,26 @@
     <div class="col-md-12">
       <div class="float-right" style="padding-bottom: 3px">
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
+          [disabled]="
+            statusTask == 'FINALIZADA' || showClarificationButtons === false
+          "
           class="btn btn-primary btn-sm active"
           (click)="newClarification()">
           Nuevo
         </button>
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
+          [disabled]="
+            statusTask == 'FINALIZADA' || showClarificationButtons === false
+          "
           style="margin-left: 2px"
           class="btn btn-secondary btn-sm active"
           (click)="editForm()">
           Editar
         </button>
         <button
-          [disabled]="statusTask == 'FINALIZADA'"
+          [disabled]="
+            statusTask == 'FINALIZADA' || showClarificationButtons === false
+          "
           style="margin-left: 2px"
           class="btn btn-danger btn-sm active"
           (click)="deleteClarification()">

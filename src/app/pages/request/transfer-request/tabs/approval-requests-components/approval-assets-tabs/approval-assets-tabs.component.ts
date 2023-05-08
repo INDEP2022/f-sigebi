@@ -395,7 +395,11 @@ export class ApprovalAssetsTabsComponent
     this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (data: any) => {
         if (data !== null) {
-          const result = data.data.map(async (item: any) => {
+          const good = data.data.filter(
+            (x: any) => x.goodStatus != 'SOLICITUD DE ACLARACION'
+          );
+
+          const result = good.map(async (item: any) => {
             //obtener tipo bien
             const goodType = await this.getGoodType(item.goodTypeId);
             item['goodTypeName'] = goodType;
@@ -424,8 +428,8 @@ export class ApprovalAssetsTabsComponent
           });
 
           Promise.all(result).then(x => {
-            this.totalItems = data.count;
-            this.paragraphs = data.data;
+            this.totalItems = good.length;
+            this.paragraphs = good;
             this.loading = false;
           });
         } else {
