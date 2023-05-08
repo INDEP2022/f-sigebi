@@ -14,10 +14,12 @@ import { IVban } from 'src/app/core/models/ms-good/good';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -145,6 +147,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   selectData: any = null;
   statusProceeding: string;
   transferSelect = new DefaultSelect();
+  rec_adm: string = '';
+  v_atrib_del = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -154,7 +158,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceGood: GoodService,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
     private serviceRNomencla: ParametersService,
-    private serviceSssubtypeGood: GoodSssubtypeService
+    private serviceSssubtypeGood: GoodSssubtypeService,
+    private serviceUser: UsersService,
+    private serviceGoodParameter: GoodParametersService
   ) {
     super();
   }
@@ -164,35 +170,28 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
     this.form.get('mes').setValue(format(new Date(), 'MM'));
     this.checkChange();
+    this.initalizateProceeding();
   }
 
   prepareForm() {
     this.form = this.fb.group({
       expediente: [null, [Validators.required]],
-      averPrev: [null, [Validators.required]],
-      acta: [null, [Validators.required]],
-      transfer: [null, [Validators.required]],
-      ident: [null, [Validators.required]],
-      entrego: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      recibe: [null, [Validators.required]],
-      folio: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      year: [null, [Validators.required]],
-      mes: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      nombre: [null, [Validators.required]],
+      averPrev: [null],
+      acta: [null],
+      transfer: [null],
+      ident: [null],
+      entrego: [null, [Validators.pattern(STRING_PATTERN)]],
+      recibe: [null],
+      folio: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      year: [null],
+      mes: [null],
       acta2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       direccion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
-      folioEscaneo: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+      folioEscaneo: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       recibe2: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -206,26 +205,61 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       fecElab: [null, [Validators.required]],
       fecRecepFisica: [null, [Validators.required]],
       fecCaptura: [null, [Validators.required]],
-      elabora: [null, [Validators.required]],
       testigo: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      estatusPrueba: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      etiqueta: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      edoFisico: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      noAlmacen: [null, [Validators.required]],
-      noBoveda: [null, [Validators.required]],
+      estatusPrueba: [null, [Validators.pattern(STRING_PATTERN)]],
+      etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
+      edoFisico: [null, [Validators.pattern(STRING_PATTERN)]],
+      noAlmacen: [null],
+      noBoveda: [null],
     });
+  }
+
+  //Inicializa
+  initalizateProceeding() {
+    const user = localStorage.getItem('username');
+    const paramsF = new FilterParams();
+    let no_delegation: string | number;
+    let stage_edo: string | number;
+    paramsF.addFilter('id', user);
+    this.serviceUser.getAllSegUsers(paramsF.getParams()).subscribe(
+      res => {
+        no_delegation = res.data['0']['usuario']['delegationNumber'];
+        this.serviceGoodParameter.getPhaseEdo().subscribe(res => {
+          stage_edo = res.stagecreated;
+          const paramsFN = new FilterParams();
+          paramsFN.addFilter('numberDelegation2', no_delegation);
+          paramsFN.addFilter('stageedo', stage_edo);
+          this.serviceRNomencla.getRNomencla(paramsFN.getParams()).subscribe(
+            res => {
+              if (res.count > 1) {
+                this.rec_adm = 'FILTRAR';
+              }
+            },
+            err => {
+              console.log(err);
+              this.rec_adm = 'NADA';
+            }
+          );
+        });
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  automaticFill() {
+    console.log(this.rec_adm);
+    if (!['FILTRAR', 'NADA'].includes(this.rec_adm)) {
+      this.form.get('recibe').setValue(this.rec_adm);
+      this.form.get('entrego').setValue('PART');
+      this.form.get('ident').setValue('DEV');
+    } else {
+      console.log('No llena');
+    }
   }
 
   //Validate Proceeding
@@ -329,6 +363,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form
           .get('fecCaptura')
           .setValue(addDays(new Date(dataRes.captureDate), 1));
+        this.form
+          .get('fecElabRecibo')
+          .setValue(addDays(new Date(dataRes.dateElaborationReceipt), 1));
+        this.form
+          .get('fecEntregaBienes')
+          .setValue(addDays(new Date(dataRes.dateDeliveryGood), 1));
+
         this.form.get('observaciones').setValue(dataRes.observations);
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
@@ -345,6 +386,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
+    this.automaticFill();
+
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -387,6 +430,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         next: async (res: any) => {
           if (res.data.length > 0) {
             this.form.get('ident').setValue('DEV');
+            this.form.get('entrego').setValue('PART');
             this.dataGoods.load(res.data);
             console.log(res);
             const newData = await Promise.all(
@@ -502,7 +546,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         : '') +
       '/' +
       (this.form.get('entrego').value != null
-        ? this.form.get('entrego').value.delegation
+        ? this.form.get('entrego').value
         : '') +
       '/' +
       (this.form.get('recibe').value != null
@@ -592,7 +636,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     screenKey: 'FACTREFACTAVENT',
                     goodNumber: this.selectData.id,
                     identificador: this.selectData.identifier,
-                    typeAct: 'DXCV',
+                    typeAct: 'DXCVENT',
                   },
                 ],
               };
@@ -717,18 +761,18 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         );
         this.fillIncomeProceeding(dataRes);
       } else {
-        this.getTransfer();
         this.checkChange();
         this.minDateFecElab = new Date();
         this.form.get('acta2').setValue('');
+        this.form.get('entrega').setValue('');
+        this.form.get('fecElabRecibo').setValue('');
+        this.form.get('fecEntregaBienes').setValue('');
         this.form.get('fecElab').setValue('');
-        this.form.get('fecCierreActa').setValue('');
+        this.form.get('fecRecepFisica').setValue('');
         this.form.get('fecCaptura').setValue('');
-        this.form.get('direccion').setValue('');
         this.form.get('observaciones').setValue('');
-        this.form.get('autoridadCancela').setValue('');
-        this.form.get('elabora').setValue('');
-        this.form.get('testigo').setValue('');
+        this.form.get('recibe2').setValue('');
+        this.form.get('direccion').setValue('');
         this.statusProceeding = '';
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-info';
@@ -738,6 +782,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.initialBool = false;
         this.goodData = [];
         this.dataGoodAct.load(this.goodData);
+        this.getTransfer();
       }
     }
   }
@@ -760,5 +805,54 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         }
       }
     }
+  }
+
+  deleteProceeding() {
+    console.log(this.form.get('fecElab').value);
+    if (this.v_atrib_del === 0) {
+      if (this.statusProceeding === 'CERRADO') {
+        this.alert(
+          'error',
+          'No puede elimar acta',
+          'No puede eliminar un Acta cerrada'
+        );
+      }
+      if (
+        format(this.form.get('fecElab').value, 'MM-yyyy') !=
+        format(new Date(), 'MM-yyyy')
+      ) {
+        this.alert(
+          'error',
+          'No puede eliminar acta',
+          'No puede eliminar un Acta fuera del mes de elaboración'
+        );
+      }
+    }
+
+    this.alertQuestion(
+      'question',
+      '¿Desea eliminar completamente el acta?',
+      `Se eliminará el acta ${this.idProceeding}`,
+      'Eliminar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        this.serviceProcVal
+          .deleteProceeding(this.idProceeding.toString())
+          .subscribe(
+            res => {
+              console.log(res);
+              this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
+            },
+            err => {
+              console.log(err);
+              this.alert(
+                'error',
+                'No se pudo eliminar acta',
+                'Secudió un problema al eliminar el acta'
+              );
+            }
+          );
+      }
+    });
   }
 }
