@@ -23,7 +23,7 @@ import { LIST_REPORTS_COLUMN } from './list-reports-column';
   styles: [],
 })
 export class PrintReportModalComponent extends BasePage implements OnInit {
-  idDoc: any;
+  //idDoc: number;
   idTypeDoc: any; //ID Tipo de documento
   idReportAclara: any; //ID del reporte de Oficio_Aclaracion
   sign: boolean = true;
@@ -63,6 +63,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   formLoading: boolean = true;
   urlBaseReport =
     'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=';
+  idSolicitud: any;
 
   constructor(
     public modalService: BsModalService,
@@ -103,12 +104,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     console.log('ID tipo de documento', this.idTypeDoc);
     console.log('idReportAclara', this.idReportAclara);
+    console.log('idSolicitud', this.idSolicitud);
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
     //Verifica si ya existe ese usuario en la lista de firmantes
     this.signatoriesService
-      .getSignatoriesName(this.idTypeDoc, this.idDoc, token.name)
+      .getSignatoriesName(this.idTypeDoc, this.idSolicitud, token.name)
       .subscribe({
         next: response => {
           this.signatories = response.data;
@@ -130,28 +132,28 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     switch (this.idTypeDoc) {
       case 50: {
         console.log('Tipo 50, Aclaración');
-        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idSolicitud}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 104: {
         console.log('Tipo 104, OficioAclaracionTransferente');
-        let linkDoc: string = `${this.urlBaseReport}OficioAclaracionTransferente.jasper&ID_DOCUMENTO=${this.idDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}OficioAclaracionTransferente.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 111: {
         console.log('Tipo 111, OficioImprocedencia');
-        let linkDoc: string = `${this.urlBaseReport}OficioImprocedencia.jasper&ID_DOCUMENTO=${this.idDoc}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}OficioImprocedencia.jasper&ID_DOCUMENTO=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
         console.log('URL reporte -> ', linkDoc);
         break;
       }
       case 211: {
         console.log('Tipo 211, AclaracionAsegurados');
-        let linkDoc: string = `${this.urlBaseReport}AclaracionAsegurados.jasper&ID_DOCUMENTO=${this.idDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}AclaracionAsegurados.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
 
@@ -159,21 +161,21 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       }
       case 212: {
         console.log('Tipo 212, AclaracionComercioExterior');
-        let linkDoc: string = `${this.urlBaseReport}AclaracionComercioExterior.jasper&ID_DOCUMENTO=${this.idDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}AclaracionComercioExterior.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 216: {
         console.log('Tipo 216, ImprocedenciaTransferentesVoluntarias');
-        let linkDoc: string = `${this.urlBaseReport}ImprocedenciaTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}ImprocedenciaTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
       }
       case 213: {
         console.log('Tipo 213, AclaracionTransferentesVoluntarias');
-        let linkDoc: string = `${this.urlBaseReport}AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
@@ -192,7 +194,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       name: token.name,
       post: token.cargonivel1,
       learnedType: this.idTypeDoc,
-      learnedId: this.idDoc,
+      learnedId: this.idSolicitud,
     };
 
     //Asigna un firmante según el usuario logeado
@@ -213,7 +215,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    const learnedId = this.idDoc;
+    const learnedId = this.idSolicitud;
     this.loading = true;
     console.log('Traer firmantes');
     this.signatoriesService
@@ -286,7 +288,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   rowsSelected(event: any) {
     this.valuesSign = event.data;
-    const idDoc = this.idDoc;
+    const idDoc = this.idSolicitud;
     const obj: Object = {
       id: this.requestInfo.id,
       recordId: this.requestInfo.recordId,
@@ -440,7 +442,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       dDocCreator: token.name, //Creador del documento
       //dDocName: 'Dictamen Procendecia',	//Identificador del documento
       dInDate: new Date(), //Fecha de creación del documento
-      xidSolicitud: this.idDoc,
+      xidSolicitud: this.idSolicitud,
       xtipoDocumento: this.idTypeDoc,
     };
 
@@ -489,9 +491,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
       const requestInfo = this.requestInfo; //ID solicitud
+      console.log('ID de solicitud', this.requestInfo);
       const nameTypeReport = 'DictamenProcendecia';
       const formData: Object = {
-        id: this.idDoc,
+        id: this.idSolicitud,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -504,7 +507,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'OficioImprocedencia';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idSolicitud,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -514,9 +517,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     }
     if (this.idTypeDoc == 104) {
       const requestInfo = this.requestInfo; //ID solicitud
+      console.log('ID de solicitud', this.requestInfo);
       const nameTypeReport = 'OficioAclaracionTransferente';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idSolicitud,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -529,7 +533,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionComercioExterior';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idSolicitud,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -542,7 +546,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionAsegurados';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idSolicitud,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -555,7 +559,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionTransferentesVoluntarias';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idSolicitud,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -568,7 +572,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'ImprocedenciaTransferentesVoluntarias';
       const formData: Object = {
-        id: requestInfo.id,
+        id: this.idSolicitud,
         firma: true,
         tipoDocumento: nameTypeReport,
       };

@@ -40,6 +40,7 @@ export class InappropriatenessPgrSatFormComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   dataChatClarifications: IChatClarifications[];
+  idSolicitud: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -56,11 +57,7 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    console.log('tipoTransferente', this.type);
     this.generateClave();
-    console.log('notification', this.notification);
-    //console.log('dateclar', this.notification);
-    console.log('request', this.request);
     this.prepareForm();
   }
 
@@ -95,7 +92,7 @@ export class InappropriatenessPgrSatFormComponent
       //invoiceNumber: 1,
       modificationDate: new Date(),
       creationUser: token.name,
-      documentTypeId: '111',
+      documentTypeId: '111', //Aclaración tipo 2 e improcedencia -> OficioImprocedencia
       modificationUser: token.name,
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
@@ -106,6 +103,7 @@ export class InappropriatenessPgrSatFormComponent
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
         this.changeStatusAnswered();
+        this.openReport(response);
         this.loading = false;
         this.close();
       },
@@ -144,19 +142,11 @@ export class InappropriatenessPgrSatFormComponent
       .update(chatClarifications.id, modelChatClarifications)
       .subscribe({
         next: async data => {
-          if (data.clarificationTypeId == 1) {
-            this.updateAnsweredAcla(
-              data.clarifiNewsRejectId,
-              chatClarifications.id,
-              modelChatClarifications.goodId
-            );
-          } else if (data.clarificationTypeId == 2) {
-            this.updateAnsweredImpro(
-              data.clarifiNewsRejectId,
-              chatClarifications.id,
-              modelChatClarifications.goodId
-            );
-          }
+          this.updateAnsweredImpro(
+            data.clarifiNewsRejectId,
+            chatClarifications.id,
+            modelChatClarifications.goodId
+          );
         },
         error: error => {
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
@@ -173,11 +163,9 @@ export class InappropriatenessPgrSatFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'ACLARADA', // ??
+      answered: 'EN ACLARACION', // ??
       observations: observations,
     };
-
-    console.log(data);
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {
         const updateInfo: IChatClarifications = {
@@ -210,7 +198,7 @@ export class InappropriatenessPgrSatFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENTE',
+      answered: 'EN ACLARACION',
       observations: observations,
     };
 
@@ -219,11 +207,16 @@ export class InappropriatenessPgrSatFormComponent
         const updateInfo: IChatClarifications = {
           requestId: this.request.id,
           goodId: goodId,
-          clarificationStatus: 'IMPROCEDENTE',
+          clarificationStatus: 'EN_ACLARACION',
         };
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.modalRef.content.callback(true, data.goodId);
+            this.onLoadToast(
+              'success',
+              'Actualizado',
+              'Notificación actualizada correctamente'
+            );
             this.modalRef.hide();
           },
           error: error => {
@@ -237,17 +230,18 @@ export class InappropriatenessPgrSatFormComponent
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
-    const idDoc = data.id;
-    const idTypeDoc = 111;
-    const requestInfo = data;
-
+    //const idDoc = data.id;
+    const idTypeDoc = Number(data.documentTypeId);
+    const requestInfo = this.request;
+    const idSolicitud = this.idSolicitud;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
         requestInfo,
         idTypeDoc,
-        idDoc,
+        //idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
@@ -267,7 +261,6 @@ export class InappropriatenessPgrSatFormComponent
         // this.noFolio = response.data;
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
-        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
       },
       error: error => {
         console.log('Error al generar secuencia de dictamen', error.error);
@@ -279,18 +272,14 @@ export class InappropriatenessPgrSatFormComponent
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
-    console.log(token);
-
     //Trae el año actuar
     const year = this.today.getFullYear();
     //Cadena final (Al final las siglas ya venian en el token xd)
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     }
   }
 }

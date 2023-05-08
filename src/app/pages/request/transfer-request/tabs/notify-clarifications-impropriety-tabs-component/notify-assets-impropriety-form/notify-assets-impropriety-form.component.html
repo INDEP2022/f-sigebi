@@ -146,7 +146,7 @@
         </div>
       </div>
 
-      <div class="row pt-3">
+      <!-- <div class="row pt-3">
         <div class="col-md-12">
           <form-field
             [control]="clarificationForm.get('foundation')"
@@ -157,9 +157,9 @@
               formControlName="foundation"></textarea>
           </form-field>
         </div>
-      </div>
+      </div> -->
 
-      <div class="row pt-3">
+      <!--<div class="row pt-3">
         <div class="col-md-6">
           <form-field
             [control]="clarificationForm.get('transmitterId')"
@@ -183,10 +183,10 @@
               formControlName="invoiceLearned" />
           </form-field>
         </div>
-      </div>
+      </div> -->
 
       <div class="row pt-3">
-        <div class="col-md-4">
+        <!--<div class="col-md-4">
           <form-field
             [control]="clarificationForm.get('worthAppraisal')"
             label="Valor Aval&uacute;o">
@@ -196,7 +196,7 @@
               maxlength="60"
               formControlName="worthAppraisal" />
           </form-field>
-        </div>
+        </div> -->
 
         <div class="col-md-4">
           <form-field
@@ -210,7 +210,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" *ngIf="infoRequest.typeOfTransfer == 'SAT_SAE'">
           <form-field
             [control]="clarificationForm.get('webMail')"
             label="Correo Notificaci&oacute;n Respuesta SAT">
@@ -227,20 +227,9 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="clarificationForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
-      <!-- <div class="m-3" *ngIf="withDocumentation">
-        <confirm-button
-          [disabled]="clarificationForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
-      </div> -->
-
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar

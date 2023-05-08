@@ -890,20 +890,20 @@ export class RegistrationOfRequestsComponent
   }
 
   signDictum() {
-    const idDoc = this.route.snapshot.paramMap.get('id');
+    const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
 
-    this.requestService.getById(idDoc).subscribe({
+    this.requestService.getById(idSolicitud).subscribe({
       next: response => {
-        this.requestList = response;
+        const requestData = response;
 
         let config: ModalOptions = {
           initialState: {
-            idDoc,
+            idSolicitud,
             idTypeDoc,
             typeAnnex,
-            response,
+            requestData,
             callback: (next: boolean) => {},
           },
           class: 'modal-lg modal-dialog-centered',

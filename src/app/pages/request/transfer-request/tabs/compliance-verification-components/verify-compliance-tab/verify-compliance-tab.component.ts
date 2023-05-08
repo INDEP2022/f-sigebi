@@ -94,6 +94,7 @@ export class VerifyComplianceTabComponent
   confirmation: boolean = false;
   task: any;
   statusTask: any = '';
+  showClarificationButtons: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -742,20 +743,21 @@ export class VerifyComplianceTabComponent
   selectGood(event: any) {
     //if (event.isSelected === true) {
     this.formLoading = true;
-    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
+
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
 
     if (this.goodsSelected.length === 1) {
+      //verifica si el bien ya fue aclarado para desabilitar
+      this.showClarificationButtons =
+        this.goodsSelected[0].goodStatus == 'ACLARADO' ? false : true;
       this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
-        //console.log("info del goodSELECTED v1", this.goodsSelected[0]); //henry
         this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
-        console.log('info del good v1', this.detailArray); //henry
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
@@ -764,6 +766,9 @@ export class VerifyComplianceTabComponent
 
       //console.log("Información de domicilio ",);
     } else {
+      this.clarificationData = [];
+      this.isGoodSelected = false;
+      this.detailArray.reset();
       this.formLoading = false;
     }
   }

@@ -168,19 +168,19 @@ const routes: Routes = [
         .DonationApprovalModule,
     data: { title: 'Aprobación donación', screen: 'FACTDESAPROBDONAC' },
   },
-  // {
-  //   path: 'approval-change-numeraire',
-  //   loadChildren: async () =>
-  //     (
-  //       await import(
-  //         './approval-change-numeraire/approval-change-numeraire.module'
-  //       )
-  //     ).ApprovalChangeNumeraireModule,
-  //   data: {
-  //     title: ' Aprobación de cambio a numerario',
-  //     screen: 'FACTDIRAPROBCAMNU',
-  //   },
-  // },
+  {
+    path: 'approval-change-numeraire',
+    loadChildren: async () =>
+      (
+        await import(
+          './approval-change-numeraire/approval-change-numeraire.module'
+        )
+      ).ApprovalChangeNumeraireModule,
+    data: {
+      title: ' Aprobación de cambio a numerario',
+      screen: 'FACTDIRAPROBCAMNU',
+    },
+  },
   {
     path: 'doc-received-sera',
     loadChildren: async () =>

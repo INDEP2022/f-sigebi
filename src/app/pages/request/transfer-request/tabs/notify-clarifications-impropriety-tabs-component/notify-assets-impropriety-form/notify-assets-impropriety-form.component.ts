@@ -56,6 +56,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Parámetro para detectar que tipo de aclaración es
   typeClarifications: any;
+  idSolicitud: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -73,12 +74,8 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('Tipo de aclaración... ', this.typeClarifications);
-    console.log('información de request', this.infoRequest);
     this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
-    console.log('info request', this.infoRequest);
-    console.log('info not', this.dataClarifications2);
     this.dictamenSeq();
     this.initForm1();
     const applicationId = this.idRequest;
@@ -95,10 +92,10 @@ export class NotifyAssetsImproprietyFormComponent
     });
 
     this.clarificationForm = this.fb.group({
-      addresseeName: ['', [Validators.required, Validators.maxLength(50)]],
+      addresseeName: [' ', [Validators.required, Validators.maxLength(50)]],
 
       positionAddressee: [
-        '',
+        ' ',
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -125,7 +122,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       consistentIn: [
-        '',
+        ' ',
         [
           Validators.pattern(STRING_PATTERN),
           //Validators.required,
@@ -143,7 +140,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       clarification: [
-        '',
+        null,
         [
           Validators.pattern(STRING_PATTERN),
           //Validators.required,
@@ -156,29 +153,29 @@ export class NotifyAssetsImproprietyFormComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
-      foundation: [
-        '',
+      /*foundation: [
+        ' ',
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(4000),
         ],
-      ],
+      ], */
 
-      transmitterId: [
+      /*transmitterId: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
-      ],
+      ], */
 
-      invoiceLearned: [
+      /*invoiceLearned: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
+      ], */
 
-      worthAppraisal: [
+      /*worthAppraisal: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
+      ], */
 
       /*jobClarificationKey: [
         this.dataClarifications2.chatClarification.keyClarificationPaper,
@@ -191,7 +188,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       webMail: [
-        this.dataClarifications2?.chatClarification?.emailWeb,
+        ' ',
         [
           Validators.required,
           Validators.pattern(EMAIL_PATTERN),
@@ -202,23 +199,17 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async confirm() {
-    console.log('Aclaración', this.clarificationForm.value);
     const typeTransference = this.infoRequest.typeOfTransfer;
     let generaXML: boolean = false;
     if (
       typeTransference == 'SAT_SAE' &&
       this.dataClarifications2.chatClarification.idClarificationType == '2'
     ) {
-      console.log('Soy tipo Aclaración de SAT_SAE y 2');
       generaXML = true;
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      console.log('Soy tipo Aclaración,', typeTransference);
       if (this.typeClarifications == 2 && typeTransference != 'SAT_SAE') {
-        console.log(
-          'Aclaracipon tipo 2, ImprocedenciaTransferentesVoluntarias tipo 216'
-        );
         this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
       }
       const obtainTypeDocument = await this.obtainTypeDocument(
@@ -226,15 +217,11 @@ export class NotifyAssetsImproprietyFormComponent
         this.infoRequest
       );
       if (obtainTypeDocument) {
-        //console.log('Tipo', this.typeDoc);
-        //Depende del tipo de documento, envia al método correspondiente
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
             if (this.typeClarifications == 2) {
-              console.log('Aclaracipon tipo 2, OficioImprocedencia tipo 111');
               this.oficioImprocedencia(); //Aclaración PGR tipo 2
             } else {
-              console.log('Método para: ', this.typeDoc);
               this.aclaracionAsegurados(); //Aclaración PGR tipo 1
             }
 
@@ -242,7 +229,6 @@ export class NotifyAssetsImproprietyFormComponent
           }
           case 'AclaracionTransferentesVoluntarias': {
             if (this.typeClarifications == 1) {
-              console.log('Método para: ', this.typeDoc);
               this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
             }
 
@@ -252,27 +238,12 @@ export class NotifyAssetsImproprietyFormComponent
       }
     }
 
-    console.log(generaXML);
-    console.log(typeTransference);
-
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
-      console.log(
-        'Soy: ',
-        typeTransference,
-        'documento: OficioAclaracionTransferente'
-      ); //Duda
       this.oficioAclaracionTransferente();
     }
-
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 1) {
-      console.log(
-        'Soy: ',
-        typeTransference,
-        'documento: AclaracionComercioExterior '
-      ); //Duda
       this.aclaracionComercioExterior();
     }
-
     //this.saveClarificationsAcept();
   }
 
@@ -316,6 +287,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
         this.changeStatusAnswered();
+        this.openReport(data);
         this.loading = false;
         this.close();
       },
@@ -367,6 +339,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
         this.changeStatusAnswered();
+        this.openReport(data);
         this.loading = false;
         this.close();
       },
@@ -396,10 +369,10 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: 'DIRIGIDO A EJEMPLO',
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee: 'CARGO DE EJEMPLO',
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '212',
@@ -418,6 +391,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
         this.changeStatusAnswered();
+        this.openReport(data);
         this.loading = false;
         this.close();
       },
@@ -447,10 +421,11 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value,
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '104',
@@ -469,6 +444,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
         this.changeStatusAnswered();
+        this.openReport(data);
         this.loading = false;
         this.close();
       },
@@ -520,6 +496,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
+        this.openReport(data);
         this.changeStatusAnswered();
         this.loading = false;
         this.close();
@@ -573,6 +550,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
         this.changeStatusAnswered();
+        this.openReport(data);
         this.loading = false;
         this.close();
       },
@@ -639,11 +617,10 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'ACLARADA', // ??
+      answered: 'EN ACLARACION', // ??
       observations: observations,
     };
 
-    console.log(data);
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {
         const updateInfo: IChatClarifications = {
@@ -676,7 +653,7 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENTE',
+      answered: 'IMPROCEDENCIA',
       observations: observations,
     };
 
@@ -685,7 +662,7 @@ export class NotifyAssetsImproprietyFormComponent
         const updateInfo: IChatClarifications = {
           requestId: this.idRequest,
           goodId: goodId,
-          clarificationStatus: 'IMPROCEDENTE',
+          clarificationStatus: 'EN_ACLARACION',
         };
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
@@ -765,17 +742,18 @@ export class NotifyAssetsImproprietyFormComponent
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
-    const idDoc = data.id;
+    //const idDoc = data.id;
     const idTypeDoc = Number(data.documentTypeId);
-    const requestInfo = data;
-    console.log('ID tipo de documento', idTypeDoc);
+    const requestInfo = this.infoRequest;
+    const idSolicitud = this.idSolicitud;
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
         requestInfo,
         idTypeDoc,
-        idDoc,
+        //idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
@@ -795,7 +773,6 @@ export class NotifyAssetsImproprietyFormComponent
         // this.noFolio = response.data;
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
-        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
       },
       error: error => {
         console.log('Error al generar secuencia de dictamen', error.error);
@@ -807,18 +784,14 @@ export class NotifyAssetsImproprietyFormComponent
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
-    console.log(token);
-
     //Trae el año actuar
     const year = this.today.getFullYear();
     //Cadena final (Al final las siglas ya venian en el token xd)
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     }
   }
 
