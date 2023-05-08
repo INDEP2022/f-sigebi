@@ -76,7 +76,6 @@ export class RequestRecordTabComponent
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
-    console.log(this.requestForm.value);
     //estable el campo para preguntar en la vista si es del tipo 1 o 3
     if (this.requestForm.controls['transferenceId'].value != null) {
       this.transferenceNumber = Number(

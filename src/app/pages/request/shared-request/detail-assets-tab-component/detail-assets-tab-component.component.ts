@@ -44,9 +44,11 @@ import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercom
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  DOUBLE_PATTERN,
   NUMBERS_PATTERN,
   NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -961,9 +963,39 @@ export class DetailAssetsTabComponentComponent
         next: resp => {
           //const result = resp.data.filter((x: any) => x.uomCode === id);
           this.ligieUnit = resp.data[0].measureTlUnit;
+          this.setQuantityTypeInput(this.ligieUnit);
         },
       });
   }
+
+  setQuantityTypeInput(unity: string) {
+    if (
+      unity === 'JUEGOS' ||
+      unity === 'PAR' ||
+      unity === 'PIEZA' ||
+      unity === 'UNIDAD' ||
+      unity === 'CAJAS'
+    ) {
+      this.detailAssets.controls['quantity'].setValidators([
+        Validators.required,
+        Validators.pattern(POSITVE_NUMBERS_PATTERN),
+      ]);
+    } else if (
+      unity === 'KILOGRAMOS' ||
+      unity === 'GRAMO' ||
+      unity === 'LITRO' ||
+      unity === 'METRO' ||
+      unity === 'METRO CÚBICO' ||
+      unity === 'METRO CUADRADO'
+    ) {
+      this.detailAssets.controls['quantity'].setValidators([
+        Validators.required,
+        Validators.pattern(DOUBLE_PATTERN),
+      ]);
+    }
+    this.detailAssets.updateValueAndValidity();
+  }
+
   onValuesChange(data: any) {
     if (data != undefined) {
       this.getSubBrand(new ListParams(), data.flexValue);
