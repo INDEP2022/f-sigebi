@@ -1,6 +1,6 @@
 export interface IMassiveNumeraryChangeSpent {
-  noGood: number; // NO_BIEN
-  npNUm: number; // NO_BIEN_NUME
+  noGood: number; // NO_BIEN // good.id
+  npNUm: number; // NO_BIEN_NUME // good.id
   description: string; // DESCRIPCION
   cveEvent: string; // CVE_PROCESO
   status: string; // ESTATUS
@@ -8,13 +8,13 @@ export interface IMassiveNumeraryChangeSpent {
   costs: number; // GASTO
   tax: number; // IVA
   impNumerary: number; // VALOR_AVALUO
-  noExpAssociated: string; // NO_EXP_ASOCIADO
+  noExpAssociated: any; // NO_EXP_ASOCIADO
   noExpedient: string; // NO_EXPEDIENTE
   quantity: number; // CANTIDAD
   noDelegation: string; // NO_DELEGACION
   noSubDelegation: string; // NO_SUBDELEGACION
   identifier: string; // IDENTIFICADOR
-  noFlier: string; // NO_VOLANTE
+  noFlier: any; // NO_VOLANTE
   indNume: number; // IND_NUME
   color?:
     | 'bg-custom-red'

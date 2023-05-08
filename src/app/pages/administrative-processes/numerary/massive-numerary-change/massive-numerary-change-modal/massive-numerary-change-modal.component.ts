@@ -96,18 +96,18 @@ export class MassiveNumeraryChangeModalComponent
 
   async exportExcel(goods: any[], goodsMore: any[]) {
     const dataForExcel = goods.map(good => {
-      const goodMore = goodsMore.find(
+      const goodMoreFilter = goodsMore.find(
         goodMore => goodMore.noGood == good.noGood
       );
       const dataMoreExcel = {
-        DESCRIPCION_NUM: goodMore?.description,
-        ESTATUS_NUM: goodMore?.noExpedient,
+        DESCRIPCION_NUM: goodMoreFilter?.description,
+        ESTATUS_NUM: goodMoreFilter?.noExpedient,
         CVE_EVENTO: good?.noExpedient,
-        MONEDA_NUM: goodMore?.val1,
-        INGRESO_NUM: goodMore?.val2,
-        IVA_NUM: goodMore?.val10,
-        GASTO_NUM: goodMore?.val13,
-        VALOR_AVALUO_NUM: goodMore?.appraisedValue,
+        MONEDA_NUM: goodMoreFilter?.val1,
+        INGRESO_NUM: goodMoreFilter?.val2,
+        IVA_NUM: goodMoreFilter?.val10,
+        GASTO_NUM: goodMoreFilter?.val13,
+        VALOR_AVALUO_NUM: goodMoreFilter?.appraisedValue,
       };
       const rowExcel = {
         NO_BIEN: good.noGood,

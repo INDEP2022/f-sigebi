@@ -44,7 +44,7 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field
+            <!-- <form-field
               [control]="form.get('recordsRead')"
               label="Registros leídos">
               <input
@@ -53,38 +53,42 @@
                 formControlName="recordsRead"
                 min="1"
                 pattern="^[0-9]+" />
-            </form-field>
+            </form-field> -->
+            Registros leídos <span>{{ registerReads }}</span>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('processed')" label="Procesados">
+            <!-- <form-field [control]="form.get('processed')" label="Procesados">
               <input
                 type="number"
                 class="form-control"
                 formControlName="processed"
                 min="1"
                 pattern="^[0-9]+" />
-            </form-field>
+            </form-field> -->
+            Registros procesados <span>{{ registerProcessed }}</span>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('correct')" label="Correctos">
+            <!-- <form-field [control]="form.get('correct')" label="Correctos">
               <input
                 type="number"
                 class="form-control"
                 formControlName="correct"
                 min="1"
                 pattern="^[0-9]+" />
-            </form-field>
+            </form-field> -->
+            Registros correctos <span>{{ registerCorrect }}</span>
           </div>
           <div class="col-md-3">
             Erróneos
-            <form-field [control]="form.get('wrong')" label="Erroneos">
+            <!-- <form-field [control]="form.get('wrong')" label="Erroneos">
               <input
                 type="number"
                 class="form-control"
                 formControlName="wrong"
                 min="1"
                 pattern="^[0-9]+" />
-            </form-field>
+            </form-field> -->
+            <span>{{ registerIncorrect }}</span>
           </div>
         </div>
         <div class="row mt-4 m-0">

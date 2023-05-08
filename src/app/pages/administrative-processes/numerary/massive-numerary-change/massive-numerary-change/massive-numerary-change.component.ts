@@ -15,6 +15,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
@@ -58,6 +59,14 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   totalItems: number = 0;
 
   columns = HELP_ARR;
+
+  registerReads: number = 0;
+  registerProcessed: number = 0;
+  registerCorrect: number = 0;
+  registerIncorrect: number = 0;
+
+  BLK_BIENES = new LocalDataSource();
+  BLK_GASTOS = new LocalDataSource();
 
   constructor(
     private fb: FormBuilder,
@@ -118,9 +127,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       this.formGas.addControl(`GAS${index + 1}`, new FormControl(''));
       this.formGad.addControl(`GAD${index + 1}`, new FormControl(''));
     });
-
-    // let test = await this.getGoodById([{ value: 143503, filter: 'filter.id' }]);
-    // console.log({ test });
   }
 
   //#region On click Button Process Extraction
@@ -152,7 +158,11 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
           break;
         case 'G':
           const controlGas = this.formGas.get(`GAS${index}`);
-          controlGas?.value ? (banG = true) : (colG = `${colG}${index},`);
+          if (!controlGas?.value) {
+            banG = true;
+          } else {
+            colG = colG + index + ',';
+          }
           break;
         case 'V':
           colV = index;
@@ -215,13 +225,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         FIRST_RECORD;
     */
 
-    // declare service
-    // const params = new ListParams();
-    // params.limit = 10000000000000;
-
-    // const excelData: any[] = /* await firstValueFrom(
-    //   this.service.getDataExcel(params).pipe()
-    // ); */ [];
     const dataTablePreview = await this.dataPrevious.getAll();
     console.log({ dataTablePreview });
     this.processExtraction(dataTablePreview, colB, colI, colV, colG);
@@ -235,216 +238,300 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     colG: string
   ) {
     let dataTableSpent: IMassiveNumeraryChangeSpent[] = [];
-    let dataTableTableSmall: IMassiveNumeraryTableSmall[] = [];
-    let indNume;
+    let dataTableSmall: IMassiveNumeraryTableSmall[] = [];
+    // let indNume;
     let contm = 0;
+    let cont = 0;
     let cveProcess: string | null = null;
     let actaOk = false;
     let vItem = null;
+
+    let vType = null;
+    let vnoGood;
+    let vContm = 0;
+
+    let vGood = null;
+    let vGoodStatus = null;
+
+    let vnoGoodn = null;
+    let vcveProcess = null;
+    let vIndNume: number;
+    let vActaOk = null;
+    let vIncome: any = null;
+    let vTax: any = 0;
+    let vColg1 = null;
+    let vTotalSpent = null;
+    let vColgu;
+    let vdSpent = null;
+    let vDescription = null;
+    // /** @replace vno_bienn */
+    // let numberGoodn = null;
+
+    /** @replace vestatusn */
+    let status = null;
+
     // dataTablePreview.map(
     const test = async (item: any) => {
       vItem = 'COL' + colB;
-      const numberGood = item[vItem];
-      if (numberGood) {
+      vType = item[vItem];
+
+      if (vType) {
         try {
-          const good = await this.getGoodById([
-            { filter: 'filter.id', value: numberGood },
-          ]);
-          console.log({ good });
-          cveProcess = null;
-
+          vnoGood = Number(vType.replace(',', '.'));
           try {
-            const goodStatus = await this.getGoodById(
-              [
-                { filter: 'filter.goodReferenceNumber', value: numberGood },
-                {
-                  filter: 'filter.id',
-                  value: `${SearchFilter.NEQ}:${numberGood}`,
-                },
-              ],
-              true
-            );
-
-            if (Array.isArray(goodStatus) && goodStatus.length > 1) {
-              throw new Error('Más de una ref.');
-            }
-
-            if (goodStatus?.status !== 'ADM') {
-              indNume = 0;
-              contm++;
-              cveProcess = 'Numerario <> ADM.';
-            } else {
-              try {
-                const movement = await firstValueFrom(
-                  this.accountMovementService.getAllFiltered(
-                    `filter.numberGood=${goodStatus.id}`
-                  )
-                );
-                indNume = 3;
-                contm++;
-                cveProcess = 'Numerario conciliado.';
-              } catch (ex) {
-                indNume = 2;
-              }
-            }
-            cveProcess = await this.pufSearchEvent(numberGood);
-          } catch (ex: any) {
-            if (ex?.error?.message === 'Más de una ref.') {
-              indNume = 0;
-              contm++;
-              cveProcess = 'Más de una ref.';
-            } else {
-              if (
-                good.identifier === 'TRANS' &&
-                ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(good.status)
-              ) {
-                indNume = 2;
-                cveProcess = await this.pufSearchEvent(numberGood);
+            vGood = await this.selectGoodForId(vnoGood);
+            vnoGoodn = null;
+            vcveProcess = null;
+            try {
+              vGoodStatus = await this.selectGoodFilterNoGoodReferenceAndNoGood(
+                vnoGood
+              );
+              vnoGoodn = vGoodStatus?.id;
+              if (vGoodStatus?.status !== 'ADM') {
+                vIndNume = 0;
+                vContm++;
+                vcveProcess = 'Numerario <> ADM.';
               } else {
-                indNume = 1;
-                if (good.identifier === 'TRANS') {
-                  indNume = 4;
-                }
-                actaOk = await this.pufValidActaReception(numberGood);
-                if (
-                  !actaOk &&
-                  this.nvl(good?.goodsPartializationFatherNumber) > 0
-                ) {
-                  actaOk = await this.pufValidActaReception(
-                    good.goodsPartializationFatherNumber
-                  );
-                }
-                if (!actaOk) {
-                  indNume = 5;
-                  contm++;
-                  cveProcess = 'Bien sin Acta.';
-                }
-              }
-            }
-          }
-          vItem = 'COL' + colI;
-          let vTipo = item[vItem];
-          let income;
-          let viva;
-          let colG1;
-          let totSpent;
-          let colGu;
-          let spent;
-          let dSpent;
-          let descriptionG;
-          if (vTipo) {
-            income = vTipo?.replace(',', '.');
-            vItem = 'COL' + colV;
-            vTipo = item[vItem];
-            if (vTipo) {
-              viva = vTipo?.replace(',', '.');
-              colG1 = colG;
-              totSpent = 0;
-              while (colG1) {
-                colGu = colG1.substring(0, colG1.indexOf(','));
-                vItem = 'F' + colGu;
-                vTipo = item[vItem];
                 try {
-                  spent = this.nvl(
-                    parseFloat(vTipo?.replace(',', '.')).toFixed(2),
-                    0
+                  const accountMovement = await this.selectMovementAccount(
+                    vnoGoodn
                   );
-                  vItem = 'GAS' + colGu;
-                  dSpent = this.formGas.get(vItem)?.value;
-                  totSpent += spent;
-                  vItem = 'GAD' + colGu;
-                  descriptionG = this.formGad.get(vItem)?.value;
-                  if (descriptionG) {
-                    try {
-                      const conceptSpent = await this.getConceptSpend(dSpent);
-                      descriptionG = conceptSpent?.description;
-                    } catch (e: any) {
-                      descriptionG = 'Gasto: ' + dSpent;
-                    }
-                  }
-                  dataTableTableSmall.push({
-                    noGood: numberGood,
-                    cveie: dSpent,
-                    amount: spent,
-                    description: descriptionG,
-                    status: good.status,
-                    type: 'E',
-                  });
-                } catch (e: any) {}
-                colG1 = colG1.substring(colG1.indexOf(',') + 1);
-              }
-
-              dataTableTableSmall.push({
-                noGood: numberGood,
-                cveie: 0,
-                amount: viva,
-                description: 'I.V.A',
-                status: good.status,
-                type: 'I',
-              });
-              const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
-                noGood: numberGood,
-                description: good.description,
-                status: good.status,
-                entry: income + totSpent - viva,
-                costs: totSpent,
-                tax: viva,
-                impNumerary: income,
-                noExpAssociated: good.associatedFileNumber,
-                noExpedient: good.fileeNumber,
-                quantity: good.quantity,
-                noDelegation: good.delegationNumber?.id,
-                noSubDelegation: good.subDelegationNumber?.id,
-                identifier: good.identifier,
-                noFlier: good.flyerNumber,
-                indNume: indNume,
-                cveEvent: cveProcess,
-                npNUm: good.id,
-              };
-
-              if (indNume !== 1) {
-                switch (indNume) {
-                  case 0:
-                    prevDataTableSpent['color'] = 'bg-custom-red';
-                    break;
-                  case 2:
-                    prevDataTableSpent['color'] = 'bg-custom-green';
-                    break;
-                  case 4:
-                    prevDataTableSpent['color'] = 'bg-custom-cyan';
-                    break;
-                  case 5:
-                    prevDataTableSpent['color'] = 'bg-custom-orange';
-                    break;
-                  default:
-                    prevDataTableSpent['color'] = 'bg-custom-yellow';
+                  vIndNume = 3;
+                  vContm++;
+                  vcveProcess = 'Numerario conciliado.';
+                } catch (ex) {
+                  vContm++;
                 }
-                dataTableSpent.push(prevDataTableSpent);
+              }
+              vcveProcess = await this.pufSearchEvent(vnoGood);
+            } catch (ex: any) {
+              console.log({ ex: ex.message });
+              if (ex?.message === 'Más de una ref.') {
+                vIndNume = 0;
+                vContm++;
+                vcveProcess = ex?.message;
+              } else {
+                if (
+                  vGood.identifier == 'TRANS' &&
+                  ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(vGood.status)
+                ) {
+                  vIndNume = 2;
+                  vcveProcess = await this.pufSearchEvent(vnoGood);
+                } else {
+                  vIndNume = 1;
+                  if (vGood.identifier == 'TRANS') {
+                    vIndNume = 4;
+                  }
+                  vActaOk = await this.pufValidActaReception(vnoGood);
+                  if (
+                    !vActaOk &&
+                    this.nvl(vGood.goodsPartializationFatherNumber) > 0
+                  ) {
+                    vActaOk = await this.pufValidActaReception(
+                      vGood.goodsPartializationFatherNumber
+                    );
+                  }
+                  if (!vActaOk) {
+                    vIndNume = 5;
+                    vContm++;
+                    vcveProcess = 'Bien sin acta';
+                  }
+                }
               }
             }
+            vItem = 'COL' + colI;
+            vType = item[vItem];
+            if (vType) {
+              try {
+                vIncome = Number(
+                  Math.round(parseFloat((vType as string).replace(',', '.')))
+                ).toFixed(2);
+                vItem = 'COL' + colV;
+                vType = item[vItem];
+                if (vType) {
+                  try {
+                    vTax = Number(
+                      Math.round(
+                        parseFloat((vType as string).replace(',', '.'))
+                      )
+                    ).toFixed(2);
+                    vColg1 = colG;
+                    vTotalSpent = 0;
+                    while (vColg1) {
+                      vColgu = vColg1.substring(0, vColg1.indexOf(','));
+                      vItem = 'COL' + vColgu;
+                      vType = item[vItem];
+                      try {
+                        vdSpent = Number(
+                          Math.round(
+                            parseFloat((vType as string).replace(',', '.'))
+                          )
+                        ).toFixed(2);
+                        vItem = 'GAS' + vColgu;
+                        vdSpent = this.formGas.get(vItem)?.value;
+                        vTotalSpent =
+                          vTotalSpent + Number(this.nvl(vdSpent, 0));
+                        vItem = 'GAD' + vColgu;
+                        vDescription = this.formGad.get(vItem)?.value;
+                        if (!vDescription) {
+                          try {
+                            const conceptSpent = await this.getConceptSpend(
+                              vdSpent
+                            );
+                            vDescription = conceptSpent?.description;
+                          } catch (ex) {
+                            vDescription = 'Gasto ' + vdSpent;
+                          }
+                        }
+                        // GO_BLOCK('BLK_GASTOS');
+                        //            IF NOT FORM_SUCCESS THEN
+                        //               RAISE Form_Trigger_Failure;
+                        //            END IF;
+                        //            IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
+                        //               CREATE_RECORD;
+                        //            END IF;
+
+                        const blkSpent = {
+                          noGood: vnoGood,
+                          cveie: vdSpent,
+                          amount: vdSpent,
+                          description: vDescription,
+                          status: vGood.status,
+                          type: 'E',
+                        };
+                        dataTableSmall.push(blkSpent);
+                      } catch (ex) {
+                        null;
+                      }
+                      vColg1 = vColg1.substring(vColg1.indexOf(',') + 1);
+                    }
+
+                    // IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
+                    //           CREATE_RECORD;
+                    //        END IF;
+                    dataTableSmall.push({
+                      noGood: vnoGood,
+                      cveie: 0,
+                      amount: vTax.toString(),
+                      description: 'I.V.A',
+                      status: vGood.status,
+                      type: 'I',
+                    });
+
+                    const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
+                      noGood: vnoGood,
+                      description: vGood.description,
+                      status: vGood.status,
+                      entry: vIncome + vTotalSpent - vTax,
+                      costs: vTotalSpent,
+                      tax: vTax,
+                      impNumerary: vIncome,
+                      noExpAssociated: vGood.associatedFileNumber,
+                      noExpedient: vGood.fileeNumber,
+                      quantity: vGood.quantity,
+                      noDelegation: (vGood.delegationNumber as any)?.id,
+                      noSubDelegation: (vGood.subDelegationNumber as any)?.id,
+                      identifier: vGood.identifier,
+                      noFlier: vGood.flyerNumber,
+                      indNume: vIndNume,
+                      cveEvent: vcveProcess,
+                      npNUm: vnoGoodn,
+                    };
+
+                    if (vIndNume !== 1) {
+                      switch (vIndNume) {
+                        case 0:
+                          prevDataTableSpent['color'] = 'bg-custom-red';
+                          break;
+                        case 2:
+                          prevDataTableSpent['color'] = 'bg-custom-green';
+                          break;
+                        case 4:
+                          prevDataTableSpent['color'] = 'bg-custom-cyan';
+                          break;
+                        case 5:
+                          prevDataTableSpent['color'] = 'bg-custom-orange';
+                          break;
+                        default:
+                          prevDataTableSpent['color'] = 'bg-custom-yellow';
+                      }
+                    }
+                    dataTableSpent.push(prevDataTableSpent);
+                    cont++;
+                  } catch (ex) {
+                    vContm++;
+                  }
+                }
+              } catch (ex) {
+                vContm++;
+              }
+            } else {
+              vContm++;
+            }
+          } catch (ex) {
+            vContm++;
           }
-        } catch (e) {
-          contm++;
+        } catch (ex) {
+          vContm++;
         }
       } else {
-        contm++;
+        vContm++;
       }
+      this.registerProcessed = cont + vContm;
+      this.registerCorrect = cont;
+      this.registerIncorrect = vContm;
     };
 
-    await test({ COL1: '2732892', COL2: '10', COL3: '10', COL4: '10' });
+    await test({ COL1: '7349', COL2: '10', COL3: '10', COL4: '10' });
     this.isLoadingProcessExtraction = false;
     this.modalService.show(MassiveNumeraryChangeModalComponent, {
       initialState: {
         dataTableMain: new LocalDataSource(dataTableSpent),
-        dataTableSecond: new LocalDataSource(dataTableTableSmall),
+        dataTableSecond: new LocalDataSource(dataTableSmall),
       },
       class: 'modal-lg',
     });
   }
 
-  // async loopProcessExtraction(item) {
+  selectMovementAccount(numberGoodn: number): Promise<any> {
+    return firstValueFrom(
+      this.accountMovementService.getAllFiltered(
+        `filter.numberGood=${numberGoodn}`
+      )
+    );
+  }
 
-  // }
+  selectGoodForId(id: number): Promise<IGood> {
+    return this.getGoodById([{ filter: 'filter.id', value: id }]);
+  }
+
+  async selectGoodFilterNoGoodReferenceAndNoGood(
+    numberGood: number | string
+  ): Promise<IGood> {
+    try {
+      const good = await this.getGoodById(
+        [
+          { filter: 'filter.goodReferenceNumber', value: numberGood },
+          {
+            filter: 'filter.id',
+            value: `${SearchFilter.NOT}:${numberGood}`,
+          },
+        ],
+        true
+      );
+      if (good?.length > 1) {
+        throw new Error('Más de una ref.');
+      }
+      if (Array.isArray(good)) {
+        return good[0];
+      }
+      return good;
+    } catch (ex) {
+      throw new Error('No se encontró el bien');
+    }
+
+    // return good;
+  }
 
   nvl(valor: any, def: any = 0) {
     return valor || def;
@@ -521,6 +608,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
           });
           return data;
         });
+        this.registerReads = dataPreviewTable.length;
 
         this.dataPrevious.load(dataPreviewTable);
 
