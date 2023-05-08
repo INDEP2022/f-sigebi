@@ -25,6 +25,7 @@ export class RefuseClarificationModalComponent
   today: Date;
   refuseObj: ClarificationGoodRejectNotification;
   dataClarifications2: ClarificationGoodRejectNotification;
+  idSolicitud: any;
 
   constructor(
     private modalRef: BsModalRef,

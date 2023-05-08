@@ -896,14 +896,14 @@ export class RegistrationOfRequestsComponent
 
     this.requestService.getById(idDoc).subscribe({
       next: response => {
-        this.requestList = response;
+        const requestData = response;
 
         let config: ModalOptions = {
           initialState: {
             idDoc,
             idTypeDoc,
             typeAnnex,
-            response,
+            requestData,
             callback: (next: boolean) => {},
           },
           class: 'modal-lg modal-dialog-centered',
