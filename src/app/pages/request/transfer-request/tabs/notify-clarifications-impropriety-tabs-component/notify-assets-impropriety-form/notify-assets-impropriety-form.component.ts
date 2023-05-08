@@ -74,12 +74,8 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('Tipo de aclaración... ', this.typeClarifications);
-    console.log('información de request', this.infoRequest);
     this.generateClave();
     this.withDocumentation = this.idAclara === '1' ? true : false;
-    console.log('info request', this.infoRequest);
-    console.log('info not', this.dataClarifications2);
     this.dictamenSeq();
     this.initForm1();
     const applicationId = this.idRequest;
@@ -157,29 +153,29 @@ export class NotifyAssetsImproprietyFormComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
-      foundation: [
+      /*foundation: [
         ' ',
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(4000),
         ],
-      ],
+      ], */
 
-      transmitterId: [
+      /*transmitterId: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
-      ],
+      ], */
 
-      invoiceLearned: [
+      /*invoiceLearned: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
+      ], */
 
-      worthAppraisal: [
+      /*worthAppraisal: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ],
+      ], */
 
       /*jobClarificationKey: [
         this.dataClarifications2.chatClarification.keyClarificationPaper,
@@ -203,23 +199,17 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async confirm() {
-    console.log('Aclaración', this.clarificationForm.value);
     const typeTransference = this.infoRequest.typeOfTransfer;
     let generaXML: boolean = false;
     if (
       typeTransference == 'SAT_SAE' &&
       this.dataClarifications2.chatClarification.idClarificationType == '2'
     ) {
-      console.log('Soy tipo Aclaración de SAT_SAE y 2');
       generaXML = true;
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      console.log('Soy tipo Aclaración,', typeTransference);
       if (this.typeClarifications == 2 && typeTransference != 'SAT_SAE') {
-        console.log(
-          'Aclaracipon tipo 2, ImprocedenciaTransferentesVoluntarias tipo 216'
-        );
         this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
       }
       const obtainTypeDocument = await this.obtainTypeDocument(
@@ -227,15 +217,11 @@ export class NotifyAssetsImproprietyFormComponent
         this.infoRequest
       );
       if (obtainTypeDocument) {
-        //console.log('Tipo', this.typeDoc);
-        //Depende del tipo de documento, envia al método correspondiente
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
             if (this.typeClarifications == 2) {
-              console.log('Aclaracipon tipo 2, OficioImprocedencia tipo 111');
               this.oficioImprocedencia(); //Aclaración PGR tipo 2
             } else {
-              console.log('Método para: ', this.typeDoc);
               this.aclaracionAsegurados(); //Aclaración PGR tipo 1
             }
 
@@ -243,7 +229,6 @@ export class NotifyAssetsImproprietyFormComponent
           }
           case 'AclaracionTransferentesVoluntarias': {
             if (this.typeClarifications == 1) {
-              console.log('Método para: ', this.typeDoc);
               this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
             }
 
@@ -253,27 +238,12 @@ export class NotifyAssetsImproprietyFormComponent
       }
     }
 
-    console.log(generaXML);
-    console.log(typeTransference);
-
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
-      console.log(
-        'Soy: ',
-        typeTransference,
-        'documento: OficioAclaracionTransferente'
-      ); //Duda
       this.oficioAclaracionTransferente();
     }
-
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 1) {
-      console.log(
-        'Soy: ',
-        typeTransference,
-        'documento: AclaracionComercioExterior '
-      ); //Duda
       this.aclaracionComercioExterior();
     }
-
     //this.saveClarificationsAcept();
   }
 
@@ -316,11 +286,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        console.log(
-          'Abriendo improcedenciaTransferentesVoluntarias3, ',
-          'Con idDoc: ',
-          data.documentTypeId
-        );
         this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
@@ -373,11 +338,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        console.log(
-          'Abriendo oficioImprocedencia, ',
-          'Con idDoc: ',
-          data.documentTypeId
-        );
         this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
@@ -430,11 +390,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        console.log(
-          'Abriendo aclaracionComercioExterior, ',
-          'Con idDoc: ',
-          data.id
-        );
         this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
@@ -488,11 +443,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        console.log(
-          'Abriendo oficioAclaracionTransferente, ',
-          'Con idDoc: ',
-          data.documentTypeId
-        );
         this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
@@ -546,13 +496,8 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        console.log(
-          'Abriendo aclaracionAsegurados, ',
-          'Con idDoc: ',
-          data.documentTypeId
-        );
         this.openReport(data);
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -604,11 +549,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        console.log(
-          'Abriendo aclaracionTransferentesVoluntarias, ',
-          'Con idDoc: ',
-          data.documentTypeId
-        );
         this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
@@ -681,7 +621,6 @@ export class NotifyAssetsImproprietyFormComponent
       observations: observations,
     };
 
-    console.log(data);
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {
         const updateInfo: IChatClarifications = {
@@ -807,7 +746,6 @@ export class NotifyAssetsImproprietyFormComponent
     const idTypeDoc = Number(data.documentTypeId);
     const requestInfo = this.infoRequest;
     const idSolicitud = this.idSolicitud;
-    console.log('ID tipo de documento', idTypeDoc);
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
@@ -835,7 +773,6 @@ export class NotifyAssetsImproprietyFormComponent
         // this.noFolio = response.data;
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
-        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
       },
       error: error => {
         console.log('Error al generar secuencia de dictamen', error.error);
@@ -847,18 +784,14 @@ export class NotifyAssetsImproprietyFormComponent
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
-    console.log(token);
-
     //Trae el año actuar
     const year = this.today.getFullYear();
     //Cadena final (Al final las siglas ya venian en el token xd)
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     }
   }
 
