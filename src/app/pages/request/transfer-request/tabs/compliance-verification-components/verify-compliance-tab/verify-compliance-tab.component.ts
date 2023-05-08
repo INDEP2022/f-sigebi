@@ -749,7 +749,6 @@ export class VerifyComplianceTabComponent
     this.goodsSelected = event.selected;
 
     if (this.goodsSelected.length === 1) {
-      debugger;
       //verifica si el bien ya fue aclarado para desabilitar
       this.showClarificationButtons =
         this.goodsSelected[0].goodStatus == 'ACLARADO' ? false : true;
