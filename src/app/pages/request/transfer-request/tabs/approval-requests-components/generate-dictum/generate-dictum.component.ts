@@ -17,10 +17,9 @@ import { PrintReportModalComponent } from '../../notify-clarifications-improprie
   styles: [],
 })
 export class GenerateDictumComponent extends BasePage implements OnInit {
-  idDoc: any; //ID de solicitud, viene desde el componente principal
+  idSolicitud: any; //ID de solicitud, viene desde el componente principal
   idTypeDoc: any;
   requestData: IRequest;
-  response: IRequest;
 
   title: string = 'Reporte Dictamen Procedencia';
   edit: boolean = false;
@@ -49,6 +48,7 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('info de request', this.requestData);
     //Crea la clave armada o el folio
     this.dictamenSeq();
     this.initForm();
@@ -67,9 +67,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       postSignatoryRuling: [null],
       ccpRuling: [null, [Validators.maxLength(200)]],
     });
-    if (this.response != null) {
+    if (this.requestData != null) {
       this.edit = true;
-      this.dictumForm.patchValue(this.response);
+      this.dictumForm.patchValue(this.requestData);
     }
   }
 
@@ -92,25 +92,26 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     };
     console.log('Actualizar reporte', this.folioReporte);
 
-    const idDoc = this.idDoc;
+    const idDoc = this.idSolicitud;
     this.requestService.update(idDoc, obj).subscribe({
       next: data => {
-        this.handleSuccess(), (this.requestData = data), this.signDictum();
+        this.handleSuccess(), this.signDictum();
       },
       error: error => (this.loading = false),
     });
   }
 
   signDictum(): void {
+    console.log('id de solicitud', this.requestData.id);
     const requestInfo = this.requestData;
-    const idDoc = this.idDoc;
+    const idSolicitud = this.idSolicitud;
     const typeAnnex = 'approval-request';
     const idTypeDoc = this.idTypeDoc;
     const nameTypeDoc = 'DictamenProcendecia';
 
     let config: ModalOptions = {
       initialState: {
-        idDoc,
+        idSolicitud,
         idTypeDoc,
         typeAnnex,
         requestInfo,

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ClarificationGoodRejectNotification } from 'src/app/core/models/ms-clarification/clarification-good-reject-notification';
 import { IClarificationDocumentsImpro } from 'src/app/core/models/ms-documents/clarification-documents-impro-model';
 import { IDictamenSeq } from 'src/app/core/models/ms-goods-query/opinionDelRegSeq-model';
@@ -9,7 +12,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
-import { RequestService } from 'src/app/core/services/requests/request.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
@@ -27,15 +30,21 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   today: Date;
   folio: IDictamenSeq;
   folioReporte: string;
+  //
+  paramsReload = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
+  dataChatClarifications: IChatClarifications[];
+  idSolicitud: any;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
     private fb: FormBuilder,
     private authService: AuthService,
     private documentService: DocumentsService,
-    private requestService: RequestService,
-    private chatClarificationsService: ChatClarificationsService,
-    private applicationGoodsQueryService: ApplicationGoodsQueryService
+    private chatService: ChatClarificationsService,
+    private applicationGoodsQueryService: ApplicationGoodsQueryService,
+    private rejectedGoodService: RejectedGoodService
   ) {
     super();
     this.today = new Date();
@@ -43,8 +52,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.generateClave();
-    console.log('notification', this.notification);
-    console.log('request', this.request);
     this.prepareForm();
   }
 
@@ -61,10 +68,13 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       paragraphInitial: [null, [Validators.maxLength(1000)]],
       paragraphFinal: [null, [Validators.maxLength(1000)]],
       observations: [null, [Validators.maxLength(1000)]],
-      transmitterId: [null, [Validators.maxLength(15)]],
-      foundation: [null, [Validators.maxLength(4000)]],
-      invoiceLearned: [null, [Validators.maxLength(60)]],
-      worthAppraisal: [null, [Validators.maxLength(60)]],
+      //transmitterId: [null, [Validators.maxLength(15)]],
+      //foundation: [null, [Validators.maxLength(4000)]],
+      //invoiceLearned: [null, [Validators.maxLength(60)]],
+      /*worthAppraisal: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(NUMBERS_PATTERN)],
+      ], */
       consistentIn: [
         null,
         [
@@ -99,7 +109,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       positionAddressee: this.form.controls['positionAddressee'].value,
       modificationDate: new Date(),
       creationUser: token.name,
-      documentTypeId: '216',
+      documentTypeId: '216', //Aclaración tipo 2 -> ImprocedenciaTransferentesVoluntarias
       modificationUser: token.name,
       worthAppraisal: this.form.controls['worthAppraisal'].value,
       creationDate: new Date(),
@@ -114,11 +124,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        console.log('Información del documento creado: ', response);
-        //this.onLoadToast('success','Aclaración guardada correctamente','' );
-        //this.chatClarifications2(); //PARA FORMULARIO LARGO | CREAR NUEVO MÉTODO O CONDICIONAR LOS VALORES DE FORMULARIOS
-        this.openReport(response); //Falta verificar información que se envia...
-        //this.modalRef.content.callback(true);
+        this.changeStatusAnswered();
+        this.openReport(response);
         this.loading = false;
         this.close();
       },
@@ -130,20 +137,94 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     });
   }
 
+  changeStatusAnswered() {
+    this.loading = true;
+    this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
+      this.notification.rejectNotificationId;
+
+    this.chatService.getAll(this.paramsReload.getValue()).subscribe({
+      next: data => {
+        this.dataChatClarifications = data.data;
+        this.updateChatClarification(this.dataChatClarifications[0]);
+      },
+      error: error => {},
+    });
+  }
+
+  updateChatClarification(chatClarifications: IChatClarifications) {
+    const modelChatClarifications: IChatClarifications = {
+      id: chatClarifications.id, //ID primaria
+      clarifiNewsRejectId: this.notification.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
+      requestId: this.request.id,
+      goodId: this.notification.goodId,
+      //clarificationStatus: 'EN_ACLARACION', //Valor a cambiar
+    };
+
+    this.chatService
+      .update(chatClarifications.id, modelChatClarifications)
+      .subscribe({
+        next: async data => {
+          this.updateAnsweredImpro(
+            data.clarifiNewsRejectId,
+            chatClarifications.id,
+            modelChatClarifications.goodId
+          );
+        },
+        error: error => {
+          this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
+        },
+      });
+  }
+
+  updateAnsweredImpro(
+    id?: number,
+    chatClarId?: number,
+    goodId?: number,
+    observations?: string
+  ) {
+    const data: ClarificationGoodRejectNotification = {
+      rejectionDate: new Date(),
+      rejectNotificationId: id,
+      answered: 'EN ACLARACION',
+      observations: observations,
+    };
+
+    this.rejectedGoodService.update(id, data).subscribe({
+      next: () => {
+        const updateInfo: IChatClarifications = {
+          requestId: this.request.id,
+          goodId: goodId,
+          clarificationStatus: 'EN_ACLARACION',
+        };
+        this.chatService.update(chatClarId, updateInfo).subscribe({
+          next: data => {
+            this.modalRef.content.callback(true, data.goodId);
+            this.modalRef.hide();
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+      },
+    });
+  }
+
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
-    const idDoc = data.id;
+    //const idDoc = data.id;
     const idTypeDoc = 216;
-    const requestInfo = data;
+    const requestInfo = this.request;
+    const idSolicitud = this.idSolicitud;
 
     //Modal que genera el reporte
     let config: ModalOptions = {
       initialState: {
         requestInfo,
         idTypeDoc,
-        idDoc,
+        //idDoc,
         idReportAclara,
+        idSolicitud,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
@@ -163,7 +244,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         // this.noFolio = response.data;
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
-        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
       },
       error: error => {
         console.log('Error al generar secuencia de dictamen', error.error);
@@ -175,7 +255,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
-    console.log(token);
 
     //Trae el año actuar
     const year = this.today.getFullYear();
@@ -183,10 +262,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     }
   }
 

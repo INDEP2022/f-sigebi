@@ -15,6 +15,7 @@ export class PrintSatAnswerComponent implements OnInit {
   idAclaracion: any;
 
   isPdfLoaded = false;
+  idSolicitud: any;
   private pdf: PDFDocumentProxy;
 
   constructor(
