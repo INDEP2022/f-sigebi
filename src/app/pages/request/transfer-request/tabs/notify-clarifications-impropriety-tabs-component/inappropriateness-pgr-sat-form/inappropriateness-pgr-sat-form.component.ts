@@ -230,7 +230,7 @@ export class InappropriatenessPgrSatFormComponent
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
-    const idDoc = data.id;
+    //const idDoc = data.id;
     const idTypeDoc = Number(data.documentTypeId);
     const requestInfo = this.request;
     const idSolicitud = this.idSolicitud;
@@ -239,7 +239,7 @@ export class InappropriatenessPgrSatFormComponent
       initialState: {
         requestInfo,
         idTypeDoc,
-        idDoc,
+        //idDoc,
         idReportAclara,
         idSolicitud,
         callback: (next: boolean) => {},

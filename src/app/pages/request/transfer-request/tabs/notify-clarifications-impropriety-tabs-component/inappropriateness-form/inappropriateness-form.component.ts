@@ -212,7 +212,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
-    const idDoc = data.id;
+    //const idDoc = data.id;
     const idTypeDoc = 216;
     const requestInfo = this.request;
     const idSolicitud = this.idSolicitud;
@@ -222,7 +222,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       initialState: {
         requestInfo,
         idTypeDoc,
-        idDoc,
+        //idDoc,
         idReportAclara,
         idSolicitud,
         callback: (next: boolean) => {},
