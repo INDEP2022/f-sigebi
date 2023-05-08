@@ -88,6 +88,9 @@ export class RequestDetailTabComponent
     this.tyepOfTransferent = this.requestForm.controls['typeOfTransfer'].value;
     this.reactiveFormCalls();
     this.showDataProg();
+    setTimeout(() => {
+      this.formLoading = false;
+    }, 600);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -103,7 +106,7 @@ export class RequestDetailTabComponent
   }
 
   ngAfterViewInit() {
-    this.formLoading = false;
+    //this.formLoading = false;
   }
 
   prepareForm(): void {

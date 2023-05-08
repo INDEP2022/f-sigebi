@@ -25,13 +25,13 @@ const routes: Routes = [
       ).AnnualAccumulatedAssetsModule,
     data: { title: 'Acumulado Anual de Bienes', screen: 'FGERDIRBIACUMANUA' },
   },
-  {
-    path: 'acumulative-asset-tabs',
-    loadChildren: async () =>
-      (await import('./acumulative-asset-tabs/acumulative-asset-tabs.module'))
-        .AcumulativeAssetTabsModule,
-    data: { title: 'Acumulado de Bienes' },
-  },
+  // {
+  //   path: 'acumulative-asset-tabs',
+  //   loadChildren: async () =>
+  //     (await import('./acumulative-asset-tabs/acumulative-asset-tabs.module'))
+  //       .AcumulativeAssetTabsModule,
+  //   data: { title: 'Acumulado de Bienes' },
+  // },
   {
     path: 'cumulative-goods',
     loadChildren: async () =>
@@ -98,16 +98,16 @@ const routes: Routes = [
       ).AuthorizationAssetsDestructionModule,
     data: { title: 'Aprobación destrucción', screen: 'FACTDIRAPROBDESTR' },
   },
-  {
-    path: 'approval-assets-destination',
-    loadChildren: async () =>
-      (
-        await import(
-          './approval-assets-destination/approval-assets-destination.module'
-        )
-      ).ApprovalAssetsDestinationModule,
-    data: { title: 'Aprobación destino', screen: 'FACTDESAPROBUTILI' },
-  },
+  // {
+  //   path: 'approval-assets-destination',
+  //   loadChildren: async () =>
+  //     (
+  //       await import(
+  //         './approval-assets-destination/approval-assets-destination.module'
+  //       )
+  //     ).ApprovalAssetsDestinationModule,
+  //   data: { title: 'Aprobación destino', screen: 'FACTDESAPROBUTILI' },
+  // },
   {
     path: 'reception-area-sera',
     loadChildren: async () =>
@@ -118,49 +118,49 @@ const routes: Routes = [
       screen: 'FCONDIRRECEPDOCTOA',
     },
   },
-  {
-    path: 'totaldoc-received-destinationarea',
-    loadChildren: async () =>
-      (
-        await import(
-          './totaldoc-received-destinationarea/totaldoc-received-destinationarea.module'
-        )
-      ).TotaldocReceivedDestinationareaModule,
-    data: {
-      title: 'Documentación recibida X Área Destino',
-      screen: 'FCONDIRREPORECDOCA',
-    },
-  },
-  {
-    path: 'report-doc-received',
-    loadChildren: async () =>
-      (await import('./report-doc-received/report-doc-received.module'))
-        .ReportDocReceivedModule,
-    data: {
-      title: 'Total de Documentación Recibida',
-      screen: 'FCONDIRREPORECDOC',
-    },
-  },
-  {
-    path: 'assets-received-admon',
-    loadChildren: async () =>
-      (await import('./assets-received-admon/assets-received-admon.module'))
-        .AssetsReceivedAdmonModule,
-    data: {
-      title: 'Bienes recibidos en Administración',
-      screen: 'FCONDIRREPORBIERE',
-    },
-  },
-  {
-    path: 'update-mss-value',
-    loadChildren: async () =>
-      (await import('./update-mss-value/update-mss-value.module'))
-        .UpdateMssValueModule,
-    data: {
-      title: 'Actualización masiva de Valor de Avalúo',
-      screen: 'FMASUPDAVALUOS',
-    },
-  },
+  // {
+  //   path: 'totaldoc-received-destinationarea',
+  //   loadChildren: async () =>
+  //     (
+  //       await import(
+  //         './totaldoc-received-destinationarea/totaldoc-received-destinationarea.module'
+  //       )
+  //     ).TotaldocReceivedDestinationareaModule,
+  //   data: {
+  //     title: 'Documentación recibida X Área Destino',
+  //     screen: 'FCONDIRREPORECDOCA',
+  //   },
+  // },
+  // {
+  //   path: 'report-doc-received',
+  //   loadChildren: async () =>
+  //     (await import('./report-doc-received/report-doc-received.module'))
+  //       .ReportDocReceivedModule,
+  //   data: {
+  //     title: 'Total de Documentación Recibida',
+  //     screen: 'FCONDIRREPORECDOC',
+  //   },
+  // },
+  // {
+  //   path: 'assets-received-admon',
+  //   loadChildren: async () =>
+  //     (await import('./assets-received-admon/assets-received-admon.module'))
+  //       .AssetsReceivedAdmonModule,
+  //   data: {
+  //     title: 'Bienes recibidos en Administración',
+  //     screen: 'FCONDIRREPORBIERE',
+  //   },
+  // },
+  // {
+  //   path: 'update-mss-value',
+  //   loadChildren: async () =>
+  //     (await import('./update-mss-value/update-mss-value.module'))
+  //       .UpdateMssValueModule,
+  //   data: {
+  //     title: 'Actualización masiva de Valor de Avalúo',
+  //     screen: 'FMASUPDAVALUOS',
+  //   },
+  // },
   {
     path: 'donation-approval',
     loadChildren: async () =>
@@ -181,16 +181,16 @@ const routes: Routes = [
   //     screen: 'FACTDIRAPROBCAMNU',
   //   },
   // },
-  {
-    path: 'doc-received-sera',
-    loadChildren: async () =>
-      (await import('./doc-received-sera/doc-received-sera.module'))
-        .DocReceivedSeraModule,
-    data: {
-      title: 'Documentación recibida en sera',
-      screen: 'FCONDIRRECEPDOCTO',
-    },
-  },
+  // {
+  //   path: 'doc-received-sera',
+  //   loadChildren: async () =>
+  //     (await import('./doc-received-sera/doc-received-sera.module'))
+  //       .DocReceivedSeraModule,
+  //   data: {
+  //     title: 'Documentación recibida en sera',
+  //     screen: 'FCONDIRRECEPDOCTO',
+  //   },
+  // },
 ];
 
 @NgModule({
