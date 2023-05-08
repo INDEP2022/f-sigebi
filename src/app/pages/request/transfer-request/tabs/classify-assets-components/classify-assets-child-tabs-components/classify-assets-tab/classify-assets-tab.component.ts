@@ -778,15 +778,15 @@ export class ClassifyAssetsTabComponent
       goods.addressId = Number(goods.addressId);
       goodResult = await this.createGood(goods);
       //manda a guardar los campos de los bienes, domicilio, inmueble
-      if (this.process != 'classify-assets') {
-        this.childSaveAction = goodResult.saved;
-      }
+      //if (this.process != 'classify-assets') {
+      this.childSaveAction = true;
+      //}
     } else {
       goodResult = await this.updateGood(goods);
       //manda a actualizar los campos de los bienes, domicilio, inmueble
-      if (this.process != 'classify-assets') {
-        this.childSaveAction = goodResult.saved;
-      }
+      // if (this.process != 'classify-assets') {
+      this.childSaveAction = true;
+      //}
     }
 
     /*if(this.process === 'classify-assets'){
