@@ -63,6 +63,7 @@ export class ClassifyAssetsTabComponent
   detailArray: any = {};
 
   good: any = null;
+  isClassifyAsset: boolean = false;
   formLoading: boolean = false;
   noItemsFoundMessage = 'No se encontraron elementos';
   fractionCode: string = null;
@@ -89,7 +90,6 @@ export class ClassifyAssetsTabComponent
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.showHideErrorInterceptorService.showHideError(false);
     this.initForm();
@@ -109,6 +109,10 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.process === 'classify-assets') {
+      this.isClassifyAsset = true;
+    }
+
     this.good = changes['goodObject']?.currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
