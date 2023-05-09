@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export const PROCEEDINGS_COLUMNS = {
   id: {
     title: 'No.',
@@ -10,6 +12,11 @@ export const PROCEEDINGS_COLUMNS = {
   elaborationDate: {
     title: 'Fecha elaboración',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      console.log(value);
+      const date = value ? new Date(value) : null;
+      return date ? format(date, 'yyyy-MM-dd') : null;
+    },
   },
   /*datePhysicalReception: {
     title: 'Fecha recepción',
@@ -17,6 +24,11 @@ export const PROCEEDINGS_COLUMNS = {
   },*/
   captureDate: {
     title: 'Fecha captura',
+    valuePrepareFunction: (value: string) => {
+      console.log(value);
+      const date = value ? new Date(value) : null;
+      return date ? format(date, 'yyyy-MM-dd') : null;
+    },
     sort: false,
   },
   statusProceedings: {
@@ -69,7 +81,7 @@ export const GOODS_COLUMNS = {
 
 export const DICTATION_COLUMNS = {
   dictation: {
-    title: 'Clave oficio armada',
+    title: 'DICTAMINACIONES',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value.passOfficeArmy;
@@ -79,7 +91,7 @@ export const DICTATION_COLUMNS = {
 
 export const ACTA_RECEPTION_COLUMNS = {
   offices: {
-    title: 'Actas',
+    title: 'ACTAS DE RECEPCIÓN',
     sort: false,
   },
 };

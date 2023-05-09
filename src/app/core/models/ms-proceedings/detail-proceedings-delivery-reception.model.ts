@@ -1,5 +1,5 @@
 export interface IDetailProceedingsDeliveryReception {
-  numberProceedings?: number;
+  numberProceedings?: number | string;
   numberGood?: number;
   amount?: number;
   received?: string;

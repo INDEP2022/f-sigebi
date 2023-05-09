@@ -4,65 +4,127 @@
       <h5 class="title">
         GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
       </h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button class="btn btn-success active btn-sm ml-3">Nueva Acta</button>
+          <button class="btn btn-info active btn-sm ml-3">
+            Consultar Acta
+          </button>
+          <button (click)="save()" class="btn btn-primary active btn-sm ml-3">
+            Guardar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
   <div body>
-    <div class="row">
+    <form class="form-material" [formGroup]="proceedingForm">
       <div class="row">
-        <div class="form-material col-md-5">
-          <search-bar
-            [filterParams]="filterParams"
-            [filterField]="searchFilter"></search-bar>
+        <form-field
+          class="col-md-2"
+          label="No."
+          [control]="proceedingForm.get('id')">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="id"
+            readonly />
+        </form-field>
+
+        <form-field
+          class="col-md-4"
+          label="Oficio de solicitud"
+          [control]="proceedingForm.get('keysProceedings')">
+          <input
+            type="text"
+            [max-length]="60"
+            class="form-control"
+            formControlName="keysProceedings" />
+        </form-field>
+
+        <form-field
+          class="col-md-4"
+          label="Oficio de Alcance"
+          [control]="proceedingForm.get('affair')">
+          <input
+            type="text"
+            [max-length]="70"
+            class="form-control"
+            formControlName="affair" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          label="Estatus"
+          [control]="proceedingForm.get('statusProceedings')">
+          <input
+            type="text"
+            [style.color]="
+              controls.statusProceedings.value == 'CERRADA' ? 'red' : 'green'
+            "
+            class="form-control"
+            formControlName="statusProceedings"
+            readonly />
+        </form-field>
+      </div>
+      <div class="row pt-4">
+        <form-field
+          class="col-md-4"
+          label="Fecha de recepción"
+          [control]="proceedingForm.get('elaborationDate')">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="elaborationDate"
+            bsDatepicker
+            [bsConfig]="{
+              dateInputFormat: 'YYYY-MM-DD'
+            }" />
+        </form-field>
+        <form-field
+          class="col-md-4"
+          label="Fecha de alcance"
+          [control]="proceedingForm.get('datePhysicalReception')">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="datePhysicalReception"
+            bsDatepicker
+            [bsConfig]="{
+              dateInputFormat: 'YYYY-MM-DD'
+            }" />
+        </form-field>
+        <form-field
+          class="col-md-4"
+          label="Fecha de intergracion"
+          [control]="proceedingForm.get('closeDate')">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="closeDate"
+            bsDatepicker
+            [bsConfig]="{
+              dateInputFormat: 'YYYY-MM-DD'
+            }" />
+        </form-field>
+      </div>
+      <div class="row pt-4">
+        <form-field
+          class="col-md-9"
+          label="Observaciones"
+          [control]="proceedingForm.get('observations')">
+          <textarea
+            rows="3"
+            maxlength="1000"
+            class="form-control"
+            formControlName="observations"></textarea>
+        </form-field>
+        <div class="col-md-3">
+          <button class="btn btn-secondary btn-sm active">Cerrar Acta</button>
         </div>
       </div>
-      <div class="ch-content" header>
-        <h5 class="title">Actas</h5>
-        <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
-          <div>
-            <button
-              (click)="openForm1()"
-              class="btn btn-primary active btn-sm ml-3">
-              Nuevo
-            </button>
-          </div>
-          <div>
-            <button
-              (click)="openEmail()"
-              class="btn btn-primary active btn-sm ml-3"
-              *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
-              Cerrar Acta
-            </button>
-          </div>
-          <div class="ml-3" *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
-            <p class="d-flex justify-content-center">
-              <span class="text-success">ABIERTA</span>
-            </p>
-          </div>
-          <div class="ml-3" *ngIf="selectedRow?.statusProceedings == 'CERRADA'">
-            <p class="d-flex justify-content-center">
-              <span class="text-danger">CERRADA</span>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div [class]="loadingProceedings ? 'table-loading' : ''">
-        <div class="table-responsive">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="proceedingsList"
-            (edit)="openForm1($event.data)"
-            (userRowSelect)="rowsSelected($event)"
-            (rowSelect)="selectRow($event.data)"></ng2-smart-table>
-        </div>
-        <app-pagination
-          [filterParams]="filterParams"
-          [totalItems]="totalItems"></app-pagination>
-      </div>
-      <hr />
-    </div>
-    <div class="row" *ngIf="rowSelected">
+    </form>
+    <div class="row">
       <div class="col-md-3">
         <div class="mt-4">
           <h5 class="font-size-14">Folio de escaneo:</h5>
@@ -73,36 +135,25 @@
       </div>
       <div class="col-md-6">
         <div class="col-md-4">
-          <button class="btn btn-sm btn-primary active" (click)="report()">
+          <button class="btn btn-sm btn-danger active" (click)="report()">
             Solicitud <i class="fa fa-print"></i>
           </button>
         </div>
         <div class="col-md-4">
-          <button class="btn btn-sm btn-primary active" (click)="scan()">
+          <button class="btn btn-sm btn-danger active" (click)="scan()">
             Escaneo <i class="fa fa-print"></i>
           </button>
         </div>
         <div class="col-md-4">
-          <button class="btn btn-sm btn-primary active" (click)="report()">
+          <button class="btn btn-sm btn-danger active" (click)="report()">
             imprimir <i class="fa fa-print"></i>
           </button>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="mt-4">
-          <h5 class="font-size-14">Observaciones:</h5>
-          <p class="text-muted mb-0">
-            {{ selectedRow?.observations }}
-          </p>
         </div>
       </div>
     </div>
     <div class="row pt-5">
       <hr />
       <div class="col-md-6">
-        <div class="ch-content" header>
-          <h5 class="title">ACTAS DE RECEPCIÓN</h5>
-        </div>
         <div [class]="loadingActReception ? 'table-loading' : ''">
           <div class="table-responsive">
             <ng2-smart-table
@@ -116,9 +167,6 @@
         </div>
       </div>
       <div class="col-md-6">
-        <div class="ch-content" header>
-          <h5 class="title">DICTAMINACIONES</h5>
-        </div>
         <div [class]="loadingDictation ? 'table-loading' : ''">
           <div class="table-responsive">
             <ng2-smart-table
@@ -143,9 +191,6 @@
     <div class="row pt-5">
       <div class="col-md-6">
         <div class="row">
-          <div class="ch-content" header>
-            <h5 class="title">Todos los Bienes en estado PDS</h5>
-          </div>
           <div [class]="loadingGoods ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
@@ -160,21 +205,20 @@
         </div>
       </div>
       <div class="col-md-6">
-        <div class="row pt-5">
-          <div class="ch-content" header>
+        <div class="row">
+          <!-- <div class="ch-content" header>
             <h5 class="title">Bienes del acta #{{ selectedRow?.id }}</h5>
             <div class="col-md-5 buttons">
               <app-columns-select [(settings)]="settings2"></app-columns-select>
-              <div *ngIf="rowSelected">
+              <div>
                 <button
                   (click)="openForm2()"
-                  class="btn btn-primary active btn-sm ml-3"
-                  *ngIf="selectedRow?.statusProceedings == 'ABIERTA'">
+                  class="btn btn-primary active btn-sm ml-3">
                   Agregar bienes
                 </button>
               </div>
             </div>
-          </div>
+          </div> -->
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
@@ -186,6 +230,24 @@
             <app-pagination
               [params]="params2"
               [totalItems]="totalItems2"></app-pagination>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-secondary btn-sm active">
+                Insertar vía Archivo plano
+              </button>
+            </div>
+            <div class="m-3">
+              <button
+                (click)="insertFromGoodsTracker()"
+                type="button"
+                class="btn btn-secondary btn-sm active">
+                Insertar vía rastreador
+              </button>
+            </div>
           </div>
         </div>
       </div>
