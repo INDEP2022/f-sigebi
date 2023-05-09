@@ -124,7 +124,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.openReport(response);
         this.loading = false;
         this.close();

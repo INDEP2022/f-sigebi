@@ -111,7 +111,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     switch (this.idTypeDoc) {
       case 50: {
         console.log('Tipo 50, Aclaración');
-        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idSolicitud}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
@@ -511,7 +511,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       };
       console.log(formData);
 
-      //this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(requestInfo.id, nameTypeReport, formData);
     }
     //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
     if (this.idTypeDoc == 111) {
