@@ -32,6 +32,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.delete(this.endpoint, id);
   }
 
+  newDeleteProceeding(id: string) {
+    return this.delete(`${this.endpoint}/${id}`);
+  }
+
   getProceedingsByDelAndSub(
     delegation: string | number,
     subdelegation: string | number,

@@ -568,17 +568,17 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       } else {
         this.getTransfer();
         this.minDateFecElab = new Date();
-        this.form.get('acta2').setValue('');
-        this.form.get('direccion').setValue('');
-        this.form.get('entrega').setValue('');
-        this.form.get('fecElabRec').setValue('');
-        this.form.get('fecEntBien').setValue('');
-        this.form.get('fecElab').setValue('');
-        this.form.get('fecReception').setValue('');
-        this.form.get('fecCaptura').setValue('');
-        this.form.get('observaciones').setValue('');
-        this.form.get('recibe2').setValue('');
-        this.form.get('testigo').setValue('');
+        this.form.get('acta2').setValue(null);
+        this.form.get('direccion').setValue(null);
+        this.form.get('entrega').setValue(null);
+        this.form.get('fecElabRec').setValue(null);
+        this.form.get('fecEntBien').setValue(null);
+        this.form.get('fecElab').setValue(null);
+        this.form.get('fecReception').setValue(null);
+        this.form.get('fecCaptura').setValue(null);
+        this.form.get('observaciones').setValue(null);
+        this.form.get('recibe2').setValue(null);
+        this.form.get('testigo').setValue(null);
         this.statusProceeding = '';
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-info';
@@ -842,53 +842,73 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   deleteProceeding() {
-    console.log(this.form.get('fecElab').value);
-    if (this.v_atrib_del === 0) {
+    const user = localStorage.getItem('username');
+    if (
+      !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(user)
+    ) {
       if (this.statusProceeding === 'CERRADO') {
+        console.log(1);
         this.alert(
           'error',
           'No puede elimar acta',
           'No puede eliminar un Acta cerrada'
         );
-      }
-      if (
+      } else if (
+        this.form.get('fecElab').value != null &&
         format(this.form.get('fecElab').value, 'MM-yyyy') !=
-        format(new Date(), 'MM-yyyy')
+          format(new Date(), 'MM-yyyy')
       ) {
+        console.log(2);
+
         this.alert(
           'error',
           'No puede eliminar acta',
           'No puede eliminar un Acta fuera del mes de elaboración'
         );
+      } else if (!this.act2Valid) {
+        console.log(3);
+
+        this.alert(
+          'warning',
+          'Error en el acta',
+          'Debe introducir un acta 2 válido'
+        );
+      } else {
+        console.log(4);
+        this.alertQuestion(
+          'question',
+          '¿Desea eliminar completamente el acta?',
+          `Se eliminará el acta ${this.idProceeding}`,
+          'Eliminar'
+        ).then(q => {
+          if (q.isConfirmed) {
+            this.serviceProcVal
+              .deleteProceeding(this.idProceeding.toString())
+              .subscribe(
+                res => {
+                  console.log(res);
+                  this.alert(
+                    'success',
+                    'Eliminado',
+                    'Acta eliminada con éxito'
+                  );
+                },
+                err => {
+                  console.log(err);
+                  this.alert(
+                    'error',
+                    'No se pudo eliminar acta',
+                    'Secudió un problema al eliminar el acta'
+                  );
+                }
+              );
+          }
+        });
       }
+    } else {
+      this.alert('error', 'error', '');
     }
 
-    this.alertQuestion(
-      'question',
-      '¿Desea eliminar completamente el acta?',
-      `Se eliminará el acta ${this.idProceeding}`,
-      'Eliminar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        this.serviceProcVal
-          .deleteProceeding(this.idProceeding.toString())
-          .subscribe(
-            res => {
-              console.log(res);
-              this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
-            },
-            err => {
-              console.log(err);
-              this.alert(
-                'error',
-                'No se pudo eliminar acta',
-                'Secudió un problema al eliminar el acta'
-              );
-            }
-          );
-        this.searchKeyProceeding();
-      }
-    });
     /*  if(){
     } */
   }
@@ -939,13 +959,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         : '');
     this.form.get('acta2').setValue(nameAct);
     //Validar Acta 2
-    countAct == 8 ? (this.act2Valid = true) : (this.act2Valid = false);
+    if (countAct == 8) {
+      this.act2Valid = true;
+      this.searchKeyProceeding();
+    } else {
+      this.act2Valid = false;
+    }
   }
 
   searchKeyProceeding() {
     const acta2Input = this.form.get('folio');
     console.log(this.act2Valid);
-    if (this.act2Valid) {
+    console.log(!['CERRADA', 'ABIERTA'].includes(this.statusProceeding));
+    if (
+      this.act2Valid &&
+      !['CERRADA', 'ABIERTA'].includes(this.statusProceeding)
+    ) {
       const paramsF = new FilterParams();
       paramsF.addFilter(
         'keysProceedings',
@@ -955,6 +984,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
           console.log(res.data[0]['typeProceedings']);
+          this.form.get('folio').setValue(this.form.get('folio').value + 1);
+          this.fillActTwo();
           this.alert(
             'warning',
             'El acta ya existe',
