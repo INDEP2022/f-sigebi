@@ -184,7 +184,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.totalItems = filter.length;
       } else {
         this.paragraphs = filter;
-        this.onLoadToast('warning', 'No se encontro ningún bien', '');
+        this.onLoadToast('warning', 'No se encontró ningún bien', '');
       }
     }
 
@@ -198,7 +198,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.totalItems = filter.length;
       } else {
         this.paragraphs = filter;
-        this.onLoadToast('warning', 'No se encontro ningún bien', '');
+        this.onLoadToast('warning', 'No se encontró ningún bien', '');
       }
     }
 
@@ -211,7 +211,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningún bien', '');
+        this.onLoadToast('warning', 'No se encontró ningún bien', '');
       }
     }
   }

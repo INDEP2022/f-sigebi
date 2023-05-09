@@ -1,6 +1,6 @@
 export enum ProceedingsEndpoints {
   BasePath = 'proceeding',
-  Proceedings = 'proceedings',
+  Proceedings = 'proceeding',
   ProeedingsDevolution = 'proceedings-devolution',
   //ProceedingsDeliveryReception = 'proceedings-delivery-reception',
   DetailProceedingsDevollution = 'detail-proceedings-devolution',
