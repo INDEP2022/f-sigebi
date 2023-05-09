@@ -584,7 +584,6 @@ export class ClarificationsComponent
   } */
 
   clarifiRowSelected(event: any) {
-    console.log(event);
     this.clariArraySelected = event.selected;
   }
 
@@ -633,9 +632,7 @@ export class ClarificationsComponent
     });
   }
   editForm() {
-    console.log(this.clariArraySelected);
     let data = this.clariArraySelected;
-    console.log(data);
     if (data.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
