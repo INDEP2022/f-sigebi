@@ -28,6 +28,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get<IListResponse<IValidations>>(`${this.endpoint}`);
   }
 
+  deleteProceeding(id: string) {
+    return this.delete(this.endpoint, id);
+  }
+
   getProceedingsByDelAndSub(
     delegation: string | number,
     subdelegation: string | number,
@@ -39,13 +43,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     );
   }
 
-  getTransfer(
-    model: TransferProceeding
-  ): Observable<IListResponse<IValidations>> {
-    return this.post<IListResponse<IValidations>>(
-      `${this.endpoint}/get-transferent-number-key-and-name`,
-      model
-    );
+  getTransfer(model: TransferProceeding) {
+    let partials = ProceedingsEndpoints.ProceedingDeliveryReceptionTranfer;
+    /* this.microservice = partials[0]; */
+    return this.post<IListResponse<IValidations>>(partials, model);
   }
 
   getByFilter(params?: string): Observable<IListResponse<IValidations>> {
