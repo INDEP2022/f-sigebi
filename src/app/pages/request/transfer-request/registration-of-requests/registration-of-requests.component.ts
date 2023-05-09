@@ -890,17 +890,17 @@ export class RegistrationOfRequestsComponent
   }
 
   signDictum() {
-    const idDoc = this.route.snapshot.paramMap.get('id');
+    const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
 
-    this.requestService.getById(idDoc).subscribe({
+    this.requestService.getById(idSolicitud).subscribe({
       next: response => {
         const requestData = response;
 
         let config: ModalOptions = {
           initialState: {
-            idDoc,
+            idSolicitud,
             idTypeDoc,
             typeAnnex,
             requestData,

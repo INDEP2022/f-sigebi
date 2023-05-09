@@ -135,13 +135,9 @@ export class NotificationAssetsTabComponent
     this.today = new Date();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    //console.log(changes);
-    //la accion del guardar llega al hijo
-  }
+  ngOnChanges(changes: SimpleChanges): void {}
 
   ngOnInit(): void {
-    console.log('ID SOLICITUD', this.idRequest);
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -213,7 +209,6 @@ export class NotificationAssetsTabComponent
     this.paramsRequest.getValue()['filter.id'] = this.idRequest;
     this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
       next: async data => {
-        console.log('data', data);
         data.data.map(data => {
           this.transferentName(data?.transferenceId);
           this.regDelName(data?.regionalDelegationId);
@@ -330,7 +325,6 @@ export class NotificationAssetsTabComponent
           data.rejectionDate = formatDate;
           return data;
         });
-        console.log(dataNotification);
         this.notificationsList.load(dataNotification);
         this.totalItems2 = response.count;
         this.formLoading = false;
@@ -677,7 +671,6 @@ export class NotificationAssetsTabComponent
           }
         } else if (impro) {
           this.initializeFormclarification(notification);
-          console.log('type', this.requestData.transferent.type);
           if (
             this.requestData.transferent.type == 'A' ||
             this.requestData.transferent.type == 'CE'
@@ -750,7 +743,6 @@ export class NotificationAssetsTabComponent
   async initializeFormclarification(
     notification: ClarificationGoodRejectNotification
   ) {
-    console.log('not', notification);
     let inappropriateness: boolean = false;
     if (notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA')
       inappropriateness = true;
@@ -768,8 +760,6 @@ export class NotificationAssetsTabComponent
     inappropriateness: boolean,
     notification: ClarificationGoodRejectNotification
   ) {
-    console.log('notification', notification);
-    console.log('solicitud', this.requestData);
     let typeTransference = this.requestData.typeOfTransfer;
     let generaXML: boolean = false;
     let type: string = null;
@@ -778,61 +768,38 @@ export class NotificationAssetsTabComponent
       notification.chatClarification.idClarificationType == '2'
     )
       generaXML = true;
-
-    console.log('generaXML', generaXML);
-    console.log('inprocedencía', inappropriateness);
   }
 
   FinishClariImpro() {
-    let aclaration: boolean = false;
-    let impro: boolean = false;
-    if (this.rowSelected == false) {
-      this.message('Error', 'Seleccione notificación a Finalizar');
-    } else {
-      if (this.selectedRow.answered == 'RECHAZADA') {
-        this.message('Error', 'La notificación ya fue rechazada');
-      }
+    const notification = this.selectedRow;
+    if (notification != null) {
+      let improcedencia: boolean = false;
+      let aclaracion: boolean = false;
 
-      if (this.selectedRow.clarification.type < 1) {
-        this.message('Error', 'Seleccione almenos un registro!');
-        return;
-      }
-
-      if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
-        if (this.selectedRow.answered == 'EN ACLARACION') {
-          aclaration = true;
-        } else if (
-          this.selectedRow.answered != 'RECHAZADA' &&
-          this.selectedRow.answered != 'ACLARADA'
-        ) {
+      if (notification.clarificationType == 'SOLICITAR_ACLARACION') {
+        if (notification.answered == 'EN ACLARACION') {
+          aclaracion = true;
+        } else {
           this.onLoadToast(
-            'warning',
-            'Acción Invalida',
-            'El estatus de la aclaración debe ser igual a EN ACLARACIÓN'
-          );
-        } else if (this.selectedRow.answered == 'ACLARADA') {
-          this.onLoadToast(
-            'warning',
-            'Acción Invalida',
-            'La aclaración ya se encuentrada contestada'
+            'info',
+            'Acción invalida',
+            'Se necesita tener la aclaración en status: EN ACLARACION'
           );
         }
-      } else if (
-        this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
-      ) {
-        if (
-          this.selectedRow.answered == 'NUEVA' ||
-          this.selectedRow.answered == 'EN ACLARACION'
-        ) {
-          aclaration = true;
-          impro = true;
+      } else if (notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
+        if (notification.answered == 'EN ACLARACION') {
+          improcedencia = true;
+        } else {
+          this.onLoadToast(
+            'info',
+            'Acción invalida',
+            'Se necesita tener la aclaración en status: EN ACLARACION'
+          );
         }
       }
 
-      console.log('aclaración', aclaration);
-      console.log('improcedencia', impro);
-      if (aclaration || impro) {
-        if (aclaration) {
+      if (aclaracion || improcedencia) {
+        if (aclaracion) {
           this.alertQuestion(
             'question',
             'Finalizar',
@@ -842,7 +809,7 @@ export class NotificationAssetsTabComponent
               this.endAclaration();
             }
           });
-        } else if (impro) {
+        } else if (improcedencia) {
           this.alertQuestion(
             'question',
             'Finalizar',
@@ -854,6 +821,8 @@ export class NotificationAssetsTabComponent
           });
         }
       }
+    } else {
+      this.onLoadToast('info', 'Error', 'Seleccione al menos un registro');
     }
   }
 
@@ -1001,7 +970,6 @@ export class NotificationAssetsTabComponent
             data.rejectionDate = formatDate;
             return data;
           });
-          console.log(dataNotification);
           this.notificationsList.load(dataNotification);
           this.totalItems2 = response.count;
           this.formLoading = false;
@@ -1539,7 +1507,7 @@ export class NotificationAssetsTabComponent
         if (
           this.selectedRow.answered == 'EN ACLARACION' &&
           this.selectedRow.chatClarification.clarificationStatus ==
-            'ACLARADO' &&
+            'EN_ACLARACION' &&
           this.selectedRow.chatClarification.satClarify == null
         ) {
           if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
@@ -1736,34 +1704,6 @@ export class NotificationAssetsTabComponent
                 }
               });
             });
-            /*this.notificationsList.load(data.data);
-            const filterAclaration = data.data.filter((item: any) => {
-              if (
-                item.answered == 'ACLARADA' ||
-                item.answered == 'RECHAZADA'
-                //item.answered == 'EN ACLARACION'
-              ) {
-                return item;
-              }
-            });
-
-            if (filterAclaration.length == this.notificationsList.count()) {
-              const valuesClarifications = { ...this.valuesNotifications };
-              const good: IGood = {
-                id: valuesClarifications.goodId,
-                goodId: valuesClarifications.goodId,
-                goodStatus: 'ACLARADO',
-              };
-              this.goodService.update(good).subscribe({
-                next: data => {
-                  this.getGoodsByRequest();
-                  this.notificationsList = new LocalDataSource();
-                },
-                error: error => {
-                  console.log(error);
-                },
-              });
-            } */
           },
         });
       resolve(true);

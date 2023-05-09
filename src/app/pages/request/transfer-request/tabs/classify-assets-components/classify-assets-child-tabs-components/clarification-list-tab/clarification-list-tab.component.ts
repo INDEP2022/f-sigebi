@@ -61,7 +61,6 @@ export class ClarificationListTabComponent
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.settings = {
       ...TABLE_SETTINGS,
@@ -78,6 +77,7 @@ export class ClarificationListTabComponent
   getData(): void {
     if (this.good) {
       this.loading = true;
+      this.paragraphs = new LocalDataSource();
       this.params.getValue()['filter.goodId'] = this.good.id;
       this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
         next: async (data: any) => {

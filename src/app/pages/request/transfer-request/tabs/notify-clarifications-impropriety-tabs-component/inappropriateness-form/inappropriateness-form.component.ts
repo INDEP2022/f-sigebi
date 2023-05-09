@@ -14,7 +14,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
 @Component({
@@ -52,8 +52,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.generateClave();
-    console.log('notification', this.notification);
-    console.log('request', this.request);
     this.prepareForm();
   }
 
@@ -70,13 +68,13 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       paragraphInitial: [null, [Validators.maxLength(1000)]],
       paragraphFinal: [null, [Validators.maxLength(1000)]],
       observations: [null, [Validators.maxLength(1000)]],
-      transmitterId: [null, [Validators.maxLength(15)]],
-      foundation: [null, [Validators.maxLength(4000)]],
-      invoiceLearned: [null, [Validators.maxLength(60)]],
-      worthAppraisal: [
+      //transmitterId: [null, [Validators.maxLength(15)]],
+      //foundation: [null, [Validators.maxLength(4000)]],
+      //invoiceLearned: [null, [Validators.maxLength(60)]],
+      /*worthAppraisal: [
         null,
         [Validators.maxLength(60), Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      ], */
       consistentIn: [
         null,
         [
@@ -126,11 +124,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        console.log(
-          'Abriendo ImprocedenciaTransferentesVoluntarias1, ',
-          'Con idDoc: ',
-          response.documentTypeId
-        );
         this.changeStatusAnswered();
         this.openReport(response);
         this.loading = false;
@@ -219,7 +212,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
     const idReportAclara = data.id;
-    const idDoc = data.id;
+    //const idDoc = data.id;
     const idTypeDoc = 216;
     const requestInfo = this.request;
     const idSolicitud = this.idSolicitud;
@@ -229,7 +222,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       initialState: {
         requestInfo,
         idTypeDoc,
-        idDoc,
+        //idDoc,
         idReportAclara,
         idSolicitud,
         callback: (next: boolean) => {},
@@ -251,7 +244,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         // this.noFolio = response.data;
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
-        console.log('No. Folio generado ', this.folio.dictamenDelregSeq);
       },
       error: error => {
         console.log('Error al generar secuencia de dictamen', error.error);
@@ -263,7 +255,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
-    console.log(token);
 
     //Trae el año actuar
     const year = this.today.getFullYear();
@@ -271,10 +262,8 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
-      console.log('Folio Armado final', this.folioReporte);
     }
   }
 

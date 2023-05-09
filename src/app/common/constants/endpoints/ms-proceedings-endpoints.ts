@@ -7,6 +7,7 @@ export enum ProceedingsEndpoints {
   DetailProceedingsDeliveryReception = 'detail-proceedings-delivery-reception',
   ProceedingsValidations = 'proceedings-validations',
   ProceedingsDeliveryReception = 'proceedings-delivery-reception',
+  ProceedingDeliveryReceptionTranfer = 'proceedings-delivery-reception/get-transferent-number-key-and-name',
   MaximunClosingTime = 'maximun-closing-time',
   UpdateVaultByProceedingNumber = 'updateSafe',
   UpdateVaultByKeyProceeding = 'updateSafeByAct',
