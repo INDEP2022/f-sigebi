@@ -3,12 +3,18 @@ import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
-import { showToast } from 'src/app/common/helpers/helpers';
+import {
+  showAlert,
+  showQuestion,
+  showToast,
+} from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IMassiveNumeraryChangeSpent } from '../types/massive-numerary.type';
@@ -53,8 +59,8 @@ export class MassiveNumeraryChangeModalComponent
   title: string = 'Win Bienes';
   form: FormGroup;
   settings2 = { ...this.settings, actions: false };
-  dataTableMain = new LocalDataSource();
-  dataTableSecond = new LocalDataSource();
+  BLK_BIENES = new LocalDataSource();
+  BLK_GASTOS = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
@@ -62,7 +68,8 @@ export class MassiveNumeraryChangeModalComponent
     private modalRef: BsModalRef,
     // private fb: FormBuilder,
     private goodServices: GoodService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private accountMovementService: AccountMovementService
   ) {
     super();
     this.settings = {
@@ -127,8 +134,7 @@ export class MassiveNumeraryChangeModalComponent
   }
 
   async getGoodsIn(): Promise<{ goods: any[]; goodsMore: any[] }> {
-    const goods: IMassiveNumeraryChangeSpent[] =
-      await this.dataTableMain.getAll();
+    const goods: IMassiveNumeraryChangeSpent[] = await this.BLK_BIENES.getAll();
     const goodsFilter = goods.filter(item => item.indNume === 3);
 
     const goodsNumber = goodsFilter.map((item: { noGood: any }) => item.noGood);
@@ -144,5 +150,114 @@ export class MassiveNumeraryChangeModalComponent
     );
     console.log({ goodsMore });
     return { goods: goodsFilter, goodsMore };
+  }
+
+  chkMovBan = 'NO';
+  DI_MONEDA_NEW: any;
+  TI_FICHA_NEW: any;
+  TI_BANCO_NEW: any;
+  TI_FECHA_NEW: any;
+  DI_CUENTA_NEW: any;
+  DI_NO_CUENTA_DEPOSITO: any;
+  DI_CATEGORIA: any;
+  DI_NO_MOVIMIENTO: any;
+  vestatus_ant: any;
+  vestatus_nue: any;
+  v_clasif_bien: number;
+  vBAN: boolean;
+  vCHECA: boolean;
+  vVALIDA_ESTATUS: number;
+  V_FEC_REG_INSERT: string;
+  vNoMovimiento: any;
+
+  async onClickGenerateNumeraries(): Promise<void> {
+    const BLK_BIENES_ALL: IMassiveNumeraryChangeSpent[] =
+      await this.BLK_BIENES.getAll();
+    if (BLK_BIENES_ALL.length > 1) {
+      if (this.chkMovBan === 'SI') {
+        if (!this.TI_BANCO_NEW) {
+          showAlert({
+            title: 'Error',
+            text: 'Se debe ingresar los datos del banco',
+          });
+          return;
+        }
+        if (!this.TI_FECHA_NEW) {
+          showAlert({
+            title: 'Error',
+            text: 'Se debe ingresar la fecha de depósito',
+          });
+          return;
+        } else {
+          try {
+            const accountMovement = await this.selectAccountMovementFilter();
+            this.vNoMovimiento = accountMovement?.numberMotion;
+          } catch (ex) {
+            showAlert({
+              title: 'Error',
+              text: 'Se debe ingresar una fecha de depósito válida',
+            });
+            return;
+          }
+        }
+      } else {
+        this.DI_MONEDA_NEW = 'MN';
+        this.TI_FICHA_NEW = null;
+        this.TI_BANCO_NEW = null;
+        this.TI_FECHA_NEW = null;
+        this.DI_CUENTA_NEW = null;
+        this.DI_NO_CUENTA_DEPOSITO = null;
+        this.DI_CATEGORIA = null;
+        this.DI_NO_MOVIMIENTO = null;
+      }
+      this.vestatus_ant = 'CNE';
+      this.vestatus_nue = 'ADM';
+      if (this.DI_MONEDA_NEW === 'MN') {
+        this.v_clasif_bien = 1424;
+      } else {
+        this.v_clasif_bien = 1426;
+      }
+      // this.vBAN = false;
+      this.vBAN = BLK_BIENES_ALL.some(element => element.indNume == 2);
+      if (this.vBAN) {
+        this.vCHECA = (
+          await showQuestion({
+            title: 'Confirmación',
+            text: 'Se Actualizan los importes de los numerarios en ADM sin conciliar?',
+            confirmButtonText: 'SI',
+            cancelButtonText: 'NO',
+          })
+        ).isConfirmed;
+      }
+      /**TODO: Esperando respuesta del backend  */
+      // BLK_BIENES_ALL.forEach(async element => {
+      //   this.vVALIDA_ESTATUS = 0;
+
+      //   try {
+      //     try {
+      //     } catch (ex) {
+      //       console.log(ex);
+      //     }
+      //   } catch (ex) {
+      //     console.log(ex);
+      //   }
+      // });
+    }
+  }
+
+  async selectAccountMovementFilter(): Promise<IAccountMovement> {
+    const params = {
+      'filter.dateMotion': this.TI_FECHA_NEW,
+      'filter.numberAccount': this.DI_NO_CUENTA_DEPOSITO,
+      'filter.isFileDeposit': 'S',
+      'filter.numberGood': SearchFilter.NULL,
+      limit: 1,
+    };
+    const result = await firstValueFrom(
+      this.accountMovementService
+        .getAllFiltered(params)
+        .pipe(map(res => res?.data[0]))
+    );
+    return result;
   }
 }

@@ -16,10 +16,13 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
 import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { SelectConceptSpentDialogComponent } from '../components/select-concept-spent-dialog/select-concept-spent-dialog.component';
 import { MassiveNumeraryChangeModalComponent } from '../massive-numerary-change-modal/massive-numerary-change-modal.component';
 import {
   IMassiveNumeraryChangeSpent,
@@ -41,13 +44,19 @@ import {
         margin-left: 5px;
         margin-right: 5px;
         padding: 3px;
+        outline: none;
+        font-weight: 500;
       }
       .spent-inputs input {
         border: none;
         border-bottom: 1px solid black;
-        padding: 3px;
-        margin: 5px;
+        margin: 0 5px 15px 0;
         outline: none;
+      }
+
+      .spent-inputs > div {
+        display: flex;
+        flex-direction: column;
       }
     `,
   ],
@@ -68,13 +77,16 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   BLK_BIENES = new LocalDataSource();
   BLK_GASTOS = new LocalDataSource();
 
+  isVisibleSpent: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private goodService: GoodService,
     private accountMovementService: AccountMovementService,
     private spentService: SpentService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private prepareEventService: UtilComerV1Service
   ) {
     super();
     this.settings = {
@@ -90,6 +102,21 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.params.pipe(skip(1)).subscribe((res: any) => {
       this.loadTablePreviewData(res);
     });
+    // this.changeValueFormTips();
+  }
+  changeTip(e: any, num: number) {
+    const value = e.target.value;
+    console.log(value, num);
+    if (value === 'G') {
+      this.formGad.get(`GAD${num}`).enable();
+      this.formGas.get(`GAS${num}`).enable();
+    } else {
+      this.formGad.get(`GAD${num}`).disable();
+      this.formGas.get(`GAS${num}`).disable();
+    }
+    this.isVisibleSpent = Object.values(this.formTips.value).some(
+      value => value === 'G'
+    );
   }
 
   prepareForm() {
@@ -101,6 +128,14 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       data: [null, Validators.nullValidator],
       concept: [null, Validators.nullValidator],
       description: [null, Validators.nullValidator],
+    });
+  }
+
+  onDobleClickInputGas(num: number) {
+    console.log('onDobleClickInputGas');
+    this.formGas.get(`GAS${num}`).setValue('');
+    this.modalService.show(SelectConceptSpentDialogComponent, {
+      class: 'modal-lg',
     });
   }
 
@@ -119,13 +154,19 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   }
 
   formTips = new FormGroup({});
-  formGas = new FormGroup({});
+  formGas = new FormGroup<any>({});
   formGad = new FormGroup({});
   async onInit() {
     this.columns.forEach((column, index) => {
       this.formTips.addControl(`TIP${index + 1}`, new FormControl(''));
-      this.formGas.addControl(`GAS${index + 1}`, new FormControl(''));
-      this.formGad.addControl(`GAD${index + 1}`, new FormControl(''));
+      this.formGas.addControl(
+        `GAS${index + 1}`,
+        new FormControl({ value: '', disabled: true })
+      );
+      this.formGad.addControl(
+        `GAD${index + 1}`,
+        new FormControl({ value: '', disabled: true })
+      );
     });
   }
 
@@ -240,10 +281,10 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     let dataTableSpent: IMassiveNumeraryChangeSpent[] = [];
     let dataTableSmall: IMassiveNumeraryTableSmall[] = [];
     // let indNume;
-    let contm = 0;
+    // let contm = 0;
     let cont = 0;
-    let cveProcess: string | null = null;
-    let actaOk = false;
+    // let cveProcess: string | null = null;
+    // let actaOk = false;
     let vItem = null;
 
     let vType = null;
@@ -268,7 +309,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     // let numberGoodn = null;
 
     /** @replace vestatusn */
-    let status = null;
+    // let status = null;
 
     // dataTablePreview.map(
     const test = async (item: any) => {
@@ -375,10 +416,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                         vDescription = this.formGad.get(vItem)?.value;
                         if (!vDescription) {
                           try {
-                            const conceptSpent = await this.getConceptSpend(
-                              vdSpent
-                            );
-                            vDescription = conceptSpent?.description;
+                            vDescription = (await this.getConceptSpend(vdSpent))
+                              .description;
                           } catch (ex) {
                             vDescription = 'Gasto ' + vdSpent;
                           }
@@ -486,8 +525,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.isLoadingProcessExtraction = false;
     this.modalService.show(MassiveNumeraryChangeModalComponent, {
       initialState: {
-        dataTableMain: new LocalDataSource(dataTableSpent),
-        dataTableSecond: new LocalDataSource(dataTableSmall),
+        BLK_BIENES: new LocalDataSource(dataTableSpent),
+        BLK_GASTOS: new LocalDataSource(dataTableSmall),
       },
       class: 'modal-lg',
     });
@@ -537,16 +576,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     return valor || def;
   }
 
-  getConceptSpend(id: number): Promise<any> {
+  async getConceptSpend(id: number): Promise<ISpentConcept> {
     //TODO: implementar PUF_CONCEPTO_GASTO
-    return firstValueFrom(this.spentService.getExpensesConceptById(id));
+    const result = await firstValueFrom(
+      this.spentService.getExpensesConceptById(id)
+    );
+    return result.data;
   }
 
-  pufSearchEvent(goodNumber: number | string): Promise<string> {
-    //TODO: implementar PUF_BUSCA_EVENTO
-    return new Promise(resolve => {
-      resolve('true');
-    });
+  async pufSearchEvent(goodNumber: number | string): Promise<string> {
+    try {
+      const result = await firstValueFrom(
+        this.prepareEventService.getPufSearchEvent(goodNumber as string)
+      );
+      return result.data.v_cve_proceso;
+    } catch (ex) {
+      return 'Evento no localizado';
+    }
   }
 
   pufValidActaReception(goodNumber: number | string): Promise<boolean> {

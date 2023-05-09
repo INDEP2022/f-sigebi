@@ -26,7 +26,7 @@ export class SpentService extends HttpService {
   }
 
   getExpensesConceptById(id: number) {
-    return this.get<IListResponse<ISpentConcept>>(
+    return this.get<{ data: ISpentConcept }>(
       `${this.route.ExpenseConcept}/${id}`
     );
   }
