@@ -334,6 +334,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   goodsByExpediente() {
+    console.log('¿Entra?');
     this.serviceGood
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
@@ -342,6 +343,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: async (res: any) => {
+          console.log(res.data);
           if (res.data.length > 0) {
             this.dataGoods.load(res.data);
             console.log(res);
@@ -393,6 +395,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   fillIncomeProceeding(dataRes: any) {
+    console.log(dataRes);
     const paramsF = new FilterParams();
     this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
     paramsF.addFilter('numberProceedings', dataRes.id);
@@ -401,6 +404,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       res => {
         const data = this.dataGoods;
         const incomeData = res.data;
+        console.log(incomeData);
         for (let i = 0; i < incomeData.length; i++) {
           const element = JSON.parse(JSON.stringify(incomeData[i]));
           this.goodData.push(element.good);
@@ -432,8 +436,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get('elabora').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.statusProceeding = dataRes.statusProceedings;
-        this.labelActa = 'Cerrar acta';
-        this.btnCSSAct = 'btn-primary';
+        if (this.statusProceeding === 'ABIERTA') {
+          this.labelActa = 'Cerrar acta';
+          this.btnCSSAct = 'btn-primary';
+        } else {
+          this.labelActa = 'Abrir acta';
+          this.btnCSSAct = 'btn-success';
+        }
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
@@ -804,7 +813,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     ).then(q => {
       if (q.isConfirmed) {
         this.serviceProcVal
-          .deleteProceeding(this.idProceeding.toString())
+          .newDeleteProceeding(this.idProceeding.toString())
           .subscribe(
             res => {
               console.log(res);
@@ -827,7 +836,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
-      console.log(this.numberProceeding);
       if (this.numberProceeding <= this.proceedingData.length - 1) {
         this.prevProce = true;
         const dataRes = JSON.parse(
@@ -861,6 +869,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   prevProceeding() {
+    this.initialBool = true;
     if (
       this.numberProceeding <= this.proceedingData.length &&
       this.numberProceeding > 0

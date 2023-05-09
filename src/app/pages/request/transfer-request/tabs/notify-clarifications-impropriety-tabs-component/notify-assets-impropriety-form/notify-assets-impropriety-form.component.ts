@@ -286,7 +286,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -338,7 +338,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -390,7 +390,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -443,7 +443,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -549,7 +549,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
+        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();

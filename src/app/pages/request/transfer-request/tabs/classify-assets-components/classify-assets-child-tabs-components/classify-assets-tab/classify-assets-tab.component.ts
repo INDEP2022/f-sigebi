@@ -71,6 +71,7 @@ export class ClassifyAssetsTabComponent
   task: any;
   statusTask: any = '';
   childSaveAction: boolean = false;
+  canClean: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -507,7 +508,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getChapter(params: ListParams, id?: number) {
+  getChapter(params: ListParams, id?: number, clean: boolean = false) {
     if (id) {
       if (this.advSearch === false) {
         params['filter.parentId'] = '$eq:' + id.toString();
@@ -532,7 +533,8 @@ export class ClassifyAssetsTabComponent
           if (
             this.goodObject &&
             this.good.ligieChapter &&
-            this.advSearch == false
+            this.advSearch == false &&
+            clean == false
           ) {
             this.classiGoodsForm.controls['ligieChapter'].setValue(
               this.good.ligieChapter
@@ -545,7 +547,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel1(params: ListParams, id?: number) {
+  getLevel1(params: ListParams, id?: number, clean: boolean = false) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -568,7 +570,7 @@ export class ClassifyAssetsTabComponent
             this.getChapter(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && this.advSearch == false) {
+          if (this.goodObject && this.advSearch == false && clean == false) {
             this.classiGoodsForm.controls['ligieLevel1'].setValue(
               this.good.ligieLevel1
             );
@@ -580,7 +582,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel2(params: ListParams, id?: number) {
+  getLevel2(params: ListParams, id?: number, clean: boolean = false) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -599,7 +601,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel1(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && this.advSearch == false) {
+          if (this.goodObject && this.advSearch == false && clean == false) {
             this.classiGoodsForm.controls['ligieLevel2'].setValue(
               this.good.ligieLevel2
             );
@@ -611,7 +613,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel3(params: ListParams, id?: number) {
+  getLevel3(params: ListParams, id?: number, clean: boolean = false) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -630,7 +632,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel2(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && this.advSearch == false) {
+          if (this.goodObject && this.advSearch == false && clean == false) {
             this.classiGoodsForm.controls['ligieLevel3'].setValue(
               this.good.ligieLevel3
             );
@@ -642,7 +644,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel4(params: ListParams, id?: number) {
+  getLevel4(params: ListParams, id?: number, clean: boolean = false) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -661,7 +663,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel3(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject) {
+          if (this.goodObject && clean == false) {
             this.classiGoodsForm.controls['ligieLevel4'].setValue(
               this.good.ligieLevel4
             );
@@ -732,10 +734,15 @@ export class ClassifyAssetsTabComponent
 
   cleanLvl(lvl?: number) {
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
+    this.selectLevel4 = [];
     this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+    this.selectLevel3 = [];
     this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+    this.selectLevel2 = [];
     this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+    this.selectLevel1 = [];
     this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+    this.selectChapter = [];
     this.classiGoodsForm.controls['ligieChapter'].setValue(null);
     this.classiGoodsForm.controls['ligieSection'].setValue(null);
     this.getSection(new ListParams());
@@ -867,11 +874,24 @@ export class ClassifyAssetsTabComponent
         if (data != null) {
           if (this.advSearch === false) {
             // this.classiGoodsForm.controls['ligieChapter'].setValue(null);
-            this.getChapter(new ListParams(), data);
+
+            const section: any = this.good ? this.good.ligieSection : null;
+            if (section != data) {
+              this.selectChapter = [];
+              this.selectLevel1 = [];
+              this.selectLevel2 = [];
+              this.selectLevel3 = [];
+              this.selectLevel4 = [];
+              this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+              this.getChapter(new ListParams(), data, true);
+            } else {
+              this.getChapter(new ListParams(), data, false);
+            }
           }
         }
       }
     );
+
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
         if (dataChapter != null) {
@@ -892,9 +912,23 @@ export class ClassifyAssetsTabComponent
             this.setRelevantTypeId(relativeTypeId);
           }
 
-          if (this.advSearch === false) {
-            this.getLevel1(new ListParams(), dataChapter);
+          const chapter: any = this.good ? this.good.ligieChapter : null;
+          if (this.advSearch === false && chapter === dataChapter) {
+            this.getLevel1(new ListParams(), dataChapter, false);
+          } else if (this.advSearch === false && chapter != dataChapter) {
+            this.selectLevel1 = [];
+            this.selectLevel2 = [];
+            this.selectLevel3 = [];
+            this.selectLevel4 = [];
+            this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.getLevel1(new ListParams(), dataChapter, true);
           }
+        } else {
+          this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+          this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+          this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         }
       }
     );
@@ -921,15 +955,22 @@ export class ClassifyAssetsTabComponent
           this.setRelevantTypeId(relativeTypeId);
           //no se puse el this.getNorma(fraction);
 
-          if (this.advSearch === false) {
-            this.getLevel2(new ListParams(), dataLevel1);
-          }
-        } /* else {
-          const lvl2 = this.classiGoodsForm.controls['ligieLevel2'].value;
-          if(lvl2){
+          const lvl1: any = this.good ? this.good.ligieLevel1 : null;
+          if (this.advSearch === false && lvl1 === dataLevel1) {
+            this.getLevel2(new ListParams(), dataLevel1, false);
+          } else {
+            this.selectLevel2 = [];
+            this.selectLevel3 = [];
+            this.selectLevel4 = [];
             this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.getLevel2(new ListParams(), dataLevel1, true);
           }
-        } */
+        } else {
+          this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+          this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+        }
       }
     );
     this.classiGoodsForm.controls['ligieLevel2'].valueChanges.subscribe(
@@ -954,15 +995,17 @@ export class ClassifyAssetsTabComponent
             //this.getNorma(fraction);
           }
 
-          if (this.advSearch === false) {
-            this.getLevel3(new ListParams(), dataLevel2);
-          }
-        } /* else {
-          const lvl3 = this.classiGoodsForm.controls['ligieLevel3'].value;
-          if(lvl3){
+          const lvl2: any = this.good ? this.good.ligieLevel2 : null;
+          if (this.advSearch === false && lvl2 === dataLevel2) {
+            this.getLevel3(new ListParams(), dataLevel2, false);
+          } else {
+            this.selectLevel3 = [];
+            this.selectLevel4 = [];
             this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.getLevel3(new ListParams(), dataLevel2, true);
           }
-        } */
+        }
       }
     );
     this.classiGoodsForm.controls['ligieLevel3'].valueChanges.subscribe(
@@ -988,15 +1031,15 @@ export class ClassifyAssetsTabComponent
             this.getNorma(fraction);
           }
 
-          if (this.advSearch === false) {
-            this.getLevel4(new ListParams(), dataLevel3);
-          }
-        } /* else {
-          const lvl4 = this.classiGoodsForm.controls['ligieLevel4'].value;
-          if(lvl4){
+          const lvl3: any = this.good ? this.good.ligieLevel3 : null;
+          if (this.advSearch === false && lvl3 === dataLevel3) {
+            this.getLevel4(new ListParams(), dataLevel3, false);
+          } else {
+            this.selectLevel4 = [];
             this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.getLevel4(new ListParams(), dataLevel3, true);
           }
-        } */
+        }
       }
     );
 
