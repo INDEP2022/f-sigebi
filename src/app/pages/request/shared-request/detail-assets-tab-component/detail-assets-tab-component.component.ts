@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import {
@@ -1183,7 +1182,7 @@ export class DetailAssetsTabComponentComponent
   changeDateEvaluoEvent(event: any) {
     this.bsEvaluoDate = event;
     if (this.bsEvaluoDate) {
-      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsEvaluoDate.toISOString();
+      let date = this.bsEvaluoDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['appraisalDate'].setValue(date);
     }
   }
@@ -1191,7 +1190,7 @@ export class DetailAssetsTabComponentComponent
     this.bsCertifiDate = event;
 
     if (this.bsCertifiDate) {
-      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsCertifiDate.toISOString();
+      let date = this.bsCertifiDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['certLibLienDate'].setValue(date);
     }
   }
@@ -1200,7 +1199,7 @@ export class DetailAssetsTabComponentComponent
     this.bsPffDate = event;
 
     if (this.bsPffDate) {
-      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsPffDate.toISOString();
+      let date = this.bsPffDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['pffDate'].setValue(date);
     }
   }
