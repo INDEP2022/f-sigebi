@@ -835,11 +835,12 @@ export class VerifyComplianceTabComponent
       confirmButtonText: 'Eliminar',
     }).then(async result => {
       if (result.isConfirmed) {
-        debugger;
         this.loader.load = true;
-        //console.log(this.clarifyRowSelected[0])
-
-        //const result = await this.removeChatClarification(this.clarifyRowSelected[0].chatClarification.id);
+        //eliminar el chat clarification
+        const idChatClarification =
+          this.clarifyRowSelected[0].chatClarification.idClarification;
+        const result = await this.removeChatClarification(idChatClarification);
+        //elimina la aclaracion
         const id = this.clarifyRowSelected[0].rejectNotificationId;
         this.rejectedGoodService.remove(id).subscribe({
           next: async resp => {
