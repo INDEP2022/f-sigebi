@@ -473,7 +473,122 @@ export class ClassifyAssetsTabComponent
     for (let i = 0; i < listReverse.length; i++) {
       const id = listReverse[i];
       this.classiGoodsForm.controls[fractions[i]].setValue(id);
+      if (i === 1) {
+        this.getChapter1(new ListParams(), id);
+      } else if (i === 2) {
+        this.getLevels1(new ListParams(), id);
+      } else if (i === 3) {
+        this.getLevels2(new ListParams(), id);
+      } else if (i === 4) {
+        this.getLevels3(new ListParams(), id);
+      } else if (i === 5) {
+        this.getLevels4(new ListParams(), id);
+      }
     }
+    this.getSection1(new ListParams());
+
+    // console.log(listReverse);
+  }
+  getLevels4(params: ListParams, id?: number, clean: boolean = false) {
+    params['filter.parentId'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          this.showHideErrorInterceptorService.showHideError(false);
+          this.selectLevel4 = data.data; //new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          this.loading = false;
+          this.formLoading = false;
+        },
+      });
+  }
+  getLevels3(params: ListParams, id?: number, clean: boolean = false) {
+    params['filter.parentId'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: data => {
+          this.showHideErrorInterceptorService.showHideError(false);
+          this.selectLevel3 = data.data;
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+  }
+  getLevels2(params: ListParams, id?: number, clean: boolean = false) {
+    params['filter.parentId'] = '$eq:' + id.toString();
+    params.limit = 50;
+    this.fractionService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: data => {
+          this.showHideErrorInterceptorService.showHideError(false);
+          this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+  }
+  getLevels1(params: ListParams, id?: number, clean: boolean = false) {
+    params['filter.parentId'] = '$eq:' + id.toString();
+    delete params.text;
+    delete params.inicio;
+    delete params.pageSize;
+    delete params.take;
+    params.limit = 50;
+    this.fractionService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: (data: any) => {
+          this.showHideErrorInterceptorService.showHideError(false);
+          this.selectLevel1 = data.data;
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+  }
+  getChapter1(params: ListParams, id?: number, clean: boolean = false) {
+    if (id) {
+      params['filter.parentId'] = '$eq:' + id.toString();
+    }
+    params.limit = 50;
+    this.fractionService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: data => {
+          this.showHideErrorInterceptorService.showHideError(false);
+          this.selectChapter = data.data;
+        },
+        error: error => {
+          this.formLoading = false;
+        },
+      });
+  }
+  getSection1(params: ListParams, id?: number) {
+    params['filter.level'] = '$eq:' + 0;
+    params.limit = 50;
+    this.fractionService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: data => {
+          this.showHideErrorInterceptorService.showHideError(false);
+          this.selectSection = data.data;
+        },
+        error: error => {},
+      });
   }
 
   getSection(params: ListParams, id?: number) {
@@ -490,7 +605,7 @@ export class ClassifyAssetsTabComponent
         next: data => {
           this.showHideErrorInterceptorService.showHideError(false);
           this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
-
+          console.log(this.selectSection);
           if (this.advSearch === true) {
             this.listAdvancedFractions.push(data.data[0].id);
             const listReverse = this.listAdvancedFractions.reverse();
@@ -501,7 +616,6 @@ export class ClassifyAssetsTabComponent
           if (this.goodObject != null && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieSection'].setValue(id);
           }
-
           this.advSearch = false;
         },
         error: error => {},
@@ -731,7 +845,6 @@ export class ClassifyAssetsTabComponent
         break;
     }
   }
-
   cleanLvl(lvl?: number) {
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
     this.selectLevel4 = [];
@@ -1012,7 +1125,7 @@ export class ClassifyAssetsTabComponent
       (dataLevel3: any) => {
         //this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
         if (dataLevel3 != null) {
-          console.log('fraccion lvl3', dataLevel3);
+          // console.log('fraccion lvl3', dataLevel3);
           let fraction = this.selectLevel3.filter(
             (x: any) => x.id === dataLevel3
           )[0];
@@ -1046,7 +1159,7 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel4'].valueChanges.subscribe(
       (dataLevel4: any) => {
         if (dataLevel4 !== null) {
-          console.log('fraccion lvl4', dataLevel4);
+          // console.log('fraccion lvl4', dataLevel4);
           const relevantTypeId = this.getRelevantTypeId(
             this.selectLevel4,
             dataLevel4
@@ -1070,6 +1183,7 @@ export class ClassifyAssetsTabComponent
   }
 
   getRelevantTypeId(arrayData: any, id: number): any {
+    // console.log(arrayData);
     if (arrayData) {
       return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
     }
