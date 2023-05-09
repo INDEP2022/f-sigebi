@@ -94,10 +94,10 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.notification.clarificationType,
       sender: this.form.controls['senderName'].value,
-      foundation: this.form.controls['foundation'].value,
+      //foundation: this.form.controls['foundation'].value,
       //id: 1, //ID primaria
       version: 1,
-      transmitterId: this.form.controls['transmitterId'].value,
+      //transmitterId: this.form.controls['transmitterId'].value,
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
       positionSender: this.form.controls['senderCharge'].value,
@@ -111,7 +111,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       creationUser: token.name,
       documentTypeId: '216', //Aclaración tipo 2 -> ImprocedenciaTransferentesVoluntarias
       modificationUser: token.name,
-      worthAppraisal: this.form.controls['worthAppraisal'].value,
+      //worthAppraisal: this.form.controls['worthAppraisal'].value,
       creationDate: new Date(),
       //rejectNoticeId: 1,
       assignmentInvoiceDate: new Date(),
@@ -124,7 +124,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        this.changeStatusAnswered();
+        //this.changeStatusAnswered();
         this.openReport(response);
         this.loading = false;
         this.close();
