@@ -476,7 +476,8 @@ export class AddressTransferorTabComponent
       domicile.requestId = this.requestObject.id;
       domicile.regionalDelegationId = this.requestObject.regionalDelegationId;
     }
-    debugger;
+
+    //crea un alias en el almacen
     let alias = null;
     if (this.isNewAddress === true) {
       let aliasStore: any = {};
