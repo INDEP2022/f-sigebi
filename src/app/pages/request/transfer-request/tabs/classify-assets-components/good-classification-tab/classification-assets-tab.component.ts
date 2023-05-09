@@ -296,6 +296,28 @@ export class ClassificationAssetsTabComponent
     });
   }
 
+  updateTableEvent(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map(async (item: any) => {
+        if (item.id === event.id) {
+          item.ligieSection = event.ligiesSection;
+          item.ligieChapter = event.ligieChapter;
+          item.ligieLevel1 = event.ligieLevel1;
+          item.ligieLevel2 = event.ligieLevel2;
+          item.ligieLevel3 = event.ligieLevel3;
+          item.ligieLevel4 = event.ligieLevel4;
+          item.fractionId = event.fractionId;
+          item.fractionCode = event.fractionCode;
+          item.ligieUnit = event.ligieUnit;
+          item.goodClassNumber = event.goodClassNumber;
+          const goodTypeName = await this.getTypeGood(item.goodTypeId);
+          item['goodTypeName'] = goodTypeName;
+        }
+      });
+      this.paragraphs.load(data);
+    });
+  }
+
   initForm() {
     this.detailArray = this.fb.group({
       id: [null],

@@ -7,8 +7,8 @@
   <div body>
     <form action="" class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="form.get('dateMotion')" label="Fecha depósito">
+        <div class="col-md-6">
+          <form-field [control]="form.get('dateMotion')" label="Fecha">
             <input
               type="text"
               formControlName="dateMotion"
@@ -16,25 +16,12 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('deposit')"
-            label="Cantidad a depositar">
+        <div class="col-md-6">
+          <form-field [control]="form.get('deposit')" label="Deposito">
             <input
               type="number"
               class="form-control"
               formControlName="deposit" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('withdrawal')"
-            label="Cantidad a retirar">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="withdrawal" />
           </form-field>
         </div>
       </div>

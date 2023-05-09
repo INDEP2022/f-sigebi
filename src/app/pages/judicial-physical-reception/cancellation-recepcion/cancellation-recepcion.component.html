@@ -44,6 +44,26 @@
             </div> -->
           </div>
         </div>
+        <div *ngIf="navigateProceedings" class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <button
+                id="expedient-number"
+                [disabled]="!prevProce"
+                class="btn btn-secondary btn-sm active mr-2"
+                (click)="prevProceeding()">
+                Anterior
+              </button>
+              <button
+                id="expedient-number"
+                class="btn btn-secondary btn-sm active"
+                [disabled]="!nextProce"
+                (click)="nextProceeding()">
+                Siguiente
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <hr class="row" />
       <div class="row">
