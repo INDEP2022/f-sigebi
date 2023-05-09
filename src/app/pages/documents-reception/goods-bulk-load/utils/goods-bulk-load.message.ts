@@ -62,19 +62,19 @@ const ERROR_ATRIBUTE_CLASS_GOOD = (class_good: number) =>
   `El atributo no pudo ser cargado para el clasificador del bien: ${class_good}`;
 // CARGA PROCESO
 const ERROR_CVE_SAT = (cve_sat: number) =>
-  `No se encontro SAT_CVE_UNICA: ${cve_sat}`;
+  `No se encontró SAT_CVE_UNICA: ${cve_sat}`;
 // PROCESO 2
 const ERROR_GOOD_INMUEBLE = (good_number: string) =>
   `No se encontraron datos del bien inmueble: ${good_number}`;
 // PROCESO 4
 const ERROR_EXPEDIENTE = (expedient: string) =>
-  `No se encontro el expediente en el documento: ${expedient}`;
+  `No se encontró el expediente en el documento: ${expedient}`;
 const ERROR_CITY_ASUNTO_SAT = (asunto_sat: string) =>
-  `No se encontro la clave de la ciudad filtrada por el asunto: ${asunto_sat}`;
+  `No se encontró la clave de la ciudad filtrada por el asunto: ${asunto_sat}`;
 const ERROR_GET_CLAVE_SAT = (descripcion: string) =>
-  `No se encontro SAT_CVE_UNICA de: ${descripcion}`;
+  `No se encontró SAT_CVE_UNICA de: ${descripcion}`;
 const ERROR_ISSUING_INSTITUTION = (cveIssuing: string) =>
-  `No se encontro la institución emisora: ${cveIssuing}`;
+  `No se encontró la institución emisora: ${cveIssuing}`;
 const ERROR_TRANSFERENTE_PARAMS = (
   contador: number,
   opcionValid: string,

@@ -1026,7 +1026,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string, description?: string) {
-    console.log(this.detailAssets.value);
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
