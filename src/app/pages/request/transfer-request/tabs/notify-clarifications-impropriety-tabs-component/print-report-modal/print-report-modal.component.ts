@@ -167,14 +167,15 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     }
   }
 
+  //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
   verificateFirm() {
-    //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
     this.signatoriesService
       .getSignatoriesName(this.idTypeDoc, this.idSolicitud)
       .subscribe({
         next: response => {
           console.log('Existe firmante, proceder a eliminarlo');
           this.signatories = response.data;
+          //Ciclo para eliminar todos los posibles firmantes existentes para esa solicitud
           const count = response.count;
           for (let i = 0; i < count; i++) {
             this.signatoriesService
