@@ -151,10 +151,10 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   initFilterForm() {
     this.filterForm = this.fb.group({
       management: [
-        'null',
+        '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      typeGood: ['null', [Validators.pattern(STRING_PATTERN)]],
+      typeGood: ['', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -184,7 +184,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.totalItems = filter.length;
       } else {
         this.paragraphs = filter;
-        this.onLoadToast('warning', 'No se encontro ningún bien', '');
+        this.onLoadToast('warning', 'No se encontró ningún bien', '');
       }
     }
 
@@ -198,7 +198,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.totalItems = filter.length;
       } else {
         this.paragraphs = filter;
-        this.onLoadToast('warning', 'No se encontro ningún bien', '');
+        this.onLoadToast('warning', 'No se encontró ningún bien', '');
       }
     }
 
@@ -211,7 +211,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
         this.paragraphs = filter;
         this.totalItems = filter.length;
       } else {
-        this.onLoadToast('warning', 'No se encontro ningún bien', '');
+        this.onLoadToast('warning', 'No se encontró ningún bien', '');
       }
     }
   }

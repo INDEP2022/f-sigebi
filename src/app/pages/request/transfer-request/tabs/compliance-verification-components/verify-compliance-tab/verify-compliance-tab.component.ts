@@ -26,6 +26,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -110,7 +111,8 @@ export class VerifyComplianceTabComponent
     private rejectedGoodService: RejectedGoodService,
     private requestHelperService: RequestHelperService,
     private goodResDevService: GetGoodResVeService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private chatClarificationService: ChatClarificationsService
   ) {
     super();
   }
@@ -119,7 +121,6 @@ export class VerifyComplianceTabComponent
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     /* aclaraciones */
     this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
@@ -818,7 +819,7 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  deleteClarification() {
+  async deleteClarification() {
     if (this.clarifyRowSelected.length !== 1) {
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
@@ -832,9 +833,14 @@ export class VerifyComplianceTabComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Eliminar',
-    }).then(result => {
+    }).then(async result => {
       if (result.isConfirmed) {
         this.loader.load = true;
+        //eliminar el chat clarification
+        const idChatClarification =
+          this.clarifyRowSelected[0].chatClarification.idClarification;
+        const result = await this.removeChatClarification(idChatClarification);
+        //elimina la aclaracion
         const id = this.clarifyRowSelected[0].rejectNotificationId;
         this.rejectedGoodService.remove(id).subscribe({
           next: async resp => {
@@ -972,6 +978,26 @@ export class VerifyComplianceTabComponent
             'error',
             'Error interno',
             'No se pudo eliminar el bien-res-deb'
+          );
+        },
+      });
+    });
+  }
+
+  removeChatClarification(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.chatClarificationService.remove(id).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          reject(false);
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error al eliminar',
+            'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
         },
       });
