@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_URL: 'http://sigebimsqa.indep.gob.mx/', //'http://localhost:3000/api/v1/',
+  API_URL: 'http://sigebimsdev.indep.gob.mx/', //'http://localhost:3000/api/v1/',
   API_URL2: 'http://sigebimsqa.indep.gob.mx/',
   URL_PREFIX: 'api/v1/',
   API_REPORTS_BASE: 'http://reports-qa.indep.gob.mx/jasperserver/',
