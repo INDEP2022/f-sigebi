@@ -54,9 +54,12 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getByFilter(params?: string): Observable<IListResponse<IValidations>> {
-    let partials = this.endpoint;
-    console.log(partials);
+    // let partials = this.endpoint;
+    // console.log(partials);
     /* this.microservice = partials[0]; */
-    return this.get<IListResponse<IValidations>>(partials, params);
+    return this.get<IListResponse<IValidations>>(`${this.endpoint}`, params);
+    // return this.get<IListResponse<IValidations>>(partials, params).pipe(
+    //   tap(() => (this.microservice = ''))
+    // );
   }
 }

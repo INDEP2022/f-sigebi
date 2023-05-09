@@ -102,29 +102,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('ID tipo de documento', this.idTypeDoc);
-    console.log('idReportAclara', this.idReportAclara);
-    console.log('idSolicitud', this.idSolicitud);
-    //Recupera información del usuario logeando para luego registrarlo como firmante
-    let token = this.authService.decodeToken();
-
-    //Verifica si ya existe ese usuario en la lista de firmantes
-    this.signatoriesService
-      .getSignatoriesName(this.idTypeDoc, this.idSolicitud, token.name)
-      .subscribe({
-        next: response => {
-          this.signatories = response.data;
-          console.log(
-            'Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más'
-          );
-          //Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más
-        },
-        error: error => {
-          //Si no hay firmantes, entonces asignar nuevos
-          console.log('Si no hay firmantes, entonces asignar nuevos');
-          this.registerSign();
-        },
-      });
+    //Método para confirmar si hay firmantes y eliminarlo
+    this.verificateFirm();
 
     this.signParams();
 
@@ -188,6 +167,32 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     }
   }
 
+  //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
+  verificateFirm() {
+    this.signatoriesService
+      .getSignatoriesName(this.idTypeDoc, this.idSolicitud)
+      .subscribe({
+        next: response => {
+          console.log('Existe firmante, proceder a eliminarlo');
+          this.signatories = response.data;
+          //Ciclo para eliminar todos los posibles firmantes existentes para esa solicitud
+          const count = response.count;
+          for (let i = 0; i < count; i++) {
+            this.signatoriesService
+              .deleteFirmante(this.signatories[i].signatoryId)
+              .subscribe({
+                next: response => console.log('Firmante borrado'),
+              });
+          }
+        },
+        error: error => {
+          //Si no hay firmantes, entonces asignar nuevos
+          console.log('Si no hay firmantes, entonces crear nuevo');
+          this.registerSign();
+        },
+      });
+  }
+
   registerSign() {
     let token = this.authService.decodeToken();
     const formData: Object = {
@@ -238,6 +243,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     //mostrar listado de reportes
 
     if (!this.listSigns && this.printReport && !this.isAttachDoc) {
+      this.verificateFirm();
       this.printReport = false;
       this.listSigns = true;
       this.title = 'Firma electrónica';
@@ -602,7 +608,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.alert(
               'info',
               'Error al generar firma electrónic',
-              error.error + '.2 Verificar datos del firmante'
+              error.error + 'Verificar datos del firmante'
             );
             this.updateStatusSigned();
           }
