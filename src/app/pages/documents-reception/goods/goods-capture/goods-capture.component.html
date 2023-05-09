@@ -163,6 +163,7 @@
           <ngx-select
             [form]="assetsForm"
             control="destino"
+            (change)="identChange()"
             [data]="goodLabels"
             value="labelNumber"
             bindLabel="e_descripcion"
