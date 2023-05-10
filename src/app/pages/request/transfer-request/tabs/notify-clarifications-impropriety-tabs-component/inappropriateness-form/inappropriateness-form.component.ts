@@ -87,6 +87,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    console.log('improcedenciaTransferentesVoluntarias DESDE EL PEQUEÑO');
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -124,7 +125,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.openReport(response);
         this.loading = false;
         this.close();
