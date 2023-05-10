@@ -23,4 +23,26 @@ function maxDate(max: any): ValidatorFn {
   };
 }
 
-export { minDate, maxDate };
+function dateRangeValidator(): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} | null => {
+    const startDate = control.get('startDate').value;
+    const endDate = control.get('endDate').value;
+
+    if (endDate && startDate) {
+      return startDate <= endDate ? null : { dateRange: true };
+    }
+
+    return null;
+  };
+}
+function getErrorMessage(fin:string,ini:string){
+  const stard = new Date(ini).getTime()
+  const end = new Date(fin).getTime()
+  if (fin && ini) {
+    return stard <= end ? null : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
+  }
+  return '';
+}
+
+
+export { minDate, maxDate , dateRangeValidator , getErrorMessage };
