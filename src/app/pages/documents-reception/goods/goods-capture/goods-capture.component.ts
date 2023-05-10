@@ -10,7 +10,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of, switchMap, tap, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
@@ -18,6 +21,7 @@ import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/come
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
+import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { HOME_DEFAULT } from 'src/app/utils/constants/main-routes';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
@@ -45,6 +49,7 @@ export class GoodsCaptureComponent
 {
   numerary: string | number = null;
   @ViewChild('initPage', { static: true }) initPage: ElementRef<HTMLDivElement>;
+  initalStatus: string = null;
   constructor(
     fb: FormBuilder,
     modalService: BsModalService,
@@ -57,7 +62,8 @@ export class GoodsCaptureComponent
     private tmpExpedientService: TmpExpedientService,
     private _expedienService: ExpedientService,
     private comerDetailsService: ComerDetailsService,
-    private accountMovementService: AccountMovementService
+    private accountMovementService: AccountMovementService,
+    private statusXScreenService: StatusXScreenService
   ) {
     super(
       fb,
@@ -344,6 +350,16 @@ export class GoodsCaptureComponent
     }
   }
 
+  identChange() {
+    const params = new FilterParams();
+    params.addFilter('screenKey', 'FACTOFPCAPTURABIE');
+    params.addFilter('identifier', this.formControls.identifica.value);
+    params.addFilter('statusFinal', SearchFilter.NULL, SearchFilter.NOT);
+    this.statusXScreenService.getList(params.getParams()).subscribe(res => {
+      this.formControls.status.setValue(res.data[0].statusFinal.status ?? null);
+    });
+  }
+
   getAccountMovement() {
     const params = new FilterParams();
     params.addFilter('numberMotion', this.numerary);
@@ -468,7 +484,7 @@ export class GoodsCaptureComponent
 
   createGood() {
     this.loading = true;
-    console.log(this.goodToSave.fileNumber);
+
     if (this.params.origin == FLYERS_REGISTRATION_CODE) {
       this.createFromParams();
     } else {
@@ -615,6 +631,7 @@ export class GoodsCaptureComponent
     this.goodToSave.unit = this.formControls.unidadMedida.value + '';
     this.goodToSave.referenceValue = this.formControls.valRef.value;
     this.goodToSave.satDepartureNumber = this.formControls.noPartida.value;
+    this.goodToSave.status = this.formControls.status.value;
     this.goodToSave.vaultNumber;
     this.goodToSave.stateConservation =
       this.formControls.estadoConservacion.value;
