@@ -359,7 +359,7 @@ export class NotificationAssetsTabComponent
         this.onLoadToast(
           'warning',
           'Acción no permitida',
-          'La notificación no se puede rechazar porque ya se encunetra a espera de respuesta del SAT'
+          'La notificación ya fue aclarada'
         );
       } else if (this.selectedRow.answered != 'ACLARADA') {
         const refuseObj = { ...this.valuesNotifications }; //Info de sus notificaciones
@@ -429,8 +429,8 @@ export class NotificationAssetsTabComponent
           );
         } else {
           this.alertQuestion(
-            'question',
-            'Confirmación',
+            'info',
+            'Acción',
             'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -449,15 +449,52 @@ export class NotificationAssetsTabComponent
     return new Promise((resolve, reject) => {
       this.goodsReject.getElements().then(data => {
         data.map((bien: IGoodresdev) => {
-          this.updateStatusGood(
-            'ACLARADO',
-            'VERIFICAR_CUMPLIMIENTO',
-            bien.goodid,
-            bien.goodresdev,
-            bien.typeorigin
-          );
+          console.log('bien', bien);
+          this.paramsCheckInfo.getValue()[
+            'filter.goodId'
+          ] = `$eq:${bien.goodid}`;
+          this.rejectedGoodService
+            .getAllFilter(this.paramsCheckInfo.getValue())
+            .subscribe({
+              next: response => {
+                response.data.map(notification => {
+                  if (
+                    notification.clarificationType == 'SOLICITAR_ACLARACION'
+                  ) {
+                    if (
+                      notification.answered == 'ACLARADA' ||
+                      notification.answered == 'RECHAZADA'
+                    ) {
+                      this.updateStatusGood(
+                        'ACLARADO',
+                        'VERIFICAR_CUMPLIMIENTO',
+                        bien.goodid,
+                        bien.goodresdev,
+                        bien.typeorigin
+                      );
+                    }
+                  } else if (
+                    notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
+                  ) {
+                    if (
+                      notification.answered == 'IMPROCEDENTE' ||
+                      notification.answered == 'RECHAZADA'
+                    ) {
+                      console.log('IMPROCEDENTE', notification);
+                      this.updateStatusGood(
+                        'IMPROCEDENTE',
+                        'IMPROCEDENTE',
+                        bien.goodid,
+                        bien.goodresdev,
+                        bien.typeorigin
+                      );
+                    }
+                  }
+                });
+              },
+              error: error => {},
+            });
         });
-
         resolve(true);
       });
     });
@@ -1435,7 +1472,9 @@ export class NotificationAssetsTabComponent
           processStatus: statusProcess,
         };
         this.goodService.update(good).subscribe({
-          next: data => {},
+          next: data => {
+            console.log('actualizado', data);
+          },
           error: error => {
             console.log(error);
           },
@@ -1721,7 +1760,7 @@ export class NotificationAssetsTabComponent
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
-        //this.close();
+        this.endClarification();
       }
     });
   }

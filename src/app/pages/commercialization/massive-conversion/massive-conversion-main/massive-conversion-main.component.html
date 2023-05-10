@@ -48,6 +48,7 @@
                       dropdownToggle
                       id="loadBtn"
                       type="button"
+                      [disabled]="isLoadingLoadFile"
                       class="btn btn-sm btn-info btn-block active me-2 font-size-14 dropdown-toggle"
                       aria-controls="dropdown-animated">
                       <i class="bx bx-file text-light float-icon"></i>
@@ -68,7 +69,7 @@
                             hidden
                             type="file"
                             accept=".csv, .xlsx, .xls"
-                            (change)="readFile($event, 'rfc')"
+                            (change)="onClickLoadFile($event, 'rfc')"
                         /></a>
                       </li>
                       <li role="menuitem">
@@ -80,7 +81,7 @@
                             hidden
                             type="file"
                             accept=".csv, .xlsx, .xls"
-                            (change)="readFile($event, 'client_id')"
+                            (change)="onClickLoadFile($event, 'client_id')"
                         /></a>
                       </li>
                     </ul>
@@ -148,7 +149,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
               <p class="text-muted">
-                {{ selectedEvent.eventDate | date : 'medium' }}
+                {{ selectedEvent.eventDate | date: 'medium' }}
               </p>
             </div>
             <div
@@ -168,7 +169,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
               <p class="text-muted">
-                {{ selectedEvent.failedDate | date : 'medium' }}
+                {{ selectedEvent.failedDate | date: 'medium' }}
               </p>
             </div>
             <div
