@@ -106,7 +106,6 @@ export class UserFormComponent extends BasePage implements OnInit {
         this.programmingService.updateUserProgramming(formData).subscribe({
           next: res => {
             this.loading = true;
-            this.onLoadToast('success', 'Usuario editado correctamente', '');
             this.modalService.content.callback(true);
             this.close();
           },

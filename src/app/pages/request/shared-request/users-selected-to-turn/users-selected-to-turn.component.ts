@@ -125,6 +125,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   confirm(): void {
     this.triggerEvent(this.user);
     this.close();
+    this.modalRef.content.callback(this.user);
   }
 
   close(): void {
