@@ -605,7 +605,7 @@ export class NotificationAssetsTabComponent
 
   finishClarifiImpro() {
     let message =
-      '¿Esta seguro de que desea finalizar la aclaración?\nSe sugiere subir documentación soporte para esta sección';
+      '¿Está seguro de que desea finalizar la aclaración?\nSe sugiere subir documentación soporte para esta sección';
     this.alertQuestion(
       undefined,
       'Confirmación de Aclaración',
