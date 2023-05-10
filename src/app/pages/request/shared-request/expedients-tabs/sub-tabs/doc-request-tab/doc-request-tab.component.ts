@@ -77,6 +77,8 @@ export class DocRequestTabComponent
   typesDocuments: any = [];
   idDelegation: number = 0;
   idState: string = '';
+  statusTask: any = '';
+  task: any;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -96,6 +98,11 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
+    // DISABLED BUTTON - FINALIZED //
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     this.prepareForm();
     this.getRegDelegation(new ListParams());
     this.getState(new ListParams());
@@ -216,10 +223,15 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async data => {
+          console.log('docs', data);
           const transferent = await this.getInfoRequest();
           if (transferent == 1) {
             const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document' && item.xidTransferente == 1) {
+              if (
+                item.dDocType == 'Document' &&
+                item.xidTransferente == 1 &&
+                item.xidBien == '         '
+              ) {
                 return item;
               }
             });
@@ -240,12 +252,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {
@@ -258,7 +270,7 @@ export class DocRequestTabComponent
 
           if (transferent != 1) {
             const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document') {
+              if (item.dDocType == 'Document' && item.xidBien == '         ') {
                 return item;
               }
             });
@@ -278,12 +290,12 @@ export class DocRequestTabComponent
                 );
                 items['transferentName'] = transferent;
               }
-              if (items?.xestado) {
+              /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-                items.xtipoDocumento = filter[0]?.ddescription;
-                return items;
-              }
+              } */
+              items.xtipoDocumento = filter[0]?.ddescription;
+              return items;
             });
 
             Promise.all(info).then(x => {
@@ -765,7 +777,7 @@ export class DocRequestTabComponent
         this.title = 'Expedientes';
         break;
       case 'request-expedient':
-        this.title = '';
+        this.title = 'Solicitud';
         break;
       default:
         break;

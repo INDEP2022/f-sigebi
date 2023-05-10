@@ -19,13 +19,16 @@ import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DOCUMENTS_SCAN_COLUMNS } from '../utils/documents-scan-columns';
 import { DocumentsScanForm } from '../utils/documents-scan-form';
 import { DOCUMENTS_SCAN_MESSAGES } from '../utils/documents-scan-messages';
-
+const INVALID_USER = 'INVALIDO';
+const SERA_USER = 'SERA';
+const DEVELOP_USER = 'DESARROLLO';
 @Component({
   selector: 'app-documents-scan',
   templateUrl: './documents-scan.component.html',
@@ -46,6 +49,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   requestOrigin: string = '';
   noDocumentsFound: boolean = false;
   noFoliosFound: boolean = false;
+  registerUser: string = INVALID_USER;
   get controls() {
     return this.form.controls;
   }
@@ -55,7 +59,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     private documentsService: DocumentsService,
     private fileBrowserService: FileBrowserService,
     private modalService: BsModalService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     super();
     this.activatedRoute.queryParams
@@ -116,6 +121,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     this.loading = true;
     return this.getDocuments(params).pipe(
       catchError(error => {
+        this.registerUser = INVALID_USER;
         this.loading = false;
         const message = DOCUMENTS_SCAN_MESSAGES.FOLIO_NOT_FOUND(this.folio);
         this.handleErrorAlert(message, error);
@@ -123,6 +129,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       }),
       map(response => response.data[0] ?? null),
       tap(document => {
+        this.registerUser = document.userRegistersScan ?? INVALID_USER;
         this.loading = false;
         if (!document) {
           return;
@@ -231,6 +238,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   }
 
   onSelectFolio(document: IDocuments) {
+    this.registerUser = document.userRegistersScan ?? INVALID_USER;
+    console.log(this.registerUser);
     const { id } = document;
     this.folio = Number(id);
     this.loadImages(this.folio).subscribe();
@@ -267,6 +276,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   }
 
   async confirmDelete() {
+    const token = this.authService.decodeToken();
+    const user = token?.preferred_username?.toUpperCase();
+    const validUsers = [user, SERA_USER, DEVELOP_USER];
     if (this.filesToDelete.length < 1) {
       this.onLoadToast(
         'warning',
@@ -275,10 +287,21 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       );
       return;
     }
+    if (
+      !validUsers.find(user => user == this.registerUser) ||
+      this.registerUser == INVALID_USER
+    ) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No tiene permiso para borrar las imágenes. Sólo el usuario que escaneo puede borrar las imágenes.'
+      );
+      return;
+    }
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que deseas eliminar las imágenes seleccionadas?'
+      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
     );
 
     if (result.isConfirmed) {
@@ -290,12 +313,13 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const obs = this.filesToDelete.map(filename => this.deleteFile(filename));
     forkJoin(obs).subscribe({
       complete: () => {
+        this.files = [];
         this.onLoadToast(
           'success',
           'Se eliminaron los archivos correctamente',
           ''
         );
-        this.filesToDelete.length = 0;
+        this.filesToDelete = [];
         this.loadImages(this.folio).subscribe(() => {
           this.updateSheets();
         });
@@ -304,13 +328,21 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   }
 
   updateSheets() {
+    const token = this.authService.decodeToken();
     let scanStatus = null;
     const sheets = `${this.files.length}`;
     if (this.files.length > 0) {
       scanStatus = 'ESCANEADO';
     }
+    const userRegistersScan = token?.preferred_username?.toUpperCase();
+    const dateRegistrationScan = new Date();
     this.documentsService
-      .update(this.folio, { sheets, scanStatus })
+      .update(this.folio, {
+        sheets,
+        scanStatus,
+        userRegistersScan,
+        dateRegistrationScan,
+      })
       .subscribe(() => {
         const params = this.documentsParams.getValue();
         this.documentsParams.next(params);

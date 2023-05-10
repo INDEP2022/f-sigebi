@@ -97,7 +97,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
     if (this.fraction != null) {
       this.edit = true;
       let classification: ISiabClasification = this.fraction
-        .clasificationId as ISiabClasification;
+        .siabClasification as ISiabClasification;
       let norm: INorm = this.fraction.normId as INorm;
       this.fractionForm.patchValue({
         normId: norm?.id,

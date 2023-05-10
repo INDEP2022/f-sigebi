@@ -1,41 +1,48 @@
 export const UPDATE_MASS_VALUE_COLUMNS = {
-  solicitante: {
+  SOLICITANTE: {
     title: 'Solicitante',
     width: '25px',
     type: 'string',
     sort: false,
   },
-  fecavaluo: {
+  FECAVALUO: {
     title: 'Fecha de Avalúo',
     type: 'string',
     sort: false,
+    /*valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      console.log(typeof value)
+      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+    },*/
   },
-  institucion: {
+  INSTITUCION: {
     title: 'Institución',
     type: 'string',
     sort: false,
   },
-  perito: {
+  PERITO: {
     title: 'Perito',
     type: 'string',
     sort: false,
   },
-  observ: {
+  OBSERV: {
     title: 'Observaciones',
     type: 'string',
     sort: false,
   },
-  nobien: {
+  NOBIEN: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
   },
-  valoravaluo: {
+  VALORAVALUO: {
     title: 'Valor avalúo',
     type: 'string',
     sort: false,
   },
-  moneda: {
+  MONEDA: {
     title: 'Moneda',
     type: 'string',
     sort: false,

@@ -1,7 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
@@ -15,9 +24,9 @@ import { COPY_DOCUMENTATION_GOODS_COLUMNS } from './copy-documentation-goods.col
 })
 export class CopyDocumentationGoodsComponent
   extends BasePage
-  implements OnInit, OnDestroy
+  implements OnInit, OnDestroy, OnChanges
 {
-  data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   tableSettings = {
@@ -34,6 +43,16 @@ export class CopyDocumentationGoodsComponent
 
   dataTable: ICopiesOfficialOpinion[] = [];
 
+  @Input() set loadingData(value: boolean) {
+    this.loading = value;
+  }
+
+  @Input() set data(value: ICopiesOfficialOpinion[]) {
+    this.dataTable = value;
+  }
+
+  @Output() loadingDialog = new EventEmitter<boolean>();
+
   constructor(
     private modalService: BsModalService,
     private copiesOfficialOpinionService: CopiesOfficialOpinionService
@@ -41,42 +60,22 @@ export class CopyDocumentationGoodsComponent
     super();
   }
 
-  ngOnInit(): void {
-    this.loading = true;
-    this.data
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(x => {
-        this.getData();
-      });
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes && changes['data']) {
+      if (changes['data'].currentValue.length > 0) {
+        this.loading = false;
+      }
+    }
   }
 
-  getData() {
-    this.copiesOfficialOpinionService.getAll().subscribe({
-      next: data => {
-        this.dataTable = data.data;
-        this.data.load(this.dataTable);
-        this.totalItems = data.count || 0;
-        this.data.refresh();
-        this.loading = false;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
-  }
+  ngOnInit(): void {}
 
   openForm(copiesOfficial?: ICopiesOfficialOpinion) {
-    console.log(copiesOfficial);
     let config: ModalOptions = {
       initialState: {
         copiesOfficial,
         callback: (next: boolean) => {
-          if (next) this.getData();
+          if (next) this.loadingDialog.emit(true);
         },
       },
       class: 'modal-lg modal-dialog-centered',

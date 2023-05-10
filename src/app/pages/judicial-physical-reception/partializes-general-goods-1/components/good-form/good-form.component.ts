@@ -9,8 +9,8 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
-import { AlertButton } from '../../scheduled-maintenance-1/models/alert-button';
-import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
+import { AlertButton } from '../../../scheduled-maintenance-1/models/alert-button';
+import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
   selector: 'app-good-form',
@@ -32,6 +32,11 @@ export class GoodFormComponent extends AlertButton implements OnInit {
 
   ngOnInit(): void {
     this.service.initFormGood();
+    this.selectGood(this.service.getSavedGood());
+  }
+
+  get saldo() {
+    return this.service.formControl.get('saldo');
   }
 
   get form() {
@@ -123,6 +128,11 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     let bandera;
     let clasif: number;
     console.log(good.goodClassNumber);
+    const newBinesPar = this.service.bienesPar.filter(bien => {
+      bien.noBien = good.goodId;
+    });
+    this.service.bienesPar = newBinesPar;
+    this.service.savePartializeds();
     if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
       bandera = 0;
       const validacion = await this.validateGood(good);
@@ -145,14 +155,18 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.good = good;
     if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodClassNumber)) {
       this.service.setSettingsFirstCase();
-      if (+good.val14 <= 0) {
+      if (isNaN(+good.val2) || +good.val14 <= 0 || good.appraisedValue <= 0) {
         this.onLoadToast(
           'error',
           'Parcialización',
           'Bien ' + good.goodId + ' no cuenta con importe'
         );
+        this.service.good = null;
         return;
       }
+      this.saldo.setValue(
+        good.appraisedValue ? good.appraisedValue : good.val14
+      );
     } else {
       this.service.setSettingsSecondCase();
     }

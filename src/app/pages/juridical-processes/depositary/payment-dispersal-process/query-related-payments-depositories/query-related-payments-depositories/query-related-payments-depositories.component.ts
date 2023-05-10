@@ -91,6 +91,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   // Loading
   loadingAppointment: boolean = false;
   loadingGood: boolean = false;
+  loadingGoodAccount: boolean = false;
   loadingSirsaeProcess: boolean = false;
   // Send Sirsae
   totalItemsSirsae: number = 0;
@@ -99,23 +100,35 @@ export class QueryRelatedPaymentsDepositoriesComponent
   // Errores de Sirsae
   errorsSirsae: any[] = [];
   screenKey: string = 'FCONDEPODISPAGOS';
+  origin: string = null;
+  noBienParams: number = null;
 
   constructor(
     private fb: FormBuilder,
-    private activateRoute: ActivatedRoute,
     private svQueryRelatedPaymentsService: QueryRelatedPaymentsService,
     private datePipe: DatePipe,
     private excelService: ExcelService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.noBienParams = params['goodNumber']
+          ? Number(params['goodNumber'])
+          : null;
+        this.origin = params['origin'] ?? null;
+        console.log(params);
+      });
     this.errorsSirsae = [];
     this.loadingSirsaeProcess = false;
+    this.loadingGoodAccount = false;
     this.prepareForm();
-    const id = this.activateRoute.snapshot.paramMap.get('id');
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (id) {
       if (!isNaN(Number(id))) {
         this.noBienReadOnly = Number(id);
@@ -214,7 +227,51 @@ export class QueryRelatedPaymentsDepositoriesComponent
 
   btnExportarExcel(): any {
     console.log('Exportar Excel');
-    // FUNCION PENDIENTE DE DESARROLLO
+    // SE MANDA AL BACK PARA OBTENER EL REPORTE
+    if (this.form.get('noBien').valid) {
+      if (!this.noBienReadOnly) {
+        this.alert(
+          'warning',
+          'Carga la Información del Bien primero para Continuar',
+          ''
+        );
+        return;
+      }
+      this.loadingGoodAccount = true;
+      this.svQueryRelatedPaymentsService
+        .getExportExcell(this.noBienReadOnly)
+        .subscribe({
+          next: res => {
+            this.downloadFile(
+              res,
+              `ESTADO_DE_CUENTA_DEL_BIEN_${
+                this.noBienReadOnly
+              }_${new Date().getTime()}`
+            );
+          },
+          error: err => {
+            this.loadingGoodAccount = false;
+            this.alert(
+              'warning',
+              'Número de Bien',
+              NOT_FOUND_GOOD(err.error.message)
+            );
+          },
+        });
+    } else {
+      this.alert('warning', 'Número de Bien', ERROR_GOOD_NULL);
+    }
+  }
+
+  downloadFile(base64: any, fileName: any) {
+    const linkSource = `data:file/csv;base64,${base64}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName + '.csv';
+    downloadLink.target = '_blank';
+    this.loadingGoodAccount = false;
+    downloadLink.click();
+    downloadLink.remove();
   }
 
   btnEnviarSIRSAE(): any {
@@ -244,6 +301,18 @@ export class QueryRelatedPaymentsDepositoriesComponent
     // PASAR SOLO EL NÚMERO DE BIEN
     // this.alert('info', 'LLAMAR PANTALLA FCONDEPOREPINGXBIEN', '');
     if (this.form.get('noBien').valid) {
+      if (!this.noBienReadOnly) {
+        this.alert(
+          'warning',
+          'Carga la Información del Bien primero para Continuar',
+          ''
+        );
+        return;
+      }
+      this.svQueryRelatedPaymentsService.setGoodParamGood(
+        this.noBienReadOnly,
+        this.screenKey
+      ); // Set good param
       this.router.navigate(
         ['/pages/juridical/depositary/income-orders-depository-goods'],
         {
@@ -683,5 +752,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
       dataSet.push(newObj);
     });
     return dataSet;
+  }
+
+  goBack() {
+    if (this.origin == 'FCONDEPOCONCILPAG') {
+      this.router.navigate([
+        '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments/' +
+          this.noBienParams,
+      ]);
+    }
   }
 }

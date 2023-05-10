@@ -30,4 +30,8 @@ export class ParametersService extends HttpService {
   getRNomencla(params?: string): Observable<IListResponse<IParameters>> {
     return this.get<IListResponse<IParameters>>(this.route.rNomecla, params);
   }
+
+  getPhaseEdo(date: string): Observable<IListResponse<IParameters>> {
+    return this.get<IListResponse<IParameters>>(this.route.FaseEdo, date);
+  }
 }

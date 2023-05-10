@@ -1,23 +1,38 @@
-<form [formGroup]="form" class="form-material">
+<form [formGroup]="searchForm" class="form-material" (ngSubmit)="setFormData()">
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
-        [control]="form.get('id')"
+        [control]="searchForm.get('id')"
         label="No&#46; Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="id" />
+        <input type="number" class="form-control" formControlName="id" />
       </form-field>
     </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="searchForm.get('typeDict')" label="Tipo">
+        <input class="form-control" formControlName="typeDict" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-8 p-2">
+      <button
+        type="submit"
+        [disabled]="searchForm.invalid"
+        class="btn btn-sm btn-primary active">
+        Buscar
+      </button>
+    </div>
+  </div>
+</form>
+<form [formGroup]="form" class="form-material" (ngSubmit)="send()">
+  <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
         [control]="form.get('expedientNumber')"
         label="No&#46; Expediente">
-        <input class="form-control" formControlName="expedientNumber" />
+        <input
+          type="number"
+          class="form-control"
+          formControlName="expedientNumber" />
       </form-field>
-    </div>
-    <div class="col-sm-12 col-12 col-md-8 p-2">
-      <button class="btn btn-sm btn-primary active" (click)="emitChange()">
-        Buscar
-      </button>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('wheelNumber')" label="No&#46; Volante">
@@ -31,11 +46,7 @@
         <input class="form-control" formControlName="delegationDictNumber" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 p-2">
-      <form-field [control]="form.get('typeDict')" label="Tipo">
-        <input class="form-control" formControlName="typeDict" />
-      </form-field>
-    </div>
+
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
         [control]="form.get('statusDict')"
@@ -47,7 +58,10 @@
       <form-field
         [control]="form.get('passOfficeArmy')"
         label="Clave Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="passOfficeArmy" />
+        <input
+          maxlength="100"
+          class="form-control"
+          formControlName="passOfficeArmy" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -71,7 +85,10 @@
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('esDelit')" label="Delito">
-        <input class="form-control" formControlName="esDelit" />
+        <select class="form-control" formControlName="esDelit">
+          <option value="S">Sí</option>
+          <option value="N">No</option>
+        </select>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -151,6 +168,21 @@
           formControlName="entryHcDate"
           bsDatepicker />
       </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <button
+        class="btn btn-sm btn-primary active"
+        type="submit"
+        [disabled]="form.invalid">
+        Guardar
+      </button>
+      <a
+        (click)="resetForm()"
+        class="btn btn-danger active btn-sm ml-3"
+        type="submit">
+        <i class="bx bx-reset"></i>
+        Limpiar
+      </a>
     </div>
   </div>
 </form>

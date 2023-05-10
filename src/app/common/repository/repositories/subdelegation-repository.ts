@@ -44,7 +44,7 @@ export class SubDelegationRepository<T> implements SubDelegationRepository<T> {
     const params = _params ? this.makeParams(_params) : {};
     const filter: string = '?limit=10&page=1&filter.delegationNumber=';
     return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL2}${route}${filter}${id}`,
+      `${environment.API_URL}${route}${filter}${id}`,
       { params }
     );
   }

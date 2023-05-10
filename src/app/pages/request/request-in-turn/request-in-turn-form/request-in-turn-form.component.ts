@@ -74,6 +74,7 @@ export class RequestInTurnFormComponent implements OnInit {
     this.initialForm();
     this.deleRegionalId = Number(this.authService.decodeToken().department);
     this.getRegionalDelegationId(new ListParams());
+    this.getStateOfRepublic(new ListParams());
     this.getAffair(new ListParams());
   }
 
@@ -88,18 +89,18 @@ export class RequestInTurnFormComponent implements OnInit {
       authority: [null],
       expedient: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
       affair: [null],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       acta: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
-      ascertainment: [null, [Validators.maxLength(30)]],
+      ascertainment: [null, [Validators.maxLength(50)]],
       cause: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
     });
 
@@ -115,10 +116,10 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          this.selectTransfer = new DefaultSelect();
+          this.selectTransfer = new DefaultSelect([], 0, true);
 
-          this.selectStation = new DefaultSelect();
-          this.selectAuthority = new DefaultSelect();
+          this.selectStation = new DefaultSelect([], 0, true);
+          this.selectAuthority = new DefaultSelect([], 0, true);
 
           this.searchForm.controls['stateOfRepublic'].reset();
           this.searchForm.controls['transfer'].reset();
@@ -133,19 +134,18 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm.controls['stateOfRepublic'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
-          console.log('rest2323232');
-          this.selectStation = new DefaultSelect();
-          this.selectAuthority = new DefaultSelect();
-          this.selectTransfer = new DefaultSelect();
+          this.selectStation = new DefaultSelect([], 0, true);
+          this.selectAuthority = new DefaultSelect([], 0, true);
+          this.selectTransfer = new DefaultSelect([], 0, true);
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
           this.stateId = data;
           this.getTransferente(new ListParams());
         } else {
-          this.selectStation = new DefaultSelect();
-          this.selectAuthority = new DefaultSelect();
-          this.selectTransfer = new DefaultSelect();
+          this.selectStation = new DefaultSelect([], 0, true);
+          this.selectAuthority = new DefaultSelect([], 0, true);
+          this.selectTransfer = new DefaultSelect([], 0, true);
           this.searchForm.controls['transfer'].reset();
           this.searchForm.controls['station'].reset();
           this.searchForm.controls['authority'].reset();
@@ -154,23 +154,23 @@ export class RequestInTurnFormComponent implements OnInit {
     );
     this.searchForm.controls['transfer'].valueChanges.subscribe((data: any) => {
       if (data) {
-        this.selectStation = new DefaultSelect();
-        this.selectAuthority = new DefaultSelect();
+        this.selectStation = new DefaultSelect([], 0, true);
+        this.selectAuthority = new DefaultSelect([], 0, true);
 
         this.searchForm.controls['station'].reset();
         this.searchForm.controls['authority'].reset();
         this.transferenceId = data;
         this.getStation(new ListParams());
       } else {
-        this.selectStation = new DefaultSelect();
-        this.selectAuthority = new DefaultSelect();
+        this.selectStation = new DefaultSelect([], 0, true);
+        this.selectAuthority = new DefaultSelect([], 0, true);
         this.searchForm.controls['station'].reset();
         this.searchForm.controls['authority'].reset();
       }
     });
     this.searchForm.controls['station'].valueChanges.subscribe((data: any) => {
       if (data) {
-        this.selectAuthority = new DefaultSelect();
+        this.selectAuthority = new DefaultSelect([], 0, true);
         this.stationId = data;
         this.getAuthority(new ListParams());
       }
@@ -178,7 +178,8 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getRegionalDelegationId(params: ListParams) {
-    //const id = this.authService.decodeToken().department;
+    // const id = this.authService.decodeToken().department;
+    // console.log(id);
     //return id;
     params['filter.description'] = `$ilike:${params.text}`;
     params['sortBy'] = 'description:ASC';
@@ -186,7 +187,7 @@ export class RequestInTurnFormComponent implements OnInit {
       next: resp => {
         this.selectRegDele = new DefaultSelect(resp.data, resp.count);
       },
-      error: error => (this.selectRegDele = new DefaultSelect()),
+      error: error => (this.selectRegDele = new DefaultSelect([], 0, true)),
     });
   }
   getAffair(params?: ListParams) {
@@ -196,7 +197,7 @@ export class RequestInTurnFormComponent implements OnInit {
         this.selectAffeir = new DefaultSelect(data.data, data.count);
       },
       error => {
-        this.selectAffeir = new DefaultSelect();
+        this.selectAffeir = new DefaultSelect([], 0, true);
       }
     );
   }
@@ -213,7 +214,7 @@ export class RequestInTurnFormComponent implements OnInit {
           });
           this.selectTransfer = new DefaultSelect(data.data, data.count);
         },
-        error: error => (this.selectTransfer = new DefaultSelect()),
+        error: error => (this.selectTransfer = new DefaultSelect([], 0, true)),
       });
   }
 
@@ -231,7 +232,7 @@ export class RequestInTurnFormComponent implements OnInit {
         this.selectState = new DefaultSelect(result, result.length);
       },
       error => {
-        this.selectState = new DefaultSelect();
+        this.selectState = new DefaultSelect([], 0, true);
       }
     );
   }
@@ -271,7 +272,6 @@ export class RequestInTurnFormComponent implements OnInit {
     this.stationService;
     this.authorityService.getAll(params).subscribe(
       (data: IListResponse<IAuthority>) => {
-        console.log(data);
         data.data.map((data: any) => {
           data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
@@ -294,18 +294,14 @@ export class RequestInTurnFormComponent implements OnInit {
     // delete params.pageSize;
     // delete params.take;
     // delete params.text;
-    console.log(params);
+
     this.sendSearchForm.emit(params);
   }
 
   reset(): void {
-    this.selectTransfer = new DefaultSelect();
-    // this.selectStation = new DefaultSelect();
-    this.selectAuthority = new DefaultSelect();
-    this.selectState = new DefaultSelect();
-    // // this.selectAffeir = new DefaultSelect();
-    // // this.selectRegDele = new DefaultSelect();
-    // console.log('rest');
+    this.selectTransfer = new DefaultSelect([], 0, true);
+    this.selectAuthority = this.selectTransfer = new DefaultSelect([], 0, true);
+    this.selectState = this.selectTransfer = new DefaultSelect([], 0, true);
     this.searchForm.reset();
     this.resetForm.emit(true);
     this.deleRegionalId = Number(this.authService.decodeToken().department);
@@ -341,41 +337,33 @@ export class RequestInTurnFormComponent implements OnInit {
         `${date1},${date2}`,
         SearchFilter.BTW
       );
-      // params['filter.applicationDate'] = `$btw:${date1},${date2}`;
     }
     if (this.searchForm.controls['authority'].value != null) {
       const authority = this.searchForm.controls['authority'].value;
       params.addFilter('authorityId', authority, SearchFilter.EQ);
-      // params['filter.authorityId'] = `$eq:${authority}`;
     }
     if (this.searchForm.controls['ascertainment'].value != null) {
       const ascertainment = this.searchForm.controls['ascertainment'].value;
       params.addFilter('previousInquiry', ascertainment, SearchFilter.ILIKE);
-      // params['filter.previousInquiry'] = `$eq:${ascertainment}`;
     }
 
     if (this.searchForm.controls['stateOfRepublic'].value != null) {
       const stateOfRepublic = this.searchForm.controls['stateOfRepublic'].value;
       params.addFilter('keyStateOfRepublic', stateOfRepublic, SearchFilter.EQ);
-      // params['filter.keyStateOfRepublic'] = `$eq:${stateOfRepublic}`;
     }
 
     if (this.searchForm.controls['contributor'].value != null) {
       const contributor = this.searchForm.controls['contributor'].value;
       params.addFilter('indicatedTaxpayer', contributor, SearchFilter.ILIKE);
-      // params['filter.indicatedTaxpayer'] = `$eq:${contributor}`;
     }
 
     if (this.searchForm.controls['cause'].value != null) {
       const cause = this.searchForm.controls['cause'].value;
-      // params['filter.lawsuit'] = `$eq:${cause}`;
       params.addFilter('lawsuit', cause, SearchFilter.ILIKE);
     }
 
     if (this.searchForm.controls['transfer'].value != null) {
       const transfer = this.searchForm.controls['transfer'].value;
-      console.log(transfer);
-      // params['filter.transferenceId'] = `$eq:${transfer}`;
       params.addFilter('transferenceId', transfer, SearchFilter.EQ);
     }
 
@@ -383,29 +371,24 @@ export class RequestInTurnFormComponent implements OnInit {
       const dateJob = this.searchForm.controls['dateJob'].value;
       const date1 = this.getDateFormat(dateJob[0]);
       const date2 = this.getDateFormat(dateJob[1]);
-      // params['filter.paperDate'] = `$btw:${date1},${date2}`;
-      params.addFilter('paperDate', `$btw:${date1},${date2}`, SearchFilter.BTW);
+      params.addFilter('paperDate', `${date1},${date2}`, SearchFilter.BTW);
     }
     if (this.searchForm.controls['expedient'].value != null) {
       const expedient = this.searchForm.controls['expedient'].value;
       params.addFilter('transferenceFile', expedient, SearchFilter.ILIKE);
-      // params['filter.transferenceFile'] = `$eq:${expedient}`;
     }
 
     if (this.searchForm.controls['station'].value != null) {
       const station = this.searchForm.controls['station'].value;
-      // params['filter.stationId'] = `$eq:${station}`;
       params.addFilter('stationId', station, SearchFilter.EQ);
     }
     if (this.searchForm.controls['acta'].value != null) {
       const acta = this.searchForm.controls['acta'].value;
       params.addFilter('circumstantialRecord', acta, SearchFilter.ILIKE);
-      // params['filter.circumstantialRecord'] = `$eq:${acta}`;
     }
     if (this.searchForm.controls['affair'].value != null) {
       const affair = this.searchForm.controls['affair'].value;
       params.addFilter('affair', affair, SearchFilter.EQ);
-      // params['filter.affair'] = `$eq:${affair}`;
     }
 
     return params;

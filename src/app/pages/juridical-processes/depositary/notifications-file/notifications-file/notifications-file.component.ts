@@ -17,7 +17,7 @@ import {
 import { NotificationsFileService } from './services/notifications-file.service';
 import { NOTIFICATIONS_FILE_LOAD_COLUMNS } from './utils/notifications-file.columns';
 //Rxjs
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ERROR_AREA_DESTINO_DATA,
@@ -45,6 +45,8 @@ export class NotificationsFileComponent
   dataTable: LocalDataSource = new LocalDataSource();
   public form: FormGroup;
   fileNumber: number = null;
+  fileNumberParam: number = null;
+  origin: string = null;
   notificationByExpedient = new BehaviorSubject<ListParams>(new ListParams());
   totalData: number = 0;
   loadingTableData: boolean = false;
@@ -52,19 +54,30 @@ export class NotificationsFileComponent
   constructor(
     private fb: FormBuilder,
     private notificationsFileService: NotificationsFileService,
-    private route: ActivatedRoute
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.fileNumberParam = null;
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        // this.fileNumberParam = params['no_expediente']
+        //   ? Number(params['no_expediente'])
+        //   : null;
+        this.origin = params['origin'] ?? null;
+      });
     this.setSettingsTable();
     this.prepareForm();
-    let param = this.route.snapshot.paramMap.get('id');
+    let param = this.activatedRoute.snapshot.paramMap.get('id');
     if (param) {
-      this.fileNumber = parseInt(param);
+      this.fileNumber = Number(param);
       this.form.get('fileNumber').setValue(this.fileNumber);
       this.form.updateValueAndValidity();
+      this.fileNumberParam = this.fileNumber;
       this.form.get('fileNumber').markAsTouched();
       this.btnGetNotificationsByExpedient();
     }
@@ -209,5 +222,14 @@ export class NotificationsFileComponent
           );
         },
       });
+  }
+
+  goBack() {
+    if (this.origin == 'FACTJURBIENESXAMP') {
+      this.router.navigate([
+        '/pages/juridical/depositary/assignment-protected-assets/' +
+          this.fileNumberParam,
+      ]);
+    }
   }
 }

@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-4">
           <div class="row">
-            <span>STATUS</span>
+            <span>{{ statusProceeding }}</span>
             <!--  <div class="col-md-9">
               <form-field
                 [control]="form.get('averPrev')"
@@ -42,6 +42,26 @@
                   formControlName="averPrev" />
               </form-field>
             </div> -->
+          </div>
+        </div>
+        <div *ngIf="navigateProceedings" class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <button
+                id="expedient-number"
+                [disabled]="!prevProce"
+                class="btn btn-secondary btn-sm active mr-2"
+                (click)="prevProceeding()">
+                Anterior
+              </button>
+              <button
+                id="expedient-number"
+                class="btn btn-secondary btn-sm active"
+                [disabled]="!nextProce"
+                (click)="nextProceeding()">
+                Siguiente
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -120,9 +140,11 @@
             <div class="col-md-2">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
-                  type="text"
+                  type="number"
                   [class]="initialBool ? 'disabled' : ''"
                   class="form-control"
+                  [min]="0"
+                  [max-length]="5"
                   formControlName="folio" />
               </form-field>
             </div>
@@ -184,7 +206,6 @@
                 label="Fecha Elaboraci&oacute;n">
                 <input
                   bsDatepicker
-                  (ngModelChange)="fecElab()"
                   class="form-control"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
@@ -282,22 +303,23 @@
               size="small">
               {{ labelActa }}
             </button>
-            <button
+            <!--      <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
               size="small">
               Envia PGR
-            </button>
+            </button> -->
             <a
-              [routerLink]="['partialization']"
-              class="btn btn-secondary btn-sm active mr-2 ml-2"
+              class="my-1 mx-2 btn btn-warning active btn-sm"
               size="small"
-              >Parcializaci&oacute;n</a
-            >
+              (click)="goParcializacion()"
+              >Parcializaci&oacute;n
+            </a>
             <button
               type="button"
-              class="btn btn-secondary btn-sm active mr-2 ml-2"
-              size="small">
+              class="my-1 mx-2 btn btn-danger active btn-sm"
+              size="small"
+              (click)="deleteProceeding()">
               Eliminar Acta
             </button>
             <button
@@ -344,7 +366,9 @@
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings1"
-          [source]="data"></ng2-smart-table>
+          [source]="dataGoods"
+          (rowSelect)="rowSelect($event)"
+          (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
 
       <hr class="row" />
@@ -373,10 +397,16 @@
 
       <div class="row pt-2">
         <div class="col-md-12 text-center">
-          <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+          <button
+            type="button"
+            class="mx-2 btn btn-secondary btn-sm active"
+            (click)="deleteGoods()">
             <i class="fa fa-angle-up"></i>
           </button>
-          <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+          <button
+            type="button"
+            class="mx-2 btn btn-secondary btn-sm active"
+            (click)="addGood()">
             <i class="fa fa-angle-down"></i>
           </button>
         </div>
@@ -386,15 +416,20 @@
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
-          [source]="data2"></ng2-smart-table>
+          [source]="dataGoodAct"
+          (rowSelect)="selectRowGoodActa($event)"
+          (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
       <hr class="row" />
       <div class="d-flex justify-content-center">
         <form-field
           class="col-md-3"
-          [control]="form.get('etiqueta')"
-          label="Etiqueta ">
-          <input type="text" class="form-control" formControlName="etiqueta" />
+          [control]="form.get('estatusBienActa')"
+          label="Estatus ">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="estatusBienActa" />
         </form-field>
       </div>
 

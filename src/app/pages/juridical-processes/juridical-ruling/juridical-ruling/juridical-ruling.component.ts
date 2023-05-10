@@ -1,5 +1,12 @@
 /** BASE IMPORT */
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -25,12 +32,15 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -55,12 +65,31 @@ export class JuridicalRulingComponent
   goods: IGood[] = [];
   goodsValid: IGood[] = [];
   idGoodSelected = 0;
+  statusDict: string = undefined;
+  dictNumber: string | number = undefined;
+  wheelNumber: string | number = undefined;
+  delegationDictNumber: string | number = undefined;
+  @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
   //tipos
   types = new DefaultSelect<Partial<IGoodType>>();
   subtypes = new DefaultSelect();
   ssubtypes = new DefaultSelect();
   sssubtypes = new DefaultSelect();
+
+  typesDict = new DefaultSelect(
+    [
+      { id: 'DESTRUCCION', typeDict: 'DESTRUCCIÓN' },
+      { id: 'DONACION', typeDict: 'DONACION' },
+      { id: 'ENAJENACION', typeDict: 'ENAJENACIÓN' },
+      { id: 'TRANSFERENTE', typeDict: 'TRANSFERENTE' },
+      { id: 'PROCEDENCIA', typeDict: 'PROCEDENCIA' },
+      { id: 'DEVOLUCIÓN', typeDict: 'DEVOLUCIÓN' },
+      { id: 'ABANDONO', typeDict: 'ABANDONO' },
+      { id: 'RESARCIMIENTO', typeDict: 'RESARCIMIENTO' },
+    ],
+    2
+  );
 
   typeField: string = 'type';
   subtypeField: string = 'subtype';
@@ -137,27 +166,27 @@ export class JuridicalRulingComponent
         onComponentInitFunction: (instance: CheckboxElementComponent) =>
           this.onGoodSelect(instance),
       },
-      noBien: {
+      id: {
         title: 'No. Bien',
         type: 'number',
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
       },
-      cantidad: {
+      quantity: {
         title: 'Cantidad',
         type: 'string',
       },
-      ident: {
+      identifier: {
         title: 'Ident.',
         type: 'string',
       },
-      est: {
+      status: {
         title: 'Est',
         type: 'string',
       },
-      proceso: {
+      processStatus: {
         title: 'Proceso',
         type: 'string',
       },
@@ -185,7 +214,7 @@ export class JuridicalRulingComponent
         onComponentInitFunction: (instance: CheckboxElementComponent) =>
           this.onGoodSelectValid(instance),
       },
-      noBien: {
+      id: {
         title: 'No. Bien',
         type: 'number',
       },
@@ -197,15 +226,15 @@ export class JuridicalRulingComponent
         title: 'Menaje',
         type: 'string',
       },
-      cantidad: {
+      quantity: {
         title: 'Cant. Dic..',
         type: 'string',
       },
-      est: {
+      status: {
         title: 'Est',
         type: 'string',
       },
-      proceso: {
+      processStatus: {
         title: 'Proceso',
         type: 'string',
       },
@@ -230,7 +259,7 @@ export class JuridicalRulingComponent
         title: 'Documentos',
         type: 'string',
       },
-      fecha: {
+      selectedDate: {
         title: 'Fec. Recibido',
         type: 'string',
       },
@@ -254,7 +283,7 @@ export class JuridicalRulingComponent
         title: 'Documentos',
         type: 'string',
       },
-      fecha: {
+      selectedDate: {
         title: 'Fecha',
         sort: false,
         type: 'custom',
@@ -284,7 +313,10 @@ export class JuridicalRulingComponent
     private goodSubtypesService: GoodSubtypeService,
     private goodSssubtypeService: GoodSssubtypeService,
     private readonly documentService: DocumentsService,
-    private goodSsubtypeService: GoodSsubtypeService
+    private goodSsubtypeService: GoodSsubtypeService,
+    private readonly expedientServices: ExpedientService,
+    private readonly authService: AuthService,
+    private applicationGoodsQueryService: ApplicationGoodsQueryService
   ) {
     super();
   }
@@ -302,10 +334,80 @@ export class JuridicalRulingComponent
     this.onLoadDocumentsByGood();
   }
 
-  onLoadGoodList() {
-    console.log('FIXME:1');
+  onKeyPress($event: any) {
+    if ($event.key === 'Enter') $event.currentTarget.blur();
+  }
+
+  changeNumExpediente() {
+    this.onLoadGoodList();
+    this.onLoadExpedientData();
+    this.onLoadDictationInfo();
+  }
+
+  onLoadExpedientData() {
     let noExpediente = this.legalForm.get('noExpediente').value || '';
-    console.log('EXP::', noExpediente);
+    this.expedientServices.getById(noExpediente).subscribe({
+      next: response => {
+        // ..Datos del expediente
+        this.legalForm.get('criminalCase').setValue(response.criminalCase);
+        this.legalForm
+          .get('preliminaryInquiry')
+          .setValue(response.preliminaryInquiry);
+      },
+    });
+  }
+
+  /**
+   * Trae información de dictamen
+   * según # de expediente
+   */
+  onLoadDictationInfo() {
+    let noExpediente = this.legalForm.get('noExpediente').value || '';
+    this.loadExpedientInfo(noExpediente).then(({ json }) => {
+      json
+        .then(res => {
+          this.dictNumber = res.data[0].id;
+          this.wheelNumber = res.data[0].wheelNumber;
+          this.delegationDictNumber = res.data[0].delegationDictNumber;
+          this.legalForm
+            .get('tipoDictaminacion')
+            .setValue(res.data[0].typeDict || undefined);
+          this.legalForm
+            .get('fecDicta')
+            .setValue(new Date(res.data[0].dictDate) || undefined);
+          this.legalForm
+            .get('observations')
+            .setValue(res.data[0].observations || undefined);
+
+          this.statusDict = res.data[0].statusDict;
+          this.legalForm
+            .get('label')
+            .setValue(new Date(res.data[0].instructorDate) || undefined);
+        })
+        .catch(err => {
+          this.legalForm.get('tipoDictaminacion').setValue(null);
+          this.legalForm.get('cveOficio').setValue(null);
+          this.legalForm.get('observations').setValue(null);
+          this.legalForm.get('fecDicta').setValue(null);
+          this.legalForm.get('label').setValue(null);
+          this.statusDict = undefined;
+        });
+    });
+  }
+
+  async loadExpedientInfo(id: number | string) {
+    const response = await fetch(
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation?filter.expedientNumber=' +
+        id,
+      {
+        method: 'GET',
+      }
+    );
+    return { status: response.status, json: response.json() };
+  }
+
+  onLoadGoodList() {
+    let noExpediente = this.legalForm.get('noExpediente').value || '';
     if (noExpediente !== '') {
       this.goodServices
         .getByExpedient(noExpediente, this.params.getValue())
@@ -324,7 +426,7 @@ export class JuridicalRulingComponent
   prepareForm() {
     this.expedientesForm = this.fb.group({
       tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: [null, [Validators.required]],
+      noExpediente: ['791474', [Validators.required]],
       averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       delito: [false],
@@ -333,17 +435,21 @@ export class JuridicalRulingComponent
     this.legalForm = this.fb.group({
       tipoDictaminacion: [null, [Validators.required]],
       noExpediente: [null, [Validators.required]],
-      averPrevia: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
+      // averPrevia: [null, [Validators.pattern(KEYGENERATION_PATTERN)]], // Se cambia por preliminaryInquiry (según doc)
+      preliminaryInquiry: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      // causaPenal: [null, [Validators.pattern(STRING_PATTERN)]], // Se cambia por CriminalCase (según doc)
+      criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       tipo: [null],
       esPropiedad: [false],
-      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
+      // observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
       fecDest: [null, [Validators.required]],
       fecDicta: [null, [Validators.required]],
       autoriza: [null, [Validators.required]],
       cveOficio: [null, [Validators.required]],
       ident: [null],
       tipos: [null],
+      label: [null],
     });
     this.subtipoForm = this.fb.group({
       tipoDictaminacion: [null],
@@ -385,6 +491,22 @@ export class JuridicalRulingComponent
       field.setValue(null);
     });
     this.subtipoForm.updateValueAndValidity();
+  }
+
+  /**
+   * Traer descripción dictaminada por bien
+   * @param id del bien
+   */
+  async getDicDescriptionByGood(id: number) {
+    const response = await fetch(
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation-x-good1/find-by-ids',
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: id }),
+      }
+    );
+    return { status: response.status, json: response.json() };
   }
 
   //Métodos para autocompletar los tipos
@@ -526,6 +648,7 @@ export class JuridicalRulingComponent
       );
     }
   }
+
   addSelect() {
     if (this.selectedGooods.length > 0) {
       this.goodsValid = this.goodsValid.concat(this.selectedGooods);
@@ -533,8 +656,11 @@ export class JuridicalRulingComponent
         this.goods = this.goods.filter(_good => _good.id != good.id);
       });
       this.selectedGooods = [];
+    } else {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien.');
     }
   }
+
   addAll() {
     if (this.goods.length > 0) {
       this.goodsValid = this.goodsValid.concat(this.goods);
@@ -554,6 +680,8 @@ export class JuridicalRulingComponent
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
       });
       this.selectedGooodsValid = [];
+    } else {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien.');
     }
   }
   rowSelected(e: any) {
@@ -568,7 +696,11 @@ export class JuridicalRulingComponent
    * --
    */
   btnDocumentos() {
-    this.listadoDocumentos = true;
+    if (this.idGoodSelected) {
+      this.listadoDocumentos = true;
+    } else {
+      this.alert('info', '', 'Selecciona un bien para continuar.');
+    }
   }
 
   onLoadDocumentsByGood() {
@@ -593,6 +725,11 @@ export class JuridicalRulingComponent
       this.selectedDocuments.forEach(doc => {
         this.goods = this.goods.filter(_doc => _doc.id != doc.id);
       });
+      // this.selectedDocuments.find(v => console.log(v));
+      // this.documents = this.documents.concat(this.selectedDocuments);
+      // this.selectedDocuments.forEach(doc => {
+      //   this.goods = this.goods.filter(_doc => _doc.id != doc.id);
+      // });
     }
   }
   isDocumentSelectedValid(_doc: any) {
@@ -608,6 +745,7 @@ export class JuridicalRulingComponent
   }
   documentSelectedChangeValid(doc: any, selected?: string) {
     console.log('fecha ', selected);
+    doc = { ...doc, selectedDate: selected };
     if (selected) {
       this.selectedDocuments.push(doc);
     } else {
@@ -615,5 +753,146 @@ export class JuridicalRulingComponent
         _doc => _doc.id != doc.id
       );
     }
+  }
+
+  isDocsEmpty() {
+    return this.documents.length === 0;
+  }
+
+  btnApprove() {
+    let token = this.authService.decodeToken();
+    const pNumber = Number(token.department);
+    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+      next: (response: any) => {
+        this.generateCveOficio(response.dictamenDelregSeq);
+        // document.getElementById('cveOficio').focus();
+        this.cveOficio.nativeElement.focus();
+        setTimeout(
+          () =>
+            this.alert(
+              'success',
+              '',
+              'Clave de oficio generada correctamente.'
+            ),
+          1000
+        );
+      },
+    });
+  }
+
+  generateCveOficio(noDictamen: string) {
+    let token = this.authService.decodeToken();
+    const year = new Date().getFullYear();
+    let cveOficio = '';
+    cveOficio =
+      token.siglasnivel1 + '/' + token.siglasnivel2 + '/' + token.siglasnivel3;
+    // if (token.siglasnivel4 !== null) {
+    //   cveOficio = cveOficio + '/' + token.siglasnivel4;
+    // }
+    cveOficio = cveOficio + '/' + noDictamen + '/' + year;
+    this.legalForm.get('cveOficio').setValue(cveOficio);
+  }
+
+  btnVerify() {
+    const status = this.statusDict;
+    const expedient = this.legalForm.get('noExpediente').value;
+    if (status === 'DICTAMINADO') {
+      this.alert('info', 'AVISO', 'Bien ya dictaminado');
+    } else {
+      if (expedient === null || undefined) {
+        this.alert('error', 'ERROR', 'Falta seleccionar expediente');
+      } else {
+        this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');
+      }
+    }
+  }
+
+  btnDeleteDictation() {
+    let token = this.authService.decodeToken();
+
+    const object = {
+      proceedingsNumber: this.legalForm.get('noExpediente').value,
+      typeDicta: this.legalForm.get('tipoDictaminacion').value,
+      numberOfDicta: this.dictNumber,
+      wheelNumber: this.wheelNumber,
+      user: token.preferred_username,
+      delegationNumberDictam: this.delegationDictNumber,
+      clueJobNavy: '1',
+      judgmentDate: '04/04/2023',
+      statusJudgment: 'cadena',
+      typeJudgment: 'cadena',
+    };
+
+    this.checkout1(object).then(({ json }) => {
+      json.then(res => {
+        if (res.statusCode === 200) {
+          if (res.vBan === 'S' && res.vDelete === 'S') {
+            // Pendiente
+            // --
+          } else {
+            let object2 = {
+              vProceedingsNumber: res.data.vProceedingsNumber,
+              vTypeDicta: res.data.vTypeDicta,
+              vOfDictaNumber: res.data.vOfDictaNumber,
+              vWheelNumber: res.data.vWheelNumber,
+            };
+            this.checkout2(object2).then(({ json }) => {
+              json.then(res => {
+                if (res.statusCode !== 200) {
+                  this.alert('warning', 'AVISO', res.message[0]);
+                } else {
+                  console.log('TODO SALE BIEN', res.data);
+                }
+              });
+            });
+          }
+        }
+      });
+    });
+  }
+
+  async checkout1(object: object) {
+    let response = await fetch(
+      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      {
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(object),
+      }
+    );
+    return { status: response.status, json: response.json() };
+  }
+
+  async checkout2(object: object) {
+    let response = await fetch(
+      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      {
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(object),
+      }
+    );
+    return { status: response.status, json: response.json() };
+  }
+
+  async checkout3(object: object) {
+    let response = await fetch(
+      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      {
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(object),
+      }
+    );
+    return { status: response.status, json: response.json() };
+  }
+
+  btnDeleteListDocs() {
+    this.documents = [];
+  }
+
+  onTypeDictChange($event: any) {
+    // ..activar para ver cambio
+    // console.log($event);
   }
 }

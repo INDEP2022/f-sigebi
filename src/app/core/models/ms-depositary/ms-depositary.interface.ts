@@ -1,3 +1,6 @@
+import { IGood } from '../good/good.model';
+import { ISegUsers } from '../ms-users/seg-users-model';
+
 export interface IAppointmentDepositary {
   appointmentNumber: string;
   nameProvDate: string;
@@ -19,6 +22,7 @@ export interface IAppointmentDepositary {
   feeAmount: string;
   provisionalOfficialNumber: string;
   annexed: string;
+
   governmentMeetingOfficialDate: string;
   governmentMeetingOfficialNumber: string;
   shippingDateGeneralAddress: string;
@@ -74,6 +78,8 @@ export interface IAppointmentDepositary {
   reference: string;
   iva: string;
   withKitchenware: string;
+  good: IGood;
+  user: ISegUsers;
 }
 
 export interface IRequestDepositary {
@@ -88,4 +94,21 @@ export interface IRequestDepositary {
   attentionUser: string;
   registerNumber: number;
   proposedCandidate: string;
+}
+export interface IPersonsModDepositary {
+  appointmentNum: number;
+  personNum: string;
+  process: string;
+  dateExecution: Date;
+  sentSirsae: string;
+  modifyStatus: string;
+  indicted: string;
+  dateShipment: Date;
+  sendSirsae: string;
+  nbOrigin: string;
+}
+
+export interface IPaymendtDepParamsDep {
+  name: number;
+  address: string;
 }

@@ -55,6 +55,7 @@ export class RequestRecordTabComponent
   transfe: string = '';
   paperDateLabel: any = '';
   rem: string = 'del Remitente';
+  maxDate = new Date();
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
@@ -75,7 +76,6 @@ export class RequestRecordTabComponent
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
-    console.log(this.requestForm.value);
     //estable el campo para preguntar en la vista si es del tipo 1 o 3
     if (this.requestForm.controls['transferenceId'].value != null) {
       this.transferenceNumber = Number(
@@ -214,8 +214,8 @@ export class RequestRecordTabComponent
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
-    // this.requestForm.updateValueAndValidity();
   }
+
   getPublicMinister(params: ListParams) {
     params['filter.description'] = `$ilike:${params.text}`;
     this.minPub.getAll(params).subscribe({
@@ -263,21 +263,6 @@ export class RequestRecordTabComponent
     } else {
       this.transfe = 'MP';
     }
-    // let params = new ListParams();
-    // params['filter.id'] = `$eq:${transferenceNumber}`;
-    // this.transferenteService.getAll(params).subscribe({
-    //   next: ({ data }) => {
-    //     console.log(this.transfe);
-    //     if (transferenceNumber === 1 || transferenceNumber === 120) {
-    //       this.transfe = 'MP';
-    //     } else {
-    //       this.transfe = this.rem;
-    //     }
-    //   },
-    //   error: error => {
-    //     this.transfe = '';
-    //   },
-    // });
   }
 
   changeDateEvent(event: Date) {
@@ -370,8 +355,19 @@ export class RequestRecordTabComponent
     }
     this.loading = true;
     this.submitted = true;
-    // if (this.requestForm.invalid || this.requestForm.value.paperDate.length == 0 || this.requestForm.value.previousInquiry.length == 0 || this.requestForm.value.circumstantialRecord.length == 0) { this.formLoading = false; return }
     const request = this.requestForm.getRawValue() as IRequest;
+    Object.keys(request).forEach((key: any) => {
+      if (
+        typeof (request as any)[key] === 'string' &&
+        (request as any)[key]?.trim() === ''
+      ) {
+        (request as any)[key] = null;
+      }
+    });
+    request.transferEntNotes = request.transferEntNotes
+      ? request.transferEntNotes
+      : null;
+    //request.court = request.court ? request.court : null;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);
     if (requestResult === true) {
@@ -381,7 +377,7 @@ export class RequestRecordTabComponent
         'Se guardó la solicitud correctamente'
       );
     } else {
-      this.message('error', 'Error', '¡No se guardó la solicitud!');
+      this.message('error', 'Error', 'No se guardó la solicitud');
     }
   }
 
@@ -395,7 +391,7 @@ export class RequestRecordTabComponent
 
           if (resp.statusCode != 200) {
             resolve(false);
-            this.message('error', 'Error', `¡No se guardó la solicitud!.`);
+            this.message('error', 'Error', `No se guardó la solicitud.`);
           }
           this.formLoading = false;
           this.loading = false;
@@ -406,7 +402,7 @@ export class RequestRecordTabComponent
           this.message(
             'error',
             'Error',
-            `¡No se guardó la solicitud!. ${error.error.message}`
+            `No se guardó la solicitud. ${error.error.message}`
           );
           reject(false);
         },

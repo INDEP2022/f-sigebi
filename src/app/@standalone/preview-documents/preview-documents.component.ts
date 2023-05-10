@@ -104,7 +104,7 @@ export class PreviewDocumentsComponent extends BasePage implements OnInit {
     const bytesSize = 4 * Math.ceil(base64Length / 3) * 0.5624896334383812;
     const KbSize = bytesSize / 1000;
 
-    if (KbSize > 2000) {
+    if (KbSize > 1500) {
       const alert = this.alertQuestion(
         'info',
         'Aviso',

@@ -14,7 +14,10 @@
   </div>
 
   <div body>
-    <app-goods></app-goods>
+    <app-goods
+      (loadingDialog)="loadGood($event)"
+      [loadingData]="loading1"
+      [data]="dataDictationXGood1"></app-goods>
   </div>
 </app-card>
 
@@ -24,7 +27,10 @@
   </div>
 
   <div body>
-    <app-documentation-goods></app-documentation-goods>
+    <app-documentation-goods
+      (loadingDialog)="loadDocumentGood($event)"
+      [data]="dataDocumentDictumStateM"
+      [loadingData]="loading2"></app-documentation-goods>
   </div>
 </app-card>
 
@@ -35,6 +41,7 @@
 
   <div body>
     <app-document-trade
+      [data]="dataOfficialDictation"
       (formValues)="documentData($event)"></app-document-trade>
   </div>
 </app-card>
@@ -46,6 +53,7 @@
 
   <div body>
     <app-more-information
+      [data]="dataJobDictumTexts"
       (formValues)="moreInformationData($event)"></app-more-information>
   </div>
 </app-card>
@@ -56,7 +64,10 @@
   </div>
 
   <div body>
-    <app-copy-documentation-goods></app-copy-documentation-goods>
+    <app-copy-documentation-goods
+      (loadingDialog)="loadCopy($event)"
+      [data]="dataCopiesOfficialOpinion"
+      [loadingData]="loading3"></app-copy-documentation-goods>
   </div>
 </app-card>
 

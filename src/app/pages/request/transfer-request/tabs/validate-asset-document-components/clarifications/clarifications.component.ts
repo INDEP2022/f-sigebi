@@ -20,6 +20,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -65,6 +66,8 @@ export class ClarificationsComponent
   articleColumns = CLARIFICATION_COLUMNS;
   haveNotification: boolean = false;
   isLoadingTable2 = false;
+  task: any;
+  statusTask: any = '';
 
   constructor(
     private modalService: BsModalService,
@@ -74,7 +77,8 @@ export class ClarificationsComponent
     private readonly rejectGoodService: RejectedGoodService,
     private readonly typeRelevantService: TypeRelevantService,
     private readonly genericService: GenericService,
-    private readonly goodResDevService: GetGoodResVeService
+    private readonly goodResDevService: GetGoodResVeService,
+    private readonly chatClarificationService: ChatClarificationsService
   ) {
     super();
   }
@@ -88,6 +92,13 @@ export class ClarificationsComponent
   }
 
   ngOnInit(): void {
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    console.log('task', this.task);
+
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
+    console.log('statustask', this.statusTask);
+
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -409,7 +420,7 @@ export class ClarificationsComponent
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
 
-          item['fraction'] = item.fractionId.description;
+          item['fraction'] = item.fractionId ? item.fractionId.description : '';
 
           item['quantity'] = Number(item.quantity);
 
@@ -469,7 +480,7 @@ export class ClarificationsComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
@@ -495,7 +506,7 @@ export class ClarificationsComponent
 
   getClarifications() {
     this.paragraphs = [];
-    this.loading = true;
+    this.isLoadingTable2 = true;
     const params = new ListParams();
     params['filter.goodId'] = `$eq:${this.good.id}`;
 
@@ -510,11 +521,11 @@ export class ClarificationsComponent
 
         Promise.all(clarification).then(data => {
           this.paragraphs = resp.data;
-          this.loading = false;
+          this.isLoadingTable2 = false;
         });
       },
       error: error => {
-        this.loading = false;
+        this.isLoadingTable2 = false;
       },
     });
   }
@@ -576,7 +587,6 @@ export class ClarificationsComponent
 
   clarifiRowSelected(event: any) {
     this.clariArraySelected = event.selected;
-    console.log(event.target.value);
   }
 
   newClarification() {
@@ -600,14 +610,17 @@ export class ClarificationsComponent
       'warning',
       'Eliminar',
       'Desea eliminar el registro?'
-    ).then(val => {
+    ).then(async val => {
       if (val.isConfirmed) {
+        const idChatClarification = data.chatClarification.idClarification;
+        const result = await this.removeChatClarification(idChatClarification);
+
         this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
           next: async val => {
             this.onLoadToast(
               'success',
               'Eliminada con exito',
-              'La aclaración fue eliminada con éxito.'
+              'La aclaración fue eliminada con éxito'
             );
 
             if (clarifycationLength === 1) {
@@ -619,13 +632,21 @@ export class ClarificationsComponent
           complete: () => {
             this.getClarifications();
           },
+          error: error => {
+            console.log(error);
+            this.onLoadToast(
+              'error',
+              'Error al eliminar',
+              `No se pudo eliminar la aclaración ${error.error.message}`
+            );
+          },
         });
       }
     });
   }
   editForm() {
-    let data = this.clariArraySelected[0];
-    if (data === 1) {
+    let data = this.clariArraySelected;
+    if (data.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
@@ -638,6 +659,7 @@ export class ClarificationsComponent
       initialState: {
         goodTransfer: this.goodForm.value,
         docClarification,
+        request: this.requestObject,
         callback: (next: boolean) => {
           if (next) this.getClarifications();
         },
@@ -685,6 +707,26 @@ export class ClarificationsComponent
             'error',
             'Erro Interno',
             'No se actualizo el campo bien-res-dev en bien'
+          );
+        },
+      });
+    });
+  }
+
+  removeChatClarification(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.chatClarificationService.remove(id).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          reject(false);
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error al eliminar',
+            'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
         },
       });

@@ -17,6 +17,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   data: any;
   fileToUpload: File | null = null;
   typeReport: string = '';
+  statusTask: any;
   sizeMessage: boolean = false;
   filesImages: any[] = [];
   idRequest: number = 0;
@@ -63,35 +64,37 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   loadImage(uploadEvent: IUploadEvent) {
-    const { index, fileEvents } = uploadEvent;
+    if (this.statusTask != 'FINALIZADA') {
+      const { index, fileEvents } = uploadEvent;
 
-    fileEvents.forEach(fileEvent => {
-      const formData = {
-        xidcProfile: 'NSBDB_Gral',
-        dDocAuthor: this.userLogName,
-        xidSolicitud: this.idRequest,
-        xidTransferente: this.idTrans,
-        xidBien: this.idGood,
-        xnombreProceso: 'Clasificar Bien',
-      };
+      fileEvents.forEach(fileEvent => {
+        const formData = {
+          xidcProfile: 'NSBDB_Gral',
+          dDocAuthor: this.userLogName,
+          xidSolicitud: this.idRequest,
+          xidTransferente: this.idTrans,
+          xidBien: this.idGood,
+          xnombreProceso: 'Clasificar Bien',
+        };
 
-      const contentType = 'img';
-      const docName = `IMG_${this.date}${contentType}`;
+        const contentType = 'img';
+        const docName = `IMG_${this.date}${contentType}`;
 
-      this.wContentService
-        .addImagesToContent(
-          docName,
-          contentType,
-          JSON.stringify(formData),
-          fileEvent.file
-        )
-        .subscribe({
-          next: data => {
-            this.bsModalRef.content.callBack(true);
-            this.close();
-          },
-          error: error => {},
-        });
-    });
+        this.wContentService
+          .addImagesToContent(
+            docName,
+            contentType,
+            JSON.stringify(formData),
+            fileEvent.file
+          )
+          .subscribe({
+            next: data => {
+              this.bsModalRef.content.callBack(true);
+              this.close();
+            },
+            error: error => {},
+          });
+      });
+    }
   }
 }

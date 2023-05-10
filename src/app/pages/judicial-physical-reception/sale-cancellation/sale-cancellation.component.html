@@ -5,9 +5,9 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4 ml-3">
+        <div class="col-md-4">
           <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-9">
               <form-field [control]="form.get('expediente')" label="Expediente">
                 <input
                   type="number"
@@ -31,7 +31,8 @@
         </div>
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <span>{{ statusProceeding }}</span>
+            <!--  <div class="col-md-9">
               <form-field
                 [control]="form.get('averPrev')"
                 label="Averiguaci&oacute;n Previa">
@@ -40,6 +41,26 @@
                   class="form-control"
                   formControlName="averPrev" />
               </form-field>
+            </div> -->
+          </div>
+        </div>
+        <div *ngIf="navigateProceedings" class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <button
+                id="expedient-number"
+                [disabled]="!prevProce"
+                class="btn btn-secondary btn-sm active mr-2"
+                (click)="prevProceeding()">
+                Anterior
+              </button>
+              <button
+                id="expedient-number"
+                class="btn btn-secondary btn-sm active"
+                [disabled]="!nextProce"
+                (click)="nextProceeding()">
+                Siguiente
+              </button>
             </div>
           </div>
         </div>
@@ -52,6 +73,7 @@
               <form-field [control]="form.get('acta')" label="Acta 1">
                 <select
                   id="acta"
+                  [class]="initialBool ? 'disabled' : ''"
                   class="form-control"
                   formControlName="acta"
                   (ngModelChange)="changeAct()">
@@ -67,9 +89,9 @@
                   id="transfer"
                   control="transfer"
                   label="Transfer"
+                  [class]="initialBool ? 'disabled' : ''"
                   bindLabel="transferentkey"
                   (change)="verifyTransferenteAndAct()"
-                  [readonly]="form.get('acta').value == null"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
                 <!--  <input
@@ -102,6 +124,7 @@
                 <ngx-select
                   (fetchItems)="getRecibe($event)"
                   (change)="fillActTwo()"
+                  [class]="initialBool ? 'disabled' : ''"
                   control="recibe"
                   label="Recibe"
                   bindLabel="delegation"
@@ -117,8 +140,9 @@
             <div class="col">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
+                  [class]="initialBool ? 'disabled' : ''"
                   formControlName="folio"
                   maxlength="5"
                   (change)="fillActTwo()" />
@@ -128,7 +152,7 @@
               <form-field [control]="form.get('year')" label="A&ntilde;o">
                 <input
                   type="number"
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="year"
                   (change)="fillActTwo()" />
               </form-field>
@@ -137,7 +161,7 @@
               <form-field [control]="form.get('mes')" label="Mes">
                 <input
                   type="number"
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="mes"
                   (change)="fillActTwo()" />
               </form-field>
@@ -163,6 +187,196 @@
       </div>
 
       <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <form-field [control]="form.get('acta2')" label="Acta 2">
+              <input
+                type="text"
+                class="form-control disabled"
+                formControlName="acta2" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('direccion')"
+                label="Direcci&oacute;n">
+                <textarea
+                  rows="2"
+                  class="form-control"
+                  formControlName="direccion"></textarea>
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('entrega')" label="Entrega">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="entrega" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('fecElabRecibo')"
+                label="Fecha Elaboraci&oacute;n Recibo">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fecElabRecibo" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('fecEntregaBienes')"
+                label="Fecha Entrega de Bienes">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fecEntregaBienes" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-5">
+              <form-field
+                [control]="form.get('folioEscaneo')"
+                label="Folio de Escaneo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="folioEscaneo"
+                  maxlength="15" />
+              </form-field>
+            </div>
+
+            <div class="col-md-4 pt-3">
+              <button type="button" size="small">Replicar Folio</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group row">
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('fecElab')"
+                label="Fecha Elaboraci&oacute;n">
+                <input
+                  bsDatepicker
+                  id="fecElab"
+                  class="form-control"
+                  [maxDate]="maxDate"
+                  formControlName="fecElab" />
+              </form-field>
+            </div>
+
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('fecRecepFisica')"
+                label="Fecha Recepci&oacute;n F&iacute;sica">
+                <input
+                  bsDatepicker
+                  class="form-control disabled"
+                  formControlName="fecRecepFisica" />
+              </form-field>
+            </div>
+
+            <div class="col-md-4">
+              <form-field
+                [control]="form.get('fecCaptura')"
+                label="Fecha Captura">
+                <input
+                  bsDatepicker
+                  class="form-control disabled"
+                  formControlName="fecCaptura" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('observaciones')"
+                label="Observaciones">
+                <textarea
+                  rows="2"
+                  class="form-control"
+                  formControlName="observaciones"></textarea>
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('recibe2')" label="Recibe">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="recibe2" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('testigo')"
+                label="Testigo de la Contr&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="testigo" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <button
+                type="button"
+                [class]="btnCSSAct"
+                [disabled]="!form.valid"
+                class="btn btn-sm active mr-2 ml-2"
+                size="small"
+                (click)="toggleActa()">
+                {{ labelActa }}
+              </button>
+              <a
+                (click)="goParcializacion()"
+                class="my-1 mx-2 btn btn-warning active btn-sm"
+                size="small"
+                >Parcializaci&oacute;n
+              </a>
+
+              <button
+                type="button"
+                class="my-1 mx-2 btn btn-danger active btn-sm"
+                (click)="deleteProceeding()">
+                Eliminar Acta
+              </button>
+              <button
+                type="button"
+                class="my-1 mx-2 btn btn-secondary active btn-sm">
+                Carga Masiva
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 
 
       <div class="row">
         <div class="col-md-6">
@@ -298,34 +512,17 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <hr class="row" />
-      <div class="row">
-        <div class="d-flex justify-content-center">
-          <button type="button" class="my-1 mx-2" size="small">
-            Cerrar Acta
-          </button>
-          <button type="button" class="my-1 mx-2" size="small">
-            Envia PGR
-          </button>
-          <a [routerLink]="['partialization']" class="my-1 mx-2" size="small"
-            >Parcializaci&oacute;n</a
-          >
-          <button type="button" class="my-1 mx-2" size="small">
-            Eliminar Acta
-          </button>
-          <button type="button" class="my-1 mx-2" size="small">
-            Carga Masiva
-          </button>
-        </div>
-      </div>
 
       <div class="row pt-2 scroll-table mt-5">
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings1"
-          [source]="dataGoods"></ng2-smart-table>
+          [source]="dataGoods"
+          (rowSelect)="rowSelect($event)"
+          (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
 
       <hr class="row" />
@@ -354,10 +551,16 @@
 
       <div class="row pt-2">
         <div class="col-md-12 text-center">
-          <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+          <button
+            type="button"
+            class="mx-2 btn btn-secondary btn-sm active"
+            (click)="deleteGoods()">
             <i class="fa fa-angle-up"></i>
           </button>
-          <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+          <button
+            type="button"
+            class="mx-2 btn btn-secondary btn-sm active"
+            (click)="addGood()">
             <i class="fa fa-angle-down"></i>
           </button>
         </div>
@@ -367,7 +570,9 @@
         <ng2-smart-table
           class="col-md-12"
           [settings]="settings2"
-          [source]="data2"></ng2-smart-table>
+          [source]="dataGoodAct"
+          (rowSelect)="selectRowGoodActa($event)"
+          (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
       <hr class="row" />
       <div class="d-flex justify-content-center">

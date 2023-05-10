@@ -1,4 +1,3 @@
-<!-- FIXME: 1 -->
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">DICTAMINACIONES JUR&Iacute;DICAS</h5>
@@ -8,131 +7,178 @@
     <form [formGroup]="legalForm" class="container-fluid form-material">
       <div class="row">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-2 p-2">
-              <form-field
-                [control]="expedientesForm.get('noExpediente')"
-                label="No Expediente">
-                <input
-                  class="form-control"
-                  (blur)="onLoadGoodList()"
-                  formControlName="noExpediente" />
-              </form-field>
+          <div class="row mt-5">
+            <!-- <div class="col-sm-12 col-12 col-md-2 p-2"> -->
+            <!-- <div class="col-md-6"> -->
+            <div class="col-md-4">
+              <div class="row">
+                <form-field [control]="legalForm.get('tipoDictaminacion')">
+                  <ngx-select
+                    [searchOnInit]="true"
+                    [data]="typesDict"
+                    [form]="legalForm"
+                    label="Tipo de dictaminación"
+                    bindLabel="typeDict"
+                    control="tipoDictaminacion"
+                    (change)="onTypeDictChange($event)"></ngx-select>
+                </form-field>
+              </div>
+              <div class="row mt-3">
+                <form-field
+                  [control]="expedientesForm.get('noExpediente')"
+                  label="No Expediente">
+                  <input
+                    type="number"
+                    class="form-control"
+                    (blur)="changeNumExpediente()"
+                    formControlName="noExpediente"
+                    (keypress)="onKeyPress($event)" />
+                </form-field>
+              </div>
+              <div class="row mt-3">
+                <form-field
+                  [control]="legalForm.get('preliminaryInquiry')"
+                  label="Averiguaci&oacute;n Previa">
+                  <input
+                    class="form-control"
+                    formControlName="preliminaryInquiry" />
+                </form-field>
+              </div>
+              <div class="row mt-3">
+                <form-field
+                  [control]="legalForm.get('criminalCase')"
+                  label="Causa Penal">
+                  <input class="form-control" formControlName="criminalCase" />
+                </form-field>
+              </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-              <form-field
-                [control]="legalForm.get('tipoDictaminacion')"
-                label="Tipo de dictaminaci&oacute;n">
-                <select
-                  class="form-control"
-                  formControlName="tipoDictaminacion">
-                  <option [value]="null" disabled>Seleccione un valor</option>
-                  <option [value]="null">Destrucción</option>
-                  <option [value]="null">Donación</option>
-                  <option [value]="null">Enajenación</option>
-                  <option [value]="null">Transferente</option>
-                  <option [value]="null">Procedencia</option>
-                  <option [value]="null">Devolución</option>
-                  <option [value]="null">Abandono</option>
-                  <option [value]="null">Resarcimiento</option>
-                </select>
-              </form-field>
+
+            <div class="col-md-2">
+              <div class="row ps-4">
+                <form-radio label="Normal">
+                  <input type="radio" formControlName="tipo" value="Normal" />
+                </form-radio>
+                <form-radio label="Paquete">
+                  <input type="radio" formControlName="tipo" value="Paquete" />
+                </form-radio>
+              </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-              <form-field
-                [control]="legalForm.get('cveOficio')"
-                label="Cve&#46; Oficio">
-                <input class="form-control" formControlName="cveOficio" />
-              </form-field>
+
+            <div class="col-md-6">
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    [control]="legalForm.get('label')"
+                    label="Etiqueta">
+                    <input
+                      formControlName="label"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    [control]="legalForm.get('fecDicta')"
+                    label="Fec&#46; Dictamina">
+                    <input
+                      formControlName="fecDicta"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    [control]="legalForm.get('fecDicta')"
+                    label="Fec. Notif Aseg">
+                    <input
+                      formControlName="fecDicta"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <form-field
+                    [control]="legalForm.get('fecDicta')"
+                    label="Fecha resolución">
+                    <input
+                      formControlName="fecDicta"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-6 col-md-offset-6 mt-3">
+                <div class="row">
+                  <form-field
+                    [control]="legalForm.get('fecDicta')"
+                    label="Fecha notificación">
+                    <input
+                      formControlName="fecDicta"
+                      class="form-control"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-12 mt-3">
+                <div class="row">
+                  <form-field
+                    [control]="legalForm.get('cveOficio')"
+                    label="Cve&#46; Oficio">
+                    <input
+                      class="form-control"
+                      #cveOficio
+                      formControlName="cveOficio" />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-md-12 text-danger text-end">
+                  <b>Estatus </b>
+                  <b> {{ statusDict }}</b>
+                </div>
+              </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-              <form-field
-                [control]="legalForm.get('averPrevia')"
-                label="Averiguaci&oacute;n Previa">
-                <input class="form-control" formControlName="averPrevia" />
-              </form-field>
+
+            <div class="col-md-6">
+              <div class="row">
+                <form-check
+                  class="col-md-12"
+                  label="&#191;El expediente es delito propiedad intelectual&#63;"
+                  for="esPropiedad">
+                  <input
+                    id="esPropiedad-check"
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="esPropiedad" />
+                </form-check>
+              </div>
+              <div class="row mt-5">
+                <form-field
+                  [control]="legalForm.get('observations')"
+                  label="Observaciones del Dictamen">
+                  <textarea
+                    rows="3"
+                    class="form-control"
+                    formControlName="observations"></textarea>
+                </form-field>
+              </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-              <form-field
-                [control]="legalForm.get('causaPenal')"
-                label="Causa Penal">
-                <input class="form-control" formControlName="causaPenal" />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-              <form-field
-                [control]="legalForm.get('fecDicta')"
-                label="Fec&#46; Dictamina">
-                <input
-                  formControlName="fecDicta"
-                  class="form-control"
-                  bsDatepicker />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+
+            <!-- <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="legalForm.get('autoriza')"
                 label="Autoriza Dict&#46;">
-                <!-- <ngx-select [form]="legalForm" control="autoriza"></ngx-select> -->
                 <select class="form-control" formControlName="autoriza">
                   <option [value]="null">Seleccione un valor</option>
                 </select>
               </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-              <form-field
-                [control]="legalForm.get('fecDest')"
-                label="Fec&#46; Dest&#46;">
-                <input
-                  formControlName="fecDest"
-                  class="form-control"
-                  bsDatepicker />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-              <div class="row p-2">
-                <div class="col-md-6">
-                  <form-radio label="Normal">
-                    <input type="radio" formControlName="tipo" value="Normal" />
-                  </form-radio>
-                </div>
-                <div class="col-md-6">
-                  <form-radio label="Paquete">
-                    <input
-                      type="radio"
-                      formControlName="tipo"
-                      value="Paquete" />
-                  </form-radio>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-              <form-field
-                [control]="legalForm.get('observaciones')"
-                label="Observaciones del Dictamen">
-                <textarea
-                  rows="3"
-                  class="form-control"
-                  formControlName="observaciones"></textarea>
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2 text-center">
-              <form-check
-                class="col-md-12 ml-4"
-                label="&#191;El expediente es delito propiedad intelectual&#63;"
-                for="esPropiedad">
-                <input
-                  id="esPropiedad-check"
-                  type="checkbox"
-                  class="form-control"
-                  formControlName="esPropiedad" />
-              </form-check>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-              <div class="col-md-12 text-center text-danger">
-                <b>Estatus</b>
-              </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -154,37 +200,8 @@
                 </select>
               </form-field>
             </div>
-
-            <!-- <div class="col-md-4">
-              <form-field
-                [control]="subtipoForm.get('noExpediente')"
-                label="Subtipo &#45; Ssubtipo &#45; Sssubtipo">
-                <select class="form-control" formControlName="noExpediente">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'Alta'">Alta</option>
-                  <option [value]="'Normal'">Normal</option>
-                </select>
-              </form-field>
-            </div> -->
-            <div class="mb-5 b-block w-100"></div>
-            <!--  -->
-            <!-- <div class="col-md-3">
-              <form-field [control]="subtipoForm.get('type')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  (fetchItems)="getTypes($event)"
-                  [data]="types"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Tipo de Bien"
-                  bindLabel="nameGoodType"
-                  control="type"
-                  (change)="onTypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div> -->
-            <!--  -->
-            <div class="col-md-4">
+            <!-- <div class="mb-5 b-block w-100"></div> -->
+            <div class="col-md-9">
               <form-field [control]="subtipoForm.get('subtype')">
                 <ngx-select
                   [searchOnInit]="true"
@@ -192,15 +209,14 @@
                   [data]="subtypes"
                   [form]="subtipoForm"
                   value="id"
-                  label="Subtipo"
+                  label="Subtipo - Ssubtipo - Sssubtipo"
                   bindLabel="nameSubtypeGood"
                   control="subtype"
                   (change)="onSubtypesChange($event)">
                 </ngx-select>
               </form-field>
             </div>
-            <!--  -->
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
               <form-field [control]="subtipoForm.get('ssubtype')">
                 <ngx-select
                   [searchOnInit]="true"
@@ -214,9 +230,8 @@
                   (change)="onSsubtypesChange($event)">
                 </ngx-select>
               </form-field>
-            </div>
-            <!--  -->
-            <div class="col-md-4">
+            </div> -->
+            <!-- <div class="col-md-4">
               <form-field [control]="subtipoForm.get('sssubtype')">
                 <ngx-select
                   [searchOnInit]="true"
@@ -231,7 +246,7 @@
                   (change)="onValuesChange($event)">
                 </ngx-select>
               </form-field>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -310,8 +325,15 @@
         </div>
       </div>
       <div class="col-md-4">
-        <button class="btn btn-primary btn-sm active m-3">Aprobar</button>
-        <button class="btn btn-danger btn-sm active m-3">
+        <button
+          class="btn btn-primary btn-sm active m-3"
+          [disabled]="isDocsEmpty()"
+          (click)="btnApprove()">
+          Aprobar
+        </button>
+        <button
+          class="btn btn-danger btn-sm active m-3"
+          (click)="btnDeleteDictation()">
           Borrar Dictamen
         </button>
         <button
@@ -319,7 +341,14 @@
           (click)="btnDocumentos()">
           Documentos
         </button>
-        <button class="btn btn-warning btn-sm active m-3">Personalizar</button>
+        <button class="btn btn-warning btn-sm active m-3" (click)="btnVerify()">
+          Parcializar
+        </button>
+        <button
+          class="btn btn-warning btn-sm active m-3"
+          (click)="btnDeleteListDocs()">
+          Limpiar documentos
+        </button>
       </div>
     </div>
   </div>

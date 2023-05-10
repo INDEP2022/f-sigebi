@@ -100,7 +100,7 @@ export class RegistrationOfRequestsComponent
   question: boolean = false;
   verifyResp: string = null;
   task: any = null;
-
+  statusTask: any = '';
   pgr: boolean = false;
 
   constructor(
@@ -133,7 +133,9 @@ export class RegistrationOfRequestsComponent
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
-    console.log('task', this.task);
+
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -156,8 +158,12 @@ export class RegistrationOfRequestsComponent
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
   associateExpedientListener() {
     this.requestHelperService.currentExpedient.subscribe({
-      next: resp => {
+      next: async resp => {
         if (resp === true) {
+          const request: any = await this.getAsyncRequestById();
+          this.registRequestForm.controls['recordId'].setValue(
+            request.recordId
+          );
           this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }
@@ -176,7 +182,7 @@ export class RegistrationOfRequestsComponent
         [
           Validators.required,
           Validators.minLength(1),
-          Validators.maxLength(30),
+          Validators.maxLength(50),
         ],
       ],
       regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -310,10 +316,11 @@ export class RegistrationOfRequestsComponent
           await this.getDictamen(data.id);
         }
 
+        this.verifyTransDelegaStatiAuthoExist(data);
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
-        console.log({ data });
         if (!data?.typeOfTransfer) {
           data.typeOfTransfer = 'MANUAL';
         }
@@ -330,6 +337,30 @@ export class RegistrationOfRequestsComponent
         console.log(error.error.message);
       },
     });
+  }
+
+  verifyTransDelegaStatiAuthoExist(data: any) {
+    if (
+      !data.transferenceId ||
+      !data.regionalDelegationId ||
+      !data.stationId ||
+      !data.authorityId
+    ) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Sin los campos de transferente, emisora y autoridad no se podran realizar las documentaciones requeridas! ',
+        icon: 'error',
+        width: 450,
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#b38e5d',
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+      }).then(async result => {
+        if (result.isConfirmed) {
+        }
+      });
+    }
   }
 
   setRequiredFields(data: any) {
@@ -537,7 +568,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'finish';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -548,7 +579,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'returnar';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -613,7 +644,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegúrese de tener guardado los formularios antes de turnar la solicitud',
+      'Asegúrese de haber guardado la información antes de turnar la solicitud',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -784,26 +815,95 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
 
+  /* Metodo para crear solo aprovacion de solicitud */
+  createApprovalProcessOnly() {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.task.assignees;
+      task['assigneesDisplayname'] = this.task.displayName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestData.id);
+      task[
+        'title'
+      ] = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestData.id;
+      task['expedientId'] = this.requestData.recordId;
+      task['urlNb'] = 'pages/request/transfer-request/process-approval';
+
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+          reject(false);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'No se pudo crear la tarea de Aprovación de Solicitud'
+          );
+        },
+      });
+    });
+  }
+  /* FIN CREAR SOLO TAREA APROVACION DE SOLICITUD */
+
+  /* Cerrar la tarea de validacion documental */
+  async closeValidateDocumentation() {
+    const title = `Cerrar tarea de (Destino-Documental), No. Solicitud: ${this.requestData.id}`;
+    const url =
+      'pages/request/transfer-request/notify-clarification-inadmissibility';
+    const from = 'VERIFICAR_CUMPLIMIENTO';
+    const to = 'NOTIFICAR_ACLARACIONES';
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Destino_Documental',
+      'APROBAR_SOLICITUD_AA'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se Turno la solicitud con el folio: ${this.requestData.id}`
+      );
+      console.log('Tarea Cerrada');
+    }
+  }
+  /* FIN CERRAR VALIDACION DOCUMENTAL */
+
   close() {
     this.registRequestForm.reset();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 
   signDictum() {
-    const idDoc = this.route.snapshot.paramMap.get('id');
+    const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
 
-    this.requestService.getById(idDoc).subscribe({
+    this.requestService.getById(idSolicitud).subscribe({
       next: response => {
-        this.requestList = response;
+        const requestData = response;
 
         let config: ModalOptions = {
           initialState: {
-            idDoc,
+            idSolicitud,
             idTypeDoc,
             typeAnnex,
-            response,
+            requestData,
             callback: (next: boolean) => {},
           },
           class: 'modal-lg modal-dialog-centered',
@@ -822,7 +922,7 @@ export class RegistrationOfRequestsComponent
   approveRequest() {
     this.msgSaveModal(
       'Aprobar',
-      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
+      '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -831,19 +931,31 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     this.loader.load = true;
+    //no tiene aclaraciones
+    const haveClarifications = await this.haveNotificacions();
+    if (haveClarifications === 'POR_ACLARAR') {
+      this.onLoadToast(
+        'info',
+        'No se puede aprobar la solicitud',
+        'La solicitud aun cuenta con bienes por aclarar!'
+      );
+      this.loader.load = false;
+      return;
+    }
+
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
-        'No se puede aprobar',
+        'No se puede aprobar la solicitud',
         'Es requerido previamente tener firmado el dictamen'
       );
       this.loader.load = false;
       return;
     }
 
-    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
-    const url = 'pages/request/programming-request/schedule-reception';
+    const title = ``;
+    const url = '';
     const from = 'SOLICITAR_APROBACION';
     const to = 'APROBADO';
     const user: any = this.authService.decodeToken();
@@ -875,7 +987,7 @@ export class RegistrationOfRequestsComponent
   refuseRequest() {
     this.msgSaveModal(
       'Rechazar',
-      'Deseas rechazar la solicitud con el folio: ' + this.requestData.id + '?',
+      '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       'refuse'
@@ -883,6 +995,17 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
+    const haveClarifications = await this.haveNotificacions();
+    if (haveClarifications === 'POR_ACLARAR') {
+      this.onLoadToast(
+        'info',
+        'No se puede rechazar la solicitud',
+        'La solicitud aun cuenta con bienes por aclarar!'
+      );
+      this.loader.load = false;
+      return;
+    }
+
     const oldTask: any = await this.getOldTask();
     if (oldTask.assignees != '') {
       const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
@@ -1094,22 +1217,27 @@ export class RegistrationOfRequestsComponent
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
+          this.loader.load = true;
           const clarification = await this.haveNotificacions();
-          console.log(clarification);
-          console.log(this.requestData.typeOfTransfer);
-          //debugger;
-          if (
-            clarification === true &&
-            this.requestData.typeOfTransfer !== 'MANUAL'
-          ) {
+          if (clarification === 'POR_ACLARAR') {
+            const result = await this.createApprovalProcessOnly();
+            if (result) {
+              await this.notifyClarificationsMethod();
+            }
+          } else if (clarification === 'ACLARADO') {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
-            body.rulingCreatorName = user.username;
+            body.rulingCreatorName = user.name;
             await this.updateRequest(body);
-            await this.notifyClarificationsMethod();
-          } else {
-            this.destinyDocumental();
+            await this.closeValidateDocumentation();
+          } else if (clarification === 'SIN_ACLARACIONES') {
+            const user: any = this.authService.decodeToken();
+            const body: any = {};
+            body.id = this.requestData.id;
+            body.rulingCreatorName = user.name;
+            await this.updateRequest(body);
+            await this.destinyDocumental();
           }
         }
         if (typeCommit === 'proceso-aprovacion') {
@@ -1128,19 +1256,22 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
+      //params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
-      //debugger;
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
-          if (resp.data) {
-            resolve(true);
+          const goodsClarified = resp.data.filter(
+            (x: any) => x.good.goodStatus === 'ACLARADO'
+          );
+          if (goodsClarified.length > 0) {
+            resolve('ACLARADO');
           } else {
-            resolve(false);
+            resolve('POR_ACLARAR');
           }
+          console.log(goodsClarified);
         },
         error: (error: any) => {
-          resolve(false);
+          resolve('SIN_ACLARACIONES');
           /*this.onLoadToast(
             'error',
             'Error interno',

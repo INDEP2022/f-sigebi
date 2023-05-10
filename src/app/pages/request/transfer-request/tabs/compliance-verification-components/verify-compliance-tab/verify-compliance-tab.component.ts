@@ -15,6 +15,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IFormGroup, ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
@@ -25,6 +26,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -91,6 +93,9 @@ export class VerifyComplianceTabComponent
   clarificationData: any = [];
   clarifyRowSelected: any = [];
   confirmation: boolean = false;
+  task: any;
+  statusTask: any = '';
+  showClarificationButtons: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -106,12 +111,17 @@ export class VerifyComplianceTabComponent
     private rejectedGoodService: RejectedGoodService,
     private requestHelperService: RequestHelperService,
     private goodResDevService: GetGoodResVeService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private chatClarificationService: ChatClarificationsService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    // DISABLED BUTTON - FINALIZED //
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    this.statusTask = this.task.status;
+
     /* aclaraciones */
     this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
 
@@ -459,7 +469,10 @@ export class VerifyComplianceTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      fractionId: [null],
       descriptionGoodSae: [null],
+      uniqueKey: [null],
+      duplicatedGood: [null],
     });
   }
 
@@ -510,15 +523,20 @@ export class VerifyComplianceTabComponent
     }); */
   }
 
-  setDescriptionGoodSae(data: any) {
-    this.goodData.getElements().then(data => {
-      data.map((item: any) => {
-        if (item.id === data.data.id) {
-          item.descriptionGoodSae = data.text;
-        }
-      });
-      this.goodData.load(data);
+  setDescriptionGoodSae(descriptionInput: any) {
+    this.goodData['data'].map((item: any) => {
+      if (item.id === descriptionInput.data.id) {
+        item.descriptionGoodSae = descriptionInput.text;
+      }
     });
+    /*this.goodData.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === descriptionInput.data.id) {
+          item.descriptionGoodSae = descriptionInput.text;
+        }
+        this.goodData.load(data)
+      });
+    });*/
   }
 
   getData() {
@@ -592,7 +610,7 @@ export class VerifyComplianceTabComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
@@ -640,16 +658,17 @@ export class VerifyComplianceTabComponent
   }
 
   getArticle3(id: number, transferentId: number) {
-    const params = new ListParams();
-    params['filter.requestId'] = `$eq:${id}`;
-    params['filter.cumpliance.article'] = `$eq:Articulo 3 Ley`;
+    let param = new FilterParams();
+    param.addFilter('requestId', id);
+    param.addFilter('cumpliance.article', 'Articulo 3 Ley');
     if (Number(transferentId) === 1 || Number(transferentId) === 120) {
-      params['filter.cumpliance.transfereeId'] = `$eq:${transferentId}`;
+      param.addFilter('cumpliance.transfereeId', transferentId);
     } else {
-      params['filter.cumpliance.transfereeId'] = `$null`;
+      param.addFilter('cumpliance.transfereeId', '', SearchFilter.NULL);
     }
-    params.limit = 30;
-    this.requestDocumentService.getAll(params).subscribe({
+    param.limit = 30;
+    let filter = param.getParams();
+    this.requestDocumentService.getAll(filter).subscribe({
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
@@ -669,16 +688,17 @@ export class VerifyComplianceTabComponent
   }
 
   getArticle1213(id: number, transferentId: number) {
-    const params = new ListParams();
-    params['filter.requestId'] = `$eq:${id}`;
-    params['filter.cumpliance.article'] = `$eq:Articulo 12 y 13 Reglamento`;
+    let param = new FilterParams();
+    param.addFilter('requestId', id);
+    param.addFilter('cumpliance.article', 'Articulo 12 y 13 Reglamento');
     if (Number(transferentId) === 1 || Number(transferentId) === 120) {
-      params['filter.cumpliance.transfereeId'] = `$eq:${transferentId}`;
+      param.addFilter('cumpliance.transfereeId', transferentId);
     } else {
-      params['filter.cumpliance.transfereeId'] = `$null`;
+      param.addFilter('cumpliance.transfereeId', '', SearchFilter.NULL);
     }
-    params.limit = 30;
-    this.requestDocumentService.getAll(params).subscribe({
+    param.limit = 30;
+    let filter = param.getParams();
+    this.requestDocumentService.getAll(filter).subscribe({
       next: resp => {
         let cumpliance = resp.data.map((item: any) => {
           item.cumpliance['cumple'] = item.fulfill === 'N' ? false : true;
@@ -724,11 +744,15 @@ export class VerifyComplianceTabComponent
   selectGood(event: any) {
     //if (event.isSelected === true) {
     this.formLoading = true;
+
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
 
     if (this.goodsSelected.length === 1) {
+      //verifica si el bien ya fue aclarado para desabilitar
+      this.showClarificationButtons =
+        this.goodsSelected[0].goodStatus == 'ACLARADO' ? false : true;
       this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
@@ -740,7 +764,12 @@ export class VerifyComplianceTabComponent
         }
         this.formLoading = false;
       }, 1000);
+
+      //console.log("Información de domicilio ",);
     } else {
+      this.clarificationData = [];
+      this.isGoodSelected = false;
+      this.detailArray.reset();
       this.formLoading = false;
     }
   }
@@ -790,7 +819,7 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  deleteClarification() {
+  async deleteClarification() {
     if (this.clarifyRowSelected.length !== 1) {
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
@@ -804,9 +833,14 @@ export class VerifyComplianceTabComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Eliminar',
-    }).then(result => {
+    }).then(async result => {
       if (result.isConfirmed) {
         this.loader.load = true;
+        //eliminar el chat clarification
+        const idChatClarification =
+          this.clarifyRowSelected[0].chatClarification.idClarification;
+        const result = await this.removeChatClarification(idChatClarification);
+        //elimina la aclaracion
         const id = this.clarifyRowSelected[0].rejectNotificationId;
         this.rejectedGoodService.remove(id).subscribe({
           next: async resp => {
@@ -944,6 +978,26 @@ export class VerifyComplianceTabComponent
             'error',
             'Error interno',
             'No se pudo eliminar el bien-res-deb'
+          );
+        },
+      });
+    });
+  }
+
+  removeChatClarification(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.chatClarificationService.remove(id).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          reject(false);
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error al eliminar',
+            'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
         },
       });

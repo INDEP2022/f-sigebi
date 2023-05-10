@@ -1,9 +1,11 @@
 import {
   Component,
+  EventEmitter,
   inject,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -41,9 +43,11 @@ import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercom
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  DOUBLE_PATTERN,
   NUMBERS_PATTERN,
   NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -64,21 +68,11 @@ export class DetailAssetsTabComponentComponent
   @Input() requestObject: any; //solicitud
   @Input() assetsId: any; //id del bien
   @Input() detailAssets: ModelForm<any>;
-
-  // set detailAssets(value: ModelForm<any>) {
-  //   this.initForm();
-  //   this.getBrand(new ListParams(), () => {
-  //     this._detailAssets = value;
-  //     return {};
-  //   });
-  // }
-  // get detailAssets() {
-  //   return this._detailAssets;
-  // }
-  // bienes ModelForm
   @Input() domicilieObject: IDomicilies; // domicilio del bien
   @Input() typeDoc: any;
   @Input() process: string = '';
+  @Input() childSaveAction: boolean = false;
+  @Output() sendDetailInfoEvent?: EventEmitter<any> = new EventEmitter();
 
   goodData: IGood;
   bsModalRef: BsModalRef;
@@ -170,6 +164,8 @@ export class DetailAssetsTabComponentComponent
   isGoodInfReadOnly: boolean = false;
   isGoodTypeReadOnly: boolean = false;
   ligieUnit: string = '';
+  typeOfRequest: string = '';
+  detailAssetsInfo: any;
 
   constructor(
     private fb: FormBuilder,
@@ -193,8 +189,10 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-    //console.log({ process: this.process });
-    console.log('goods ', this.detailAssets);
+
+    this.typeOfRequest = this.requestObject.typeOfTransfer
+      ? this.requestObject.typeOfTransfer
+      : this.requestObject.controls['typeOfTransfer'].value;
     if (this.process == 'validate-document') {
       this.getDomicilieGood(
         parseInt(this.detailAssets.controls['addressId'].value)
@@ -202,31 +200,16 @@ export class DetailAssetsTabComponentComponent
     }
     if (this.process == 'classify-assets') {
       if (this.domicilieObject) {
-        // console.log(this.domicilieObject.warehouseAlias);
-        //console.log({ alias: this.domicilieObject.warehouseAlias });
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
+      // this.goodData = this.detailAssets.value;
 
-      /*  this.domicileForm
-        .get('warehouseAlias')
-        .setValue(this.domicilieObject.warehouseAlias);
-      this.getStateOfRepublic(new ListParams(), this.domicilieObject.statusKey); */
-      this.goodData = this.detailAssets.value;
-      /*if (this.goodData.fractionId) {
-        this.relevantTypeService
-          .getById(this.goodData.fractionId?.relevantTypeId)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: data => {
-              this.relevantTypeName = data.description;
-            },
-            error: error => {},
-          });
-      }*/
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
+        console.log(this.detailAssets.value);
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
+        console.log('inicia<>>>><<<<<>>>>>');
       }
       this.isGoodTypeReadOnly = true;
     }
@@ -235,6 +218,7 @@ export class DetailAssetsTabComponentComponent
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
+        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), brand);
       }
     }
@@ -273,7 +257,12 @@ export class DetailAssetsTabComponentComponent
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        this.getSubBrand(new ListParams(), brand);
+        console.log('inicia<>>>><<<<<>>>>>');
+        this.getSubBrand(
+          new ListParams(),
+          brand,
+          this.detailAssets.controls['subBrand'].value
+        );
       }
     }
     if (this.detailAssets.controls['brand'].value) {
@@ -304,7 +293,10 @@ export class DetailAssetsTabComponentComponent
     }
 
     //revisa si el formulario de bienes contiene el id del tipo de bien
-    if (this.detailAssets.controls['goodTypeId'].value != null) {
+    if (
+      this.detailAssets.controls['goodTypeId'].value != null &&
+      this.childSaveAction === false
+    ) {
       const data = this.detailAssets.controls['goodTypeId'].value;
       this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
       this.displayTypeTapInformation(Number(data));
@@ -321,6 +313,10 @@ export class DetailAssetsTabComponentComponent
       if (destiny) {
         this.getDestiny(destiny);
       }
+    }
+
+    if (this.childSaveAction === true) {
+      this.save();
     }
   }
 
@@ -349,20 +345,21 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
+    this.detailAssetsInfo = this.detailAssets.value;
     this.initForm();
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
-    this.isSavingData();
-    this.getBrand(new ListParams());
+
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
     }
+    this.getBrand(new ListParams(), this.detailAssets.controls['brand'].value);
   }
 
   initForm() {
@@ -643,6 +640,14 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
+      lien: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      gravPleaseTrans: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
     });
   }
 
@@ -716,9 +721,6 @@ export class DetailAssetsTabComponentComponent
 
   getMunicipaly(params: ListParams, municipalyId?: number | string) {
     params['filter.stateKey'] = `$eq:${this.stateOfRepId}`;
-    /*if (municipalyId) {
-      params['filter.municipalityKey'] = `$eq:${municipalyId}`;
-    }*/
     this.goodsInvService
       .getAllMunipalitiesByFilter(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -782,7 +784,6 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
-    // debugger;
     if (municipalityId === null || stateKey === null) {
       return;
     }
@@ -959,15 +960,48 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          const result = resp.data.filter((x: any) => x.uomCode === id);
-          this.ligieUnit = result[0].measureTlUnit;
+          //const result = resp.data.filter((x: any) => x.uomCode === id);
+          this.ligieUnit = resp.data[0].measureTlUnit;
+          this.setQuantityTypeInput(this.ligieUnit);
         },
       });
   }
+
+  setQuantityTypeInput(unity: string) {
+    if (
+      unity === 'JUEGOS' ||
+      unity === 'PAR' ||
+      unity === 'PIEZA' ||
+      unity === 'UNIDAD' ||
+      unity === 'CAJAS'
+    ) {
+      this.detailAssets.controls['quantity'].setValidators([
+        Validators.required,
+        Validators.pattern(POSITVE_NUMBERS_PATTERN),
+      ]);
+    } else if (
+      unity === 'KILOGRAMOS' ||
+      unity === 'GRAMO' ||
+      unity === 'LITRO' ||
+      unity === 'METRO' ||
+      unity === 'METRO CÚBICO' ||
+      unity === 'METRO CUADRADO'
+    ) {
+      this.detailAssets.controls['quantity'].setValidators([
+        Validators.required,
+        Validators.pattern(DOUBLE_PATTERN),
+      ]);
+    }
+    this.detailAssets.updateValueAndValidity();
+  }
+
   onValuesChange(data: any) {
-    // this.brandId = data.flexValue;
-    this.getSubBrand(new ListParams(), data.flexValue);
-    this.detailAssets.controls['subBrand'].setValue(null);
+    if (data != undefined) {
+      this.getSubBrand(new ListParams(), data.flexValue);
+      this.detailAssets.controls['subBrand'].setValue(null);
+    } else {
+      this.getBrand(new ListParams());
+    }
   }
   getBrand(params: ListParams, brandId?: string) {
     const filter = new FilterParams();
@@ -991,13 +1025,17 @@ export class DetailAssetsTabComponentComponent
       });
   }
 
-  getSubBrand(params: ListParams, brandId?: string) {
+  getSubBrand(params: ListParams, brandId?: string, description?: string) {
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
     filter.limit = params.limit;
     filter['filter.carBrand'] = `$eq:${idBrand}`;
-    filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
+    if (description != null) {
+      filter['filter.flexValueMeaningDependent'] = `$ilike:${description}`;
+    } else {
+      filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
+    }
 
     this.goodsInvService
       .getAllSubBrandWithFilter(filter)
@@ -1130,7 +1168,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
-    //debugger;
     this.typeRelevantSevice
       .getById(id)
       .pipe(takeUntil(this.$unSubscribe))
@@ -1143,9 +1180,8 @@ export class DetailAssetsTabComponentComponent
 
   changeDateEvaluoEvent(event: any) {
     this.bsEvaluoDate = event;
-
     if (this.bsEvaluoDate) {
-      let date = this.bsEvaluoDate.toISOString(); //new Date(this.bsEvaluoDate);
+      let date = this.bsEvaluoDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['appraisalDate'].setValue(date);
     }
   }
@@ -1153,7 +1189,7 @@ export class DetailAssetsTabComponentComponent
     this.bsCertifiDate = event;
 
     if (this.bsCertifiDate) {
-      let date = this.bsCertifiDate.toISOString(); //new Date(this.bsCertifiDate);
+      let date = this.bsCertifiDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['certLibLienDate'].setValue(date);
     }
   }
@@ -1162,7 +1198,7 @@ export class DetailAssetsTabComponentComponent
     this.bsPffDate = event;
 
     if (this.bsPffDate) {
-      let date = this.bsPffDate.toISOString(); //new Date(this.bsPffDate);
+      let date = this.bsPffDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['pffDate'].setValue(date);
     }
   }
@@ -1211,7 +1247,6 @@ export class DetailAssetsTabComponentComponent
 
   async save() {
     const domicilie = this.domicileForm.getRawValue();
-
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
@@ -1225,7 +1260,11 @@ export class DetailAssetsTabComponentComponent
           `Se reguiqere ingresar el domicilio del bien`
         );
       } else {
-        await this.saveGoodRealState();
+        if (!this.goodDomicilieForm.controls['id'].value) {
+          await this.saveGoodRealState();
+        } else {
+          await this.updateGoodRealState();
+        }
       }
     }
 
@@ -1292,7 +1331,7 @@ export class DetailAssetsTabComponentComponent
 
             if (data.id != null) {
               this.domicileForm.controls['id'].setValue(data.id);
-              resolve('Se actualizo el registro del domicilio del bien');
+              resolve(true);
             }
           },
           error: error => {
@@ -1317,45 +1356,52 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       domicilio.userCreation = username;
       domicilio.userModification = username;
+      domicilio.id = this.detailAssets.controls['id'].value;
+      this.goodEstateService.create(domicilio).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.goodDomicilieForm.controls['id'].setValue(resp.id);
+          this.goodDomicilieForm.controls['userCreation'].setValue(
+            resp.userCreation
+          );
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          console.log('inmueble crear', error);
+          this.message(
+            'error',
+            'Error',
+            `El registro del inmueble no se guardo!\n. ${error.error.message}`
+          );
+        },
+      });
+    });
+  }
 
-      if (domicilio.id === null) {
-        domicilio.id = this.detailAssets.controls['id'].value;
-        this.goodEstateService
-          .create(domicilio)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: resp => {
-              resolve(true);
-            },
-            error: error => {
-              reject(false);
-              console.log('inmueble ', error);
-              this.message(
-                'error',
-                'Error',
-                `El registro del inmueble no se guardo!\n. ${error.error.message}`
-              );
-            },
-          });
-      } else {
-        this.goodEstateService
-          .update(domicilio.id, domicilio)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: resp => {
-              resolve(true);
-            },
-            error: error => {
-              reject(false);
-              console.log('inmueble ', error);
-              this.message(
-                'error',
-                'Error',
-                `El registro del inmueble no se actualizo!\n. ${error.error.message}`
-              );
-            },
-          });
-      }
+  updateGoodRealState() {
+    return new Promise((resolve, reject) => {
+      const username = this.authService.decodeToken().preferred_username;
+      let domicilio = this.goodDomicilieForm.getRawValue();
+      domicilio.modificationDate = new Date().toISOString();
+      domicilio.creationDate = new Date().toISOString();
+
+      domicilio.userCreation = username;
+      domicilio.userModification = username;
+      this.goodEstateService.update(domicilio).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          console.log('inmueble actualizar', error);
+          this.message(
+            'error',
+            'Error',
+            `El registro del inmueble no se actualizo!\n. ${error.error.message}`
+          );
+        },
+      });
     });
   }
 
@@ -1434,7 +1480,6 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
-        // debugger;
         if (data === null) {
           this.combineMunicipalityId = true;
         }
@@ -1513,26 +1558,40 @@ export class DetailAssetsTabComponentComponent
 
   getGoodEstate() {
     if (this.detailAssets.controls['id'].value !== null) {
-      const id = this.detailAssets.controls['id'].value;
-      this.goodEstateService
-        .getById(id)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            this.goodDomicilieForm.patchValue(resp);
-            /* establece las fechas  */
-            //debugger;
-            const dateEvaluo =
-              this.goodDomicilieForm.controls['appraisalDate'].value;
-            this.bsEvaluoDate = dateEvaluo ? new Date(dateEvaluo) : null;
-            const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
-            this.bsPffDate = datePFF ? new Date(datePFF) : null;
-            const dateCerti =
-              this.goodDomicilieForm.controls['certLibLienDate'].value;
-            this.bsCertifiDate = dateCerti ? new Date(dateCerti) : null;
-          },
-        });
+      try {
+        const id = this.detailAssets.controls['id'].value;
+        this.goodEstateService
+          .getById(id)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: resp => {
+              this.goodDomicilieForm.patchValue(resp);
+              /* establece las fechas  */
+              const dateEvaluo =
+                this.goodDomicilieForm.controls['appraisalDate'].value;
+              this.bsEvaluoDate = dateEvaluo
+                ? this.parseDateNoOffset(dateEvaluo)
+                : null;
+              const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
+              this.bsPffDate = datePFF ? this.parseDateNoOffset(datePFF) : null;
+              const dateCerti =
+                this.goodDomicilieForm.controls['certLibLienDate'].value;
+              this.bsCertifiDate = dateCerti
+                ? this.parseDateNoOffset(dateCerti)
+                : null;
+            },
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   message(header: any, title: string, body: string) {
@@ -1541,17 +1600,15 @@ export class DetailAssetsTabComponentComponent
     }, 2000);
   }
 
-  isSavingData() {
-    this.requestHelperService.currentRefresh
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          if (data) {
-            this.save();
-          }
-        },
-      });
-  }
+  /*isSavingData() {
+    this.requestHelperService.currentRefresh.subscribe({
+      next: data => {
+        if (data) {
+          this.save();
+        }
+      },
+    });
+  }*/
 
   setGoodDomicilieSelected(domicilie: any) {
     domicilie.localityKey = Number(domicilie.localityKey);
@@ -1571,5 +1628,10 @@ export class DetailAssetsTabComponentComponent
     this.domicileForm.patchValue(domicilie);
 
     this.domicileForm.controls['localityKey'].setValue(domicilie.localityKey);
+  }
+
+  getDetailInfo(event: any) {
+    console.log(event);
+    this.sendDetailInfoEvent.emit(event);
   }
 }

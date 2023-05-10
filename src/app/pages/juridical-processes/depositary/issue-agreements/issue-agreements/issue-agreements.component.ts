@@ -14,19 +14,20 @@ import { Example } from 'src/app/core/models/catalogs/example';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 /** SERVICE IMPORTS */
+import { DatePipe } from '@angular/common';
 import { addDays, format } from 'date-fns';
 import { BehaviorSubject, from, map, takeUntil } from 'rxjs';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { DATE_FORMAT } from 'src/app/common/constants/data-formats/date.format';
+import { getUser } from 'src/app/common/helpers/helpers';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
-import { EventEmitterService } from './eventEmitter.service';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { DatePipe } from '@angular/common';
-import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
-import { getUser } from 'src/app/common/helpers/helpers';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { EventEmitterService } from './eventEmitter.service';
 
 /** ROUTING MODULE */
 
@@ -45,6 +46,32 @@ export class CustomRender implements ViewCell {
   @HostListener('click') onclick() {
     // console.log('CELL clicked', this.rowData);
     this.eventEmitterService.onFirstComponentButtonClick(this.rowData);
+  }
+}
+
+/** CHECK COMPONENT */
+@Component({
+  selector: 'my-check',
+  template: `
+    <input type="checkbox" name="check" [checked]="this.isChecked" />
+  `,
+})
+export class CheckboxComponent implements OnInit {
+  @Input() value: any; // This hold the cell value
+  @Input() rowData: any;
+  isChecked: boolean;
+  constructor(private eventEmitterService: EventEmitterService) {}
+  ngOnInit(): void {
+    if (this.value) {
+      this.isChecked = true;
+    }
+  }
+  @HostListener('change', ['$event']) changeListener(event: any) {
+    // console.log('CELL clicked', this.rowData);
+    this.eventEmitterService.onFirstComponentCheckClick({
+      event,
+      row: this.rowData,
+    });
   }
 }
 @Component({
@@ -119,13 +146,9 @@ export class IssueAgreementsComponent
         title: 'Observaciones Acuerdo Inicial',
         sort: false,
       },
-      ApprovedSuspencion: {
+      aceptaSuspencion: {
         title: 'Acepta Suspención',
         sort: false,
-        type: 'custom',
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction: (instance: CheckboxElementComponent) =>
-          this.onSelectDelegation(instance),
       }, //*
     },
   };
@@ -161,10 +184,7 @@ export class IssueAgreementsComponent
     private fb: FormBuilder,
     private eventEmitterService: EventEmitterService,
     private goodService: GoodService,
-    private statusGoodService: StatusGoodService,
-    private typeRelevantService: TypeRelevantService,
-    private historyGoodService: HistoryGoodService,
-
+    private statusGoodService: StatusGoodService
   ) {
     super();
   }
@@ -178,7 +198,6 @@ export class IssueAgreementsComponent
           }
         );
     }
-    this.getGoodStatusSelect();
     this.prepareForm();
     this.getData();
     this.params
@@ -189,33 +208,33 @@ export class IssueAgreementsComponent
   onSelectDelegation(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
-        this.goodService.update({
-          id: parseInt(data.row.id),
-          goodId: parseInt(data.row.goodId),
-          statusResourceReview: "ACEPTADO RECURSO DE REVISION"
-        }).subscribe({
-          next: datagod => {
-            this.createLogs(data.row);
-          }
-        })
+        this.goodService
+          .update({
+            id: parseInt(data.row.id),
+            goodId: parseInt(data.row.goodId),
+            statusResourceReview: 'ACEPTADO RECURSO DE REVISION',
+          })
+          .subscribe({
+            next: datagod => {
+              this.createLogs(data.row);
+            },
+          });
       },
     });
   }
-  public createLogs(dataLog:any ){
+  public createLogs(dataLog: any) {
     console.log(dataLog);
 
     const params = {
-        propertyNum:parseInt(dataLog.id),
-        status: dataLog.status ? dataLog.status :'' ,
-        changeDate:new Date() ,
-        userChange: getUser(),
-        statusChangeProgram:'FACTJUREMISIONACU' ,
-        reasonForChange: 'Automatico',
+      propertyNum: parseInt(dataLog.id),
+      status: dataLog.status ? dataLog.status : '',
+      changeDate: new Date(),
+      userChange: getUser(),
+      statusChangeProgram: 'FACTJUREMISIONACU',
+      reasonForChange: 'Automatico',
     };
-  this.historyGoodService.create(params).subscribe(data => {
-
-  })
-  };
+    this.historyGoodService.create(params).subscribe(data => {});
+  }
   private prepareForm() {
     this.form = this.fb.group({
       noBien: ['', [Validators.required]], //*
@@ -226,7 +245,7 @@ export class IssueAgreementsComponent
       goodId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]], //*
       description: [null],
       status: [null],
-      physicalReceptionDate: [null]
+      physicalReceptionDate: [null],
     });
     this.formDepositario = this.fb.group({
       idDepositario: ['', [Validators.required]], //*
@@ -241,7 +260,7 @@ export class IssueAgreementsComponent
     // this.params.value.addFilter('statusResourceReview',"DICTAMINADO RECURSO DE REVISION",SearchFilter.ILIKE);
 
     const filter = this.params.getValue().getParams();
-    const filterdefault = `${filter}&filter.statusResourceReview=$ilike:DICTAMINADO RECURSO DE REVISION`
+    const filterdefault = `${filter}&filter.statusResourceReview=$ilike:DICTAMINADO RECURSO DE REVISION`;
     console.log(filterdefault);
 
     this.goodService.getAllFilter(filterdefault).subscribe({
@@ -261,7 +280,8 @@ export class IssueAgreementsComponent
             })
           )
           .subscribe({
-            next: value => {
+            next: (value: any) => {
+              value.acceptSuspension = false;
               data.push(value);
               if (data.length == val.data.length) {
                 setTimeout(() => {
@@ -273,7 +293,7 @@ export class IssueAgreementsComponent
             },
           });
       },
-      error:(e) =>{
+      error: e => {
         this.message('info', 'Error', 'No se encontraron registros');
         this.loading = false;
       },
@@ -299,7 +319,7 @@ export class IssueAgreementsComponent
     });
   }
   clean() {
-    this.dataTable  = [];
+    this.dataTable = [];
     this.searchForm.reset();
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     this.getData();
@@ -311,7 +331,6 @@ export class IssueAgreementsComponent
       this.statu.value != null ||
       this.goodId.value != null
     ) {
-
       this.paginator();
     } else {
       this.message('info', 'Error', 'Debe llenar algun filtro.');
@@ -325,18 +344,16 @@ export class IssueAgreementsComponent
   }
   buildFilters() {
     var form = this.searchForm.getRawValue();
-    this.params.getValue().removeAllFilters()
+    this.params.getValue().removeAllFilters();
     for (const key in form) {
       if (form[key] !== null) {
-
-        if(key === 'physicalReceptionDate'){
-          form[key] = new DatePipe('en-EN').transform( form[key], 'dd/MM/yyyy')
+        if (key === 'physicalReceptionDate') {
+          form[key] = new DatePipe('en-EN').transform(form[key], 'dd/MM/yyyy');
         }
         this.params.value.addFilter(key, form[key]);
       }
     }
   }
-
 
   public open(data: any) {
     if (data) {
@@ -350,15 +367,12 @@ export class IssueAgreementsComponent
     this.mostrarHistoricalSituationGoods = false;
   }
 
-
-
   mostrarInfo(form: FormGroup): any {
     console.log(form.value);
   }
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
   }
-
 
   mostrarInfoDepositario(formDepositario: FormGroup): any {
     console.log(formDepositario.value);
