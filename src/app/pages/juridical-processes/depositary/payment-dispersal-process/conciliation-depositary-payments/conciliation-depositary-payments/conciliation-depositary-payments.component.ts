@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { DatePipe } from '@angular/common';
+import { takeUntil } from 'rxjs';
 import { DEPOSITARY_ROUTES_1 } from 'src/app/common/constants/juridical-processes/depositary-routes-1';
 import {
   baseMenu,
@@ -58,6 +59,8 @@ export class ConciliationDepositaryPaymentsComponent
   dataPersonsDepositary: IPersonsModDepositary;
   screenKey: string = 'FCONDEPOCONCILPAG';
   actualDate: any = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
+  origin: string = null;
+  noBienParams: number = null;
 
   public rutaValidacionPagos: string =
     baseMenu +
@@ -76,6 +79,15 @@ export class ConciliationDepositaryPaymentsComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.noBienParams = params['p_nom_bien']
+          ? Number(params['p_nom_bien'])
+          : null;
+        this.origin = params['origin'] ?? null;
+        console.log(params);
+      });
     this.loading = true;
     this.prepareForm();
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -362,5 +374,14 @@ export class ConciliationDepositaryPaymentsComponent
         },
         error: err => {},
       });
+  }
+
+  goBack() {
+    if (this.origin == 'FCONDEPOCARGAPAG') {
+      this.router.navigate([
+        '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments/' +
+          this.noBienParams,
+      ]);
+    }
   }
 }

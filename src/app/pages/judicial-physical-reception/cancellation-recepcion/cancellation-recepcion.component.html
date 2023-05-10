@@ -206,7 +206,6 @@
                 label="Fecha Elaboraci&oacute;n">
                 <input
                   bsDatepicker
-                  (ngModelChange)="fecElab()"
                   class="form-control"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
@@ -318,8 +317,9 @@
             </a>
             <button
               type="button"
-              class="btn btn-secondary btn-sm active mr-2 ml-2"
-              size="small">
+              class="my-1 mx-2 btn btn-danger active btn-sm"
+              size="small"
+              (click)="deleteProceeding()">
               Eliminar Acta
             </button>
             <button
