@@ -28,6 +28,7 @@ export class SelectConceptSpentDialogComponent implements OnInit {
       edit: true,
       delete: false,
     },
+    hideSubHeader: true,
     columns: {
       id: {
         title: 'Id',
