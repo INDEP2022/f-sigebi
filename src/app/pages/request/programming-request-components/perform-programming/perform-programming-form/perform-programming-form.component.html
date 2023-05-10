@@ -38,7 +38,11 @@
           <form-field
             [control]="performForm.get('address')"
             label="Direcci&oacute;n">
-            <input type="text" class="form-control" formControlName="address" />
+            <input
+              type="text"
+              class="form-control"
+              maxlength="200"
+              formControlName="address" />
           </form-field>
         </div>
 
@@ -61,7 +65,11 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field [control]="performForm.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="city" />
           </form-field>
         </div>
 
@@ -196,6 +204,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="50"
               formControlName="emailTransfer" />
           </form-field>
         </div>
@@ -206,6 +215,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="400"
               formControlName="observation" />
           </form-field>
         </div>

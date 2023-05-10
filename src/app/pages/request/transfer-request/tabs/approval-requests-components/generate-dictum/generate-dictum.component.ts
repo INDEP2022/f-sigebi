@@ -104,14 +104,14 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   signDictum(): void {
     console.log('id de solicitud', this.requestData.id);
     const requestInfo = this.requestData;
-    const idSolicitud = this.idSolicitud;
+    const idReportAclara = this.idSolicitud;
     const typeAnnex = 'approval-request';
     const idTypeDoc = this.idTypeDoc;
     const nameTypeDoc = 'DictamenProcendecia';
 
     let config: ModalOptions = {
       initialState: {
-        idSolicitud,
+        idReportAclara,
         idTypeDoc,
         typeAnnex,
         requestInfo,
