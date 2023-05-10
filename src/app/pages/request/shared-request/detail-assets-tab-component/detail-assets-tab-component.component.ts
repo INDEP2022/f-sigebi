@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import {
@@ -1026,6 +1027,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string, description?: string) {
+    console.log(this.detailAssets.value);
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
@@ -1181,7 +1183,7 @@ export class DetailAssetsTabComponentComponent
   changeDateEvaluoEvent(event: any) {
     this.bsEvaluoDate = event;
     if (this.bsEvaluoDate) {
-      let date = this.bsEvaluoDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
+      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsEvaluoDate.toISOString();
       this.goodDomicilieForm.controls['appraisalDate'].setValue(date);
     }
   }
@@ -1189,7 +1191,7 @@ export class DetailAssetsTabComponentComponent
     this.bsCertifiDate = event;
 
     if (this.bsCertifiDate) {
-      let date = this.bsCertifiDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
+      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsCertifiDate.toISOString();
       this.goodDomicilieForm.controls['certLibLienDate'].setValue(date);
     }
   }
@@ -1198,7 +1200,7 @@ export class DetailAssetsTabComponentComponent
     this.bsPffDate = event;
 
     if (this.bsPffDate) {
-      let date = this.bsPffDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
+      let date = moment(this.bsEvaluoDate).format('DD-MM-YYYY'); //this.bsPffDate.toISOString();
       this.goodDomicilieForm.controls['pffDate'].setValue(date);
     }
   }

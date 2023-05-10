@@ -48,20 +48,13 @@
                     formControlName="cveOfficeGenerate" />
                 </form-field>
                 <form-field
-                  *ngIf="showEnableTypeOffice"
                   class="col-sm-12 col-12 col-md-12 p-2"
                   [control]="form.get('typeOffice')"
                   label="Tipo Oficio">
-                  <select
-                    class="form-control"
-                    formControlName="typeOffice"
-                    (change)="changeTypeOffice($event)">
+                  <select class="form-control" formControlName="typeOffice">
                     <option value="">Seleccione un valor</option>
-                    <option
-                      *ngFor="let optionTypeOffice of officeTypeOption"
-                      [value]="optionTypeOffice.value">
-                      {{ optionTypeOffice.option }}
-                    </option>
+                    <option value="1">Opcion 1</option>
+                    <option value="2">Opcion 2</option>
                   </select>
                 </form-field>
                 <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -98,9 +91,9 @@
                 <div class="col-sm-12 col-12 col-md-12 p-2">
                   <ngx-select
                     [data]="cityData"
-                    bindLabel="nameAndId"
+                    bindLabel="description"
                     label="Ciudad"
-                    value="idCity"
+                    value="id"
                     (fetchItems)="getCityByDetail($event)"
                     [form]="form"
                     [showTooltip]="true"
@@ -167,28 +160,19 @@
             </div>
             <div class="card-body">
               <div class="col-sm-12 col-12 col-md-3">
-                <button
-                  (click)="showMoreInformationField(true, 1)"
-                  type="button"
-                  class="btn btn-success btn-sm active">
+                <button type="button" class="btn btn-primary btn-sm active">
                   <i aria-hidden="true" class="fa fa-plus"></i>
                   M&aacute;s Información 1
                 </button>
               </div>
               <div class="col-sm-12 col-12 col-md-3">
-                <button
-                  (click)="showMoreInformationField(true, 2)"
-                  type="button"
-                  class="btn btn-info btn-sm active">
+                <button type="button" class="btn btn-primary btn-sm active">
                   <i aria-hidden="true" class="fa fa-plus"></i>
                   M&aacute;s Información 2
                 </button>
               </div>
               <div class="col-sm-12 col-12 col-md-3">
-                <button
-                  (click)="showMoreInformationField(true, 3)"
-                  type="button"
-                  class="btn btn-warning btn-sm active">
+                <button type="button" class="btn btn-primary btn-sm active">
                   <i aria-hidden="true" class="fa fa-plus"></i>
                   M&aacute;s Información 3
                 </button>
@@ -202,51 +186,6 @@
                   class="form-control"
                   formControlName="numberNotary" />
               </form-field>
-            </div>
-            <div
-              class="card-footer"
-              *ngIf="moreInfo1 || moreInfo2 || moreInfo3">
-              <form-field
-                *ngIf="moreInfo1"
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('moreInformation1')"
-                label="M&aacute;s Información 1">
-                <textarea
-                  class="form-control"
-                  formControlName="moreInformation1"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-              <form-field
-                *ngIf="moreInfo2"
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('moreInformation2')"
-                label="M&aacute;s Información 2">
-                <textarea
-                  class="form-control"
-                  formControlName="moreInformation2"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-              <form-field
-                *ngIf="moreInfo3"
-                class="col-md-12 col-sm-12 col-12 p-2"
-                [control]="form.get('moreInformation3')"
-                label="M&aacute;s Información 3">
-                <textarea
-                  class="form-control"
-                  formControlName="moreInformation3"
-                  rows="5"
-                  [readonly]="true"></textarea>
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-12 text-center">
-                <button
-                  (click)="showMoreInformationField(false, 4)"
-                  type="button"
-                  class="btn btn-danger btn-sm active">
-                  Cerrar Información Adicional
-                </button>
-              </div>
             </div>
           </div>
           <div class="card">
@@ -317,20 +256,6 @@
             </div>
           </div>
         </form>
-      </div>
-      <div class="col-sm-12 col-12 col-md-12 text-center">
-        <button type="button" class="btn btn-primary btn-sm active m-3">
-          Reporte
-          <i class="fa fa-file" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn btn-info btn-sm active m-3">
-          Detalle
-          <i class="fa fa-info-circle" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="btn btn-success btn-sm active m-3">
-          Enviar
-          <i class="fa fa-paper-plane" aria-hidden="true"></i>
-        </button>
       </div>
     </div>
     <hr />

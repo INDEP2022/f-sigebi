@@ -20,7 +20,9 @@ export class AppointmentsService {
   ) {}
 
   getGoodAppointmentDepositaryByNoGood(params: ListParams) {
-    return this.msDepositaryService.getAllFiltered(params);
+    return this.msDepositaryService.getGoodAppointmentDepositaryByNoGood(
+      params
+    );
   }
 
   getGoodByParams(params: ListParams) {

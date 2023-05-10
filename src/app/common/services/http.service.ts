@@ -32,9 +32,6 @@ export class HttpService {
   protected post<T = any>(route: string, body: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(this.microservice);
-    console.log(route);
-    console.log(url);
     return this.httpClient.post<T>(`${url}`, body, { params });
   }
 

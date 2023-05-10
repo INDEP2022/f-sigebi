@@ -33,9 +33,10 @@ export class SignatoriesService extends HttpService {
   getSignatoriesName(
     learnedType: string | number,
     learnedId: string | number,
+    name: string | number,
     params?: string
   ): Observable<IListResponse<ISignatories>> {
-    const route = `${ElectronicFirmEndpoint.Signatories}?filter.learnedType=${learnedType}&filter.learnedId=${learnedId}`;
+    const route = `${ElectronicFirmEndpoint.Signatories}?filter.learnedType=${learnedType}&filter.learnedId=${learnedId}&filter.name=${name}`;
     return this.get(route, params);
   }
 
@@ -46,10 +47,5 @@ export class SignatoriesService extends HttpService {
   update(id: string | number, model: FormData) {
     const route = `${ElectronicFirmEndpoint.Signatories}/${id}`;
     return this.put(route, model);
-  }
-
-  deleteFirmante(id: number) {
-    const route = `${ElectronicFirmEndpoint.Signatories}/${id}`;
-    return this.delete(route);
   }
 }

@@ -22,7 +22,6 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
-import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import {
   NUMBERS_PATTERN,
   NUMBERS_POINT_PATTERN,
@@ -82,7 +81,6 @@ export class AddressTransferorTabComponent
   authService = inject(AuthService);
   route = inject(ActivatedRoute);
   goodsinvService = inject(GoodsInvService);
-  aliasStoreService = inject(StoreAliasStockService);
 
   constructor(
     private fb: FormBuilder,
@@ -463,7 +461,7 @@ export class AddressTransferorTabComponent
     });
   }
 
-  async saveAddres() {
+  saveAddres() {
     //guardar el formulario para que se carge en el modal anterior
     this.domicileForm.controls['creationDate'].setValue(
       new Date().toISOString()
@@ -476,18 +474,6 @@ export class AddressTransferorTabComponent
       domicile.requestId = this.requestObject.id;
       domicile.regionalDelegationId = this.requestObject.regionalDelegationId;
     }
-
-    //crea un alias en el almacen
-    let alias = null;
-    if (this.isNewAddress === true) {
-      let aliasStore: any = {};
-      aliasStore.aliasStock = domicile.warehouseAlias;
-      aliasStore.userCreation = username;
-      aliasStore.dateCreation = new Date().toISOString();
-      aliasStore.version = '1.0';
-      alias = await this.createAliasStock(aliasStore);
-    }
-
     if (!domicile.id) {
       this.createAddress(domicile);
     } else {
@@ -550,25 +536,10 @@ export class AddressTransferorTabComponent
         }
       },
       error => {
-        //this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
+        this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
         this.message('error', 'Error', error.getMessage());
       }
     );
-  }
-
-  createAliasStock(aliasStock: any) {
-    return new Promise((resolve, reject) => {
-      this.aliasStoreService.create(aliasStock).subscribe({
-        next: resp => {
-          resolve(true);
-        },
-        error: error => {
-          resolve(false);
-          console.log(error);
-          this.onLoadToast('error', 'Alias Almacen', `${error.error.message}`);
-        },
-      });
-    });
   }
 
   formReactiveCalls() {

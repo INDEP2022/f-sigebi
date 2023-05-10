@@ -71,7 +71,6 @@ export class ClassifyAssetsTabComponent
   task: any;
   statusTask: any = '';
   childSaveAction: boolean = false;
-  canClean: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -473,122 +472,7 @@ export class ClassifyAssetsTabComponent
     for (let i = 0; i < listReverse.length; i++) {
       const id = listReverse[i];
       this.classiGoodsForm.controls[fractions[i]].setValue(id);
-      if (i === 1) {
-        this.getChapter1(new ListParams(), id);
-      } else if (i === 2) {
-        this.getLevels1(new ListParams(), id);
-      } else if (i === 3) {
-        this.getLevels2(new ListParams(), id);
-      } else if (i === 4) {
-        this.getLevels3(new ListParams(), id);
-      } else if (i === 5) {
-        this.getLevels4(new ListParams(), id);
-      }
     }
-    this.getSection1(new ListParams());
-
-    // console.log(listReverse);
-  }
-  getLevels4(params: ListParams, id?: number, clean: boolean = false) {
-    params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: (data: any) => {
-          this.showHideErrorInterceptorService.showHideError(false);
-          this.selectLevel4 = data.data; //new DefaultSelect(data.data, data.count);
-        },
-        error: error => {
-          this.loading = false;
-          this.formLoading = false;
-        },
-      });
-  }
-  getLevels3(params: ListParams, id?: number, clean: boolean = false) {
-    params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.showHideErrorInterceptorService.showHideError(false);
-          this.selectLevel3 = data.data;
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-  }
-  getLevels2(params: ListParams, id?: number, clean: boolean = false) {
-    params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.showHideErrorInterceptorService.showHideError(false);
-          this.selectLevel2 = data.data; //= new DefaultSelect(data.data, data.count);
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-  }
-  getLevels1(params: ListParams, id?: number, clean: boolean = false) {
-    params['filter.parentId'] = '$eq:' + id.toString();
-    delete params.text;
-    delete params.inicio;
-    delete params.pageSize;
-    delete params.take;
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: (data: any) => {
-          this.showHideErrorInterceptorService.showHideError(false);
-          this.selectLevel1 = data.data;
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-  }
-  getChapter1(params: ListParams, id?: number, clean: boolean = false) {
-    if (id) {
-      params['filter.parentId'] = '$eq:' + id.toString();
-    }
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.showHideErrorInterceptorService.showHideError(false);
-          this.selectChapter = data.data;
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-  }
-  getSection1(params: ListParams, id?: number) {
-    params['filter.level'] = '$eq:' + 0;
-    params.limit = 50;
-    this.fractionService
-      .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          this.showHideErrorInterceptorService.showHideError(false);
-          this.selectSection = data.data;
-        },
-        error: error => {},
-      });
   }
 
   getSection(params: ListParams, id?: number) {
@@ -605,7 +489,7 @@ export class ClassifyAssetsTabComponent
         next: data => {
           this.showHideErrorInterceptorService.showHideError(false);
           this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
-          console.log(this.selectSection);
+
           if (this.advSearch === true) {
             this.listAdvancedFractions.push(data.data[0].id);
             const listReverse = this.listAdvancedFractions.reverse();
@@ -616,13 +500,14 @@ export class ClassifyAssetsTabComponent
           if (this.goodObject != null && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieSection'].setValue(id);
           }
+
           this.advSearch = false;
         },
         error: error => {},
       });
   }
 
-  getChapter(params: ListParams, id?: number, clean: boolean = false) {
+  getChapter(params: ListParams, id?: number) {
     if (id) {
       if (this.advSearch === false) {
         params['filter.parentId'] = '$eq:' + id.toString();
@@ -647,8 +532,7 @@ export class ClassifyAssetsTabComponent
           if (
             this.goodObject &&
             this.good.ligieChapter &&
-            this.advSearch == false &&
-            clean == false
+            this.advSearch == false
           ) {
             this.classiGoodsForm.controls['ligieChapter'].setValue(
               this.good.ligieChapter
@@ -661,7 +545,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel1(params: ListParams, id?: number, clean: boolean = false) {
+  getLevel1(params: ListParams, id?: number) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -684,7 +568,7 @@ export class ClassifyAssetsTabComponent
             this.getChapter(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && this.advSearch == false && clean == false) {
+          if (this.goodObject && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieLevel1'].setValue(
               this.good.ligieLevel1
             );
@@ -696,7 +580,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel2(params: ListParams, id?: number, clean: boolean = false) {
+  getLevel2(params: ListParams, id?: number) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -715,7 +599,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel1(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && this.advSearch == false && clean == false) {
+          if (this.goodObject && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieLevel2'].setValue(
               this.good.ligieLevel2
             );
@@ -727,7 +611,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel3(params: ListParams, id?: number, clean: boolean = false) {
+  getLevel3(params: ListParams, id?: number) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -746,7 +630,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel2(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && this.advSearch == false && clean == false) {
+          if (this.goodObject && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieLevel3'].setValue(
               this.good.ligieLevel3
             );
@@ -758,7 +642,7 @@ export class ClassifyAssetsTabComponent
       });
   }
 
-  getLevel4(params: ListParams, id?: number, clean: boolean = false) {
+  getLevel4(params: ListParams, id?: number) {
     if (this.advSearch === false) {
       params['filter.parentId'] = '$eq:' + id.toString();
     } else {
@@ -777,7 +661,7 @@ export class ClassifyAssetsTabComponent
             this.getLevel3(new ListParams(), data.data[0].parentId);
           }
 
-          if (this.goodObject && clean == false) {
+          if (this.goodObject) {
             this.classiGoodsForm.controls['ligieLevel4'].setValue(
               this.good.ligieLevel4
             );
@@ -845,17 +729,13 @@ export class ClassifyAssetsTabComponent
         break;
     }
   }
+
   cleanLvl(lvl?: number) {
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
-    this.selectLevel4 = [];
     this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-    this.selectLevel3 = [];
     this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-    this.selectLevel2 = [];
     this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-    this.selectLevel1 = [];
     this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-    this.selectChapter = [];
     this.classiGoodsForm.controls['ligieChapter'].setValue(null);
     this.classiGoodsForm.controls['ligieSection'].setValue(null);
     this.getSection(new ListParams());
@@ -987,24 +867,11 @@ export class ClassifyAssetsTabComponent
         if (data != null) {
           if (this.advSearch === false) {
             // this.classiGoodsForm.controls['ligieChapter'].setValue(null);
-
-            const section: any = this.good ? this.good.ligieSection : null;
-            if (section != data) {
-              this.selectChapter = [];
-              this.selectLevel1 = [];
-              this.selectLevel2 = [];
-              this.selectLevel3 = [];
-              this.selectLevel4 = [];
-              this.classiGoodsForm.controls['ligieChapter'].setValue(null);
-              this.getChapter(new ListParams(), data, true);
-            } else {
-              this.getChapter(new ListParams(), data, false);
-            }
+            this.getChapter(new ListParams(), data);
           }
         }
       }
     );
-
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
         if (dataChapter != null) {
@@ -1025,23 +892,9 @@ export class ClassifyAssetsTabComponent
             this.setRelevantTypeId(relativeTypeId);
           }
 
-          const chapter: any = this.good ? this.good.ligieChapter : null;
-          if (this.advSearch === false && chapter === dataChapter) {
-            this.getLevel1(new ListParams(), dataChapter, false);
-          } else if (this.advSearch === false && chapter != dataChapter) {
-            this.selectLevel1 = [];
-            this.selectLevel2 = [];
-            this.selectLevel3 = [];
-            this.selectLevel4 = [];
-            this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.getLevel1(new ListParams(), dataChapter, true);
+          if (this.advSearch === false) {
+            this.getLevel1(new ListParams(), dataChapter);
           }
-        } else {
-          this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
-          this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-          this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         }
       }
     );
@@ -1068,22 +921,15 @@ export class ClassifyAssetsTabComponent
           this.setRelevantTypeId(relativeTypeId);
           //no se puse el this.getNorma(fraction);
 
-          const lvl1: any = this.good ? this.good.ligieLevel1 : null;
-          if (this.advSearch === false && lvl1 === dataLevel1) {
-            this.getLevel2(new ListParams(), dataLevel1, false);
-          } else {
-            this.selectLevel2 = [];
-            this.selectLevel3 = [];
-            this.selectLevel4 = [];
-            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.getLevel2(new ListParams(), dataLevel1, true);
+          if (this.advSearch === false) {
+            this.getLevel2(new ListParams(), dataLevel1);
           }
-        } else {
-          this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
-          this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-        }
+        } /* else {
+          const lvl2 = this.classiGoodsForm.controls['ligieLevel2'].value;
+          if(lvl2){
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+          }
+        } */
       }
     );
     this.classiGoodsForm.controls['ligieLevel2'].valueChanges.subscribe(
@@ -1108,24 +954,22 @@ export class ClassifyAssetsTabComponent
             //this.getNorma(fraction);
           }
 
-          const lvl2: any = this.good ? this.good.ligieLevel2 : null;
-          if (this.advSearch === false && lvl2 === dataLevel2) {
-            this.getLevel3(new ListParams(), dataLevel2, false);
-          } else {
-            this.selectLevel3 = [];
-            this.selectLevel4 = [];
-            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.getLevel3(new ListParams(), dataLevel2, true);
+          if (this.advSearch === false) {
+            this.getLevel3(new ListParams(), dataLevel2);
           }
-        }
+        } /* else {
+          const lvl3 = this.classiGoodsForm.controls['ligieLevel3'].value;
+          if(lvl3){
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+          }
+        } */
       }
     );
     this.classiGoodsForm.controls['ligieLevel3'].valueChanges.subscribe(
       (dataLevel3: any) => {
         //this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
         if (dataLevel3 != null) {
-          // console.log('fraccion lvl3', dataLevel3);
+          console.log('fraccion lvl3', dataLevel3);
           let fraction = this.selectLevel3.filter(
             (x: any) => x.id === dataLevel3
           )[0];
@@ -1144,22 +988,22 @@ export class ClassifyAssetsTabComponent
             this.getNorma(fraction);
           }
 
-          const lvl3: any = this.good ? this.good.ligieLevel3 : null;
-          if (this.advSearch === false && lvl3 === dataLevel3) {
-            this.getLevel4(new ListParams(), dataLevel3, false);
-          } else {
-            this.selectLevel4 = [];
-            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-            this.getLevel4(new ListParams(), dataLevel3, true);
+          if (this.advSearch === false) {
+            this.getLevel4(new ListParams(), dataLevel3);
           }
-        }
+        } /* else {
+          const lvl4 = this.classiGoodsForm.controls['ligieLevel4'].value;
+          if(lvl4){
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+          }
+        } */
       }
     );
 
     this.classiGoodsForm.controls['ligieLevel4'].valueChanges.subscribe(
       (dataLevel4: any) => {
         if (dataLevel4 !== null) {
-          // console.log('fraccion lvl4', dataLevel4);
+          console.log('fraccion lvl4', dataLevel4);
           const relevantTypeId = this.getRelevantTypeId(
             this.selectLevel4,
             dataLevel4
@@ -1183,7 +1027,6 @@ export class ClassifyAssetsTabComponent
   }
 
   getRelevantTypeId(arrayData: any, id: number): any {
-    // console.log(arrayData);
     if (arrayData) {
       return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
     }

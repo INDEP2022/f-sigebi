@@ -30,7 +30,9 @@ export class QueryRelatedPaymentsService {
     return this.msMsDepositaryPaymentService.sendSirsae(params);
   }
   getGoodAppointmentDepositaryByNoGood(params: string) {
-    return this.msDepositaryService.getAllFiltered(params);
+    return this.msDepositaryService.getGoodAppointmentDepositaryByNoGood(
+      params
+    );
   }
   getGoodDataByFilter(body: string) {
     return this.msGoodService.getAllFilter(body);

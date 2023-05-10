@@ -1,12 +1,5 @@
 /** BASE IMPORT */
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -66,10 +59,6 @@ export class JuridicalRulingComponent
   goodsValid: IGood[] = [];
   idGoodSelected = 0;
   statusDict: string = undefined;
-  dictNumber: string | number = undefined;
-  wheelNumber: string | number = undefined;
-  delegationDictNumber: string | number = undefined;
-  @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
   //tipos
   types = new DefaultSelect<Partial<IGoodType>>();
@@ -334,7 +323,7 @@ export class JuridicalRulingComponent
     let noExpediente = this.legalForm.get('noExpediente').value || '';
     this.expedientServices.getById(noExpediente).subscribe({
       next: response => {
-        console.log('EXPEDIENTE:DATA::', response);
+        console.log(response);
         this.legalForm.get('criminalCase').setValue(response.criminalCase);
         this.legalForm
           .get('preliminaryInquiry')
@@ -352,9 +341,7 @@ export class JuridicalRulingComponent
     this.loadExpedientInfo(noExpediente).then(({ json }) => {
       json
         .then(res => {
-          this.dictNumber = res.data[0].id;
-          this.wheelNumber = res.data[0].wheelNumber;
-          this.delegationDictNumber = res.data[0].delegationDictNumber;
+          debugger;
           this.legalForm
             .get('tipoDictaminacion')
             .setValue(res.data[0].typeDict || undefined);
@@ -739,8 +726,6 @@ export class JuridicalRulingComponent
     this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
       next: (response: any) => {
         this.generateCveOficio(response.dictamenDelregSeq);
-        // document.getElementById('cveOficio').focus();
-        this.cveOficio.nativeElement.focus();
       },
     });
   }
@@ -770,85 +755,5 @@ export class JuridicalRulingComponent
         this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');
       }
     }
-  }
-
-  btnDeleteDictation() {
-    let token = this.authService.decodeToken();
-
-    const object = {
-      proceedingsNumber: this.legalForm.get('noExpediente').value,
-      typeDicta: this.legalForm.get('tipoDictaminacion').value,
-      numberOfDicta: this.dictNumber,
-      wheelNumber: this.wheelNumber,
-      user: token.preferred_username,
-      delegationNumberDictam: this.delegationDictNumber,
-      clueJobNavy: '1',
-      judgmentDate: '04/04/2023',
-      statusJudgment: 'cadena',
-      typeJudgment: 'cadena',
-    };
-
-    this.checkout1(object).then(({ json }) => {
-      json.then(res => {
-        if (res.statusCode === 200) {
-          if (res.vBan === 'S' && res.vDelete === 'S') {
-            // Pendiente
-            // --
-          } else {
-            let object2 = {
-              vProceedingsNumber: res.data.vProceedingsNumber,
-              vTypeDicta: res.data.vTypeDicta,
-              vOfDictaNumber: res.data.vOfDictaNumber,
-              vWheelNumber: res.data.vWheelNumber,
-            };
-            this.checkout2(object2).then(({ json }) => {
-              json.then(res => {
-                if (res.statusCode !== 200) {
-                  this.alert('warning', 'AVISO', res.message[0]);
-                } else {
-                  console.log('TODO SALE BIEN', res.data);
-                }
-              });
-            });
-          }
-        }
-      });
-    });
-  }
-
-  async checkout1(object: object) {
-    let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
-      {
-        headers: { 'content-type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify(object),
-      }
-    );
-    return { status: response.status, json: response.json() };
-  }
-
-  async checkout2(object: object) {
-    let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
-      {
-        headers: { 'content-type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify(object),
-      }
-    );
-    return { status: response.status, json: response.json() };
-  }
-
-  async checkout3(object: object) {
-    let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
-      {
-        headers: { 'content-type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify(object),
-      }
-    );
-    return { status: response.status, json: response.json() };
   }
 }

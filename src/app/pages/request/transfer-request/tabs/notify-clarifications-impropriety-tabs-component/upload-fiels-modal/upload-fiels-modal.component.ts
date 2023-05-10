@@ -30,7 +30,6 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   base64Cer: string;
   base64Key: string;
   encrypResult: string;
-  idReportAclara: any;
 
   @ViewChild('FileInputCert', { static: true })
   cert: ElementRef<HTMLInputElement>;
@@ -242,10 +241,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
       .update(this.signatories.signatoryId, formData)
       .subscribe(
         data => this.handleSuccess(),
-        error => (
-          this.alert('info', 'No se pudo actualizar', error.error),
-          console.log('No se actualizó el firmante', error.error)
-        )
+        error => this.alert('info', 'No se pudo actualizar', error.data)
       );
   }
 

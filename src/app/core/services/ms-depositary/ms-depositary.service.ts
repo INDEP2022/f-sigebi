@@ -19,15 +19,15 @@ export class MsDepositaryService extends HttpService {
     super();
     this.microservice = DepositaryEndPoints.Depositary;
   }
-
-  getAllFiltered(
-    params?: _Params
-  ): Observable<IListResponse<IAppointmentDepositary>> {
-    return this.get<IListResponse<IAppointmentDepositary>>(
+  /*
+getGoodAppointmentDepositaryByNoGood(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
       DepositaryEndPoints.DepositaryAppointment,
       params
     );
-  }
+  }*/
 
   getGoodAppointmentDepositaryByNoGood(
     params?: ListParams | string

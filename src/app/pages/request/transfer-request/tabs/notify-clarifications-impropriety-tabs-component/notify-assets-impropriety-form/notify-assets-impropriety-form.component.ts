@@ -92,10 +92,10 @@ export class NotifyAssetsImproprietyFormComponent
     });
 
     this.clarificationForm = this.fb.group({
-      addresseeName: ['', [Validators.required, Validators.maxLength(50)]],
+      addresseeName: [' ', [Validators.required, Validators.maxLength(50)]],
 
       positionAddressee: [
-        '',
+        ' ',
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -122,7 +122,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       consistentIn: [
-        '',
+        ' ',
         [
           Validators.pattern(STRING_PATTERN),
           //Validators.required,
@@ -190,7 +190,7 @@ export class NotifyAssetsImproprietyFormComponent
       webMail: [
         ' ',
         [
-          //Validators.required,
+          Validators.required,
           Validators.pattern(EMAIL_PATTERN),
           Validators.maxLength(30),
         ],
@@ -286,7 +286,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -338,7 +338,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -390,7 +390,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -443,7 +443,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -496,8 +496,8 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
+        this.changeStatusAnswered();
         this.loading = false;
         this.close();
       },
@@ -549,7 +549,7 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
+        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
