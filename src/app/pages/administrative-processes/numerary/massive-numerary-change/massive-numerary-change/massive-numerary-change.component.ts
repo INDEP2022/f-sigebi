@@ -681,3 +681,111 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   loadTablePreviewData(params: ListParams): void {}
 }
+
+// function _onClickBtnProcessExtraction(
+//   columns: string[],
+//   formTips: FormGroup,
+//   formGas: FormGroup
+// ) {
+//   let colB = 0;
+//   let banB = 0;
+
+//   let colI = 0;
+//   let banI = 0;
+
+//   let colG = '';
+//   let banG = false;
+//   let colV = 0;
+//   let banV = 0;
+//   columns.forEach((column, index) => {
+//     index++;
+//     console.log(`TIP${index}`);
+//     const control = formTips.get(`TIP${index}`);
+//     const controlValue = control?.value;
+//     switch (controlValue) {
+//       case 'B':
+//         colB = index;
+//         banB++;
+//         break;
+//       case 'I':
+//         colI = index;
+//         banI++;
+//         break;
+//       case 'G':
+//         const controlGas = formGas.get(`GAS${index}`);
+//         controlGas?.value ? (banG = true) : (colG = `${colG}${index},`);
+//         break;
+//       case 'V':
+//         colV = index;
+//         banV++;
+//     }
+//   });
+//   const messages = [];
+//   let ban = false;
+//   if (banB === 0 || banB > 1) {
+//     messages.push(
+//       banB === 0
+//         ? 'Se debe especificar la columna del No. de Bien'
+//         : 'Se especificó más de una columna del No. de Bien'
+//     );
+//     ban = true;
+//   }
+
+//   if (banI === 0 || banI > 1) {
+//     messages.push(
+//       banI === 0
+//         ? 'Se debe especificar la columna del Ingreso neto'
+//         : 'Se especificó más de una columna del Ingreso neto'
+//     );
+//     ban = true;
+//   }
+
+//   if (banG) {
+//     messages.push(
+//       'No se especificó el Concepto de Gasto en al menos una columna'
+//     );
+//     ban = true;
+//   }
+
+//   if (banV === 0 || banV > 1) {
+//     messages.push(
+//       banV === 0
+//         ? 'Se debe especificar la columna del IVA'
+//         : 'Se especificó más de una columna del IVA'
+//     );
+//     ban = true;
+//   }
+//   if (messages.length > 0) {
+//     showToast({
+//       icon: 'warning',
+//       title: 'Advertencia',
+//       text: messages.join('\n'),
+//     });
+//   }
+//   // console.log(colB);
+//   if (ban) return;
+
+//   //TODO: CONTINUAR CON EL PROCESO DEL LOOP
+
+//   const params = new ListParams();
+//   params.limit = 10000000000000;
+//   // this.service.getDataExcel(params).subscribe(res: any) => {
+//   //   if (!Array.isArray(res)){
+//   //     showAlert({
+//   //       icon: 'error',
+//   //       text: 'Ups! ocurrió un error al procesar los datos vuelve a intentarlo'
+//   //     })
+//   //     return;
+//   //   }
+//   //   processExtraction(res, colB)
+//   // });
+// }
+
+// function processExtraction(res: any[], colB: number) {
+//   res.map((item) => {
+//     const typeValue = item[`F${colB}`];
+//     if (typeValue) {
+
+//     }
+//   })
+// }
