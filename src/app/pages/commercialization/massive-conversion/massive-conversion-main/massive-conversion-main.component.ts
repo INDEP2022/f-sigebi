@@ -1,4 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -8,6 +9,8 @@ import { BehaviorSubject, skip } from 'rxjs';
 import {
   convertFormatDate,
   generateUrlOrPath,
+  showAlert,
+  showQuestion,
   showToast,
 } from 'src/app/common/helpers/helpers';
 import {
@@ -24,7 +27,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
 import { TableCheckPortalDialogComponent } from '../components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
-import { insertFile } from '../tools/insert-file';
 import { loadCheckLc } from '../tools/load-check';
 import {
   SETTING_BATCH_REWORK,
@@ -123,7 +125,8 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private capturelineService: CapturelineService,
     private guarantyService: GuarantyService,
-    private comerEventService: ComerEventosService
+    private comerEventService: ComerEventosService,
+    private httpClient: HttpClient
   ) {
     super();
   }
@@ -283,15 +286,54 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
     this.lcsTotalItems = 0;
   }
 
-  readFile(event: Event, type: 'rfc' | 'client_id') {
-    /* TODO: insertar en la temporal por que tiene que se masivamente */
-    insertFile(
-      // this.form.get('eventId').value,
-      event,
-      type,
-      this.excelService
-    );
+  //#region on click load file
+  isLoadingLoadFile = false;
+  onClickLoadFile(event: any, type: 'rfc' | 'client_id') {
+    showQuestion({
+      text: `¿Está seguro de que desea insertar el archivo por ${type}?`,
+      title: 'Insertar archivo',
+      confirmButtonText: 'Si, insertar',
+      cancelButtonText: 'No, cancelar',
+      icon: 'question',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.isLoadingLoadFile = true;
+        const file = event.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('pmode', 'W');
+        let url = '';
+        if (type === 'client_id') {
+          url =
+            'http://sigebimsdev.indep.gob.mx/massivecaptureline/api/v1/application/pupInsertRecord';
+        } else {
+          url =
+            'http://sigebimsdev.indep.gob.mx/massivecaptureline/api/v1/application/pupInsertRecordMassively';
+        }
+
+        this.httpClient.post(url, formData).subscribe({
+          next: res => {
+            showToast({ text: 'Éxito al insertar a datos', title: 'Éxito' });
+            this.isLoadingLoadFile = false;
+            event.target.value = null;
+          },
+          error: err => {
+            console.log({ err });
+            showAlert({
+              icon: 'error',
+              text:
+                err?.error?.message ||
+                'Ups! ocurrió un error al insertar los datos vuelve a intentarlo',
+            });
+            this.isLoadingLoadFile = false;
+            event.target.value = null;
+          },
+        });
+      }
+    });
   }
+
+  //#endregion on click load file
 
   isLoadingExportFile = false;
   exportFile() {
@@ -310,7 +352,7 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         this.excelService.export(res.data, { filename: 'LCS' });
         this.searchLcs();
       },
-      error: () => {
+      error: err => {
         this.isLoadingExportFile = false;
       },
     });
