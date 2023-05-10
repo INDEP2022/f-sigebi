@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sigebi-app
+  namespace: ns-sb-0001-sigebi
+spec:
+  selector:
+    app: sigebi-app
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    #nodePort: 32002
