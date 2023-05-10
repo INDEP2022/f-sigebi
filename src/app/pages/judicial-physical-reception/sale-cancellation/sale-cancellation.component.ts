@@ -619,8 +619,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         numFile: this.form.get('expediente').value,
         witness1: this.form.get('entrega').value,
         witness2: this.form.get('recibe2').value,
-        typeProceedings:
-          this.form.get('acta').value == 'C' ? 'RECEPCAN' : 'SUSPENSION',
+        typeProceedings: 'DXCVENT',
         dateElaborationReceipt: format(
           this.form.get('fecElabRec').value,
           'yyyy-MM,dd HH:mm'
@@ -971,16 +970,16 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       } else {
         this.checkChange();
         this.minDateFecElab = new Date();
-        this.form.get('acta2').setValue('');
-        this.form.get('entrega').setValue('');
-        this.form.get('fecElabRecibo').setValue('');
-        this.form.get('fecEntregaBienes').setValue('');
-        this.form.get('fecElab').setValue('');
-        this.form.get('fecRecepFisica').setValue('');
-        this.form.get('fecCaptura').setValue('');
-        this.form.get('observaciones').setValue('');
-        this.form.get('recibe2').setValue('');
-        this.form.get('direccion').setValue('');
+        this.form.get('acta2').setValue(null);
+        this.form.get('entrega').setValue(null);
+        this.form.get('fecElabRecibo').setValue(null);
+        this.form.get('fecEntregaBienes').setValue(null);
+        this.form.get('fecElab').setValue(null);
+        this.form.get('fecRecepFisica').setValue(null);
+        this.form.get('fecCaptura').setValue(null);
+        this.form.get('observaciones').setValue(null);
+        this.form.get('recibe2').setValue(null);
+        this.form.get('direccion').setValue(null);
         this.statusProceeding = '';
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-info';
@@ -1016,8 +1015,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   deleteProceeding() {
-    console.log(this.form.get('fecElab').value);
-    if (this.v_atrib_del === 0) {
+    const perm = 1;
+
+    if (perm == 1) {
       if (this.statusProceeding === 'CERRADO') {
         this.alert(
           'error',
@@ -1036,31 +1036,38 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         );
       }
     }
-
-    this.alertQuestion(
-      'question',
-      '¿Desea eliminar completamente el acta?',
-      `Se eliminará el acta ${this.idProceeding}`,
-      'Eliminar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        this.serviceProcVal
-          .deleteProceeding(this.idProceeding.toString())
-          .subscribe(
-            res => {
-              console.log(res);
-              this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
-            },
-            err => {
-              console.log(err);
-              this.alert(
-                'error',
-                'No se pudo eliminar acta',
-                'Secudió un problema al eliminar el acta'
-              );
-            }
-          );
-      }
-    });
+    if (this.act2Valid && this.statusProceeding != '') {
+      this.alertQuestion(
+        'question',
+        '¿Desea eliminar completamente el acta?',
+        `Se eliminará el acta ${this.idProceeding}`,
+        'Eliminar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.serviceProcVal
+            .deleteProceeding(this.idProceeding.toString())
+            .subscribe(
+              res => {
+                console.log(res);
+                this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
+              },
+              err => {
+                console.log(err);
+                this.alert(
+                  'error',
+                  'No se pudo eliminar acta',
+                  'Secudió un problema al eliminar el acta'
+                );
+              }
+            );
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Error en acta 2',
+        'Necesita registrar un acta 2 correcto y que su estatus sea abierto o cerrado'
+      );
+    }
   }
 }
