@@ -6,6 +6,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { showToast } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -13,6 +14,7 @@ import {
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MassiveDictationService } from 'src/app/core/services/ms-massivedictation/massivedictation.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -95,7 +97,8 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
-    private notificationsService: NotificationService
+    private notificationsService: NotificationService,
+    private massiveDictationService: MassiveDictationService
   ) {
     super();
   }
@@ -190,7 +193,27 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     ).then(question => {
       if (question.isConfirmed) {
         //Eliminar dictamenes
-        this.close();
+        // this.close();
+        this.loading = true;
+        const id = this.form.get('id').value;
+        this.massiveDictationService.deleteGoodOpinion(id).subscribe({
+          next: data => {
+            this.loading = false;
+            console.log(data);
+            showToast({
+              icon: 'success',
+              text: 'Proceso Terminado',
+            });
+          },
+          error: err => {
+            this.loading = false;
+            console.log(err);
+            // showToast({
+            //   icon: 'error',
+            //   text: 'Ocurrio un error al eliminar los bienes del dictamen',
+            // });
+          },
+        });
       }
     });
   }
