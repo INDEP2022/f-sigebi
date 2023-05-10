@@ -25,15 +25,11 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EventEmitterService } from './eventEmitter.service';
 
-/** ROUTING MODULE */
-
-/** COMPONENTS IMPORTS */
-
-/** CELL COMPONENT */
 @Component({
   selector: 'my-row',
   template: `<span>{{ value }}</span>`,
@@ -42,7 +38,10 @@ export class CustomRender implements ViewCell {
   @Input() value: any; // This hold the cell value
   @Input() rowData: any;
 
-  constructor(private eventEmitterService: EventEmitterService) {}
+  constructor(
+    private eventEmitterService: EventEmitterService,
+    private historyGoodService: HistoryGoodService
+  ) {}
   @HostListener('click') onclick() {
     // console.log('CELL clicked', this.rowData);
     this.eventEmitterService.onFirstComponentButtonClick(this.rowData);
@@ -233,7 +232,7 @@ export class IssueAgreementsComponent
       statusChangeProgram: 'FACTJUREMISIONACU',
       reasonForChange: 'Automatico',
     };
-    this.historyGoodService.create(params).subscribe(data => {});
+    // this.historyGoodService.create(params).subscribe(data => { });
   }
   private prepareForm() {
     this.form = this.fb.group({
