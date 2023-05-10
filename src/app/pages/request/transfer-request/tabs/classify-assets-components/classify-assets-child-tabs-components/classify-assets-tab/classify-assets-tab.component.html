@@ -27,7 +27,7 @@
           [disabled]="isClassifyAsset == true"
           class="btn btn-danger btn-sm active"
           (click)="cleanLvl()">
-          Cancelar
+          Limpiar
         </button>
       </div>
     </div>
@@ -221,6 +221,7 @@
         [detailAssets]="classiGoodsForm"
         [domicilieObject]="domicilieObject"
         [process]="process"
+        [childSaveAction]="childSaveAction"
         [typeDoc]="typeDoc"></app-detail-assets-tab-component>
     </div>
   </div>
