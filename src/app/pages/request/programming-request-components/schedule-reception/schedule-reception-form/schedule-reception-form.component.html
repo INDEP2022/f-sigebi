@@ -8,47 +8,54 @@
         <label class="title">Usuario&#58; {{ nameUser }}</label>
       </div>
     </div>
-    <form [formGroup]="scheduleForm" class="form-horizontal form-material">
-      <div class="form-group">
-        <label class="control-label col-sm-2">Tipo de usuario&#58;</label>
-
-        <div class="col-sm-6">
-          <form-radio label="T.E" class="radio-inline">
+    <form [formGroup]="requestForm" class="form-horizontal form-material">
+      <div class="row pt-5">
+        <label class="control-label col-sm-2" for="pwd"
+          >Tipo de usuario&#58;</label
+        >
+        <div class="col-sm-1">
+          <form-radio label="T.E">
             <input
               type="radio"
-              formControlName="typeUser"
-              value="INDEP"
-              (change)="selectTypeUser($event)" />
+              formControlName="targetUserType"
+              value="TE"
+              id="te"
+              [checked]="checked" />
           </form-radio>
-          <form-radio label="INDEP" class="radio-inline">
+        </div>
+        <div class="col-sm-1">
+          <form-radio label="INDEP">
             <input
               type="radio"
-              formControlName="typeUser"
+              formControlName="targetUserType"
               value="SAE"
-              (change)="selectTypeUser($event)" />
+              id="sae" />
           </form-radio>
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="control-label col-sm-2">Selecciona usuario&#58;</label>
-
-        <div class="col-sm-7">
-          <form-field [control]="scheduleForm.get('creationUser')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="creationUser" />
-          </form-field>
-        </div>
+      <div class="row pt-3">
+        <label class="control-label col-sm-2" for="pwd"
+          >Usuario Recepci&oacute;n&#58;</label
+        >
         <div class="col-md-3">
-          <button (click)="searchUser()" class="btn btn-primary btn-sm active">
-            Buscar usuario
+          <input
+            type="text"
+            class="form-control"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="userName"
+            [readOnly]="true" />
+        </div>
+        <div class="col-md-1">
+          <button
+            class="btn btn-info active btn-sm ml-3"
+            (click)="openModalSelectUser()">
+            Seleccionar
           </button>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group pt-2">
         <label class="control-label col-sm-2" for="pwd"
           >Tipo de evento&#58;</label
         >
@@ -68,7 +75,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-2">
         <confirm-button
-          [disabled]="!scheduleForm.valid"
+          [disabled]="!userName"
           [loading]="loading"
           [text]="'Turnar'"
           [loadingText]="'Turnando'"

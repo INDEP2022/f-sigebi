@@ -16,12 +16,17 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ICourt } from 'src/app/core/models/catalogs/court.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDelegation } from 'src/app/core/models/ms-survillance/survillance';
+import { CourtService } from 'src/app/core/services/catalogs/court.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProtectionService } from 'src/app/core/services/ms-protection/protection.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -51,7 +56,19 @@ export class AssignationGoodsProtectionComponent
       goodId: {
         title: 'No. Bien',
         sort: false,
-      }, //*
+        type: 'html',
+        valuePrepareFunction: (ev: any) => {
+          return `<div class="bg-success text-white text-center">${ev}</div>`;
+        },
+      },
+      description: {
+        title: '',
+        sort: false,
+        type: 'html',
+        valuePrepareFunction: (ev: any) => {
+          return `<div class="bg-success text-white text-center">${ev}</div>`;
+        },
+      },
     },
   };
   // Data table 1
@@ -86,21 +103,135 @@ export class AssignationGoodsProtectionComponent
   goodAdd: IGood;
   goodRemove: IGood;
   public form: FormGroup;
-  public formTipoSuspersion: FormGroup;
   public formAmparo: FormGroup;
+
+  paramsDel = new BehaviorSubject<FilterParams>(new FilterParams());
+  paramsMin = new BehaviorSubject<FilterParams>(new FilterParams());
+  paramsCourt = new BehaviorSubject<FilterParams>(new FilterParams());
+  paramsExp = new BehaviorSubject<FilterParams>(new FilterParams());
 
   constructor(
     private fb: FormBuilder,
     private exampleService: ExampleService,
     private goodService: GoodService,
-    private protectionService: ProtectionService
+    private protectionService: ProtectionService,
+    private router: Router,
+    private delegationServ: DelegationService,
+    private minService: MinPubService,
+    private courtServ: CourtService,
+    private route: ActivatedRoute,
+    private expedientService: ExpedientService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.route.paramMap.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: param => {
+        const id = param.get('id');
+        if (id) {
+          setTimeout(() => {
+            const params = new ListParams();
+            params.text = id;
+            this.getExpedient(params);
+          }, 1000);
+        }
+      },
+    });
+
+    this.paramsDel
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDelegation(new ListParams()));
+    this.paramsMin
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getMin(new ListParams()));
+    this.paramsCourt
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getCourt(new ListParams()));
+
     this.loading = true;
     this.prepareForm();
+  }
+
+  getExpedient(params: ListParams) {
+    this.paramsExp.getValue().removeAllFilters();
+    this.paramsExp.getValue().page = params.page;
+    if (params.text)
+      this.paramsExp.getValue().addFilter('id', params.text, SearchFilter.EQ);
+
+    this.expedientService
+      .getAllFilter(this.paramsExp.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.expedientSelect(resp.data[0]);
+        },
+        error: err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.error.message;
+          }
+          this.onLoadToast('error', error, '');
+        },
+      });
+  }
+
+  getDelegation(params?: ListParams) {
+    this.paramsDel.getValue().removeAllFilters();
+    this.paramsDel.getValue().sortBy = 'description:ASC';
+    this.paramsDel.getValue().page = params.page;
+    this.paramsDel
+      .getValue()
+      .addFilter('description', params.text ?? '', SearchFilter.ILIKE);
+    this.delegationServ
+      .getAllFiltered(this.paramsDel.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.delegationItems = new DefaultSelect(resp.data, resp.count);
+        },
+        error: error => {
+          this.delegationItems = new DefaultSelect();
+        },
+      });
+  }
+
+  getCourt(params?: ListParams) {
+    this.paramsCourt.getValue().removeAllFilters();
+    this.paramsCourt.getValue().page = params.page;
+    this.paramsCourt.getValue().sortBy = 'description:ASC';
+    this.paramsCourt
+      .getValue()
+      .addFilter('description', params.text ?? '', SearchFilter.ILIKE);
+    this.courtServ
+      .getAllFiltered(this.paramsCourt.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.courtItems = new DefaultSelect(resp.data, resp.count);
+        },
+        error: error => {
+          this.courtItems = new DefaultSelect();
+        },
+      });
+  }
+
+  getMin(params?: ListParams) {
+    this.paramsMin.getValue().removeAllFilters();
+    this.paramsMin.getValue().page = params.page;
+    this.paramsMin.getValue().sortBy = 'description:ASC';
+    this.paramsMin
+      .getValue()
+      .addFilter('description', params.text ?? '', SearchFilter.ILIKE);
+    this.minService
+      .getAllWithFilters(this.paramsMin.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.minItems = new DefaultSelect(resp.data, resp.count);
+        },
+        error: error => {
+          this.minItems = new DefaultSelect();
+        },
+      });
   }
 
   private prepareForm() {
@@ -110,19 +241,17 @@ export class AssignationGoodsProtectionComponent
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]], // Criminal Case
       protectionKey: [null],
     });
-    this.formTipoSuspersion = this.fb.group({
+    this.formAmparo = this.fb.group({
       suspensionType: '', // Provisional, Definitiva, De plano
       reportPreviousDate: [new Date()],
-      justificado: ['', [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
-    this.formAmparo = this.fb.group({
       amparo: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
       protectionType: [null, [Validators.required]], //* Directo, Indirecto
       officialDate: [new Date()],
+      reportJustifiedDate: [null],
       minpubNumber: [null], // Detalle Min. Pub.
       courtNumber: [null], // Detalle No Juzgado
-      responsable: '',
+      responsable: [null, Validators.pattern(STRING_PATTERN)],
       delegationNumber: [null], // 4 campos con el primero en id
       complainers: [null, [Validators.pattern(STRING_PATTERN)]],
       actReclaimed: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -130,12 +259,10 @@ export class AssignationGoodsProtectionComponent
   }
 
   expedientSelect(expedient: IExpedient) {
-    console.log(expedient);
     this.minItems = new DefaultSelect<IMinpub>([], 0, true);
     this.courtItems = new DefaultSelect<ICourt>([], 0, true);
     this.delegationItems = new DefaultSelect<IDelegation>([], 0, true);
     this.formAmparo.reset();
-    this.formTipoSuspersion.reset();
     this.form.patchValue(expedient);
     if (expedient) {
       this.getData(this.form.value);
@@ -154,6 +281,8 @@ export class AssignationGoodsProtectionComponent
     if (val.id) {
       this.goodService.getByExpedient(val.id, params).subscribe({
         next: value => {
+          console.log('Bienes', value);
+
           this.dataTable = [...value.data];
           this.data = [...this.dataTable];
         },
@@ -162,37 +291,41 @@ export class AssignationGoodsProtectionComponent
     let filterParams = new FilterParams();
     filterParams.limit = 10;
     filterParams.page = 1;
-    filterParams.addFilter('cveProtection', val.protectionKey, SearchFilter.EQ);
-    if (val.protectionKey) {
+    filterParams.addFilter('proceedingsNumber', val.id, SearchFilter.EQ);
+    if (val.id) {
       this.protectionService
         .getAllWithFilters(filterParams.getParams())
         .subscribe({
           next: value => {
-            console.log(value.data[0]);
             let amparo: any = value.data[0];
             this.formAmparo.patchValue(amparo);
             if (amparo.minpubNumber) {
-              this.minItems = new DefaultSelect([amparo.minpubNumber]);
+              const paramsD = new ListParams();
+              paramsD.text = amparo.minpubNumber.description;
+              this.getMin(paramsD);
               this.formAmparo
                 .get('minpubNumber')
                 .patchValue(amparo.minpubNumber.minpubNumber);
             }
             if (amparo.delegationNumber) {
-              this.delegationItems = new DefaultSelect([
-                amparo.delegationNumber,
-              ]);
+              const paramsD = new ListParams();
+              paramsD.text = amparo.delegationNumber.description;
+              this.getDelegation(paramsD);
               this.formAmparo
                 .get('delegationNumber')
                 .patchValue(amparo.delegationNumber.delegationId);
             }
             if (amparo.courtNumber) {
-              this.courtItems = new DefaultSelect([amparo.courtNumber]);
+              const paramsD = new ListParams();
+              paramsD.text = amparo.courtNumber.description;
+              this.getCourt(paramsD);
+              // this.courtItems = new DefaultSelect([amparo.courtNumber]);
               this.formAmparo
                 .get('courtNumber')
                 .patchValue(amparo.courtNumber.courtNumber);
             }
-            this.formTipoSuspersion.patchValue(amparo);
-            this.formTipoSuspersion
+            // this.formTipoSuspersion.patchValue(amparo);
+            this.formAmparo
               .get('suspensionType')
               .patchValue(this.setSuspensionType(amparo));
           },
@@ -201,11 +334,11 @@ export class AssignationGoodsProtectionComponent
   }
 
   private setSuspensionType(amparo: any): SuspensionType {
-    if (amparo.definitive_suspension) {
+    if (amparo.suspensionfinal == 'N') {
       return 'DEFINITIVA';
-    } else if (amparo.plane_suspension) {
+    } else if (amparo.suspensionOfFlat == 'P') {
       return 'DE PLANO';
-    } else if (amparo.provisional_suspension) {
+    } else if (amparo.suspensionProvisional == 'N') {
       return 'PROVISIONAL';
     } else {
       return '';
@@ -213,7 +346,19 @@ export class AssignationGoodsProtectionComponent
   }
 
   mostrarInfo(): any {
-    console.log(this.form.value);
+    const { id } = this.form.value;
+    if (id) {
+      this.router.navigate(
+        [`/pages/juridical/depositary/notifications-file/${id}`],
+        { queryParams: { origin: 'FACTJURBIENESXAMP' } }
+      );
+    } else {
+      this.onLoadToast(
+        'info',
+        'No se tiene expediente, favor de verificar.',
+        ''
+      );
+    }
   }
 
   selectGoodTable1({ data, isSelected }: any) {
