@@ -12,6 +12,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="30"
               formControlName="numberRegister" />
           </form-field>
         </div>
@@ -37,6 +38,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="1000"
               formControlName="description" />
           </form-field>
         </div>
@@ -63,6 +65,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="30"
               formControlName="numberManagement" />
           </form-field>
         </div>
@@ -82,6 +85,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="40"
               formControlName="contractNumber" />
           </form-field>
         </div>
@@ -93,6 +97,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="60"
               formControlName="siabWarehouse" />
           </form-field>
         </div>
@@ -130,6 +135,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="150"
               formControlName="responsibleDelegation"
               readonly />
           </form-field>
@@ -142,6 +148,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="100"
               formControlName="managedBy" />
           </form-field>
         </div>
@@ -282,7 +289,11 @@
 
         <div class="col-md-6">
           <form-field [control]="warehouseForm.get('street')" label="Calle">
-            <input type="text" class="form-control" formControlName="street" />
+            <input
+              type="text"
+              maxlength="200"
+              class="form-control"
+              formControlName="street" />
           </form-field>
         </div>
       </div>
@@ -295,6 +306,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="100"
               formControlName="numberOutside" />
           </form-field>
         </div>
@@ -304,6 +316,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="150"
               formControlName="latitude" />
           </form-field>
         </div>
@@ -317,6 +330,7 @@
             <input
               type="text"
               class="form-control"
+              maxlength="100"
               formControlName="longitude" />
           </form-field>
         </div>
