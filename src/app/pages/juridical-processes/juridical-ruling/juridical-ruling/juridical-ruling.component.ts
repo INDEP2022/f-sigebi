@@ -77,6 +77,20 @@ export class JuridicalRulingComponent
   ssubtypes = new DefaultSelect();
   sssubtypes = new DefaultSelect();
 
+  typesDict = new DefaultSelect(
+    [
+      { id: 'DESTRUCCION', typeDict: 'DESTRUCCIÓN' },
+      { id: 'DONACION', typeDict: 'DONACION' },
+      { id: 'ENAJENACION', typeDict: 'ENAJENACIÓN' },
+      { id: 'TRANSFERENTE', typeDict: 'TRANSFERENTE' },
+      { id: 'PROCEDENCIA', typeDict: 'PROCEDENCIA' },
+      { id: 'DEVOLUCIÓN', typeDict: 'DEVOLUCIÓN' },
+      { id: 'ABANDONO', typeDict: 'ABANDONO' },
+      { id: 'RESARCIMIENTO', typeDict: 'RESARCIMIENTO' },
+    ],
+    2
+  );
+
   typeField: string = 'type';
   subtypeField: string = 'subtype';
   ssubtypeField: string = 'ssubtype';
@@ -334,7 +348,7 @@ export class JuridicalRulingComponent
     let noExpediente = this.legalForm.get('noExpediente').value || '';
     this.expedientServices.getById(noExpediente).subscribe({
       next: response => {
-        console.log('EXPEDIENTE:DATA::', response);
+        // ..Datos del expediente
         this.legalForm.get('criminalCase').setValue(response.criminalCase);
         this.legalForm
           .get('preliminaryInquiry')
@@ -642,6 +656,8 @@ export class JuridicalRulingComponent
         this.goods = this.goods.filter(_good => _good.id != good.id);
       });
       this.selectedGooods = [];
+    } else {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien.');
     }
   }
 
@@ -664,6 +680,8 @@ export class JuridicalRulingComponent
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
       });
       this.selectedGooodsValid = [];
+    } else {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien.');
     }
   }
   rowSelected(e: any) {
@@ -678,7 +696,11 @@ export class JuridicalRulingComponent
    * --
    */
   btnDocumentos() {
-    this.listadoDocumentos = true;
+    if (this.idGoodSelected) {
+      this.listadoDocumentos = true;
+    } else {
+      this.alert('info', '', 'Selecciona un bien para continuar.');
+    }
   }
 
   onLoadDocumentsByGood() {
@@ -698,12 +720,16 @@ export class JuridicalRulingComponent
     this.listadoDocumentos = false;
     // --
     // Sube documentos seleccionados
-    console.log(this.selectedDocuments);
     if (this.selectedDocuments.length > 0) {
       this.documents = this.documents.concat(this.selectedDocuments);
       this.selectedDocuments.forEach(doc => {
         this.goods = this.goods.filter(_doc => _doc.id != doc.id);
       });
+      // this.selectedDocuments.find(v => console.log(v));
+      // this.documents = this.documents.concat(this.selectedDocuments);
+      // this.selectedDocuments.forEach(doc => {
+      //   this.goods = this.goods.filter(_doc => _doc.id != doc.id);
+      // });
     }
   }
   isDocumentSelectedValid(_doc: any) {
@@ -741,6 +767,15 @@ export class JuridicalRulingComponent
         this.generateCveOficio(response.dictamenDelregSeq);
         // document.getElementById('cveOficio').focus();
         this.cveOficio.nativeElement.focus();
+        setTimeout(
+          () =>
+            this.alert(
+              'success',
+              '',
+              'Clave de oficio generada correctamente.'
+            ),
+          1000
+        );
       },
     });
   }
@@ -850,5 +885,14 @@ export class JuridicalRulingComponent
       }
     );
     return { status: response.status, json: response.json() };
+  }
+
+  btnDeleteListDocs() {
+    this.documents = [];
+  }
+
+  onTypeDictChange($event: any) {
+    // ..activar para ver cambio
+    // console.log($event);
   }
 }
