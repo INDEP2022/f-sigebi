@@ -988,7 +988,13 @@ export class ClassifyAssetsTabComponent
         if (data != null) {
           if (this.advSearch === false) {
             // this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+            let fraction = this.selectSection.filter(
+              (x: any) => x.id === data
+            )[0];
 
+            if (fraction) {
+              this.fractionCode = fraction.fractionCode;
+            }
             const section: any = this.good ? this.good.ligieSection : null;
             if (section != data) {
               this.selectChapter = [];
