@@ -882,9 +882,7 @@ export class RegistrationOfRequestsComponent
     const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
-
     const sign: boolean = await this.ableToSignDictamen();
-
     if (sign == false) {
       this.onLoadToast(
         'error',
