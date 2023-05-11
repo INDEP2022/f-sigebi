@@ -303,4 +303,14 @@ export class GoodService extends HttpService {
   changeGoodToNumerary(body: any) {
     return this.post(GoodEndpoints.CreateGoodNumerary, body);
   }
+
+  updateWithParams(good: any) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
+
+  getGoodById(id: string | number) {
+    const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
+    return this.get<IGood>(route);
+  }
 }

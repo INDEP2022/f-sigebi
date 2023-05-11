@@ -150,6 +150,8 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
 
   fetchMore(text: string) {
     if (!this.loading && this.buffer.length < this.totalItems) {
+      console.log( 'aouto fecht ' , this.buffer.length ,this.totalItems);
+
       this.page++;
       this.loading = true;
       this.concat = true;
