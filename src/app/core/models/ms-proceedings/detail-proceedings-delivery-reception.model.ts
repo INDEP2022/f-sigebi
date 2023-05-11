@@ -1,3 +1,5 @@
+import { IGood } from '../ms-good/good';
+
 export interface IDetailProceedingsDeliveryReception {
   numberProceedings?: number | string;
   numberGood?: number;
@@ -12,6 +14,7 @@ export interface IDetailProceedingsDeliveryReception {
   correctIndft?: number;
   idftUser?: string;
   idftDate?: Date;
+  good?: IGood;
   numDelegationIndft?: number;
   yearIndft?: number;
   monthIndft?: number;

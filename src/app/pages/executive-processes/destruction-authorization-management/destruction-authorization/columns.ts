@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const PROCEEDINGS_COLUMNS = {
   id: {
@@ -45,9 +46,11 @@ export const DETAIL_PROCEEDINGS_DELIVERY_RECEPTION = {
   good: {
     title: 'Descripción',
     sort: false,
+    type: 'custom',
     valuePrepareFunction: (value: any) => {
-      return value.description;
+      return value.description ?? '';
     },
+    renderComponent: SeeMoreComponent,
   },
   amount: {
     title: 'Cantidad',
@@ -64,8 +67,12 @@ export const GOODS_COLUMNS = {
   },
   description: {
     title: 'Descripción',
-    type: 'string',
+    type: 'custom',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value ?? '';
+    },
+    renderComponent: SeeMoreComponent,
   },
   quantity: {
     title: 'Cantidad',

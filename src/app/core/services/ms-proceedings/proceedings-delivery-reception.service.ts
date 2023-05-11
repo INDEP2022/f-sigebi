@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import { catchError, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import {
@@ -165,7 +162,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getAllProceedingsDeliveryReception(
-    params?: ListParams
+    params?: _Params
   ): Observable<IListResponse<IProceedings>> {
     return this.get<IListResponse<IProceedings>>(
       ProceedingsEndpoints.ProceedingsDeliveryReception,

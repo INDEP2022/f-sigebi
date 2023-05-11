@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DestructionAuthorizationManagementRoutingModule } from './destruction-authorization-management-routing.module';
 import { DestructionAuthorizationManagementComponent } from './destruction-authorization-management/destruction-authorization-management.component';
@@ -27,6 +28,7 @@ import { ProceedingsModalComponent } from './proceedings-modal/proceedings-modal
     ModalModule.forChild(),
     AlertModule.forRoot(),
     StoreModule.forFeature('destructionAuth', destructionAuthReducer),
+    PreviewDocumentsComponent,
   ],
 })
 export class DestructionAuthorizationManagementModule {}

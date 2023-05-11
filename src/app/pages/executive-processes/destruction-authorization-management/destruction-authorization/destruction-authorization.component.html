@@ -6,13 +6,23 @@
       </h5>
       <div class="col-md-5 buttons">
         <div>
-          <button class="btn btn-success active btn-sm ml-3">Nueva Acta</button>
-          <button class="btn btn-info active btn-sm ml-3">
+          <button
+            class="btn btn-success active btn-sm mx-1"
+            (click)="newProceeding()">
+            Nueva Acta
+          </button>
+          <button
+            class="btn btn-info active btn-sm mr-1"
+            (click)="queryProceeding()">
             Consultar Acta
           </button>
-          <button (click)="save()" class="btn btn-primary active btn-sm ml-3">
-            Guardar
-          </button>
+          <confirm-button
+            [loading]="loading"
+            text="Guardar"
+            loadingText="Guardando"
+            [btnSmall]="true"
+            type="button"
+            (confirm)="save()"></confirm-button>
         </div>
       </div>
     </div>
@@ -36,8 +46,10 @@
           label="Oficio de solicitud"
           [control]="proceedingForm.get('keysProceedings')">
           <input
+            #focusElement
             type="text"
             [max-length]="60"
+            (change)="keyProceedingchange()"
             class="form-control"
             formControlName="keysProceedings" />
         </form-field>
@@ -100,6 +112,7 @@
           [control]="proceedingForm.get('closeDate')">
           <input
             type="text"
+            #closeDate
             class="form-control"
             formControlName="closeDate"
             bsDatepicker
@@ -120,32 +133,46 @@
             formControlName="observations"></textarea>
         </form-field>
         <div class="col-md-3">
-          <button class="btn btn-secondary btn-sm active">Cerrar Acta</button>
+          <button
+            (click)="closeProceeding()"
+            class="btn btn-secondary btn-sm active"
+            *ngIf="controls.statusProceedings.value != 'CERRADA'">
+            Cerrar Acta
+          </button>
+          <button
+            class="btn btn-secondary btn-sm active"
+            *ngIf="controls.statusProceedings.value == 'CERRADA'">
+            Sacar bienes
+          </button>
         </div>
       </div>
     </form>
     <div class="row">
-      <div class="col-md-3">
-        <div class="mt-4">
-          <h5 class="font-size-14">Folio de escaneo:</h5>
-          <p class="text-muted mb-0">
-            {{ selectedRow?.universalFolio }}
-          </p>
+      <div class="col d-flex justify-content-between">
+        <div>
+          <h5>Folio de escaneo: {{ controls.universalFolio.value }}</h5>
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="col-md-4">
-          <button class="btn btn-sm btn-danger active" (click)="report()">
-            Solicitud <i class="fa fa-print"></i>
+        <div>
+          <button
+            [disabled]="loadingReport"
+            class="btn btn-sm btn-danger active"
+            (click)="scanRequest()">
+            {{ loadingReport ? 'Cargando' : 'Solicitud' }}
+            <i class="fa fa-print"></i>
+            <img
+              [style.width.px]="20"
+              *ngIf="loadingReport"
+              src="assets/images/loader-button.gif"
+              alt="loading" />
           </button>
         </div>
-        <div class="col-md-4">
+        <div>
           <button class="btn btn-sm btn-danger active" (click)="scan()">
             Escaneo <i class="fa fa-print"></i>
           </button>
         </div>
-        <div class="col-md-4">
-          <button class="btn btn-sm btn-danger active" (click)="report()">
+        <div>
+          <button class="btn btn-sm btn-danger active" (click)="printReport()">
             imprimir <i class="fa fa-print"></i>
           </button>
         </div>
@@ -206,26 +233,12 @@
       </div>
       <div class="col-md-6">
         <div class="row">
-          <!-- <div class="ch-content" header>
-            <h5 class="title">Bienes del acta #{{ selectedRow?.id }}</h5>
-            <div class="col-md-5 buttons">
-              <app-columns-select [(settings)]="settings2"></app-columns-select>
-              <div>
-                <button
-                  (click)="openForm2()"
-                  class="btn btn-primary active btn-sm ml-3">
-                  Agregar bienes
-                </button>
-              </div>
-            </div>
-          </div> -->
           <div [class]="loadingGoodsByP ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings2"
-                [source]="detailProceedingsList"
-                (userRowSelect)="rowsSelected2($event)"></ng2-smart-table>
+                [source]="detailProceedingsList"></ng2-smart-table>
             </div>
             <app-pagination
               [params]="params2"
