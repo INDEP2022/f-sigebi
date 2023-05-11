@@ -1,24 +1,32 @@
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { IGood } from 'src/app/core/models/good/good.model';
 import { BehaviorSubject } from 'rxjs';
 import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
+import { IGood } from 'src/app/core/models/good/good.model';
 
 /** SERVICE IMPORTS */
+import { DatePipe } from '@angular/common';
+import { dateRangeValidator } from 'src/app/common/validations/date.validators';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
-import { dateRangeValidator } from 'src/app/common/validations/date.validators';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
-import { DatePipe } from '@angular/common';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 
 /** ROUTING MODULE */
 
@@ -45,8 +53,6 @@ export class ReviewResourceReportComponent
   phaseEdo: number;
   patchValue: boolean = false;
 
-
-
   get startDate(): AbstractControl {
     return this.form.get('startDate');
   }
@@ -72,8 +78,7 @@ export class ReviewResourceReportComponent
     private goodServices?: GoodService,
     private siabService?: SiabService,
     private datePipe?: DatePipe
-
-    ) {
+  ) {
     super();
   }
 
@@ -85,14 +90,14 @@ export class ReviewResourceReportComponent
   private prepareForm() {
     this.form = this.fb.group(
       {
-      delegation: [null, [Validators.required]],
-      subdelegation: [null, [Validators.required]],
-      startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required ]],
-      delBien: [null], // Del Bien Detalle
-      alBien: [null], // Al Bien Detalle
-    },
-    { validator: dateRangeValidator() }
+        delegation: [null, [Validators.required]],
+        subdelegation: [null, [Validators.required]],
+        startDate: [null, [Validators.required]],
+        endDate: [null, [Validators.required]],
+        delBien: [null], // Del Bien Detalle
+        alBien: [null], // Al Bien Detalle
+      },
+      { validator: dateRangeValidator() }
     );
   }
   getDelegations(params: ListParams) {
@@ -120,10 +125,10 @@ export class ReviewResourceReportComponent
     this.goodAl = new DefaultSelect();
 
     if (this.delegation.value)
-    console.log('change delegacion' , this.delegation.value)
-      this.getSubDelegations({ page: 1, limit: 10, text: '' });
-      this.getGoodIdDescription({ page: 1, limit: 10, text: '' });
-      this.getGoodAlIdDescription({ page: 1, limit: 10, text: '' });
+      console.log('change delegacion', this.delegation.value);
+    this.getSubDelegations({ page: 1, limit: 10, text: '' });
+    this.getGoodIdDescription({ page: 1, limit: 10, text: '' });
+    this.getGoodAlIdDescription({ page: 1, limit: 10, text: '' });
   }
 
   getSubDelegations(lparams: ListParams) {
@@ -156,7 +161,6 @@ export class ReviewResourceReportComponent
     this.resetFields([this.subdelegation]);
   }
   getGoodIdDescription(lparams: ListParams) {
-
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
@@ -166,8 +170,7 @@ export class ReviewResourceReportComponent
 
     this.goodServices.getAll(params.getParams()).subscribe({
       next: data => {
-      this.good = new DefaultSelect(data.data, data.count);
-
+        this.good = new DefaultSelect(data.data, data.count);
       },
       error: err => {
         let error = '';
@@ -182,7 +185,6 @@ export class ReviewResourceReportComponent
     });
   }
   getGoodAlIdDescription(lparams: ListParams) {
-
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
@@ -208,17 +210,18 @@ export class ReviewResourceReportComponent
     });
     this.form.updateValueAndValidity();
   }
-  getEndDateErrorMessage(fin:any,ini:any) {
-    const stard = new Date(ini.value).getTime()
-    const end = new Date(fin.value).getTime()
+  getEndDateErrorMessage(fin: any, ini: any) {
+    const stard = new Date(ini.value).getTime();
+    const end = new Date(fin.value).getTime();
     if (fin && ini) {
-      return stard <= end ? null : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
+      return stard <= end
+        ? null
+        : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
     }
     return '';
   }
 
   btnGenerarReporte() {
-
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2FSIGEBI%2FReportes%2FSIAB&reportUnit=%2FSIGEBI%2FReportes%2FSIAB%2FRGERJURRECDEREV&standAlone=true`; //window.URL.createObjectURL(blob);
 
     // Crea enlace de etiqueta anchor con js
@@ -229,18 +232,18 @@ export class ReviewResourceReportComponent
     let params = { ...this.form.value };
     for (const key in params) {
       if (params[key] === null) delete params[key];
-      if(key ==='endDate' || key ==='startDate'){
+      if (key === 'endDate' || key === 'startDate') {
         params[key] = this.datePipe.transform(params[key], 'dd-MM-yyyy');
       }
     }
-    console.log( 'params' , params);
+    console.log('params', params);
 
     setTimeout(() => {
       this.siabService
         .getReport(SiabReportEndpoints.FGERJURRECDEREV, params)
         .subscribe({
           next: response => {
-            console.log('response' ,response);
+            console.log('response', response);
             window.open(pdfurl, 'DOCUMENT');
           },
           error: () => {
@@ -251,5 +254,4 @@ export class ReviewResourceReportComponent
         });
     }, 4000);
   }
-
 }
