@@ -546,7 +546,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 let disponible: boolean = false;
                 const resVal = this.validateGood(e.id);
                 disponible = resVal.available;
-
                 return { ...e, avalaible: disponible };
               })
             );

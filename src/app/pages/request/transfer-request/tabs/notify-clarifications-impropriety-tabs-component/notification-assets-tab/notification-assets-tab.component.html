@@ -252,7 +252,7 @@
 
               <div class="p-2">
                 <button
-                  id="btn2a"
+                  id="btn2"
                   (click)="reloadData()"
                   class="btn btn-info btn-sm active">
                   <i class="fa-thin fa-repeat"></i> Actualizar
@@ -260,7 +260,7 @@
               </div>
               <div class="p-2">
                 <button
-                  id="btn1a"
+                  id="btn1"
                   class="btn btn-primary btn-sm active"
                   (click)="verifyClarification()">
                   <i class="bx bx-check"></i>Verificar Cumplimiento
@@ -303,26 +303,28 @@
                   Simular respuesta
                 </button>
               </div>
-              <div class="p-2">
+              <div class="p-2" *ngIf="notification?.answered == 'NUEVA'">
                 <button
-                  id="btn6a"
+                  id="btn6"
                   class="btn btn-success btn-sm active"
                   (click)="acceptClarification()">
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
                 </button>
               </div>
-              <div
-                class="p-2"
-                *ngIf="
-                  requestData?.typeOfTransfer == 'PGR_SAE' ||
-                  requestData?.typeOfTransfer == 'MANUAL'
-                ">
-                <button
-                  id="btn8a"
-                  class="btn btn-success btn-sm active"
-                  (click)="FinishClariImpro()">
-                  Finalizar Aclaraci&oacute;n&#47;improcedencia
-                </button>
+              <div *ngIf="notification?.answered != 'ACLARADA'">
+                <div
+                  class="p-2"
+                  *ngIf="
+                    requestData?.typeOfTransfer == 'PGR_SAE' ||
+                    requestData?.typeOfTransfer == 'MANUAL'
+                  ">
+                  <button
+                    id="btn8"
+                    class="btn btn-success btn-sm active"
+                    (click)="FinishClariImpro()">
+                    Finalizar Aclaraci&oacute;n&#47;improcedencia
+                  </button>
+                </div>
               </div>
               <div class="p-2" *ngIf="requestData?.typeOfTransfer == 'SAT_SAE'">
                 <button
