@@ -8,11 +8,6 @@
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-2">
-          <!-- <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field> -->
           <app-expedient-shared
             expedientField="id"
             [form]="form"
@@ -36,7 +31,13 @@
               formControlName="criminalCase" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-2"
+            (click)="clear()">
+            Limpiar
+          </button>
           <button
             type="button"
             class="btn btn-primary btn-sm active"
@@ -129,15 +130,15 @@
     <!-- FORM formAmparo -->
     <form [formGroup]="formAmparo" class="form-material row">
       <!-- <div class="row w-100"> -->
-      <div class="col-sm-12 col-12 col-md-2 p-2">
-        <form-field [control]="formAmparo.get('amparo')" label="Amparo">
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field [control]="formAmparo.get('cveProtection')" label="Amparo">
           <input
             oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)"
             class="form-control"
-            formControlName="amparo" />
+            formControlName="cveProtection" />
         </form-field>
       </div>
-      <div class="col-sm-12 col-12 col-md-2 p-2">
+      <div class="col-sm-12 col-12 col-md-3 p-2">
         <form-field
           [control]="formAmparo.get('protectionType')"
           label="Tipo Amparo">
@@ -155,14 +156,15 @@
           </ng-select>
         </form-field>
       </div>
-      <div class="col-sm-12 col-12 col-md-2 p-2">
+      <div class="col-sm-12 col-12 col-md-3 p-2">
         <form-field
-          [control]="formAmparo.get('officialDate')"
+          [control]="formAmparo.get('protectionDate')"
           label="Fecha Oficio">
           <input
             class="form-control"
-            formControlName="officialDate"
-            bsDatepicker />
+            formControlName="protectionDate"
+            bsDatepicker
+            [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }" />
         </form-field>
       </div>
       <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -188,7 +190,7 @@
           </ng-template>
         </ngx-select>
       </div>
-      <div class="col-sm-12 col-12 col-md-3 p-2">
+      <div class="col-sm-12 col-12 col-md-2 p-2">
         <ngx-select
           [data]="courtItems"
           bindLabel="description"
@@ -210,16 +212,6 @@
             </div>
           </ng-template>
         </ngx-select>
-      </div>
-      <div class="col-sm-12 col-12 col-md-2 p-3">
-        <form-field
-          [control]="formAmparo.get('responsable')"
-          label="Responsable">
-          <input
-            oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)"
-            class="form-control"
-            formControlName="responsable" />
-        </form-field>
       </div>
       <div class="col-sm-12 col-12 col-md-3 p-3">
         <ngx-select
@@ -271,11 +263,16 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-5 p-2">
         <ng2-smart-table
-          #avaliable
+          id="table"
           [attr.class]="'table-bordered'"
           [settings]="tableSettings"
           [source]="dataTable"
           (rowSelect)="selectGoodTable1($event)"></ng2-smart-table>
+        <input
+          type="text"
+          class="form-control mt-3"
+          placeholder="Bien cambiado a numerario por enajenación"
+          (dblclick)="callFormNumerary()" />
         <br />
         <span class="badge bagde-3 bg-success mr-3"> Disponibles </span>
         <span class="badge primary-3 bg-danger">
@@ -309,6 +306,16 @@
           [settings]="tableSettings2"
           [source]="dataTable2"
           (rowSelect)="selectGoodTable2($event)"></ng2-smart-table>
+        <div class="row d-flex justify-content-center">
+          <div class="col-auto mt-4">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="changeStatus()">
+              Regresar estatus
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

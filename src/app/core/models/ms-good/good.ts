@@ -353,6 +353,7 @@ export interface IGoodSami {
 }
 
 export interface IGood {
+  protection?: string;
   id?: number;
   inventoryNumber?: number;
   goodId?: number;
@@ -710,6 +711,7 @@ export interface Estatus {
   fecVilidityFin?: any;
   observationShortStatus?: any;
   destiny: string;
+  id?: string;
 }
 
 export interface IVban {
