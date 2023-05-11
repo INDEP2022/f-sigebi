@@ -1,12 +1,12 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
+      <form-field [control]="form.get('managementNumber')" label="Expediente">
         <input
           type="text"
           class="form-control"
-          formControlName="proceedingsNumber"
-          (keyup.enter)="onNumberGoodEnter()" />
+          formControlName="managementNumber"
+          (keyup.enter)="onmanagementNumberEnter()" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
@@ -69,8 +69,10 @@
         label="P&aacute;rrafo Inicial">
         <textarea
           type="text"
+          rows="4"
           class="form-control"
-          formControlName="paragraphInitial"></textarea>
+          formControlName="paragraphInitial">
+        </textarea>
       </form-field>
     </div>
   </div>

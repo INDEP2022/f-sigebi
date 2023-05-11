@@ -22,3 +22,13 @@ export interface IDictation {
   dictHcDAte: Date | null;
   entryHcDate: Date | null;
 }
+export interface IDictationCopies {
+  id?: number;
+  numberOfDicta: string;
+  typeDictamination: string;
+  recipientCopy: string;
+  copyDestinationNumber: number;
+  personExtInt: string;
+  namePersonExt: string;
+  registerNumber: number;
+}

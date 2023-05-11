@@ -1,13 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IGoodJobManagement,
   ImanagementOffice,
 } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -21,7 +29,7 @@ import {
 })
 export class OfficeComponent extends BasePage implements OnInit {
   goodJobManagement = new Observable<IListResponse<IGoodJobManagement>>();
-
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   comboOfficeFlayer: IGoodJobManagement[] = [];
   comboOffice: ImanagementOffice[] = [];
   objOffice: ImanagementOffice[] = [];
@@ -30,21 +38,17 @@ export class OfficeComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private serviceOficces: GoodsJobManagementService
+    private serviceOficces: GoodsJobManagementService,
+    private jobsService: JobsService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService,
+    private siabServiceReport: SiabService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.buildForm();
-    this.getAllOficceDocs();
-    /*this.loadAllOficceDocs();
-     console.log("     this.loadAllOficceDocs( )   ");
-     console.log(JSON.stringify(this.comboOfficeFlayer));
-
-
-
-*/
   }
 
   /**
@@ -55,6 +59,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       proceedingsNumber: [null, [Validators.required]],
+      managementNumber: [null, [Validators.required]],
       numberGestion: [null, [Validators.required]],
       flywheel: [
         null,
@@ -108,76 +113,65 @@ export class OfficeComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {
-    this.loading = true;
-    //console.log(this.checkedListFA,this.checkedListFI)
-    console.log(this.form.value);
-    setTimeout((st: any) => {
-      this.loading = false;
-    }, 5000);
+  public confirm() {
+    const params = {
+      no_of_ges: this.form.value.proceedingsNumber,
+    };
+    this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
   }
 
-  onNumberGoodEnter() {
-    let numberExpedinte = this.form.get('proceedingsNumber').value;
-    if (this.comboOffice != null) {
-      this.objOffice = this.comboOffice.filter(
-        X => X.proceedingsNumber == numberExpedinte
+  onmanagementNumberEnter() {
+    this.filterParams.getValue().removeAllFilters;
+    this.filterParams
+      .getValue()
+      .addFilter(
+        'managementNumber',
+        this.form.get('managementNumber').value,
+        SearchFilter.EQ
       );
-
-      if (this.objOffice.length > 0) {
-        this.cleanFilters();
-        this.form
-          .get('numberGestion')
-          .setValue(this.objOffice[0].managementNumber);
-        this.form.get('flywheel').setValue(this.objOffice[0].flyerNumber);
-        this.form.get('officio').setValue(this.objOffice[0].cveManagement);
-        this.form.get('senderUser').setValue(this.objOffice[0].sender);
-        this.form.get('addressee').setValue(this.objOffice[0].addressee);
-        this.form.get('charge').setValue(this.objOffice[0].cveChargeRem);
-        this.form.get('paragraphInitial').setValue(this.objOffice[0].text1);
-        this.form.get('paragraphFinish').setValue(this.objOffice[0].text2);
-        this.form.get('paragraphOptional').setValue(this.objOffice[0].text3);
-      } else {
-        this.onLoadToast(
-          'error',
-          'Error',
-          'No existen registros con ese número'
-        );
-      }
-    }
+    this.serviceOficces
+      .getAllOfficialDocument(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.form.get('proceedingsNumber').value;
+          this.form
+            .get('numberGestion')
+            .setValue(resp.data[0].proceedingsNumber);
+          this.form.get('flywheel').setValue(resp.data[0].flyerNumber);
+          this.form.get('officio').setValue(resp.data[0].cveManagement);
+          this.form.get('senderUser').setValue(resp.data[0].sender);
+          this.form.get('addressee').setValue(resp.data[0].addressee);
+          this.form.get('charge').setValue(resp.data[0].cveChargeRem);
+          this.form.get('paragraphInitial').setValue(resp.data[0].text1);
+          this.form.get('paragraphFinish').setValue(resp.data[0].text2);
+          this.form.get('paragraphOptional').setValue(resp.data[0].text3);
+          this.form.get('descriptionSender').setValue(resp.data[0].desSenderpa);
+        },
+        error: err => {
+          this.onLoadToast('error', 'error', err.error.message);
+        },
+      });
   }
 
   onNumberGestionEnter() {}
   onFlywheelEnter() {}
   onOfficioEnter() {}
-
-  loadAllOficceDocs() {
-    let params = new FilterParams();
-    this.serviceOficces.getAllFiltered(params.getParams()).subscribe({
-      next: response => {
-        this.comboOfficeFlayer = [...response.data];
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
-
-  getAllOficceDocs() {
-    this.serviceOficces.getAllOfficialDocument().subscribe({
-      next: response => {
-        this.comboOffice = response.data;
-        console.log(
-          '================= 2 getAllOficceDocs======\n\n     this.getAllOficceDocs( )   \n\n====  comboOffice  ==================='
-        );
-        console.log(JSON.stringify(this.comboOffice));
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
-
   cleanFilters() {
     this.form.get('numberGestion').setValue('');
     this.form.get('flywheel').setValue('');

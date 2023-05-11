@@ -172,6 +172,7 @@ export class IncomeOrdersDepositoryGoodsComponent
     this.form.get('userId').setValue(this.datosUser.username);
     this.form.get('username').setValue(this.datosUser.name);
     this.form.get('charge').setValue(this.datosUser.puesto);
+    this.form.get('date').setValue(new Date(Date.now()));
     this.form.get('numberGood').setValue(this.interfasValorBienes.numBien);
     this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
     this.form.get('depositary').setValue(this.interfasValorBienes.depositario);

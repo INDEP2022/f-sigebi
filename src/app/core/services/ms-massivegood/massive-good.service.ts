@@ -67,4 +67,8 @@ export class MassiveGoodService extends HttpService {
     const route = `${this.route.GetFlierNumberMassiveGood}/${goodNumber}`;
     return this.get(route);
   }
+
+  getDatosCSV() {
+    return this.post(this.route.GetFileCSV, '');
+  }
 }
