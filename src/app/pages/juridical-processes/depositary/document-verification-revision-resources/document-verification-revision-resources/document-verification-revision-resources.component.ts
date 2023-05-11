@@ -1,6 +1,8 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -65,7 +67,10 @@ export class DocumentVerificationRevisionResourcesComponent
   public informes: boolean = false;
   public autoridad: boolean = false;
 
-  constructor(private fb?: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private readonly goodService: GoodService
+  ) {
     super();
   }
 
@@ -76,30 +81,51 @@ export class DocumentVerificationRevisionResourcesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noExpediente: '',
-      averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]],
-      causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
-      fechaPresentacionRecursoRevision: '',
-      noAmparo: '',
+      id: [null],
+      preliminaryInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
+      criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
+      fechaPresentacionRecursoRevision: null,
+      protectionKey: [null],
 
-      noBien: '',
-      acuerdoInicial: ['', [Validators.pattern(STRING_PATTERN)]],
+      goodId: [null],
+      initialAgreement: [null, [Validators.pattern(STRING_PATTERN)]],
       statusDictaminacion: '',
-      descripcion: ['', [Validators.pattern(STRING_PATTERN)]],
-      fechaAcuerdoInicial: '',
-      estatusBien: ['', [Validators.pattern(STRING_PATTERN)]], //Estatus del bien detalle
-      fechaNotificacion: '',
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      initialAgreementDate: [null],
+      status: [null, [Validators.pattern(STRING_PATTERN)]], //Estatus del bien detalle
+      notificationDate: [null],
       estatusDictaminacion: ['', [Validators.pattern(STRING_PATTERN)]],
       motivoRecursoRevision: ['', [Validators.pattern(STRING_PATTERN)]],
-      observaciones: ['', [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.formInforme = this.fb.group({
-      noExpediente: '',
-      noBien: '',
+      id: [null],
+      noBien: [null],
     });
     this.formAutoridad = this.fb.group({
       autoridad: ['', [Validators.pattern(STRING_PATTERN)]],
     });
+  }
+
+  expedientSelect(expedient: any) {
+    console.log(expedient);
+    this.form.patchValue(expedient);
+    let params = new ListParams();
+    params.limit = 1;
+    params.page = 1;
+    params.text = '';
+    this.goodService.getByExpedient(expedient.id, params).subscribe({
+      next: value => {
+        console.log(value.data);
+        this.form.get('description').patchValue(value.data[0].description);
+        this.form.get('goodId').patchValue(value.data[0].goodId);
+        this.form.get('status').patchValue(value.data[0].status);
+      },
+    });
+  }
+
+  selectGood(good: any) {
+    console.log(good);
   }
 
   btnAprobar() {

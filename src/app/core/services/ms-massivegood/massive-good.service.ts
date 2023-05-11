@@ -59,6 +59,10 @@ export class MassiveGoodService extends HttpService {
     );
   }
 
+  massivePropertyExcel(body: { base64: string }) {
+    return this.post(this.route.MassivePropertyExcel, body);
+  }
+
   deleteMassiveGoodComer(good: number) {
     return this.delete(`${this.route.DeleteMassiveGood}/${good}`);
   }

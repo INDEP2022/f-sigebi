@@ -392,49 +392,48 @@ export class ApprovalAssetsTabsComponent
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
+    this.params.value.addFilter('processStatus', 'SOLICITAR_APROBACION');
+
     this.goodService.getAll(this.params.getValue().getParams()).subscribe({
-      next: async (data: any) => {
-        if (data !== null) {
-          const result = data.data.map(async (item: any) => {
-            //obtener tipo bien
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
-            //obtener el estado fisico
-            const physicalStatus = await this.getPhysicalStatus(
-              item.physicalStatus
-            );
-            item['physicalStatusName'] = physicalStatus;
+      next: async (resp: any) => {
+        const result = resp.data.map(async (item: any) => {
+          //obtener tipo bien
+          const goodType = await this.getGoodType(item.goodTypeId);
+          item['goodTypeName'] = goodType;
+          //obtener el estado fisico
+          const physicalStatus = await this.getPhysicalStatus(
+            item.physicalStatus
+          );
+          item['physicalStatusName'] = physicalStatus;
 
-            //obtener el estado de concervacion
-            const stateConservation = await this.getStateConservation(
-              item.stateConservation
-            );
-            item['stateConservationName'] = stateConservation;
+          //obtener el estado de concervacion
+          const stateConservation = await this.getStateConservation(
+            item.stateConservation
+          );
+          item['stateConservationName'] = stateConservation;
 
-            //obtener el destino de la transferencia
-            const transferentDestiny = await this.getTransferDestiny(
-              item.transferentDestiny
-            );
-            item['transferentDestinyName'] = transferentDestiny;
-            item['destinyLigieName'] = transferentDestiny;
+          //obtener el destino de la transferencia
+          const transferentDestiny = await this.getTransferDestiny(
+            item.transferentDestiny
+          );
+          item['transferentDestinyName'] = transferentDestiny;
+          const destiny = await this.getDestinyLigie(item.destiny);
+          item['destinyLigieName'] = destiny;
 
-            const goodMenaje = await this.getMenaje(item.id);
-            item['goodMenaje'] = goodMenaje;
-          });
+          const goodMenaje = await this.getMenaje(item.id);
+          item['goodMenaje'] = goodMenaje;
+        });
 
-          Promise.all(result).then(x => {
-            this.totalItems = data.count;
-            this.paragraphs = data.data;
-            this.loading = false;
-          });
-        } else {
-          this.paragraphs = defaultData;
+        Promise.all(result).then(x => {
+          this.totalItems = resp.count;
+          this.paragraphs = resp.data;
           this.loading = false;
-        }
+        });
       },
       error: error => {
         this.loading = false;
         this.paragraphs = [];
+        this.onLoadToast('info', '', 'No se encontraron registros');
       },
     });
   }
@@ -479,6 +478,23 @@ export class ApprovalAssetsTabsComponent
         this.genericService.getAll(params).subscribe({
           next: data => {
             resolve(data.data[0].description);
+          },
+        });
+      } else {
+        resolve('');
+      }
+    });
+  }
+
+  getDestinyLigie(id: any) {
+    return new Promise((resolve, reject) => {
+      if (id !== null) {
+        var params = new ListParams();
+        params['filter.keyId'] = `$eq:${id}`;
+        params['filter.name'] = `$eq:Destino`;
+        this.genericService.getAll(params).subscribe({
+          next: data => {
+            resolve(data.data.length > 0 ? data.data[0].description : '');
           },
         });
       } else {

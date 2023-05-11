@@ -38,6 +38,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   user: IUserProcess = null;
   warningTLP: boolean = false;
+  deleRegionalUserId: number = null;
 
   //injections
   private fb = inject(FormBuilder);
@@ -55,7 +56,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
+    //console.log(this.data);
+    const authService: any = this.authService.decodeToken();
+    this.deleRegionalUserId = authService.delegacionreg;
     let column: any = null;
     if (this.typeAnnex === 'commit-request') {
       column = TURN_SELECTED_COLUMNS;
@@ -97,9 +100,15 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     this.loading = true;
     const typeEmployee = this.userForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', typeEmployee);
+    this.params.value.addFilter('regionalDelegation', this.deleRegionalUserId);
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
+        resp.data.map((item: any) => {
+          const fullName = item.firstName + ' ' + item.lastName;
+          item['fullName'] = fullName;
+        });
+
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
         this.loading = false;
@@ -149,10 +158,15 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       'SolicitudProgramacion.DelegadosRegionales'
     );
     this.params.value.addFilter('employeetype', 'DR');*/
+
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAllUsersWithRol(filter).subscribe({
       next: resp => {
-        console.log(resp);
+        resp.data.map((item: any) => {
+          const fullName = item.firstName + ' ' + item.lastName;
+          item['fullName'] = fullName;
+        });
+
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
         this.loading = false;

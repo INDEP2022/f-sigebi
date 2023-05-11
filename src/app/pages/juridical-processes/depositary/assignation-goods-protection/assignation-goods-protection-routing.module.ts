@@ -15,6 +15,10 @@ const routes: Routes = [
     path: '',
     component: AssignationGoodsProtectionComponent,
   },
+  {
+    path: ':id',
+    component: AssignationGoodsProtectionComponent,
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

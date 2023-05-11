@@ -9,8 +9,8 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
-import { AlertButton } from '../../scheduled-maintenance-1/models/alert-button';
-import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
+import { AlertButton } from '../../../scheduled-maintenance-1/models/alert-button';
+import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
   selector: 'app-good-form',
@@ -51,7 +51,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // this.paramsGoods = new FilterParams();
     this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
     this.paramsGoods.addFilter2('filter.extDomProcess=$not:$null');
-    this.paramsGoods.addFilter2('filter.unit=$not:$null');
+    // this.paramsGoods.addFilter2('filter.unit=$not:$null');
     this.paramsGoods.addFilter2('filter.appraisalCurrencyKey=$not:$null');
     // this.paramsGoods.addFilter2('filter.locationType=$not:$null');
     // this.paramsGoods.addFilter2('filter.originSignals=$not:$null');
@@ -63,8 +63,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // this.paramsGoods.addFilter2('filter.rackNumber=$not:$null');
     // this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
     // this.paramsGoods.addFilter2('filter.statusResourceRevision=$not:$null');
-    this.paramsGoods.addFilter2('filter.fractionId=$not:$null');
-    // this.paramsGoods.addFilter2('filter.=$not:$null')
+    // this.paramsGoods.addFilter2('filter.fractionId=$not:$null');
     return this.goodService.getAll(this.paramsGoods.getParams());
   }
 
@@ -127,6 +126,9 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   async selectGood(good: IGood) {
     let bandera;
     let clasif: number;
+    if (!good) {
+      return;
+    }
     console.log(good.goodClassNumber);
     const newBinesPar = this.service.bienesPar.filter(bien => {
       bien.noBien = good.goodId;

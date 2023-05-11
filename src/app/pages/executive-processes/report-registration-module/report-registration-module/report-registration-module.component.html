@@ -61,13 +61,12 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="submit"
-          class="btn btn-primary active"
-          [disabled]="!form.valid"
-          (click)="confirm()">
-          Imprimir
-        </button>
+        <confirm-button
+          [loading]="loading"
+          text="Imprimir"
+          loadingText="Generando Reporte"
+          (confirm)="confirm()"
+          [disabled]="!form.valid"></confirm-button>
       </div>
       <div class="m-3">
         <button

@@ -214,8 +214,10 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
   }
 
   getReport(report: string, params: any): void {
+    this.loading = true;
     this.siabService.fetchReport(report, params).subscribe({
       next: response => {
+        this.loading = false;
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         let config = {
@@ -230,7 +232,6 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true, //ignora el click fuera del modal
         };
         this.modalService.show(PreviewDocumentsComponent, config);
-        this.loading = false;
       },
       error: error => {
         this.loading = false;

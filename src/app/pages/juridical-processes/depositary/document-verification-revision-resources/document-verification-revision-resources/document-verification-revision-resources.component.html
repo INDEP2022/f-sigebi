@@ -12,15 +12,16 @@
           <h6>Informaci&oacute;n de Expediente</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field>
+          <app-expedient-shared
+            expedientField="id"
+            [form]="form"
+            (selectExpedient)="expedientSelect($event)"></app-expedient-shared>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noAmparo')" label="No&#46; Amparo">
-            <input class="form-control" formControlName="noAmparo" />
+          <form-field
+            [control]="form.get('protectionKey')"
+            label="No&#46; Amparo">
+            <input class="form-control" formControlName="protectionKey" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -35,53 +36,53 @@
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
-            [control]="form.get('averiguacionPrevia')"
+            [control]="form.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
-            <input class="form-control" formControlName="averiguacionPrevia" />
+            <input class="form-control" formControlName="preliminaryInquiry" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input class="form-control" formControlName="causaPenal" />
+          <form-field [control]="form.get('criminalCase')" label="Causa Penal">
+            <input class="form-control" formControlName="criminalCase" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <h6>Informaci&oacute;n de Bienes</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-            <input class="form-control" formControlName="noBien" />
+          <form-field [control]="form.get('goodId')" label="No&#46; Bien">
+            <input class="form-control" formControlName="goodId" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
-            [control]="form.get('descripcion')"
+            [control]="form.get('description')"
             label="No&#46; Bien Descripción">
-            <input class="form-control" formControlName="descripcion" />
+            <input class="form-control" formControlName="description" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('fechaAcuerdoInicial')"
+            [control]="form.get('initialAgreementDate')"
             label="Fecha Notificaci&oacute;n">
             <input
               class="form-control"
-              formControlName="fechaAcuerdoInicial"
+              formControlName="initialAgreementDate"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field [control]="form.get('estatusBien')" label="Estatus Bien">
-            <input class="form-control" formControlName="estatusBien" />
+          <form-field [control]="form.get('status')" label="Estatus Bien">
+            <input class="form-control" formControlName="status" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('fechaNotificacion')"
+            [control]="form.get('notificationDate')"
             label="Fecha Notificaci&oacute;n">
             <input
               class="form-control"
-              formControlName="fechaNotificacion"
+              formControlName="notificationDate"
               bsDatepicker />
           </form-field>
         </div>
@@ -94,12 +95,12 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
-            [control]="form.get('acuerdoInicial')"
+            [control]="form.get('initialAgreement')"
             label="Acuerdo Inicial">
             <textarea
               rows="3"
               class="form-control"
-              formControlName="acuerdoInicial"></textarea>
+              formControlName="initialAgreement"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -114,12 +115,12 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
-            [control]="form.get('observaciones')"
+            [control]="form.get('observations')"
             label="Observaciones">
             <textarea
               rows="3"
               class="form-control"
-              formControlName="observaciones"></textarea>
+              formControlName="observations"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">

@@ -48,16 +48,13 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   user: any;
   typeUser: string = '';
   //injections
-  private userProcessService = inject(UserProcessService);
   deleRegionalId: any;
   validBtn: any = false;
   idUser: any;
   storeData: any;
-  constructor(
-    private authService: AuthService,
-    public modalRef: BsModalRef,
-    public fb: FormBuilder
-  ) {
+  private userProcessService = inject(UserProcessService);
+  private readonly authService = inject(AuthService);
+  constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
     super();
     this.settings.columns = TURN_SELECTED_COLUMNS;
     this.settings.actions = {
@@ -72,16 +69,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.typeUser = this.request.targetUserType;
     this.storeData = this.authService.decodeToken();
-
     this.deleRegionalId = this.storeData.delegacionreg;
-
-    // let str = "DELEGACIÓN REGIONAL METROPOLITANA";
-    // let arr = str.split(" "); // Divide la cadena en un array utilizando el espacio como separador
-    // arr.splice(arr.indexOf("DELEGACIÓN"), 1); // Elimina la palabra "DELEGACIÓN" del array
-    // let nuevaCadena = arr.join(" "); // Convierte el array en una nueva cadena utilizando el espacio como separador
-    // console.log(nuevaCadena);
-
-    console.log('aaa', this.deleRegionalId);
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getAllUsers();
     });
@@ -137,6 +125,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   confirm(): void {
     this.triggerEvent(this.user);
     this.close();
+    this.modalRef.content.callback(this.user);
   }
 
   close(): void {

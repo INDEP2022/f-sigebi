@@ -43,6 +43,7 @@ export class ReadInfoGoodComponent
   selectPhysicalState = new DefaultSelect();
   selectConcervationState = new DefaultSelect();
   selectMeasureUnitSae = new DefaultSelect();
+  formLoading: boolean = false;
 
   duplicity: string = '';
   avaluo: string = '';
@@ -76,6 +77,7 @@ export class ReadInfoGoodComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.formLoading = true;
     this.goodData = this.detailAssets.value;
     console.log(this.goodData);
     if (this.goodData) {
@@ -107,17 +109,21 @@ export class ReadInfoGoodComponent
         this.getDestinoSAE(new ListParams());
       }
 
-      if (this.process == 'verify-compliance') {
+      if (this.process == 'validate-document') {
         this.getConcervationState(
           new ListParams(),
           this.goodData.stateConservation
         );
       }
+
       this.getUnitMeasureTransferent(
         new ListParams(),
         this.goodData.unitMeasure
       );
     }
+    setTimeout(() => {
+      this.formLoading = false;
+    }, 3000);
   }
 
   ngOnInit(): void {
@@ -129,38 +135,12 @@ export class ReadInfoGoodComponent
     });
   }
 
-  // getTypeGood() {
-  //   const params = new ListParams();
-  //   params['filter.id'] = `$eq:${this.goodData.fractionId}`;
-  //   this.fractionsService.getAll(params).subscribe({
-  //     next: resp => {
-  //       console.log(resp);
-  //       this.fraction = resp.data[0].code;
-  //       this.relevantTypeName = resp.data[0].description;
-  //     },
-  //     error: error => {
-  //       console.log(error);
-  //     },
-  //   });
-  // }
   getTypeGood() {
     const params = new ListParams();
     params['filter.id'] = `$eq:${this.goodData.fractionId}`;
     this.fractionsService.getAll(params).subscribe({
       next: (resp: any) => {
         this.relevantTypeName = resp.data[0].siabClasification.typeDescription;
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
-  }
-
-  getSubTypeGood(fractionId: number) {
-    this.fractionService.findByFraction(fractionId).subscribe({
-      next: resp => {
-        this.subType = resp.data[0].siabClasification.typeDescription;
-        console.log(this.subType);
       },
       error: error => {
         console.log(error);
@@ -233,7 +213,8 @@ export class ReadInfoGoodComponent
           if (
             (this.typeOfRequest == 'MANUAL' ||
               this.typeOfRequest == 'PGR_SAE') &&
-            this.process == 'verify-compliance'
+            (this.process == 'verify-compliance' ||
+              this.process == 'validate-document')
           ) {
             this.conservationState = data.data[0].description;
           } else {
@@ -380,7 +361,7 @@ export class ReadInfoGoodComponent
   save() {
     Swal.fire({
       title: 'Actualizando',
-      text: '¿Esta seguro de querer actualizar la información del bien?',
+      text: '¿Está seguro que desea actualizar la información del bien?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9d2449',
@@ -416,7 +397,7 @@ export class ReadInfoGoodComponent
             this.onLoadToast(
               'error',
               'Error',
-              `El formulario no se puedo actualizar ${error.error.message}`
+              `El formulario no se puede actualizar ${error.error.message}`
             );
           },
         });

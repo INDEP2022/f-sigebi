@@ -1,6 +1,16 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">NOTIFICACIONES POR EXPEDIENTE</h5>
+    <h5 *ngIf="!origin" class="title">NOTIFICACIONES POR EXPEDIENTE</h5>
+    <div class="row w-100" *ngIf="origin">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">NOTIFICACIONES POR EXPEDIENTE</h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end">
+        <button class="btn btn-primary active btn-sm" (click)="goBack()">
+          Regresar
+        </button>
+      </div>
+    </div>
   </div>
   <div body *ngIf="loading">
     <form-loader></form-loader>
