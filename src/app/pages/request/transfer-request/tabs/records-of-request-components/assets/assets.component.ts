@@ -570,7 +570,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     if (this.listgoodObjects.length > 0) {
       Swal.fire({
         title: 'Eliminar',
-        text: '¿Esta seguro de querer eliminar el bien seleccionado?',
+        text: '¿Está seguro de querer eliminar el bien seleccionado?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#9D2449',
