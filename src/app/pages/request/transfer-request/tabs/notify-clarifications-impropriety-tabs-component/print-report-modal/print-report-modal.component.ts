@@ -15,6 +15,7 @@ import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
 @Component({
@@ -61,9 +62,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   msjCheck: boolean = false;
   formLoading: boolean = true;
-  urlBaseReport =
-    'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=';
+  urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   idSolicitud: any;
+  notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
   constructor(
     public modalService: BsModalService,
@@ -102,7 +103,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    //Método para confirmar si hay firmantes y eliminarlo
+    //Borrar firmantes existentes
     this.verificateFirm();
 
     this.signParams();
@@ -194,23 +195,39 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       });
   }
 
-  registerSign() {
-    let token = this.authService.decodeToken();
-    const formData: Object = {
-      name: token.name,
-      post: token.cargonivel1,
-      learnedType: this.idTypeDoc,
-      learnedId: this.idReportAclara, // Para los demás reportes
-      //learnedId: this.idSolicitud, Para DictamenProdcedencia
-    };
-
-    //Asigna un firmante según el usuario logeado
-    this.signatoriesService.create(formData).subscribe({
-      next: response => {
-        this.signParams(), console.log('Firmante creado: ', response);
-      },
-      error: error => console.log('No se puede crear: ', error),
+  deleteSignatories() {
+    this.signatoriesService.deleteFirmante(this.idReportAclara).subscribe({
+      next: response => console.log('Firmante borrado'),
     });
+  }
+
+  registerSign() {
+    this.signatoriesService
+      .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+      .subscribe({
+        next: response => {
+          console.log('Existe firmante, ya no crear');
+        },
+        error: error => {
+          console.log('Si no hay firmantes, entonces crear nuevo');
+          let token = this.authService.decodeToken();
+          const formData: Object = {
+            name: token.name,
+            post: token.cargonivel1,
+            learnedType: this.idTypeDoc,
+            learnedId: this.idReportAclara, // Para los demás reportes
+            //learnedId: this.idSolicitud, Para DictamenProdcedencia
+          };
+
+          //Asigna un firmante según el usuario logeado
+          this.signatoriesService.create(formData).subscribe({
+            next: response => {
+              this.signParams(), console.log('Firmante creado: ', response);
+            },
+            error: error => console.log('No se puede crear: ', error),
+          });
+        },
+      });
   }
 
   signParams() {
@@ -246,7 +263,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     //mostrar listado de reportes
 
     if (!this.listSigns && this.printReport && !this.isAttachDoc) {
-      //this.verificateFirm();
+      // if(this.notificationValidate == 'Y'){
+      //   console.log('Soy una notificación, no es necesario validar firmante creado');
+      // } else {
+      //   console.log('Soy un dictamen, es necesario validar firmante para evitar duplicidad');
+      //   this.verificateFirm();
+      // }
+      this.registerSign();
       this.printReport = false;
       this.listSigns = true;
       this.title = 'Firma electrónica';
@@ -403,6 +426,16 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   backStep() {
+    if (this.notificationValidate == 'Y') {
+      console.log(
+        'Soy una notificación, no es necesario validar firmante creado'
+      );
+    } else {
+      console.log(
+        'Soy un dictamen, es necesario validar firmante para evitar duplicidad'
+      );
+      this.verificateFirm();
+    }
     this.listSigns = false;
     this.isAttachDoc = false;
     this.printReport = true;
@@ -476,7 +509,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
               'Documento Guardado',
               'El documento se guardó correctamente'
             );
-
+            this.modalRef.content.callback(true);
             this.close();
           },
           error: error => {

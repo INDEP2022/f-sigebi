@@ -146,8 +146,8 @@ export class GoodService extends HttpService {
   }
 
   getById(id: string | number) {
-    const route = `${GoodEndpoints.Good}/${id}`;
-    return this.get<IGood>(route);
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IGood>(`${route}?filter.id=$eq:${id}`);
   }
 
   getByIdAndGoodId(id: string | number, goodId: string | number) {
