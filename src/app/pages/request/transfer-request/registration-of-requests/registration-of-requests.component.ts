@@ -131,6 +131,8 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    const authService: any = this.authService.decodeToken();
+    console.log(authService);
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
 
@@ -880,16 +882,16 @@ export class RegistrationOfRequestsComponent
     const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
-    const sign: boolean = await this.ableToSignDictamen();
+    // const sign: boolean = await this.ableToSignDictamen();
 
-    if (sign == false) {
-      this.onLoadToast(
-        'error',
-        'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
-      );
-      return;
-    }
+    // if (sign == false) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Bienes no aclarados',
+    //     'Algunos bienes aun no se aclarar'
+    //   );
+    //   return;
+    // }
 
     this.requestService.getById(idSolicitud).subscribe({
       next: response => {
@@ -917,16 +919,16 @@ export class RegistrationOfRequestsComponent
 
   /** Proceso de aprobacion */
   async approveRequest() {
-    const sign: boolean = await this.ableToSignDictamen();
+    // const sign: boolean = await this.ableToSignDictamen();
 
-    if (sign == false) {
-      this.onLoadToast(
-        'error',
-        'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
-      );
-      return;
-    }
+    // if (sign == false) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Bienes no aclarados',
+    //     'Algunos bienes aun no se aclarar'
+    //   );
+    //   return;
+    // }
 
     this.msgSaveModal(
       'Aprobar',
@@ -993,16 +995,16 @@ export class RegistrationOfRequestsComponent
 
   /* Inicio de rechazar aprovacion */
   async refuseRequest() {
-    const sign: boolean = await this.ableToSignDictamen();
+    // const sign: boolean = await this.ableToSignDictamen();
 
-    if (sign == false) {
-      this.onLoadToast(
-        'error',
-        'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
-      );
-      return;
-    }
+    // if (sign == false) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Bienes no aclarados',
+    //     'Algunos bienes aun no se aclarar'
+    //   );
+    //   return;
+    // }
 
     this.msgSaveModal(
       'Rechazar',
@@ -1389,7 +1391,7 @@ export class RegistrationOfRequestsComponent
     const filter = goods.data.filter(
       (x: any) =>
         x.processStatus == 'SOLICITAR_APROBACION' ||
-        x.processStatus == 'SOLICITAR_ACLARACION'
+        x.processStatus == 'IMPROCEDENTE'
     );
 
     return filter.length == goods.length ? true : false;
