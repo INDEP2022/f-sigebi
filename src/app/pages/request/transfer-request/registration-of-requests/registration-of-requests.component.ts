@@ -524,19 +524,6 @@ export class RegistrationOfRequestsComponent
     }
   }
 
-  getGoodQuantity(requestId: number) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.requestId'] = `$eq:${requestId}`;
-      this.goodService.getAll(params).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {},
-      });
-    });
-  }
-
   getFractionCode(fractionId: number) {
     return new Promise((resolve, reject) => {
       this.fractionService.getById(fractionId).subscribe({
@@ -1183,42 +1170,38 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'verificar-cumplimiento') {
           this.question = true;
-          setTimeout(() => {
+          setTimeout(async () => {
+            console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
+              await this.updateGoodStatus('CLASIFICAR_BIEN');
               this.verifyComplianceMethod();
             } else if (this.verifyResp === 'sin articulos') {
-              Swal.fire({
-                title: 'Error',
-                text: 'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
-                icon: 'error',
-                showCancelButton: false,
-                confirmButtonColor: '#AD4766',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar',
-              }).then(result => {
-                if (result.isConfirmed) {
-                }
-              });
+              this.verifyCumplianteMsg(
+                'Error',
+                'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
+                'error'
+              );
             } else if (this.verifyResp === 'sin guardar') {
-              Swal.fire({
-                title: 'No se pudo turnar la solicitud',
-                text: 'Guarde el formulario antes de turnar la solicitud',
-                icon: 'info',
-                showCancelButton: false,
-                confirmButtonColor: '#AD4766',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar',
-              }).then(result => {});
+              this.verifyCumplianteMsg(
+                'No se pudo turnar la solicitud',
+                'Guarde el formulario antes de turnar la solicitud',
+                'info'
+              );
             }
             this.question = false;
           }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
+          await this.updateGoodStatus('DESTINO_DOCUMENTAL');
+          //creat tarea para destino documental
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
           this.loader.load = true;
+          await this.updateGoodStatus('SOLICITAR_APROBACION');
           const clarification = await this.haveNotificacions();
+          console.log(clarification);
+          this.loader.load = false;
           if (clarification === 'POR_ACLARAR') {
             const result = await this.createApprovalProcessOnly();
             if (result) {
@@ -1263,7 +1246,12 @@ export class RegistrationOfRequestsComponent
           const goodsClarified = resp.data.filter(
             (x: any) => x.good.goodStatus === 'ACLARADO'
           );
-          if (goodsClarified.length > 0) {
+
+          const goodsImprocedente = resp.data.filter(
+            (x: any) => x.good.goodStatus === 'IMPROCEDENTE'
+          );
+
+          if (goodsClarified.length > 0 || goodsImprocedente.length > 0) {
             resolve('ACLARADO');
           } else {
             resolve('POR_ACLARAR');
@@ -1272,11 +1260,65 @@ export class RegistrationOfRequestsComponent
         },
         error: (error: any) => {
           resolve('SIN_ACLARACIONES');
+          this.loader.load = false;
           /*this.onLoadToast(
             'error',
             'Error interno',
             'No se pudo obtener el bien-res-dev'
           );*/
+        },
+      });
+    });
+  }
+
+  async updateGoodStatus(newProcessStatus: string) {
+    let goods: any = await this.getAllGood();
+    goods.data.map(async (good: any) => {
+      //consultar si aclarado puede volver a modificarse
+      if (
+        good.processStatus != 'SOLICITAR_ACLARACION' &&
+        good.processStatus != 'IMPROCEDENTE' &&
+        good.processStatus != 'SOLICITAR_APROBACION'
+      ) {
+        let body: any = {};
+        body.id = good.id;
+        body.goodId = good.goodId;
+        body.processStatus = newProcessStatus;
+        await this.updateGood(body);
+      }
+    });
+  }
+
+  getAllGood() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.requestId'] = `$eq:${this.requestData.id}`;
+      this.goodService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject('error');
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error en los bienes',
+            'Error al obtener los bienes'
+          );
+        },
+      });
+    });
+  }
+
+  updateGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.update(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+          reject(false);
         },
       });
     });
@@ -1325,6 +1367,21 @@ export class RegistrationOfRequestsComponent
     }).then(result => {
       if (result.isConfirmed) {
         this.close();
+      }
+    });
+  }
+
+  verifyCumplianteMsg(title: string, text: string, icon: any) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#AD4766',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
       }
     });
   }
