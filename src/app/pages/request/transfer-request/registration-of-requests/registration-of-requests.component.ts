@@ -131,6 +131,8 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    const authService: any = this.authService.decodeToken();
+    console.log(authService);
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
 
@@ -1389,7 +1391,7 @@ export class RegistrationOfRequestsComponent
     const filter = goods.data.filter(
       (x: any) =>
         x.processStatus == 'SOLICITAR_APROBACION' ||
-        x.processStatus == 'SOLICITAR_ACLARACION'
+        x.processStatus == 'IMPROCEDENTE'
     );
 
     return filter.length == goods.length ? true : false;
