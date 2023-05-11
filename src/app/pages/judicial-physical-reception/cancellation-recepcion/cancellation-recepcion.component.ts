@@ -344,7 +344,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.form.get('expediente').value
-        }&filter.status=$eq:VXP&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
       )
       .subscribe({
         next: async (res: any) => {
@@ -464,7 +464,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'ENTREGA');
+    paramsF.addFilter('typeProceedings', 'SUSPENSION');
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
