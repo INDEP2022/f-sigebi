@@ -919,16 +919,16 @@ export class RegistrationOfRequestsComponent
 
   /** Proceso de aprobacion */
   async approveRequest() {
-    /* const sign: boolean = await this.ableToSignDictamen();
+    // const sign: boolean = await this.ableToSignDictamen();
 
-    if (sign == false) {
-      this.onLoadToast(
-        'error',
-        'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
-      );
-      return;
-    } */
+    // if (sign == false) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Bienes no aclarados',
+    //     'Algunos bienes aun no se aclarar'
+    //   );
+    //   return;
+    // }
 
     this.msgSaveModal(
       'Aprobar',
