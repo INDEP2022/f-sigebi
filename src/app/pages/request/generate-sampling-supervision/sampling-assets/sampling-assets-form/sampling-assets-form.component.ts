@@ -161,7 +161,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   turnForm() {
     Swal.fire({
       title: 'Confirmación Turnado',
-      text: '¿Esta seguro que la información es correcta para turnar?',
+      text: '¿Está seguro que la información es correcta para turnar?',
       icon: undefined,
       width: 450,
       showCancelButton: true,

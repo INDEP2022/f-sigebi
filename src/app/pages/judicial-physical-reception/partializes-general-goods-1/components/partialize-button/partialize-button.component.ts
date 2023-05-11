@@ -43,14 +43,14 @@ export class PartializeButtonComponent
   }
 
   ngOnInit() {
-    console.log(
-      !this.validationClasif()
-        ? +(this.good.quantity + '')
-        : this.good.val14
-        ? +this.good.val14
-        : -1
-    );
-    console.log(!this.validationClasif() ? this.sumCant : this.sumVal14);
+    // console.log(
+    //   !this.validationClasif()
+    //     ? +(this.good.quantity + '')
+    //     : this.good.val14
+    //     ? +this.good.val14
+    //     : -1
+    // );
+    // console.log(!this.validationClasif() ? this.sumCant : this.sumVal14);
   }
 
   private validationImporte() {

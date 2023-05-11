@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
 import { ScheduledMaintenance } from './scheduled-maintenance';
@@ -18,7 +19,8 @@ export class ScheduledMaintenanceComponent
   constructor(
     protected override fb: FormBuilder,
     protected override service: ProceedingsDeliveryReceptionService,
-    protected override detailService: ProceedingsDetailDeliveryReceptionService
+    protected override detailService: ProceedingsDetailDeliveryReceptionService,
+    private router: Router
   ) {
     super(fb, service, detailService, 'filtersIndica');
     this.settings1 = { ...this.settings1, actions: null };
@@ -28,6 +30,23 @@ export class ScheduledMaintenanceComponent
         description: 'RECEPCIÓN FÍSICA',
       },
     ];
+  }
+
+  captureEvent() {
+    console.log(this.form.value);
+    if (!this.form.get('tipoEvento').value) {
+      this.onLoadToast(
+        'error',
+        'Captura de Evento',
+        'No se ha especificado el Tipo de Evento'
+      );
+    }
+    this.router.navigate([
+      'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event',
+    ]);
+    // if(this.form.get('tipoEvento').value === 'EVENTREC'){
+
+    // }
   }
 
   exportExcel() {

@@ -14,4 +14,10 @@ export class UtilComerV1Service extends HttpService {
   encrypt(model: IEncrypt) {
     return this.post(PrepareEventEndpoints.Encrypt, model);
   }
+
+  getPufSearchEvent(goodNumber: string) {
+    return this.get(
+      PrepareEventEndpoints.ApplicationPufSearchEvent + '/' + goodNumber
+    );
+  }
 }

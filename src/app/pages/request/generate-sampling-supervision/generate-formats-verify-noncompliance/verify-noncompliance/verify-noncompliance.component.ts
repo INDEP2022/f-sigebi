@@ -76,7 +76,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     this.alertQuestion(
       undefined,
       'Confirmación',
-      '¿Esta seguro que la informacion es correcta para turnar?',
+      '¿Está seguro que la informacion es correcta para turnar?',
       'Aceptar'
     ).then(question => {
       if (question.isConfirmed) {
