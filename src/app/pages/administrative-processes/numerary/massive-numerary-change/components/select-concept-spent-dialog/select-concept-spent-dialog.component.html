@@ -1,0 +1,20 @@
+<app-modal>
+  <div class="ch-content" header>
+    <h5 class="modal-title">Selector de Conceptos de Gastos</h5>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="isLoading ? 'table-loading' : ''" class="overflow-auto">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="spentConcepts">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-modal>

@@ -72,7 +72,7 @@
         statusActaValue="ABIERTA"></app-key-proceedings-form> -->
 
       <div class="action-buttons">
-        <div class="col-md-6" [class]="loading ? 'disabled' : ''">
+        <div class="col-md-4" [class]="loading ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -82,7 +82,19 @@
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <div class="col-md-6">
+        <div
+          class="col-md-4"
+          [class]="loading || data.length === 0 ? 'disabled' : ''">
+          <button
+            class="btn btn-primary btn-sm active"
+            type="submit"
+            size="small"
+            (click)="captureEvent()">
+            <i class="bx bx-loader float-icon"></i>
+            Captura de Evento
+          </button>
+        </div>
+        <div class="col-md-4">
           <div
             [class]="
               loading || loadingExcel || data.length === 0 ? 'disabled' : ''
