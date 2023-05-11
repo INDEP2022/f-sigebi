@@ -1,5 +1,3 @@
-import { DatePipe } from '@angular/common';
-
 export const NOTIFY_ASSETS_COLUMNS = {
   answered: {
     title: 'Estatus',
@@ -35,13 +33,8 @@ export const NOTIFY_ASSETS_COLUMNS = {
 
   rejectionDate: {
     title: 'Fecha Aclaración',
-    type: 'text',
+    type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
-    },
   },
 
   reason: {
