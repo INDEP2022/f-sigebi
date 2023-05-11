@@ -29,8 +29,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   deleteProceeding(id: string) {
-    return this.delete(this.endpoint, id);
+    return this.delete(`${this.endpoint}/${id}`);
   }
+
+  editProceeding() {}
 
   newDeleteProceeding(id: string) {
     return this.delete(`${this.endpoint}/${id}`);
