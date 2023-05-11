@@ -367,10 +367,18 @@
           [settings]="settings4"
           [source]="data4"></ng2-smart-table>
       </div>
-      <div class="col-sm-12 col-12 col-md-12 text-right p-2">
-        <div class="form-group">
-          <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
+
+      <div class="col-12 flex p-2">
+        <div class="form-group text-right">
+          <button
+            class="btn btn-danger active btn-sm m-3"
+            (click)="btnCloseDocs()">
             Cerrar Ventana
+          </button>
+          <button
+            class="btn btn-primary active btn-sm m-3"
+            (click)="btnSalir()">
+            Cargar documentos
           </button>
         </div>
       </div>

@@ -298,7 +298,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -350,7 +349,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -402,7 +400,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -455,7 +452,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -508,7 +504,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -561,7 +556,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -753,6 +747,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
+    const notificationValidate = 'Y';
     const idReportAclara = data.id;
     //const idDoc = data.id;
     const idTypeDoc = Number(data.documentTypeId);
@@ -766,7 +761,15 @@ export class NotifyAssetsImproprietyFormComponent
         //idDoc,
         idReportAclara,
         idSolicitud,
-        callback: (next: boolean) => {},
+        notificationValidate,
+        callback: (next: boolean) => {
+          if (next) {
+            console.log('Modal cerrado 1');
+            this.changeStatusAnswered();
+          } else {
+            console.log('Modal no cerrado 1');
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

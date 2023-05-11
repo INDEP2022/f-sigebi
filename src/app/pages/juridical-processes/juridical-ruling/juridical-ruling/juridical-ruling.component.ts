@@ -45,6 +45,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import Swal from 'sweetalert2';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
@@ -69,6 +70,7 @@ export class JuridicalRulingComponent
   dictNumber: string | number = undefined;
   wheelNumber: string | number = undefined;
   delegationDictNumber: string | number = undefined;
+  keyArmyNumber: string | number = undefined;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
   //tipos
@@ -378,7 +380,7 @@ export class JuridicalRulingComponent
           this.legalForm
             .get('observations')
             .setValue(res.data[0].observations || undefined);
-
+          this.keyArmyNumber = res.data[0].keyArmyNumber;
           this.statusDict = res.data[0].statusDict;
           this.legalForm
             .get('label')
@@ -390,6 +392,7 @@ export class JuridicalRulingComponent
           this.legalForm.get('observations').setValue(null);
           this.legalForm.get('fecDicta').setValue(null);
           this.legalForm.get('label').setValue(null);
+          this.keyArmyNumber = undefined;
           this.statusDict = undefined;
         });
     });
@@ -716,12 +719,13 @@ export class JuridicalRulingComponent
   }
 
   btnSalir() {
-    console.log('Salir');
-    this.listadoDocumentos = false;
     // --
     // Sube documentos seleccionados
     if (this.selectedDocuments.length > 0) {
+      this.listadoDocumentos = false;
+
       this.documents = this.documents.concat(this.selectedDocuments);
+
       this.selectedDocuments.forEach(doc => {
         this.goods = this.goods.filter(_doc => _doc.id != doc.id);
       });
@@ -730,6 +734,13 @@ export class JuridicalRulingComponent
       // this.selectedDocuments.forEach(doc => {
       //   this.goods = this.goods.filter(_doc => _doc.id != doc.id);
       // });
+      this.selectedDocuments = [];
+    } else {
+      this.alert(
+        'info',
+        '',
+        'Debes seleccionar la fecha de un documento para continuar.'
+      );
     }
   }
   isDocumentSelectedValid(_doc: any) {
@@ -802,7 +813,14 @@ export class JuridicalRulingComponent
       if (expedient === null || undefined) {
         this.alert('error', 'ERROR', 'Falta seleccionar expediente');
       } else {
-        this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');
+        // this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');}
+        Swal.fire('PENDIENTE', 'Parcializa la dictaminazión.', 'warning').then(
+          () => {
+            window.location.replace(
+              '/pages/general-processes/goods-partialization'
+            );
+          }
+        );
       }
     }
   }
@@ -817,10 +835,10 @@ export class JuridicalRulingComponent
       wheelNumber: this.wheelNumber,
       user: token.preferred_username,
       delegationNumberDictam: this.delegationDictNumber,
-      clueJobNavy: '1',
-      judgmentDate: '04/04/2023',
-      statusJudgment: 'cadena',
-      typeJudgment: 'cadena',
+      clueJobNavy: this.keyArmyNumber, // -- keyArmyNumber
+      judgmentDate: this.legalForm.get('fecDicta').value, // -- entryDate
+      statusJudgment: this.statusDict, // -- statusDict
+      typeJudgment: this.legalForm.get('tipoDictaminacion').value, // -- typeDict
     };
 
     this.checkout1(object).then(({ json }) => {
@@ -889,10 +907,14 @@ export class JuridicalRulingComponent
 
   btnDeleteListDocs() {
     this.documents = [];
+    this.selectedDocuments = [];
   }
 
   onTypeDictChange($event: any) {
     // ..activar para ver cambio
     // console.log($event);
+  }
+  btnCloseDocs() {
+    this.listadoDocumentos = false;
   }
 }

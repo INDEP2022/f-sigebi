@@ -73,7 +73,41 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     }
   }
 
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    //Objeto para actualizar el reporte con datos del formulario
+    const obj: IRequest = {
+      ccpRuling: this.dictumForm.controls['ccpRuling'].value,
+      //id: this.dictumForm.controls['id'].value,
+      nameRecipientRuling:
+        this.dictumForm.controls['nameRecipientRuling'].value,
+      nameSignatoryRuling:
+        this.dictumForm.controls['nameSignatoryRuling'].value,
+      paragraphOneRuling: this.dictumForm.controls['paragraphOneRuling'].value,
+      paragraphTwoRuling: this.dictumForm.controls['paragraphTwoRuling'].value,
+      postRecipientRuling:
+        this.dictumForm.controls['postRecipientRuling'].value,
+      postSignatoryRuling:
+        this.dictumForm.controls['postSignatoryRuling'].value,
+      reportSheet: this.folioReporte,
+    };
+    console.log('Crear reporte', this.folioReporte);
+
+    //const idDoc = this.idSolicitud;
+    this.requestService.create(obj).subscribe({
+      next: data => {
+        this.handleSuccess(), this.signDictum();
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
   update() {
+    this.loading = true;
     //Objeto para actualizar el reporte con datos del formulario
     const obj: IRequest = {
       ccpRuling: this.dictumForm.controls['ccpRuling'].value,
