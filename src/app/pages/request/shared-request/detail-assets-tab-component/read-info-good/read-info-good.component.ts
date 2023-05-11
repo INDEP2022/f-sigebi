@@ -361,7 +361,7 @@ export class ReadInfoGoodComponent
   save() {
     Swal.fire({
       title: 'Actualizando',
-      text: '¿Esta seguro que desea actualizar la información del bien?',
+      text: '¿Está seguro que desea actualizar la información del bien?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9d2449',

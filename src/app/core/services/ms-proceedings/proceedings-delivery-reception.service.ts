@@ -92,6 +92,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
         const array: Observable<any>[] = [];
         if (data && data.length > 0) {
           data.forEach(item => {
+            console.log(item);
             const paramsDetail = new FilterParams();
             paramsDetail.limit = 100000;
             paramsDetail.addFilter('numberProceedings', item.id);
@@ -102,9 +103,11 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
                   const dataDetail = details.data;
                   if (dataDetail && dataDetail.length > 0) {
                     dataDetail.forEach(detail => {
+                      console.log(detail);
                       arrayDetails.push({
                         PROGRAMA: item.keysProceedings,
-                        'LOCALIDAD/DICTAMEN': item.numTransfer.description,
+                        'LOCALIDAD/DICTAMEN':
+                          item.numTransfer?.description ?? '',
                         'NO BIEN': detail.numberGood,
                         ESTATUS: detail.good.status,
                         DESCRIPCION: detail.good.description,

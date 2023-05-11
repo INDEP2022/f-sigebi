@@ -35,7 +35,7 @@ export class MaintenanceComponent implements OnInit {
     const period = form.get('period').value;
     const textNotPass =
       'Debe seleccionar un bien de número aleatorio y periodo en cambio de bienes de número aleatorio';
-    const textQuestion = `¿Esta seguro de cambiar el bien de número aleatorio ${numberAleatory} del periodo ${period}`;
+    const textQuestion = `¿Está seguro de cambiar el bien de número aleatorio ${numberAleatory} del periodo ${period}`;
     this.onClickStructure(
       Boolean(numberAleatory) && Boolean(period),
       textNotPass,
@@ -52,7 +52,7 @@ export class MaintenanceComponent implements OnInit {
     const changePeriodEndValue = form.get('periodDestiny').value;
     const textNotPass =
       'Debe seleccionar un periodo de origen y destino en el bloque de cambio de periodo';
-    const textQuestion = `¿Esta seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}`;
+    const textQuestion = `¿Está seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}`;
     this.onClickStructure(
       Boolean(changePeriodInitValue) && Boolean(changePeriodEndValue),
       textNotPass,
@@ -69,7 +69,7 @@ export class MaintenanceComponent implements OnInit {
       .get('period').value;
     const textNotPass =
       'Debe seleccionar un periodo en el bloque de eliminación de periodo';
-    const textPrecaution = `¿Esta seguro de eliminar la carga del periodo ${periodNumber}`;
+    const textPrecaution = `¿Está seguro de eliminar la carga del periodo ${periodNumber}`;
     this.onClickStructure(
       Boolean(periodNumber),
       textNotPass,
