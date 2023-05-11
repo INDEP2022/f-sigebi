@@ -16,6 +16,9 @@ export class GoodTypeService implements ICrudMethods<IGoodType> {
   getAll(params?: ListParams): Observable<IListResponse<IGoodType>> {
     return this.goodTypeRepository.getAllPaginated(this.route, params);
   }
+  getAllS(params?: string): Observable<IListResponse<IGoodType>> {
+    return this.goodTypeRepository.getAllPaginated(this.route, params);
+  }
 
   search(params?: ListParams) {
     return this.goodTypeRepository.getAllPaginated(this.route, params);
