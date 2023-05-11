@@ -882,16 +882,15 @@ export class RegistrationOfRequestsComponent
     const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
-    // const sign: boolean = await this.ableToSignDictamen();
-
-    // if (sign == false) {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Bienes no aclarados',
-    //     'Algunos bienes aun no se aclarar'
-    //   );
-    //   return;
-    // }
+    const sign: boolean = await this.ableToSignDictamen();
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
+      );
+      return;
+    }
 
     this.requestService.getById(idSolicitud).subscribe({
       next: response => {
@@ -919,16 +918,16 @@ export class RegistrationOfRequestsComponent
 
   /** Proceso de aprobacion */
   async approveRequest() {
-    // const sign: boolean = await this.ableToSignDictamen();
+    const sign: boolean = await this.ableToSignDictamen();
 
-    // if (sign == false) {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Bienes no aclarados',
-    //     'Algunos bienes aun no se aclarar'
-    //   );
-    //   return;
-    // }
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
+      );
+      return;
+    }
 
     this.msgSaveModal(
       'Aprobar',
@@ -953,7 +952,7 @@ export class RegistrationOfRequestsComponent
       return;
     }
 
-    const existDictamen = await this.getDictamen(this.requestData.id);
+    /*const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
@@ -962,7 +961,7 @@ export class RegistrationOfRequestsComponent
       );
       this.loader.load = false;
       return;
-    }
+    }*/
 
     const title = ``;
     const url = '';
@@ -995,16 +994,16 @@ export class RegistrationOfRequestsComponent
 
   /* Inicio de rechazar aprovacion */
   async refuseRequest() {
-    // const sign: boolean = await this.ableToSignDictamen();
+    const sign: boolean = await this.ableToSignDictamen();
 
-    // if (sign == false) {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Bienes no aclarados',
-    //     'Algunos bienes aun no se aclarar'
-    //   );
-    //   return;
-    // }
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
+      );
+      return;
+    }
 
     this.msgSaveModal(
       'Rechazar',
@@ -1385,7 +1384,7 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  async ableToSignDictamen(): Promise<boolean> {
+  async ableToSignDictamen() {
     const goods: any = await this.getAllGood();
     let canSign: boolean = false;
     const filter = goods.data.filter(
@@ -1394,7 +1393,7 @@ export class RegistrationOfRequestsComponent
         x.processStatus == 'IMPROCEDENTE'
     );
 
-    return filter.length == goods.length ? true : false;
+    return filter.length == goods.count ? true : false;
   }
 
   msgGuardado(icon: any, title: string, message: string) {

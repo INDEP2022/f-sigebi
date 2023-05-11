@@ -91,7 +91,7 @@
                   <ng-container *ngFor="let optionDate of listDateOptions">
                     <option [value]="optionDate.payIdGens">
                       {{ '#' + optionDate.payIdGens }} ---
-                      {{ optionDate.processDate | date: 'dd/MM/yyyy' }}
+                      {{ optionDate.processDate | date : 'dd/MM/yyyy' }}
                     </option>
                   </ng-container>
                 </select>
