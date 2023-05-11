@@ -6,6 +6,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
@@ -66,6 +67,11 @@ export class ExpedientSharedComponent extends BasePage implements OnInit {
   getExpedient(params: ListParams) {
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    if (params.text)
+      this.filterParams
+        .getValue()
+        .addFilter('id', params.text, SearchFilter.EQ);
+
     this.expedientService
       .getAllFilter(this.filterParams.getValue().getParams())
       .subscribe({
@@ -73,6 +79,7 @@ export class ExpedientSharedComponent extends BasePage implements OnInit {
           this.expedient = new DefaultSelect(resp.data, resp.count);
         },
         error: err => {
+          this.expedient = new DefaultSelect();
           let error = '';
           if (err.status === 0) {
             error = 'Revise su conexión de Internet.';

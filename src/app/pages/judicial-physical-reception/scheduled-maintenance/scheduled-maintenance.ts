@@ -80,10 +80,6 @@ export abstract class ScheduledMaintenance extends BasePage {
         title: 'Observaciones',
         sort: false,
       },
-      label: {
-        title: 'Label',
-        sort: false,
-      },
     },
     noDataMessage: 'No se encontrarón registros',
   };
