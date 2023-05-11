@@ -51,7 +51,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
         sort: false,
       },
@@ -325,6 +325,93 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
+  //Validacion de bienes
+  validateGood(goodId: string) {
+    let cu_valnume = 1;
+    let cu_valotro = 1;
+    let vn_numerario = 0;
+    let lv_programa = 2;
+    let di_disponible = false;
+    let di_numerario = false;
+    let di_acta: number = null;
+    let bamparo = false;
+    //!VALNUME Y VALOTRO
+    /* CURSOR CU_VALNUME (pc_pantalla VARCHAR2) IS
+      SELECT 1
+        FROM bienes bie,
+             estatus_x_pantalla exp
+       WHERE bie.estatus       = exp.estatus
+         AND exp.cve_pantalla  = pc_pantalla
+         AND bie.no_bien       = :blk_bie.no_bien
+         AND NVL(EXP.ACCION,'ENTREGA') = 'NUME'
+         AND EXP.IDENTIFICADOR = :blk_bie.IDENTIFICADOR
+         AND EXP.PROCESO_EXT_DOM = :blk_bie.PROCESO_EXT_DOM;--AKCO201009
+   CURSOR CU_VALOTRO (pc_pantalla VARCHAR2) IS
+      SELECT 1
+        FROM bienes bie,
+             estatus_x_pantalla exp
+       WHERE bie.estatus       = exp.estatus
+         AND exp.cve_pantalla  = pc_pantalla
+         AND bie.no_bien       = :blk_bie.no_bien
+         AND NVL(EXP.ACCION,'ENTREGA') <> 'NUME'
+         AND EXP.IDENTIFICADOR = :blk_bie.IDENTIFICADOR
+         AND EXP.PROCESO_EXT_DOM = :blk_bie.PROCESO_EXT_DOM; */
+    //!VN_NUMERARIO
+    /**
+     SELECT 1
+           INTO vn_numerario
+           FROM BIENES
+          WHERE NO_BIEN = :blk_bie.no_bien
+            AND NO_CLASIF_BIEN IN (SELECT NO_CLASIF_BIEN
+                                     FROM CAT_SSSUBTIPO_BIEN
+                                    WHERE NO_TIPO = 7
+                                      AND NO_SUBTIPO = 1);
+     */
+    if (vn_numerario) {
+      di_numerario = true;
+      if (cu_valnume > 0) {
+        di_disponible = true;
+      }
+    } else {
+      di_numerario = false;
+      if (cu_valotro > 0) {
+        di_disponible = true;
+      }
+    }
+
+    if (di_acta != null || di_acta > 0) {
+      di_disponible = false;
+    }
+
+    if (di_disponible && !di_numerario) {
+      /*       SELECT COUNT(0)
+              INTO lv_programa
+              FROM DETALLE_ACTA_ENT_RECEP
+             WHERE NO_BIEN = :blk_bie.no_bien
+               AND NO_ACTA IN (SELECT NO_ACTA
+                                 FROM ACTAS_ENTREGA_RECEPCION
+                                WHERE TIPO_ACTA = 'EVENTREC') 
+                 AND TRUNC(FEC_INDICA_USUARIO_APROBACION) BETWEEN to_date('01'||to_char(sysdate,'mmyyyy'),'ddmmyyyy') and last_day(trunc(sysdate));*/
+      if (lv_programa === 0) {
+        di_disponible = false;
+      }
+    }
+
+    this.serviceGood.getById(`${goodId}&filter.labelNumber=$eq:6`).subscribe(
+      res => {
+        bamparo = true;
+      },
+      err => {
+        bamparo = false;
+      }
+    );
+
+    return {
+      available: di_disponible,
+      bamparo: bamparo,
+    };
+  }
+
   //Catalogs
 
   getWarehouses(params: ListParams) {
@@ -440,6 +527,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   goodsByExpediente() {
+    console.log('Trae bienes');
     this.serviceGood
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
@@ -455,7 +543,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
                 let disponible: boolean = false;
-                if (e.detail != null) {
+                const resVal = this.validateGood(e.id);
+                disponible = resVal.available;
+                /* if (e.detail != null) {
                   if (
                     format(
                       new Date(e.detail.approvedXAdmonDate),
@@ -472,7 +562,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   }
                 } else {
                   disponible = false;
-                }
+                } */
 
                 return { ...e, avalaible: disponible };
               })
@@ -488,6 +578,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         },
         error: (err: any) => {
           console.error(err);
+          this.dataGoods.load([]);
           if (err.status === 404) {
             this.alert(
               'warning',
@@ -545,14 +636,33 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.statusProceeding = dataRes.statusProceedings;
-        this.labelActa = 'Cerrar acta';
-        this.btnCSSAct = 'btn-primary';
+        if (this.statusProceeding === 'ABIERTA') {
+          this.labelActa = 'Cerrar acta';
+          this.btnCSSAct = 'btn-primary';
+        } else {
+          this.labelActa = 'Abrir acta';
+          this.btnCSSAct = 'btn-success';
+        }
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
       },
       err => console.log(err)
     );
+  }
+
+  clearInputs() {
+    this.form.get('acta2').setValue(null);
+    this.form.get('direccion').setValue(null);
+    this.form.get('entrega').setValue(null);
+    this.form.get('fecElabRec').setValue(null);
+    this.form.get('fecEntBien').setValue(null);
+    this.form.get('fecElab').setValue(null);
+    this.form.get('fecReception').setValue(null);
+    this.form.get('fecCaptura').setValue(null);
+    this.form.get('observaciones').setValue(null);
+    this.form.get('recibe2').setValue(null);
+    this.form.get('testigo').setValue(null);
   }
 
   nextProceeding() {
@@ -568,17 +678,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       } else {
         this.getTransfer();
         this.minDateFecElab = new Date();
-        this.form.get('acta2').setValue(null);
-        this.form.get('direccion').setValue(null);
-        this.form.get('entrega').setValue(null);
-        this.form.get('fecElabRec').setValue(null);
-        this.form.get('fecEntBien').setValue(null);
-        this.form.get('fecElab').setValue(null);
-        this.form.get('fecReception').setValue(null);
-        this.form.get('fecCaptura').setValue(null);
-        this.form.get('observaciones').setValue(null);
-        this.form.get('recibe2').setValue(null);
-        this.form.get('testigo').setValue(null);
+        this.clearInputs();
         this.statusProceeding = '';
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-info';
@@ -614,6 +714,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
+    this.clearInputs();
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -816,9 +917,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
             paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
             this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-              res => {
-                console.log(res);
-              },
+              res => {},
               err => {}
             );
           } else {
