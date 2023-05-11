@@ -56,14 +56,15 @@ export abstract class PartializeGeneralGood {
   }
 
   savePartializeds() {
-    localStorage.setItem(this.dbPartialize, JSON.stringify(this._bienesPar));
+    // localStorage.setItem(this.dbPartialize, JSON.stringify(this._bienesPar));
   }
 
   saveSelectedGood() {
-    localStorage.setItem(this.dbSelectedGood, JSON.stringify(this.good));
+    // localStorage.setItem(this.dbSelectedGood, JSON.stringify(this.good));
   }
 
   getSavedGood(): IGood {
+    return null;
     const good = localStorage.getItem(this.dbSelectedGood);
     return good ? JSON.parse(good) : null;
   }
