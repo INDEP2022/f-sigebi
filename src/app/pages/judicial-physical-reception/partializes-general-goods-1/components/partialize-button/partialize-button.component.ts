@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { FunctionButtons } from '../../models/function-buttons';
@@ -12,6 +12,19 @@ export class PartializeButtonComponent
   extends FunctionButtons
   implements OnInit
 {
+  @Input() set press(value: boolean) {
+    if (this.service) {
+      if (
+        this.form?.invalid ||
+        this.formGood?.invalid ||
+        this.vsum >= this.vimporte ||
+        this.loading
+      ) {
+        return;
+      }
+      this.partialize();
+    }
+  }
   v_inmueble: number;
   vres: number;
   vident: number;
@@ -22,11 +35,7 @@ export class PartializeButtonComponent
     return this.service.sumVal14;
   }
   get vimporte() {
-    return !this.validationClasif()
-      ? +(this.good.quantity + '')
-      : this.good.val14
-      ? +this.good.val14
-      : -1;
+    return this.service.vimporte;
   }
   get cantPar() {
     return this.form.get('cantPar');
@@ -35,22 +44,11 @@ export class PartializeButtonComponent
     return this.form.get('cantidad');
   }
   get vsum() {
-    return !this.validationClasif() ? this.sumCant : this.sumVal14;
+    return this.service.vsum;
   }
 
   constructor(private goodSSSubtypeService: GoodSssubtypeService) {
     super();
-  }
-
-  ngOnInit() {
-    // console.log(
-    //   !this.validationClasif()
-    //     ? +(this.good.quantity + '')
-    //     : this.good.val14
-    //     ? +this.good.val14
-    //     : -1
-    // );
-    // console.log(!this.validationClasif() ? this.sumCant : this.sumVal14);
   }
 
   private validationImporte() {
@@ -110,32 +108,16 @@ export class PartializeButtonComponent
 
   private async validationDecimales() {
     const fraccion = this.good.fraccion;
-    if (!fraccion) {
-      return false;
-    }
-    // const unidad = this.good.unit;
-    if (fraccion.decimalAmount === 'N' && !this.validationClasif()) {
-      if (this.cantPar.value % 1 !== 0 || this.cantidad.value % 1 !== 0) {
-        this.onLoadToast(
-          'error',
-          'Parcialización',
-          'No es posible parcializar bien en fracciones'
-        );
-        return false;
-      }
-    }
-    return true;
-
-    // let decimales;
-    // try {
-    //   const decimalesValidation = await firstValueFrom(
-    //     this.goodService.getMeasurementUnits(unidad)
+    // if (!fraccion) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Parcialización',
+    //     'No es posible parcializar bien en fracciones'
     //   );
-    //   decimales = decimalesValidation.data.decimales;
-    // } catch (x) {}
-
-    // //fraccion.decimalAmount === 'N'
-    // if (decimales === 'N' && !this.validationClasif()) {
+    //   return false;
+    // }
+    const unidad = this.good.unit;
+    // if (fraccion.decimalAmount === 'N' && !this.validationClasif()) {
     //   if (this.cantPar.value % 1 !== 0 || this.cantidad.value % 1 !== 0) {
     //     this.onLoadToast(
     //       'error',
@@ -146,6 +128,27 @@ export class PartializeButtonComponent
     //   }
     // }
     // return true;
+
+    let decimales;
+    try {
+      const decimalesValidation = await firstValueFrom(
+        this.goodService.getMeasurementUnits(unidad)
+      );
+      decimales = decimalesValidation.data.decimales;
+    } catch (x) {}
+
+    //fraccion.decimalAmount === 'N'
+    if (decimales === 'N' && !this.validationClasif()) {
+      if (this.cantPar.value % 1 !== 0 || this.cantidad.value % 1 !== 0) {
+        this.onLoadToast(
+          'error',
+          'Parcialización',
+          'No es posible parcializar bien en fracciones'
+        );
+        return false;
+      }
+    }
+    return true;
   }
 
   private async validationNumerario() {
@@ -169,8 +172,11 @@ export class PartializeButtonComponent
   }
 
   private fillAvaluo() {
+    debugger;
     if (this.good.appraisedValue) {
-      return +(+(this.good.appraisedValue + '') * this.vfactor).toFixed(2);
+      const algo = +(this.good.appraisedValue + '') * this.vfactor;
+      const newValue = +algo.toFixed(2);
+      return newValue;
     } else {
       return null;
     }
@@ -219,7 +225,7 @@ export class PartializeButtonComponent
     if (this.validationClasif()) {
       importe = this.cantidad.value;
       const cantGood = this.good.quantity;
-      if (cantGood !== 1) {
+      if (+(cantGood + '') !== 1) {
         cantidad = this.cantidad.value;
       } else {
         cantidad = cantGood;
@@ -236,6 +242,7 @@ export class PartializeButtonComponent
     v_avaluo: string,
     newImporte: number
   ) {
+    debugger;
     this.vfactor = this.cantidad.value / this.vimporte;
     console.log(this.cantidad.value, this.vimporte);
     this.vres = this.vimporte - newImporte;
@@ -268,9 +275,8 @@ export class PartializeButtonComponent
     });
   }
 
-  async partialize() {
-    this.loading = true;
-    // debugger;
+  private async partializeContent() {
+    debugger;
     this.form.get('ind').setValue('N');
     if (this.form.valid && this.formGood.valid) {
       // debugger;
@@ -282,14 +288,14 @@ export class PartializeButtonComponent
       const validationDec = await this.validationDecimales();
       if (!validationDec) return;
       const { v_cantidad, v_unidad, v_avaluo } = await this.setMeasureData();
-      if (!v_cantidad || !v_unidad || !v_avaluo) {
-        this.onLoadToast(
-          'error',
-          'Parcialización',
-          'No es posible parcializar, no tiene unidades de medida '
-        );
-        return;
-      }
+      // if (!v_cantidad || !v_unidad || !v_avaluo) {
+      //   this.onLoadToast(
+      //     'error',
+      //     'Parcialización',
+      //     'No es posible parcializar, no tiene unidades de medida '
+      //   );
+      //   return;
+      // }
 
       const validationNum = await this.validationNumerario();
       if (!validationNum) return;
@@ -331,13 +337,18 @@ export class PartializeButtonComponent
         val13: 0,
       });
       this.bienesPar = [...this.bienesPar];
-      this.loading = false;
     } else {
       this.form.markAllAsTouched();
       setTimeout(() => {
         this.form.markAsUntouched();
       }, 1000);
-      this.loading = false;
     }
+  }
+
+  async partialize() {
+    this.loading = true;
+    // debugger;
+    await this.partializeContent();
+    this.loading = false;
   }
 }
