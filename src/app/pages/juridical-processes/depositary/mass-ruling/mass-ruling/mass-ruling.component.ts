@@ -4,15 +4,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { showToast } from 'src/app/common/helpers/helpers';
+import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MassiveDictationService } from 'src/app/core/services/ms-massivedictation/massivedictation.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -80,7 +81,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     },
   };
   // Data table
-  dataTable1 = [
+  dataTableErrors = [
     {
       erroresProceso: 'DATA',
     },
@@ -98,7 +99,8 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private notificationsService: NotificationService,
-    private massiveDictationService: MassiveDictationService
+    private massiveDictationService: MassiveDictationService,
+    private documentsService: DocumentsService
   ) {
     super();
   }
@@ -163,14 +165,14 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   private prepareForm() {
     this.form = this.fb.group({
       id: '', //*
-      typeDict: '',
-      dictDate: '',
-      statusDict: ['', [Validators.pattern(STRING_PATTERN)]],
       passOfficeArmy: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      instructorDate: '',
-      userDict: ['', [Validators.pattern(STRING_PATTERN)]],
-      wheelNumber: '',
       expedientNumber: ['', Validators.required],
+      typeDict: '',
+      statusDict: ['', [Validators.pattern(STRING_PATTERN)]],
+      dictDate: '',
+      userDict: ['', [Validators.pattern(STRING_PATTERN)]],
+      instructorDate: '',
+      wheelNumber: '',
       delete: false,
     });
     this.searchForm = this.fb.group({
@@ -185,17 +187,47 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     });
   }
 
+  private showToasterError(message: string) {
+    showToast({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+    });
+  }
+
   btnBienesDictamen() {
+    const identifier = this.formCargaMasiva.get(
+      'identificadorCargaMasiva'
+    ).value;
+
+    if (!identifier) {
+      this.showToasterError('Debe ingresar el identificador de carga masiva');
+      return;
+    }
+
+    if (this.dataTable.length === 0 || this.dataTable[0].id !== identifier) {
+      this.showToasterError(
+        'No se tiene datos cargados de identificador o debe cargar el identificador'
+      );
+      return;
+    }
+
+    if (this.dataTable[0].id !== identifier) {
+      this.showToasterError(
+        'El identificador ingresado no coincide con el de la tabla'
+      );
+      return;
+    }
+
     this.alertQuestion(
       'warning',
       'Confirmación',
       'Los Bienes del Dictamen serán eliminados, desea continuar?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Eliminar dictamenes
-        // this.close();
         this.loading = true;
-        const id = this.form.get('id').value;
+        const id = this.formCargaMasiva.get('identificadorCargaMasiva').value;
+        // TODO: Esperando resolucion de incidencia 785 para comprobación eliminación de carga masiva
         this.massiveDictationService.deleteGoodOpinion(id).subscribe({
           next: data => {
             this.loading = false;
@@ -208,10 +240,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
           error: err => {
             this.loading = false;
             console.log(err);
-            // showToast({
-            //   icon: 'error',
-            //   text: 'Ocurrio un error al eliminar los bienes del dictamen',
-            // });
+            this.showToasterError(err.error.message);
           },
         });
       }
@@ -223,14 +252,32 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   btnDictamenes() {
+    const armyOfficeKey = this.form.get('passOfficeArmy').value;
+    if (!armyOfficeKey) {
+      showToast({
+        icon: 'error',
+        text: 'Debe ingresar la clave de la oficina del ejercito',
+      });
+      return;
+    }
+    this.documentsService.postCountDictationGoodFile(armyOfficeKey).subscribe({
+      next: data => {},
+    });
     console.log('Dictamenes');
   }
 
   btnCargarIdentificador() {
-    this.loading = true;
     const identificador = this.formCargaMasiva.get(
       'identificadorCargaMasiva'
     ).value;
+    if (!identificador) {
+      showToast({
+        icon: 'error',
+        text: 'Debe ingresar un identificador de carga masiva',
+      });
+      return;
+    }
+    this.loading = true;
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
@@ -268,55 +315,96 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   btnExpedientesCsv(event: any) {
-    console.log(event);
-    const base64 = this.handleUpload(event);
+    // console.log(event);
+    // const base64 = this.handleUpload(event);
 
-    if (base64) {
-      this.massiveGoodService.massivePropertyExcel({ base64 }).subscribe({
-        next: data => {
-          console.log(data);
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
-    }
+    // if (base64) {
+    //   this.massiveGoodService.massivePropertyExcel({ base64 }).subscribe({
+    //     next: data => {
+    //       console.log(data);
+    //     },
+    //     error: err => {
+    //       console.log(err);
+    //     },
+    //   });
+    // }
+    getDataFromExcel(event.target.files[0]).then(data => {
+      console.log({ data });
+      // this.dataTable = data;
+    });
   }
 
   btnExpedientesXls(event: any) {
-    if (!this.form.get('id').value && !this.form.get('typeDict').value) {
-      this.alert('info', 'Se debe ingresar un dictamen', '');
-      return;
-    }
+    // if (!this.form.get('id').value && !this.form.get('typeDict').value) {
+    //   this.alert('info', 'Se debe ingresar un dictamen', '');
+    //   return;
+    // }
+    getDataFromExcel(event.target.files[0]).then(data => {
+      console.log({ data });
+      // this.dataTable = data;
+    });
 
-    const base64 = this.handleUpload(event);
+    // const base64 = this.handleUpload(event);
 
-    if (base64) {
-      this.massiveGoodService.massivePropertyExcel({ base64 }).subscribe({
-        next: data => {
-          console.log(data);
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
-    }
+    // if (base64) {
+    //   this.massiveGoodService.massivePropertyExcel({ base64 }).subscribe({
+    //     next: data => {
+    //       console.log(data);
+    //     },
+    //     error: err => {
+    //       console.log(err);
+    //     },
+    //   });
+    // }
   }
 
-  btnCrearDictamenes() {
+  isDisableCreateDictation = false;
+  async btnCrearDictamenes() {
+    let vNO_OF_DICTA;
     if (this.form.invalid) {
       this.alert('error', 'Se debe ingresar un dictamen', '');
       return;
     }
 
-    this.dictationService.create(this.form.value).subscribe({
-      next: data => {
-        console.log(data);
+    try {
+      const dictation = await this.getDictationForId();
+      console.log(dictation);
+      vNO_OF_DICTA = dictation.id;
+    } catch (error) {
+      this.alert('error', 'No se encontró el dictamen', '');
+      return;
+    }
+    const body = {
+      p_no_of_dicta: this.form.get('id').value,
+      p_tipo_dictaminacion: this.form.get('typeDict').value,
+    };
+    this.dictationService.postCargaMasDesahogob(body).subscribe({
+      next: () => {
+        this.isDisableCreateDictation = true;
+        this.dataTableErrors = [];
       },
-      error: err => {
-        console.log(err);
+      error: () => {
+        this.alert('error', 'Error inesperado en el proceso.', '');
       },
     });
+
+    // this.dictationService.create(this.form.value).subscribe({
+    //   next: data => {
+    //     console.log(data);
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //   },
+    // });
+  }
+
+  async getDictationForId() {
+    const body = {
+      id: this.form.get('id').value,
+      typeDict: this.form.get('typeDict').value,
+    };
+    const dictation = await firstValueFrom(this.dictationService.getById(body));
+    return dictation;
   }
 
   btnImprimeOficio() {

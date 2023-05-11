@@ -62,4 +62,9 @@ export class DictationService extends HttpService {
     const route = `${DictationEndpoints.getParamsOfTypeGood}`;
     return this.post(route, model);
   }
+
+  postCargaMasDesahogob(body: any) {
+    const route = `${DictationEndpoints.CargaMasDesahogob}`;
+    return this.post(route, body);
+  }
 }
