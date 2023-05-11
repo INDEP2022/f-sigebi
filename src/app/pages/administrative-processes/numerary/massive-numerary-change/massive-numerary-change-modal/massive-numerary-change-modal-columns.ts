@@ -1,5 +1,6 @@
 export const MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS = {
   noGood: {
+    //NO_BIEN
     title: 'No.Bien',
     type: 'number',
     sort: false,
@@ -10,6 +11,7 @@ export const MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS = {
     sort: false,
   },
   description: {
+    //DESCRIPCION
     title: 'Descripción',
     type: 'string',
     sort: false,
@@ -20,26 +22,31 @@ export const MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS = {
     sort: false,
   },
   status: {
+    //ESTATUS
     title: 'Estatus',
     type: 'string',
     sort: false,
   },
   entry: {
+    //INGRESO
     title: 'Ingreso',
     type: 'number',
     sort: false,
   },
   costs: {
+    //GASTO
     title: 'Gastos',
     type: 'number',
     sort: false,
   },
-  iva: {
+  tax: {
+    //IVA
     title: 'I.V.A',
     type: 'number',
     sort: false,
   },
   impNumerary: {
+    //VALOR_AVALUO
     title: 'Imp.Numerario',
     type: 'number',
     sort: false,
