@@ -114,7 +114,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <label for="">Fecha recepci&oacute;n&#58; </label>
-            <span> {{ requestData?.receptionDate }}</span>
+            <span> {{ requestData?.receptionDate | date : 'dd/MM/yyyy' }}</span>
           </div>
           <div class="col-md-6">
             <label for="">No. Amparo&#58; </label>
@@ -132,13 +132,17 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="requestData?.transferenceId != 1">
+            <label for="">Nombre Remitente&#58; </label>
+            <span> {{ requestData?.nameOfOwner }}</span>
+          </div>
+          <div class="col-md-6" *ngIf="requestData?.transferenceId == 1">
             <label for="">Nombre MP&#58; </label>
             <span> {{ requestData?.nameOfOwner }}</span>
           </div>
           <div class="col-md-6">
             <label for="">Fecha de oficio&#58; </label>
-            <span> {{ requestData?.paperDate }}</span>
+            <span> {{ requestData?.paperDate | date : 'dd/MM/yyyy' }}</span>
           </div>
         </div>
         <div class="row pt-4">
@@ -153,7 +157,11 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="requestData?.transferenceId != 1">
+            <label for="">Teléfono Remitente&#58; </label>
+            <span> {{ requestData?.phoneOfOwner }}</span>
+          </div>
+          <div class="col-md-6" *ngIf="requestData?.transferenceId == 1">
             <label for="">Teléfono MP&#58; </label>
             <span> {{ requestData?.phoneOfOwner }}</span>
           </div>
@@ -163,7 +171,11 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="requestData?.transferenceId != 1">
+            <label for="">Correo Remitente&#58; </label>
+            <span> {{ requestData?.emailOfOwner }}</span>
+          </div>
+          <div class="col-md-6" *ngIf="requestData?.transferenceId == 1">
             <label for="">Correo MP&#58; </label>
             <span> {{ requestData?.emailOfOwner }}</span>
           </div>
@@ -291,26 +303,28 @@
                   Simular respuesta
                 </button>
               </div>
-              <div class="p-2">
+              <div class="p-2" *ngIf="notification?.answered == 'NUEVA'">
                 <button
-                  id="btn6a"
+                  id="btn6"
                   class="btn btn-success btn-sm active"
                   (click)="acceptClarification()">
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
                 </button>
               </div>
-              <div
-                class="p-2"
-                *ngIf="
-                  requestData?.typeOfTransfer == 'PGR_SAE' ||
-                  requestData?.typeOfTransfer == 'MANUAL'
-                ">
-                <button
-                  id="btn8"
-                  class="btn btn-success btn-sm active"
-                  (click)="FinishClariImpro()">
-                  Finalizar Aclaraci&oacute;n&#47;improcedencia
-                </button>
+              <div *ngIf="notification?.answered != 'ACLARADA'">
+                <div
+                  class="p-2"
+                  *ngIf="
+                    requestData?.typeOfTransfer == 'PGR_SAE' ||
+                    requestData?.typeOfTransfer == 'MANUAL'
+                  ">
+                  <button
+                    id="btn8"
+                    class="btn btn-success btn-sm active"
+                    (click)="FinishClariImpro()">
+                    Finalizar Aclaraci&oacute;n&#47;improcedencia
+                  </button>
+                </div>
               </div>
               <div class="p-2" *ngIf="requestData?.typeOfTransfer == 'SAT_SAE'">
                 <button

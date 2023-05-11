@@ -495,9 +495,9 @@ export class ClarificationsComponent
 
   selectGoods(event: any) {
     if (event.selected.length === 1) {
-      console.log(event);
       this.good = event.data;
       this.goodForm.reset();
+      console.log(...this.good);
       this.goodForm.patchValue({ ...this.good });
       this.rowSelected = this.good;
 
@@ -553,6 +553,7 @@ export class ClarificationsComponent
 
   clicked(event: any) {
     this.goodForm.reset();
+    console.log(...event);
     this.goodForm.patchValue({ ...event });
     this.rowSelected = event;
   }

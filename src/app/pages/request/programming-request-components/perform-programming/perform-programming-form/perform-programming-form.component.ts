@@ -115,6 +115,8 @@ export class PerformProgrammingFormComponent
   paramsGoodsProg = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
   loadGoods: boolean = false;
+  delegationId: number = 0;
+  delRegUserLog: string = '';
   settingUser = { ...this.settings, ...SettingUserTable };
 
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
@@ -187,6 +189,7 @@ export class PerformProgrammingFormComponent
   getInfoUserLog() {
     this.programmingService.getUserInfo().subscribe(data => {
       this.userInfo = data;
+      this.delRegUserLog = this.userInfo.delegacionreg;
     });
   }
 
@@ -225,16 +228,34 @@ export class PerformProgrammingFormComponent
     this.performForm = this.fb.group({
       emailTransfer: [
         null,
-        [Validators.required, Validators.pattern(EMAIL_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(EMAIL_PATTERN),
+        ],
       ],
       address: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      city: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       startDate: [null, [Validators.required, minDate(new Date())]],
       endDate: [null, [Validators.required, minDate(new Date(fiveDays))]],
-      observation: [null, [Validators.pattern(STRING_PATTERN)]],
+      observation: [
+        null,
+        [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
+      ],
       regionalDelegationNumber: [null, [Validators.required]],
       stateKey: [null, [Validators.required]],
       tranferId: [null, [Validators.required]],
@@ -275,10 +296,10 @@ export class PerformProgrammingFormComponent
       idProgramming,
       callback: (data: boolean, create: boolean) => {
         if (data && create) {
-          this.onLoadToast('success', 'Usuario creado correctamente', '');
+          this.onLoadToast('success', 'Correcto', 'Usuario creado');
           this.showUsersProgramming();
         } else if (data) {
-          this.onLoadToast('success', 'Usuario modificado correctamente', '');
+          this.onLoadToast('success', 'Correcto', 'Usuario modificado');
           this.showUsersProgramming();
         }
       },
@@ -313,9 +334,13 @@ export class PerformProgrammingFormComponent
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     const typeUser = this.dataProgramming.typeUser;
     const idProgramming = this.idProgramming;
+    const delegationUserLog = this.delRegUserLog;
+
+    console.log('delegation', this.delegationId);
     config.initialState = {
       typeUser,
       idProgramming,
+      delegationUserLog,
       callback: (data: boolean) => {
         if (data) {
           this.onLoadToast(
@@ -382,6 +407,7 @@ export class PerformProgrammingFormComponent
         .getById(data.department)
         .subscribe((delegation: IRegionalDelegation) => {
           console.log('Delegación regional', delegation);
+          this.delegationId = delegation.id;
           this.performForm
             .get('regionalDelegationNumber')
             .setValue(delegation.description);

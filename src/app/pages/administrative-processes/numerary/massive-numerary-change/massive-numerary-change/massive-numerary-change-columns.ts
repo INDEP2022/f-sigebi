@@ -1,135 +1,140 @@
 export const MASSIVE_NUMERARY_CHANGE_COLUMNS = {
-  a: {
+  COL1: {
     title: 'A',
     type: 'string',
     sort: false,
   },
-  b: {
+  COL2: {
     title: 'B',
     type: 'string',
     sort: false,
   },
-  c: {
+  COL3: {
     title: 'C',
     type: 'string',
     sort: false,
   },
-  d: {
+  COL4: {
     title: 'D',
     type: 'string',
     sort: false,
   },
-  e: {
+  COL5: {
     title: 'E',
     type: 'string',
     sort: false,
   },
-  f: {
+  COL6: {
     title: 'F',
     type: 'string',
     sort: false,
   },
-  g: {
+  COL7: {
     title: 'G',
     type: 'string',
     sort: false,
   },
-  h: {
+  COL8: {
     title: 'H',
     type: 'string',
     sort: false,
   },
-  j: {
+  COL9: {
+    title: 'I',
+    type: 'string',
+    sort: false,
+  },
+  COL10: {
     title: 'J',
     type: 'string',
     sort: false,
   },
-  k: {
+  COL11: {
     title: 'K',
     type: 'string',
     sort: false,
   },
-  l: {
+  COL12: {
     title: 'L',
     type: 'string',
     sort: false,
   },
-  m: {
+  COL13: {
     title: 'M',
     type: 'string',
     sort: false,
   },
-  n: {
+  COL14: {
     title: 'N',
     type: 'string',
     sort: false,
   },
-  o: {
+  COL15: {
     title: 'O',
     type: 'string',
     sort: false,
   },
-  p: {
+  COL16: {
     title: 'P',
     type: 'string',
     sort: false,
   },
-  q: {
+  COL17: {
     title: 'Q',
     type: 'string',
     sort: false,
   },
-  r: {
+  COL18: {
     title: 'R',
     type: 'string',
     sort: false,
   },
-  s: {
+  COL19: {
     title: 'S',
     type: 'string',
     sort: false,
   },
-  t: {
+  COL20: {
     title: 'T',
     type: 'string',
     sort: false,
   },
-  u: {
+  COL21: {
     title: 'U',
     type: 'string',
     sort: false,
   },
-  v: {
+  COL22: {
     title: 'V',
     type: 'string',
     sort: false,
   },
-  w: {
+  COL23: {
     title: 'W',
     type: 'string',
     sort: false,
   },
-  x: {
+  COL24: {
     title: 'X',
     type: 'string',
     sort: false,
   },
-  y: {
+  COL25: {
     title: 'Y',
     type: 'string',
     sort: false,
   },
-  z: {
+  COL26: {
     title: 'Z',
     type: 'string',
     sort: false,
   },
-  aa: {
+  COL27: {
     title: 'AA',
     type: 'string',
     sort: false,
   },
-  ab: {
+  COL28: {
     title: 'AB',
     type: 'string',
     sort: false,
@@ -145,6 +150,7 @@ export const HELP_ARR = [
   'f',
   'g',
   'h',
+  'i',
   'j',
   'k',
   'l',
