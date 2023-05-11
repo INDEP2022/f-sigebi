@@ -876,10 +876,20 @@ export class RegistrationOfRequestsComponent
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 
-  signDictum() {
+  async signDictum() {
     const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
+    const sign: boolean = await this.ableToSignDictamen();
+
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
+      );
+      return;
+    }
 
     this.requestService.getById(idSolicitud).subscribe({
       next: response => {
@@ -906,7 +916,18 @@ export class RegistrationOfRequestsComponent
   }
 
   /** Proceso de aprobacion */
-  approveRequest() {
+  async approveRequest() {
+    const sign: boolean = await this.ableToSignDictamen();
+
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
+      );
+      return;
+    }
+
     this.msgSaveModal(
       'Aprobar',
       '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
@@ -971,7 +992,18 @@ export class RegistrationOfRequestsComponent
   /** fin de proceso */
 
   /* Inicio de rechazar aprovacion */
-  refuseRequest() {
+  async refuseRequest() {
+    const sign: boolean = await this.ableToSignDictamen();
+
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
+      );
+      return;
+    }
+
     this.msgSaveModal(
       'Rechazar',
       '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
@@ -1224,10 +1256,12 @@ export class RegistrationOfRequestsComponent
           }
         }
         if (typeCommit === 'proceso-aprovacion') {
+          await this.updateGoodStatus('APROBADO');
           this.approveRequestMethod();
         }
 
         if (typeCommit === 'refuse') {
+          await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
           this.refuseMethod();
         }
       }
@@ -1349,12 +1383,18 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  /* dinamyCallFrom() {
-    this.registRequestForm.valueChanges.subscribe(data => {
-      this.requestData = data;
-    });
+  async ableToSignDictamen(): Promise<boolean> {
+    const goods: any = await this.getAllGood();
+    let canSign: boolean = false;
+    const filter = goods.data.filter(
+      (x: any) =>
+        x.processStatus == 'SOLICITAR_APROBACION' ||
+        x.processStatus == 'SOLICITAR_ACLARACION'
+    );
+
+    return filter.length == goods.length ? true : false;
   }
- */
+
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,
