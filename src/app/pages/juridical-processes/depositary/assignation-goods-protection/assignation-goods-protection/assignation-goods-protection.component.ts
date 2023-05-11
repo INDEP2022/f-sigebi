@@ -23,6 +23,7 @@ import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDelegation } from 'src/app/core/models/ms-survillance/survillance';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CourtService } from 'src/app/core/services/catalogs/court.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
@@ -43,12 +44,7 @@ export class AssignationGoodsProtectionComponent
   implements OnInit, OnDestroy
 {
   tableSettings = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
+    actions: false,
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
     selectedRowIndex: -1,
@@ -56,18 +52,17 @@ export class AssignationGoodsProtectionComponent
       goodId: {
         title: 'No. Bien',
         sort: false,
-        type: 'html',
-        valuePrepareFunction: (ev: any) => {
-          return `<div class="bg-success text-white text-center">${ev}</div>`;
-        },
+        type: 'number',
       },
       description: {
         title: '',
         sort: false,
-        type: 'html',
-        valuePrepareFunction: (ev: any) => {
-          return `<div class="bg-success text-white text-center">${ev}</div>`;
-        },
+        type: 'string',
+      },
+      protection: {
+        title: '',
+        sort: false,
+        type: 'string',
       },
     },
   };
@@ -76,12 +71,7 @@ export class AssignationGoodsProtectionComponent
   private data: IGood[] = [];
   private data2: IGood[] = [];
   tableSettings2 = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
+    actions: false,
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
     selectedRowIndex: -1,
@@ -89,7 +79,12 @@ export class AssignationGoodsProtectionComponent
       goodId: {
         title: 'No. Bien',
         sort: false,
-      }, //*
+      },
+      description: {
+        title: '',
+        sort: false,
+        type: 'string',
+      },
     },
   };
   // Data table 2
@@ -120,7 +115,8 @@ export class AssignationGoodsProtectionComponent
     private minService: MinPubService,
     private courtServ: CourtService,
     private route: ActivatedRoute,
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private user: AuthService
   ) {
     super();
   }
@@ -243,11 +239,14 @@ export class AssignationGoodsProtectionComponent
     });
     this.formAmparo = this.fb.group({
       suspensionType: '', // Provisional, Definitiva, De plano
-      reportPreviousDate: [new Date()],
+      reportPreviousDate: [null],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
-      amparo: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      cveProtection: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       protectionType: [null, [Validators.required]], //* Directo, Indirecto
-      officialDate: [new Date()],
+      protectionDate: [null],
       reportJustifiedDate: [null],
       minpubNumber: [null], // Detalle Min. Pub.
       courtNumber: [null], // Detalle No Juzgado
@@ -263,10 +262,22 @@ export class AssignationGoodsProtectionComponent
     this.courtItems = new DefaultSelect<ICourt>([], 0, true);
     this.delegationItems = new DefaultSelect<IDelegation>([], 0, true);
     this.formAmparo.reset();
+    this.dataTable = [];
+    this.dataTable2 = [];
+    this.data = [];
+    this.data2 = [];
     this.form.patchValue(expedient);
     if (expedient) {
       this.getData(this.form.value);
     }
+  }
+
+  clear() {
+    this.minItems = new DefaultSelect<IMinpub>([], 0, true);
+    this.courtItems = new DefaultSelect<ICourt>([], 0, true);
+    this.delegationItems = new DefaultSelect<IDelegation>([], 0, true);
+    this.formAmparo.reset();
+    this.form.reset();
     this.dataTable = [];
     this.dataTable2 = [];
     this.data = [];
@@ -279,12 +290,36 @@ export class AssignationGoodsProtectionComponent
     params.page = 1;
     params.text = '';
     if (val.id) {
+      const table = document.getElementById('table').children[0].children[1];
       this.goodService.getByExpedient(val.id, params).subscribe({
         next: value => {
-          console.log('Bienes', value);
-
           this.dataTable = [...value.data];
           this.data = [...this.dataTable];
+
+          value.data.map((data, i) => {
+            const filter = { goodNumber: this.dataTable[i].goodId };
+            this.protectionService.getByPerIds(filter).subscribe({
+              next: resp => {
+                data.protection = resp.cveProtection;
+              },
+              error: err => {
+                data.protection = '';
+              },
+            });
+          });
+
+          const time1 = setTimeout(() => {
+            this.dataTable = [...value.data];
+            const time2 = setTimeout(() => {
+              this.dataTable.map((amp, i) => {
+                amp.protection
+                  ? table.children[i].classList.add('bg-danger', 'text-white')
+                  : table.children[i].classList.add('bg-success', 'text-white');
+              });
+              clearTimeout(time2);
+            }, 500);
+            clearTimeout(time1);
+          }, 1000);
         },
       });
     }
@@ -375,36 +410,141 @@ export class AssignationGoodsProtectionComponent
   }
 
   btnAgregar() {
-    if (this.goodAdd) {
-      this.data2.push(this.goodAdd);
-      this.data.splice(
-        this.data.findIndex(item => item.id === this.goodAdd.id),
-        1
+    const { cveProtection } = this.formAmparo.value;
+    const table = document.getElementById('table').children[0].children[1];
+    if (this.goodAdd.protection) {
+      this.onLoadToast(
+        'info',
+        'Ese bien ya se encuentra en el amparo',
+        this.goodAdd.protection
       );
-      this.dataTable = [...this.data];
-      this.dataTable2 = [...this.data2];
-      console.log('Agregar');
-      this.goodAdd = null;
+    } else if (!cveProtection) {
+      this.onLoadToast(
+        'info',
+        'Debe especificar o buscar el amparo para después integrar el bien',
+        ''
+      );
+    } else {
+      const user = this.user.decodeToken();
+      const data = {
+        goodNumber: this.goodAdd.goodId,
+        cveProtection: cveProtection,
+        recordDate: new Date(),
+        recordUser: user.name.toUpperCase(),
+      };
+
+      this.protectionService.createPerProtection(data).subscribe({
+        next: () => {
+          this.onLoadToast(
+            'success',
+            'Recuerde que después de registrarlo ya no se puede regresar',
+            ''
+          );
+          this.data2.push(this.goodAdd);
+          const i = this.dataTable.findIndex(
+            item => item.id === this.goodAdd.id
+          );
+          const filter = this.goodAdd.goodId;
+
+          this.protectionService.getByPerIds(filter).subscribe({
+            next: resp => {
+              this.dataTable[i].protection = resp.cveProtection;
+              table.children[i].classList.add('bg-danger', 'text-white');
+            },
+            error: err => {
+              this.dataTable[i].protection = '';
+              table.children[i].classList.add('bg-success', 'text-white');
+            },
+          });
+
+          const time1 = setTimeout(() => {
+            this.dataTable2 = [...this.data2];
+            this.dataTable = [...this.dataTable];
+            const time2 = setTimeout(() => {
+              this.dataTable.map((amp, i) => {
+                amp.protection
+                  ? table.children[i].classList.add('bg-danger', 'text-white')
+                  : table.children[i].classList.add('bg-success', 'text-white');
+              });
+              clearTimeout(time2);
+            }, 500);
+            clearTimeout(time1);
+          }, 1000);
+          this.goodAdd = null;
+        },
+        error: err => {
+          this.onLoadToast('error', err.error.message, '');
+        },
+      });
     }
   }
 
-  btnEliminar() {
-    if (this.goodRemove) {
-      this.data.push(this.goodRemove);
-      this.data2.splice(
-        this.data2.findIndex(item => item.id === this.goodRemove.id),
-        1
-      );
-      this.dataTable = [...this.data];
-      this.dataTable2 = [...this.data2];
-      console.log('Eliminar');
-      this.goodRemove = null;
-    }
-  }
+  async btnEliminar() {
+    let exist: boolean = false;
 
-  getFromSelect(params: ListParams) {
-    this.exampleService.getAll(params).subscribe(data => {
-      this.items = new DefaultSelect(data.data, data.count);
+    const data = await new Promise((resolve, reject) => {
+      this.protectionService
+        .getByPerIds({ goodNumber: this.goodRemove.goodId })
+        .subscribe({
+          next: () => {
+            exist = true;
+            resolve(exist);
+          },
+          error: () => {
+            exist = false;
+            resolve(exist);
+          },
+        });
     });
+
+    const { cveProtection } = this.formAmparo.value;
+
+    if (cveProtection == null) {
+      this.onLoadToast(
+        'info',
+        'Debe especificar o buscar el acta para después eliminar el bien de esta',
+        ''
+      );
+    } else if (this.goodRemove.goodId == null) {
+      this.onLoadToast(
+        'info',
+        'Debe seleccionar un bien que forme parte del amparo primero',
+        ''
+      );
+    } else if (exist != null) {
+      this.onLoadToast('info', 'No se puede eliminar un bien ya asignado', '');
+    } else {
+      const removed = {
+        goodNumber: this.goodRemove.goodId,
+        cveProtection: this.goodRemove.protection,
+        recordDate: '',
+      };
+    }
+
+    console.log(exist);
+
+    // if (this.goodRemove) {
+    //   this.data.push(this.goodRemove);
+    //   this.data2.splice(
+    //     this.data2.findIndex(item => item.id === this.goodRemove.id),
+    //     1
+    //   );
+    //   this.dataTable = [...this.data];
+    //   this.dataTable2 = [...this.data2];
+    //   console.log('Eliminar');
+    //   this.goodRemove = null;
+    // }
+  }
+
+  changeStatus() {
+    this.checkStatus(this.goodRemove.goodId);
+  }
+
+  checkStatus(goodId: number) {}
+
+  callFormNumerary() {
+    this.router.navigate([
+      '/pages/general-processes/historical-good-situation',
+    ]);
   }
 }

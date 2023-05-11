@@ -67,9 +67,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
-    console.log('good', this.goodTransfer);
     this.getGoodResDev(Number(this.goodTransfer.id));
     this.initForm();
     this.clarificationForm.get('clarificationType').valueChanges.subscribe({
@@ -132,6 +130,14 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   async confirm() {
+    if (this.haveGoodResDevRegister == true) {
+      this.onLoadToast(
+        'info',
+        'Bien aclarado',
+        'El bien ya cuenta con una aclaración'
+      );
+      return;
+    }
     //Crea la notificacion
     this.loader.load = true;
     const user: any = this.authService.decodeToken();

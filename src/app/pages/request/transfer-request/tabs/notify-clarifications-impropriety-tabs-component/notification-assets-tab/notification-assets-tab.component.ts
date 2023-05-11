@@ -113,6 +113,8 @@ export class NotificationAssetsTabComponent
   priority: any = null;
   typeClarification: number = 0;
   good: IGoodresdev[] = [];
+  showButton = true;
+  notification: ClarificationGoodRejectNotification;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -388,8 +390,8 @@ export class NotificationAssetsTabComponent
     }
   }
 
-  showButton = true;
   selectRow(row?: any) {
+    this.notification = row;
     if (row.chatClarification.clarificationStatus == 'IMPROCEDENCIA') {
       this.showButton = true;
       // const btn8 = document.getElementById('btn8') as HTMLButtonElement | null;

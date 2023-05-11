@@ -41,6 +41,7 @@ export class InappropriatenessPgrSatFormComponent
   paramsRequest = new BehaviorSubject<ListParams>(new ListParams());
   dataChatClarifications: IChatClarifications[];
   idSolicitud: any;
+  formLoading: boolean = false;
 
   constructor(
     private modalRef: BsModalRef,
@@ -57,7 +58,10 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    this.generateClave();
+    if (this.folioReporte === null) {
+      console.log('Crear folio');
+      this.dictamenSeq();
+    }
     this.prepareForm();
   }
 
@@ -102,7 +106,6 @@ export class InappropriatenessPgrSatFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        this.changeStatusAnswered();
         this.openReport(response);
         this.loading = false;
         this.close();
@@ -212,11 +215,6 @@ export class InappropriatenessPgrSatFormComponent
         this.chatService.update(chatClarId, updateInfo).subscribe({
           next: data => {
             this.modalRef.content.callback(true, data.goodId);
-            this.onLoadToast(
-              'success',
-              'Actualizado',
-              'Notificación actualizada correctamente'
-            );
             this.modalRef.hide();
           },
           error: error => {
@@ -229,6 +227,7 @@ export class InappropriatenessPgrSatFormComponent
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
+    const notificationValidate = 'Y';
     const idReportAclara = data.id;
     //const idDoc = data.id;
     const idTypeDoc = Number(data.documentTypeId);
@@ -242,7 +241,15 @@ export class InappropriatenessPgrSatFormComponent
         //idDoc,
         idReportAclara,
         idSolicitud,
-        callback: (next: boolean) => {},
+        notificationValidate,
+        callback: (next: boolean) => {
+          if (next) {
+            console.log('Modal cerrado 1');
+            this.changeStatusAnswered();
+          } else {
+            console.log('Modal no cerrado 1');
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
