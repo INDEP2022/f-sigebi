@@ -344,6 +344,14 @@ export class JuridicalRulingComponent
     this.onLoadGoodList();
     this.onLoadExpedientData();
     this.onLoadDictationInfo();
+    this.resetALL();
+  }
+
+  resetALL() {
+    this.selectedDocuments = [];
+    this.selectedGooods = [];
+    this.selectedGooodsValid = [];
+    this.goodsValid = [];
   }
 
   onLoadExpedientData() {
