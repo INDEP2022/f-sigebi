@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -11,7 +12,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
-import { IGood, IVban } from 'src/app/core/models/ms-good/good';
+import { IGood, IValNumeOtro, IVban } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
@@ -19,6 +20,7 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
@@ -162,7 +164,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceSssubtypeGood: GoodSssubtypeService,
     private serviceVault: SafeService,
     private serviceUser: UsersService,
-    private router: Router
+    private router: Router,
+    private serviceGoodProcess: GoodProcessService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -325,8 +329,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
+  /* openEdo() {
+    this.modalService.show()
+  } */
+
   //Validacion de bienes
-  validateGood(goodId: string) {
+  validateGood(good: any) {
+    console.log(good);
     let cu_valnume = 1;
     let cu_valotro = 1;
     let vn_numerario = 0;
@@ -356,6 +365,33 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
          AND NVL(EXP.ACCION,'ENTREGA') <> 'NUME'
          AND EXP.IDENTIFICADOR = :blk_bie.IDENTIFICADOR
          AND EXP.PROCESO_EXT_DOM = :blk_bie.PROCESO_EXT_DOM; */
+    const valModel: IValNumeOtro = {
+      pc_pantalla: 'FACTREFACTAENTREC',
+      no_bien: good.id,
+      identificador: good.identifier,
+      proceso_ext_dom: good.extDomProcess,
+    };
+
+    console.log(valModel);
+
+    this.serviceGoodProcess.getValNume(valModel).subscribe(
+      res => {
+        console.log({ valNume: res });
+      },
+      err => {
+        console.log(err);
+      }
+    );
+
+    this.serviceGoodProcess.getValOtro(valModel).subscribe(
+      res => {
+        console.log({ valOtro: res });
+      },
+      err => {
+        console.log(err);
+      }
+    );
+
     //!VN_NUMERARIO
     /**
      SELECT 1
@@ -397,7 +433,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       }
     }
 
-    this.serviceGood.getById(`${goodId}&filter.labelNumber=$eq:6`).subscribe(
+    this.serviceGood.getById(`${good.id}&filter.labelNumber=$eq:6`).subscribe(
       res => {
         bamparo = true;
       },
@@ -544,7 +580,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
                 let disponible: boolean = false;
-                const resVal = this.validateGood(e.id);
+                const resVal = this.validateGood(e);
                 disponible = resVal.available;
                 return { ...e, avalaible: disponible };
               })

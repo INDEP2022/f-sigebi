@@ -10,7 +10,9 @@ import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodAndDetailProceeding } from 'src/app/core/models/ms-good/good';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -39,6 +41,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   labelSubdelegation: string = 'Delegación Administra';
   activeOne: boolean = false;
   activeTwo: boolean = false;
+  initialProceedingBool: boolean = false;
+  finalProceedingBool: boolean = false;
   loadingText = 'Cargando ...';
 
   get initialRecord() {
@@ -55,7 +59,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private procedureManagementService: ProcedureManagementService,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super();
   }
@@ -80,6 +85,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.r2.addClass(initial, 'disabled');
         this.r2.addClass(final, 'disabled');
       }
+
+      this.activeProceedings();
     });
 
     this.form.get('subdelegation').valueChanges.subscribe(res => {
@@ -124,7 +131,6 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('estatusActa').value != null &&
       this.form.get('actaInicial').value != null &&
       this.form.get('actaFinal').value != null &&
-      this.form.get('noExpediente').value != null &&
       this.form.get('desde').value != null &&
       this.form.get('hasta').value != null &&
       this.form.get('fechaDesde').value != null &&
@@ -151,7 +157,19 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaDesde').value != null &&
       this.form.get('fechaHasta').value != null
     ) {
-      return true;
+      if (
+        this.form.get('desde').value < this.form.get('hasta').value &&
+        this.form.get('fechaDesde').valid <= this.form.get('fechaHasta').valid
+      ) {
+        return true;
+      } else {
+        this.alert(
+          'warning',
+          'Debe registrar datos validos',
+          'Alguno de los campos que lleno no son válidos'
+        );
+        return false;
+      }
     } else {
       this.alert(
         'warning',
@@ -163,12 +181,11 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.type.value);
     this.form.markAllAsTouched();
     if (this.type.value === 'RECEPTION' && this.validateReception()) {
       this.generateEntrega();
     } else if (this.type.value === 'CONFISCATION' && this.validateDecomiso()) {
-      this.alert('success', 'Funciona', ':D');
+      this.generateDecomiso();
     }
   }
 
@@ -181,10 +198,21 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       PC_ESTATUS_ACTA1: this.form.get('estatusActa').value,
       PF_F_RECEP_INI: format(this.form.get('fechaDesde').value, 'dd-MM-yyyy'),
       PF_F_RECEP_FIN: format(this.form.get('fechaHasta').value, 'dd-MM-yyyy'),
-      PN_ACTA_INICIAL: this.form.get('actaInicial').value,
-      PN_ACTA_FINAL: this.form.get('actaFinal').value,
+      PN_ACTA_INICIAL: this.form.get('actaInicial').value.cve_acta,
+      PN_ACTA_FINAL: this.form.get('actaFinal').value.cve_acta,
     };
+    console.log(params);
+
     this.downloadReport('blank', params);
+  }
+
+  activeProceedings() {
+    this.form.get('subdelegation').valueChanges.subscribe(res => {
+      if (res != null) {
+        this.initialProceedingBool = true;
+        this.finalProceedingBool = true;
+      }
+    });
   }
 
   generateDecomiso() {
@@ -199,6 +227,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       PN_ACTA_INICIAL: this.form.get('actaInicial').value,
       PN_ACTA_FINAL: this.form.get('actaFinal').value,
     };
+    console.log(params);
     this.downloadReport('blank', params);
   }
 
@@ -225,76 +254,38 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     });
   }
 
-  /*  getPaperwork() {
-    return this.procedureManagementService.getById(
-      this.paperwork.processNumber
-    );
-  }
-
-  downloadReport(user: string) {
-    return this.getPaperwork().pipe(
-      switchMap(paperwork => {
-        const params = {
-          PFOLIO: paperwork.folio,
-          PTURNADOA: user,
-        };
-        return this.siabService.fetchReport('RREPREFACTAENTREC', params);
-      }),
-      tap(response => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-      })
-    );
-  } */
-
   getInitialProceedings(params: any) {
-    this.serviceProcVal
-      .getProceedingsByDelAndSub(
-        this.form.get('delegacionRecibe').value,
-        this.form.get('subdelegation').value.id,
-        'proceedingkey',
-        params.text.toUpperCase()
-      )
-      .subscribe(
-        (res: any) => {
-          console.log(res);
-          this.initialProceeding = new DefaultSelect(res.data, res.count);
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+    const model: IGoodAndDetailProceeding = {
+      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+      pTiNumberSubdel: this.form.get('subdelegation').value.id,
+    };
+    console.log(model);
+    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
+      res => {
+        console.log(res.data);
+        this.initialProceeding = new DefaultSelect(res.data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   getFinalProceedings(params: ListParams) {
-    this.serviceProcVal
-      .getProceedingsByDelAndSub(
-        this.form.get('delegacionRecibe').value,
-        this.form.get('subdelegation').value.id,
-        'proceedingkey',
-        params.text.toUpperCase()
-      )
-      .subscribe(
-        (res: any) => {
-          console.log(res);
-          this.finalProceeding = new DefaultSelect(res.data, res.count);
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+    const model: IGoodAndDetailProceeding = {
+      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+      pTiNumberSubdel: this.form.get('subdelegation').value.id,
+    };
+    console.log(model);
+    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
+      res => {
+        console.log(res.data);
+        this.finalProceeding = new DefaultSelect(res.data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   print() {
