@@ -53,7 +53,7 @@
               <form-field [control]="form.get('actaInicial')">
                 <ngx-select
                   (fetchItems)="getInitialProceedings($event)"
-                  class="disabled"
+                  [class]="!initialProceedingBool ? 'disabled' : ''"
                   id="actaI"
                   bindLabel="proceedingkey"
                   control="actaInicial"
@@ -71,7 +71,7 @@
                   (fetchItems)="getFinalProceedings($event)"
                   id="actaF"
                   control="actaFinal"
-                  class="disabled"
+                  [class]="!finalProceedingBool ? 'disabled' : ''"
                   bindLabel="proceedingkey"
                   label="Acta Final"
                   [form]="form"
@@ -123,6 +123,7 @@
                 label="Fecha Elaboraci&oacute;n Hasta">
                 <input
                   bsDatepicker
+                  [minDate]="form.get('fechaDesde').value"
                   class="form-control"
                   formControlName="fechaHasta" />
               </form-field>
