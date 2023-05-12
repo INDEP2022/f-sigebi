@@ -5,4 +5,6 @@ export enum DepositaryEndPoints {
   PersonsModDepositary = `persons-mod-depositary`,
   PaymentRefParamsDep = `payment-ref/paramsDep`,
   PaymentRefValidDep = `payment-ref/validDep`,
+  PaymentRefPrepOI = `payment-ref/prepOI`,
+  ValidBlackListAppointment = `valid-black-list/appointment`,
 }
