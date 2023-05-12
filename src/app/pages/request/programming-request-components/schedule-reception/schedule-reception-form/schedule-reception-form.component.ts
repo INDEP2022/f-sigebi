@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IUserTurn } from 'src/app/core/models/user-turn/user-turn.model';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { UsersSelectedToTurnComponent } from '../../../shared-request/users-selected-to-turn/users-selected-to-turn.component';
 import { userData } from '../../perform-programming/perform-programming-form/data-perfom-programming';
-import { SearchUserFormComponent } from '../search-user-form/search-user-form.component';
 
 @Component({
   selector: 'app-schedule-reception-form',
@@ -15,17 +16,21 @@ import { SearchUserFormComponent } from '../search-user-form/search-user-form.co
   styles: [],
 })
 export class ScheduleReceptionFormComponent implements OnInit {
-  scheduleForm: FormGroup = new FormGroup({});
+  requestForm: ModelForm<any>;
   loading: boolean = false;
   users = new DefaultSelect(userData);
   date = new Date();
   nameUser: string = '';
   typeUser: string = 'INDEP';
+  checked: string = 'checked';
+  userName: string = '';
+  nickName: string = '';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private programmingRequestService: ProgrammingRequestService,
-    private router: Router
+    private router: Router,
+    private bsModalRef: BsModalRef
   ) {}
 
   ngOnInit(): void {
@@ -41,9 +46,11 @@ export class ScheduleReceptionFormComponent implements OnInit {
   }
 
   prepareForm() {
-    this.scheduleForm = this.fb.group({
-      typeUser: ['INDEP', [Validators.required]],
+    this.requestForm = this.fb.group({
       creationUser: [null, [Validators.required]],
+      targetUserType: ['TE'],
+      date: this.date,
+      typeEvent: 'Recepción Fisica',
     });
   }
 
@@ -53,27 +60,27 @@ export class ScheduleReceptionFormComponent implements OnInit {
 
   confirm() {
     this.loading = true;
-    console.log('Enviar', this.scheduleForm.value);
+    this.requestForm.get('creationUser').setValue(this.nameUser);
+    console.log('Enviar', this.requestForm.value);
     this.loading = false;
   }
 
   getUserSelect(user: ListParams) {}
 
-  searchUser() {
-    const typeUser = this.typeUser;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
-    config.initialState = {
-      typeUser,
-      callback: (data: any) => {
-        if (data) {
-          data.map((item: any) => {
-            this.scheduleForm.get('creationUser').setValue(item.firstName);
-          });
-        }
+  openModalSelectUser() {
+    let config: ModalOptions = {
+      initialState: {
+        request: this.requestForm.value,
+        callback: (user: IUserTurn) => {
+          if (user) {
+            console.log('user', user);
+            this.userName = user.firstName + ' ' + user.lastName;
+          }
+        },
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
-
-    const searchUser = this.modalService.show(SearchUserFormComponent, config);
+    this.modalService.show(UsersSelectedToTurnComponent, config);
   }
 }

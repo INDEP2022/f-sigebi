@@ -353,6 +353,7 @@ export interface IGoodSami {
 }
 
 export interface IGood {
+  protection?: string;
   id?: number;
   inventoryNumber?: number;
   goodId?: number;
@@ -710,6 +711,7 @@ export interface Estatus {
   fecVilidityFin?: any;
   observationShortStatus?: any;
   destiny: string;
+  id?: string;
 }
 
 export interface IVban {
@@ -723,6 +725,13 @@ export interface IVban {
   ];
 }
 
+export interface IValNumeOtro {
+  pc_pantalla: string;
+  no_bien: number;
+  identificador: string;
+  proceso_ext_dom: string;
+}
+
 export interface GoodGetData {
   goodNumber: number;
   subDelegationNumber: number;
@@ -734,6 +743,11 @@ export interface GoodGetData {
   processExt: string;
   statusGood: string;
   screenKey: string;
+}
+
+export interface IGoodAndDetailProceeding {
+  pTiNumberDeleg: number;
+  pTiNumberSubdel: number;
 }
 
 // TODO: Checar si la interfaz es la del modelo:

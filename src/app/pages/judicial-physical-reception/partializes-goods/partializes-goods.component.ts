@@ -119,6 +119,13 @@ export class PartializesGoodsComponent
       .subscribe({
         next: response => {
           console.log(response);
+          if (response[0].subItems.length === 0) {
+            this.onLoadToast(
+              'error',
+              'Bien ' + goodNumber,
+              'No tiene bienes parcializados'
+            );
+          }
           this.itemsTree = response;
           this.loadingTree = false;
         },

@@ -19,15 +19,15 @@ export class MsDepositaryService extends HttpService {
     super();
     this.microservice = DepositaryEndPoints.Depositary;
   }
-  /*
-getGoodAppointmentDepositaryByNoGood(
-    params?: ListParams
-  ): Observable<IListResponse<any>> {
-    return this.get<IListResponse<any>>(
+
+  getAllFiltered(
+    params?: _Params
+  ): Observable<IListResponse<IAppointmentDepositary>> {
+    return this.get<IListResponse<IAppointmentDepositary>>(
       DepositaryEndPoints.DepositaryAppointment,
       params
     );
-  }*/
+  }
 
   getGoodAppointmentDepositaryByNoGood(
     params?: ListParams | string
@@ -68,6 +68,18 @@ getGoodAppointmentDepositaryByNoGood(
     return this.post<IListResponse<any>>(
       DepositaryEndPoints.PaymentRefValidDep,
       params
+    );
+  }
+
+  getPaymentRefPrepOI(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.PaymentRefPrepOI,
+      params
+    );
+  }
+  getValidBlackListAppointment(id?: number): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DepositaryEndPoints.ValidBlackListAppointment}/${id}`
     );
   }
 }

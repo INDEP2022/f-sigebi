@@ -120,7 +120,7 @@ export class SelectListFilteredModalComponent
         next: data => {
           console.log(data);
           this.columns = data.data;
-          this.totalItems = data.count;
+          this.totalItems = data.count || 0;
           this.loading = false;
         },
         error: err => {
@@ -140,8 +140,16 @@ export class SelectListFilteredModalComponent
     if (this.filters.length > 0) {
       const params = new FilterParams();
       this.filters.forEach(f => {
-        if (f.value !== null && f.value !== undefined)
+        if (f.value !== null && f.value !== undefined && this.type === 'text') {
           params.addFilter(f.field, f.value, f?.operator);
+        } else if (
+          f.value !== null &&
+          f.value !== undefined &&
+          f.value !== '' &&
+          this.type !== 'number'
+        ) {
+          params.addFilter(f.field, f.value, f?.operator);
+        }
       });
       this.filterParams.next(params);
     }

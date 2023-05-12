@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'form-loader',
@@ -29,6 +29,7 @@ import { Component, OnInit } from '@angular/core';
   ],
 })
 export class FormLoaderComponent implements OnInit {
+  @Input() text: string = 'Cargando... por favor espere...';
   constructor() {}
 
   ngOnInit(): void {}
