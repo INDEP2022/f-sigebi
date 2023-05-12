@@ -311,6 +311,6 @@ export class GoodService extends HttpService {
 
   getGoodById(id: string | number) {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
-    return this.get<IGood>(route);
+    return this.get<any>(route);
   }
 }

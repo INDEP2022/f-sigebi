@@ -1,0 +1,77 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Formaliza Escrituraci&oacute;n</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('escrituraNo')"
+                label="Escritura No.">
+                <input
+                  maxlength="99999999999999999999"
+                  type="text"
+                  class="form-control"
+                  formControlName="escrituraNo" />
+              </form-field>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('fechaEscritura')"
+                label="Fecha Escritura">
+                <input
+                  bsDatepicker
+                  type="text"
+                  class="form-control"
+                  formControlName="fechaEscritura" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('escrituraAntNo')"
+                label="Escritura Anterior No.">
+                <input
+                  maxlength="99999999999999999999"
+                  type="text"
+                  class="form-control"
+                  formControlName="escrituraAntNo" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('noFecha')" label="No. Fecha">
+                <input
+                  bsDatepicker
+                  type="text"
+                  class="form-control"
+                  formControlName="noFecha" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

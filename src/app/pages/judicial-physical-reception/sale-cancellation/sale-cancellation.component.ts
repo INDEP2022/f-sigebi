@@ -332,6 +332,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       });
   }
 
+  validateGood(good: any) {}
+
   fillIncomeProceeding(dataRes: any) {
     const paramsF = new FilterParams();
     this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
@@ -434,7 +436,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.form.get('expediente').value
-        }&filter.status=$eq:VXP&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
       )
       .subscribe({
         next: async (res: any) => {
@@ -589,8 +591,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   openProceeding() {
-    console.log(typeof this.form.get('folio').value);
-    /* if (this.form.get('folioEscaneo').value.length > 15) {
+    if (this.statusProceeding === 'CERRADO') {
+    } else {
+      console.log(typeof this.form.get('folio').value);
+      /* if (this.form.get('folioEscaneo').value.length > 15) {
       this.alert(
         'error',
         'Número de folio incorrecto',
@@ -598,91 +602,92 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       );
     } else { */
 
-    /* } */
-    if (this.goodData.length <= 0) {
-      this.alert(
-        'warning',
-        'No hay bienes registrados',
-        'Necesita registrar bienes en el acta para crearla'
-      );
-    } else {
-      let userDelegation: any;
+      /* } */
+      if (this.goodData.length <= 0) {
+        this.alert(
+          'warning',
+          'No hay bienes registrados',
+          'Necesita registrar bienes en el acta para crearla'
+        );
+      } else {
+        let userDelegation: any;
 
-      let newProceeding: IProccedingsDeliveryReception = {
-        keysProceedings: this.form.get('acta2').value,
-        elaborationDate: format(
-          this.form.get('fecElab').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        datePhysicalReception: format(
-          this.form.get('fecReception').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        address: this.form.get('direccion').value,
-        statusProceedings: 'ABIERTA',
-        elaborate: localStorage.getItem('username'),
-        numFile: this.form.get('expediente').value,
-        witness1: this.form.get('entrega').value,
-        witness2: this.form.get('recibe2').value,
-        typeProceedings: 'DXCVENT',
-        dateElaborationReceipt: format(
-          this.form.get('fecElabRec').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        dateDeliveryGood: format(
-          this.form.get('fecEntBien').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        responsible: null,
-        destructionMethod: null,
-        observations: this.form.get('observaciones').value,
-        approvalDateXAdmon: null,
-        approvalUserXAdmon: null,
-        numRegister: null,
-        captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-        numDelegation1: this.form.get('admin').value.numberDelegation2,
-        numDelegation2:
-          this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
-        identifier: null,
-        label: null,
-        universalFolio: null,
-        numeraryFolio: null,
-        numTransfer: null,
-        idTypeProceedings: this.form.get('acta').value,
-        receiptKey: null,
-        comptrollerWitness: this.form.get('testigo').value,
-        numRequest: null,
-        closeDate: null,
-        maxDate: null,
-        indFulfilled: null,
-        dateCaptureHc: null,
-        dateCloseHc: null,
-        dateMaxHc: null,
-        receiveBy: null,
-        affair: null,
-      };
-      console.log(newProceeding);
-      this.serviceProcVal.postProceeding(newProceeding).subscribe(
-        res => {
-          const paramsF = new FilterParams();
-          paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-          this.serviceProcVal
-            .getByFilter(paramsF.getParams())
-            .subscribe(res => {
-              const resData = JSON.parse(JSON.stringify(res.data))[0];
-              this.saveDetailProceeding(resData);
-              this.form.get('fecCaptura').setValue(new Date());
-              this.statusProceeding = 'ABIERTA';
-              this.labelActa = 'Cerrar acta';
-              this.btnCSSAct = 'btn-primary';
-            });
-        },
-        err => {
-          console.log(err);
-          console.log('Error al guardar');
-        }
-      );
-      console.log(newProceeding);
+        let newProceeding: IProccedingsDeliveryReception = {
+          keysProceedings: this.form.get('acta2').value,
+          elaborationDate: format(
+            this.form.get('fecElab').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          datePhysicalReception: format(
+            this.form.get('fecReception').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          address: this.form.get('direccion').value,
+          statusProceedings: 'ABIERTA',
+          elaborate: localStorage.getItem('username'),
+          numFile: this.form.get('expediente').value,
+          witness1: this.form.get('entrega').value,
+          witness2: this.form.get('recibe2').value,
+          typeProceedings: 'DXCVENT',
+          dateElaborationReceipt: format(
+            this.form.get('fecElabRec').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          dateDeliveryGood: format(
+            this.form.get('fecEntBien').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          responsible: null,
+          destructionMethod: null,
+          observations: this.form.get('observaciones').value,
+          approvalDateXAdmon: null,
+          approvalUserXAdmon: null,
+          numRegister: null,
+          captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+          numDelegation1: this.form.get('admin').value.numberDelegation2,
+          numDelegation2:
+            this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
+          identifier: null,
+          label: null,
+          universalFolio: null,
+          numeraryFolio: null,
+          numTransfer: null,
+          idTypeProceedings: this.form.get('acta').value,
+          receiptKey: null,
+          comptrollerWitness: this.form.get('testigo').value,
+          numRequest: null,
+          closeDate: null,
+          maxDate: null,
+          indFulfilled: null,
+          dateCaptureHc: null,
+          dateCloseHc: null,
+          dateMaxHc: null,
+          receiveBy: null,
+          affair: null,
+        };
+        console.log(newProceeding);
+        this.serviceProcVal.postProceeding(newProceeding).subscribe(
+          res => {
+            const paramsF = new FilterParams();
+            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+            this.serviceProcVal
+              .getByFilter(paramsF.getParams())
+              .subscribe(res => {
+                const resData = JSON.parse(JSON.stringify(res.data))[0];
+                this.saveDetailProceeding(resData);
+                this.form.get('fecCaptura').setValue(new Date());
+                this.statusProceeding = 'ABIERTA';
+                this.labelActa = 'Cerrar acta';
+                this.btnCSSAct = 'btn-primary';
+              });
+          },
+          err => {
+            console.log(err);
+            console.log('Error al guardar');
+          }
+        );
+        console.log(newProceeding);
+      }
     }
   }
 
