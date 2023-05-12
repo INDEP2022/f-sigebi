@@ -1,6 +1,11 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -87,7 +92,20 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     },
   ];
 
-  public form: FormGroup;
+  public form = new FormGroup({
+    id: new FormControl(),
+    passOfficeArmy: new FormControl('', [
+      Validators.pattern(KEYGENERATION_PATTERN),
+    ]),
+    expedientNumber: new FormControl(null, Validators.required),
+    typeDict: new FormControl(''),
+    statusDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    dictDate: new FormControl(''),
+    userDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    instructorDate: new FormControl(''),
+    wheelNumber: new FormControl('', Validators.required),
+    delete: new FormControl(''),
+  });
   public formCargaMasiva: FormGroup;
   public searchForm: FormGroup;
   constructor(
@@ -139,11 +157,13 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     this.dictationService.getAllWithFilters(data.getParams()).subscribe({
       next: data => {
         console.log(data);
-        this.form.patchValue(data.data[0]);
+        this.form.patchValue(data.data[0] as any);
         this.form
           .get('instructorDate')
-          .patchValue(new Date(data.data[0].instructorDate));
-        this.form.get('dictDate').patchValue(new Date(data.data[0].dictDate));
+          .patchValue(new Date(data.data[0].instructorDate) as any);
+        this.form
+          .get('dictDate')
+          .patchValue(new Date(data.data[0].dictDate) as any);
         this.searchForm.get('wheelNumber').patchValue(data.data[0].wheelNumber);
         this.searchForm
           .get('expedientNumber')
@@ -163,18 +183,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
-      id: '', //*
-      passOfficeArmy: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      expedientNumber: ['', Validators.required],
-      typeDict: '',
-      statusDict: ['', [Validators.pattern(STRING_PATTERN)]],
-      dictDate: '',
-      userDict: ['', [Validators.pattern(STRING_PATTERN)]],
-      instructorDate: '',
-      wheelNumber: '',
-      delete: false,
-    });
+    // this.form = this.fb.group();
     this.searchForm = this.fb.group({
       wheelNumber: null,
       expedientNumber: null,
@@ -298,64 +307,102 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     });
   }
 
-  handleUpload(event: any): string {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const result: string = reader.result as string;
-        return result.split(',')[1];
-      };
+  // handleUpload(event: any): string {
+  //   if (event.target.files && event.target.files.length > 0) {
+  //     const file = event.target.files[0];
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = async () => {
+  //       const result: string = reader.result as string;
+  //       return result.split(',')[1];
+  //     };
+  //     return '';
+  //   } else {
+  //     return '';
+  //   }
+  // }
 
-      return '';
-    } else {
-      return '';
+  async btnExpedientesCsv(event: any) {
+    const data = await getDataFromExcel(event.target.files[0]);
+    if (!this.validateExcel(data)) {
+      return;
+    }
+    this.dataTable = data.map((item: any) => {
+      return {
+        goodNumber: { id: item.NO_BIEN },
+        fileNumber: { id: item.NO_EXPEDIENTE },
+      };
+    });
+    console.log({ data });
+  }
+
+  async onClickPrintOffice() {
+    const { id, typeDict, passOfficeArmy } = this.form.value;
+    if (id && typeDict && passOfficeArmy) {
+      this.alertQuestion('warning', 'Error', 'Se debe ingresar un Dictamen.');
+      return;
+    }
+
+    try {
+      const dictation = await this.getDictationForId();
+    } catch (error) {
+      this.alertQuestion('warning', 'Error', 'No se encontró un Dictamen ');
+      return;
+    }
+
+    try {
+      const good = await this.findGoodAndDictXGood1();
+    } catch (error: any) {
+      this.alertQuestion('warning', 'Error', error?.message);
+      console.log({ error });
     }
   }
 
-  btnExpedientesCsv(event: any) {
-    // console.log(event);
-    // const base64 = this.handleUpload(event);
+  async findGoodAndDictXGood1(): Promise<any> {
+    const body = {
+      NO_OF_DICTA: this.form.value.id,
+      TIPO_DICTAMINACION: this.form.value.typeDict,
+    };
+    const data: any[] = await firstValueFrom(
+      this.dictationService.postFindGoodDictGood1(body)
+    );
+    if (data?.length > 1) {
+      throw new Error('Se tiene varios identificadores en el Dictamen.');
+    }
 
-    // if (base64) {
-    //   this.massiveGoodService.massivePropertyExcel({ base64 }).subscribe({
-    //     next: data => {
-    //       console.log(data);
-    //     },
-    //     error: err => {
-    //       console.log(err);
-    //     },
-    //   });
-    // }
-    getDataFromExcel(event.target.files[0]).then(data => {
-      console.log({ data });
-      // this.dataTable = data;
-    });
+    return data[0].substr;
   }
 
-  btnExpedientesXls(event: any) {
-    // if (!this.form.get('id').value && !this.form.get('typeDict').value) {
-    //   this.alert('info', 'Se debe ingresar un dictamen', '');
-    //   return;
-    // }
-    getDataFromExcel(event.target.files[0]).then(data => {
-      console.log({ data });
-      // this.dataTable = data;
-    });
+  async btnExpedientesXls(event: any) {
+    const data = await getDataFromExcel(event.target.files[0]);
+    if (!this.validateExcel(data)) {
+      return;
+    }
+    console.log({ data });
+  }
 
-    // const base64 = this.handleUpload(event);
-
-    // if (base64) {
-    //   this.massiveGoodService.massivePropertyExcel({ base64 }).subscribe({
-    //     next: data => {
-    //       console.log(data);
-    //     },
-    //     error: err => {
-    //       console.log(err);
-    //     },
-    //   });
-    // }
+  validateExcel(data: unknown): boolean {
+    if (!Array.isArray(data)) {
+      this.alert('error', 'No se encontraron datos en el archivo', '');
+      return false;
+    }
+    if (Array.isArray(data) && data.length === 0) {
+      this.alert('error', 'No se encontraron datos en el archivo', '');
+      return false;
+    }
+    const columns = ['NO_BIEN', 'NO_EXPEDIENTE'];
+    const keysExcel = Object.keys(data[0]);
+    if (!keysExcel.every(key => columns.includes(key))) {
+      this.alert(
+        'error',
+        `Columna(s) no encontrada(s), asegúrese de contener esta columnas ${columns.join(
+          ','
+        )}`,
+        ''
+      );
+      return false;
+    }
+    return true;
   }
 
   isDisableCreateDictation = false;
@@ -407,9 +454,9 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     return dictation;
   }
 
-  btnImprimeOficio() {
-    console.log('Oficio');
-  }
+  // btnImprimeOficio() {
+  //   console.log('Oficio');
+  // }
 
   getVolante() {
     if (this.form.get('wheelNumber').value) {

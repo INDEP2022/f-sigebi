@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDictation } from '../../models/ms-dictation/dictation-model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -65,6 +66,14 @@ export class DictationService extends HttpService {
 
   postCargaMasDesahogob(body: any) {
     const route = `${DictationEndpoints.CargaMasDesahogob}`;
+    return this.post(route, body);
+  }
+
+  postFindGoodDictGood1(body: {
+    NO_OF_DICTA: any;
+    TIPO_DICTAMINACION: string;
+  }) {
+    const route = `${DictationEndpoints.FindGoodDictGood1}`;
     return this.post(route, body);
   }
 }
