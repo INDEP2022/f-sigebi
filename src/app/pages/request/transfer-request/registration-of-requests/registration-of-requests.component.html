@@ -5,7 +5,6 @@
         <h5 class="title">{{ title }}</h5>
       </div>
       <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
-        111
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -107,7 +106,7 @@
                 <div class="col-md-4">
                   <div>
                     <label for="">Fecha de Solicitud&#58;</label>
-                    {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                   </div>
                 </div>
                 <div class="col-md-4">

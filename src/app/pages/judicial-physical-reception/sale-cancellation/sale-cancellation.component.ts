@@ -94,7 +94,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      noBien: {
+      goodId: {
         title: 'No. Bien',
         type: 'number',
         sort: false,
@@ -379,8 +379,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.statusProceeding = dataRes.statusProceedings;
-        this.labelActa = 'Cerrar acta';
-        this.btnCSSAct = 'btn-primary';
+        if (this.statusProceeding === 'ABIERTA') {
+          this.labelActa = 'Cerrar acta';
+          this.btnCSSAct = 'btn-primary';
+        } else {
+          this.labelActa = 'Abrir acta';
+          this.btnCSSAct = 'btn-success';
+        }
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
@@ -392,6 +397,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
     this.automaticFill();
+    this.goodsByExpediente();
+    this.clearInputs();
 
     const paramsF = new FilterParams();
     paramsF.addFilter(
@@ -399,7 +406,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'ENTREGA');
+    paramsF.addFilter('typeProceedings', 'DXCVENT');
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -420,8 +427,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.initialBool = false;
       }
     );
-
-    this.goodsByExpediente();
   }
 
   goodsByExpediente() {
@@ -429,7 +434,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       .getAllFilterDetail(
         `filter.fileNumber=$eq:${
           this.form.get('expediente').value
-        }&filter.status=$eq:VXP&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
       )
       .subscribe({
         next: async (res: any) => {
@@ -584,8 +589,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   openProceeding() {
-    console.log(typeof this.form.get('folio').value);
-    /* if (this.form.get('folioEscaneo').value.length > 15) {
+    if (this.statusProceeding === 'CERRADO') {
+    } else {
+      console.log(typeof this.form.get('folio').value);
+      /* if (this.form.get('folioEscaneo').value.length > 15) {
       this.alert(
         'error',
         'Número de folio incorrecto',
@@ -593,91 +600,92 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       );
     } else { */
 
-    /* } */
-    if (this.goodData.length <= 0) {
-      this.alert(
-        'warning',
-        'No hay bienes registrados',
-        'Necesita registrar bienes en el acta para crearla'
-      );
-    } else {
-      let userDelegation: any;
+      /* } */
+      if (this.goodData.length <= 0) {
+        this.alert(
+          'warning',
+          'No hay bienes registrados',
+          'Necesita registrar bienes en el acta para crearla'
+        );
+      } else {
+        let userDelegation: any;
 
-      let newProceeding: IProccedingsDeliveryReception = {
-        keysProceedings: this.form.get('acta2').value,
-        elaborationDate: format(
-          this.form.get('fecElab').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        datePhysicalReception: format(
-          this.form.get('fecReception').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        address: this.form.get('direccion').value,
-        statusProceedings: 'ABIERTA',
-        elaborate: localStorage.getItem('username'),
-        numFile: this.form.get('expediente').value,
-        witness1: this.form.get('entrega').value,
-        witness2: this.form.get('recibe2').value,
-        typeProceedings: 'DXCVENT',
-        dateElaborationReceipt: format(
-          this.form.get('fecElabRec').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        dateDeliveryGood: format(
-          this.form.get('fecEntBien').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        responsible: null,
-        destructionMethod: null,
-        observations: this.form.get('observaciones').value,
-        approvalDateXAdmon: null,
-        approvalUserXAdmon: null,
-        numRegister: null,
-        captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-        numDelegation1: this.form.get('admin').value.numberDelegation2,
-        numDelegation2:
-          this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
-        identifier: null,
-        label: null,
-        universalFolio: null,
-        numeraryFolio: null,
-        numTransfer: null,
-        idTypeProceedings: this.form.get('acta').value,
-        receiptKey: null,
-        comptrollerWitness: this.form.get('testigo').value,
-        numRequest: null,
-        closeDate: null,
-        maxDate: null,
-        indFulfilled: null,
-        dateCaptureHc: null,
-        dateCloseHc: null,
-        dateMaxHc: null,
-        receiveBy: null,
-        affair: null,
-      };
-      console.log(newProceeding);
-      this.serviceProcVal.postProceeding(newProceeding).subscribe(
-        res => {
-          const paramsF = new FilterParams();
-          paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-          this.serviceProcVal
-            .getByFilter(paramsF.getParams())
-            .subscribe(res => {
-              const resData = JSON.parse(JSON.stringify(res.data))[0];
-              this.saveDetailProceeding(resData);
-              this.form.get('fecCaptura').setValue(new Date());
-              this.statusProceeding = 'ABIERTA';
-              this.labelActa = 'Cerrar acta';
-              this.btnCSSAct = 'btn-primary';
-            });
-        },
-        err => {
-          console.log(err);
-          console.log('Error al guardar');
-        }
-      );
-      console.log(newProceeding);
+        let newProceeding: IProccedingsDeliveryReception = {
+          keysProceedings: this.form.get('acta2').value,
+          elaborationDate: format(
+            this.form.get('fecElab').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          datePhysicalReception: format(
+            this.form.get('fecReception').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          address: this.form.get('direccion').value,
+          statusProceedings: 'ABIERTA',
+          elaborate: localStorage.getItem('username'),
+          numFile: this.form.get('expediente').value,
+          witness1: this.form.get('entrega').value,
+          witness2: this.form.get('recibe2').value,
+          typeProceedings: 'DXCVENT',
+          dateElaborationReceipt: format(
+            this.form.get('fecElabRec').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          dateDeliveryGood: format(
+            this.form.get('fecEntBien').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          responsible: null,
+          destructionMethod: null,
+          observations: this.form.get('observaciones').value,
+          approvalDateXAdmon: null,
+          approvalUserXAdmon: null,
+          numRegister: null,
+          captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+          numDelegation1: this.form.get('admin').value.numberDelegation2,
+          numDelegation2:
+            this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
+          identifier: null,
+          label: null,
+          universalFolio: null,
+          numeraryFolio: null,
+          numTransfer: null,
+          idTypeProceedings: this.form.get('acta').value,
+          receiptKey: null,
+          comptrollerWitness: this.form.get('testigo').value,
+          numRequest: null,
+          closeDate: null,
+          maxDate: null,
+          indFulfilled: null,
+          dateCaptureHc: null,
+          dateCloseHc: null,
+          dateMaxHc: null,
+          receiveBy: null,
+          affair: null,
+        };
+        console.log(newProceeding);
+        this.serviceProcVal.postProceeding(newProceeding).subscribe(
+          res => {
+            const paramsF = new FilterParams();
+            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+            this.serviceProcVal
+              .getByFilter(paramsF.getParams())
+              .subscribe(res => {
+                const resData = JSON.parse(JSON.stringify(res.data))[0];
+                this.saveDetailProceeding(resData);
+                this.form.get('fecCaptura').setValue(new Date());
+                this.statusProceeding = 'ABIERTA';
+                this.labelActa = 'Cerrar acta';
+                this.btnCSSAct = 'btn-primary';
+              });
+          },
+          err => {
+            console.log(err);
+            console.log('Error al guardar');
+          }
+        );
+        console.log(newProceeding);
+      }
     }
   }
 
@@ -957,6 +965,19 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //NAVIGATE
   //NAVIGATE PROCEEDING
+  clearInputs() {
+    this.form.get('acta2').setValue(null);
+    this.form.get('entrega').setValue(null);
+    this.form.get('fecElabRecibo').setValue(null);
+    this.form.get('fecEntregaBienes').setValue(null);
+    this.form.get('fecElab').setValue(null);
+    this.form.get('fecRecepFisica').setValue(null);
+    this.form.get('fecCaptura').setValue(null);
+    this.form.get('observaciones').setValue(null);
+    this.form.get('recibe2').setValue(null);
+    this.form.get('direccion').setValue(null);
+  }
+
   nextProceeding() {
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -970,16 +991,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       } else {
         this.checkChange();
         this.minDateFecElab = new Date();
-        this.form.get('acta2').setValue(null);
-        this.form.get('entrega').setValue(null);
-        this.form.get('fecElabRecibo').setValue(null);
-        this.form.get('fecEntregaBienes').setValue(null);
-        this.form.get('fecElab').setValue(null);
-        this.form.get('fecRecepFisica').setValue(null);
-        this.form.get('fecCaptura').setValue(null);
-        this.form.get('observaciones').setValue(null);
-        this.form.get('recibe2').setValue(null);
-        this.form.get('direccion').setValue(null);
+        this.clearInputs();
         this.statusProceeding = '';
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-info';
