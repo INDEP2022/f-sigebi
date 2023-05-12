@@ -5,9 +5,11 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { GoodService } from 'src/app/core/services/good/good.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { NotificationService } from '../../../../core/services/ms-notification/notification.service';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -30,6 +32,7 @@ export class ReturnAbandonmentMonitorComponent
   public idBien: string = '';
   public form: FormGroup;
   good: IGood;
+  validRatificacion: boolean = true;
   notifications: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   notificationPropertyResponse: any;
@@ -38,26 +41,56 @@ export class ReturnAbandonmentMonitorComponent
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
     private goodService: GoodService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private statusGoodService: StatusGoodService,
+    private screenStatusService: ScreenStatusService,
+    private token: AuthService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    let toast = {
+      icon: 'warning',
+      message: 'El Bien ya se encuentra Ratificado',
+    };
+
     const id: string | number = this.activateRoute.snapshot.paramMap.get('id');
     if (id) this.idBien = String(id);
 
-    this.getGood(id);
-
     this.prepareForm();
+    this.getGood(id, toast);
+
     this.loading = true;
   }
 
-  private getGood(id: number | string) {
-    this.goodService.getById(id).subscribe(
+  // PREPARAMOS EL FORMULARIO //
+  private prepareForm() {
+    this.form = this.fb.group({
+      noBien: [this.idBien ? this.idBien : '', [Validators.required]],
+      descripcion: [''],
+      quantity: [''],
+      estatus: [''],
+      goodEstatus: [''],
+      fechaNotificacion: [''],
+      fechaNotificacion2: [''],
+      fechaTerminoPeriodo: [''],
+      fechaTerminoPeriodo2: [''],
+      declaracionAbandonoSERA: [
+        '',
+        [Validators.maxLength(1000), Validators.required],
+      ],
+    });
+  }
+
+  // OBTENEMOS DATA DEL BIEN //
+  private getGood(id: number | string, toast: any) {
+    this.goodService.getGoodById(id).subscribe(
       response => {
         setTimeout(() => {
           this.good = response;
+
+          this.getScreenStatusFinal(response, toast);
           this.loadGood(response);
         }, 1000);
       },
@@ -66,95 +99,201 @@ export class ReturnAbandonmentMonitorComponent
     );
   }
 
-  private loadGood(good: IGood) {
-    this.form.get('descripcion').setValue(good.description);
-    this.form.get('quantity').setValue(good.quantity);
-    this.form.get('estatus').setValue(good.status);
-    this.form.get('declaracionAbandonoSERA').setValue(good.descriptionGoodSae);
-    this.form.get('estatus').setValue(good.status);
-    this.form.get('goodEstatus').setValue(good.goodStatus);
-  }
-
-  private prepareForm() {
-    this.form = this.fb.group({
-      noBien: [this.idBien ? this.idBien : '', Validators.required],
-      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
-      quantity: ['', [Validators.required]],
-      estatus: [
-        '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      goodEstatus: ['', [Validators.required, Validators.maxLength(50)]],
-      fechaNotificacion: ['', [Validators.required]],
-      fechaNotificacion2: ['', [Validators.required]],
-      fechaTerminoPeriodo: ['', [Validators.required]],
-      fechaTerminoPeriodo2: ['', [Validators.required]],
-      declaracionAbandonoSERA: [
-        '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(150)],
-      ],
+  // LLENAR FORM - Y CARGAR DATA DEL BIEN - //
+  private async loadGood(good: IGood) {
+    // DATA DE STATUSGOOD - PARA OBTENER LA DESCRIPCIÓN DE STATUS BIEN//
+    let params = new ListParams();
+    params['filter.status'] = `$ilike:${good.status}`;
+    await this.statusGoodService.getAll(params).subscribe({
+      next: (response: any) => {
+        this.form.get('descripcion').setValue(good.description);
+        this.form.get('quantity').setValue(good.quantity);
+        this.form.get('estatus').setValue(response.data[0].description);
+        this.form
+          .get('declaracionAbandonoSERA')
+          .setValue(good.seraAbnDeclaration);
+        this.form.get('goodEstatus').setValue(good.goodStatus);
+      },
+      error: err => {
+        this.form.get('descripcion').setValue(good.description);
+        this.form.get('quantity').setValue(good.quantity);
+        this.form.get('estatus').setValue(good.status);
+        this.form
+          .get('declaracionAbandonoSERA')
+          .setValue(good.seraAbnDeclaration);
+        this.form.get('goodEstatus').setValue(good.goodStatus);
+      },
     });
   }
 
-  getNotification(): void {
-    this.notificationService.getAll(this.params.getValue()).subscribe(
-      response => {
-        this.notifications = response.data;
-        this.loading = false;
+  // ACCIÓN DEL BOTÓN RATIFICAR
+  public btnRatificacion() {
+    this.getScreenStatus(this.good);
+  }
+
+  // BUSCAMOS EL STATUSFINAL EN LA TABLA STATUSXSCREEN //
+  getScreenStatus(good: any) {
+    let obj = {
+      estatus: good.status,
+      vc_pantalla: 'FACTJURDECABANDEV',
+    };
+
+    let _statusFinal: any = {
+      status: null,
+    };
+
+    this.screenStatusService.getAllFiltro(obj).subscribe(
+      (response: any) => {
+        const { data } = response;
+        _statusFinal.status = data[0].statusFinal.status;
+
+        this.getDataNotixGood(_statusFinal);
       },
-      error => (this.loading = false)
+      error => {
+        // this.getDataNotixGood(_statusFinal);
+        this.onLoadToast(
+          'warning',
+          'No se encontró el Estatus Final',
+          'Estatus por Pantalla'
+        );
+      }
     );
   }
 
-  public btnRatificacion() {
-    this.ratificacion();
-  }
-
-  private ratificacion() {
+  // OBTENEMOS DATA DE LA TABLA NOTIFICACIONES X BIENES //
+  getDataNotixGood(_statusFinal: any) {
     let notificationPropertyRequest = {
       numberProperty: this.good.id,
-      notificationDate: '2002-04-09T00:00:00.000Z',
     };
 
-    this.GetNotificationxPropertyFilter(notificationPropertyRequest);
-  }
-
-  private GetNotificationxPropertyFilter(data: any) {
     this.notificationService
-      .getByNotificationxProperty(data.numberProperty)
+      .getByNotificationxProperty2(notificationPropertyRequest)
       .subscribe({
         next: response => {
+          // console.log('NOTIFICATION X BIEN', response);
           const { data } = response;
 
-          delete data[0].userCorrectsKey;
-
-          let form = {
-            userCorrectsKey: 'sigebiadmon',
-            ...data[0],
-          };
-
-          this.notificationService
-            .updateNotificationxPropertyFilter(
-              Number(data[0].numberProperty),
-              data[0].notificationDate,
-              form
-            )
-            .subscribe({
-              next: response => {
-                this.onLoadToast(
-                  'success',
-                  'Ratificado',
-                  'Se Ratifico correctamente'
-                );
-              },
-              error: err => {
-                this.onLoadToast('error', 'Ratificado', 'No se pudo Ratificar');
-              },
-            });
+          if (
+            data[0].userCorrectsKey == null &&
+            this.good.status != _statusFinal.status
+          ) {
+            this.UpdateNotificationXProperty(data[0]);
+            this.updateGood(_statusFinal);
+          } else if (
+            data[0].userCorrectsKey != null &&
+            this.good.status != _statusFinal.status
+          ) {
+            this.onLoadToast(
+              'warning',
+              'Notificación por Bien',
+              'Se encontró un CVE usuario ractifica'
+            );
+          } else if (
+            data[0].userCorrectsKey == null &&
+            this.good.status == _statusFinal.status
+          ) {
+            this.onLoadToast(
+              'warning',
+              'Notificación por Bien',
+              'El Estatus-Bien y el Estatus Final son iguales'
+            );
+          }
         },
         error: err => {
-          this.onLoadToast('error', 'Ratificado', 'Error al  ratificar');
+          this.onLoadToast('error', 'Notificación por Bien', err.error.message);
         },
       });
+  }
+
+  // ACTUALIZAMOS EN LA TABLA NOTIFICACIÓNXBIENES
+  async UpdateNotificationXProperty(data: any) {
+    const formData: any = {
+      numberProperty: data.numberProperty,
+      // periodEndDate: this.form.get('fechaTerminoPeriodo').value,
+      userCorrectsKey: this.token.decodeToken().preferred_username,
+    };
+
+    this.notificationService
+      .updateNotiXProperty(data.numberProperty, data.periodEndDate, formData)
+      .subscribe({
+        next: response => {
+          this.onLoadToast(
+            'success',
+            'Ratificado',
+            'Se modificó el CVE Usuario Ratifica'
+          );
+        },
+        error: err => {
+          this.onLoadToast(
+            'error',
+            'Declaración de Abandono',
+            err.error.message
+          );
+        },
+      });
+  }
+
+  // ACTUALIZAR STATUS DEL BIEN //
+  async updateGood(_status: any) {
+    // data.status = _status.status;
+    // data.seraAbnDeclaration = this.form.get('declaracionAbandonoSERA').value;
+
+    let obj = {
+      id: this.idBien,
+      goodId: this.idBien,
+      status: _status.status,
+      seraAbnDeclaration: this.form.get('declaracionAbandonoSERA').value,
+    };
+
+    this.goodService.updateWithParams(obj).subscribe({
+      next: response => {
+        let toast = {
+          icon: 'success',
+          message: 'Se Ratificó el Bien correctamente',
+        };
+
+        this.getGood(this.idBien, toast);
+        this.form.get('estatus').setValue(_status.description);
+        // this, this.onLoadToast('success', 'Ratificado', 'Estatus del Bien Actualizado')
+      },
+      error: err => {
+        this.onLoadToast(
+          'error',
+          'Actualización del Status Bien',
+          err.error.message
+        );
+      },
+    });
+  }
+
+  // OBTENEMOS SCREEN STATUS FINAL //
+  getScreenStatusFinal(good: any, toast: any) {
+    let obj = {
+      vc_pantalla: 'FACTJURDECABANDEV',
+    };
+
+    this.screenStatusService.getAllFiltroScreenKey(obj).subscribe(
+      (response: any) => {
+        const { data } = response;
+
+        console.log('SCREEN', data);
+
+        for (let i = 0; i < data.length; i++) {
+          if (good.status == data[i].statusFinal.status) {
+            this.alertInfo(toast.icon, toast.message, '');
+            this.validRatificacion = false;
+          } else {
+            this.validRatificacion = true;
+          }
+        }
+      },
+      error => {
+        this.onLoadToast(
+          'info',
+          'Declaración de Abandono',
+          'No se encontró Estatus en la tabla Estatus_X_Pantalla'
+        );
+      }
+    );
   }
 }

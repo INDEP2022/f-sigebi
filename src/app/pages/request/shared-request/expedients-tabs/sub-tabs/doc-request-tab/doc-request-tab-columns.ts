@@ -220,7 +220,7 @@ export const DOC_EXPEDIENT_COLUMNS = {
     sort: false,
   },
   dDocAuthor: {
-    title: 'No. Autor',
+    title: 'Autor',
     type: 'string',
     sort: false,
   },
