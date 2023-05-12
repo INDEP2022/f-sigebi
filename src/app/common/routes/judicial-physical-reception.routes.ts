@@ -20,7 +20,7 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
         link: '/pages/judicial-physical-reception/confiscated-records',
       },
       {
-        label: 'Parcializa Bienes Generales',
+        label: 'Parcialización de Bienes Generales',
         link: '/pages/judicial-physical-reception/partializes-general-goods-1',
       },
 
@@ -29,7 +29,7 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
       //   link: '/pages/judicial-physical-reception/partializes-general-goods-2',
       // },
       {
-        label: 'Parcialización de Bienes',
+        label: 'Bienes Parcializados',
         link: '/pages/judicial-physical-reception/partializes-goods',
       },
       {
