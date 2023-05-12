@@ -11,12 +11,14 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="form.get('tipoEvento')" label="Tipo de Evento">
+          <!-- <form-field [control]="form.get('tipoEvento')" label="Tipo de Evento">
             <select class="form-control" formControlName="tipoEvento">
               <option value="TODOS">TODOS</option>
               <option value="EVENTREC">RECEPCIÓN FÍSICA</option>
             </select>
-          </form-field>
+          </form-field> -->
+          <app-proceeding-types-shared
+            [form]="form"></app-proceeding-types-shared>
 
           <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
             [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
@@ -26,7 +28,8 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="fechaInicio" />
+              formControlName="fechaInicio"
+              [maxDate]="hoy" />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -35,6 +38,7 @@
               bsDatepicker
               class="form-control"
               [minDate]="fechaInicio.value"
+              [maxDate]="hoy"
               formControlName="fechaFin" />
           </form-field>
         </div>
@@ -55,11 +59,30 @@
       </div>
       <div class="row mb-3" style="margin-top: 20px">
         <div class="col-md-6">
-          <app-regional-coord-shared [form]="form"></app-regional-coord-shared>
+          <app-select-form
+            [form]="form"
+            [multiple]="true"
+            formField="coordRegional"
+            label="Coordinación Regional"
+            value="description"
+            [haveTodos]="false"
+            [getListObservable]="coordRegional"
+            [(params)]="paramsCoords"></app-select-form>
+          <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
         <div class="col-md-6">
-          <app-elaborate-users-shared
-            [form]="form"></app-elaborate-users-shared>
+          <app-select-form
+            [form]="form"
+            formField="usuario"
+            label="Usuarios"
+            bindLabel="name"
+            [haveTodos]="false"
+            [operator]="like"
+            paramFilter="goodId"
+            [getListObservable]="usuarios"
+            [(paramsFilter)]="paramsUsers"></app-select-form>
+          <!-- <app-elaborate-users-shared
+            [form]="form"></app-elaborate-users-shared> -->
         </div>
       </div>
       <div class="row">
@@ -78,14 +101,15 @@
             type="submit"
             size="small"
             (click)="getData()">
-            <i class="bx bx-loader float-icon"></i>
-            Refrescar Informaci&oacute;n
+            <i class="fa fa-search"></i>
+            Buscar
           </button>
         </div>
         <div
           class="col-md-4"
           [class]="loading || data.length === 0 ? 'disabled' : ''">
           <button
+            *ngIf="!showTable1"
             class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
@@ -104,17 +128,26 @@
               [elementToExport]="elementToExport"
               [externalClick]="flagDownload"
               [nameExcel]="'Reporte de Mantenimiento de Programaciones.xlsx'"
-              text="Exporta Excel"></app-excel-report>
+              text="Exportar Excel"></app-excel-report>
           </div>
         </div>
       </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
+      <div class="row pt-4 scheduledTable">
+        <div class="col-md-12" [class]="showTable1 ? '' : 'hide'">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               class="table-responsive"
               [settings]="settings1"
-              [source]="data"></ng2-smart-table>
+              [source]="data"
+              (edit)="rowsSelected($event)"></ng2-smart-table>
+          </div>
+        </div>
+        <div class="col-md-12" [class]="showTable1 ? 'hide' : ''">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              class="table-responsive"
+              [settings]="settings1"
+              [source]="data2"></ng2-smart-table>
           </div>
         </div>
       </div>

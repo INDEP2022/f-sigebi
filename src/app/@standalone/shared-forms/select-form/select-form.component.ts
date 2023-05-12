@@ -24,7 +24,20 @@ import { SweetAlertIcon } from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './select-form.component.html',
-  styles: [``],
+  styles: [
+    `
+      #select-form {
+        ngx-select {
+          ::ng-deep {
+            ng-select {
+              height: auto;
+              min-height: 43px;
+            }
+          }
+        }
+      }
+    `,
+  ],
 })
 export class SelectFormComponent implements OnInit {
   @Input() form: FormGroup;
@@ -92,11 +105,15 @@ export class SelectFormComponent implements OnInit {
 
   setParams(params: ListParams) {
     console.log(params);
+    // this._params = params;
+    // this.getData();
     this.paramsChange.emit(params);
   }
 
   setFilterParams(params: FilterParams) {
     console.log(params);
+    // this._paramsFilter = params;
+    // this.getData();
     this.paramsFilterChange.emit(params);
   }
 
@@ -133,16 +150,21 @@ export class SelectFormComponent implements OnInit {
     this.subscription = this.getListObservable.subscribe({
       next: data => {
         console.log(data);
+        // debugger;
         // this.loadingData.emit(false);
-        this.typeToSearchText = oldTypeSearchText;
-        this.otherData = data.data;
-        this.data = new DefaultSelect(
-          this.haveTodos
-            ? [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...data.data]
-            : data.data,
-          data.count ? data.count : data.data.length,
-          true
-        );
+        if (data.data && data.data.length > 0) {
+          this.typeToSearchText = oldTypeSearchText;
+          this.otherData = data.data;
+          this.data = new DefaultSelect(
+            this.haveTodos
+              ? [
+                  { [this.value]: null, [this.bindLabel]: 'Todos' },
+                  ...data.data,
+                ]
+              : data.data,
+            data.count ? data.count : data.data.length
+          );
+        }
       },
       error: err => {
         let error = '';
@@ -152,7 +174,7 @@ export class SelectFormComponent implements OnInit {
         } else {
           error = err.error.message;
         }
-        this.data = new DefaultSelect();
+        // this.data = new DefaultSelect();
         this.onLoadToast('error', 'Error', error);
       },
     });
@@ -175,6 +197,7 @@ export class SelectFormComponent implements OnInit {
   }
 
   getData() {
+    console.log(this.data);
     if (this.list && this.list.length > 0) {
       this.getDataOfList();
     } else {
@@ -199,6 +222,9 @@ export class SelectFormComponent implements OnInit {
 
   onChange(event: any) {
     console.log(event);
+    if (event.length == 0) {
+      return;
+    }
     if (this.otherData) {
       this.selectEvent.emit(event);
       // console.log(event);
