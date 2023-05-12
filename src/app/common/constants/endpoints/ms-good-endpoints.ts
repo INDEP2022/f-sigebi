@@ -31,5 +31,5 @@ export enum GoodProcessPoints {
   cuValOtro = `cuValotro`,
   vnNumerario = `getVnNumerario`,
   lvlPrograma = `getLvlPrograma`,
-  goodAndDetail = `getBienAndDetailActa`,
+  goodAndDetail = `application/getBienAndDetailActa`,
 }

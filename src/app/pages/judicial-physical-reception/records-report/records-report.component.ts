@@ -131,7 +131,6 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('estatusActa').value != null &&
       this.form.get('actaInicial').value != null &&
       this.form.get('actaFinal').value != null &&
-      this.form.get('noExpediente').value != null &&
       this.form.get('desde').value != null &&
       this.form.get('hasta').value != null &&
       this.form.get('fechaDesde').value != null &&
@@ -158,7 +157,19 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaDesde').value != null &&
       this.form.get('fechaHasta').value != null
     ) {
-      return true;
+      if (
+        this.form.get('desde').value < this.form.get('hasta').value &&
+        this.form.get('fechaDesde').valid <= this.form.get('fechaHasta').valid
+      ) {
+        return true;
+      } else {
+        this.alert(
+          'warning',
+          'Debe registrar datos validos',
+          'Alguno de los campos que lleno no son válidos'
+        );
+        return false;
+      }
     } else {
       this.alert(
         'warning',
@@ -187,8 +198,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       PC_ESTATUS_ACTA1: this.form.get('estatusActa').value,
       PF_F_RECEP_INI: format(this.form.get('fechaDesde').value, 'dd-MM-yyyy'),
       PF_F_RECEP_FIN: format(this.form.get('fechaHasta').value, 'dd-MM-yyyy'),
-      PN_ACTA_INICIAL: this.form.get('actaInicial').value,
-      PN_ACTA_FINAL: this.form.get('actaFinal').value,
+      PN_ACTA_INICIAL: this.form.get('actaInicial').value.cve_acta,
+      PN_ACTA_FINAL: this.form.get('actaFinal').value.cve_acta,
     };
     console.log(params);
 
@@ -199,6 +210,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     this.form.get('subdelegation').valueChanges.subscribe(res => {
       if (res != null) {
         this.initialProceedingBool = true;
+        this.finalProceedingBool = true;
       }
     });
   }
@@ -243,17 +255,15 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   }
 
   getInitialProceedings(params: any) {
-    console.log(this.form.get('delegacionRecibe').value);
     const model: IGoodAndDetailProceeding = {
       pTiNumberDeleg: this.form.get('delegacionRecibe').value,
       pTiNumberSubdel: this.form.get('subdelegation').value.id,
     };
-
     console.log(model);
-
     this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
       res => {
-        console.log(res);
+        console.log(res.data);
+        this.initialProceeding = new DefaultSelect(res.data);
       },
       err => {
         console.log(err);
@@ -262,22 +272,20 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   }
 
   getFinalProceedings(params: ListParams) {
-    this.serviceProcVal
-      .getProceedingsByDelAndSub(
-        this.form.get('delegacionRecibe').value,
-        this.form.get('subdelegation').value.id,
-        'proceedingkey',
-        params.text.toUpperCase()
-      )
-      .subscribe(
-        (res: any) => {
-          console.log(res);
-          this.finalProceeding = new DefaultSelect(res.data, res.count);
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+    const model: IGoodAndDetailProceeding = {
+      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+      pTiNumberSubdel: this.form.get('subdelegation').value.id,
+    };
+    console.log(model);
+    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
+      res => {
+        console.log(res.data);
+        this.finalProceeding = new DefaultSelect(res.data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   print() {

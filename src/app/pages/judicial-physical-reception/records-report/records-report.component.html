@@ -55,7 +55,7 @@
                   (fetchItems)="getInitialProceedings($event)"
                   [class]="!initialProceedingBool ? 'disabled' : ''"
                   id="actaI"
-                  bindLabel="proceedingkey"
+                  bindLabel="cve_acta"
                   control="actaInicial"
                   label="Acta Inicial"
                   [form]="form"
@@ -72,7 +72,7 @@
                   id="actaF"
                   control="actaFinal"
                   [class]="!finalProceedingBool ? 'disabled' : ''"
-                  bindLabel="proceedingkey"
+                  bindLabel="cve_acta"
                   label="Acta Final"
                   [form]="form"
                   [data]="finalProceeding"></ngx-select>
