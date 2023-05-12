@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { PartializeGeneralGood } from './partialize-general-good';
-
 @Injectable()
-export class PartializeGeneralGoodService extends PartializeGeneralGood {
+export class PartializeGeneralGoodTab2Service extends PartializeGeneralGood {
   private columns: any = {
     id: {
       title: 'Id.',
@@ -35,12 +34,8 @@ export class PartializeGeneralGoodService extends PartializeGeneralGood {
       type: 'string',
       sort: false,
     },
-    importe: {
-      title: 'Importe',
-      type: 'number',
-      sort: false,
-    },
   };
+
   constructor(
     @Inject('dbPartialize') override dbPartialize: string,
     @Inject('dbSelectedGood') override dbSelectedGood: string,
