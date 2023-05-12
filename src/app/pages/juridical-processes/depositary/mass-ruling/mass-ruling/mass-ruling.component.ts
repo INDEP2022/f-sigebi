@@ -11,11 +11,12 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
 import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+  downloadReport,
+  getDataFromExcel,
+  showToast,
+} from 'src/app/common/helpers/helpers';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -93,11 +94,11 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   ];
 
   public form = new FormGroup({
-    id: new FormControl(),
+    id: new FormControl(null, Validators.required),
     passOfficeArmy: new FormControl('', [
       Validators.pattern(KEYGENERATION_PATTERN),
     ]),
-    expedientNumber: new FormControl(null, Validators.required),
+    expedientNumber: new FormControl(null),
     typeDict: new FormControl(''),
     statusDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
     dictDate: new FormControl(''),
@@ -107,7 +108,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     delete: new FormControl(''),
   });
   public formCargaMasiva: FormGroup;
-  public searchForm: FormGroup;
+  // public searchForm: FormGroup;
   constructor(
     private fb: FormBuilder,
     private dictationService: DictationService,
@@ -132,22 +133,27 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   getDictations(
-    params: ListParams,
-    expedientNumber?: number,
-    wheelNumber?: number
+    // params: ListParams,
+    id: number,
+    wheelNumber: number
   ) {
-    this.expedientNumber = expedientNumber;
-    if (!expedientNumber && !wheelNumber) {
+    this.expedientNumber = id;
+    if (!id && !wheelNumber) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debe ingresar un número de dictaminacion o un número de volante'
+      );
       return;
     }
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
-    data.page = params.page;
-    data.limit = params.limit;
+    // data.page = params.page;
+    data.limit = 1;
 
-    if (expedientNumber) {
-      data.addFilter('expedientNumber', expedientNumber);
+    if (id) {
+      data.addFilter('id', id);
     }
 
     if (wheelNumber) {
@@ -164,10 +170,10 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
         this.form
           .get('dictDate')
           .patchValue(new Date(data.data[0].dictDate) as any);
-        this.searchForm.get('wheelNumber').patchValue(data.data[0].wheelNumber);
-        this.searchForm
-          .get('expedientNumber')
-          .patchValue(data.data[0].expedientNumber);
+        // this.searchForm.get('wheelNumber').patchValue(data.data[0].wheelNumber);
+        // this.searchForm
+        //   .get('expedientNumber')
+        //   .patchValue(data.data[0].expedientNumber);
       },
       error: err => {
         this.loading = false;
@@ -177,17 +183,17 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   searchDictation() {
-    const expedientNumber = this.searchForm.get('expedientNumber').value;
-    const wheelNumber = this.searchForm.get('wheelNumber').value;
-    this.getDictations(new ListParams(), expedientNumber, wheelNumber);
+    const id = this.form.get('id').value;
+    const wheelNumber = this.form.get('wheelNumber').value as any;
+    this.getDictations(id, wheelNumber);
   }
 
   private prepareForm() {
     // this.form = this.fb.group();
-    this.searchForm = this.fb.group({
-      wheelNumber: null,
-      expedientNumber: null,
-    });
+    // this.searchForm = this.fb.group({
+    //   wheelNumber: null,
+    //   expedientNumber: null,
+    // });
     this.formCargaMasiva = this.fb.group({
       identificadorCargaMasiva: [
         '',
@@ -271,6 +277,9 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     }
     this.documentsService.postCountDictationGoodFile(armyOfficeKey).subscribe({
       next: data => {},
+      error: err => {
+        this.alert('error', 'Error', err.error?.message);
+      },
     });
     console.log('Dictamenes');
   }
@@ -333,29 +342,121 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
         fileNumber: { id: item.NO_EXPEDIENTE },
       };
     });
-    console.log({ data });
+    // console.log({ data });
+    this.form.get('id').setValue(null);
   }
 
-  async onClickPrintOffice() {
+  async prePrints(): Promise<{
+    PARAMFORM: string;
+    P_OFICIO: string;
+    TIPO_DIC: any;
+    CLAVE_ARMADA: any;
+    TIPO_VOL: any;
+    vIDENTI: any;
+  }> {
     const { id, typeDict, passOfficeArmy } = this.form.value;
-    if (id && typeDict && passOfficeArmy) {
-      this.alertQuestion('warning', 'Error', 'Se debe ingresar un Dictamen.');
-      return;
+    let vTIPO_VOLANTE = '';
+    let vIDENTI = '';
+    console.log({ id, typeDict, passOfficeArmy });
+    if (!id && !typeDict && !passOfficeArmy) {
+      this.alert('warning', 'Error', 'Se debe ingresar un Dictamen.');
+      return Promise.reject(null);
     }
 
     try {
       const dictation = await this.getDictationForId();
     } catch (error) {
-      this.alertQuestion('warning', 'Error', 'No se encontró un Dictamen ');
-      return;
+      this.alert('warning', 'Error', 'No se encontró un Dictamen ');
+      return null;
     }
 
     try {
-      const good = await this.findGoodAndDictXGood1();
+      vIDENTI = await this.findGoodAndDictXGood1();
     } catch (error: any) {
       this.alertQuestion('warning', 'Error', error?.message);
       console.log({ error });
+      return null;
     }
+
+    try {
+      const notification = await this.getNotificationWhereWheelNumber();
+      vTIPO_VOLANTE = notification?.wheelType;
+    } catch (error) {
+      this.alert(
+        'warning',
+        'Error',
+        'No se encontró la Notificación del Dictamen.'
+      );
+      return null;
+    }
+
+    //ERROR: este codigo no implementado de oracle forms
+    //   pl_id := Get_Parameter_List(pl_name);
+    //  IF Id_Null(pl_id) THEN
+    //     pl_id := Create_Parameter_List(pl_name);
+    //     IF Id_Null(pl_id) THEN
+    //        LIP_MENSAJE('Error al crear lista de parámetros. '||pl_name,'N');
+    //        RAISE Form_Trigger_Failure;
+    //     END IF;
+    //  ELSE
+    //     Destroy_Parameter_List(pl_id);
+    //     pl_id := Create_Parameter_List(pl_name);
+    //  END IF;
+
+    return {
+      PARAMFORM: 'NO',
+      P_OFICIO: id,
+      TIPO_DIC: typeDict,
+      CLAVE_ARMADA: passOfficeArmy,
+      TIPO_VOL: vTIPO_VOLANTE,
+      vIDENTI,
+    };
+  }
+
+  async onClickPrintOffice() {
+    try {
+      const { CLAVE_ARMADA, PARAMFORM, P_OFICIO, TIPO_DIC, TIPO_VOL, vIDENTI } =
+        await this.prePrints();
+      let reportPath = 'SIAB/RGENREPDICTAMASDES';
+      if (vIDENTI.includes('4')) {
+        reportPath = 'SIAB/RGENREPDICTAMASDES_EXT';
+      }
+      downloadReport(reportPath, {
+        CLAVE_ARMADA,
+        PARAMFORM,
+        P_OFICIO,
+        TIPO_DIC,
+        TIPO_VOL,
+      });
+    } catch (ex) {
+      console.log({ ex });
+    }
+  }
+
+  async onClickRelationGood() {
+    try {
+      const { CLAVE_ARMADA, PARAMFORM, P_OFICIO, TIPO_DIC, TIPO_VOL } =
+        await this.prePrints();
+      downloadReport('SIAB/RGENREPDICTAMASREL', {
+        CLAVE_ARMADA,
+        PARAMFORM,
+        P_OFICIO,
+        TIPO_DIC,
+        TIPO_VOL,
+      });
+    } catch (ex) {
+      console.log({ ex });
+    }
+  }
+
+  async getNotificationWhereWheelNumber() {
+    const { wheelNumber } = this.form.value;
+    const queryParams = `filter.wheelNumber=${wheelNumber || ''}&limit=1`;
+    const notification = await firstValueFrom(
+      this.notificationsService.getAllFilter(queryParams)
+    );
+    console.log({ notification });
+    return notification.data[0];
   }
 
   async findGoodAndDictXGood1(): Promise<any> {
@@ -363,14 +464,15 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       NO_OF_DICTA: this.form.value.id,
       TIPO_DICTAMINACION: this.form.value.typeDict,
     };
-    const data: any[] = await firstValueFrom(
+    const data: { data: any[] } = await firstValueFrom(
       this.dictationService.postFindGoodDictGood1(body)
     );
-    if (data?.length > 1) {
+    console.log({ findGoodAndDictXGood1: data });
+    if (data?.data.length > 1) {
       throw new Error('Se tiene varios identificadores en el Dictamen.');
     }
 
-    return data[0].substr;
+    return data.data[0].substr;
   }
 
   async btnExpedientesXls(event: any) {
@@ -450,7 +552,10 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       id: this.form.get('id').value,
       typeDict: this.form.get('typeDict').value,
     };
-    const dictation = await firstValueFrom(this.dictationService.getById(body));
+    const dictation = await firstValueFrom(
+      this.dictationService.findByIds(body)
+    );
+    console.log({ dictation });
     return dictation;
   }
 

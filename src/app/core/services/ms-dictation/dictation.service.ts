@@ -40,7 +40,10 @@ export class DictationService extends HttpService {
     return this.get(this.route.Dictation, body);
   }
 
-  findByIds(body: { id: string | number }): Observable<IDictation> {
+  findByIds(body: {
+    id: string | number;
+    typeDict?: string | number;
+  }): Observable<IDictation> {
     return this.post(this.route.FindByIds, body);
   }
 
