@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -51,7 +52,8 @@ export class EmailModalComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private usersService: UsersService,
     private emailService: EmailService,
-    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
   }
@@ -111,6 +113,7 @@ export class EmailModalComponent extends BasePage implements OnInit {
         .update(this.proceeding.id, this.proceeding)
         .subscribe({
           next: () => {
+            this.updateGoods();
             if (this.emailForm.controls.email.value) {
               this.sendEmail();
               this.handleSuccess();
@@ -127,6 +130,17 @@ export class EmailModalComponent extends BasePage implements OnInit {
           },
         });
     }
+  }
+
+  updateGoods() {
+    this.massiveGoodService
+      .updateMassiveGoods({
+        screen: 'FESTATUSRGA',
+        proceedingNumber: this.proceeding.id,
+      })
+      .subscribe({
+        error: error => console.log(error),
+      });
   }
 
   handleSuccess() {

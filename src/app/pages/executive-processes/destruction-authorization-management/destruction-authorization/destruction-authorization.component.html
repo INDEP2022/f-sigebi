@@ -18,6 +18,7 @@
           </button>
           <confirm-button
             [loading]="loading"
+            [disabled]="controls.statusProceedings.value == 'CERRADA'"
             text="Guardar"
             loadingText="Guardando"
             [btnSmall]="true"
@@ -188,9 +189,6 @@
               [settings]="settings4"
               [source]="actaList"></ng2-smart-table>
           </div>
-          <app-pagination
-            [params]="params5"
-            [totalItems]="totalItems4"></app-pagination>
         </div>
       </div>
       <div class="col-md-6">
@@ -201,9 +199,6 @@
               [settings]="settings5"
               [source]="dictaList"></ng2-smart-table>
           </div>
-          <app-pagination
-            [params]="params5"
-            [totalItems]="totalItems5"></app-pagination>
         </div>
       </div>
     </div>

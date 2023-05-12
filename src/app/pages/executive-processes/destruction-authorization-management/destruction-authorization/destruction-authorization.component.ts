@@ -25,13 +25,13 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { maxDate } from 'src/app/common/validations/date.validators';
-import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -98,7 +98,7 @@ export class DestructionAuthorizationComponent
 
   detailProceedingsList: IDetailProceedingsDeliveryReception[] = [];
   detailProceedings: IDetailProceedingsDeliveryReception;
-  dictaList: IDictation[] = [];
+  dictaList: { clave_oficio_armada: string }[] = [];
 
   goodPDS: IGood[] = [];
 
@@ -113,7 +113,7 @@ export class DestructionAuthorizationComponent
   selectedRow: any = null;
 
   data: LocalDataSource = new LocalDataSource();
-  actaList: any;
+  actaList: { cve_acta: string }[] = [];
 
   loadingProceedings = false;
   loadingGoods = false;
@@ -165,6 +165,8 @@ export class DestructionAuthorizationComponent
   closeDate: ElementRef<HTMLInputElement>;
 
   queryMode = false;
+
+  goodTrackerGoods: IDetailProceedingsDeliveryReception[] = [];
   get controls() {
     return this.proceedingForm.controls;
   }
@@ -176,6 +178,7 @@ export class DestructionAuthorizationComponent
     private detailProceeDelRecService: DetailProceeDelRecService,
     private datePipe: DatePipe,
     private dictationService: DictationService,
+    private dictationXGoodService: DictationXGoodService,
     private router: Router,
     private sanitizer: DomSanitizer,
     private fb: FormBuilder,
@@ -237,6 +240,7 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: { ...DICTATION_COLUMNS },
     };
+    console.log('constructor');
   }
 
   getUserInfo() {
@@ -283,7 +287,6 @@ export class DestructionAuthorizationComponent
           this.store.dispatch(ResetDestructionAuth());
           return;
         }
-
         const destructionAuth: IDestructionAuth = {
           ...this.state,
           form: this.proceedingForm.value,
@@ -291,13 +294,11 @@ export class DestructionAuthorizationComponent
         this.store.dispatch(SetDestructionAuth({ destructionAuth }));
       },
     });
-    this.setState();
     this.show = true;
     this.show2 = true;
     this.filterParams2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodByStatusPDS());
-
     this.globalVarService
       .getGlobalVars$()
       .pipe(takeUntil(this.$unSubscribe))
@@ -307,6 +308,7 @@ export class DestructionAuthorizationComponent
           if (this.ngGlobal.REL_BIENES) {
             this.insertDetailFromGoodsTracker();
           }
+          this.setState();
         },
       });
   }
@@ -314,8 +316,8 @@ export class DestructionAuthorizationComponent
   insertDetailFromGoodsTracker() {
     const mockGoods: any = [
       {
-        numberGood: 4005332,
-        good: { description: 'Bien de prueba' },
+        numberGood: 4005331,
+        good: { id: 4005331, description: 'Bien de prueba' },
         amount: 1,
         expedient: 783558,
         numberProceedings: null,
@@ -324,9 +326,14 @@ export class DestructionAuthorizationComponent
     ];
     mockGoods.forEach((good: any) => {
       // TODO: checar si el campo vendra asi en la respuesta
-      this.controls.numFile.setValue(good.expedient);
+      if (!this.controls.numFile.value) {
+        this.controls.numFile.setValue(good.expedient);
+      }
     });
-    this.detailProceedingsList = mockGoods;
+    this.goodTrackerGoods = mockGoods;
+    this.detailProceedingsList = [...mockGoods, ...this.detailProceedingsList];
+    console.log(this.detailProceedingsList);
+    this.getDictAndActs().subscribe();
   }
 
   insertFromGoodsTracker() {
@@ -365,7 +372,7 @@ export class DestructionAuthorizationComponent
     if (!this.controls.id.value) {
       this.create();
     } else {
-      this.udpate();
+      this.update();
     }
   }
 
@@ -391,6 +398,7 @@ export class DestructionAuthorizationComponent
       )
       .subscribe({
         next: proceeding => {
+          this.goodTrackerGoods = [];
           this.loading = false;
           this.proceedingForm.patchValue(proceeding);
           this.getProceedingGoods(proceeding.id).subscribe();
@@ -418,14 +426,31 @@ export class DestructionAuthorizationComponent
           numberProceedings,
         };
       });
-    console.log(forms);
     const $obs = forms.map(form =>
       this.detailProceeDelRecService.addGoodToProceedings(form)
     );
     return forkJoin($obs);
   }
 
-  udpate() {}
+  update() {
+    this.loading = true;
+    const { id, keysProceedings } = this.controls;
+    forkJoin([
+      this.updateProceeding(id.value, this.proceedingForm.value),
+      this.saveDetail(id.value),
+    ]).subscribe({
+      next: () => {
+        this.loading = false;
+        this.goodTrackerGoods = [];
+        this.onLoadToast('success', 'Acta actualizada correctamente');
+        this.findProceeding(keysProceedings.value).subscribe();
+        this.getProceedingGoods(id.value).subscribe();
+      },
+      error: () => {
+        this.loading = false;
+      },
+    });
+  }
 
   async scanRequest() {
     const { statusProceedings, universalFolio, numFile, id } = this.controls;
@@ -620,11 +645,65 @@ export class DestructionAuthorizationComponent
           return throwError(() => error);
         }),
         tap(response => {
-          this.detailProceedingsList = response.data;
+          this.detailProceedingsList = [
+            ...this.goodTrackerGoods,
+            ...response.data,
+          ];
           this.totalItems2 = response.count;
           this.loadingGoodsByP = false;
-        })
+        }),
+        switchMap(() => this.getDictAndActs())
       );
+  }
+
+  getDictAndActs() {
+    console.log(this.goodTrackerGoods);
+    console.log(this.detailProceedingsList);
+    const trackerGoodNumbers = this.goodTrackerGoods.map(
+      detail => detail.good.id
+    );
+    const goodNumbers = this.detailProceedingsList.map(
+      detail => detail.good.id
+    );
+
+    const allGoods = [...trackerGoodNumbers, ...goodNumbers];
+    return forkJoin([this.getDicts(allGoods), this.getActs(allGoods)]);
+  }
+
+  getActs(goodNumbers: number[]) {
+    return this.dictationXGoodService.getByAct(goodNumbers).pipe(
+      catchError(error => {
+        if (error.status >= 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al obtener las actas de recepci+on'
+          );
+        }
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.actaList = response.data;
+      })
+    );
+  }
+
+  getDicts(goodNumbers: number[]) {
+    return this.dictationXGoodService.getByDictation(goodNumbers).pipe(
+      catchError(error => {
+        if (error.status >= 500) {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al obtener las dictaminaciones'
+          );
+        }
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.dictaList = response.data;
+      })
+    );
   }
 
   newProceeding() {

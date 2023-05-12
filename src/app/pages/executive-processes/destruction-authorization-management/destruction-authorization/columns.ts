@@ -87,17 +87,14 @@ export const GOODS_COLUMNS = {
 };
 
 export const DICTATION_COLUMNS = {
-  dictation: {
+  clave_oficio_armada: {
     title: 'DICTAMINACIONES',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return value.passOfficeArmy;
-    },
   },
 };
 
 export const ACTA_RECEPTION_COLUMNS = {
-  offices: {
+  cve_acta: {
     title: 'ACTAS DE RECEPCIÓN',
     sort: false,
   },
