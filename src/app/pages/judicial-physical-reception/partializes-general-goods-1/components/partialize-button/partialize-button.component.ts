@@ -257,8 +257,8 @@ export class PartializeButtonComponent
     console.log(avaluo);
     const { importe, cantidad } = this.fillImporteCant();
     const noBien = this.good.goodId;
-    this.service.sumCant += cantidad;
-    this.service.sumVal14 += importe;
+    this.service.sumCant += +(cantidad + '');
+    this.service.sumVal14 += +(importe + '');
     // this.vident++;
     this.bienesPar.push({
       id: this.vident,

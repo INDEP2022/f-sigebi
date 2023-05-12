@@ -1,6 +1,10 @@
 <ng-container>
   <div class="row" id="select-form">
-    <div class="col-md-12">
+    <div class="row" *ngIf="loading" style="margin-bottom: 5rem">
+      <form-loader></form-loader>
+    </div>
+    <div class="col-md-12" *ngIf="!loading">
+      <!-- {{ data.data.length }} -->
       <form-field [control]="form.get(formField)">
         <ngx-select
           (fetchItems)="setParams($event)"
@@ -18,7 +22,6 @@
           [operator]="operator"
           [typeToSearchText]="typeToSearchText"
           (change)="onChange($event)"
-          [closeOnSelect]="false"
           (clear)="clear()">
         </ngx-select>
       </form-field>
