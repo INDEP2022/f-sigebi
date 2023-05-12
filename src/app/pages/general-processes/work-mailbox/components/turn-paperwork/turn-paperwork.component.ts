@@ -148,6 +148,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       tap(response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
+        console.log({ blob: blob, url: url });
         let config = {
           initialState: {
             documento: {
@@ -165,6 +166,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   }
 
   getPaperwork() {
+    console.log(this.paperwork.processNumber);
     return this.procedureManagementService.getById(
       this.paperwork.processNumber
     );
