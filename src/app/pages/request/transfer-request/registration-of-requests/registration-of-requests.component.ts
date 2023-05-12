@@ -941,7 +941,7 @@ export class RegistrationOfRequestsComponent
   async approveRequestMethod() {
     this.loader.load = true;
     //no tiene aclaraciones
-    const haveClarifications = await this.haveNotificacions();
+    /*const haveClarifications = await this.haveNotificacions();
     if (haveClarifications === 'POR_ACLARAR') {
       this.onLoadToast(
         'info',
@@ -950,9 +950,10 @@ export class RegistrationOfRequestsComponent
       );
       this.loader.load = false;
       return;
-    }
+    }*/
 
-    /*const existDictamen = await this.getDictamen(this.requestData.id);
+    /* const existDictamen = await this.getDictamen(this.requestData.id);
+    console.log(existDictamen)
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
@@ -961,7 +962,7 @@ export class RegistrationOfRequestsComponent
       );
       this.loader.load = false;
       return;
-    }*/
+    } */
 
     const title = ``;
     const url = '';
@@ -1026,33 +1027,30 @@ export class RegistrationOfRequestsComponent
       return;
     }
 
-    const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/verify-compliance';
-      const from = 'SOLICITAR_APROBACION';
-      const to = 'VERIFICAR_CUMPLIMIENTO';
-      const user: any = this.authService.decodeToken();
-      const taskResult = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        false,
-        this.task.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Aprobar_Solicitud',
-        'RECHAZAR'
+    const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+    const url = 'pages/request/transfer-request/verify-compliance';
+    const from = 'SOLICITAR_APROBACION';
+    const to = 'VERIFICAR_CUMPLIMIENTO';
+    const user: any = this.authService.decodeToken();
+    const taskResult = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      false,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Aprobar_Solicitud',
+      'RECHAZAR'
+    );
+    if (taskResult === true) {
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se guardó la solicitud con el folio: ${this.requestData.id}`
       );
-      if (taskResult === true) {
-        this.msgGuardado(
-          'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
-        );
-      }
     }
   }
   /* Fin rechazo de aprovacion */
@@ -1124,27 +1122,6 @@ export class RegistrationOfRequestsComponent
         error: error => {
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
-        },
-      });
-    });
-  }
-
-  getOldTask() {
-    return new Promise((resolve, reject) => {
-      const params = new FilterParams();
-      params.addFilter('requestId', this.requestData.id);
-      const filter = params.getParams();
-      this.taskService.getAll(filter).subscribe({
-        next: resp => {
-          const task = {
-            assignees: resp.data[0].assignees,
-            assigneesDisplayname: resp.data[0].assigneesDisplayname,
-          };
-          resolve(task);
-        },
-        error: error => {
-          this.message('error', 'Error', 'Error al obtener la tarea antigua');
-          reject(error.error.message);
         },
       });
     });
@@ -1236,9 +1213,18 @@ export class RegistrationOfRequestsComponent
           console.log(clarification);
           this.loader.load = false;
           if (clarification === 'POR_ACLARAR') {
-            const result = await this.createApprovalProcessOnly();
-            if (result) {
+            debugger;
+            //consultar si ya exise una tarea de solicitar aprovacion creada
+            const existApprovalTask = await this.existApprobalTask();
+            if (existApprovalTask === true) {
+              //si existe crea solo la Notificacion de aclaracion
               await this.notifyClarificationsMethod();
+            } else {
+              //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+              const result = await this.createApprovalProcessOnly();
+              if (result) {
+                await this.notifyClarificationsMethod();
+              }
             }
           } else if (clarification === 'ACLARADO') {
             const user: any = this.authService.decodeToken();
@@ -1354,6 +1340,26 @@ export class RegistrationOfRequestsComponent
         error: error => {
           console.log(error);
           reject(false);
+        },
+      });
+    });
+  }
+
+  existApprobalTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      params.addFilter(
+        'title',
+        `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`
+      );
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
         },
       });
     });
