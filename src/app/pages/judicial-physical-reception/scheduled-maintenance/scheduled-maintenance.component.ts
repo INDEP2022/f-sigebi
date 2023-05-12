@@ -8,14 +8,20 @@ import { ScheduledMaintenance } from './scheduled-maintenance';
 @Component({
   selector: 'app-scheduled-maintenance',
   templateUrl: './scheduled-maintenance.component.html',
-  styleUrls: ['../scheduled-maintenance-1/scheduled-maintenance.scss'],
+  styleUrls: [
+    '../scheduled-maintenance-1/scheduled-maintenance.scss',
+    './scheduled-maintenance.component.scss',
+  ],
 })
 export class ScheduledMaintenanceComponent
   extends ScheduledMaintenance
   implements OnInit
 {
+  showTable1 = true;
   loadingExcel = false;
   flagDownload = false;
+
+  data2: any[] = [];
   constructor(
     protected override fb: FormBuilder,
     protected override service: ProceedingsDeliveryReceptionService,
@@ -23,7 +29,14 @@ export class ScheduledMaintenanceComponent
     private router: Router
   ) {
     super(fb, service, detailService, 'filtersIndica');
-    this.settings1 = { ...this.settings1, actions: null };
+    this.settings1 = {
+      ...this.settings1,
+      actions: null,
+    };
+    // this.settings1 = {
+    //   ...this.settings1,
+    //   actions: { ...this.settings1.actions, position: 'left' },
+    // };
     this.tiposEvento = [
       {
         id: 'EVENTREC',
@@ -49,6 +62,10 @@ export class ScheduledMaintenanceComponent
     // }
   }
 
+  rowsSelected(event: any) {
+    console.log(event);
+  }
+
   exportExcel() {
     // const data = <IProceedingDeliveryReception[]>this.table.source.data;
     // this.elementToExport = data.map(item => {
@@ -59,11 +76,19 @@ export class ScheduledMaintenanceComponent
     //   };
     // })
     this.loadingExcel = true;
+    this.onLoadToast(
+      'info',
+      'Reporte de Mantenimiento de Programaciones',
+      'Consiguiendo datos'
+    );
     this.service.getExcel(this.filterParams).subscribe(x => {
       this.elementToExport = x;
       this.flagDownload = !this.flagDownload;
       console.log(x);
       this.loadingExcel = false;
+      setTimeout(() => {
+        this._toastrService.clear();
+      }, 1000);
     });
     console.log(this.table);
   }
