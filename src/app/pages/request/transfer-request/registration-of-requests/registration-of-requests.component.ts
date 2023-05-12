@@ -940,20 +940,17 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     this.loader.load = true;
-    //no tiene aclaraciones
-    /*const haveClarifications = await this.haveNotificacions();
-    if (haveClarifications === 'POR_ACLARAR') {
+    const sign: boolean = await this.ableToSignDictamen();
+    if (sign == false) {
       this.onLoadToast(
-        'info',
-        'No se puede aprobar la solicitud',
-        'La solicitud aun cuenta con bienes por aclarar!'
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
       );
-      this.loader.load = false;
       return;
-    }*/
-
-    /* const existDictamen = await this.getDictamen(this.requestData.id);
-    console.log(existDictamen)
+    }
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    console.log(existDictamen);
     if (existDictamen === false) {
       this.onLoadToast(
         'info',
@@ -962,7 +959,7 @@ export class RegistrationOfRequestsComponent
       );
       this.loader.load = false;
       return;
-    } */
+    }
 
     const title = ``;
     const url = '';
@@ -996,7 +993,6 @@ export class RegistrationOfRequestsComponent
   /* Inicio de rechazar aprovacion */
   async refuseRequest() {
     const sign: boolean = await this.ableToSignDictamen();
-
     if (sign == false) {
       this.onLoadToast(
         'error',
