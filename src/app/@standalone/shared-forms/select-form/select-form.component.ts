@@ -105,16 +105,16 @@ export class SelectFormComponent implements OnInit {
 
   setParams(params: ListParams) {
     console.log(params);
-    this._params = params;
-    this.getData();
-    // this.paramsChange.emit(params);
+    // this._params = params;
+    // this.getData();
+    this.paramsChange.emit(params);
   }
 
   setFilterParams(params: FilterParams) {
     console.log(params);
-    this._paramsFilter = params;
-    this.getData();
-    // this.paramsFilterChange.emit(params);
+    // this._paramsFilter = params;
+    // this.getData();
+    this.paramsFilterChange.emit(params);
   }
 
   private getDataOfList() {
