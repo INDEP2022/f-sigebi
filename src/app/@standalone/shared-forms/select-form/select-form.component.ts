@@ -247,7 +247,6 @@ export class SelectFormComponent implements OnInit {
     // }
     if (this.otherData) {
       this.selectEvent.emit(event);
-      // console.log(event);
     }
     this.form.updateValueAndValidity();
   }
