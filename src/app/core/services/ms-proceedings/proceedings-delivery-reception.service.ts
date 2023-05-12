@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { format } from 'date-fns';
 import { catchError, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
 import {
   FilterParams,
@@ -80,6 +81,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.delete(this.endpoint + '/' + selected.id);
   }
 
+  private validationObs(obs: Observable<any>[]) {
+    return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
+  }
+
   getExcel(filterParams?: FilterParams) {
     const params = new FilterParams(filterParams);
     params.limit = 10000;
@@ -88,6 +93,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       params.getParams()
     ).pipe(
       map(items => {
+        console.log(items);
         const data = items.data;
         const array: Observable<any>[] = [];
         if (data && data.length > 0) {
@@ -98,6 +104,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
             paramsDetail.addFilter('numberProceedings', item.id);
             array.push(
               this.detailService.getAll(paramsDetail.getParams()).pipe(
+                catchError(err => of({ data: [] })),
                 map(details => {
                   const arrayDetails: any[] = [];
                   const dataDetail = details.data;
@@ -109,15 +116,20 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
                         'LOCALIDAD/DICTAMEN':
                           item.numTransfer?.description ?? '',
                         'NO BIEN': detail.numberGood,
-                        ESTATUS: detail.good.status,
-                        DESCRIPCION: detail.good.description,
-                        'TIPO BIEN': detail.good.goodsCategory,
+                        ESTATUS: detail.good?.status,
+                        DESCRIPCION: detail.good?.description,
+                        'TIPO BIEN': detail.good?.goodsCategory,
                         EXPEDIENTE: item.numFile,
                         EVENTO: detail.numberProceedings,
                         CANTIDAD: detail.amount,
                         FEC_RECEPCION: detail.approvedXAdmon,
-                        FEC_FINALIZACION: detail.dateIndicatesUserApproval,
-                        INDICADOR_DEST: detail.good.identifier,
+                        FEC_FINALIZACION: detail.dateIndicatesUserApproval
+                          ? format(
+                              new Date(detail.dateIndicatesUserApproval),
+                              'dd/MM/yyyy'
+                            )
+                          : '',
+                        INDICADOR_DEST: detail.good?.identifier,
                       });
                     });
                   }
@@ -129,7 +141,7 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
         }
         return array;
       }),
-      mergeMap(obs => forkJoin(...obs)),
+      mergeMap(array => this.validationObs(array)),
       map(arrays => {
         const result: any = [];
         arrays.forEach(array => {

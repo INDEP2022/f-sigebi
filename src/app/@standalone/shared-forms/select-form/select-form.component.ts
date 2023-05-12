@@ -24,7 +24,20 @@ import { SweetAlertIcon } from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './select-form.component.html',
-  styles: [``],
+  styles: [
+    `
+      #select-form {
+        ngx-select {
+          ::ng-deep {
+            ng-select {
+              height: auto;
+              min-height: 43px;
+            }
+          }
+        }
+      }
+    `,
+  ],
 })
 export class SelectFormComponent implements OnInit {
   @Input() form: FormGroup;
