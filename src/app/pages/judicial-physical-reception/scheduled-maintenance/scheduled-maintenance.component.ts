@@ -31,8 +31,12 @@ export class ScheduledMaintenanceComponent
     super(fb, service, detailService, 'filtersIndica');
     this.settings1 = {
       ...this.settings1,
-      actions: { ...this.settings1.actions, position: 'left' },
+      actions: null,
     };
+    // this.settings1 = {
+    //   ...this.settings1,
+    //   actions: { ...this.settings1.actions, position: 'left' },
+    // };
     this.tiposEvento = [
       {
         id: 'EVENTREC',

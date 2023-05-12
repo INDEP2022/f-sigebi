@@ -21,7 +21,7 @@ import { FunctionButtons } from '../../models/function-buttons';
 })
 export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   @Input() set press(value: boolean) {
-    debugger;
+    // debugger;
     if (this.service) {
       if (
         this.formGood?.invalid ||
