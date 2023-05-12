@@ -102,7 +102,7 @@ const routes: Routes = [
   },
   {
     // Lista - Monitor de Abandono por Devolución
-    path: routesJuridicalProcesses[8].link,
+    path: routesJuridicalProcesses[8].link + '/:id',
     loadChildren: async () =>
       (
         await import(
