@@ -5,8 +5,16 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { format } from 'date-fns';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodAndDetailProceeding } from 'src/app/core/models/ms-good/good';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -33,6 +41,9 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   labelSubdelegation: string = 'Delegación Administra';
   activeOne: boolean = false;
   activeTwo: boolean = false;
+  initialProceedingBool: boolean = false;
+  finalProceedingBool: boolean = false;
+  loadingText = 'Cargando ...';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -44,7 +55,12 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private serviceProcVal: ProceedingsDeliveryReceptionService,
-    private r2: Renderer2
+    private r2: Renderer2,
+    private siabService: SiabService,
+    private procedureManagementService: ProcedureManagementService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super();
   }
@@ -69,6 +85,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.r2.addClass(initial, 'disabled');
         this.r2.addClass(final, 'disabled');
       }
+
+      this.activeProceedings();
     });
 
     this.form.get('subdelegation').valueChanges.subscribe(res => {
@@ -106,53 +124,168 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     });
   }
 
-  onSubmit() {
-    this.form.markAllAsTouched();
-    if (this.REPORT_TYPES.Reception) {
-      const value = this.form.get('delegacionRecibe').value;
-      console.log({
-        delegacionRecibe: value,
-        delegacionEmite: this.form.get('subdelegation').value,
-      });
+  validateReception() {
+    if (
+      this.form.get('delegacionRecibe').value != null &&
+      this.form.get('subdelegation').value != null &&
+      this.form.get('estatusActa').value != null &&
+      this.form.get('actaInicial').value != null &&
+      this.form.get('actaFinal').value != null &&
+      this.form.get('desde').value != null &&
+      this.form.get('hasta').value != null &&
+      this.form.get('fechaDesde').value != null &&
+      this.form.get('fechaHasta').value != null
+    ) {
+      return true;
+    } else {
+      this.alert(
+        'warning',
+        'Debe registrar todos los datos',
+        'Faltan llenar campos que son obligatorios para imprimir el acta'
+      );
+      return false;
     }
   }
 
-  getInitialProceedings(params: any) {
-    this.serviceProcVal
-      .getProceedingsByDelAndSub(
-        this.form.get('delegacionRecibe').value,
-        this.form.get('subdelegation').value.id,
-        'proceedingkey',
-        params.text.toUpperCase()
-      )
-      .subscribe(
-        (res: any) => {
-          console.log(res);
-          this.initialProceeding = new DefaultSelect(res.data, res.count);
-        },
-        (err: any) => {
-          console.log(err);
-        }
+  validateDecomiso() {
+    if (
+      this.form.get('delegacionRecibe').value != null &&
+      this.form.get('subdelegation').value != null &&
+      this.form.get('estatusActa').value != null &&
+      this.form.get('desde').value != null &&
+      this.form.get('hasta').value != null &&
+      this.form.get('fechaDesde').value != null &&
+      this.form.get('fechaHasta').value != null
+    ) {
+      if (
+        this.form.get('desde').value < this.form.get('hasta').value &&
+        this.form.get('fechaDesde').valid <= this.form.get('fechaHasta').valid
+      ) {
+        return true;
+      } else {
+        this.alert(
+          'warning',
+          'Debe registrar datos validos',
+          'Alguno de los campos que lleno no son válidos'
+        );
+        return false;
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Debe registrar todos los datos',
+        'Faltan llenar campos que son obligatorios para imprimir el acta'
       );
+      return false;
+    }
+  }
+
+  onSubmit() {
+    this.form.markAllAsTouched();
+    if (this.type.value === 'RECEPTION' && this.validateReception()) {
+      this.generateEntrega();
+    } else if (this.type.value === 'CONFISCATION' && this.validateDecomiso()) {
+      this.generateDecomiso();
+    }
+  }
+
+  generateEntrega() {
+    const params = {
+      PN_DELEG: this.form.get('delegacionRecibe').value,
+      PN_SUBDEL: this.form.get('subdelegation').value.id,
+      PN_EXPEDI_INICIAL: this.form.get('desde').value,
+      PN_EXPEDI_FINAL: this.form.get('hasta').value,
+      PC_ESTATUS_ACTA1: this.form.get('estatusActa').value,
+      PF_F_RECEP_INI: format(this.form.get('fechaDesde').value, 'dd-MM-yyyy'),
+      PF_F_RECEP_FIN: format(this.form.get('fechaHasta').value, 'dd-MM-yyyy'),
+      PN_ACTA_INICIAL: this.form.get('actaInicial').value.cve_acta,
+      PN_ACTA_FINAL: this.form.get('actaFinal').value.cve_acta,
+    };
+    console.log(params);
+
+    this.downloadReport('blank', params);
+  }
+
+  activeProceedings() {
+    this.form.get('subdelegation').valueChanges.subscribe(res => {
+      if (res != null) {
+        this.initialProceedingBool = true;
+        this.finalProceedingBool = true;
+      }
+    });
+  }
+
+  generateDecomiso() {
+    const params = {
+      PN_DELEG: this.form.get('delegacionRecibe').value,
+      PN_SUBDEL: this.form.get('subdelegation').value.id,
+      PN_EXPEDI_INICIAL: this.form.get('desde').value,
+      PN_EXPEDI_FINAL: this.form.get('hasta').value,
+      PC_ESTATUS_ACTA1: this.form.get('estatusActa').value,
+      PF_F_RECEP_INI: format(this.form.get('fechaDesde').value, 'dd-MM-yyyy'),
+      PF_F_RECEP_FIN: format(this.form.get('fechaHasta').value, 'dd-MM-yyyy'),
+      PN_ACTA_INICIAL: this.form.get('actaInicial').value,
+      PN_ACTA_FINAL: this.form.get('actaFinal').value,
+    };
+    console.log(params);
+    this.downloadReport('blank', params);
+  }
+
+  downloadReport(reportName: string, params: any) {
+    this.loading = true;
+    this.loadingText = 'Generando reporte ...';
+    return this.siabService.fetchReport(reportName, params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+
+  getInitialProceedings(params: any) {
+    const model: IGoodAndDetailProceeding = {
+      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+      pTiNumberSubdel: this.form.get('subdelegation').value.id,
+    };
+    console.log(model);
+    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
+      res => {
+        console.log(res.data);
+        this.initialProceeding = new DefaultSelect(res.data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   getFinalProceedings(params: ListParams) {
-    this.serviceProcVal
-      .getProceedingsByDelAndSub(
-        this.form.get('delegacionRecibe').value,
-        this.form.get('subdelegation').value.id,
-        'proceedingkey',
-        params.text.toUpperCase()
-      )
-      .subscribe(
-        (res: any) => {
-          console.log(res);
-          this.finalProceeding = new DefaultSelect(res.data, res.count);
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+    const model: IGoodAndDetailProceeding = {
+      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+      pTiNumberSubdel: this.form.get('subdelegation').value.id,
+    };
+    console.log(model);
+    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
+      res => {
+        console.log(res.data);
+        this.finalProceeding = new DefaultSelect(res.data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   print() {

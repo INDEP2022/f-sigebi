@@ -11,13 +11,13 @@ import {
 import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
-import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { ICourt } from 'src/app/core/models/catalogs/court.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
@@ -29,6 +29,7 @@ import { DelegationService } from 'src/app/core/services/catalogs/delegation.ser
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { ProtectionService } from 'src/app/core/services/ms-protection/protection.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -68,6 +69,7 @@ export class AssignationGoodsProtectionComponent
   };
   // Data table 1
   dataTable: IGood[] = [];
+  count: number = 0;
   private data: IGood[] = [];
   private data2: IGood[] = [];
   tableSettings2 = {
@@ -104,10 +106,9 @@ export class AssignationGoodsProtectionComponent
   paramsMin = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsCourt = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsExp = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   constructor(
     private fb: FormBuilder,
-    private exampleService: ExampleService,
     private goodService: GoodService,
     private protectionService: ProtectionService,
     private router: Router,
@@ -116,9 +117,11 @@ export class AssignationGoodsProtectionComponent
     private courtServ: CourtService,
     private route: ActivatedRoute,
     private expedientService: ExpedientService,
-    private user: AuthService
+    private user: AuthService,
+    private historyGood: HistoryGoodService
   ) {
     super();
+    this.params.getValue().limit = 5;
   }
 
   ngOnInit(): void {
@@ -145,7 +148,6 @@ export class AssignationGoodsProtectionComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getCourt(new ListParams()));
 
-    this.loading = true;
     this.prepareForm();
   }
 
@@ -266,68 +268,24 @@ export class AssignationGoodsProtectionComponent
     this.dataTable2 = [];
     this.data = [];
     this.data2 = [];
+    this.count = 0;
     this.form.patchValue(expedient);
     if (expedient) {
-      this.getData(this.form.value);
-    }
-  }
-
-  clear() {
-    this.minItems = new DefaultSelect<IMinpub>([], 0, true);
-    this.courtItems = new DefaultSelect<ICourt>([], 0, true);
-    this.delegationItems = new DefaultSelect<IDelegation>([], 0, true);
-    this.formAmparo.reset();
-    this.form.reset();
-    this.dataTable = [];
-    this.dataTable2 = [];
-    this.data = [];
-    this.data2 = [];
-  }
-
-  private getData(val: any) {
-    let params = new ListParams();
-    params.limit = 5;
-    params.page = 1;
-    params.text = '';
-    if (val.id) {
-      const table = document.getElementById('table').children[0].children[1];
-      this.goodService.getByExpedient(val.id, params).subscribe({
-        next: value => {
-          this.dataTable = [...value.data];
-          this.data = [...this.dataTable];
-
-          value.data.map((data, i) => {
-            const filter = { goodNumber: this.dataTable[i].goodId };
-            this.protectionService.getByPerIds(filter).subscribe({
-              next: resp => {
-                data.protection = resp.cveProtection;
-              },
-              error: err => {
-                data.protection = '';
-              },
-            });
-          });
-
-          const time1 = setTimeout(() => {
-            this.dataTable = [...value.data];
-            const time2 = setTimeout(() => {
-              this.dataTable.map((amp, i) => {
-                amp.protection
-                  ? table.children[i].classList.add('bg-danger', 'text-white')
-                  : table.children[i].classList.add('bg-success', 'text-white');
-              });
-              clearTimeout(time2);
-            }, 500);
-            clearTimeout(time1);
-          }, 1000);
+      this.params.getValue().page = 1;
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+        next: () => {
+          this.getData(this.form.value);
         },
       });
-    }
-    let filterParams = new FilterParams();
-    filterParams.limit = 10;
-    filterParams.page = 1;
-    filterParams.addFilter('proceedingsNumber', val.id, SearchFilter.EQ);
-    if (val.id) {
+
+      let filterParams = new FilterParams();
+      filterParams.limit = 10;
+      filterParams.page = 1;
+      filterParams.addFilter(
+        'proceedingsNumber',
+        this.form.value.id,
+        SearchFilter.EQ
+      );
       this.protectionService
         .getAllWithFilters(filterParams.getParams())
         .subscribe({
@@ -363,6 +321,66 @@ export class AssignationGoodsProtectionComponent
             this.formAmparo
               .get('suspensionType')
               .patchValue(this.setSuspensionType(amparo));
+          },
+        });
+    }
+  }
+
+  clear() {
+    this.minItems = new DefaultSelect<IMinpub>([], 0, true);
+    this.courtItems = new DefaultSelect<ICourt>([], 0, true);
+    this.delegationItems = new DefaultSelect<IDelegation>([], 0, true);
+    this.formAmparo.reset();
+    this.form.reset();
+    this.dataTable = [];
+    this.dataTable2 = [];
+    this.data = [];
+    this.data2 = [];
+    this.count = 0;
+  }
+
+  private getData(val: any) {
+    if (val.id) {
+      this.loading = true;
+      const table = document.getElementById('table').children[0].children[1];
+      this.goodService
+        .getByExpedient(val.id, this.params.getValue())
+        .subscribe({
+          next: value => {
+            this.loading = false;
+            this.dataTable = [...value.data];
+            this.data = [...this.dataTable];
+            this.count = value.count;
+            value.data.map((data, i) => {
+              const filter = { goodNumber: this.dataTable[i].goodId };
+              this.protectionService.getByPerIds(filter).subscribe({
+                next: resp => {
+                  data.protection = resp.cveProtection;
+                },
+                error: err => {
+                  data.protection = '';
+                },
+              });
+            });
+
+            const time1 = setTimeout(() => {
+              this.dataTable = [...value.data];
+              const time2 = setTimeout(() => {
+                this.dataTable.map((amp, i) => {
+                  amp.protection
+                    ? table.children[i].classList.add('bg-danger', 'text-white')
+                    : table.children[i].classList.add(
+                        'bg-success',
+                        'text-white'
+                      );
+                });
+                clearTimeout(time2);
+              }, 500);
+              clearTimeout(time1);
+            }, 1000);
+          },
+          error: () => {
+            this.loading = false;
           },
         });
     }
@@ -442,11 +460,10 @@ export class AssignationGoodsProtectionComponent
           );
           this.data2.push(this.goodAdd);
           const i = this.dataTable.findIndex(
-            item => item.id === this.goodAdd.id
+            item => item.goodId === this.goodAdd.goodId
           );
           const filter = this.goodAdd.goodId;
-
-          this.protectionService.getByPerIds(filter).subscribe({
+          this.protectionService.getByPerIds({ goodNumber: filter }).subscribe({
             next: resp => {
               this.dataTable[i].protection = resp.cveProtection;
               table.children[i].classList.add('bg-danger', 'text-white');
@@ -480,19 +497,15 @@ export class AssignationGoodsProtectionComponent
   }
 
   async btnEliminar() {
-    let exist: boolean = false;
-
-    const data = await new Promise((resolve, reject) => {
+    const exist = await new Promise((resolve, reject) => {
       this.protectionService
         .getByPerIds({ goodNumber: this.goodRemove.goodId })
         .subscribe({
           next: () => {
-            exist = true;
-            resolve(exist);
+            resolve(true);
           },
           error: () => {
-            exist = false;
-            resolve(exist);
+            resolve(false);
           },
         });
     });
@@ -536,11 +549,82 @@ export class AssignationGoodsProtectionComponent
     // }
   }
 
-  changeStatus() {
-    this.checkStatus(this.goodRemove.goodId);
+  async changeStatus() {
+    const table = document.getElementById('table').children[0].children[1];
+    const status: any = await this.checkStatus(this.goodRemove.goodId);
+
+    if (!status) {
+      this.onLoadToast('info', 'No se puede verificar estatus anterior', '');
+    } else {
+      let good = this.dataTable.filter(
+        g => g.goodId == this.goodRemove.goodId
+      )[0];
+      const user = this.user.decodeToken();
+      let history: IHistoryGood = {
+        changeDate: new Date(),
+        propertyNum: good.goodId,
+        reasonForChange: 'Automatico por cancelacion de amparo',
+        status: good.estatus.id,
+        statusChangeProgram: 'FACTJURBIENESXAMP',
+        userChange: user.name.toUpperCase(),
+      };
+
+      this.historyGood.create(history).subscribe({
+        next: () => {
+          const beforeStatus = this.goodRemove.status;
+          this.onLoadToast(
+            'success',
+            `Se cambió el estatus del bien ${this.goodRemove.goodId} de ${beforeStatus} a ${status}`,
+            ''
+          );
+
+          good.status = status;
+          const i = this.dataTable.findIndex(
+            item => item.goodId === this.goodRemove.goodId
+          );
+
+          this.dataTable[i] = good;
+
+          const time1 = setTimeout(() => {
+            this.dataTable2 = [...this.data2];
+            this.dataTable = [...this.dataTable];
+            const time2 = setTimeout(() => {
+              this.dataTable.map((amp, i) => {
+                amp.protection
+                  ? table.children[i].classList.add('bg-danger', 'text-white')
+                  : table.children[i].classList.add('bg-success', 'text-white');
+              });
+              clearTimeout(time2);
+            }, 500);
+            clearTimeout(time1);
+          }, 1000);
+        },
+        error: () => {
+          this.onLoadToast(
+            'error',
+            'No se puede actualizar el estatus del bien',
+            ''
+          );
+        },
+      });
+    }
   }
 
-  checkStatus(goodId: number) {}
+  checkStatus(goodId: number) {
+    return new Promise((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('propertyNum', goodId, SearchFilter.EQ);
+      filter.sortBy = 'changeDate:DESC';
+      this.historyGood.getAllFilter(filter.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data[0].status);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
+  }
 
   callFormNumerary() {
     this.router.navigate([

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IBienesPar } from '../partializes-general-goods-1/models/bienesPar.model';
 import { PartializeGeneralGoodService } from '../partializes-general-goods-1/services/partialize-general-good.service';
@@ -15,6 +15,7 @@ export class PartializesGeneralGoodsComponent
   extends BasePage
   implements OnInit
 {
+  @Input() firstCase = false;
   vestatus: string;
   partializeObj = new Partialize();
   checkSumObj = new CheckSum();
@@ -60,9 +61,6 @@ export class PartializesGeneralGoodsComponent
   }
   get saldo() {
     return this.form.get('saldo');
-  }
-  get isFirstCase() {
-    return this.service.isFirstCase;
   }
 
   checkSum(pindica: string) {

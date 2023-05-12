@@ -62,7 +62,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active m-2"
                 (click)="btnEjecutar()">
-                Ejecuta para Conciliar Pagos
+                Ejecutar Conciliaci&oacute;n de Pagos
               </button>
               <button
                 *ngIf="!deleteDateOption"
@@ -90,8 +90,15 @@
                   <option value="">Seleccione una Fecha</option>
                   <ng-container *ngFor="let optionDate of listDateOptions">
                     <option [value]="optionDate.payIdGens">
-                      {{ '#' + optionDate.payIdGens }} ---
-                      {{ optionDate.processDate | date : 'dd/MM/yyyy' }}
+                      {{
+                        '#PAGO_DESTINO: ' + optionDate.payIdGens
+                      }}&nbsp;---&nbsp;{{
+                        '#PAGO_ORIGEN: ' + optionDate.payId
+                      }}&nbsp;---&nbsp;{{
+                        'MONTO:$ ' + formatTotalAmount(optionDate.payId)
+                      }}&nbsp;---&nbsp;FECHA:{{
+                        optionDate.processDate | date: 'dd/MM/yyyy'
+                      }}
                     </option>
                   </ng-container>
                 </select>
@@ -101,7 +108,7 @@
                   type="button"
                   class="btn btn-primary btn-sm active m-2"
                   (click)="btnDeleteDispersalPay()">
-                  Deshacer Dispersi&oacute;n de Pagos
+                  Eliminar Dispersi&oacute;n de Pagos
                 </button>
                 <button
                   type="button"
