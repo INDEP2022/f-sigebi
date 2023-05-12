@@ -77,4 +77,12 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
     };
     this.eliminarDispersionPagos.emit(resp);
   }
+
+  formatTotalAmount(numberParam: number) {
+    if (numberParam) {
+      return new Intl.NumberFormat('es-MX').format(numberParam);
+    } else {
+      return '0.00';
+    }
+  }
 }
