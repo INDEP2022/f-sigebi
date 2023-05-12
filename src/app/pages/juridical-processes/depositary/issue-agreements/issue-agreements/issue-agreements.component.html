@@ -39,9 +39,8 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field
-              [control]="searchForm.get('description')">
-                <ngx-select
+            <form-field [control]="searchForm.get('description')">
+              <ngx-select
                 [form]="searchForm"
                 control="description"
                 [data]="goodDescriptions"
@@ -57,26 +56,27 @@
         <div class="row pt-3">
           <div class="col-md-6">
             <form-field [control]="searchForm.get('status')">
-                 <ngx-select
-                 [form]="searchForm"
-                 control="status"
-                 [data]="goodEstatus"
-                 value="status"
-                 bindLabel="description"
-                 label="Estatus"
-                 (fetchItems)="getGoodStatusSelect($event)">
-               </ngx-select>
+              <ngx-select
+                [form]="searchForm"
+                control="status"
+                [data]="goodEstatus"
+                value="status"
+                bindLabel="description"
+                label="Estatus"
+                (fetchItems)="getGoodStatusSelect($event)">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="searchForm.get('physicalReceptionDate')"
-            label="Fecha de recepción">
-            <input type="text"
-            class="form-control"
-            formControlName="physicalReceptionDate"
-            bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
-            />
+            <form-field
+              [control]="searchForm.get('physicalReceptionDate')"
+              label="Fecha de recepción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="physicalReceptionDate"
+                bsDatepicker
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" />
             </form-field>
           </div>
         </div>
