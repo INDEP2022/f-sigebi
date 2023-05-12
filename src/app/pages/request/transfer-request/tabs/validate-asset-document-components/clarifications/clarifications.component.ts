@@ -62,6 +62,7 @@ export class ClarificationsComponent
   typeDoc: string = 'clarification';
   good: any;
   totalItems: number = 0;
+  showClarificationButtons: boolean = true;
 
   domicilieObject: any;
   articleColumns = CLARIFICATION_COLUMNS;
@@ -495,9 +496,10 @@ export class ClarificationsComponent
 
   selectGoods(event: any) {
     if (event.selected.length === 1) {
+      this.showClarificationButtons =
+        event.data.processStatus != 'SOLICITAR_ACLARACION' ? true : false;
       this.good = event.data;
       this.goodForm.reset();
-      console.log(...this.good);
       this.goodForm.patchValue({ ...this.good });
       this.rowSelected = this.good;
 
@@ -591,7 +593,14 @@ export class ClarificationsComponent
   } */
 
   clarifiRowSelected(event: any) {
-    this.clariArraySelected = event.selected;
+    console.log(event);
+    if (event.isSelected == true) {
+      this.showClarificationButtons =
+        event.data.answered == 'ACLARADA' ? false : true;
+      this.clariArraySelected = event.selected;
+    } else {
+      this.showClarificationButtons = true;
+    }
   }
 
   newClarification() {
@@ -700,8 +709,8 @@ export class ClarificationsComponent
       body.id = this.good.id;
       body.goodId = this.good.goodId;
       //body.goodResdevId = Number(id);
-      body.processStatus = 'REGISTRO_SOLICITUD';
-      body.goodStatus = 'REGISTRO_SOLICITUD';
+      body.processStatus = 'DESTINO_DOCUMENTAL';
+      body.goodStatus = 'DESTINO_DOCUMENTAL';
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
