@@ -16,7 +16,9 @@
           [readonly]="readonly"
           [clearable]="clearable"
           [operator]="operator"
-          (change)="onChange($event)">
+          [typeToSearchText]="typeToSearchText"
+          (change)="onChange($event)"
+          (clear)="clear()">
         </ngx-select>
       </form-field>
     </div>

@@ -58,7 +58,10 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    this.generateClave();
+    if (this.folioReporte === null) {
+      console.log('Crear folio');
+      this.dictamenSeq();
+    }
     this.prepareForm();
   }
 

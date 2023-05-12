@@ -542,9 +542,18 @@ export class VerifyComplianceTabComponent
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
+    this.params.value.addFilter(
+      'processStatus',
+      'VERIFICAR_CUMPLIMIENTO,SOLICITAR_ACLARACION',
+      SearchFilter.IN
+    );
     const filter = this.params.getValue().getParams();
     this.goodServices.getAll(filter).subscribe({
       next: resp => {
+        /*let goods = resp.data.filter(x =>  
+          x.processStatus == 'VERIFICAR_CUMPLIMIENTO' || x.processStatus == 'SOLICITAR_ACLARACION'
+        );*/
+
         var result = resp.data.map(async (item: any) => {
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
@@ -949,7 +958,6 @@ export class VerifyComplianceTabComponent
       body['fulfill'] = article.cumple === true ? 'S' : 'N';
       this.requestDocumentService.update(body).subscribe({
         next: resp => {
-          console.log('actualizado', resp);
           resolve(true);
         },
         error: error => {
