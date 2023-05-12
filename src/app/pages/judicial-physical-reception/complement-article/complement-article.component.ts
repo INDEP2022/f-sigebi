@@ -2,7 +2,9 @@ import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
@@ -18,6 +20,8 @@ import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dy
 import { AppraisalGoodService } from 'src/app/core/services/ms-appraisal-good/appraisal-good.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RequestAppraisalService } from 'src/app/core/services/ms-request-appraisal/request-appraisal.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
 import { AppraisalHistoryComponent } from './appraisal-history/appraisal-history.component';
@@ -25,15 +29,37 @@ import { AppraisalHistoryComponent } from './appraisal-history/appraisal-history
 @Component({
   selector: 'app-complement-article',
   templateUrl: './complement-article.component.html',
-  styles: [],
+  styleUrls: ['complement-article.component.scss'],
 })
-export class ComplementArticleComponent implements OnInit {
+export class ComplementArticleComponent extends BasePage implements OnInit {
+  settings1 = {
+    ...TABLE_SETTINGS,
+    rowClassFunction: (row: { data: { available: any } }) =>
+      row.data.available ? 'available' : 'not-available',
+    actions: false,
+    columns: {
+      id: {
+        title: 'No. Bien',
+        type: 'number',
+        sort: false,
+      },
+      description: {
+        title: 'Descripción',
+        type: 'string',
+        sort: false,
+      },
+    },
+    noDataMessage: 'No se encontrarón registros',
+  };
+
   form: FormGroup;
   itemsSelect = new DefaultSelect();
   proeficientSelect = new DefaultSelect();
   institutionSelect = new DefaultSelect();
   currencySelect = new DefaultSelect();
-  dataGoods: any[];
+  dataGoods = new LocalDataSource();
+  dataGoodsSave: any[];
+  statusScreen: any[];
   goodDataSave: any;
   dataApprasialGood: any[];
   idGood: number | string;
@@ -49,6 +75,7 @@ export class ComplementArticleComponent implements OnInit {
   getdictamenInstitucion: string;
   monedaField = 'moneda';
   dateVigencia: Date;
+  isEnableGood = false;
 
   constructor(
     private fb: FormBuilder,
@@ -59,11 +86,15 @@ export class ComplementArticleComponent implements OnInit {
     private serviceDynamicCat: DynamicCatalogService,
     private serviceAppraiser: AppraisalGoodService,
     private modalService: BsModalService,
-    private serviceReqAppr: RequestAppraisalService
-  ) {}
+    private serviceReqAppr: RequestAppraisalService,
+    private serviceScreenStatus: ScreenStatusService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getStatusView();
   }
 
   prepareForm() {
@@ -106,6 +137,8 @@ export class ComplementArticleComponent implements OnInit {
   add() {
     this.openModal();
   }
+
+  fillContent() {}
 
   openModal(context?: Partial<AppraisalHistoryComponent>) {
     const modalRef = this.modalService.show(AppraisalHistoryComponent, {
@@ -269,8 +302,17 @@ export class ComplementArticleComponent implements OnInit {
         text: '?expedient=',
       })
       .subscribe({
-        next: (res: any) => {
-          this.dataGoods = res.data;
+        next: async (res: any) => {
+          const newData = await Promise.all(
+            res.data.map(async (e: any) => {
+              if (this.statusScreen.includes(e.status)) {
+                return (e = { ...e, available: true });
+              } else {
+                return (e = { ...e, available: false });
+              }
+            })
+          );
+          this.dataGoods.load(newData);
         },
         error: (err: any) => {
           console.error(err);
@@ -286,39 +328,16 @@ export class ComplementArticleComponent implements OnInit {
       : this.form.get(idForm).setValue('');
   }
 
-  getGoodData(id: number) {
-    this.serviceGood.getById(id).subscribe(
+  getStatusView() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('screenKey', 'FACTREFAVALUOBIEN');
+    paramsF.limit = 100;
+    this.serviceScreenStatus.getAllFiltered(paramsF.getParams()).subscribe(
       res => {
-        this.goodDataSave = res;
-        this.goodSelected = res.description;
-        this.idGood = res.id;
-        this.getgoodCategory = res.goodCategory;
-        this.getoriginSignals = res.originSignals;
-        this.getnotifyDate = moment(res.notifyDate).format('DD-MM-YYYY');
-        this.getnotifyA = res.notifyA;
-        this.getplaceNotify = res.placeNotify;
-        this.getfechaDictamen = moment(res.dateOpinion).format('DD-MM-YYYY');
-        this.getdictamenPerenidad = res.opinion;
-        this.getdictamenPerito = res.proficientOpinion;
-        this.getdictamenInstitucion = res.valuerOpinion;
-        this.getAppraisalGood();
-        this.fillFormData(res.goodCategory, 'clasificacion');
-        this.fillFormData(res.originSignals, 'remarks');
-        res.dateOpinion != null
-          ? this.form
-              .get('fechaDictamen')
-              .setValue(moment(res.dateOpinion).format('DD-MM-YYYY'))
-          : this.form.get('fechaDictamen').setValue('');
-        this.fillFormData(res.proficientOpinion, 'dictamenPerito');
-        this.fillFormData(res.valuerOpinion, 'dictamenInstitucion');
-        this.fillFormData(res.opinion, 'dictamenPerenidad');
-        res.notifyDate != null
-          ? this.form
-              .get('fechaAseg')
-              .setValue(moment(res.notifyDate).format('DD-MM-YYYY'))
-          : this.form.get('fechaAseg').setValue('');
-        this.fillFormData(res.notifyA, 'notificado');
-        this.fillFormData(res.placeNotify, 'lugar');
+        const statusScreen = JSON.parse(JSON.stringify(res.data)).map(
+          (e: any) => e.status.status
+        );
+        this.statusScreen = statusScreen;
       },
       err => {
         console.log(err);
@@ -326,76 +345,154 @@ export class ComplementArticleComponent implements OnInit {
     );
   }
 
+  getGoodData(object: any) {
+    if (object.data.available) {
+      const id = object.data.id;
+      this.serviceGood.getById(id).subscribe(
+        res => {
+          console.log(JSON.parse(JSON.stringify(res)).data);
+          const data = JSON.parse(JSON.stringify(res)).data[0];
+          this.goodDataSave = data;
+          this.goodSelected = data.description;
+          this.idGood = data.id;
+          this.getgoodCategory = data.goodCategory;
+          this.getoriginSignals = data.originSignals;
+          this.getnotifyDate = moment(data.notifyDate).format('DD-MM-YYYY');
+          this.getnotifyA = data.notifyA;
+          this.getplaceNotify = data.placeNotify;
+          this.getfechaDictamen = moment(data.dateOpinion).format('DD-MM-YYYY');
+          this.getdictamenPerenidad = data.opinion;
+          this.getdictamenPerito = data.proficientOpinion;
+          this.getdictamenInstitucion = data.valuerOpinion;
+          this.getAppraisalGood();
+          this.fillFormData(data.goodCategory, 'clasificacion');
+          this.fillFormData(data.originSignals, 'remarks');
+          data.dateOpinion != null
+            ? this.form
+                .get('fechaDictamen')
+                .setValue(moment(data.dateOpinion).format('DD-MM-YYYY'))
+            : this.form.get('fechaDictamen').setValue('');
+          this.fillFormData(data.proficientOpinion, 'dictamenPerito');
+          this.fillFormData(data.valuerOpinion, 'dictamenInstitucion');
+          this.fillFormData(data.opinion, 'dictamenPerenidad');
+          data.notifyDate != null
+            ? this.form
+                .get('fechaAseg')
+                .setValue(moment(data.notifyDate).format('DD-MM-YYYY'))
+            : this.form.get('fechaAseg').setValue('');
+          this.fillFormData(data.notifyA, 'notificado');
+          this.fillFormData(data.placeNotify, 'lugar');
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    } else {
+      this.disabledButton('update-general-good');
+      this.disabledButton('apprasial-history');
+      this.disabledButton('apprais-good');
+      this.disabledButton('opinion');
+      this.disabledButton('first-notice-abandonment');
+      this.isEnableGood = false;
+    }
+  }
+
+  enabledGroup() {}
+
   updateGoodData() {
-    const updateData: IGood = {
-      id: parseInt(this.idGood.toString()),
-      goodId: parseInt(this.idGood.toString()),
-      goodCategory: this.form.get('clasificacion').value,
-      originSignals: this.form.get('remarks').value,
-    };
-    this.serviceGood.updateWithoutId(updateData).subscribe(
-      res => {
-        console.log('Modificado');
-        this.disabledButton('update-general-good');
-        this.getgoodCategory = updateData.goodCategory;
-        this.getoriginSignals = updateData.originSignals;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    if (!this.isEnableGood) {
+      this.alert(
+        'error',
+        'Error en el tipo de bien',
+        'Esta intentando registrar en un bien con un tipo no valido'
+      );
+    } else {
+      const updateData: IGood = {
+        id: parseInt(this.idGood.toString()),
+        goodId: parseInt(this.idGood.toString()),
+        goodCategory: this.form.get('clasificacion').value,
+        originSignals: this.form.get('remarks').value,
+      };
+      this.serviceGood.updateWithoutId(updateData).subscribe(
+        res => {
+          console.log('Modificado');
+          this.disabledButton('update-general-good');
+          this.getgoodCategory = updateData.goodCategory;
+          this.getoriginSignals = updateData.originSignals;
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 
   updateOpinion() {
-    const opinionData: IGood = {
-      id: parseInt(this.idGood.toString()),
-      goodId: parseInt(this.idGood.toString()),
-      dateOpinion: this.form.get('fechaDictamen').value,
-      proficientOpinion: this.form.get('dictamenPerito').value,
-      valuerOpinion: this.form.get('dictamenInstitucion').value,
-      opinion: this.form.get('dictamenPerenidad').value,
-    };
-    this.serviceGood.updateWithoutId(opinionData).subscribe(
-      res => {
-        console.log('Modificado');
-        this.disabledButton('opinion');
-        this.getfechaDictamen = opinionData.dateOpinion;
-        this.getdictamenPerenidad = opinionData.opinion;
-        this.getdictamenPerito = opinionData.proficientOpinion;
-        this.getdictamenInstitucion = opinionData.valuerOpinion;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    if (!this.isEnableGood) {
+      this.alert(
+        'error',
+        'Error en el tipo de bien',
+        'Esta intentando registrar en un bien con un tipo no valido'
+      );
+    } else {
+      const opinionData: IGood = {
+        id: parseInt(this.idGood.toString()),
+        goodId: parseInt(this.idGood.toString()),
+        dateOpinion: this.form.get('fechaDictamen').value,
+        proficientOpinion: this.form.get('dictamenPerito').value,
+        valuerOpinion: this.form.get('dictamenInstitucion').value,
+        opinion: this.form.get('dictamenPerenidad').value,
+      };
+      this.serviceGood.updateWithoutId(opinionData).subscribe(
+        res => {
+          console.log('Modificado');
+          this.disabledButton('opinion');
+          this.getfechaDictamen = opinionData.dateOpinion;
+          this.getdictamenPerenidad = opinionData.opinion;
+          this.getdictamenPerito = opinionData.proficientOpinion;
+          this.getdictamenInstitucion = opinionData.valuerOpinion;
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 
   updateNotify() {
-    const notifyData = {
-      id: parseInt(this.idGood.toString()),
-      goodId: parseInt(this.idGood.toString()),
-      notifyDate: new Date(this.form.get('fechaAseg').value),
-      notifyA: this.form.get('notificado').value.trim(),
-      placeNotify: this.form.get('lugar').value.trim(),
-    };
-    console.log(notifyData);
-    this.serviceGood.updateWithoutId(notifyData).subscribe(
-      res => {
-        console.log('Modificado');
-        this.disabledButton('first-notice-abandonment');
-        this.getnotifyDate = notifyData.notifyDate;
-        this.getnotifyA = notifyData.notifyA;
-        this.getplaceNotify = notifyData.placeNotify;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    if (!this.isEnableGood) {
+      this.alert(
+        'error',
+        'Error en el tipo de bien',
+        'Esta intentando registrar en un bien con un tipo no valido'
+      );
+    } else {
+      const notifyData = {
+        id: parseInt(this.idGood.toString()),
+        goodId: parseInt(this.idGood.toString()),
+        notifyDate: new Date(this.form.get('fechaAseg').value),
+        notifyA: this.form.get('notificado').value.trim(),
+        placeNotify: this.form.get('lugar').value.trim(),
+      };
+      this.serviceGood.updateWithoutId(notifyData).subscribe(
+        res => {
+          console.log('Modificado');
+          this.disabledButton('first-notice-abandonment');
+          this.getnotifyDate = notifyData.notifyDate;
+          this.getnotifyA = notifyData.notifyA;
+          this.getplaceNotify = notifyData.placeNotify;
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 
   //Datos de valuo de un bien
 
   getAppraisalGood() {
+    console.log('Sí entró');
     if (this.idGood != '' && this.idGood != null && this.idGood != undefined) {
       const paramsF = new FilterParams();
       paramsF.addFilter('noGood', this.idGood);

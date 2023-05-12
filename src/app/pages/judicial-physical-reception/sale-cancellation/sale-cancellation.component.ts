@@ -94,7 +94,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      noBien: {
+      goodId: {
         title: 'No. Bien',
         type: 'number',
         sort: false,
@@ -379,8 +379,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.statusProceeding = dataRes.statusProceedings;
-        this.labelActa = 'Cerrar acta';
-        this.btnCSSAct = 'btn-primary';
+        if (this.statusProceeding === 'ABIERTA') {
+          this.labelActa = 'Cerrar acta';
+          this.btnCSSAct = 'btn-primary';
+        } else {
+          this.labelActa = 'Abrir acta';
+          this.btnCSSAct = 'btn-success';
+        }
         this.act2Valid = true;
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
@@ -392,6 +397,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
     this.automaticFill();
+    this.goodsByExpediente();
+    this.clearInputs();
 
     const paramsF = new FilterParams();
     paramsF.addFilter(
@@ -399,7 +406,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'ENTREGA');
+    paramsF.addFilter('typeProceedings', 'DXCVENT');
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -420,8 +427,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.initialBool = false;
       }
     );
-
-    this.goodsByExpediente();
   }
 
   goodsByExpediente() {
@@ -957,6 +962,19 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //NAVIGATE
   //NAVIGATE PROCEEDING
+  clearInputs() {
+    this.form.get('acta2').setValue(null);
+    this.form.get('entrega').setValue(null);
+    this.form.get('fecElabRecibo').setValue(null);
+    this.form.get('fecEntregaBienes').setValue(null);
+    this.form.get('fecElab').setValue(null);
+    this.form.get('fecRecepFisica').setValue(null);
+    this.form.get('fecCaptura').setValue(null);
+    this.form.get('observaciones').setValue(null);
+    this.form.get('recibe2').setValue(null);
+    this.form.get('direccion').setValue(null);
+  }
+
   nextProceeding() {
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -970,16 +988,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       } else {
         this.checkChange();
         this.minDateFecElab = new Date();
-        this.form.get('acta2').setValue(null);
-        this.form.get('entrega').setValue(null);
-        this.form.get('fecElabRecibo').setValue(null);
-        this.form.get('fecEntregaBienes').setValue(null);
-        this.form.get('fecElab').setValue(null);
-        this.form.get('fecRecepFisica').setValue(null);
-        this.form.get('fecCaptura').setValue(null);
-        this.form.get('observaciones').setValue(null);
-        this.form.get('recibe2').setValue(null);
-        this.form.get('direccion').setValue(null);
+        this.clearInputs();
         this.statusProceeding = '';
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-info';

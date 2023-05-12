@@ -190,4 +190,20 @@ export class NotificationService extends HttpService {
       observation
     );
   }
+
+  getByNotificationxProperty2(
+    params: any
+  ): Observable<IListResponse<INotification>> {
+    return this.post(this.route.NotificationxPropertyFilter2, params);
+  }
+
+  updateNotiXProperty(
+    numberProperty: number | string,
+    notificationDate: Date | string,
+    formData: any
+  ): Observable<IListResponse<INotificationXProperty>> {
+    const route = `${this.route.NotificationxProperty}/property/${numberProperty}/notification/${notificationDate}`;
+    console.log('ROUT', route);
+    return this.put(route, formData);
+  }
 }
