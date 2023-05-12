@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
-import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { COLUMNS } from './columns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { COLUMNS } from './columns';
 
 import { IGood } from 'src/app/core/models/good/good.model';
 @Component({
@@ -32,8 +31,8 @@ export class NoticeOfAbandonmentByReturnComponent
   totalItems: number = 0;
   good = new DefaultSelect<IGood>();
   form: FormGroup;
-  period:boolean=false;
-  searching:boolean=false;
+  period: boolean = false;
+  searching: boolean = false;
 
   get goodId() {
     return this.form.get('goodId');
@@ -58,8 +57,7 @@ export class NoticeOfAbandonmentByReturnComponent
     private fb: FormBuilder,
     private goodService: GoodService,
     private notificationService: NotificationService,
-    private goodTypesService: GoodTypeService,
-
+    private goodTypesService: GoodTypeService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -78,19 +76,11 @@ export class NoticeOfAbandonmentByReturnComponent
   private buildForm() {
     this.form = this.fb.group({
       goodId: [null, [Validators.required]],
-      description: [
-        null
-      ],
+      description: [null],
       quantity: [null],
-      periods: [
-        null
-      ],
-      periods1: [
-        null
-      ],
-      periods2: [
-        null
-      ],
+      periods: [null],
+      periods1: [null],
+      periods2: [null],
     });
   }
   getGoods() {
@@ -151,23 +141,22 @@ export class NoticeOfAbandonmentByReturnComponent
   }
 
   getGoodIdDescription(lparams: ListParams) {
-
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
     let paramDinamyc = '';
 
-    if (lparams.text.length >0 ) {
-      !isNaN(parseInt(lparams.text)) ? paramDinamyc = `filter.goodId=$eq:${lparams.text}`:
-                                       paramDinamyc = `filter.description=$ilike:${lparams.text}`
+    if (lparams.text.length > 0) {
+      !isNaN(parseInt(lparams.text))
+        ? (paramDinamyc = `filter.goodId=$eq:${lparams.text}`)
+        : (paramDinamyc = `filter.description=$ilike:${lparams.text}`);
     }
-//     this.goodId.value
-// console.log('entre al filtro ', this.goodId.value , lparams);
+    //     this.goodId.value
+    // console.log('entre al filtro ', this.goodId.value , lparams);
 
     this.goodService.getAll(`${params.getParams()}&${paramDinamyc}`).subscribe({
       next: data => {
         this.good = new DefaultSelect(data.data, data.count);
-
       },
       error: err => {
         let error = '';
@@ -185,8 +174,8 @@ export class NoticeOfAbandonmentByReturnComponent
     let param = `filter.goodId=$eq:${goodChange.goodId}`;
     this.goodService.getAll(param).subscribe({
       next: data => {
-        console.log('data filter', data.data[0].quantity)
-        this.executeCamps(data.data[0])
+        console.log('data filter', data.data[0].quantity);
+        this.executeCamps(data.data[0]);
       },
       error: err => {
         let error = '';
@@ -200,38 +189,41 @@ export class NoticeOfAbandonmentByReturnComponent
       },
     });
   }
-  executeCamps(data:any){
-    this.quantity.setValue(data.quantity)
+  executeCamps(data: any) {
+    this.quantity.setValue(data.quantity);
     const params = new FilterParams();
     let paramDinamyc = `filter.id=$eq:${data.goodTypeId}`;
 
     this.goodTypesService.getAllS(`${params}&${paramDinamyc}`).subscribe({
       next: value => {
-        const {maxAsseguranceTime ,maxFractionTime , maxExtensionTime} = value.data[0];
-        if(maxAsseguranceTime != null && maxFractionTime !== null && maxExtensionTime !==null){
-            this.period= true
-            this.periods.setValue(maxAsseguranceTime)
-            this.periods1.setValue(maxFractionTime)
-            this.periods2.setValue(maxExtensionTime)
-          }else{
-            this.onLoadToast('error', 'No existen Periodos', 'periodos vacios');
-          }
+        const { maxAsseguranceTime, maxFractionTime, maxExtensionTime } =
+          value.data[0];
+        if (
+          maxAsseguranceTime != null &&
+          maxFractionTime !== null &&
+          maxExtensionTime !== null
+        ) {
+          this.period = true;
+          this.periods.setValue(maxAsseguranceTime);
+          this.periods1.setValue(maxFractionTime);
+          this.periods2.setValue(maxExtensionTime);
+        } else {
+          this.onLoadToast('error', 'No existen Periodos', 'periodos vacios');
         }
-    })
+      },
+    });
   }
   clean() {
     // this.documentsEstData = [];
     this.form.reset();
     this.searching = false;
-    this.data=[];
+    this.data = [];
     // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     // this.requestId = null;
   }
 
   search() {
-    if (
-      this.goodId.value != null
-    ) {
+    if (this.goodId.value != null) {
       this.getGoods();
     } else {
       this.message('info', 'Error', 'Debe llenar algun filtro.');
