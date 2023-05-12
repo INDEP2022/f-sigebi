@@ -95,3 +95,56 @@ export interface IComerEvent2 {
   tpsolavalId: number;
   applyvat: string;
 }
+
+export interface IComerLotEvent {
+  year: number;
+  week: number;
+  goodNumber: number;
+  event: {
+    processKey: string;
+  };
+  tpEvent: number;
+  incorporationDate: Date;
+  soldout: string;
+  type: number;
+  origin: string;
+  stockNumber: number;
+  eventcom: number;
+  tpeventcom: number;
+  delegationcNumber: number;
+  delegationbNumber: number;
+  amount: number;
+  description: string;
+  eventRem: number;
+  lotRem: number;
+  lot: number;
+  lotComer: number;
+  steve: string;
+  delegationcm: number;
+  status: string;
+  eventDate: Date;
+  unit: string;
+  salePrice: number;
+  cost: number;
+  customerId: number;
+  salePriceLot: number;
+  ivaSale: number;
+  ivaSaleLot: number;
+  saleNoappiva: number;
+  incRemeDate: Date;
+  ois: string;
+  invoiceNumber: string;
+  invoiceDate: Date;
+  statusLot: string;
+  address: string;
+  usernameCreate: string;
+  usernameCreateRem: string;
+  transfereeNumber: number;
+  lotId: number;
+  eventpre: number;
+  lotpre: number;
+  affectationDate: string;
+  eventDad: number;
+  idEvent: number;
+  processKey: string;
+}
