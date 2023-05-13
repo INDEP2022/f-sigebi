@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -32,7 +31,6 @@ import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceeding
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
-import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -176,8 +174,6 @@ export class DestructionAuthorizationComponent
     private modalService: BsModalService,
     private goodService: GoodService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private datePipe: DatePipe,
-    private dictationService: DictationService,
     private dictationXGoodService: DictationXGoodService,
     private router: Router,
     private sanitizer: DomSanitizer,
@@ -304,11 +300,11 @@ export class DestructionAuthorizationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: global => {
+          this.setState();
           this.ngGlobal = global;
           if (this.ngGlobal.REL_BIENES) {
             this.insertDetailFromGoodsTracker();
           }
-          this.setState();
         },
       });
   }
@@ -317,7 +313,7 @@ export class DestructionAuthorizationComponent
     const mockGoods: any = [
       {
         numberGood: 4005331,
-        good: { id: 4005331, description: 'Bien de prueba' },
+        good: { id: 4005331, description: 'Bien de prueba', expedient: 783558 },
         amount: 1,
         expedient: 783558,
         numberProceedings: null,
@@ -327,7 +323,9 @@ export class DestructionAuthorizationComponent
     mockGoods.forEach((good: any) => {
       // TODO: checar si el campo vendra asi en la respuesta
       if (!this.controls.numFile.value) {
+        console.log('entro a la validacion', good.expedient);
         this.controls.numFile.setValue(good.expedient);
+        console.info(this.controls.numFile);
       }
     });
     this.goodTrackerGoods = mockGoods;
@@ -359,6 +357,7 @@ export class DestructionAuthorizationComponent
   }
 
   save() {
+    console.log(this.proceedingForm.value);
     if (!this.proceedingForm.valid) {
       this.onLoadToast('error', 'Error', 'El formulario es invalido');
       return;
