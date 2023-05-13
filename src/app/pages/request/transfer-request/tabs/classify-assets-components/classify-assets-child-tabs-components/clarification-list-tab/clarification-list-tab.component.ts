@@ -131,7 +131,7 @@ export class ClarificationListTabComponent
   }
 
   openForm(clarification?: IRejectGood): void {
-    if (clarification?.answered == 'CONTESTADA') {
+    if (clarification?.answered == 'ACLARADA') {
       this.onLoadToast(
         'warning',
         'No se puede editar una aclaración ya contestada',
@@ -158,7 +158,7 @@ export class ClarificationListTabComponent
   }
 
   delete(clarification: any) {
-    if (clarification.answered == 'CONTESTADA') {
+    if (clarification.answered == 'ACLARADA') {
       this.onLoadToast(
         'warning',
         'No se puede eliminar una aclaración ya contestada',
@@ -200,8 +200,8 @@ export class ClarificationListTabComponent
                 let body: any = {};
                 body['id'] = this.good.id;
                 body['goodId'] = this.good.goodId;
-                body.processStatus = 'REGISTRO_SOLICITUD';
-                body.goodStatus = 'REGISTRO_SOLICITUD';
+                body.processStatus = 'CLASIFICAR_BIEN';
+                body.goodStatus = 'CLASIFICAR_BIEN';
                 await this.updateGoods(body);
               }
               setTimeout(() => {

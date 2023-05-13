@@ -835,7 +835,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -868,7 +870,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -904,7 +908,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -937,7 +943,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -969,7 +977,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -1001,7 +1011,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async (data: any) => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -1011,7 +1023,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
           this.fractionProperties['unitMeasure'] = fraction.unit
             ? fraction.unit

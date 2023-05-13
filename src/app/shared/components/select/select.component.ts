@@ -50,9 +50,11 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() maxSelectedItems: number;
   @Input() searchable: boolean = true;
   @Input() searchOnInit: boolean = false;
+  @Input() typeToSearchText: string = 'Escriba 3 o mas caracteres';
   @Input() paramFilter = 'search';
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
+  @Output() clear = new EventEmitter();
   @Input() operator = SearchFilter.EQ;
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
@@ -110,6 +112,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
     if (changes['data']?.currentValue?.reset == true) {
       this.buffer = [];
       this.page = 1;
@@ -150,6 +153,8 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
 
   fetchMore(text: string) {
     if (!this.loading && this.buffer.length < this.totalItems) {
+      console.log('aouto fecht ', this.buffer.length, this.totalItems);
+
       this.page++;
       this.loading = true;
       this.concat = true;
