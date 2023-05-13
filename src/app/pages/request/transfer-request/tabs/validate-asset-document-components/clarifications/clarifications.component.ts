@@ -14,6 +14,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -61,6 +62,7 @@ export class ClarificationsComponent
   typeDoc: string = 'clarification';
   good: any;
   totalItems: number = 0;
+  showClarificationButtons: boolean = true;
 
   domicilieObject: any;
   articleColumns = CLARIFICATION_COLUMNS;
@@ -411,11 +413,14 @@ export class ClarificationsComponent
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
+    this.params.value.addFilter(
+      'processStatus',
+      'DESTINO_DOCUMENTAL,SOLICITAR_ACLARACION',
+      SearchFilter.IN
+    );
     const filter = this.params.getValue().getParams();
-
     this.goodService.getAll(filter).subscribe({
       next: resp => {
-        console.log(resp.data);
         let result = resp.data.map(async (item: any) => {
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
@@ -491,7 +496,8 @@ export class ClarificationsComponent
 
   selectGoods(event: any) {
     if (event.selected.length === 1) {
-      console.log(event);
+      this.showClarificationButtons =
+        event.data.processStatus != 'SOLICITAR_ACLARACION' ? true : false;
       this.good = event.data;
       this.goodForm.reset();
       this.goodForm.patchValue({ ...this.good });
@@ -549,6 +555,7 @@ export class ClarificationsComponent
 
   clicked(event: any) {
     this.goodForm.reset();
+    console.log(...event);
     this.goodForm.patchValue({ ...event });
     this.rowSelected = event;
   }
@@ -586,7 +593,14 @@ export class ClarificationsComponent
   } */
 
   clarifiRowSelected(event: any) {
-    this.clariArraySelected = event.selected;
+    console.log(event);
+    if (event.isSelected == true) {
+      this.showClarificationButtons =
+        event.data.answered == 'ACLARADA' ? false : true;
+      this.clariArraySelected = event.selected;
+    } else {
+      this.showClarificationButtons = true;
+    }
   }
 
   newClarification() {
@@ -695,8 +709,8 @@ export class ClarificationsComponent
       body.id = this.good.id;
       body.goodId = this.good.goodId;
       //body.goodResdevId = Number(id);
-      body.processStatus = 'REGISTRO_SOLICITUD';
-      body.goodStatus = 'REGISTRO_SOLICITUD';
+      body.processStatus = 'DESTINO_DOCUMENTAL';
+      body.goodStatus = 'DESTINO_DOCUMENTAL';
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);

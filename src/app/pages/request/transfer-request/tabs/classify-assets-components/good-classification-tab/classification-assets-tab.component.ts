@@ -13,6 +13,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
@@ -132,10 +133,14 @@ export class ClassificationAssetsTabComponent
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.idRequest);
+    this.params.value.addFilter(
+      'processStatus',
+      'CLASIFICAR_BIEN,SOLICITAR_ACLARACION',
+      SearchFilter.IN
+    );
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: resp => {
-        //console.log(resp.data);
         var result = resp.data.map(async (item: any) => {
           item['quantity'] = Number(item.quantity);
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
@@ -250,7 +255,6 @@ export class ClassificationAssetsTabComponent
       data.map((item: any) => {
         if (item.id === event.id) {
           for (const key in event) {
-            console.log(key);
             if (key != 'id') {
               item[key] = event[key];
             }
@@ -263,18 +267,15 @@ export class ClassificationAssetsTabComponent
 
   selectGood(event: any) {
     this.formLoading = true;
-    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
     this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
-        //console.log("info del goodSELECTED v1", this.goodSelect[0]); //henry|
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
-        console.log('infor del good v1', this.goodSelect[0] as IGood); //henry
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }

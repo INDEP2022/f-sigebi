@@ -12,10 +12,11 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MonitorReturnAbandonmentRoutingModule } from './monitor-return-abandonment-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { InputTableComponent } from './input-table/input-table.component';
 import { MonitorReturnAbandonmentComponent } from './monitor-return-abandonment/monitor-return-abandonment.component';
 
 @NgModule({
-  declarations: [MonitorReturnAbandonmentComponent],
+  declarations: [MonitorReturnAbandonmentComponent, InputTableComponent],
   imports: [CommonModule, MonitorReturnAbandonmentRoutingModule, SharedModule],
 })
 export class MonitorReturnAbandonmentModule {}
