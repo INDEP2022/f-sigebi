@@ -42,9 +42,10 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker-element';
+import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import Swal from 'sweetalert2';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
@@ -69,6 +70,7 @@ export class JuridicalRulingComponent
   dictNumber: string | number = undefined;
   wheelNumber: string | number = undefined;
   delegationDictNumber: string | number = undefined;
+  keyArmyNumber: string | number = undefined;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
   //tipos
@@ -76,6 +78,20 @@ export class JuridicalRulingComponent
   subtypes = new DefaultSelect();
   ssubtypes = new DefaultSelect();
   sssubtypes = new DefaultSelect();
+
+  typesDict = new DefaultSelect(
+    [
+      { id: 'DESTRUCCION', typeDict: 'DESTRUCCIÓN' },
+      { id: 'DONACION', typeDict: 'DONACION' },
+      { id: 'ENAJENACION', typeDict: 'ENAJENACIÓN' },
+      { id: 'TRANSFERENTE', typeDict: 'TRANSFERENTE' },
+      { id: 'PROCEDENCIA', typeDict: 'PROCEDENCIA' },
+      { id: 'DEVOLUCIÓN', typeDict: 'DEVOLUCIÓN' },
+      { id: 'ABANDONO', typeDict: 'ABANDONO' },
+      { id: 'RESARCIMIENTO', typeDict: 'RESARCIMIENTO' },
+    ],
+    2
+  );
 
   typeField: string = 'type';
   subtypeField: string = 'subtype';
@@ -328,13 +344,21 @@ export class JuridicalRulingComponent
     this.onLoadGoodList();
     this.onLoadExpedientData();
     this.onLoadDictationInfo();
+    this.resetALL();
+  }
+
+  resetALL() {
+    this.selectedDocuments = [];
+    this.selectedGooods = [];
+    this.selectedGooodsValid = [];
+    this.goodsValid = [];
   }
 
   onLoadExpedientData() {
     let noExpediente = this.legalForm.get('noExpediente').value || '';
     this.expedientServices.getById(noExpediente).subscribe({
       next: response => {
-        console.log('EXPEDIENTE:DATA::', response);
+        // ..Datos del expediente
         this.legalForm.get('criminalCase').setValue(response.criminalCase);
         this.legalForm
           .get('preliminaryInquiry')
@@ -364,7 +388,7 @@ export class JuridicalRulingComponent
           this.legalForm
             .get('observations')
             .setValue(res.data[0].observations || undefined);
-
+          this.keyArmyNumber = res.data[0].keyArmyNumber;
           this.statusDict = res.data[0].statusDict;
           this.legalForm
             .get('label')
@@ -376,6 +400,7 @@ export class JuridicalRulingComponent
           this.legalForm.get('observations').setValue(null);
           this.legalForm.get('fecDicta').setValue(null);
           this.legalForm.get('label').setValue(null);
+          this.keyArmyNumber = undefined;
           this.statusDict = undefined;
         });
     });
@@ -642,6 +667,8 @@ export class JuridicalRulingComponent
         this.goods = this.goods.filter(_good => _good.id != good.id);
       });
       this.selectedGooods = [];
+    } else {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien.');
     }
   }
 
@@ -664,6 +691,8 @@ export class JuridicalRulingComponent
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
       });
       this.selectedGooodsValid = [];
+    } else {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien.');
     }
   }
   rowSelected(e: any) {
@@ -678,7 +707,11 @@ export class JuridicalRulingComponent
    * --
    */
   btnDocumentos() {
-    this.listadoDocumentos = true;
+    if (this.idGoodSelected) {
+      this.listadoDocumentos = true;
+    } else {
+      this.alert('info', '', 'Selecciona un bien para continuar.');
+    }
   }
 
   onLoadDocumentsByGood() {
@@ -694,16 +727,28 @@ export class JuridicalRulingComponent
   }
 
   btnSalir() {
-    console.log('Salir');
-    this.listadoDocumentos = false;
     // --
     // Sube documentos seleccionados
-    console.log(this.selectedDocuments);
     if (this.selectedDocuments.length > 0) {
+      this.listadoDocumentos = false;
+
       this.documents = this.documents.concat(this.selectedDocuments);
+
       this.selectedDocuments.forEach(doc => {
         this.goods = this.goods.filter(_doc => _doc.id != doc.id);
       });
+      // this.selectedDocuments.find(v => console.log(v));
+      // this.documents = this.documents.concat(this.selectedDocuments);
+      // this.selectedDocuments.forEach(doc => {
+      //   this.goods = this.goods.filter(_doc => _doc.id != doc.id);
+      // });
+      this.selectedDocuments = [];
+    } else {
+      this.alert(
+        'info',
+        '',
+        'Debes seleccionar la fecha de un documento para continuar.'
+      );
     }
   }
   isDocumentSelectedValid(_doc: any) {
@@ -741,6 +786,15 @@ export class JuridicalRulingComponent
         this.generateCveOficio(response.dictamenDelregSeq);
         // document.getElementById('cveOficio').focus();
         this.cveOficio.nativeElement.focus();
+        setTimeout(
+          () =>
+            this.alert(
+              'success',
+              '',
+              'Clave de oficio generada correctamente.'
+            ),
+          1000
+        );
       },
     });
   }
@@ -767,7 +821,14 @@ export class JuridicalRulingComponent
       if (expedient === null || undefined) {
         this.alert('error', 'ERROR', 'Falta seleccionar expediente');
       } else {
-        this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');
+        // this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');}
+        Swal.fire('PENDIENTE', 'Parcializa la dictaminazión.', 'warning').then(
+          () => {
+            window.location.replace(
+              '/pages/general-processes/goods-partialization'
+            );
+          }
+        );
       }
     }
   }
@@ -782,10 +843,10 @@ export class JuridicalRulingComponent
       wheelNumber: this.wheelNumber,
       user: token.preferred_username,
       delegationNumberDictam: this.delegationDictNumber,
-      clueJobNavy: '1',
-      judgmentDate: '04/04/2023',
-      statusJudgment: 'cadena',
-      typeJudgment: 'cadena',
+      clueJobNavy: this.keyArmyNumber, // -- keyArmyNumber
+      judgmentDate: this.legalForm.get('fecDicta').value, // -- entryDate
+      statusJudgment: this.statusDict, // -- statusDict
+      typeJudgment: this.legalForm.get('tipoDictaminacion').value, // -- typeDict
     };
 
     this.checkout1(object).then(({ json }) => {
@@ -850,5 +911,18 @@ export class JuridicalRulingComponent
       }
     );
     return { status: response.status, json: response.json() };
+  }
+
+  btnDeleteListDocs() {
+    this.documents = [];
+    this.selectedDocuments = [];
+  }
+
+  onTypeDictChange($event: any) {
+    // ..activar para ver cambio
+    // console.log($event);
+  }
+  btnCloseDocs() {
+    this.listadoDocumentos = false;
   }
 }

@@ -44,6 +44,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   date: string = '';
   typesDocuments: any = [];
   typeDocument: number = 0;
+  validateSizePDF: boolean = false;
   constructor(
     public fb: FormBuilder,
     public modalRef: BsModalRef,
@@ -196,6 +197,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   selectFile(event?: any) {
     this.selectedFile = event.target.files[0];
     if (this.selectedFile?.size > 10000000) {
+      this.validateSizePDF = true;
       this.onLoadToast(
         'warning',
         'Se debe cargar un documentos menor a 10MB',
@@ -207,6 +209,17 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     if (extension != 'pdf') {
       this.onLoadToast('warning', 'Se debe cargar un documentos PDF', '');
       this.newDocForm.get('docFile').setValue(null);
+    }
+  }
+
+  validatePDF() {
+    if (this.validateSizePDF === true) {
+      this.alert('warning', 'Se debe cargar un documentos menor a 10MB', '');
+      this.validateSizePDF = false;
+      this.newDocForm.get('docFile').setValue(null);
+      this.newDocForm.get('docFile').reset;
+    } else {
+      this.confirm();
     }
   }
 

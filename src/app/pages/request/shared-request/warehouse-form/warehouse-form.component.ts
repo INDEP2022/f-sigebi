@@ -20,7 +20,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -72,37 +72,74 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   //Verificar typeTercero//
   prepareForm() {
     this.warehouseForm = this.fb.group({
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      responsibleUser: [null],
       numberRegister: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      responsibleUser: [null],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(1000),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       typeTercero: [null, [Validators.required]],
-      responsibleDelegation: [
-        this.regDelData.description,
-        [Validators.pattern(STRING_PATTERN)],
+      numberManagement: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ],
-      managedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      stateCode: [null, [Validators.required]],
-      municipalityCode: [null, [Validators.required]],
-      cityCode: [null, [Validators.required]],
-      localityCode: [null, [Validators.required]],
-      zipCode: [null, [Validators.required]],
-      street: [null, [Validators.pattern(STRING_PATTERN)]],
-      numberOutside: [null],
-      type: [null],
-      numberManagement: [null, [Validators.pattern(STRING_PATTERN)]],
       locator: [null],
-      contractNumber: [null, [Validators.pattern(STRING_PATTERN)]],
-      siabWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
+
+      contractNumber: [
+        null,
+        [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
+      ],
+
+      siabWarehouse: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
       startOperation: [null],
       endOperation: [null],
-      latitude: [null, [Validators.pattern(DOUBLE_PATTERN)]],
-      longitude: [null, [Validators.pattern(DOUBLE_PATTERN)]],
+
+      responsibleDelegation: [
+        this.regDelData.description,
+        [Validators.maxLength(150), Validators.pattern(STRING_PATTERN)],
+      ],
+
+      managedBy: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      stateCode: [null, [Validators.required]],
+      cityCode: [null, [Validators.required]],
+      municipalityCode: [null, [Validators.required]],
+      localityCode: [null, [Validators.required]],
+      zipCode: [null, [Validators.required]],
+      street: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
+      numberOutside: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      latitude: [
+        null,
+        [Validators.maxLength(150), Validators.pattern(STRING_PATTERN)],
+      ],
+      type: [null],
+
+      longitude: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   confirm() {

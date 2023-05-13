@@ -1,0 +1,76 @@
+<app-good-form [firstCase]="firstCase"></app-good-form>
+<hr />
+<form class="form-material mt-5" [formGroup]="form">
+  <div class="row">
+    <div class="col-md-4">
+      <form-field [control]="form.get('cantPar')" label="Veces a Parcializar">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="cantPar"
+          min="1" />
+      </form-field>
+    </div>
+
+    <div class="col-md-4">
+      <form-field [control]="form.get('cantidad')" label="Cantidad">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="cantidad"
+          min="1" />
+      </form-field>
+    </div>
+
+    <div class="col-md-4">
+      <div *ngIf="!firstCase">
+        <label for="">Saldo: </label>
+        {{ form.get('saldo').value }}
+      </div>
+      <form-field *ngIf="firstCase" [control]="form.get('saldo')" label="Saldo">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="saldo"
+          min="1" />
+      </form-field>
+    </div>
+  </div>
+  <!-- <ol class="c-stepper">
+    <li class="c-stepper__item">
+      <h3 class="c-stepper__title">Step 2</h3>
+      <p class="c-stepper__desc">Some desc text</p>
+    </li>
+    <li class="c-stepper__item">
+      <h3 class="c-stepper__title">Step 1</h3>
+      <p class="c-stepper__desc">Some desc text</p>
+    </li>
+  </ol> -->
+
+  <div class="row">
+    <div class="d-flex justify-content-center stepper">
+      <div [class]="statePartialize">
+        <div (click)="pressed(1)">1</div>
+        <app-partialize-button
+          [press]="pressPartialize"
+          [firstCase]="firstCase"></app-partialize-button>
+      </div>
+      <div [class]="stateApply">
+        <div (click)="pressed(2)">2</div>
+        <app-apply-button
+          [press]="pressApply"
+          [firstCase]="firstCase"></app-apply-button>
+      </div>
+      <!-- Second Step -->
+    </div>
+  </div>
+</form>
+<div
+  class="pt-2 scroll-table table-responsive"
+  [class]="loading ? 'table-loading' : ''">
+  <ng2-smart-table
+    class="col-md-12"
+    [settings]="settingsGoods"
+    [source]="bienesPar"
+    (delete)="deleteRow($event)"></ng2-smart-table>
+</div>

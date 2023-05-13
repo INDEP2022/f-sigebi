@@ -1,7 +1,13 @@
-<button
+<div
   class="mx-1"
+  [class]="
+    form.invalid || formGood.invalid || vsum >= vimporte || loading
+      ? 'disabled'
+      : ''
+  "
   size="small"
-  (click)="partialize()"
-  [disabled]="form.invalid || formGood.invalid || vsum >= vimporte || loading">
+  (click)="partialize()">
   Parcializa
-</button>
+</div>
+
+<!-- [disabled]="form.invalid || formGood.invalid || vsum >= vimporte || loading" -->

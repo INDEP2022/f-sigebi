@@ -7,9 +7,11 @@ import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 
 @Injectable({
@@ -23,7 +25,9 @@ export class LegalOpinionsOfficeService {
     private msDictationService: DictationService,
     private msExpedientService: ExpedientService,
     private msOficialDictationService: OficialDictationService,
-    private msSsf3SignatureElecDocsService: Ssf3SignatureElecDocsService
+    private msSsf3SignatureElecDocsService: Ssf3SignatureElecDocsService,
+    private msCopiesOfficialOpinionService: CopiesOfficialOpinionService,
+    private msJobDictumTextsService: JobDictumTextsService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -46,6 +50,62 @@ export class LegalOpinionsOfficeService {
   }
   getElectronicFirmData(params: _Params) {
     return this.msSsf3SignatureElecDocsService.getAllFiltered(params);
+  }
+  getOfficeCopiesDictation(params: _Params) {
+    return this.msCopiesOfficialOpinionService.getAll(params);
+  }
+  getOfficeTextDictation(params: _Params) {
+    return this.msJobDictumTextsService.getAll(params);
+  }
+
+  getTexto3FromOfficeDictation(
+    officeDictationData: IOfficialDictation,
+    type_of: string
+  ) {
+    if (officeDictationData.text3) {
+      if (officeDictationData.text3.length > 0) {
+        if (type_of == 'A-O') {
+          officeDictationData.text3 = `00/00/2007 Administración Titular Jurídica y de RecepciónInformación Reservada en su totalidad 1/1.
+                                    Período de reserva: 12 años.
+                                    Artículo 13, fracción V LFTAIPG.
+                                    La difusión de la información contenida en este documento puede impedir u obstruir las acciones que realiza el SAE para el adecuado cumplimiento de las obligaciones contenidas en la LFAEBSP en materia de Administración de bienes asegurados.`;
+        }
+        if (type_of == 'A-OH') {
+          officeDictationData.text3 = `Firma el Administrador Titular de Recuperación en suplencia del Administrador Titular Jurídico y de Recepción, con fundamento en lo dispuesto por el artículo 51, último párrafo del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes.`;
+        }
+        if (type_of == 'A-TT') {
+          officeDictationData.text3 = `00/00/2007 Administración Titular Jurídica y de RecepciónInformación Reservada en su totalidad 1/1.
+                                    Período de reserva: 12 años.
+                                    Artículo 13, fracción V LFTAIPG.
+                                    La difusión de la información contenida en este documento puede impedir u obstruir las acciones que realiza el SAE para el adecuado cumplimiento de las obligaciones contenidas en la LFAEBSP en materia de Administración de bienes asegurados.`;
+        }
+        if (type_of == 'D') {
+          officeDictationData.text3 = `00/00/2007 Administración Titular Jurídica y de RecepciónInformación Reservada en su totalidad 1/1.
+                                    Período de reserva: 12 años.
+                                    Artículo 13, fracción V LFTAIPG.
+                                    La difusión de la información contenida en este documento puede impedir u obstruir las acciones que realiza el SAE para el adecuado cumplimiento de las obligaciones contenidas en la LFAEBSP en materia de Administración de bienes asegurados.`;
+        }
+        if (type_of == 'D-A') {
+          officeDictationData.text3 = `00/00/2007 Administración Titular Jurídica y de RecepciónInformación Reservada en su totalidad 1/1.
+                                    Período de reserva: 12 años.
+                                    Artículo 13, fracción V LFTAIPG.
+                                    La difusión de la información contenida en este documento puede impedir u obstruir las acciones que realiza el SAE para el adecuado cumplimiento de las obligaciones contenidas en la LFAEBSP en materia de Administración de bienes asegurados.`;
+        }
+        if (type_of == 'D-NA') {
+          officeDictationData.text3 = `00/00/2007 Administración Titular Jurídica y de RecepciónInformación Reservada en su totalidad 1/1.
+                                    Período de reserva: 12 años.
+                                    Artículo 13, fracción V LFTAIPG.
+                                    La difusión de la información contenida en este documento puede impedir u obstruir las acciones que realiza el SAE para el adecuado cumplimiento de las obligaciones contenidas en la LFAEBSP en materia de Administración de bienes asegurados.`;
+        }
+        if (type_of == 'N-A') {
+          officeDictationData.text3 = `00/00/2007 Administración Titular Jurídica y de RecepciónInformación Reservada en su totalidad 1/1.
+                                    Período de reserva: 12 años.
+                                    Artículo 13, fracción V LFTAIPG.
+                                    La difusión de la información contenida en este documento puede impedir u obstruir las acciones que realiza el SAE para el adecuado cumplimiento de las obligaciones contenidas en la LFAEBSP en materia de Administración de bienes asegurados.`;
+        }
+      }
+    }
+    return officeDictationData;
   }
 
   getTextDefaultDictation(

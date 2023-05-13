@@ -74,9 +74,11 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    this.generateClave();
+    if (this.folioReporte === null) {
+      console.log('Crear folio');
+      this.dictamenSeq();
+    }
     this.withDocumentation = this.idAclara === '1' ? true : false;
-    this.dictamenSeq();
     this.initForm1();
     const applicationId = this.idRequest;
     const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
@@ -92,13 +94,20 @@ export class NotifyAssetsImproprietyFormComponent
     });
 
     this.clarificationForm = this.fb.group({
-      addresseeName: ['', [Validators.required, Validators.maxLength(50)]],
+      addresseeName: [
+        '',
+        [
+          //Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(50),
+        ],
+      ],
 
       positionAddressee: [
         '',
         [
           Validators.pattern(STRING_PATTERN),
-          Validators.required,
+          //Validators.required,
           Validators.maxLength(50),
         ],
       ],
@@ -209,7 +218,11 @@ export class NotifyAssetsImproprietyFormComponent
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      if (this.typeClarifications == 2 && typeTransference != 'SAT_SAE') {
+      if (
+        this.typeClarifications == 2 &&
+        typeTransference != 'SAT_SAE' &&
+        typeTransference != 'PGR_SAE'
+      ) {
         this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
       }
       const obtainTypeDocument = await this.obtainTypeDocument(
@@ -248,6 +261,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   improcedenciaTransferentesVoluntarias() {
+    console.log('improcedenciaTransferentesVoluntarias DESDE EL');
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -286,7 +300,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -338,7 +351,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -369,10 +381,10 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: 'DIRIGIDO A EJEMPLO',
+      managedTo: this.infoRequest.nameOfOwner,
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      positionAddressee: 'CARGO DE EJEMPLO',
+      positionAddressee: this.infoRequest.holderCharge,
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '212',
@@ -390,7 +402,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -443,7 +454,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -496,7 +506,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -549,7 +558,6 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        //this.changeStatusAnswered();
         this.openReport(data);
         this.loading = false;
         this.close();
@@ -741,6 +749,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
+    const notificationValidate = 'Y';
     const idReportAclara = data.id;
     //const idDoc = data.id;
     const idTypeDoc = Number(data.documentTypeId);
@@ -754,7 +763,15 @@ export class NotifyAssetsImproprietyFormComponent
         //idDoc,
         idReportAclara,
         idSolicitud,
-        callback: (next: boolean) => {},
+        notificationValidate,
+        callback: (next: boolean) => {
+          if (next) {
+            console.log('Modal cerrado 1');
+            this.changeStatusAnswered();
+          } else {
+            console.log('Modal no cerrado 1');
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -784,6 +801,7 @@ export class NotifyAssetsImproprietyFormComponent
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
+    console.log('Informació del token', token);
     //Trae el año actuar
     const year = this.today.getFullYear();
     //Cadena final (Al final las siglas ya venian en el token xd)
