@@ -497,6 +497,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           body['orderservice'] = orderservice;
 
           const taskResult = await this.createTaskOrderService(body);
+          console.log('tarea', taskResult);
           if (taskResult) {
             this.loadingTurn = false;
             this.msgModal(

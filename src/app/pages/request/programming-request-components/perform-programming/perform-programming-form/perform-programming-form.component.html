@@ -106,7 +106,7 @@
               control="tranferId"
               [data]="transferences"
               value="id"
-              bindLabel="nametransferent"
+              bindLabel="nameTransferent"
               label="Selecciona transferente"
               (change)="transferentSelect($event)"
               (fetchItems)="getTransferentSelect($event)"></ngx-select>
@@ -280,7 +280,7 @@
         </button>
       </div>
       <ng2-smart-table
-        [attr.class]="'table-bordered'"
+        [attr.class]="'table-bordered table-responsive'"
         [settings]="settingUser"
         [source]="usersToProgramming"
         (edit)="openForm($event.data)"
@@ -302,7 +302,7 @@
         <button class="btn btn-danger btn-sm active">Limpiar</button>
       </div>
 
-      <div class="justify-content-start btn-toolbar">
+      <div class="justify-content-start btn-toolbar pt-4">
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <button
           class="btn btn-primary btn-sm active"
@@ -319,7 +319,7 @@
       <div [class]="loadingGoods ? 'table-loading' : ''">
         <ng2-smart-table
           id="tableGoods"
-          [attr.class]="'table-bordered'"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings"
           [source]="estatesList">
         </ng2-smart-table>
@@ -339,12 +339,15 @@
                   "></app-columns-select>
               </div>
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingsTransportableGoods"
                 [source]="goodsTranportables"
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodTrans($event.data)">
               </ng2-smart-table>
+              <app-pagination
+                [params]="paramsTransportableGoods"
+                [totalItems]="totalItemsTransportableGoods"></app-pagination>
             </tab>
             <tab [heading]="headingGuard">
               <div class="d-flex justify-content-end">
@@ -358,6 +361,9 @@
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodGuard($event.data)">
               </ng2-smart-table>
+              <app-pagination
+                [params]="paramsGuardGoods"
+                [totalItems]="totalItemsTransportableGuard"></app-pagination>
             </tab>
             <tab [heading]="headingWarehouse">
               <div class="d-flex justify-content-end">
@@ -371,6 +377,11 @@
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodWarehouse($event.data)">
               </ng2-smart-table>
+              <app-pagination
+                [params]="paramsWarehouseGoods"
+                [totalItems]="
+                  totalItemsTransportableWarehouse
+                "></app-pagination>
             </tab>
           </tabset>
         </div>

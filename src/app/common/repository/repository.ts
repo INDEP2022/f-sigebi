@@ -30,6 +30,11 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
+  getGoodByIds(route: string): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<T>(`${fullRoute}`);
+  }
+
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     // console.log(fullRoute);

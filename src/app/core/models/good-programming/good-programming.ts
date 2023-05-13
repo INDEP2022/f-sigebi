@@ -60,6 +60,7 @@ export interface IGoodProgrammingSelect {
   addressGood: number;
   aliasWarehouse: string;
   code: number;
+  googId: number;
   cveSettlement: number;
   cveState: number;
   cveTownship: number;
@@ -73,6 +74,7 @@ export interface IGoodProgrammingSelect {
   idDelegationRegionalSol: number;
   idGood: number;
   idGoodProperty: number;
+  goodNumber: number;
   idRequest: number;
   idStation: number;
   idSubtypeGood: number;
@@ -92,13 +94,15 @@ export interface IGoodProgrammingSelect {
 }
 
 export interface IGoodInfo {
-  goodId: number;
-  uniqueKey: string;
-  fileNumber: string;
-  description: string;
-  descriptionGoodSae: string;
-  quantity: number;
-  unitMeasure: string;
-  physicalStatus: number | string;
-  reprogrammationNumber: number;
+  goodId?: number;
+  uniqueKey?: string;
+  fileNumber?: string;
+  goodDescription?: string;
+  aliasWarehouse?: string;
+  description?: string;
+  descriptionGoodSae?: string;
+  quantity?: number;
+  unitMeasure?: string;
+  physicalStatus?: number | string;
+  reprogrammationNumber?: number;
 }

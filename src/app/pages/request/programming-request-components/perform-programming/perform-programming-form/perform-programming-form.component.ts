@@ -25,9 +25,11 @@ import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { DomicileService } from 'src/app/core/services/catalogs/domicile.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
@@ -107,6 +109,8 @@ export class PerformProgrammingFormComponent
   totalItems: number = 0;
   paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsTransportableGoods: number = 0;
+  totalItemsTransportableGuard: number = 0;
+  totalItemsTransportableWarehouse: number = 0;
   paramsGuardGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsGuardGoods: number = 0;
   paramsWarehouseGoods = new BehaviorSubject<ListParams>(new ListParams());
@@ -117,6 +121,7 @@ export class PerformProgrammingFormComponent
   loadGoods: boolean = false;
   delegationId: number = 0;
   delRegUserLog: string = '';
+  showGoods: IGoodProgramming;
   settingUser = { ...this.settings, ...SettingUserTable };
 
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
@@ -146,7 +151,9 @@ export class PerformProgrammingFormComponent
     private activatedRoute: ActivatedRoute,
     private programmingService: ProgrammingRequestService,
     private goodService: GoodService,
-    private showHideErrorInterceptorService: showHideErrorInterceptorService
+    private showHideErrorInterceptorService: showHideErrorInterceptorService,
+    private transferentesSaeService: TransferentesSaeService,
+    private domicilieService: DomicileService
   ) {
     super();
 
@@ -182,7 +189,7 @@ export class PerformProgrammingFormComponent
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
     this.showUsersProgramming();
-    this.getGoodsProgTrans();
+    //this.getGoodsProgTrans();
   }
 
   //Información de el usuario logeado//
@@ -216,6 +223,7 @@ export class PerformProgrammingFormComponent
   sendGood(good: any, selected: boolean) {
     if (selected) {
       this.goodSelect.push(good);
+      console.log('good', good);
     } else {
       this.goodSelect = this.goodSelect.filter(
         _good => _good.idGood != _good.idGood
@@ -280,6 +288,9 @@ export class PerformProgrammingFormComponent
     if (type.id != null) {
       this.showForm = true;
       this.idTypeRelevant = type.id;
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoods());
     }
   }
 
@@ -345,8 +356,8 @@ export class PerformProgrammingFormComponent
         if (data) {
           this.onLoadToast(
             'success',
-            'Usuario agregado a la programación correctamente',
-            ''
+            'Correcto',
+            'Usuarios agregados a la programación correctamente'
           );
           this.showUsersProgramming();
         }
@@ -456,13 +467,22 @@ export class PerformProgrammingFormComponent
 
   getTransferentSelect(params?: ListParams) {
     if (this.idState) {
+      params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
+      params['sortBy'] = 'nameTransferent:ASC';
       this.showSelectTransferent = true;
-      const type = 'TLP';
       const state = Number(this.idState);
-      this.transferentService
-        .getByTypeUserIdState(params, state, type)
-        .subscribe(data => {
-          this.transferences = new DefaultSelect(data.data, data.count);
+      this.transferentesSaeService
+        .getStateByTransferentKey(state, params)
+        .subscribe({
+          next: response => {
+            const transferent = response.data.map(transferent => {
+              return transferent.transferent;
+            });
+            this.transferences = new DefaultSelect(transferent, response.count);
+          },
+          error: error => {
+            console.log(error);
+          },
         });
     }
   }
@@ -539,7 +559,7 @@ export class PerformProgrammingFormComponent
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
-
+    console.log('filter', filterColumns);
     this.goodsQueryService
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
@@ -553,8 +573,9 @@ export class PerformProgrammingFormComponent
               return items;
             }
           });
-
           this.filterGoodsProgramming(goodsFilter);
+          //this.estatesList.load(goodsFilter);
+          //this.totalItems = response.count;
           this.loadingGoods = false;
         },
         error: error => (this.loadingGoods = false),
@@ -599,32 +620,27 @@ export class PerformProgrammingFormComponent
   //bienes ya programados
   GoodsProgramming(goodsFilter: any) {
     this.estatesList.load(goodsFilter);
-    this.totalItems = goodsFilter.count;
+    this.totalItems = this.estatesList.count();
   }
 
   sendTransportable() {
     if (this.goodSelect.length) {
-      this.goodSelect.map((item: any) => {
-        const formData: Object = {
-          programmingId: this.idProgramming,
-          creationUser: 'aigebi admon',
-          creationDate: new Date(),
-          modificationUser: 'aigebi admon',
-          modificationDate: new Date(),
-          goodId: item.googId,
-          version: '1',
-          status: 'EN_TRANSPORTABLE',
-        };
+      this.alertQuestion(
+        'info',
+        'Acción',
+        'Los bienes seleccionados serán enviados a transportable'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.insertGoodsProgTrans();
+        }
       });
-
-      this.insertGoodsProgTrans();
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
-  /*------Insetar bienes con status transportable -----*/
-  insertGoodsProgTrans() {
+  /*------Inserta bienes con status transportable -----*/
+  async insertGoodsProgTrans() {
     this.goodSelect.map((item: any) => {
       const formData: Object = {
         programmingId: this.idProgramming,
@@ -636,88 +652,136 @@ export class PerformProgrammingFormComponent
       };
       this.programmingGoodService.createGoodsService(formData).subscribe({
         next: () => {},
+        error: error => {
+          console.log(error);
+        },
       });
     });
 
-    this.changeStatusGoodTrans();
-    this.getProgGoods();
+    const goods: any = await this.changeStatusGoodTrans();
+    if (goods) {
+      this.showGoodsTransportable(goods);
+    }
   }
 
   /*------------Cambiar status del bien a transportable ------------------*/
   changeStatusGoodTrans() {
-    this.goodSelect.map((item: any) => {
-      const formData: Object = {
-        id: Number(item.goodNumber),
-        goodId: item.googId,
-        programmationStatus: 'EN_TRANSPORTABLE',
-      };
-
-      this.programmingGoodService.updateGoodByBody(formData).subscribe({
-        next: () => {},
+    return new Promise(async (resolve, reject) => {
+      this.goodSelect.map(item => {
+        const formData: Object = {
+          id: Number(item.goodNumber),
+          goodId: item.googId,
+          programmationStatus: 'EN_TRANSPORTABLE',
+        };
+        this.goodService.updateByBody(formData).subscribe({
+          next: () => {},
+        });
       });
+
+      const showGoods: any = await this.getFilterGood('EN_TRANSPORTABLE');
+      if (showGoods) {
+        resolve(showGoods);
+      }
     });
-    this.getGoodsProgTrans();
   }
 
-  /*------------Visualizar bienes programables transportables ---------------*/
-  getGoodsProgTrans() {
-    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
-      this.idProgramming;
-
-    this.programmingService
-      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
-      .subscribe(data => {
-        console.log('data', data);
-        this.getGoodsTransportable(data.data);
+  showGoodsTransportable(showGoods: IGoodProgramming[]) {
+    console.log('Mostrar', showGoods);
+    showGoods.map((items: any) => {
+      this.goodService.getGoodByIds(items.goodId).subscribe({
+        next: async response => {
+          console.log('bienes transportables', response);
+          const aliasWarehouse = await this.getAliasWarehouse(
+            response.addressId
+          );
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          response['aliasWarehouse'] = aliasWarehouse;
+          this.goodsInfoTrans.push(response);
+          this.goodsTranportables.load(this.goodsInfoTrans);
+          this.totalItemsTransportableGoods = this.goodsTranportables.count();
+          this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
+          this.getProgGoods();
+          this.goodSelect = [];
+        },
       });
+    });
+  }
+
+  getAliasWarehouse(idAddress: number) {
+    return new Promise((resolve, reject) => {
+      this.domicilieService.getById(idAddress).subscribe({
+        next: response => {
+          resolve(response.aliasWarehouse);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+  /*------------Visualizar bienes programables transportables ---------------*/
+  getFilterGood(type: string) {
+    return new Promise((resolve, reject) => {
+      this.paramsTransportableGoods.getValue()['filter.programmingId'] =
+        this.idProgramming;
+
+      this.programmingService
+        .getGoodsProgramming(this.paramsTransportableGoods.getValue())
+        .subscribe(data => {
+          const filterGood = data.data.filter(item => {
+            return item.status == type;
+          });
+          resolve(filterGood);
+          //
+        });
+    });
   }
 
   /*-------------Filtrar bienes tranportable --------------*/
 
   getGoodsTransportable(data: IGoodProgramming[]) {
-    const filterTrans = data.filter(item => {
-      return item.status == 'EN_TRANSPORTABLE';
-    });
-
-    filterTrans.map((items: any) => {
-      this.goodService.getById(items.goodId).subscribe({
-        next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          this.goodsInfoTrans.push(response);
-          this.goodsTranportables.load(this.goodsInfoTrans);
-          this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
-        },
+    return new Promise((resolve, reject) => {
+      const filterTrans = data.filter(item => {
+        return item.status == 'EN_TRANSPORTABLE';
       });
+      resolve(filterTrans);
     });
   }
 
   /*------------ Enviar datos a resguardo ----------------------*/
   sendGuard() {
     if (this.goodSelect.length) {
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-      const idTransferent = this.idTrans;
-      config.initialState = {
-        idTransferent,
-        callback: (data: any) => {
-          if (data) this.addGoodsGuards(data);
-        },
-      };
+      this.alertQuestion(
+        'info',
+        'Acción',
+        'Los bienes seleccionados serán enviados a resguardo'
+      ).then(question => {
+        if (question.isConfirmed) {
+          let config = {
+            ...MODAL_CONFIG,
+            class: 'modal-lg modal-dialog-centered',
+          };
+          const idTransferent = this.idTrans;
+          config.initialState = {
+            idTransferent,
+            callback: (data: any) => {
+              if (data) this.addGoodsGuards(data);
+            },
+          };
 
-      this.modalService.show(WarehouseSelectFormComponent, config);
+          this.modalService.show(WarehouseSelectFormComponent, config);
+        }
+      });
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
-  addGoodsGuards(data: any) {
+  async addGoodsGuards(data: any) {
     //console.log('Almacén a guardar ', data);
-    console.log('Bienes a insertar', this.goodSelect);
     this.goodSelect.map((item: any) => {
       const formData: Object = {
         programmingId: this.idProgramming,
@@ -731,57 +795,52 @@ export class PerformProgrammingFormComponent
         .createGoodsService(formData)
         .subscribe(() => {});
     });
-    this.changeStatusGoodGuard();
+
+    const goods: any = await this.changeStatusGoodGuard();
+    if (goods) {
+      this.showGoodsGuard(goods);
+    }
     this.getProgGoods();
   }
 
   /*------------Cambio de status a resguardo ------------------*/
   changeStatusGoodGuard() {
-    this.goodSelect.map((item: any) => {
-      const formData: Object = {
-        id: Number(item.goodNumber),
-        goodId: item.googId,
-        programmationStatus: 'EN_RESGUARDO',
-      };
+    return new Promise(async (resolve, reject) => {
+      this.goodSelect.map((item: any) => {
+        const formData: Object = {
+          id: Number(item.goodNumber),
+          goodId: item.googId,
+          programmationStatus: 'EN_RESGUARDO',
+        };
 
-      this.programmingGoodService
-        .updateGoodByBody(formData)
-        .subscribe(() => {});
-    });
-    this.getGoodsProgGuard();
-  }
-
-  /*------------ visualizar bienes programables  ---------------*/
-  getGoodsProgGuard() {
-    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
-      this.idProgramming;
-    this.programmingService
-      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
-      .subscribe(data => {
-        this.getGoodsGuards(data.data);
+        this.goodService.updateByBody(formData).subscribe({
+          next: () => {},
+        });
       });
+      const showGoods: any = await this.getFilterGood('EN_RESGUARDO');
+      if (showGoods) {
+        resolve(showGoods);
+      }
+    });
   }
 
-  //Filtrar información por resguardo//
-  getGoodsGuards(data: IGoodProgramming[]) {
-    const filterTrans = data.filter(item => {
-      return item.status == 'EN_RESGUARDO';
-    });
-
-    filterTrans.map((items: any) => {
-      this.goodService.getById(items.goodId).subscribe({
-        next: response => {
+  showGoodsGuard(showGoods: IGoodProgramming[]) {
+    console.log('Mostrar', showGoods);
+    showGoods.map((items: any) => {
+      this.goodService.getGoodByIds(items.goodId).subscribe({
+        next: async response => {
+          console.log('bienes RESGUARDO', response);
+          const aliasWarehouse = await this.getAliasWarehouse(
+            response.addressId
+          );
           if (response.saePhysicalState == 1)
             response.saePhysicalState = 'BUENO';
           if (response.saePhysicalState == 2)
             response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          console.log('id alamcén', response.storeNumber);
-
-          this.goodsInfoGuard.push(response);
-          this.goodsGuards.load(this.goodsInfoGuard);
+          response['aliasWarehouse'] = aliasWarehouse;
+          this.goodsInfoTrans.push(response);
+          this.goodsGuards.load(this.goodsInfoTrans);
+          this.totalItemsTransportableGuard = this.goodsGuards.count();
           this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
         },
       });
@@ -791,22 +850,33 @@ export class PerformProgrammingFormComponent
   /* Enviar datos a almacén */
   sendWarehouse() {
     if (this.goodSelect.length) {
-      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-      const idTransferent = this.idTrans;
-      config.initialState = {
-        idTransferent,
-        callback: (data: any) => {
-          if (data) this.addGoodsWarehouse();
-        },
-      };
+      this.alertQuestion(
+        'info',
+        'Acción',
+        'Los bienes seleccionados serán enviado a almacén'
+      ).then(question => {
+        if (question.isConfirmed) {
+          let config = {
+            ...MODAL_CONFIG,
+            class: 'modal-lg modal-dialog-centered',
+          };
+          const idTransferent = this.idTrans;
+          config.initialState = {
+            idTransferent,
+            callback: (data: any) => {
+              if (data) this.addGoodsWarehouse();
+            },
+          };
 
-      this.modalService.show(WarehouseSelectFormComponent, config);
+          this.modalService.show(WarehouseSelectFormComponent, config);
+        }
+      });
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
-  addGoodsWarehouse() {
+  async addGoodsWarehouse() {
     this.goodSelect.map((item: any) => {
       const formData: Object = {
         programmingId: this.idProgramming,
@@ -821,62 +891,55 @@ export class PerformProgrammingFormComponent
         .subscribe(() => {});
     });
 
-    this.changeStatusGoodWarehouse();
-    this.getProgGoods();
+    const goods: any = await this.changeStatusGoodWarehouse();
+    if (goods) {
+      this.showGoodsWarehouse(goods);
+    }
   }
 
   //Cambio de status en la programación//
 
-  changeStatusGoodWarehouse() {
-    this.goodSelect.map((item: any) => {
-      const formData: Object = {
-        id: Number(item.goodNumber),
-        goodId: item.googId,
-        programmationStatus: 'EN_ALMACEN',
-      };
-
-      this.programmingGoodService
-        .updateGoodByBody(formData)
-        .subscribe(() => {});
-    });
-
-    this.getGoodsProgWarehouse();
-  }
-
-  // Visualizar bienes programables //
-  getGoodsProgWarehouse() {
-    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
-      this.idProgramming;
-    this.programmingService
-      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
-      .subscribe(data => {
-        this.getGoodsWarehouse(data.data);
+  async changeStatusGoodWarehouse() {
+    return new Promise(async (resolve, reject) => {
+      this.goodSelect.map((item: any) => {
+        console.log('tem', item);
+        const formData: Object = {
+          id: Number(item.goodNumber),
+          goodId: item.googId,
+          programmationStatus: 'EN_ALMACEN',
+        };
+        this.goodService.updateByBody(formData).subscribe({
+          next: () => {},
+        });
       });
+
+      const showGoods: any = await this.getFilterGood('EN_ALMACEN');
+      if (showGoods) {
+        resolve(showGoods);
+      }
+    });
   }
 
   //filtrar información por almacén //
 
-  async getGoodsWarehouse(data: IGoodProgramming[]) {
-    const filterTrans = data.filter(item => {
-      return item.status == 'EN_ALMACEN';
-    });
-
-    filterTrans.map((items: any) => {
-      this.goodService.getById(items.goodId).subscribe({
-        next: response => {
+  async showGoodsWarehouse(showGoods: IGoodProgramming[]) {
+    console.log('Mostrar', showGoods);
+    showGoods.map((items: any) => {
+      this.goodService.getGoodByIds(items.goodId).subscribe({
+        next: async response => {
+          console.log('bienes ALMACÉN', response);
+          const aliasWarehouse = await this.getAliasWarehouse(
+            response.addressId
+          );
           if (response.saePhysicalState == 1)
             response.saePhysicalState = 'BUENO';
           if (response.saePhysicalState == 2)
             response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          console.log('id alamcén', response.storeNumber);
-
-          this.goodsInfoWarehouse.push(response);
-          this.goodsWarehouse.load(this.goodsInfoWarehouse);
+          response['aliasWarehouse'] = aliasWarehouse;
+          this.goodsInfoTrans.push(response);
+          this.goodsWarehouse.load(this.goodsInfoTrans);
+          this.totalItemsTransportableWarehouse = this.goodsWarehouse.count();
           this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
-          this.goodSelect = [];
         },
       });
     });
@@ -925,7 +988,7 @@ export class PerformProgrammingFormComponent
     this.goodService.updateByBody(_good).subscribe({
       next: res => {
         this.goodsInfoTrans = [];
-        this.getGoodsProgTrans();
+        //this.getGoodsProgTrans();
       },
       error: error => {},
     });

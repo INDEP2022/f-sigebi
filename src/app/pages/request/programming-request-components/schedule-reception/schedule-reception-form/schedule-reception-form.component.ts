@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { UsersSelectedToTurnComponent } from '../../../shared-request/users-selected-to-turn/users-selected-to-turn.component';
@@ -36,6 +37,8 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
   nickName: string = '';
   delegationUser: string = '';
   typeEvent: string = '';
+  taskId: number = 0;
+  programmingId: number = 0;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -44,7 +47,9 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
     private bsModalRef: BsModalRef,
     private authService: AuthService,
     private programmingGoodService: ProgrammingGoodService,
-    private genericService: GenericService
+    private genericService: GenericService,
+    private activateRouter: ActivatedRoute,
+    private taskService: TaskService
   ) {
     super();
     let now = moment();
@@ -54,9 +59,73 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getUserInfo();
-    this.getUserSelect(new ListParams());
     this.userLogData();
     this.getTypeEvent();
+  }
+
+  getUserInfo() {
+    this.programmingRequestService.getUserInfo().subscribe((data: any) => {
+      this.nameUser = data.name;
+      this.typeUserLog = data.employeetype;
+      this.regionalDelegationNum = data.department;
+    });
+  }
+
+  async generateFirstTask() {
+    const programmingResult: any = await this.createProgramming();
+    if (programmingResult) {
+      this.programmingId = programmingResult.id;
+      const user: any = this.authService.decodeToken();
+
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = user.username;
+      task['assigneesDisplayname'] = user.username;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.programmingId);
+      task['title'] = 'Realizar Programación con folio: ' + this.programmingId;
+      task['programmingId'] = this.programmingId;
+      task['requestId'] = 0;
+      task['expedientId'] = 0;
+      task['urlNb'] = 'pages/request/programming-request/schedule-reception';
+
+      const taskResult: any = await this.createOnlyTask(task);
+      if (taskResult) {
+        this.taskId = Number(taskResult.data[0].id);
+        console.log('task Id', this.taskId);
+      }
+    }
+  }
+
+  createOnlyTask(task: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error.error.message);
+        },
+      });
+    });
+  }
+
+  createProgramming() {
+    return new Promise((resolve, reject) => {
+      const programmingData: IGoodProgramming = {
+        typeUser: this.typeUserLog,
+        regionalDelegationNumber: this.regionalDelegationNum,
+      };
+      this.programmingGoodService.createProgramming(programmingData).subscribe({
+        next: async (response: IGoodProgramming) => {
+          resolve(response);
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error', 'Error al crear la solicitud');
+          reject(error.error);
+        },
+      });
+    });
   }
 
   parseDateNoOffset(date: string | Date): Date {
@@ -70,7 +139,6 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.name'] = 'Tipo Evento';
     this.genericService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        console.log('tipo Evento', response);
         this.typeEvent = response.data[0].description;
       },
       error: error => {
@@ -82,15 +150,6 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
   userLogData() {
     let userLog = this.authService.decodeToken();
     this.delegationUser = userLog.delegacionreg;
-  }
-
-  getUserInfo() {
-    this.programmingRequestService.getUserInfo().subscribe((data: any) => {
-      console.log('data', data);
-      this.nameUser = data.name;
-      this.typeUserLog = data.employeetype;
-      this.regionalDelegationNum = data.department;
-    });
   }
 
   prepareForm() {
@@ -111,33 +170,58 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
       'question',
       'Turnar Solicitud',
       `¿Deseas turnar la solicitud a ${this.userName}?`
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
-        this.loading = true;
-        this.requestForm.get('creationUser').setValue(this.nameUser);
-        console.log('Enviar', this.requestForm.value);
+        const programmingResult: any = await this.createProgramming();
+        if (programmingResult) {
+          this.loading = true;
+          this.programmingId = programmingResult.id;
+          this.requestForm.get('creationUser').setValue(this.nameUser);
+          const user: any = this.authService.decodeToken();
+          let body: any = {};
 
-        const programmingData: IGoodProgramming = {
-          typeUser: this.typeUserLog,
-          regionalDelegationNumber: this.regionalDelegationNum,
-        };
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Programar_Recepcion';
+          body['ssubtype'] = 'TURNAR';
 
-        //SABER DONDE SE GUARDA EL USUARIO TURNADO//
-        this.programmingGoodService
-          .createProgramming(programmingData)
-          .subscribe({
-            next: response => {
-              console.log('Guardado', response);
-            },
-            error: error => {},
-          });
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = this.userName;
+          task['assigneesDisplayname'] = this.userName;
+          task['creator'] = user.username;
+          task['taskNumber'] = this.programmingId;
+          task['title'] =
+            'Realizar Programación con folio: ' + this.programmingId;
+          task['programmingId'] = this.programmingId;
+          task['requestId'] = 0;
+          task['expedientId'] = 0;
+          task['urlNb'] =
+            'pages/request/programming-request/perform-programming';
+          task['processName'] = 'SolicitudProgramacion';
+          body['task'] = task;
 
-        this.loading = false;
+          console.log('task', body);
+          const taskResult = await this.createTaskOrderService(body);
+          console.log('tarea creada ', taskResult);
+        }
       }
     });
   }
 
-  getUserSelect(user: ListParams) {}
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          console.log(error.error.message);
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
+    });
+  }
 
   openModalSelectUser() {
     const delegationUserLog = this.delegationUser;
