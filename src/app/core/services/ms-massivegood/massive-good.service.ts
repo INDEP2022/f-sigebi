@@ -71,4 +71,9 @@ export class MassiveGoodService extends HttpService {
     const route = `${this.route.GetFlierNumberMassiveGood}/${goodNumber}`;
     return this.get(route);
   }
+
+  updateMassiveGoods(body: {}) {
+    const route = `${this.route.MassiveChargeGoods}/update-massive-goods`;
+    return this.put(route, body);
+  }
 }
