@@ -168,8 +168,11 @@ export class VerifyComplianceTabComponent
     };
 
     /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
-    if (this.typeDoc === 'approval-process') {
+    if (this.process === 'approval-process') {
       this.checkboxReadOnly = true;
+      this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
+    } else if ((this.process = 'verify-compliance')) {
+      this.checkboxReadOnly = false;
       this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
     }
   }
@@ -477,7 +480,14 @@ export class VerifyComplianceTabComponent
   }
 
   clarificationSelected(event: any) {
-    this.clarifyRowSelected = event.selected;
+    console.log(event);
+    if (event.isSelected == true) {
+      this.showClarificationButtons =
+        event.data.answered == 'ACLARADA' ? false : true;
+      this.clarifyRowSelected = event.selected;
+    } else {
+      this.showClarificationButtons = true;
+    }
   }
 
   newClarification() {
@@ -761,7 +771,9 @@ export class VerifyComplianceTabComponent
     if (this.goodsSelected.length === 1) {
       //verifica si el bien ya fue aclarado para desabilitar
       this.showClarificationButtons =
-        this.goodsSelected[0].goodStatus == 'ACLARADO' ? false : true;
+        this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
+          ? true
+          : false;
       this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
@@ -866,8 +878,8 @@ export class VerifyComplianceTabComponent
               let body: any = {};
               body['id'] = this.goodsSelected[0].id;
               body['goodId'] = this.goodsSelected[0].goodId;
-              body.processStatus = 'REGISTRO_SOLICITUD';
-              body.goodStatus = 'REGISTRO_SOLICITUD';
+              body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+              body.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
               await this.updateGoods(body);
             }
           },

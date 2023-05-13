@@ -242,7 +242,7 @@ export class PartializeButtonComponent
     v_avaluo: string,
     newImporte: number
   ) {
-    debugger;
+    // debugger;
     this.vfactor = this.cantidad.value / this.vimporte;
     console.log(this.cantidad.value, this.vimporte);
     this.vres = this.vimporte - newImporte;
@@ -257,8 +257,8 @@ export class PartializeButtonComponent
     console.log(avaluo);
     const { importe, cantidad } = this.fillImporteCant();
     const noBien = this.good.goodId;
-    this.service.sumCant += cantidad;
-    this.service.sumVal14 += importe;
+    this.service.sumCant += +(cantidad + '');
+    this.service.sumVal14 += +(importe + '');
     // this.vident++;
     this.bienesPar.push({
       id: this.vident,
@@ -276,7 +276,7 @@ export class PartializeButtonComponent
   }
 
   private async partializeContent() {
-    debugger;
+    // debugger;
     this.form.get('ind').setValue('N');
     if (this.form.valid && this.formGood.valid) {
       // debugger;
