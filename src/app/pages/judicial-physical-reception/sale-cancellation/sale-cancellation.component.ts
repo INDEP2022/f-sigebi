@@ -376,8 +376,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       });
   }
 
-  validateGood(good: any) {}
-
   fillIncomeProceeding(dataRes: any) {
     const paramsF = new FilterParams();
     this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
