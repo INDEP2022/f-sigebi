@@ -5,6 +5,7 @@ import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -12,7 +13,12 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
-import { IGood, IValNumeOtro, IVban } from 'src/app/core/models/ms-good/good';
+import {
+  IGood,
+  ILvlPrograma,
+  IValNumeOtro,
+  IVban,
+} from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
@@ -334,76 +340,102 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   } */
 
   //Validacion de bienes
-  validateGood(good: any) {
+  validateGood(
+    good: any
+  ): Observable<{ available: boolean; bamparo: boolean }> {
     console.log(good);
-    let cu_valnume = 1;
-    let cu_valotro = 1;
-    let vn_numerario = 0;
-    let lv_programa = 2;
+    let cu_valnume: number;
+    let cu_valotro: number;
+    let vn_numerario: number;
+    let lv_programa: number;
     let di_disponible = false;
     let di_numerario = false;
     let di_acta: number = null;
     let bamparo = false;
     //!VALNUME Y VALOTRO
-    /* CURSOR CU_VALNUME (pc_pantalla VARCHAR2) IS
-      SELECT 1
-        FROM bienes bie,
-             estatus_x_pantalla exp
-       WHERE bie.estatus       = exp.estatus
-         AND exp.cve_pantalla  = pc_pantalla
-         AND bie.no_bien       = :blk_bie.no_bien
-         AND NVL(EXP.ACCION,'ENTREGA') = 'NUME'
-         AND EXP.IDENTIFICADOR = :blk_bie.IDENTIFICADOR
-         AND EXP.PROCESO_EXT_DOM = :blk_bie.PROCESO_EXT_DOM;--AKCO201009
-   CURSOR CU_VALOTRO (pc_pantalla VARCHAR2) IS
-      SELECT 1
-        FROM bienes bie,
-             estatus_x_pantalla exp
-       WHERE bie.estatus       = exp.estatus
-         AND exp.cve_pantalla  = pc_pantalla
-         AND bie.no_bien       = :blk_bie.no_bien
-         AND NVL(EXP.ACCION,'ENTREGA') <> 'NUME'
-         AND EXP.IDENTIFICADOR = :blk_bie.IDENTIFICADOR
-         AND EXP.PROCESO_EXT_DOM = :blk_bie.PROCESO_EXT_DOM; */
-    const valModel: IValNumeOtro = {
-      pc_pantalla: 'FACTREFACTAENTREC',
-      no_bien: good.id,
-      identificador: good.identifier,
-      proceso_ext_dom: good.extDomProcess,
-    };
 
-    console.log(valModel);
+    return new Observable(observer => {
+      const valModel: IValNumeOtro = {
+        pc_pantalla: 'FACTREFACTAENTREC',
+        no_bien: good.id,
+        identificador: good.identifier,
+        proceso_ext_dom: good.extDomProcess,
+      };
 
-    this.serviceGoodProcess.getValNume(valModel).subscribe(
-      res => {
-        console.log({ valNume: res });
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      const completeObservation = () => {
+        observer.next({
+          available: di_disponible,
+          bamparo: bamparo,
+        });
+        observer.complete();
+      };
 
-    this.serviceGoodProcess.getValOtro(valModel).subscribe(
-      res => {
-        console.log({ valOtro: res });
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      const getAmparo = () => {
+        this.serviceGood
+          .getById(`${good.id}&filter.labelNumber=$eq:6`)
+          .subscribe(
+            res => {
+              bamparo = true;
+              completeObservation();
+            },
+            err => {
+              (bamparo = false), completeObservation();
+            }
+          );
+      };
 
-    //!VN_NUMERARIO
-    /**
-     SELECT 1
-           INTO vn_numerario
-           FROM BIENES
-          WHERE NO_BIEN = :blk_bie.no_bien
-            AND NO_CLASIF_BIEN IN (SELECT NO_CLASIF_BIEN
-                                     FROM CAT_SSSUBTIPO_BIEN
-                                    WHERE NO_TIPO = 7
-                                      AND NO_SUBTIPO = 1);
-     */
-    if (vn_numerario) {
+      this.serviceGoodProcess.getVnNumerario(good.id).subscribe(
+        res => {
+          di_numerario = true;
+          this.serviceGoodProcess.getValNume(valModel).subscribe(res => {
+            di_disponible = true;
+            getAmparo();
+          });
+        },
+        err => {
+          if (err.status === 400 || err.status === 404) {
+            di_numerario = true;
+            this.serviceGoodProcess.getValNume(valModel).subscribe(
+              res => {
+                di_disponible = true;
+                getAmparo();
+              },
+              err => {
+                getAmparo();
+              }
+            );
+          } else {
+            di_numerario = false;
+            this.serviceGoodProcess.getValOtro(valModel).subscribe(
+              res => {
+                const modelLvlPrograma: ILvlPrograma = {
+                  no_bien: good.id,
+                  no_expediente: this.form.get('expediente').value,
+                };
+                this.serviceGoodProcess
+                  .getLvlPrograma(modelLvlPrograma)
+                  .subscribe(
+                    res => {
+                      lv_programa = JSON.parse(JSON.stringify(res)).lv_programa;
+                      getAmparo();
+                    },
+                    err => {
+                      lv_programa = 0;
+                      di_disponible = false;
+                      getAmparo();
+                    }
+                  );
+              },
+              err => {
+                getAmparo();
+              }
+            );
+          }
+        }
+      );
+    });
+
+    /*     if (vn_numerario === 1) {
       di_numerario = true;
       if (cu_valnume > 0) {
         di_disponible = true;
@@ -413,39 +445,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       if (cu_valotro > 0) {
         di_disponible = true;
       }
-    }
+    } */
 
-    if (di_acta != null || di_acta > 0) {
+    /* if (di_acta != null || di_acta > 0) {
       di_disponible = false;
+      console.log({ di_acta: di_disponible });
     }
 
-    if (di_disponible && !di_numerario) {
-      /*       SELECT COUNT(0)
-              INTO lv_programa
-              FROM DETALLE_ACTA_ENT_RECEP
-             WHERE NO_BIEN = :blk_bie.no_bien
-               AND NO_ACTA IN (SELECT NO_ACTA
-                                 FROM ACTAS_ENTREGA_RECEPCION
-                                WHERE TIPO_ACTA = 'EVENTREC') 
-                 AND TRUNC(FEC_INDICA_USUARIO_APROBACION) BETWEEN to_date('01'||to_char(sysdate,'mmyyyy'),'ddmmyyyy') and last_day(trunc(sysdate));*/
-      if (lv_programa === 0) {
-        di_disponible = false;
-      }
-    }
-
-    this.serviceGood.getById(`${good.id}&filter.labelNumber=$eq:6`).subscribe(
-      res => {
-        bamparo = true;
-      },
-      err => {
-        bamparo = false;
-      }
-    );
-
+    getAmparo();
     return {
       available: di_disponible,
       bamparo: bamparo,
-    };
+    }; */
   }
 
   //Catalogs
@@ -579,12 +590,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(res);
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
-                let disponible: boolean = false;
-                const resVal = this.validateGood(e);
-                disponible = resVal.available;
-                return { ...e, avalaible: disponible };
+                let disponible: boolean;
+                this.validateGood(e).subscribe(
+                  result => {
+                    console.log(result);
+                    disponible = result.available;
+                    console.log(e);
+                    return { ...e, avalaible: disponible };
+                  },
+                  err => {
+                    return { ...e, avalaible: false };
+                  }
+                );
               })
             );
+            console.log(newData);
             this.dataGoods.load(newData);
           } else {
             this.alert(
@@ -1134,7 +1154,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Select data
   selectRow(e: any) {
     const { data } = e;
-    console.log(data);
+    const resp = this.validateGood(data);
+    console.log(resp);
     this.selectData = data;
     this.form.get('estatusPrueba').setValue(data.goodStatus);
   }

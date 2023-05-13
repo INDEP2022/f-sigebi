@@ -50,33 +50,43 @@
 
           <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
             <div class="col-md-9">
-              <form-field [control]="form.get('actaInicial')">
-                <ngx-select
-                  (fetchItems)="getInitialProceedings($event)"
-                  [class]="!initialProceedingBool ? 'disabled' : ''"
-                  id="actaI"
-                  bindLabel="cve_acta"
-                  control="actaInicial"
-                  label="Acta Inicial"
-                  [form]="form"
-                  [data]="initialProceeding"></ngx-select>
-              </form-field>
+              <div class="col-md-4">
+                <form-field [control]="form.get('actaInicial')">
+                  <ngx-select
+                    (fetchItems)="getInitialProceedings($event)"
+                    [class]="!initialProceedingBool ? 'disabled' : ''"
+                    id="actaI"
+                    bindLabel="proceedingsnumber"
+                    control="actaInicial"
+                    label="Acta Inicial"
+                    [form]="form"
+                    [data]="initialProceeding"></ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-5">
+                <span className="labelActa">{{ keyProceedingInitial }}</span>
+              </div>
             </div>
           </div>
 
           <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
             <div class="col-md-9">
-              <form-field [control]="form.get('actaFinal')">
-                <ngx-select
-                  (fetchItems)="getFinalProceedings($event)"
-                  id="actaF"
-                  control="actaFinal"
-                  [class]="!finalProceedingBool ? 'disabled' : ''"
-                  bindLabel="cve_acta"
-                  label="Acta Final"
-                  [form]="form"
-                  [data]="finalProceeding"></ngx-select>
-              </form-field>
+              <div class="col-md-4">
+                <form-field [control]="form.get('actaFinal')">
+                  <ngx-select
+                    (fetchItems)="getFinalProceedings($event)"
+                    id="actaF"
+                    control="actaFinal"
+                    [class]="!finalProceedingBool ? 'disabled' : ''"
+                    bindLabel="proceedingsnumber"
+                    label="Acta Final"
+                    [form]="form"
+                    [data]="finalProceeding"></ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-5">
+                <span className="labelActa">{{ keyProceedingFinal }}</span>
+              </div>
             </div>
           </div>
         </div>

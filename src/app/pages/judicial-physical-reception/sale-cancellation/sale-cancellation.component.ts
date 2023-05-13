@@ -10,7 +10,11 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
-import { IVban } from 'src/app/core/models/ms-good/good';
+import {
+  IAcceptGoodActa,
+  IAcceptGoodStatusScreen,
+  IVban,
+} from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
@@ -18,6 +22,7 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -165,7 +170,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceSssubtypeGood: GoodSssubtypeService,
     private serviceUser: UsersService,
     private serviceGoodParameter: GoodParametersService,
-    private serviceDocuments: DocumentsService
+    private serviceDocuments: DocumentsService,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super();
   }
@@ -282,11 +288,49 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     }
   }
 
+  validateGood(element: any) {
+    console.log('Valida');
+    let di_disponible = false;
+
+    if (this.form.get('expediente').value != null) {
+      const modelScreen: IAcceptGoodStatusScreen = {
+        pNumberGood: parseInt(element.id),
+        pVcScreen: 'FACTREFACTAVENT',
+      };
+      this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
+        res => {
+          di_disponible = true;
+          let modelActa: IAcceptGoodActa = {
+            pNumberGood: parseInt(element.id),
+            pExpedients: this.form.get('expediente').value,
+          };
+          this.serviceGoodProcess.getacceptGoodActa(modelActa).subscribe(
+            res => {
+              console.log(res.data);
+              if (res.data === 'N') {
+                di_disponible = false;
+              } else {
+                di_disponible = true;
+              }
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        },
+        err => {}
+      );
+    }
+
+    return { di_disponible: di_disponible };
+  }
+
   //Select Rows
 
   rowSelect(e: any) {
     const { data } = e;
-    console.log(data);
+    const resp = this.validateGood(data);
+    console.log(resp);
     this.selectData = data;
     this.form.get('estatusPrueba').setValue(data.goodStatus);
   }
@@ -331,8 +375,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         /* this.enableElement('acta'); */
       });
   }
-
-  validateGood(good: any) {}
 
   fillIncomeProceeding(dataRes: any) {
     const paramsF = new FilterParams();

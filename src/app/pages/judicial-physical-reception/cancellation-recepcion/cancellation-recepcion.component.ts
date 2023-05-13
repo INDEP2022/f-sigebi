@@ -9,13 +9,18 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IVban } from 'src/app/core/models/ms-good/good';
+import {
+  IAcceptGoodActa,
+  IAcceptGoodStatusScreen,
+  IVban,
+} from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -163,7 +168,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceProcVal: ProceedingsDeliveryReceptionService,
     private serviceRNomencla: ParametersService,
     private serviceSssubtypeGood: GoodSssubtypeService,
-    private serviceDocuments: DocumentsService
+    private serviceDocuments: DocumentsService,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super();
   }
@@ -261,6 +267,34 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     } else {
       this.form.get('fecCierreActa').setValue(this.form.get('fecElab').value);
     }
+  }
+
+  validateGood(element: any) {
+    let di_disponible = false;
+
+    if (this.form.get('expediente').value != null) {
+      const modelScreen: IAcceptGoodStatusScreen = {
+        pNumberGood: parseInt(element.id),
+        pVcScreen: 'FACTREFACTAVENT',
+      };
+      this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
+        res => {
+          di_disponible = true;
+          let modelActa: IAcceptGoodActa = {
+            pNumberGood: parseInt(element.id),
+            pExpedients: this.form.get('expediente').value,
+          };
+          this.serviceGoodProcess
+            .getacceptGoodActa(modelActa)
+            .subscribe(res => {
+              console.log(res);
+            });
+        },
+        err => {}
+      );
+    }
+
+    return { di_disponible: di_disponible };
   }
 
   //Catalogs and data
@@ -602,6 +636,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   rowSelect(e: any) {
     const { data } = e;
     console.log(data);
+    this.validateGood(data);
     this.selectData = data;
     this.form.get('estatusPrueba').setValue(data.goodStatus);
   }
