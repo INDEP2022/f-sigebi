@@ -246,7 +246,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
     return this.detailDeliveryReception.getAllFiltered(params.getParams());
   }
 
-  getProceedingsByIds(proceedingIds: number[]) {
+  getProceedingsByIds(proceedingIds: (number | string)[]) {
     const params = new FilterParams();
     params.addFilter('id', proceedingIds.join(','), SearchFilter.IN);
     params.addFilter('statusProceedings', PROCEEDING_STATUS);
