@@ -142,7 +142,7 @@ export abstract class BasePage implements OnDestroy {
       .subscribe();
   }
 
-  protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
+  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
     const throwToast = {
       success: (title: string, text: string) =>
         this._toastrService.success(text, title),
