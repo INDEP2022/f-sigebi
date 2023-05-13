@@ -105,6 +105,7 @@ export class PerformProgrammingFormComponent
   showSelectAuthority: boolean = false;
   showWarehouseInfo: boolean = false;
   loadingGoods: boolean = false;
+  formLoading: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
@@ -121,6 +122,8 @@ export class PerformProgrammingFormComponent
   loadGoods: boolean = false;
   delegationId: number = 0;
   delRegUserLog: string = '';
+  delegation: string = '';
+  employeTypeUserLog: string = '';
   showGoods: IGoodProgramming;
   settingUser = { ...this.settings, ...SettingUserTable };
 
@@ -196,7 +199,9 @@ export class PerformProgrammingFormComponent
   getInfoUserLog() {
     this.programmingService.getUserInfo().subscribe(data => {
       this.userInfo = data;
+      console.log('info user', this.userInfo);
       this.delRegUserLog = this.userInfo.delegacionreg;
+      this.employeTypeUserLog = this.userInfo.employeetype;
     });
   }
 
@@ -271,6 +276,7 @@ export class PerformProgrammingFormComponent
       autorityId: [null, [Validators.required]],
       typeRelevantId: [null, [Validators.required]],
       storeId: [null],
+      folio: [null],
     });
   }
 
@@ -419,6 +425,7 @@ export class PerformProgrammingFormComponent
         .subscribe((delegation: IRegionalDelegation) => {
           console.log('Delegación regional', delegation);
           this.delegationId = delegation.id;
+          this.delegation = delegation.description;
           this.performForm
             .get('regionalDelegationNumber')
             .setValue(delegation.description);
@@ -488,7 +495,7 @@ export class PerformProgrammingFormComponent
   }
 
   transferentSelect(transferent: ITransferente) {
-    this.idTrans = transferent.id;
+    this.idTrans = transferent?.id;
     this.getStations(new ListParams());
   }
 
@@ -800,7 +807,6 @@ export class PerformProgrammingFormComponent
     if (goods) {
       this.showGoodsGuard(goods);
     }
-    this.getProgGoods();
   }
 
   /*------------Cambio de status a resguardo ------------------*/
@@ -842,6 +848,8 @@ export class PerformProgrammingFormComponent
           this.goodsGuards.load(this.goodsInfoTrans);
           this.totalItemsTransportableGuard = this.goodsGuards.count();
           this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+          this.getProgGoods();
+          this.goodSelect = [];
         },
       });
     });
@@ -940,6 +948,8 @@ export class PerformProgrammingFormComponent
           this.goodsWarehouse.load(this.goodsInfoTrans);
           this.totalItemsTransportableWarehouse = this.goodsWarehouse.count();
           this.headingWarehouse = `Almacén SAE(${this.goodsWarehouse.count()})`;
+          this.getProgGoods();
+          this.goodSelect = [];
         },
       });
     });
@@ -1033,16 +1043,54 @@ export class PerformProgrammingFormComponent
   }
 
   //Actualizar programación con información de la programación
-  confirm() {
+  async confirm() {
     this.loading = true;
+    this.formLoading = true;
+    this.performForm
+      .get('regionalDelegationNumber')
+      .setValue(this.delegationId);
+    const generateFolio: any = await this.generateFolio(this.performForm.value);
+    this.performForm.get('folio').setValue(generateFolio);
+
     console.log(this.performForm.value);
-    console.log('primeros datos a guardar', this.performForm.value);
     this.programmingGoodService
       .updateProgramming(this.idProgramming, this.performForm.value)
       .subscribe(() => {
         this.loading = false;
         this.onLoadToast('success', 'Programacíón guardada correctamente', '');
+        this.performForm
+          .get('regionalDelegationNumber')
+          .setValue(this.delegation);
+        this.formLoading = false;
       });
+  }
+
+  generateFolio(programming: Iprogramming) {
+    return new Promise((resolve, reject) => {
+      this.transferentService.getById(programming.tranferId).subscribe({
+        next: response => {
+          if (this.employeTypeUserLog == 'SAE') {
+            const folio =
+              `R-${this.delegation}` +
+              '-' +
+              `${response.keyTransferent}` +
+              '-' +
+              `${this.idProgramming}`;
+            resolve(folio);
+          } else if (this.employeTypeUserLog == 'TE') {
+            const folio =
+              `R-${this.delegation}` +
+              '-' +
+              `${response.keyTransferent}` +
+              '-' +
+              `${this.idProgramming}-OS`;
+
+            resolve(folio);
+          }
+        },
+        error: error => {},
+      });
+    });
   }
 
   delete(user: any) {
