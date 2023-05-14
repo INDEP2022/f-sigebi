@@ -1,7 +1,18 @@
 <form class="form-material" [formGroup]="form">
   <div class="row">
     <div class="col-md-4">
-      <app-select-form
+      <ng-custom-select-loading
+        [form]="form"
+        formControlName="noBien"
+        label="No&#46; Bien"
+        value="goodId"
+        bindLabel="goodId"
+        paramSearch="filter.goodId"
+        [prefixSearch]="goodFilter"
+        [moreParams]="moreParams"
+        path="good/api/v1/good">
+      </ng-custom-select-loading>
+      <!-- <app-select-form
         [form]="form"
         formField="noBien"
         label="No&#46; Bien"
@@ -11,7 +22,7 @@
         [haveTodos]="false"
         [getListObservable]="goodsList"
         [(paramsFilter)]="paramsGoods"
-        (selectEvent)="selectGood($event)"></app-select-form>
+        (selectEvent)="selectGood($event)"></app-select-form> -->
     </div>
     <div class="col-md-8" style="text-align: right">
       <button

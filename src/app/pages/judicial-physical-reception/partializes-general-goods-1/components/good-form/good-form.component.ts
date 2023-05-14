@@ -27,6 +27,7 @@ import { PartializeGeneralGoodService } from '../../services/partialize-general-
 export class GoodFormComponent extends AlertButton implements OnInit {
   @Input() firstCase: boolean = null;
   paramsGoods = new FilterParams();
+  moreParams: string[] = [];
   goodFilter = SearchFilter.LIKE;
 
   // operator = SearchFilter.LIKE;
@@ -44,14 +45,26 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     if (this.firstCase === null) {
       return;
     }
+    this.moreParams = [];
     if (this.firstCase === true) {
       this.serviceTab1.initFormGood();
       this.selectGood(this.serviceTab1.getSavedGood());
+      this.moreParams.push(
+        'filter.goodClassNumber=$in:1424,1426,1427,1575,1590'
+      );
     }
     if (this.firstCase === false) {
       this.serviceTab2.initFormGood();
       this.selectGood(this.serviceTab1.getSavedGood());
+      this.moreParams.push(
+        'filter.goodClassNumber=$not:$null',
+        'filter.goodClassNumber=$not:$in:1424,1426,1427,1575,1590'
+      );
     }
+    this.moreParams.push('filter.extDomProcess=$not:$null');
+    this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
+    this.moreParams.push('filter.appraisedValue=$not:$null');
+    this.moreParams.push('filter.val14=$not:$null');
   }
 
   get service() {

@@ -1,0 +1,28 @@
+#custom-select-loading {
+  ng-select {
+    height: auto;
+    min-height: 43px;
+  }
+
+  ::ng-deep {
+    .ng-select.ng-select-multiple .ng-select-container .ng-value-container {
+      overflow: auto;
+    }
+  }
+
+  // form-loader {
+  //   ::ng-deep {
+  //     .loader {
+  //       height: 30px;
+
+  //       &:after {
+  //         background-size: 100px 30px;
+  //       }
+  //     }
+
+  //     .loader-msg {
+  //       margin-top: 3rem;
+  //     }
+  //   }
+  // }
+}

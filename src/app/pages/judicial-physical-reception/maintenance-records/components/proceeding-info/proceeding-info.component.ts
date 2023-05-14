@@ -65,6 +65,10 @@ export class ProceedingInfoComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  some(event: any) {
+    console.log(event);
+  }
+
   get statusActa() {
     return this.form
       ? this.form.get('statusActa')
