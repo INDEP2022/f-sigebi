@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ProceedingsModalComponent extends BasePage implements OnInit {
-  title: string = 'Actas';
+  title: string = 'Acta';
   edit: boolean = false;
 
   proceedingForm: ModelForm<IProccedingsDeliveryReception>;
@@ -39,10 +39,19 @@ export class ProceedingsModalComponent extends BasePage implements OnInit {
       id: [null, []],
       keysProceedings: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
+      ],
+      affair: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
       ],
       datePhysicalReception: [null, [maxDate(new Date())]],
       elaborationDate: [null, [Validators.required]],
+      closeDate: [null, [Validators.required]],
       captureDate: [null, [Validators.required]],
       statusProceedings: [null, []],
       observations: [null, []],

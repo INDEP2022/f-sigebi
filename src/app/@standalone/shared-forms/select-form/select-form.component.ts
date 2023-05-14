@@ -247,6 +247,16 @@ export class SelectFormComponent implements OnInit {
             data.data,
             data.count ? data.count : data.data.length
           );
+
+          // this.data = new DefaultSelect(
+          //   this.haveTodos
+          //     ? [
+          //       { [this.value]: null, [this.bindLabel]: 'Todos' },
+          //       ...this.data.data.concat(data.data),
+          //     ]
+          //     : this.data.data.concat(data.data),
+          //   data.count ? data.count : data.data.length
+          // );
         }
         this.loading = false;
       },
@@ -309,9 +319,9 @@ export class SelectFormComponent implements OnInit {
 
   onChange(event: any) {
     console.log(event);
-    if (event.length == 0) {
-      return;
-    }
+    // if (event.length == 0) {
+    //   return;
+    // }
     if (this.otherData) {
       this.selectEvent.emit(event);
     }
