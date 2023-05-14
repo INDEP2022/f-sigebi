@@ -4,6 +4,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IResponse } from '../../interfaces/list-response.interface';
 import {
   IAcceptGoodActa,
+  IAcceptGoodStatus,
   IAcceptGoodStatusScreen,
   IGoodAndDetailProceeding,
   ILvlPrograma,
@@ -49,7 +50,11 @@ export class GoodProcessService extends HttpService {
     );
   }
 
-  getacceptGoodActa(model: IAcceptGoodActa) {
+  getacceptGoodStatus(model: IAcceptGoodStatus) {
+    return this.post<IResponse>(GoodProcessPoints.acceptGoodStatus, model);
+  }
+
+  getAccepGoodActa(model: IAcceptGoodActa) {
     return this.post<IResponse>(GoodProcessPoints.acceptGoodActa, model);
   }
 

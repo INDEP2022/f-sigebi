@@ -32,6 +32,7 @@ export enum GoodProcessPoints {
   vnNumerario = `application/getVnNumerario`,
   lvlPrograma = `application/getLvlPrograma`,
   goodAndDetail = `application/getBienAndDetailActa`,
-  acceptGoodActa = `application/acceptGoodStatus`,
+  acceptGoodActa = `application/acceptGoodActa`,
+  acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
 }

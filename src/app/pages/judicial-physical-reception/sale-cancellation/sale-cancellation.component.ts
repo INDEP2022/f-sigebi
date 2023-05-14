@@ -11,7 +11,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
 import {
-  IAcceptGoodActa,
+  IAcceptGoodStatus,
   IAcceptGoodStatusScreen,
   IVban,
 } from 'src/app/core/models/ms-good/good';
@@ -289,48 +289,64 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   validateGood(element: any) {
-    console.log('Valida');
-    let di_disponible = false;
+    let di_disponible: boolean;
+    /* return new Promise((resolve, reject) => { */
+    const modelScreen: IAcceptGoodStatusScreen = {
+      pNumberGood: element.id,
+      pVcScreen: 'FACTREFACTAVENT',
+    };
 
-    if (this.form.get('expediente').value != null) {
-      const modelScreen: IAcceptGoodStatusScreen = {
-        pNumberGood: parseInt(element.id),
-        pVcScreen: 'FACTREFACTAVENT',
-      };
+    const modelStatus: IAcceptGoodStatus = {
+      pNumberGood: element.id,
+      pExpedients: this.form.get('expediente').value,
+    };
+    return new Promise((resolve, reject) => {
       this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
         res => {
-          di_disponible = true;
-          let modelActa: IAcceptGoodActa = {
-            pNumberGood: parseInt(element.id),
-            pExpedients: this.form.get('expediente').value,
-          };
-          this.serviceGoodProcess.getacceptGoodActa(modelActa).subscribe(
-            res => {
-              console.log(res.data);
-              if (res.data === 'N') {
-                di_disponible = false;
-              } else {
-                di_disponible = true;
+          console.log(res.data);
+          if (res.data != null || res.data != undefined) {
+            di_disponible = true;
+            console.log('Entro if');
+            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
+              res => {
+                const resDis = JSON.stringify(res);
+                if (resDis != 'S') {
+                  resolve({ disponible: false });
+                } else {
+                  resolve({ disponible: true });
+                }
+              },
+              err => {
+                resolve({ disponible: false });
               }
-            },
-            err => {
-              console.log(err);
-            }
-          );
+            );
+          } else {
+            di_disponible = false;
+            console.log('Entro else');
+            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
+              res => {
+                resolve({ disponible: false });
+              },
+              err => {
+                resolve({ disponible: false });
+              }
+            );
+          }
         },
-        err => {}
+        err => {
+          resolve({ disponible: false });
+        }
       );
-    }
+    });
 
-    return { di_disponible: di_disponible };
+    /*     }); */
   }
 
   //Select Rows
 
   rowSelect(e: any) {
     const { data } = e;
-    const resp = this.validateGood(data);
-    console.log(resp);
+    console.log(data);
     this.selectData = data;
     this.form.get('estatusPrueba').setValue(data.goodStatus);
   }
@@ -489,26 +505,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             console.log(res);
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
-                let disponible: boolean = false;
-                if (e.detail != null) {
-                  if (
-                    format(
-                      new Date(e.detail.approvedXAdmonDate),
-                      'yyyy-MM-dd'
-                    ) <= format(new Date(), 'yyyy-MM-dd') &&
-                    format(
-                      new Date(e.detail.indicatesUserApprovalDate),
-                      'yyyy-MM-dd'
-                    ) >= format(new Date(), 'yyyy-MM-dd')
-                  ) {
-                    disponible = true;
-                  } else {
-                    disponible = false;
-                  }
-                } else {
-                  disponible = false;
-                }
-
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                disponible = JSON.parse(JSON.stringify(resp)).disponible;
                 return { ...e, avalaible: disponible };
               })
             );

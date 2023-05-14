@@ -615,6 +615,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   fillIncomeProceeding(dataRes: any) {
     this.initialdisabled = true;
+    this.idProceeding = dataRes.id;
     const paramsF = new FilterParams();
     this.minDateFecElab = addDays(new Date(dataRes.elaborationDate), 1);
     paramsF.addFilter('numberProceedings', dataRes.id);
@@ -669,7 +670,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         }
         this.act2Valid = true;
         this.navigateProceedings = true;
-        this.idProceeding = dataRes.id;
       },
       err => console.log(err)
     );
@@ -743,6 +743,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
+    this.nextProce = true;
+    this.prevProce = false;
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
+    this.numberProceeding = 0;
+
     this.clearInputs();
     const paramsF = new FilterParams();
     paramsF.addFilter(
@@ -798,6 +804,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   saveDetailProceeding(resData: any) {
+    this.idProceeding = resData.id;
     let newDetailProceeding: IDetailProceedingsDeliveryReception = {
       numberProceedings: resData.id,
     };
@@ -1015,26 +1022,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           'Eliminar'
         ).then(q => {
           if (q.isConfirmed) {
-            this.serviceProcVal
-              .deleteProceeding(this.idProceeding.toString())
-              .subscribe(
-                res => {
-                  console.log(res);
-                  this.alert(
-                    'success',
-                    'Eliminado',
-                    'Acta eliminada con éxito'
-                  );
-                },
-                err => {
-                  console.log(err);
-                  this.alert(
-                    'error',
-                    'No se pudo eliminar acta',
-                    'Secudió un problema al eliminar el acta'
-                  );
-                }
-              );
+            const paramsF = new FilterParams();
+            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+            this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+              res => {
+                console.log();
+                const realData = JSON.parse(JSON.stringify(res.data[0]));
+                this.alert('success', 'Éxito', `${realData.id}`);
+              },
+              err => {
+                this.alert('error', 'Error', `${err}`);
+              }
+            );
           }
         });
       }

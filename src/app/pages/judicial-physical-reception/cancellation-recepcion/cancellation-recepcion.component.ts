@@ -9,11 +9,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import {
-  IAcceptGoodActa,
-  IAcceptGoodStatusScreen,
-  IVban,
-} from 'src/app/core/models/ms-good/good';
+import { IAcceptGoodActa, IVban } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
@@ -225,15 +221,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      estatusPrueba: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      etiqueta: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      estatusBienActa: [null, [Validators.required]],
+      estatusPrueba: [null, [Validators.pattern(STRING_PATTERN)]],
+      etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
+      estatusBienActa: [null],
     });
   }
 
@@ -271,30 +261,49 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   validateGood(element: any) {
     let di_disponible = false;
+    let bamparo: boolean;
 
-    if (this.form.get('expediente').value != null) {
-      const modelScreen: IAcceptGoodStatusScreen = {
-        pNumberGood: parseInt(element.id),
-        pVcScreen: 'FACTREFACTAVENT',
-      };
-      this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
-        res => {
-          di_disponible = true;
-          let modelActa: IAcceptGoodActa = {
-            pNumberGood: parseInt(element.id),
-            pExpedients: this.form.get('expediente').value,
-          };
-          this.serviceGoodProcess
-            .getacceptGoodActa(modelActa)
-            .subscribe(res => {
-              console.log(res);
-            });
-        },
-        err => {}
-      );
-    }
-
-    return { di_disponible: di_disponible };
+    return new Promise((resolve, reject) => {
+      if (this.form.get('expediente').value != null) {
+        const modelActa: IAcceptGoodActa = {
+          pNumberGood: parseInt(element.id),
+          pVcScreen: 'FACTREFACTAVENT',
+          pIdentify: element.identifier,
+        };
+        this.serviceGoodProcess.getAccepGoodActa(modelActa).subscribe(
+          res => {
+            di_disponible = true;
+            this.serviceGood
+              .getById(`${element.id}&filter.labelNumber=$eq:6`)
+              .subscribe(
+                res => {
+                  bamparo = true;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                },
+                err => {
+                  bamparo = false;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                }
+              );
+          },
+          err => {
+            di_disponible = false;
+            this.serviceGood
+              .getById(`${element.id}&filter.labelNumber=$eq:6`)
+              .subscribe(
+                res => {
+                  bamparo = true;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                },
+                err => {
+                  bamparo = false;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                }
+              );
+          }
+        );
+      }
+    });
   }
 
   //Catalogs and data
@@ -388,26 +397,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             console.log(res);
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
-                let disponible: boolean = false;
-                if (e.detail != null) {
-                  if (
-                    format(
-                      new Date(e.detail.approvedXAdmonDate),
-                      'yyyy-MM-dd'
-                    ) <= format(new Date(), 'yyyy-MM-dd') &&
-                    format(
-                      new Date(e.detail.indicatesUserApprovalDate),
-                      'yyyy-MM-dd'
-                    ) >= format(new Date(), 'yyyy-MM-dd')
-                  ) {
-                    disponible = true;
-                  } else {
-                    disponible = false;
-                  }
-                } else {
-                  disponible = false;
-                }
-
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                disponible = JSON.parse(JSON.stringify(resp)).avalaible;
                 return { ...e, avalaible: disponible };
               })
             );
@@ -499,7 +491,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
-
+    this.initialBool = false;
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -636,7 +630,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   rowSelect(e: any) {
     const { data } = e;
     console.log(data);
-    this.validateGood(data);
+    const resp = this.validateGood(data);
+    console.log(resp);
     this.selectData = data;
     this.form.get('estatusPrueba').setValue(data.goodStatus);
   }

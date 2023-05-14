@@ -755,9 +755,15 @@ export interface IGoodAndDetailProceeding {
   pTiNumberSubdel: number;
 }
 
-export interface IAcceptGoodActa {
+export interface IAcceptGoodStatus {
   pNumberGood: number | string;
   pExpedients: number | string;
+}
+
+export interface IAcceptGoodActa {
+  pNumberGood: number | string;
+  pIdentify: string;
+  pVcScreen: string;
 }
 
 export interface IAcceptGoodStatusScreen {
