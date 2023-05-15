@@ -12,11 +12,14 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IUserRowSelectEvent } from 'src/app/core/interfaces/ng2-smart-table.interface';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IUserAccessAreaRelational } from 'src/app/core/models/ms-users/seg-access-area-relational.model';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -27,6 +30,7 @@ import { IJuridicalFileDataUpdateForm } from '../../file-data-update/interfaces/
 import { JuridicalFileUpdateService } from '../../file-data-update/services/juridical-file-update.service';
 import { JURIDICAL_FILE_DATA_UPDATE_FORM } from '../constants/form-declarations';
 import { AbandonmentsDeclarationTradesService } from '../service/abandonments-declaration-trades.service';
+import { COLUMNS_BIENES } from './columns';
 
 /** ROUTING MODULE */
 
@@ -53,6 +57,7 @@ export class AbandonmentsDeclarationTradesComponent
   public formDeclaratoriaTabla: FormGroup;
   public formOficiopageFin: FormGroup;
   public formDeclaratoriapageFin: FormGroup;
+  public di_status: FormGroup;
   declarationForm = this.fb.group(JURIDICAL_FILE_DATA_UPDATE_FORM);
   searchMode: boolean = false;
   confirmSearch: boolean = false;
@@ -64,45 +69,48 @@ export class AbandonmentsDeclarationTradesComponent
   senders = new DefaultSelect<IUserAccessAreaRelational>();
   recipients = new DefaultSelect<IUserAccessAreaRelational>();
   cities = new DefaultSelect<ICity>();
+  selectedGood: IGood[] = [];
 
   /** Tabla bienes */
+  proceedingSettings = { ...this.settings };
   data1 = [{}];
-  settings1 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      goodId: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-      quantity: {
-        title: 'Cantidad',
-        type: 'string',
-      },
-      status: {
-        title: 'Ident.',
-        type: 'string',
-      },
-      processStatus: {
-        title: 'Est',
-        type: 'string',
-      },
-      origin: {
-        title: 'Proceso',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
+  settings1 = { ...this.settings };
+  // settings1 = {
+  //   pager: {
+  //     display: false,
+  //   },
+  //   hideSubHeader: true,
+  //   actions: false,
+  //   selectedRowIndex: -1,
+  //   mode: 'external',
+  //   columns: {
+  //     goodId: {
+  //       title: 'No. Bien',
+  //       type: 'number',
+  //     },
+  //     description: {
+  //       title: 'Descripcion',
+  //       type: 'string',
+  //     },
+  //     quantity: {
+  //       title: 'Cantidad',
+  //       type: 'string',
+  //     },
+  //     status: {
+  //       title: 'Ident.',
+  //       type: 'string',
+  //     },
+  //     processStatus: {
+  //       title: 'Est',
+  //       type: 'string',
+  //     },
+  //     origin: {
+  //       title: 'Proceso',
+  //       type: 'string',
+  //     },
+  //   },
+  //   noDataMessage: 'No se encontrarón registros',
+  // };
   /** Tabla bienes */
 
   /** Tabla bienes */
@@ -135,6 +143,7 @@ export class AbandonmentsDeclarationTradesComponent
   /** Tabla bienes */
 
   constructor(
+    private screenStatusService: ScreenStatusService,
     private fb: FormBuilder,
     private abandonmentsService: AbandonmentsDeclarationTradesService,
     public fileUpdateService: JuridicalFileUpdateService,
@@ -143,6 +152,12 @@ export class AbandonmentsDeclarationTradesComponent
     private readonly goodServices: GoodService
   ) {
     super();
+    this.settings1 = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...COLUMNS_BIENES },
+    };
   }
 
   get formControls() {
@@ -157,7 +172,7 @@ export class AbandonmentsDeclarationTradesComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
-    this.onLoadGoodList();
+    // this.onLoadGoodList();
   }
 
   private prepareForm() {
@@ -249,26 +264,35 @@ export class AbandonmentsDeclarationTradesComponent
     this.formFolioEscaneo = this.fb.group({
       folioEscaneo: ['', [Validators.required]], //*
     });
+
+    this.di_status = this.fb.group({
+      di_desc_estatus: [''], //*
+    });
+  }
+
+  selectProceedings(event: IUserRowSelectEvent<IGood>) {
+    console.log('EVENT', event);
+    this.selectedGood = event.selected;
   }
 
   mostrarInfo(form: FormGroup): any {
-    console.log(form.value);
+    // console.log(form.value);
   }
 
   mostrarInfoOficio(allFormsOficio: any): any {
-    console.log(allFormsOficio);
+    // console.log(allFormsOficio);
   }
 
   mostrarInfoDeclaratoria(formDeclaratoria: FormGroup): any {
-    console.log(formDeclaratoria.value);
+    // console.log(formDeclaratoria.value);
   }
 
   oficioRelacionado(event: any) {
-    console.log('Oficio Relacionado', event);
+    // console.log('Oficio Relacionado', event);
   }
 
   capturaCopias(event: any) {
-    console.log('Captura copias', event);
+    // console.log('Captura copias', event);
   }
 
   checkSearchMode(searchMode: boolean) {
@@ -284,13 +308,21 @@ export class AbandonmentsDeclarationTradesComponent
   search(formData: Partial<IJuridicalFileDataUpdateForm>) {
     this.formData = formData;
     this.changeDetectorRef.detectChanges();
-    console.log(formData);
+    this.formData = null;
+    console.log('AQUI', formData);
   }
 
   selectData(data: INotification) {
     this.selectedRow = data;
     this.changeDetectorRef.detectChanges();
-    console.log(data);
+    this.declarationForm.get('expedientNumber').setValue(data.expedientNumber);
+    this.declarationForm
+      .get('preliminaryInquiry')
+      .setValue(data.preliminaryInquiry);
+    this.declarationForm.get('criminalCase').setValue(data.criminalCase);
+    this.declarationForm.get('passOfficeArmy').setValue(data.officeExternalKey);
+    console.log('DATA', data);
+    this.onLoadGoodList();
   }
 
   getSenders(lparams: ListParams) {
@@ -349,17 +381,41 @@ export class AbandonmentsDeclarationTradesComponent
   onLoadGoodList() {
     this.goodServices
       .getByExpedient(
-        this.formDeclaratoriaTabla.get('noExpediente').value,
+        this.declarationForm.get('expedientNumber').value,
         this.params.getValue()
       )
       .subscribe({
         next: response => {
+          console.log('FJ', response);
           debugger;
           this.data1 = response.data;
+          this.getScreenStatusFinal();
         },
         error: err => {
           this.data1 = [];
         },
       });
+  }
+
+  // OBTENEMOS SCREEN STATUS FINAL //
+  getScreenStatusFinal() {
+    let obj = {
+      vc_pantalla: 'FACTJURABANDONOS',
+    };
+
+    this.screenStatusService.getAllFiltroScreenKey(obj).subscribe(
+      (response: any) => {
+        const { data } = response;
+        console.log('SCREEN', data);
+      },
+      error => {
+        console.log('SCREEN', error.error.message);
+        // this.onLoadToast(
+        //   'info',
+        //   '',
+        //   'No se encontró Estatus en la tabla Estatus_X_Pantalla'
+        // );
+      }
+    );
   }
 }

@@ -791,7 +791,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   getGoodsByExpedient() {
-    //Validar si hay un acta abierta
+    //Validar si hay un acta abiert
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',

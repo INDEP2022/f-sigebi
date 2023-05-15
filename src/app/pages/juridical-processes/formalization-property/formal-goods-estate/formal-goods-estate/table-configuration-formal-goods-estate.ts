@@ -334,7 +334,7 @@ export const tableSettingsTodos: any = {
 };
 
 export const TODOS_COLUMNS = {
-  goodNumber: {
+  goodnumber: {
     title: 'No. Bien',
     sort: false,
     type: 'string',
@@ -344,22 +344,22 @@ export const TODOS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  notaryCli: {
+  notary: {
     title: 'Asignado Notario',
     type: 'string',
     sort: false,
   },
-  assignmentnotDate: {
+  formalizes: {
     title: 'En Formalización',
     type: 'string',
     sort: false,
   },
-  writingNumber: {
+  writing: {
     title: 'Escrituración',
     type: 'string',
     sort: false,
   },
-  dias: {
+  days: {
     title: 'Desfase en Días',
     type: 'string',
     sort: false,
