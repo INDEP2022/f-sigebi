@@ -14,9 +14,11 @@ import {
   IDictationCopies,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -37,6 +39,8 @@ export class OpinionComponent extends BasePage implements OnInit {
   options: any[];
   nrSelecttypePerson: string;
   nrSelecttypePerson_I: string;
+  UserDestinatario: ISegUsers[] = [];
+  nameUserDestinatario: ISegUsers;
 
   constructor(
     private fb: FormBuilder,
@@ -44,13 +48,16 @@ export class OpinionComponent extends BasePage implements OnInit {
     private dictationService: DictationService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private siabServiceReport: SiabService
+    private siabServiceReport: SiabService,
+    private usersService: UsersService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.buildForm();
+    this.loadUserDestinatario();
+
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'S', label: 'PERSONA EXTERNA' },
@@ -185,8 +192,11 @@ carga la  información de la parte media de la página
       ],
       typePerson: [null, [Validators.required]],
       senderUser: [null, [Validators.required]],
+      personaExt: [null, [Validators.required]],
       typePerson_I: [null, [Validators.required]],
       senderUser_I: [null, [Validators.required]],
+      personaExt_I: [null, [Validators.required]],
+
       key: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
@@ -220,6 +230,33 @@ carga la  información de la parte media de la página
         this.modalService.show(PreviewDocumentsComponent, config);
       },
     });
+  }
+
+  validaCampos(event: Event) {}
+  loadUserDestinatario() {
+    this.usersService.getUsersJob().subscribe({
+      next: resp => {
+        this.UserDestinatario = [...resp.data];
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+          this.onLoadToast('error', 'Error', error);
+        } else {
+          this.onLoadToast('error', 'Error', err.error.message);
+        }
+      },
+    });
+  }
+
+  getDescUser(control: string, event: Event) {
+    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
+    if (control === 'control') {
+      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
+    } else {
+      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
+    }
   }
 }
 

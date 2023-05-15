@@ -9,13 +9,17 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
   IGoodJobManagement,
   ImanagementOffice,
 } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -29,12 +33,18 @@ import {
 })
 export class OfficeComponent extends BasePage implements OnInit {
   goodJobManagement = new Observable<IListResponse<IGoodJobManagement>>();
+  numberManage = new Observable<IListResponse<IAttachedDocument>>();
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   comboOfficeFlayer: IGoodJobManagement[] = [];
   comboOffice: ImanagementOffice[] = [];
   objOffice: ImanagementOffice[] = [];
-
+  options: any[];
+  nrSelecttypePerson: string;
+  nrSelecttypePerson_I: string;
+  UserDestinatario: ISegUsers[] = [];
+  IAttDocument: IAttachedDocument[] = [];
   form: FormGroup = new FormGroup({});
+  nameUserDestinatario: ISegUsers;
 
   constructor(
     private fb: FormBuilder,
@@ -42,13 +52,21 @@ export class OfficeComponent extends BasePage implements OnInit {
     private jobsService: JobsService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private siabServiceReport: SiabService
+    private siabServiceReport: SiabService,
+    private usersService: UsersService,
+    private AtachedDocumenServ: AtachedDocumentsService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.loadUserDestinatario();
     this.buildForm();
+    this.options = [
+      { value: null, label: 'Seleccione un valor' },
+      { value: 'S', label: 'PERSONA EXTERNA' },
+      { value: 'I', label: 'PERSONA INTERNA' },
+    ];
   }
 
   /**
@@ -92,8 +110,10 @@ export class OfficeComponent extends BasePage implements OnInit {
       ],
       typePerson: [null, [Validators.required]],
       senderUser: [null, [Validators.required]],
+      personaExt: [null, [Validators.required]],
       typePerson_I: [null, [Validators.required]],
       senderUser_I: [null, [Validators.required]],
+      personaExt_I: [null, [Validators.required]],
       key: [
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
@@ -149,6 +169,10 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          console.warn(resp);
+          console.warn(
+            '>>>>>===>==>=>=>=>=>==>=>=>>=>=>=>==>=>=>=>=>=>==>=>=>=>='
+          );
           this.form.get('proceedingsNumber').value;
           this.form
             .get('numberGestion')
@@ -162,6 +186,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.form.get('paragraphFinish').setValue(resp.data[0].text2);
           this.form.get('paragraphOptional').setValue(resp.data[0].text3);
           this.form.get('descriptionSender').setValue(resp.data[0].desSenderpa);
+          this.loadbyAttachedDocuments();
         },
         error: err => {
           this.onLoadToast('error', 'error', err.error.message);
@@ -182,5 +207,56 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.form.get('paragraphInitial').setValue('');
     this.form.get('paragraphFinish').setValue('');
     this.form.get('paragraphOptional').setValue('');
+  }
+
+  validaCampos(event: Event) {
+    alert(this.form.value.typePerson);
+    alert(this.nrSelecttypePerson);
+  }
+  getDescUser(control: string, event: Event) {
+    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
+    if (control === 'control') {
+      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
+    } else {
+      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
+    }
+  }
+
+  loadUserDestinatario() {
+    this.usersService.getUsersJob().subscribe({
+      next: resp => {
+        this.UserDestinatario = [...resp.data];
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+          this.onLoadToast('error', 'Error', error);
+        } else {
+          this.onLoadToast('error', 'Error', err.error.message);
+        }
+      },
+    });
+  }
+
+  loadbyAttachedDocuments() {
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams
+      .getValue()
+      .addFilter(
+        'managementNumber',
+        this.form.value.managementNumber,
+        SearchFilter.EQ
+      );
+    this.AtachedDocumenServ.getAllFilter(
+      this.filterParams.getValue().getParams()
+    ).subscribe({
+      next: resp => {
+        this.IAttDocument = resp.data;
+      },
+      error: error => {
+        console.log(error.error.message);
+      },
+    });
   }
 }

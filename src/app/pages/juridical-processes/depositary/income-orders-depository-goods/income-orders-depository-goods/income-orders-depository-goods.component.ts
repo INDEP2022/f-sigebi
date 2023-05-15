@@ -89,6 +89,7 @@ export class IncomeOrdersDepositoryGoodsComponent
   }
 
   ngOnInit(): void {
+    this.getUserDepositary();
     this.valorBien.SharingNumbien.subscribe({
       next: res => {
         this.interfasValorBienes = res;
@@ -103,9 +104,9 @@ export class IncomeOrdersDepositoryGoodsComponent
   getUserDepositary() {
     console.log('====================================');
     let params = new FilterParams();
-    this.usersService.getAllSegUsers(params.getParams()).subscribe({
+    this.usersService.getUsersJob().subscribe({
       next: resp => {
-        // console.log(JSON.stringify(resp.data));
+        console.log(JSON.stringify(resp.data));
         this.itemsJsonInterfazUser = [...resp.data];
       },
       error: err => {
@@ -177,5 +178,10 @@ export class IncomeOrdersDepositoryGoodsComponent
     this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
     this.form.get('depositary').setValue(this.interfasValorBienes.depositario);
     this.form.get('description').setValue(this.interfasValorBienes.desc);
+  }
+
+  getDescUser(event: Event) {
+    alert(JSON.stringify(event));
+    //this.itemsJsonInterfaz.filter(X => {X.registerNumber==event.target});
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -11,8 +11,7 @@ import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositaryp
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { SelectElementComponent } from 'src/app/shared/components/select-element-smarttable/select-element';
+import { NgSelectElementComponent } from 'src/app/shared/components/select-element-smarttable/ng-select-element';
 import * as XLSX from 'xlsx';
 import { COLUMNS } from './columns';
 
@@ -51,6 +50,7 @@ export class DepositaryPaymentChargesComponent
   ItemsJson: IRefPayDepositary[] = [];
   itemsJsonInterfaz: IRefPayDepositary[] = [];
   ExcelData: any;
+  @Input() toggle: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private fb: FormBuilder,
@@ -61,31 +61,34 @@ export class DepositaryPaymentChargesComponent
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
-    this.options = ['S', 'N'];
+    this.options = [
+      { value: 'S', label: 'Si' },
+      { value: 'R', label: 'Rechazado' },
+      { value: 'N', label: 'No Invalido' },
+      { value: 'A', label: 'Aplicado' },
+      { value: 'B', label: 'Pago de Bases' },
+      { value: 'D', label: 'Devuelto' },
+      { value: 'C', label: 'Contabilizado' },
+      { value: 'P', label: 'Penalizado' },
+      { value: 'Z', label: 'Devuelto al Cliente' },
+    ];
 
     this.settings = {
       ...this.settings,
       actions: false,
       columns: {
-        name: {
+        sent_oi: {
           title: 'Valido',
           sort: false,
           type: 'custom',
           showAlways: true,
-          valuePrepareFunction: (isSelected: string, row: any) =>
-            this.isSelectedValid(row),
-          renderComponent: SelectElementComponent,
-          onComponentInitFunction: (
-            instance: SelectElementComponent //this.onSelectValid(any)
-          ) =>
-            /*instance.data = this.options,
-                 instance.value=ro.data.validSystem*/
-            console.log(
-              'instance.rowData  =>  ' +
-                JSON.stringify(instance.rowData) +
-                'instance.rowData_DATA  =>  ' +
-                JSON.stringify(instance.data)
-            ),
+          /*
+            valuePrepareFunction: (isSelected:string, row:any) =>
+              this.isSelectedValid(row),*/
+          renderComponent: NgSelectElementComponent,
+          onComponentInitFunction: (instance: NgSelectElementComponent) => (
+            (instance.data = this.options), this.onSelectValid(instance)
+          ),
         },
         ...COLUMNS,
       },
@@ -102,9 +105,9 @@ export class DepositaryPaymentChargesComponent
   isSelectedValid(_row: any) {
     console.log(_row);
   }
-  onSelectValid(instance: CheckboxElementComponent) {
+  onSelectValid(instance: NgSelectElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => console.log(data.row, data.toggle),
+      next: data => console.log(data.toggle),
     });
   }
   /**
