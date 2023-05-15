@@ -22,3 +22,51 @@ export interface IDictation {
   dictHcDAte: Date | null;
   entryHcDate: Date | null;
 }
+export interface IDictationCopies {
+  id?: number;
+  numberOfDicta: string;
+  typeDictamination: string;
+  recipientCopy: string;
+  copyDestinationNumber: number;
+  personExtInt: string;
+  namePersonExt: string;
+  registerNumber: number;
+}
+
+export interface IInitFormLegalOpinionOfficeBody {
+  tipo: string;
+  p_valor: number;
+}
+export interface IInitFormLegalOpinionOfficeResponse {
+  identi: string;
+  cve_acta: string;
+  fecha: Date;
+}
+export interface ICopiesOfficeSendDictation {
+  vc_pantalla: string;
+  clave_oficio_armada: string;
+  estatus_of: string;
+  fec_dictaminacion: Date;
+  tipo_dictaminacion: string;
+  identi: string;
+  no_volante: number;
+  no_of_dicta: number;
+  toolbar_no_delegacion: number;
+  nom_dest: string;
+  destinatario: string;
+  no_clasif_bien: number;
+  no_bien: number;
+  no_departamento_destinatario: number;
+  no_delegacion_destinatario: number;
+  no_delegacion_dictam: number;
+  tipo: string;
+  usuario: string;
+  ciudad: string;
+  iden: string;
+  num_clave_armada: number;
+  toolbar_no_departamento: number;
+  toolbar_no_subdelegacion: number;
+  estatus_dictaminacion: string;
+  proceso_ext_dom: string;
+  paquete: number;
+}

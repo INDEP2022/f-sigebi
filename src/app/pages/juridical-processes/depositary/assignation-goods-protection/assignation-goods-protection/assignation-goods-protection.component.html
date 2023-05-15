@@ -318,6 +318,12 @@
           <div class="col-auto mt-4">
             <button
               type="button"
+              class="btn btn-primary btn-sm active mr-2"
+              (click)="blockDelete = !blockDelete">
+              {{ blockDelete ? 'Bienes amparos protegidos' : 'Bienes amparos' }}
+            </button>
+            <button
+              type="button"
               class="btn btn-primary btn-sm active"
               (click)="changeStatus()">
               Regresar estatus

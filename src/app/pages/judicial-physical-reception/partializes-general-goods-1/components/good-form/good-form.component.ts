@@ -44,30 +44,18 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     if (this.firstCase === null || this.version === null) {
       return;
     }
-    this.moreParams = [];
-    this.service.initFormGood();
     if (this.firstCase === true) {
       // this.service.initFormGood();
       this.selectGood(this.serviceTab1.getSavedGood());
-      this.moreParams.push(
-        'filter.goodClassNumber=$in:' + this.service.clasificators
-      );
     }
     if (this.firstCase === false) {
-      // this.service.initFormGood();
-      this.selectGood(this.serviceTab2.getSavedGood());
-      this.moreParams.push(
-        'filter.goodClassNumber=$not:$null',
-        'filter.goodClassNumber=$not:$in:' + this.service.clasificators
-      );
+      this.serviceTab2.initFormGood();
+      this.selectGood(this.serviceTab1.getSavedGood());
     }
-    if (this.version === 1) {
-      this.moreParams.push('filter.unit=$not:$null');
-      this.moreParams.push('filter.extDomProcess=$not:$null');
-      this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
-      this.moreParams.push('filter.appraisedValue=$not:$null');
-      this.moreParams.push('filter.val14=$not:$null');
-    }
+    this.moreParams.push('filter.extDomProcess=$not:$null');
+    this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
+    this.moreParams.push('filter.appraisedValue=$not:$null');
+    this.moreParams.push('filter.val14=$not:$null');
   }
 
   get service() {
