@@ -296,7 +296,30 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
 
   //Obtener bienes de un expediente
 
+  clearInputs() {
+    this.form.get('clasificacion').setValue(null);
+    this.form.get('remarks').setValue(null);
+    this.form.get('importe').setValue(null);
+    this.form.get('fechaAvaluo').setValue(null);
+    this.form.get('fechaVigencia').setValue(null);
+    this.form.get('perito').setValue(null);
+    this.form.get('institucion').setValue(null);
+    this.form.get('fechaDictamen').setValue(null);
+    this.form.get('dictamenPerito').setValue(null);
+    this.form.get('dictamenInstitucion').setValue(null);
+    this.form.get('dictamenPerenidad').setValue(null);
+    this.form.get('fechaAseg').setValue(null);
+    this.form.get('notificado').setValue(null);
+    this.form.get('lugar').setValue(null);
+    this.disabledButton('first-notice-abandonment');
+    this.disabledButton('opinion');
+    this.disabledButton('apprais-good');
+    this.disabledButton('apprasial-history');
+    this.disabledButton('update-general-good');
+  }
+
   getGoodsByExpedient() {
+    this.clearInputs();
     this.serviceGood
       .getByExpedient(this.form.get('expediente').value, {
         text: '?expedient=',
@@ -347,46 +370,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
 
   getGoodData(object: any) {
     if (object.data.available) {
-      const id = object.data.id;
-      this.serviceGood.getById(id).subscribe(
-        res => {
-          console.log(JSON.parse(JSON.stringify(res)).data);
-          const data = JSON.parse(JSON.stringify(res)).data[0];
-          this.goodDataSave = data;
-          this.goodSelected = data.description;
-          this.idGood = data.id;
-          this.getgoodCategory = data.goodCategory;
-          this.getoriginSignals = data.originSignals;
-          this.getnotifyDate = moment(data.notifyDate).format('DD-MM-YYYY');
-          this.getnotifyA = data.notifyA;
-          this.getplaceNotify = data.placeNotify;
-          this.getfechaDictamen = moment(data.dateOpinion).format('DD-MM-YYYY');
-          this.getdictamenPerenidad = data.opinion;
-          this.getdictamenPerito = data.proficientOpinion;
-          this.getdictamenInstitucion = data.valuerOpinion;
-          this.getAppraisalGood();
-          this.fillFormData(data.goodCategory, 'clasificacion');
-          this.fillFormData(data.originSignals, 'remarks');
-          data.dateOpinion != null
-            ? this.form
-                .get('fechaDictamen')
-                .setValue(moment(data.dateOpinion).format('DD-MM-YYYY'))
-            : this.form.get('fechaDictamen').setValue('');
-          this.fillFormData(data.proficientOpinion, 'dictamenPerito');
-          this.fillFormData(data.valuerOpinion, 'dictamenInstitucion');
-          this.fillFormData(data.opinion, 'dictamenPerenidad');
-          data.notifyDate != null
-            ? this.form
-                .get('fechaAseg')
-                .setValue(moment(data.notifyDate).format('DD-MM-YYYY'))
-            : this.form.get('fechaAseg').setValue('');
-          this.fillFormData(data.notifyA, 'notificado');
-          this.fillFormData(data.placeNotify, 'lugar');
-        },
-        err => {
-          console.log(err);
-        }
-      );
+      this.isEnableGood = true;
     } else {
       this.disabledButton('update-general-good');
       this.disabledButton('apprasial-history');
@@ -395,6 +379,47 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       this.disabledButton('first-notice-abandonment');
       this.isEnableGood = false;
     }
+
+    const id = object.data.id;
+    this.serviceGood.getById(id).subscribe(
+      res => {
+        console.log(JSON.parse(JSON.stringify(res)).data);
+        const data = JSON.parse(JSON.stringify(res)).data[0];
+        this.goodDataSave = data;
+        this.goodSelected = data.description;
+        this.idGood = data.id;
+        this.getgoodCategory = data.goodCategory;
+        this.getoriginSignals = data.originSignals;
+        this.getnotifyDate = moment(data.notifyDate).format('DD-MM-YYYY');
+        this.getnotifyA = data.notifyA;
+        this.getplaceNotify = data.placeNotify;
+        this.getfechaDictamen = moment(data.dateOpinion).format('DD-MM-YYYY');
+        this.getdictamenPerenidad = data.opinion;
+        this.getdictamenPerito = data.proficientOpinion;
+        this.getdictamenInstitucion = data.valuerOpinion;
+        this.getAppraisalGood();
+        this.fillFormData(data.goodCategory, 'clasificacion');
+        this.fillFormData(data.originSignals, 'remarks');
+        data.dateOpinion != null
+          ? this.form
+              .get('fechaDictamen')
+              .setValue(moment(data.dateOpinion).format('DD-MM-YYYY'))
+          : this.form.get('fechaDictamen').setValue('');
+        this.fillFormData(data.proficientOpinion, 'dictamenPerito');
+        this.fillFormData(data.valuerOpinion, 'dictamenInstitucion');
+        this.fillFormData(data.opinion, 'dictamenPerenidad');
+        data.notifyDate != null
+          ? this.form
+              .get('fechaAseg')
+              .setValue(moment(data.notifyDate).format('DD-MM-YYYY'))
+          : this.form.get('fechaAseg').setValue('');
+        this.fillFormData(data.notifyA, 'notificado');
+        this.fillFormData(data.placeNotify, 'lugar');
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   enabledGroup() {}
@@ -415,7 +440,11 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       };
       this.serviceGood.updateWithoutId(updateData).subscribe(
         res => {
-          console.log('Modificado');
+          this.alert(
+            'success',
+            'Actualización exitosa',
+            'Los datos fueron modificados con éxito'
+          );
           this.disabledButton('update-general-good');
           this.getgoodCategory = updateData.goodCategory;
           this.getoriginSignals = updateData.originSignals;
@@ -439,13 +468,19 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         id: parseInt(this.idGood.toString()),
         goodId: parseInt(this.idGood.toString()),
         dateOpinion: this.form.get('fechaDictamen').value,
-        proficientOpinion: this.form.get('dictamenPerito').value,
-        valuerOpinion: this.form.get('dictamenInstitucion').value,
+        proficientOpinion: this.form.get('dictamenPerito').value.name,
+        valuerOpinion: this.form.get('dictamenInstitucion').value.description,
         opinion: this.form.get('dictamenPerenidad').value,
       };
+      console.log(opinionData);
       this.serviceGood.updateWithoutId(opinionData).subscribe(
         res => {
-          console.log('Modificado');
+          this.alert(
+            'success',
+            'Actualización exitosa',
+            'Los datos fueron modificados con éxito'
+          );
+
           this.disabledButton('opinion');
           this.getfechaDictamen = opinionData.dateOpinion;
           this.getdictamenPerenidad = opinionData.opinion;
@@ -454,6 +489,11 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         },
         err => {
           console.log(err);
+          this.alert(
+            'error',
+            'No se pudo registrar el dictamen',
+            'Ocurrió un error inesperado que no permitió guardar el dictamen'
+          );
         }
       );
     }
@@ -476,7 +516,12 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       };
       this.serviceGood.updateWithoutId(notifyData).subscribe(
         res => {
-          console.log('Modificado');
+          this.alert(
+            'success',
+            'Actualización exitosa',
+            'Los datos fueron modificados con éxito'
+          );
+
           this.disabledButton('first-notice-abandonment');
           this.getnotifyDate = notifyData.notifyDate;
           this.getnotifyA = notifyData.notifyA;
@@ -492,7 +537,6 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   //Datos de valuo de un bien
 
   getAppraisalGood() {
-    console.log('Sí entró');
     if (this.idGood != '' && this.idGood != null && this.idGood != undefined) {
       const paramsF = new FilterParams();
       paramsF.addFilter('noGood', this.idGood);
@@ -506,50 +550,63 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   }
 
   postAppraisGood() {
-    let dataAG: IAppraisersGood = {
-      noGood: this.idGood,
-      appraisalDate: this.form.get('fechaAvaluo').value,
-      effectiveDate: this.form.get('fechaVigencia').value,
-      valueAppraisal: this.form.get('importe').value,
-      noRequest: '1234',
-    };
-
-    const rxa: IRequestAppraisal = {
-      requestDate: format(new Date(), 'yyyy-MM-dd'),
-      requestType: 'E',
-      cveCurrencyAppraisal: this.form.get('moneda').value,
-      cveCurrencyCost: this.form.get('moneda').value,
-      noExpert: this.form.get('perito').value.id,
-      noAppraiser: this.form.get('institucion').value.id,
-    };
-    if (
-      this.form.get('fechaAvaluo').value > this.form.get('fechaVigencia').value
-    ) {
-    } else {
-      this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(
-        res => {
-          const id = JSON.parse(JSON.stringify(res)).id;
-          dataAG.noRequest = id;
-          this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
-            res => {
-              console.log(res);
-              this.getAppraisalGood();
-              this.form.get('fechaAvaluo').setValue('');
-              this.form.get('fechaVigencia').setValue('');
-              this.form.get('importe').setValue('');
-              this.form.get('moneda').setValue('');
-              this.form.get('perito').setValue('');
-              this.form.get('institucion').setValue('');
-            },
-            err => {
-              console.log(err);
-            }
-          );
-        },
-        err => {
-          console.log(err);
-        }
+    if (!this.isEnableGood) {
+      this.alert(
+        'error',
+        'Error en el tipo de bien',
+        'Esta intentando registrar en un bien con un tipo no valido'
       );
+    } else {
+      let dataAG: IAppraisersGood = {
+        noGood: this.idGood,
+        appraisalDate: this.form.get('fechaAvaluo').value,
+        effectiveDate: this.form.get('fechaVigencia').value,
+        valueAppraisal: this.form.get('importe').value,
+        noRequest: '1234',
+      };
+
+      const rxa: IRequestAppraisal = {
+        requestDate: format(new Date(), 'yyyy-MM-dd'),
+        requestType: 'E',
+        cveCurrencyAppraisal: this.form.get('moneda').value,
+        cveCurrencyCost: this.form.get('moneda').value,
+        noExpert: this.form.get('perito').value.id,
+        noAppraiser: this.form.get('institucion').value.id,
+      };
+      if (
+        this.form.get('fechaAvaluo').value >
+        this.form.get('fechaVigencia').value
+      ) {
+      } else {
+        this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(
+          res => {
+            const id = JSON.parse(JSON.stringify(res)).id;
+            dataAG.noRequest = id;
+            this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
+              res => {
+                this.alert(
+                  'success',
+                  'El bien se avaluó con éxito',
+                  'El bien fue valuado exitosamente'
+                );
+                this.getAppraisalGood();
+                this.form.get('fechaAvaluo').setValue(null);
+                this.form.get('fechaVigencia').setValue(null);
+                this.form.get('importe').setValue(null);
+                this.form.get('moneda').setValue(null);
+                this.form.get('perito').setValue(null);
+                this.form.get('institucion').setValue(null);
+              },
+              err => {
+                console.log(err);
+              }
+            );
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
     }
   }
 }

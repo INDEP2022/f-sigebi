@@ -21,6 +21,7 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
@@ -36,6 +37,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { TempGood } from './dataTemp';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -62,6 +64,11 @@ export class JuridicalRulingGComponent
   goodsValid: IGood[] = [];
   documents: IDocuments[] = [];
   selectedDocuments: IDocuments[] = [];
+  statusDict: string = undefined;
+  dictNumber: string | number = undefined;
+  wheelNumber: string | number = undefined;
+  delegationDictNumber: string | number = undefined;
+  keyArmyNumber: string | number = undefined;
 
   idGoodSelected = 0;
 
@@ -277,7 +284,8 @@ export class JuridicalRulingGComponent
     private goodSsubtypeService: GoodSsubtypeService,
     private goodSssubtypeService: GoodSssubtypeService,
     private readonly goodServices: GoodService,
-    private readonly documentService: DocumentsService
+    private readonly documentService: DocumentsService,
+    private readonly authService: AuthService
   ) {
     super();
   }
@@ -333,13 +341,13 @@ export class JuridicalRulingGComponent
     console.log('btnRechazar');
   }
   btnBorrarDictamen() {
-    console.log('btnBorrarDictamen');
+    this.btnDeleteDictation();
   }
   btnImprimeOficio() {
     console.log('btnImprimeOficio');
   }
   btnParcializar() {
-    console.log('btnParcializar');
+    this.btnVerify();
   }
   btnOficioSubstanciacion() {
     console.log('btnOficioSubstanciacion');
@@ -646,5 +654,110 @@ export class JuridicalRulingGComponent
         this.goods = [];
       },
     });
+  }
+
+  btnVerify() {
+    const status = this.statusDict;
+    const expedient = this.expedientesForm.get('noExpediente').value;
+    if (status === 'DICTAMINADO') {
+      this.alert('info', 'AVISO', 'Bien ya dictaminado');
+    } else {
+      if (expedient === null || undefined) {
+        this.alert('error', 'ERROR', 'Falta seleccionar expediente');
+      } else {
+        // this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');}
+        Swal.fire('PENDIENTE', 'Parcializa la dictaminazión.', 'warning').then(
+          () => {
+            window.location.replace(
+              '/pages/general-processes/goods-partialization'
+            );
+          }
+        );
+      }
+    }
+  }
+
+  btnDeleteDictation() {
+    let token = this.authService.decodeToken();
+
+    const object = {
+      proceedingsNumber: this.expedientesForm.get('noExpediente').value,
+      typeDicta: this.expedientesForm.get('tipoDictaminacion').value,
+      numberOfDicta: this.dictNumber,
+      wheelNumber: this.wheelNumber,
+      user: token.preferred_username,
+      delegationNumberDictam: this.delegationDictNumber,
+      clueJobNavy: this.keyArmyNumber, // -- keyArmyNumber
+      judgmentDate: this.dictaminacionesForm.get('fechaNotificacion').value, // -- entryDate
+      statusJudgment: this.statusDict, // -- statusDict
+      typeJudgment: this.expedientesForm.get('tipoDictaminacion').value, // -- typeDict
+    };
+
+    this.checkout1(object)
+      .then(({ json }) => {
+        json.then(res => {
+          if (res.statusCode === 200) {
+            if (res.vBan === 'S' && res.vDelete === 'S') {
+              // Pendiente
+              // --
+            } else {
+              let object2 = {
+                vProceedingsNumber: res.data.vProceedingsNumber,
+                vTypeDicta: res.data.vTypeDicta,
+                vOfDictaNumber: res.data.vOfDictaNumber,
+                vWheelNumber: res.data.vWheelNumber,
+              };
+              this.checkout2(object2).then(({ json }) => {
+                json.then(res => {
+                  if (res.statusCode !== 200) {
+                    this.alert('warning', 'AVISO', res.message[0]);
+                  } else {
+                    console.log('TODO SALE BIEN', res.data);
+                  }
+                });
+              });
+            }
+          } else if (res.statusCode === 400) {
+            this.alert('warning', 'AVISO', res.message[0]);
+          }
+        });
+      })
+      .catch(err => {});
+  }
+
+  async checkout1(object: object) {
+    let response = await fetch(
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      {
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(object),
+      }
+    );
+    return { status: response.status, json: response.json() };
+  }
+
+  async checkout2(object: object) {
+    let response = await fetch(
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      {
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(object),
+      }
+    );
+    return { status: response.status, json: response.json() };
+  }
+
+  async checkout3(object: object) {
+    let response = await fetch(
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      {
+        headers: { 'content-type': 'application/json' },
+        method: 'POST',
+        body: JSON.stringify(object),
+      }
+    );
+    return { status: response.status, json: response.json() };
   }
 }
