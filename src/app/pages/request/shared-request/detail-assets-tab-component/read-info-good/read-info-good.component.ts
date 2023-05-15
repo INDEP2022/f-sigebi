@@ -79,7 +79,8 @@ export class ReadInfoGoodComponent
   ngOnChanges(changes: SimpleChanges): void {
     this.formLoading = true;
     this.goodData = this.detailAssets.value;
-    console.log(this.goodData);
+    console.log('info good', this.goodData);
+    console.log('info descripcion bien', this.goodData.descriptionGoodSae);
     if (this.goodData) {
       this.getTypeGood();
 
@@ -95,6 +96,8 @@ export class ReadInfoGoodComponent
       this.getDestinoSAE(new ListParams(), this.goodData.saeDestiny);
       //destino transferente
       this.getDestinyTransferent(this.goodData.transferentDestiny);
+      //Descripción bien INDEP
+      this.getDescriptionGoodIndep(this.goodData.id);
       if (this.process == 'classify-assets') {
         this.getUnitMeasureSae(new ListParams(), this.goodData.saeMeasureUnit);
 
@@ -124,6 +127,23 @@ export class ReadInfoGoodComponent
     setTimeout(() => {
       this.formLoading = false;
     }, 3000);
+  }
+
+  descriptionGoodSae: string = '';
+  getDescriptionGoodIndep(id: number | string) {
+    this.goodService.getByIdAndGoodId(id, id).subscribe({
+      next: response => {
+        console.log('Data del good', response);
+        console.log(
+          'Descripción del bien INDEP es: ',
+          response.descriptionGoodSae
+        );
+        this.descriptionGoodSae = response.descriptionGoodSae;
+      },
+      error: error => {
+        console.log('no se buscó');
+      },
+    });
   }
 
   ngOnInit(): void {
