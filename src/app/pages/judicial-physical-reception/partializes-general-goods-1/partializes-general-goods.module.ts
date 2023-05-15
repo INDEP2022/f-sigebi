@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
@@ -34,6 +35,7 @@ import { PartializeGeneralGoodService } from './services/partialize-general-good
     GoodsClasificationSharedComponent,
     SelectFormComponent,
     FormLoaderComponent,
+    AccordionModule,
   ],
   providers: [
     { provide: 'dbPartialize', useValue: 'goodsPartializeds1' },

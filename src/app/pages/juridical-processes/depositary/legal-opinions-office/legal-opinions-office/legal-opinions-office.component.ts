@@ -8,10 +8,15 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
-import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import {
+  ICopiesOfficeSendDictation,
+  IDictation,
+  IInitFormLegalOpinionOfficeBody,
+} from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -85,6 +90,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   officeDictationData: IOfficialDictation;
   officeCopiesDictationData: ICopiesOfficialOpinion[] = [];
   officeTextDictationData: IJobDictumTexts;
+  addresseeDataSelect: any;
   paramsScreen: IParamsLegalOpinionsOffice = {
     PAQUETE: '',
     P_GEST_OK: '',
@@ -115,11 +121,14 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   ];
   showEnableTypeOffice: boolean = false;
   showScanForm: boolean = true;
+  screenKey: string = 'FACTJURDICTAMOFICIO';
+  dataUserLogged: any;
 
   constructor(
     private fb: FormBuilder,
     private svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -129,6 +138,16 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.showEnableTypeOffice = false;
     this.showScanForm = true;
+    this.addresseeDataSelect = null;
+    const token = this.authService.decodeToken();
+    console.log(token);
+    if (token.preferred_username) {
+      this.getUserDataLogged(
+        token.preferred_username
+          ? token.preferred_username.toLocaleUpperCase()
+          : token.preferred_username
+      );
+    }
     this.buildForm();
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
@@ -154,19 +173,59 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     }
   }
 
+  getUserDataLogged(userId: string) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'user',
+      userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+    );
+    let subscription = this.svLegalOpinionsOfficeService
+      .getInfoUserLogued(params.getParams())
+      .subscribe({
+        next: (res: any) => {
+          console.log('USER INFO', res);
+          this.dataUserLogged = res.data[0];
+          subscription.unsubscribe();
+        },
+        error: error => {
+          console.log(error);
+          subscription.unsubscribe();
+        },
+      });
+  }
+
   initForm() {
     if (this.paramsScreen.TIPO == 'RESARCIMIENTO') {
       this.form.get('cveOfficeGenerate').enable();
     } else {
       this.form.get('cveOfficeGenerate').disable();
     }
-    //  SET VARIABLES
-    if (
-      this.variables.identi.includes('4') &&
-      this.paramsScreen.TIPO == 'RESARCIMIENTO'
-    ) {
-      this.form.get('addressee').disable();
-    }
+    let body: IInitFormLegalOpinionOfficeBody = {
+      p_valor: Number(this.paramsScreen.P_VALOR),
+      tipo: this.paramsScreen.TIPO,
+    };
+    let subscription = this.svLegalOpinionsOfficeService
+      .getInitFormDictation(body)
+      .subscribe({
+        next: (res: any) => {
+          console.log('INIT FORM OFICIO', res);
+          this.variables.identi = res.data['identi'];
+          this.variables.cveActa = res.data['cve_acta'];
+          this.variables.fecha = res.data['fecha'];
+          if (
+            this.variables.identi.includes('4') &&
+            this.paramsScreen.TIPO == 'RESARCIMIENTO'
+          ) {
+            this.form.get('addressee').disable();
+          }
+          subscription.unsubscribe();
+        },
+        error: error => {
+          console.log(error);
+          subscription.unsubscribe();
+        },
+      });
     // this.btnSearchAppointment();
   }
 
@@ -567,6 +626,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
 
   changeAddreseeDetail(event: any) {
     console.log(event);
+    if (event) {
+      this.addresseeDataSelect = event;
+    }
   }
   // DELEGACION Y DEPARTAMENTO EN DESTINATARIO
   getAddresseeByDetail(paramsData: ListParams, getByValue: boolean = false) {
@@ -591,6 +653,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
             }),
             data.count
           );
+          if (getByValue) {
+            this.addresseeDataSelect = data.data[0];
+          }
           console.log(data, this.addressee);
           subscription.unsubscribe();
         },
@@ -691,5 +756,65 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.form.get('ccp_TiPerson_1').enable();
       }
     }
+  }
+
+  sendOffice() {
+    console.log('SEND OFFICE');
+
+    let body: ICopiesOfficeSendDictation = {
+      vc_pantalla: this.screenKey,
+      clave_oficio_armada: this.dictationData.keyArmyNumber.toString(),
+      estatus_of: this.officeDictationData.statusOf,
+      fec_dictaminacion: this.dictationData.dictDate,
+      tipo_dictaminacion: this.dictationData.typeDict,
+      identi: this.variables.identi,
+      no_volante: this.dictationData.wheelNumber,
+      no_of_dicta: this.dictationData.id,
+      toolbar_no_delegacion: this.dataUserLogged.delegationNumber, // Data del usuario
+      nom_dest: this.addresseeDataSelect.userDetail.name,
+      destinatario: this.officeDictationData.recipient,
+      no_clasif_bien: null, // Bienes
+      no_bien: null, // Bienes
+      no_departamento_destinatario:
+        this.officeDictationData.recipientDepartmentNumber,
+      no_delegacion_destinatario:
+        this.officeDictationData.delegacionRecipientNumber,
+      no_delegacion_dictam: null, // Data del usuario
+      tipo: this.paramsScreen.TIPO,
+      usuario:
+        this.dataUserLogged.user == 'SIGEBIADMON'
+          ? this.dataUserLogged.user.toLocaleLowerCase()
+          : this.dataUserLogged.user, // Data del usuario
+      ciudad: this.officeDictationData.city.toString(),
+      iden: null, // Bienes
+      num_clave_armada: this.dictationData.keyArmyNumber, // CHECAR CUAL ES
+      toolbar_no_departamento: this.dataUserLogged.departamentNumber, // Data del usuario
+      toolbar_no_subdelegacion: this.dataUserLogged.subdelegationNumber, // Data del usuario
+      estatus_dictaminacion: this.dictationData.statusDict,
+      proceso_ext_dom: null, // Bienes
+      paquete: Number(this.paramsScreen.PAQUETE),
+    };
+    console.log(body);
+    // let subscription = this.svLegalOpinionsOfficeService
+    //   .getCopiesOfficeSendDictation(body)
+    //   .subscribe({
+    //     next: (res: any) => {
+    //       console.log('INIT FORM OFICIO', res);
+    //       this.variables.identi = res.data['identi'];
+    //       this.variables.cveActa = res.data['cve_acta'];
+    //       this.variables.fecha = res.data['fecha'];
+    //       if (
+    //         this.variables.identi.includes('4') &&
+    //         this.paramsScreen.TIPO == 'RESARCIMIENTO'
+    //       ) {
+    //         this.form.get('addressee').disable();
+    //       }
+    //       subscription.unsubscribe();
+    //     },
+    //     error: error => {
+    //       console.log(error);
+    //       subscription.unsubscribe();
+    //     },
+    //   });
   }
 }

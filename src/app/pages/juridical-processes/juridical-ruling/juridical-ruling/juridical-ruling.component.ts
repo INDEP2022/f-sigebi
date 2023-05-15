@@ -352,6 +352,7 @@ export class JuridicalRulingComponent
     this.selectedGooods = [];
     this.selectedGooodsValid = [];
     this.goodsValid = [];
+    this.data4 = [];
   }
 
   onLoadExpedientData() {
@@ -849,37 +850,41 @@ export class JuridicalRulingComponent
       typeJudgment: this.legalForm.get('tipoDictaminacion').value, // -- typeDict
     };
 
-    this.checkout1(object).then(({ json }) => {
-      json.then(res => {
-        if (res.statusCode === 200) {
-          if (res.vBan === 'S' && res.vDelete === 'S') {
-            // Pendiente
-            // --
-          } else {
-            let object2 = {
-              vProceedingsNumber: res.data.vProceedingsNumber,
-              vTypeDicta: res.data.vTypeDicta,
-              vOfDictaNumber: res.data.vOfDictaNumber,
-              vWheelNumber: res.data.vWheelNumber,
-            };
-            this.checkout2(object2).then(({ json }) => {
-              json.then(res => {
-                if (res.statusCode !== 200) {
-                  this.alert('warning', 'AVISO', res.message[0]);
-                } else {
-                  console.log('TODO SALE BIEN', res.data);
-                }
+    this.checkout1(object)
+      .then(({ json }) => {
+        json.then(res => {
+          if (res.statusCode === 200) {
+            if (res.vBan === 'S' && res.vDelete === 'S') {
+              // Pendiente
+              // --
+            } else {
+              let object2 = {
+                vProceedingsNumber: res.data.vProceedingsNumber,
+                vTypeDicta: res.data.vTypeDicta,
+                vOfDictaNumber: res.data.vOfDictaNumber,
+                vWheelNumber: res.data.vWheelNumber,
+              };
+              this.checkout2(object2).then(({ json }) => {
+                json.then(res => {
+                  if (res.statusCode !== 200) {
+                    this.alert('warning', 'AVISO', res.message[0]);
+                  } else {
+                    console.log('TODO SALE BIEN', res.data);
+                  }
+                });
               });
-            });
+            }
+          } else if (res.statusCode === 400) {
+            this.alert('warning', 'AVISO', res.message[0]);
           }
-        }
-      });
-    });
+        });
+      })
+      .catch(err => {});
   }
 
   async checkout1(object: object) {
     let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -891,7 +896,7 @@ export class JuridicalRulingComponent
 
   async checkout2(object: object) {
     let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -903,7 +908,7 @@ export class JuridicalRulingComponent
 
   async checkout3(object: object) {
     let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',

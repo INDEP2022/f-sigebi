@@ -46,12 +46,16 @@
             ? 'disabled'
             : ''
         "
-        label="Acción">
-        <select class="form-control" formControlName="action">
-          <option [value]="null">Seleccione una acción</option>
-          <option [value]="1">Cambio de Acta</option>
-          <option [value]="2">Cambio de Estatus</option>
-        </select>
+        label="Cambio">
+        <ng-select
+          formControlName="action"
+          class="form-control"
+          placeholder="Seleccione una acción de cambio"
+          [searchable]="false"
+          [clearable]="false">
+          <ng-option value="1">Cambio de Acta</ng-option>
+          <ng-option value="2">Cambio de Estatus</ng-option>
+        </ng-select>
       </form-field>
       <div class="col-xs-2 pl-0">
         <button
