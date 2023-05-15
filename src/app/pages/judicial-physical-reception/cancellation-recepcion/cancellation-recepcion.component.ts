@@ -53,7 +53,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
         sort: false,
       },
@@ -489,11 +489,38 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     );
   }
 
+  clearInputs() {
+    this.form.get('acta2').setValue(null);
+    this.form.get('fecElab').setValue(null);
+    this.form.get('fecCierreActa').setValue(null);
+    this.form.get('fecCaptura').setValue(null);
+    this.form.get('direccion').setValue(null);
+    this.form.get('observaciones').setValue(null);
+    this.form.get('autoridadCancela').setValue(null);
+    this.form.get('elabora').setValue(null);
+    this.form.get('testigo').setValue(null);
+    this.form.get('acta').reset();
+    this.form.get('autoridad').reset();
+    this.form.get('ident').reset();
+    this.form.get('recibe').reset();
+    this.form.get('admin').reset();
+    this.form.get('folio').reset();
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
+  }
+
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
     this.initialBool = false;
+    this.nextProce = true;
+    this.prevProce = false;
+    this.navigateProceedings = false;
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
+    this.numberProceeding = 0;
+    this.form.get('folioEscaneo').reset();
+
+    this.clearInputs();
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -519,6 +546,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
+        this.maxDate = new Date();
         this.getTransfer();
       }
     );
@@ -546,8 +574,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  validations() {
-    this.form.get('fe');
+  replicateFolio() {
+    this.alert('info', 'El apartado de folios está en construcción', '');
   }
 
   checkChange() {
@@ -668,7 +696,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Estatus no disponible',
-          'El bien tiene un estatus invalido para ser asignado a alguna acta'
+          'El bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         this.alert(
@@ -788,7 +816,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Problemas con el número de acta',
-          'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+          'Debe especificar/buscar el acta para después eliminar el bien de esta'
         );
       } else if (this.selectActData == null) {
         this.alert(
@@ -1050,26 +1078,27 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       '¿Desea eliminar completamente el acta?',
-      `Se eliminará el acta ${this.idProceeding}`,
+      `Se eliminará el acta ${this.form.get('acta2').value}`,
       'Eliminar'
     ).then(q => {
       if (q.isConfirmed) {
-        this.serviceProcVal
-          .newDeleteProceeding(this.idProceeding.toString())
-          .subscribe(
-            res => {
-              console.log(res);
-              this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
-            },
-            err => {
-              console.log(err);
-              this.alert(
-                'error',
-                'No se pudo eliminar acta',
-                'Secudió un problema al eliminar el acta'
-              );
-            }
-          );
+        const paramsF = new FilterParams();
+        paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            console.log();
+            const realData = JSON.parse(JSON.stringify(res.data[0]));
+            this.alert('success', 'Éxito', `${realData.id}`);
+          },
+          err => {
+            console.log(err);
+            this.alert(
+              'error',
+              'No se pudo eliminar acta',
+              'Secudió un problema al eliminar el acta'
+            );
+          }
+        );
       }
     });
   }

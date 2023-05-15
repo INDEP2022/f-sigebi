@@ -1,7 +1,8 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -82,6 +83,7 @@ export class NotificationFileUpdateComponent
 
   constructor(
     private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService
   ) {
     super();
@@ -90,6 +92,19 @@ export class NotificationFileUpdateComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+    this.getParams();
+  }
+
+  getParams() {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.form
+          .get('noExpediente')
+          .setValue(
+            params['noExpediente'] ? Number(params['noExpediente']) : undefined
+          );
+      });
     this.onLoadListNotifications();
   }
 
