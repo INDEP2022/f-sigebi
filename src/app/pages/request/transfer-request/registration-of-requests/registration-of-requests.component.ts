@@ -37,6 +37,7 @@ import { RequestService } from '../../../../core/services/requests/request.servi
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { SelectTypeUserComponent } from '../select-type-user/select-type-user.component';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
+import { MotiveRefuseModalComponent } from './motive-refuse-modal/motive-refuse-modal.component';
 import { RegistrationHelper } from './registrarion-of-request-helper.component';
 
 @Component({
@@ -1166,6 +1167,7 @@ export class RegistrationOfRequestsComponent
     }).then(async result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
+          this.motivoRechazo();
           this.finishMethod();
         }
         if (typeCommit === 'returnar') {
@@ -1251,6 +1253,22 @@ export class RegistrationOfRequestsComponent
         }
       }
     });
+  }
+
+  //modal de motivo del rechazo
+  motivoRechazo() {
+    const dataRequest = this.requestData;
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(MotiveRefuseModalComponent, config);
   }
 
   //revisar las pruebas
