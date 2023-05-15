@@ -54,7 +54,7 @@
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Descripción Bien INDEP</label>
+            <label>Descripci&oacute;n Bien INDEP</label>
             <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-5">
@@ -116,7 +116,7 @@
           </div>
           <div class="col-md-5">
             <label>No. Norma</label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
 
@@ -138,7 +138,7 @@
             <span class="fs-4">{{ goodData?.quantity | number }}</span>
           </div>
           <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única</label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
         </div>
@@ -273,7 +273,7 @@
           </div>
           <div class="col-md-6">
             <label>No. Norma</label>
-            <span class="fs-4"> {{ cumplyNorma }}</span>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
 
@@ -306,7 +306,7 @@
         </div>
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única</label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
@@ -396,7 +396,7 @@
           </div> -->
           <div class="col-md-6">
             <label>No. Norma</label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
           <div class="col-md-6">
             <label>Destino INDEP</label>
@@ -428,7 +428,7 @@
 
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única</label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6">
@@ -450,7 +450,7 @@
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripción Bien INDEP</label>
+            <label>Descripci&oacute;n Bien INDEP</label>
             <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-6">
@@ -625,12 +625,12 @@
           </div>
           <div class="col-md-6">
             <label>No. Norma</label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Clave Única</label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6">
@@ -652,7 +652,7 @@
           <div class="col-md-6">
             <label>Fecha ingreso</label>
             <span class="fs-4">
-              {{ goodData?.admissionDate | date: 'dd/MM/yyyy' }}
+              {{ goodData?.admissionDate | date : 'dd/MM/yyyy' }}
             </span>
           </div>
           <div class="col-md-6">
