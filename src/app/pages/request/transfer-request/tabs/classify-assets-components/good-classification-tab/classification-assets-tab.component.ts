@@ -319,6 +319,18 @@ export class ClassificationAssetsTabComponent
     });
   }
 
+  updateStatusGood(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map(async (item: any) => {
+        if (item.id === this.goodObject.id) {
+          item.processStatus = event.processStatus;
+          item.goodStatus = event.goodStatus;
+        }
+      });
+      this.paragraphs.load(data);
+    });
+  }
+
   initForm() {
     this.detailArray = this.fb.group({
       id: [null],

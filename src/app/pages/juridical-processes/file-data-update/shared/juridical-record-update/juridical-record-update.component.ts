@@ -1154,6 +1154,7 @@ export class JuridicalRecordUpdateComponent
       iden: this.formControls.wheelNumber.value,
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
+      affair: this.formControls.affairKey.value,
     };
     this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
       queryParams: { origin: this.layout },

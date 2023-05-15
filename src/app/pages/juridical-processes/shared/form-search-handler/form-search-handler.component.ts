@@ -105,12 +105,12 @@ export class FormSearchHandlerComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    console.log('CAMBIO', changes);
     if (
       changes['formData']?.currentValue &&
       !changes['formData']?.isFirstChange()
     ) {
-      console.log('formData');
+      console.log('formData', this.formData);
       this.searchOnInput = true;
       this.loading = true;
       this.buildFilters();
@@ -135,7 +135,8 @@ export class FormSearchHandlerComponent
   }
 
   getData(): void {
-    console.log(this.filterParams.getValue().getParams());
+    console.log('FILTER', this.filterParams.getValue().getParams());
+
     this.loading = true;
     if (this.dataObservableFn) {
       this.dataObservableFn(
@@ -149,6 +150,7 @@ export class FormSearchHandlerComponent
             this.loading = false;
             this.modalLoaded = true;
             this.changeDetectorRef.detectChanges();
+
             if (!this.modal.isShown && data.count > 1) {
               this.modal.show();
             } else if (data.count == 1) {
@@ -182,17 +184,17 @@ export class FormSearchHandlerComponent
   }
 
   buildFilters() {
-    console.log('building...');
+    // console.log('building...');
     const params = new FilterParams();
     if (this.fieldsToSearch.length > 0 && this.formData != null) {
-      console.log('fieldsToSearch');
+      console.log('fieldsToSearch', this.fieldsToSearch);
       this.fieldsToSearch.forEach(f => {
         if (f.nestedObjField) {
           if (
             this.formData[f.field] !== null &&
             this.formData[f.field] !== undefined
           ) {
-            console.log(this.formData[f.field]);
+            console.log('FIELD', this.formData[f.field]);
             let obj;
             const { field, operator } = f;
             const nestedObj = this.formData[field] as any;
@@ -238,7 +240,8 @@ export class FormSearchHandlerComponent
           }
         }
       });
-      console.log(this.filters);
+
+      console.log('FILTERS', this.filters);
       this.filters.forEach(f => {
         const { field, value, operator } = f;
         if (operator) {
@@ -268,6 +271,7 @@ export class FormSearchHandlerComponent
       this.filterParams.next(params);
       this.getData();
     }
+    this.formData = null;
   }
 
   openModalSearch() {
@@ -277,11 +281,12 @@ export class FormSearchHandlerComponent
   close() {
     this.onSearchStart.emit(false);
     this.onConfirmSearch.emit(false);
+    this.filters = [];
     this.modal.hide();
   }
 
   selectRow(row: IUserRowSelectEvent<any>) {
-    console.log(row);
+    console.log('ROW', row);
     this.selectedRow = row.data;
     this.rowSelected = true;
     if (this.selectOnClick) {
@@ -297,6 +302,7 @@ export class FormSearchHandlerComponent
     this.onSearchStart.emit(false);
     this.onConfirmSearch.emit(false);
     this.onSelect.emit(this.selectedRow);
+    this.filters = [];
     this.modal.hide();
   }
 }

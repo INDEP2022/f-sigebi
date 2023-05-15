@@ -10,7 +10,11 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
-import { IVban } from 'src/app/core/models/ms-good/good';
+import {
+  IAcceptGoodStatus,
+  IAcceptGoodStatusScreen,
+  IVban,
+} from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
@@ -18,6 +22,7 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -165,7 +170,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceSssubtypeGood: GoodSssubtypeService,
     private serviceUser: UsersService,
     private serviceGoodParameter: GoodParametersService,
-    private serviceDocuments: DocumentsService
+    private serviceDocuments: DocumentsService,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super();
   }
@@ -282,6 +288,60 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     }
   }
 
+  validateGood(element: any) {
+    let di_disponible: boolean;
+    /* return new Promise((resolve, reject) => { */
+    const modelScreen: IAcceptGoodStatusScreen = {
+      pNumberGood: element.id,
+      pVcScreen: 'FACTREFACTAVENT',
+    };
+
+    const modelStatus: IAcceptGoodStatus = {
+      pNumberGood: element.id,
+      pExpedients: this.form.get('expediente').value,
+    };
+    return new Promise((resolve, reject) => {
+      this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
+        res => {
+          console.log(res.data);
+          if (res.data != null || res.data != undefined) {
+            di_disponible = true;
+            console.log('Entro if');
+            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
+              res => {
+                const resDis = JSON.stringify(res);
+                if (resDis != 'S') {
+                  resolve({ disponible: false });
+                } else {
+                  resolve({ disponible: true });
+                }
+              },
+              err => {
+                resolve({ disponible: false });
+              }
+            );
+          } else {
+            di_disponible = false;
+            console.log('Entro else');
+            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
+              res => {
+                resolve({ disponible: false });
+              },
+              err => {
+                resolve({ disponible: false });
+              }
+            );
+          }
+        },
+        err => {
+          resolve({ disponible: false });
+        }
+      );
+    });
+
+    /*     }); */
+  }
+
   //Select Rows
 
   rowSelect(e: any) {
@@ -331,8 +391,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         /* this.enableElement('acta'); */
       });
   }
-
-  validateGood(good: any) {}
 
   fillIncomeProceeding(dataRes: any) {
     const paramsF = new FilterParams();
@@ -447,26 +505,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             console.log(res);
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
-                let disponible: boolean = false;
-                if (e.detail != null) {
-                  if (
-                    format(
-                      new Date(e.detail.approvedXAdmonDate),
-                      'yyyy-MM-dd'
-                    ) <= format(new Date(), 'yyyy-MM-dd') &&
-                    format(
-                      new Date(e.detail.indicatesUserApprovalDate),
-                      'yyyy-MM-dd'
-                    ) >= format(new Date(), 'yyyy-MM-dd')
-                  ) {
-                    disponible = true;
-                  } else {
-                    disponible = false;
-                  }
-                } else {
-                  disponible = false;
-                }
-
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                disponible = JSON.parse(JSON.stringify(resp)).disponible;
                 return { ...e, avalaible: disponible };
               })
             );

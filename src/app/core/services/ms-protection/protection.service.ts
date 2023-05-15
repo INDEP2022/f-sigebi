@@ -53,6 +53,13 @@ export class ProtectionService extends HttpService {
     return this.put(route, body);
   }
 
+  deletePer(body: IProtectionPerGood) {
+    return this.post(
+      `${this.route.ProtectionGood}/${this.route.ProtectionGoodDelete}`,
+      body
+    );
+  }
+
   remove(id: string | number) {
     const route = `${this.route.Protection}/${id}`;
     return this.delete(route);
