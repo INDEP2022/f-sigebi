@@ -55,4 +55,5 @@ export interface IJuridicalShiftChangeParams {
   iden: number;
   exp: number;
   pNoTramite: number;
+  affair: any;
 }
