@@ -207,6 +207,16 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     });
   }
 
+  async CountDictationGoodFile(armyOfficeKey: any) {
+    const result = await firstValueFrom(
+      this.documentsService.postCountDictationGoodFile(armyOfficeKey)
+    );
+    return result;
+  }
+
+  close() {
+    this.modalService.hide();
+  }
   onClickGoodDictation() {
     if (this.dataTable.length === 0) {
       this.showToasterError(
@@ -224,13 +234,6 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       );
       return;
     }
-
-    // if (this.dataTable[0].id !== identifier) {
-    //   this.showToasterError(
-    //     'El identificador ingresado no coincide con el de la tabla'
-    //   );
-    //   return;
-    // }
 
     this.alertQuestion(
       'warning',
@@ -262,17 +265,6 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  close() {
-    this.modalService.hide();
-  }
-
-  async CountDictationGoodFile(armyOfficeKey: any) {
-    const result = await firstValueFrom(
-      this.documentsService.postCountDictationGoodFile(armyOfficeKey)
-    );
-    return result;
   }
 
   async onClickDictation() {
@@ -346,8 +338,10 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     }
     const data = await getDataFromExcel(event.target.files[0]);
     if (!this.validateExcel(data)) {
+      console.log('Error');
       return;
     }
+    console.log(data);
     this.dataTable = data.map((item: any) => {
       return {
         goodNumber: { id: item.NO_BIEN },
@@ -358,6 +352,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     this.form.get('delete').enable();
     this.form.get('delete').setValue(false);
     this.isDisabledBtnGoodDictation = true;
+    this.isDisableCreateDictation = false;
   }
 
   async prePrints(): Promise<{
@@ -636,7 +631,22 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
   }
 
   changeCbDelete(event: any) {
-    console.log({ event });
+    let target = event.target;
+    const { id, typeDict, expedientNumber } = this.form.value;
+    if ((!id && !typeDict) || (!id && !expedientNumber)) {
+      this.alert('info', 'No se han cargado los bienes a borrar', '');
+      target.checked = !target.checked;
+      return;
+    }
+
+    if (target.checked) {
+      this.isDisabledBtnGoodDictation = false;
+      this.isDisableCreateDictation = true;
+    } else {
+      this.isDisabledBtnGoodDictation = true;
+    }
+
+    console.log({ event, value: target.checked });
   }
 
   // btnImprimeRelacionBienes() {
