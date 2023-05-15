@@ -18,13 +18,27 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SweetAlertIcon } from 'sweetalert2';
+import { FormLoaderComponent } from '../../form-loader/form-loader.component';
 
 @Component({
   selector: 'app-select-form',
   standalone: true,
-  imports: [CommonModule, SharedModule],
+  imports: [CommonModule, SharedModule, FormLoaderComponent],
   templateUrl: './select-form.component.html',
-  styles: [``],
+  styles: [
+    `
+      #select-form {
+        ngx-select {
+          ::ng-deep {
+            ng-select {
+              height: auto;
+              min-height: 43px;
+            }
+          }
+        }
+      }
+    `,
+  ],
 })
 export class SelectFormComponent implements OnInit {
   @Input() form: FormGroup;
@@ -69,6 +83,8 @@ export class SelectFormComponent implements OnInit {
   data: DefaultSelect = new DefaultSelect();
   otherData: any[];
   subscription: Subscription;
+  loading = false;
+  page = 1;
   // $unSubscribe = new Subject<void>();
   private _toastrService = inject(ToastrService);
   get select() {
@@ -91,12 +107,20 @@ export class SelectFormComponent implements OnInit {
   }
 
   setParams(params: ListParams) {
-    console.log(params);
+    console.log(params, this.page++);
+    params.page = +(this.page + '');
+    // console.log(params, this.page + 1);
+    // this._params = params;
+    // this.getData();
+    // params.page = this.page;
     this.paramsChange.emit(params);
   }
 
   setFilterParams(params: FilterParams) {
-    console.log(params);
+    console.log(params, this.page++);
+    // this._paramsFilter = params;
+    // this.getData();
+    params.page = +(this.page + '');
     this.paramsFilterChange.emit(params);
   }
 
@@ -122,27 +146,44 @@ export class SelectFormComponent implements OnInit {
   }
 
   private getDataObservable() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    // if (this.subscription) {
+    //   this.subscription.unsubscribe();
+    // }
     console.log('Get Data');
 
     // this.loadingData.emit(true);
     const oldTypeSearchText = this.typeToSearchText;
     this.typeToSearchText = 'Cargando por favor espere';
+    this.loading = true;
     this.subscription = this.getListObservable.subscribe({
       next: data => {
         console.log(data);
+        // debugger;
         // this.loadingData.emit(false);
-        this.typeToSearchText = oldTypeSearchText;
-        this.otherData = data.data;
-        this.data = new DefaultSelect(
-          this.haveTodos
-            ? [{ [this.value]: null, [this.bindLabel]: 'Todos' }, ...data.data]
-            : data.data,
-          data.count ? data.count : data.data.length,
-          true
-        );
+        if (data.data && data.data.length > 0) {
+          this.typeToSearchText = oldTypeSearchText;
+          this.otherData = data.data;
+          this.data = new DefaultSelect(
+            this.haveTodos
+              ? [
+                  { [this.value]: null, [this.bindLabel]: 'Todos' },
+                  ...this.data.data.concat(data.data),
+                ]
+              : this.data.data.concat(data.data),
+            data.count ? data.count : data.data.length
+          );
+
+          // this.data = new DefaultSelect(
+          //   this.haveTodos
+          //     ? [
+          //       { [this.value]: null, [this.bindLabel]: 'Todos' },
+          //       ...this.data.data.concat(data.data),
+          //     ]
+          //     : this.data.data.concat(data.data),
+          //   data.count ? data.count : data.data.length
+          // );
+        }
+        this.loading = false;
       },
       error: err => {
         let error = '';
@@ -152,7 +193,8 @@ export class SelectFormComponent implements OnInit {
         } else {
           error = err.error.message;
         }
-        this.data = new DefaultSelect();
+        this.loading = false;
+        // this.data = new DefaultSelect();
         this.onLoadToast('error', 'Error', error);
       },
     });
@@ -175,6 +217,7 @@ export class SelectFormComponent implements OnInit {
   }
 
   getData() {
+    console.log(this.data);
     if (this.list && this.list.length > 0) {
       this.getDataOfList();
     } else {
@@ -199,9 +242,11 @@ export class SelectFormComponent implements OnInit {
 
   onChange(event: any) {
     console.log(event);
+    // if (event.length == 0) {
+    //   return;
+    // }
     if (this.otherData) {
       this.selectEvent.emit(event);
-      // console.log(event);
     }
     this.form.updateValueAndValidity();
   }

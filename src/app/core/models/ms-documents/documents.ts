@@ -29,5 +29,5 @@ export interface IDocuments {
   associateUniversalFolio?: string | number;
   dateRegistrationScanningHc?: Date;
   dateRequestScanningHc?: Date;
-  goodNumber: string | number;
+  goodNumber?: string | number;
 }
