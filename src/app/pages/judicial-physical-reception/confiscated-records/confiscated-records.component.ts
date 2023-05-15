@@ -517,6 +517,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     }
   }
 
+  replicateFolio() {
+    this.alert('info', 'El apartado de folios está en construcción', '');
+  }
+
   //Bienes y disponibilidad de bienes
 
   getTransfer() {
@@ -745,6 +749,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     //Validar si hay un acta abierta
     this.nextProce = true;
     this.prevProce = false;
+    this.navigateProceedings = false;
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
@@ -1018,7 +1023,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.alertQuestion(
           'question',
           '¿Desea eliminar completamente el acta?',
-          `Se eliminará el acta ${this.idProceeding}`,
+          `Se eliminará el acta ${this.form.get('acta2').value}`,
           'Eliminar'
         ).then(q => {
           if (q.isConfirmed) {
@@ -1031,7 +1036,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.alert('success', 'Éxito', `${realData.id}`);
               },
               err => {
-                this.alert('error', 'Error', `${err}`);
+                console.log(err);
+                this.alert(
+                  'error',
+                  'No se pudo eliminar acta',
+                  'Secudió un problema al eliminar el acta'
+                );
               }
             );
           }

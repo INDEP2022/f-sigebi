@@ -377,10 +377,11 @@
           <form-field
             class="col-md-3"
             [control]="form.get('estatusPrueba')"
-            label="Status ">
+            label="Estatus ">
             <input
               type="text"
               class="form-control"
+              [readOnly]="true"
               formControlName="estatusPrueba" />
           </form-field>
 
@@ -429,6 +430,7 @@
           <input
             type="text"
             class="form-control"
+            [readOnly]="true"
             formControlName="estatusBienActa" />
         </form-field>
       </div>
