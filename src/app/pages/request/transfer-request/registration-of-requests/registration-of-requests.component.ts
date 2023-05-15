@@ -1115,12 +1115,28 @@ export class RegistrationOfRequestsComponent
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
+          this.deleteMsjRefuse();
         },
         error: error => {
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
       });
+    });
+  }
+
+  deleteMsjRefuse() {
+    const requestObj: object = {
+      id: this.requestData.id,
+      rejectionComment: null,
+    };
+    this.requestService.update2(this.requestData.id, requestObj).subscribe({
+      next: response => {
+        console.log('Actualizado', response);
+      },
+      error: error => {
+        console.log('No actualizado', error);
+      },
     });
   }
 
@@ -1167,21 +1183,26 @@ export class RegistrationOfRequestsComponent
     }).then(async result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
-          this.motivoRechazo();
+          console.log('finish');
           this.finishMethod();
         }
         if (typeCommit === 'returnar') {
+          console.log('returnar');
+
           this.returnarMethod();
         }
         if (typeCommit === 'captura-solicitud') {
+          console.log('captura-solicitud');
           this.confirmMethod();
         }
         if (typeCommit === 'verificar-cumplimiento') {
+          console.log('verificar-cumplimiento');
           this.question = true;
           setTimeout(async () => {
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
               await this.updateGoodStatus('CLASIFICAR_BIEN');
+              console.log('CLASIFICAR_BIEN');
               this.verifyComplianceMethod();
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
@@ -1247,7 +1268,8 @@ export class RegistrationOfRequestsComponent
 
         if (typeCommit === 'refuse') {
           await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
-          this.refuseMethod();
+          this.motivoRechazo();
+          //this.refuseMethod();
         }
       }
     });
@@ -1256,10 +1278,13 @@ export class RegistrationOfRequestsComponent
   //modal de motivo del rechazo
   motivoRechazo() {
     const dataRequest = this.requestData;
+
     let config: ModalOptions = {
       initialState: {
+        dataRequest,
         callback: (next: boolean) => {
           if (next) {
+            this.refuseMethod();
           }
         },
       },
