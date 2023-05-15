@@ -531,9 +531,10 @@
           <form-field
             class="col-md-3"
             [control]="form.get('estatusPrueba')"
-            label="Status ">
+            label="Estatus ">
             <input
               type="text"
+              [readOnly]="true"
               class="form-control"
               formControlName="estatusPrueba" />
           </form-field>

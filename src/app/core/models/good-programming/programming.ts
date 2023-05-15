@@ -29,6 +29,7 @@ export interface Iprogramming {
   programmingLee: string;
   regSendSat: number;
   regionalDelegationNumber: number | string;
+  regionalDelegationName: string;
   startDate: string;
   stateKey: number;
   stationId: string | number;
