@@ -11,6 +11,8 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { AlertButton } from '../../../scheduled-maintenance-1/models/alert-button';
 import { PartializeGeneralGoodTab2Service } from '../../services/partialize-general-good-tab2.service';
+import { PartializeGeneralGoodV2Tab2Service } from '../../services/partialize-general-good-v2-tab2.service';
+import { PartializeGeneralGoodV2Service } from '../../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
@@ -20,14 +22,17 @@ import { PartializeGeneralGoodService } from '../../services/partialize-general-
 })
 export class GoodFormComponent extends AlertButton implements OnInit {
   @Input() firstCase: boolean = null;
+  @Input() version: number;
   paramsGoods = new FilterParams();
   moreParams: string[] = [];
-  goodFilter = SearchFilter.LIKE;
+  goodFilter = SearchFilter.EQ;
 
   // operator = SearchFilter.LIKE;
   constructor(
     private serviceTab1: PartializeGeneralGoodService,
     private serviceTab2: PartializeGeneralGoodTab2Service,
+    private service2Tab1: PartializeGeneralGoodV2Service,
+    private service2Tab2: PartializeGeneralGoodV2Tab2Service,
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
     private statusService: StatusGoodService
@@ -36,33 +41,43 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.firstCase === null) {
+    if (this.firstCase === null || this.version === null) {
       return;
     }
     this.moreParams = [];
+    this.service.initFormGood();
     if (this.firstCase === true) {
-      this.serviceTab1.initFormGood();
+      // this.service.initFormGood();
       this.selectGood(this.serviceTab1.getSavedGood());
       this.moreParams.push(
-        'filter.goodClassNumber=$in:1424,1426,1427,1575,1590'
+        'filter.goodClassNumber=$in:' + this.service.clasificators
       );
     }
     if (this.firstCase === false) {
-      this.serviceTab2.initFormGood();
-      this.selectGood(this.serviceTab1.getSavedGood());
+      // this.service.initFormGood();
+      this.selectGood(this.serviceTab2.getSavedGood());
       this.moreParams.push(
         'filter.goodClassNumber=$not:$null',
-        'filter.goodClassNumber=$not:$in:1424,1426,1427,1575,1590'
+        'filter.goodClassNumber=$not:$in:' + this.service.clasificators
       );
     }
-    this.moreParams.push('filter.extDomProcess=$not:$null');
-    this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
-    this.moreParams.push('filter.appraisedValue=$not:$null');
-    this.moreParams.push('filter.val14=$not:$null');
+    if (this.version === 1) {
+      this.moreParams.push('filter.unit=$not:$null');
+      this.moreParams.push('filter.extDomProcess=$not:$null');
+      this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
+      this.moreParams.push('filter.appraisedValue=$not:$null');
+      this.moreParams.push('filter.val14=$not:$null');
+    }
   }
 
   get service() {
-    return this.firstCase === true ? this.serviceTab1 : this.serviceTab2;
+    return this.version === 1
+      ? this.firstCase === true
+        ? this.serviceTab1
+        : this.serviceTab2
+      : this.firstCase === true
+      ? this.service2Tab1
+      : this.service2Tab2;
   }
 
   get formLoading() {
