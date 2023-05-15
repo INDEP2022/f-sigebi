@@ -5,83 +5,95 @@
   <div body>
     <div class="row mt-4">
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active" (click)="openForm()">
-          Abrir archivo de MS Excel 4.0
-        </button>
+        <!-- <input
+          type="file"
+          class="btn btn-secondary btn-sm active"
+          (change)="onClickBtnFileExcel($event)" /> -->
+
+        <a
+          class="btn btn-secondary btn-sm active"
+          (click)="btnFileExcel.click()"
+          >Abrir archivo de MS Excel 4.0<input
+            #btnFileExcel
+            hidden
+            type="file"
+            accept=".xlsx,.xls"
+            (change)="onClickBtnFileExcel($event)" />
+        </a>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active">
-          Abrir archivo de Texto CSV
-        </button>
+        <a class="btn btn-secondary btn-sm active" (click)="btnFileCsv.click()"
+          >Abrir archivo de Texto CSV<input
+            #btnFileCsv
+            hidden
+            type="file"
+            accept=".csv"
+            (change)="onClickBtnFileExcel($event)" />
+        </a>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-secondary btn-sm active">
+        <button
+          [disabled]="isLoadingProcessExtraction"
+          (click)="onClickBtnProcessExtraction()"
+          class="btn btn-secondary btn-sm active">
           Proceso de extracción
         </button>
       </div>
     </div>
     <div class="row mt-3 mb-3 pt-4">
       <form action="" class="form-material" [formGroup]="form">
-        <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('recordsRead')"
-              label="Registros leídos">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="recordsRead"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+        <div
+          style="
+            display: flex;
+            justify-content: space-around;
+            font-weight: bold;
+            margin-bottom: 35px;
+          "
+          class="mt-4">
+          <div>
+            Registros leídos: <span>{{ registerReads }}</span>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('processed')" label="Procesados">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="processed"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+          <div>
+            Registros procesados: <span>{{ registerProcessed }}</span>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('correct')" label="Correctos">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="correct"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+          <div>
+            Registros correctos: <span>{{ registerCorrect }}</span>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('wrong')" label="Erroneos">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="wrong"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+          <div>
+            Erróneos:
+            <span>{{ registerIncorrect }}</span>
           </div>
         </div>
         <div class="row mt-4 m-0">
           <h5 class="title">Origen de Datos</h5>
           <div [formGroup]="formTips" class="d-flex overflow-auto mb-3">
             <div
-              class="selects-origin-data"
+              class="selects-origin-data mb-4"
               *ngFor="let item of columns; let i = index">
               <label>{{ item }}:</label>
-              <select formControlName="TIP{{ i }}">
+              <select
+                (change)="changeTip($event, i + 1)"
+                formControlName="TIP{{ i + 1 }}">
                 <option selected>Opción {{ item }}</option>
-                <option value="0">Otro</option>
+                <option value="O">Otro</option>
                 <option value="B">No. Bien</option>
                 <option value="G">Gasto</option>
                 <option value="I">Ingreso neto</option>
                 <option value="V">Iva</option>
               </select>
             </div>
+            <!-- <div
+              class="selects-origin-data"
+              *ngFor="let item of columns; let i = index">
+              <ng-select formControlName="TIP{{ i + 1 }}">
+                <ng-option default>Opción {{ item }}</ng-option>
+                <ng-option value="O">Otro</ng-option>
+                <ng-option value="B">No. Bien</ng-option>
+                <ng-option value="G">Gasto</ng-option>
+                <ng-option value="I">Ingreso neto</ng-option>
+                <ng-option value="V">Iva</ng-option>
+              </ng-select>
+            </div> -->
           </div>
           <!-- <div class="col-md-3 pt-4">
             <form-field [control]="form.get('data')" label="Datos">
@@ -89,27 +101,29 @@
             </form-field>
           </div> -->
         </div>
-        <div class="row mt-4 mx-0">
+        <div [hidden]="!isVisibleSpent" class="row mt-4 mx-0">
           <h5 class="title">Gastos</h5>
-          <div [formGroup]="formGas" class="d-flex">
-            <div *ngFor="let item of columns; let i = index">
-              <label>Concepto {{ item }}:</label>
-              <!-- <form-field [control]="form.get('concept')" label="Concepto"> -->
-              <input
-                formControlName="GADS{{ i }}"
-                type="text"
-                class="form-control" />
-              <!-- </form-field> -->
+          <div class="overflow-auto">
+            <div [formGroup]="formGas" class="d-flex spent-inputs">
+              <div
+                [hidden]="formGas.get('GAS' + (i + 1)).disabled"
+                *ngFor="let item of columns; let i = index">
+                <label>Concepto {{ item }}:</label>
+                <input
+                  readonly
+                  (click)="onClickInputGas(i + 1)"
+                  [formControlName]="'GAS' + (i + 1)"
+                  type="text"
+                  class="" />
+              </div>
             </div>
-          </div>
-          <div class="d-flex">
-            <div *ngFor="let item of columns; let i = index">
-              <!-- <form-field [control]="form.get('description')" label="Descripción"> -->
-              <input
-                type="text"
-                class="form-control"
-                formControlName="GAD{{ i }}" />
-              <!-- </form-field> -->
+            <div [formGroup]="formGad" class="d-flex spent-inputs">
+              <div
+                [hidden]="formGad.get('GAD' + (i + 1)).disabled"
+                *ngFor="let item of columns; let i = index">
+                <label>Descripción {{ item }}:</label>
+                <input type="text" class="" formControlName="GAD{{ i + 1 }}" />
+              </div>
             </div>
           </div>
         </div>

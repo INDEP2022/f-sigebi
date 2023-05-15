@@ -1,12 +1,15 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -16,10 +19,12 @@ import {
 import { IRejectGood } from 'src/app/core/models/good-reject/good-reject.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { ClarificationFormTabComponent } from '../clarification-form-tab/clarification-form-tab.component';
 import { CLARIFICATION_COLUMNS } from './clarification-columns';
 
@@ -36,17 +41,21 @@ export class ClarificationListTabComponent
   @Input() request: any;
   paragraphs: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  @Output() updateGoodTable: EventEmitter<any> = new EventEmitter();
   totalItems: number = 0;
   idClarification: number = 0;
   clarificationsLength: any;
   task: any;
   statusTask: any = '';
+  bsModalRef: BsModalRef;
+
   constructor(
     private modalService: BsModalService,
     private rejectedGoodService: RejectedGoodService,
     private clarificationService: ClarificationService,
     private goodResDevService: GetGoodResVeService,
-    private goodServices: GoodService
+    private goodServices: GoodService,
+    private chatClarificationService: ChatClarificationsService
   ) {
     super();
   }
@@ -60,7 +69,6 @@ export class ClarificationListTabComponent
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.settings = {
       ...TABLE_SETTINGS,
@@ -77,6 +85,7 @@ export class ClarificationListTabComponent
   getData(): void {
     if (this.good) {
       this.loading = true;
+      this.paragraphs = new LocalDataSource();
       this.params.getValue()['filter.goodId'] = this.good.id;
       this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
         next: async (data: any) => {
@@ -88,6 +97,13 @@ export class ClarificationListTabComponent
               item.clarificationId
             );
             item['clarificationName'] = clarification;
+            const date = new Date(item.rejectionDate);
+            const datePipe = new DatePipe('en-US');
+            item['rejectionDate'] = datePipe.transform(
+              date,
+              'dd/MM/yyyy',
+              'UTC'
+            );
           });
 
           Promise.all(info).then(() => {
@@ -120,7 +136,7 @@ export class ClarificationListTabComponent
   }
 
   openForm(clarification?: IRejectGood): void {
-    if (clarification?.answered == 'CONTESTADA') {
+    if (clarification?.answered == 'ACLARADA') {
       this.onLoadToast(
         'warning',
         'No se puede editar una aclaración ya contestada',
@@ -142,46 +158,99 @@ export class ClarificationListTabComponent
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-      this.modalService.show(ClarificationFormTabComponent, config);
+
+      this.bsModalRef = this.modalService.show(
+        ClarificationFormTabComponent,
+        config
+      );
+      this.bsModalRef.content.event.subscribe((res: any) => {
+        if (res === 'UPDATE-GOOD') {
+          this.updateGoodTable.emit({
+            processStatus: 'SOLICITAR_ACLARACION',
+            goodStatus: 'SOLICITUD DE ACLARACION',
+          });
+        }
+      });
     }
   }
 
-  delete(clarification: IRejectGood) {
-    if (clarification.answered == 'CONTESTADA') {
+  delete(clarification: any) {
+    if (clarification.answered == 'ACLARADA') {
       this.onLoadToast(
         'warning',
         'No se puede eliminar una aclaración ya contestada',
         ''
       );
     } else {
-      this.rejectedGoodService
-        .remove(clarification.rejectNotificationId)
-        .subscribe({
-          next: async response => {
-            this.onLoadToast(
-              'success',
-              `Aclaración eliminada correctamente`,
-              ``
-            );
-
-            if (this.clarificationsLength === 1) {
-              console.log('entro');
-              const goodResDev: any = await this.getGoodResDev(
-                Number(this.good.id)
+      Swal.fire({
+        title: 'Eliminar Aclaración?',
+        text: '¿Desea eliminar la aclaración?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B38E5D',
+        confirmButtonText: 'Eliminar',
+      }).then(async (result: any) => {
+        const idChatClarification =
+          clarification['chatClarification'].idClarification;
+        const charResult = await this.removeChatClarification(
+          idChatClarification
+        );
+        this.rejectedGoodService
+          .remove(clarification.rejectNotificationId)
+          .subscribe({
+            next: async response => {
+              this.onLoadToast(
+                'success',
+                `Aclaración eliminada correctamente`,
+                ``
               );
-              await this.removeDevGood(Number(goodResDev));
+              console.log(
+                'cantidad de aclaraciones:',
+                this.clarificationsLength
+              );
               let body: any = {};
-              body['id'] = this.good.id;
-              body['goodId'] = this.good.goodId;
-              body.processStatus = 'REGISTRO_SOLICITUD';
-              body.goodStatus = 'REGISTRO_SOLICITUD';
-              await this.updateGoods(body);
-            }
-            setTimeout(() => {
-              this.getData();
-            }, 400);
-          },
-        });
+              //si existe solo una aclaracion
+              if (this.clarificationsLength === 1) {
+                const goodResDev: any = await this.getGoodResDev(
+                  Number(this.good.id)
+                );
+                await this.removeDevGood(Number(goodResDev));
+
+                body['id'] = this.good.id;
+                body['goodId'] = this.good.goodId;
+                body.processStatus = 'CLASIFICAR_BIEN';
+                body.goodStatus = 'CLASIFICAR_BIEN';
+                await this.updateGoods(body);
+              } else {
+                //si existe mas de una aclaracion
+                body['id'] = this.good.id;
+                body['goodId'] = this.good.goodId;
+                body.goodStatus =
+                  this.good.goodStatus != 'ACLARADO'
+                    ? 'ACLARADO'
+                    : 'CLASIFICAR_BIEN';
+                body.processStatus = 'CLASIFICAR_BIEN';
+                await this.updateGoods(body);
+              }
+              this.updateGoodTable.emit({
+                processStatus: body.processStatus,
+                goodStatus: body.goodStatus,
+              });
+              setTimeout(() => {
+                this.getData();
+              }, 400);
+            },
+            error: error => {
+              console.log(error);
+              this.onLoadToast(
+                'error',
+                'Error al eliminar',
+                `No se pudo eliminar el bien ${error.error.message}`
+              );
+            },
+          });
+      });
     }
   }
 
@@ -235,6 +304,26 @@ export class ClarificationListTabComponent
             'error',
             'Error interno',
             'No se pudo obtener el bien-res-dev'
+          );
+        },
+      });
+    });
+  }
+
+  removeChatClarification(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.chatClarificationService.remove(id).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          reject(false);
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error al eliminar',
+            'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
         },
       });

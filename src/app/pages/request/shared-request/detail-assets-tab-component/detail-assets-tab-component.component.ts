@@ -43,9 +43,11 @@ import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercom
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  DOUBLE_PATTERN,
   NUMBERS_PATTERN,
   NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
+  POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -187,7 +189,15 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-
+    // console.log(this.detailAssets.value);
+    for (const campo in this.detailAssets.controls) {
+      if (this.detailAssets.controls.hasOwnProperty(campo)) {
+        const control = this.detailAssets.get(campo);
+        if (control.value === undefined || control.value === 'undefined') {
+          this.detailAssets.get(campo).setValue(null);
+        }
+      }
+    }
     this.typeOfRequest = this.requestObject.typeOfTransfer
       ? this.requestObject.typeOfTransfer
       : this.requestObject.controls['typeOfTransfer'].value;
@@ -204,7 +214,7 @@ export class DetailAssetsTabComponentComponent
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
-        console.log(this.detailAssets.value);
+
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
         console.log('inicia<>>>><<<<<>>>>>');
@@ -303,7 +313,6 @@ export class DetailAssetsTabComponentComponent
     if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
       this.brandId = brand;
-      console.log('inicia<>>>><<<<<>>>>>');
       this.getSubBrand(new ListParams(), brand);
     }
 
@@ -344,7 +353,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   ngOnInit(): void {
-    console.log('información del good v1', this.detailAssets.value); //Henry
     this.detailAssetsInfo = this.detailAssets.value;
     this.initForm();
     this.getDestinyTransfer(new ListParams());
@@ -352,7 +360,6 @@ export class DetailAssetsTabComponentComponent
     this.getConcervationState(new ListParams());
     this.getTransferentUnit(new ListParams());
     this.getReactiveFormCall();
-    this.isSavingData();
 
     if (
       this.requestObject != undefined &&
@@ -785,7 +792,6 @@ export class DetailAssetsTabComponentComponent
     municipalityId?: number | string,
     stateKey?: number | string
   ) {
-    // debugger;
     if (municipalityId === null || stateKey === null) {
       return;
     }
@@ -964,13 +970,40 @@ export class DetailAssetsTabComponentComponent
         next: resp => {
           //const result = resp.data.filter((x: any) => x.uomCode === id);
           this.ligieUnit = resp.data[0].measureTlUnit;
+          this.setQuantityTypeInput(this.ligieUnit);
         },
       });
   }
-  onValuesChange(data: any) {
-    // this.brandId = data.flexValue;
-    console.log('ddddd' + data);
 
+  setQuantityTypeInput(unity: string) {
+    if (
+      unity === 'JUEGOS' ||
+      unity === 'PAR' ||
+      unity === 'PIEZA' ||
+      unity === 'UNIDAD' ||
+      unity === 'CAJAS'
+    ) {
+      this.detailAssets.controls['quantity'].setValidators([
+        Validators.required,
+        Validators.pattern(POSITVE_NUMBERS_PATTERN),
+      ]);
+    } else if (
+      unity === 'KILOGRAMOS' ||
+      unity === 'GRAMO' ||
+      unity === 'LITRO' ||
+      unity === 'METRO' ||
+      unity === 'METRO CÚBICO' ||
+      unity === 'METRO CUADRADO'
+    ) {
+      this.detailAssets.controls['quantity'].setValidators([
+        Validators.required,
+        Validators.pattern(DOUBLE_PATTERN),
+      ]);
+    }
+    this.detailAssets.updateValueAndValidity();
+  }
+
+  onValuesChange(data: any) {
     if (data != undefined) {
       this.getSubBrand(new ListParams(), data.flexValue);
       this.detailAssets.controls['subBrand'].setValue(null);
@@ -992,9 +1025,7 @@ export class DetailAssetsTabComponentComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log(resp);
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
-          console.log(this.selectBrand);
         },
         error: () => {
           this.selectBrand = new DefaultSelect();
@@ -1003,7 +1034,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string, description?: string) {
-    console.log(this.detailAssets.value);
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
@@ -1146,7 +1176,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
-    //debugger;
     this.typeRelevantSevice
       .getById(id)
       .pipe(takeUntil(this.$unSubscribe))
@@ -1159,9 +1188,8 @@ export class DetailAssetsTabComponentComponent
 
   changeDateEvaluoEvent(event: any) {
     this.bsEvaluoDate = event;
-
     if (this.bsEvaluoDate) {
-      let date = this.bsEvaluoDate.toISOString(); //new Date(this.bsEvaluoDate);
+      let date = this.bsEvaluoDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['appraisalDate'].setValue(date);
     }
   }
@@ -1169,7 +1197,7 @@ export class DetailAssetsTabComponentComponent
     this.bsCertifiDate = event;
 
     if (this.bsCertifiDate) {
-      let date = this.bsCertifiDate.toISOString(); //new Date(this.bsCertifiDate);
+      let date = this.bsCertifiDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['certLibLienDate'].setValue(date);
     }
   }
@@ -1178,7 +1206,7 @@ export class DetailAssetsTabComponentComponent
     this.bsPffDate = event;
 
     if (this.bsPffDate) {
-      let date = this.bsPffDate.toISOString(); //new Date(this.bsPffDate);
+      let date = this.bsPffDate.toISOString(); //moment(this.bsEvaluoDate).format('DD-MM-YYYY');
       this.goodDomicilieForm.controls['pffDate'].setValue(date);
     }
   }
@@ -1227,7 +1255,6 @@ export class DetailAssetsTabComponentComponent
 
   async save() {
     const domicilie = this.domicileForm.getRawValue();
-
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
@@ -1337,7 +1364,6 @@ export class DetailAssetsTabComponentComponent
       const username = this.authService.decodeToken().preferred_username;
       domicilio.userCreation = username;
       domicilio.userModification = username;
-
       domicilio.id = this.detailAssets.controls['id'].value;
       this.goodEstateService.create(domicilio).subscribe({
         next: resp => {
@@ -1360,15 +1386,17 @@ export class DetailAssetsTabComponentComponent
       });
     });
   }
+
   updateGoodRealState() {
     return new Promise((resolve, reject) => {
       const username = this.authService.decodeToken().preferred_username;
       let domicilio = this.goodDomicilieForm.getRawValue();
       domicilio.modificationDate = new Date().toISOString();
-
       domicilio.creationDate = new Date().toISOString();
-      //domicilio.modificationDate = new Date().toISOString();
-      this.goodEstateService.update(domicilio.id, domicilio).subscribe({
+
+      domicilio.userCreation = username;
+      domicilio.userModification = username;
+      this.goodEstateService.update(domicilio).subscribe({
         next: resp => {
           resolve(true);
         },
@@ -1433,7 +1461,6 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
-        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), data);
       }
     });
@@ -1461,7 +1488,6 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
-        // debugger;
         if (data === null) {
           this.combineMunicipalityId = true;
         }
@@ -1540,26 +1566,40 @@ export class DetailAssetsTabComponentComponent
 
   getGoodEstate() {
     if (this.detailAssets.controls['id'].value !== null) {
-      const id = this.detailAssets.controls['id'].value;
-      this.goodEstateService
-        .getById(id)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            this.goodDomicilieForm.patchValue(resp);
-            /* establece las fechas  */
-            //debugger;
-            const dateEvaluo =
-              this.goodDomicilieForm.controls['appraisalDate'].value;
-            this.bsEvaluoDate = dateEvaluo ? new Date(dateEvaluo) : null;
-            const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
-            this.bsPffDate = datePFF ? new Date(datePFF) : null;
-            const dateCerti =
-              this.goodDomicilieForm.controls['certLibLienDate'].value;
-            this.bsCertifiDate = dateCerti ? new Date(dateCerti) : null;
-          },
-        });
+      try {
+        const id = this.detailAssets.controls['id'].value;
+        this.goodEstateService
+          .getById(id)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: resp => {
+              this.goodDomicilieForm.patchValue(resp);
+              /* establece las fechas  */
+              const dateEvaluo =
+                this.goodDomicilieForm.controls['appraisalDate'].value;
+              this.bsEvaluoDate = dateEvaluo
+                ? this.parseDateNoOffset(dateEvaluo)
+                : null;
+              const datePFF = this.goodDomicilieForm.controls['pffDate'].value;
+              this.bsPffDate = datePFF ? this.parseDateNoOffset(datePFF) : null;
+              const dateCerti =
+                this.goodDomicilieForm.controls['certLibLienDate'].value;
+              this.bsCertifiDate = dateCerti
+                ? this.parseDateNoOffset(dateCerti)
+                : null;
+            },
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   message(header: any, title: string, body: string) {
@@ -1568,7 +1608,7 @@ export class DetailAssetsTabComponentComponent
     }, 2000);
   }
 
-  isSavingData() {
+  /*isSavingData() {
     this.requestHelperService.currentRefresh.subscribe({
       next: data => {
         if (data) {
@@ -1576,7 +1616,7 @@ export class DetailAssetsTabComponentComponent
         }
       },
     });
-  }
+  }*/
 
   setGoodDomicilieSelected(domicilie: any) {
     domicilie.localityKey = Number(domicilie.localityKey);

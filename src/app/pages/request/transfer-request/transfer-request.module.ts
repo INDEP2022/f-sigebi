@@ -10,6 +10,7 @@ import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
+import { MotiveRefuseModalComponent } from './registration-of-requests/motive-refuse-modal/motive-refuse-modal.component';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
 import { SelectTypeUserComponent } from './select-type-user/select-type-user.component';
 import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
@@ -29,6 +30,8 @@ import { SelectInputComponent } from './tabs/compliance-verification-components/
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
 import { EstateDocumentFormComponent } from './tabs/estate-document-form/estate-document-form.component';
 import { GeneralDocumentsFormComponent } from './tabs/general-documents-form/general-documents-form.component';
+import { InappropriatenessFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/inappropriateness-form/inappropriateness-form.component';
+import { InappropriatenessPgrSatFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/inappropriateness-pgr-sat-form/inappropriateness-pgr-sat-form.component';
 import { InputFieldComponent } from './tabs/notify-clarifications-impropriety-tabs-component/input-field/input-field.component';
 import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notification-assets-tab/notification-assets-tab.component';
 import { NotifyAssetsImproprietyFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notify-assets-impropriety-form/notify-assets-impropriety-form.component';
@@ -89,6 +92,9 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     FulfillmentComponent,
     PrintSatAnswerComponent,
     SelectInputComponent,
+    InappropriatenessPgrSatFormComponent,
+    InappropriatenessFormComponent,
+    MotiveRefuseModalComponent,
   ],
   imports: [
     CommonModule,

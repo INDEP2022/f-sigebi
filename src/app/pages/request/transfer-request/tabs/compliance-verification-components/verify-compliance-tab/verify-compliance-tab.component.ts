@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -26,6 +27,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -94,6 +96,7 @@ export class VerifyComplianceTabComponent
   confirmation: boolean = false;
   task: any;
   statusTask: any = '';
+  showClarificationButtons: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -109,7 +112,8 @@ export class VerifyComplianceTabComponent
     private rejectedGoodService: RejectedGoodService,
     private requestHelperService: RequestHelperService,
     private goodResDevService: GetGoodResVeService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private chatClarificationService: ChatClarificationsService
   ) {
     super();
   }
@@ -118,7 +122,6 @@ export class VerifyComplianceTabComponent
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     /* aclaraciones */
     this.clarifySetting.columns = CLARIFICATIONS_COLUMNS;
@@ -166,8 +169,11 @@ export class VerifyComplianceTabComponent
     };
 
     /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
-    if (this.typeDoc === 'approval-process') {
+    if (this.process === 'approval-process') {
       this.checkboxReadOnly = true;
+      this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
+    } else if ((this.process = 'verify-compliance')) {
+      this.checkboxReadOnly = false;
       this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
     }
   }
@@ -467,6 +473,7 @@ export class VerifyComplianceTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
+      fractionId: [null],
       descriptionGoodSae: [null],
       uniqueKey: [null],
       duplicatedGood: [null],
@@ -474,7 +481,14 @@ export class VerifyComplianceTabComponent
   }
 
   clarificationSelected(event: any) {
-    this.clarifyRowSelected = event.selected;
+    console.log(event);
+    if (event.isSelected == true) {
+      this.showClarificationButtons =
+        event.data.answered == 'ACLARADA' ? false : true;
+      this.clarifyRowSelected = event.selected;
+    } else {
+      this.showClarificationButtons = true;
+    }
   }
 
   newClarification() {
@@ -507,6 +521,8 @@ export class VerifyComplianceTabComponent
           this.clarificationData = [];
           if (next) {
             this.loadingClarification = true;
+            //this.isGoodSelected = false
+            //this.getData()
             this.getClarifications(this.goodsSelected[0].id);
           }
         },
@@ -514,10 +530,24 @@ export class VerifyComplianceTabComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    //this.bsModalRef =
-    this.bsModalservice.show(ClarificationFormTabComponent, config);
-    /* this.bsModalRef.content.event.subscribe((res: any) => {
-    }); */
+    this.bsModalRef = this.bsModalservice.show(
+      ClarificationFormTabComponent,
+      config
+    );
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      if (res === 'UPDATE-GOOD') {
+        this.goodData.getElements().then(data => {
+          data.map((item: any) => {
+            if (item.id === this.goodsSelected[0].id) {
+              item.processStatus = 'SOLICITAR_ACLARACION';
+              item.goodStatus = 'SOLICITUD DE ACLARACION';
+            }
+          });
+          this.goodData.load(data);
+        });
+      }
+    });
   }
 
   setDescriptionGoodSae(descriptionInput: any) {
@@ -539,9 +569,18 @@ export class VerifyComplianceTabComponent
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
+    this.params.value.addFilter(
+      'processStatus',
+      'VERIFICAR_CUMPLIMIENTO,SOLICITAR_ACLARACION',
+      SearchFilter.IN
+    );
     const filter = this.params.getValue().getParams();
     this.goodServices.getAll(filter).subscribe({
       next: resp => {
+        /*let goods = resp.data.filter(x =>  
+          x.processStatus == 'VERIFICAR_CUMPLIMIENTO' || x.processStatus == 'SOLICITAR_ACLARACION'
+        );*/
+
         var result = resp.data.map(async (item: any) => {
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
@@ -741,20 +780,23 @@ export class VerifyComplianceTabComponent
   selectGood(event: any) {
     //if (event.isSelected === true) {
     this.formLoading = true;
-    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
+
     this.clarificationData = [];
     this.detailArray.reset();
     this.goodsSelected = event.selected;
 
     if (this.goodsSelected.length === 1) {
+      //verifica si el bien ya fue aclarado para desabilitar
+      this.showClarificationButtons =
+        this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
+          ? true
+          : false;
       this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
-        //console.log("info del goodSELECTED v1", this.goodsSelected[0]); //henry
         this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
         this.detailArray.patchValue(this.goodsSelected[0] as IGood);
         this.getDomicilieGood(this.goodsSelected[0].addressId);
-        console.log('info del good v1', this.detailArray); //henry
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
@@ -763,6 +805,9 @@ export class VerifyComplianceTabComponent
 
       //console.log("Información de domicilio ",);
     } else {
+      this.clarificationData = [];
+      this.isGoodSelected = false;
+      this.detailArray.reset();
       this.formLoading = false;
     }
   }
@@ -777,6 +822,9 @@ export class VerifyComplianceTabComponent
         const clarification = resp.data.map(async (item: any) => {
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
+
+          const formatDate = moment(item.rejectionDate).format('DD/MM/YYYY');
+          item.rejectionDate = formatDate;
         });
 
         Promise.all(clarification).then(data => {
@@ -812,7 +860,7 @@ export class VerifyComplianceTabComponent
     });
   }
 
-  deleteClarification() {
+  async deleteClarification() {
     if (this.clarifyRowSelected.length !== 1) {
       this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
       return;
@@ -826,29 +874,47 @@ export class VerifyComplianceTabComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Eliminar',
-    }).then(result => {
+    }).then(async result => {
       if (result.isConfirmed) {
+        debugger;
         this.loader.load = true;
+        //eliminar el chat clarification
+        const idChatClarification =
+          this.clarifyRowSelected[0].chatClarification.idClarification;
+        const result = await this.removeChatClarification(idChatClarification);
+        //elimina la aclaracion
         const id = this.clarifyRowSelected[0].rejectNotificationId;
         this.rejectedGoodService.remove(id).subscribe({
           next: async resp => {
             this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
             this.clarificationData = [];
-            this.getClarifications(this.goodsSelected[0].id);
+            //this.getClarifications(this.goodsSelected[0].id);
+            this.isGoodSelected = false;
+            this.getData();
             this.loader.load = false;
             //actualizar el good-res-dev
+            let body: any = {};
             if (clarifycationLength === 1) {
               const goodResDev: any = await this.getGoodResDev(
                 this.goodsSelected[0].id
               );
               await this.removeDevGood(Number(goodResDev));
-              let body: any = {};
               body['id'] = this.goodsSelected[0].id;
               body['goodId'] = this.goodsSelected[0].goodId;
-              body.processStatus = 'REGISTRO_SOLICITUD';
-              body.goodStatus = 'REGISTRO_SOLICITUD';
+              body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+              body.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
+              await this.updateGoods(body);
+            } else {
+              body['id'] = this.goodsSelected[0].id;
+              body['goodId'] = this.goodsSelected[0].goodId;
+              body.goodStatus =
+                this.goodsSelected[0].goodStatus != 'ACLARADO'
+                  ? 'ACLARADO'
+                  : 'VERIFICAR_CUMPLIMIENTO';
+              body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
               await this.updateGoods(body);
             }
+            this.updateTable(body.goodStatus, body.processStatus);
           },
           error: error => {
             this.loader.load = false;
@@ -861,6 +927,18 @@ export class VerifyComplianceTabComponent
           },
         });
       }
+    });
+  }
+
+  updateTable(goodStatus: string, processStatus: string) {
+    this.goodData.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === this.goodsSelected[0].id) {
+          item.goodStatus = goodStatus;
+          item.processStatus = processStatus;
+        }
+      });
+      this.goodData.load(data);
     });
   }
 
@@ -937,7 +1015,6 @@ export class VerifyComplianceTabComponent
       body['fulfill'] = article.cumple === true ? 'S' : 'N';
       this.requestDocumentService.update(body).subscribe({
         next: resp => {
-          console.log('actualizado', resp);
           resolve(true);
         },
         error: error => {
@@ -966,6 +1043,26 @@ export class VerifyComplianceTabComponent
             'error',
             'Error interno',
             'No se pudo eliminar el bien-res-deb'
+          );
+        },
+      });
+    });
+  }
+
+  removeChatClarification(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.chatClarificationService.remove(id).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          reject(false);
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error al eliminar',
+            'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
         },
       });

@@ -18,8 +18,10 @@ export interface ClarificationGoodRejectNotification {
   statusGood?: string;
   clarificationId?: any;
   clarificationType?: string;
+  clarificationTypeName?: string;
   reason?: string;
   answered?: string;
+  addresseeName?: string;
   chatClarification?: IChatClarifications2;
   goodResDevId?: number;
   sysStsc4qbnbolbp3szu27tgt6lu?: number;

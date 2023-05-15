@@ -463,7 +463,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         if (requestResult) {
           const actualUser: any = this.authService.decodeToken();
           let body: any = {};
-          debugger;
+          // debugger;
           body['idTask'] = this.taskId;
           body['userProcess'] = actualUser.username;
 
@@ -497,6 +497,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           body['orderservice'] = orderservice;
 
           const taskResult = await this.createTaskOrderService(body);
+          console.log('tarea', taskResult);
           if (taskResult) {
             this.loadingTurn = false;
             this.msgModal(

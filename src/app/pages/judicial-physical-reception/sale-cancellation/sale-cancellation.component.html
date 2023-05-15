@@ -19,7 +19,7 @@
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm active"
-                (click)="goodsByExpediente()"
+                (click)="getGoodsByExpedient()"
                 [disabled]="
                   form.get('expediente').value == null ||
                   form.get('expediente').value < 0
@@ -44,6 +44,26 @@
             </div> -->
           </div>
         </div>
+        <div *ngIf="navigateProceedings" class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <button
+                id="expedient-number"
+                [disabled]="!prevProce"
+                class="btn btn-secondary btn-sm active mr-2"
+                (click)="prevProceeding()">
+                Anterior
+              </button>
+              <button
+                id="expedient-number"
+                class="btn btn-secondary btn-sm active"
+                [disabled]="!nextProce"
+                (click)="nextProceeding()">
+                Siguiente
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <hr class="row" />
       <div class="row">
@@ -53,6 +73,7 @@
               <form-field [control]="form.get('acta')" label="Acta 1">
                 <select
                   id="acta"
+                  [class]="initialBool ? 'disabled' : ''"
                   class="form-control"
                   formControlName="acta"
                   (ngModelChange)="changeAct()">
@@ -68,6 +89,7 @@
                   id="transfer"
                   control="transfer"
                   label="Transfer"
+                  [class]="initialBool ? 'disabled' : ''"
                   bindLabel="transferentkey"
                   (change)="verifyTransferenteAndAct()"
                   [data]="transferSelect"
@@ -83,7 +105,7 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="ident"
                   (ngModelChange)="changeAct()" />
               </form-field>
@@ -92,7 +114,7 @@
               <form-field [control]="form.get('entrego')" label="Entrego">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="entrego"
                   (change)="fillActTwo()" />
               </form-field>
@@ -102,6 +124,7 @@
                 <ngx-select
                   (fetchItems)="getRecibe($event)"
                   (change)="fillActTwo()"
+                  [class]="initialBool ? 'disabled' : ''"
                   control="recibe"
                   label="Recibe"
                   bindLabel="delegation"
@@ -119,7 +142,9 @@
                 <input
                   type="number"
                   class="form-control"
+                  [class]="initialBool ? 'disabled' : ''"
                   formControlName="folio"
+                  [min]="0"
                   maxlength="5"
                   (change)="fillActTwo()" />
               </form-field>
@@ -325,7 +350,8 @@
                 [class]="btnCSSAct"
                 [disabled]="!form.valid"
                 class="btn btn-sm active mr-2 ml-2"
-                size="small">
+                size="small"
+                (click)="toggleActa()">
                 {{ labelActa }}
               </button>
               <a
@@ -337,7 +363,8 @@
 
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-danger active btn-sm">
+                class="my-1 mx-2 btn btn-danger active btn-sm"
+                (click)="deleteProceeding()">
                 Eliminar Acta
               </button>
               <button
@@ -505,9 +532,10 @@
           <form-field
             class="col-md-3"
             [control]="form.get('estatusPrueba')"
-            label="Status ">
+            label="Estatus ">
             <input
               type="text"
+              [readOnly]="true"
               class="form-control"
               formControlName="estatusPrueba" />
           </form-field>
@@ -554,7 +582,11 @@
           class="col-md-3"
           [control]="form.get('etiqueta')"
           label="Etiqueta ">
-          <input type="text" class="form-control" formControlName="etiqueta" />
+          <input
+            type="text"
+            [readOnly]="true"
+            class="form-control"
+            formControlName="etiqueta" />
         </form-field>
         <div class="col-md-3">
           <form-field
@@ -563,6 +595,7 @@
             <input
               type="text"
               class="form-control"
+              [readOnly]="true"
               formControlName="edoFisico" />
           </form-field>
         </div>
@@ -579,7 +612,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('noAlmacen')"
-              label="No&#46; Almacen">
+              label="No&#46; Almac&eacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -604,9 +637,9 @@
               <button type="button" class="my-1 mx-2" size="small">
                 Aplica Almac&eacute;n/B&oacute;veda
               </button>
-              <button type="button" class="my-1 mx-2" size="small">
+              <!-- <button type="button" class="my-1 mx-2" size="small">
                 Exportar Datos
-              </button>
+              </button> -->
             </div>
           </div>
         </div>

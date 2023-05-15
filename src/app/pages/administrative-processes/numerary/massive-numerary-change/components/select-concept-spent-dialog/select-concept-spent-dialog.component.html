@@ -1,0 +1,42 @@
+<app-modal>
+  <div class="ch-content" header>
+    <h5 class="modal-title">Selector de Conceptos de Gastos</h5>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <form
+        [formGroup]="form"
+        (ngSubmit)="getExpensesConcept()"
+        class="container-filters form-material">
+        <div>
+          <form-field
+            class="form-group"
+            [control]="form.get('description')"
+            label="Descripción">
+            <input
+              class="form-control"
+              type="text"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-sm btn-primary active">
+            Buscar <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
+      <div class="col-md-12">
+        <div [class]="isLoading ? 'table-loading' : ''" class="overflow-auto">
+          <ng2-smart-table
+            (userRowSelect)="onUserRowSelect($event)"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="spentConcepts">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-modal>

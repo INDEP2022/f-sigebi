@@ -21,6 +21,7 @@ export class SelectInputComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     //console.log(this.value, this.rowData);
+    this.value = this.value != '' ? this.value : '__';
   }
 
   initForm() {}

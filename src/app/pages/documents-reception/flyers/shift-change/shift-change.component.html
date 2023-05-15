@@ -169,6 +169,7 @@
           <div class="m-3">
             <confirm-button
               text="Guardar"
+              [disabled]="!turnForm"
               loadingText="Cargando"
               [loading]="loading"
               (confirm)="save()"></confirm-button>

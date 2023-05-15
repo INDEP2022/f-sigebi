@@ -121,6 +121,12 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
 
+  getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(
+      `${GoodEndpoints.Good}/getAllGoodWDetail?${params}`
+    );
+  }
+
   getMeasurementUnits(unit: string) {
     return this.get<
       IResponse<{
@@ -140,8 +146,8 @@ export class GoodService extends HttpService {
   }
 
   getById(id: string | number) {
-    const route = `${GoodEndpoints.Good}/${id}`;
-    return this.get<IGood>(route);
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IGood>(`${route}?filter.id=$eq:${id}`);
   }
 
   getByIdAndGoodId(id: string | number, goodId: string | number) {
@@ -193,6 +199,7 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     if (params) {
       params['expedient'] = expedient;
+      // params['filter.status'] = `$eq:ADM`
     }
     const route = GoodEndpoints.SearchByExpedient;
     return this.get<IListResponse<IGood>>(route, params);
@@ -296,5 +303,15 @@ export class GoodService extends HttpService {
 
   changeGoodToNumerary(body: any) {
     return this.post(GoodEndpoints.CreateGoodNumerary, body);
+  }
+
+  updateWithParams(good: any) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
+
+  getGoodById(id: string | number) {
+    const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
+    return this.get<any>(route);
   }
 }

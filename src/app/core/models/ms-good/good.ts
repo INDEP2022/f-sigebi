@@ -353,6 +353,7 @@ export interface IGoodSami {
 }
 
 export interface IGood {
+  protection?: string;
   id?: number;
   inventoryNumber?: number;
   goodId?: number;
@@ -566,6 +567,7 @@ export interface IGood {
   color?: string;
   doorsNumber?: number;
   destinationRedress?: number;
+  fractionCode?: string;
   val1?: string;
   val2?: string;
   val3?: string;
@@ -709,6 +711,7 @@ export interface Estatus {
   fecVilidityFin?: any;
   observationShortStatus?: any;
   destiny: string;
+  id?: string;
 }
 
 export interface IVban {
@@ -722,6 +725,13 @@ export interface IVban {
   ];
 }
 
+export interface IValNumeOtro {
+  pc_pantalla: string;
+  no_bien: number;
+  identificador: string;
+  proceso_ext_dom: string;
+}
+
 export interface GoodGetData {
   goodNumber: number;
   subDelegationNumber: number;
@@ -733,6 +743,32 @@ export interface GoodGetData {
   processExt: string;
   statusGood: string;
   screenKey: string;
+}
+
+export interface ILvlPrograma {
+  no_bien: string | number;
+  no_expediente: string | number;
+}
+
+export interface IGoodAndDetailProceeding {
+  pTiNumberDeleg: number;
+  pTiNumberSubdel: number;
+}
+
+export interface IAcceptGoodStatus {
+  pNumberGood: number | string;
+  pExpedients: number | string;
+}
+
+export interface IAcceptGoodActa {
+  pNumberGood: number | string;
+  pIdentify: string;
+  pVcScreen: string;
+}
+
+export interface IAcceptGoodStatusScreen {
+  pNumberGood: number | string;
+  pVcScreen: string;
 }
 
 // TODO: Checar si la interfaz es la del modelo:

@@ -30,4 +30,16 @@ export class JobsService extends HttpService {
   update(id: string | number, job: any) {
     return this.put(`jobs/${id}`, job);
   }
+
+  getBymanagementNumber(params: _Params) {
+    return this.httpClient.get(
+      `${environment.API_URL}officemanagement/api/v1/m-job-management?filter.managementNumber/${params}`
+    );
+  }
+
+  getById_(id: number | string) {
+    return this.httpClient.get<IListResponse<IJob>>(
+      `${environment.API_URL}officemanagement/api/v1/jobs/${id}`
+    );
+  }
 }

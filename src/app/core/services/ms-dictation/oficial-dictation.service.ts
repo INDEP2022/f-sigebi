@@ -26,7 +26,7 @@ export class OficialDictationService extends HttpService {
     officialNumber: number;
     typeDict: string;
   }): Observable<IOfficialDictation> {
-    return this.get(this.route.FindIdsOfficialDictation, body);
+    return this.post(this.route.FindIdsOfficialDictation, body);
   }
 
   create(body: IOfficialDictation) {

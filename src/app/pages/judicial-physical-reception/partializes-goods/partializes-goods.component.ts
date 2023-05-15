@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs';
+import { TreeViewService } from 'src/app/@standalone/tree-view/tree-view.service';
 import { ITreeItem } from 'src/app/core/interfaces/menu.interface';
 import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
@@ -24,7 +25,7 @@ export class PartializesGoodsComponent
   @ViewChild('sideMenu') sideMenu: ElementRef;
   constructor(
     private fb: FormBuilder,
-
+    private treeViewService: TreeViewService,
     private goodPartializeService: GoodPartializeService
   ) {
     super();
@@ -46,7 +47,7 @@ export class PartializesGoodsComponent
         },
       },
     };
-    this.ilikeFilters.push('goodNumber');
+    // this.ilikeFilters.push('goodNumber');
     this.prepareForm();
   }
 
@@ -77,21 +78,33 @@ export class PartializesGoodsComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(params, this.columnFilters);
+    // debugger;
+    if (
+      this.columnFilters['filter.goodNumber'] ||
+      this.columnFilters['filter.description']
+    ) {
+      params.page = 1;
+    }
     if (this.service) {
       this.service.getAll(params).subscribe({
         next: (response: any) => {
           if (response) {
+            this.totalItems = response.count || 0;
+            this.items = response.data;
+            this.data.load(response.data);
+            // debugger;
             if (
-              this.columnFilters['filter.goodNumber'] &&
+              (this.columnFilters['filter.goodNumber'] ||
+                this.columnFilters['filter.description']) &&
               response.data &&
               response.data.length > 0
             ) {
               this.select(response.data[0].goodNumber);
+              this.data.setPage(1, true);
             }
-            this.totalItems = response.count || 0;
-            this.items = response.data;
-            this.data.load(response.data);
             this.data.refresh();
+
             this.loading = false;
           }
         },
@@ -113,12 +126,20 @@ export class PartializesGoodsComponent
   select(goodNumber: number) {
     // console.log(row);
     this.loadingTree = true;
+    this.treeViewService.selected = null;
     this.goodPartializeService
       .getTreePartialize(goodNumber)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
           console.log(response);
+          if (response[0].subItems.length === 0) {
+            this.onLoadToast(
+              'error',
+              'Bien ' + goodNumber,
+              'No tiene bienes parcializados'
+            );
+          }
           this.itemsTree = response;
           this.loadingTree = false;
         },

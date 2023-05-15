@@ -42,6 +42,26 @@
             </div>
           </div>
         </div>
+        <div *ngIf="navigateProceedings" class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <button
+                id="expedient-number"
+                [disabled]="!prevProce"
+                class="btn btn-secondary btn-sm active mr-2"
+                (click)="prevProceeding()">
+                Anterior
+              </button>
+              <button
+                id="expedient-number"
+                class="btn btn-secondary btn-sm active"
+                [disabled]="!nextProce"
+                (click)="nextProceeding()">
+                Siguiente
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-12">
@@ -84,8 +104,7 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
-                  [class]="initialdisabled ? 'disabled' : ''"
-                  class="form-control"
+                  class="form-control disabled"
                   formControlName="ident"
                   (change)="fillActTwo()" />
               </form-field>
@@ -156,6 +175,7 @@
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <div class="row">
@@ -232,7 +252,13 @@
             </div>
 
             <div class="col-md-4 pt-3">
-              <button type="button" size="small">Replicar Folio</button>
+              <button
+                class="btn btn-primary btn-sm active"
+                type="button"
+                size="small"
+                (click)="replicateFolio()">
+                Replicar Folio
+              </button>
             </div>
           </div>
         </div>
@@ -245,9 +271,8 @@
                 <input
                   (ngModelChange)="verifyDateAndFill()"
                   bsDatepicker
-                  id="fecElab"
-                  [minDate]="minDateFecElab"
                   class="form-control"
+                  [minDate]="minDateFecElab"
                   formControlName="fecElab" />
               </form-field>
             </div>
@@ -333,12 +358,14 @@
 
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-danger active btn-sm">
+                class="my-1 mx-2 btn btn-danger active btn-sm"
+                (click)="deleteProceeding()">
                 Eliminar Acta
               </button>
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-secondary active btn-sm">
+                class="my-1 mx-2 btn btn-secondary active btn-sm"
+                (click)="goCargaMasiva()">
                 Carga Masiva
               </button>
             </div>
@@ -368,10 +395,10 @@
 
           <p class="pt-4">
             <span class="text-success mr-5"
-              ><i class="fa fa-square"></i> Disponibles</span
+              ><i class="fa fa-square"></i>Disponibles</span
             >
             <span class="text-danger"
-              ><i class="fa fa-square"></i> No disponibles</span
+              ><i class="fa fa-square"></i>No disponibles</span
             >
           </p>
         </div>
@@ -472,7 +499,11 @@
           </div>
         </div>
         <div class="col-md-6">
-          <button type="button" size="small" class="mx-2 my-1">
+          <button
+            type="button"
+            size="small"
+            class="mx-2 my-1"
+            (click)="openEdoFisico()">
             Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
           <button
@@ -482,14 +513,14 @@
             (click)="applyWarehouseSafe()">
             Aplica Alm&#46;&#47;Bov&#46;
           </button>
-          <a
+          <!--  <a
             [routerLink]="['flat-file']"
             type="button"
             nbButton
             size="small"
             class="mx-2 my-1"
             >Exportar Datos</a
-          >
+          > -->
         </div>
       </div>
     </form>

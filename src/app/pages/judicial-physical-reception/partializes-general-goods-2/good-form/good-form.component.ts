@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -15,6 +15,7 @@ import { AlertButton } from '../../scheduled-maintenance-1/models/alert-button';
   styles: [],
 })
 export class GoodFormComponent extends AlertButton implements OnInit {
+  @Input() firstCase = false;
   paramsGoods = new FilterParams();
   // operator = SearchFilter.LIKE;
   constructor(
@@ -155,7 +156,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     }
   }
 
-  get isFirstCase() {
-    return this.service.isFirstCase;
-  }
+  // get isFirstCase() {
+  //   return this.service.isFirstCase;
+  // }
 }

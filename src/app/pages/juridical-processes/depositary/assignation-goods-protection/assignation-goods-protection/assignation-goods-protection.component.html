@@ -7,36 +7,43 @@
     <!-- FORM Expediente -->
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <!-- <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field> -->
+        <div class="col-sm-12 col-12 col-md-2">
           <app-expedient-shared
             expedientField="id"
             [form]="form"
             (selectExpedient)="expedientSelect($event)"></app-expedient-shared>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-3">
           <form-field
             [control]="form.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
-            <input class="form-control" formControlName="preliminaryInquiry" />
+            <input
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
+              class="form-control"
+              formControlName="preliminaryInquiry" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-3">
           <form-field [control]="form.get('criminalCase')" label="Causa Penal">
-            <input class="form-control" formControlName="criminalCase" />
+            <input
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
+              class="form-control"
+              formControlName="criminalCase" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-          <!-- <button
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-2"
+            (click)="clear()">
+            Limpiar
+          </button>
+          <button
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="mostrarInfo()">
             Notificaciones Posteriores
-          </button> -->
+          </button>
         </div>
       </div>
     </form>
@@ -44,166 +51,239 @@
 
     <hr class="row" />
     <!-- FORM formTipoSuspersion -->
-    <div class="row w-100">
-      <form [formGroup]="formTipoSuspersion" class="form-material">
-        <div class="col-sm-12 col-12 col-md-5 p-2 pl-3">
-          <label class="form-control-label w-100">Tipo Suspensi&oacute;n</label>
-          <div class="row">
-            <div
-              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
-              <form-radio label="PROVISIONAL">
-                <input
-                  class="p-2"
-                  type="radio"
-                  formControlName="suspensionType"
-                  [value]="'PROVISIONAL'" />
-              </form-radio>
-            </div>
-            <div
-              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
-              <form-radio label="DEFINITIVA">
-                <input
-                  class="p-2"
-                  type="radio"
-                  formControlName="suspensionType"
-                  [value]="'DEFINITIVA'" />
-              </form-radio>
-            </div>
-            <div
-              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
-              <form-radio label="DE PLANO">
-                <input
-                  class="p-2"
-                  type="radio"
-                  formControlName="suspensionType"
-                  [value]="'DE PLANO'" />
-              </form-radio>
-            </div>
+
+    <form [formGroup]="formAmparo" class="form-material row">
+      <div class="col-sm-12 col-12 col-md-5 p-2 pl-3">
+        <label class="form-control-label w-100">Tipo Suspensi&oacute;n</label>
+        <div class="row">
+          <div
+            class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
+            <form-radio label="PROVISIONAL">
+              <input
+                class="p-2"
+                type="radio"
+                formControlName="suspensionType"
+                checked
+                [value]="'PROVISIONAL'" />
+            </form-radio>
+          </div>
+          <div
+            class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
+            <form-radio label="DEFINITIVA">
+              <input
+                class="p-2"
+                type="radio"
+                formControlName="suspensionType"
+                checked
+                [value]="'DEFINITIVA'" />
+            </form-radio>
+          </div>
+          <div
+            class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
+            <form-radio label="DE PLANO">
+              <input
+                class="p-2"
+                type="radio"
+                formControlName="suspensionType"
+                checked
+                [value]="'DE PLANO'" />
+            </form-radio>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="formTipoSuspersion.get('previous_report_date')"
-            label="Fecha Informe Previo">
-            <input
-              class="form-control"
-              formControlName="previous_report_date"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-5 p-2">
-          <form-field
-            [control]="formTipoSuspersion.get('justificado')"
-            label="Justificado">
-            <input class="form-control" placeholder="Justificado" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-7 p-2">
-          <form-field
-            [control]="formTipoSuspersion.get('observations')"
-            label="Observaciones">
-            <textarea
-              class="form-control"
-              formControlName="observations"></textarea>
-          </form-field>
-        </div>
-      </form>
-      <!-- </div> -->
-      <!-- FORM formTipoSuspersion -->
+      </div>
+      <div class="col-sm-12 col-12 col-md-2 p-2">
+        <form-field
+          [control]="formAmparo.get('reportPreviousDate')"
+          label="Fecha Previo">
+          <input
+            class="form-control"
+            formControlName="reportPreviousDate"
+            bsDatepicker
+            [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-5 p-2">
+        <form-field
+          [control]="formAmparo.get('reportJustifiedDate')"
+          label="Fecha Justificado">
+          <input
+            class="form-control"
+            formControlName="reportJustifiedDate"
+            bsDatepicker
+            [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-7 p-2">
+        <form-field
+          [control]="formAmparo.get('observations')"
+          label="Observaciones">
+          <textarea
+            oninput="if(this.value.length > 500) this.value = this.value.slice(0, 500)"
+            class="form-control"
+            formControlName="observations"></textarea>
+        </form-field>
+      </div>
+    </form>
+    <!-- </div> -->
+    <!-- FORM formTipoSuspersion -->
 
-      <!-- FORM formAmparo -->
-      <form [formGroup]="formAmparo" class="form-material">
-        <!-- <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="formAmparo.get('amparo')" label="Amparo">
-            <input class="form-control" formControlName="amparo" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="formAmparo.get('protectionType')"
-            label="Tipo Amparo">
-            <select class="form-control" formControlName="protectionType">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="'D'">DIRECTO</option>
-              <option [value]="'I'">INDIRECTO</option>
-            </select>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="formAmparo.get('officialDate')"
-            label="Fecha Oficio">
-            <input
-              class="form-control"
-              formControlName="officialDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <ngx-select
-            [data]="minItems"
-            bindLabel="description"
-            label="Min&#46; Pub&#46;"
-            value="id"
-            (fetchItems)="getFromSelect($event)"
-            [form]="formAmparo"
-            control="no_minpub"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <ngx-select
-            [data]="courtItems"
-            bindLabel="description"
-            label="No&#46; Juzgado"
-            value="id"
-            (fetchItems)="getFromSelect($event)"
-            [form]="formAmparo"
-            control="court_number"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <ngx-select
-            [data]="items"
-            bindLabel="delegacionName"
-            label="Delegaci&oacute;n"
-            value="id"
-            (fetchItems)="getFromSelect($event)"
-            [form]="formAmparo"
-            control="delegacion"></ngx-select>
-        </div>
-        <div class="col-sm-12 col-12 col-md-5 p-2">
-          <form-field
-            [control]="formAmparo.get('complainers')"
-            label="Quejosos">
-            <textarea
-              class="form-control"
-              formControlName="complainers"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="formAmparo.get('act_claimed')"
-            label="Acto Reclamado">
-            <textarea
-              class="form-control"
-              formControlName="act_claimed"></textarea>
-          </form-field>
-        </div>
-      </form>
-    </div>
+    <!-- FORM formAmparo -->
+    <form [formGroup]="formAmparo" class="form-material row">
+      <!-- <div class="row w-100"> -->
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field [control]="formAmparo.get('cveProtection')" label="Amparo">
+          <input
+            oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)"
+            class="form-control"
+            formControlName="cveProtection" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field
+          [control]="formAmparo.get('protectionType')"
+          label="Tipo Amparo">
+          <ng-select formControlName="protectionType" class="form-control">
+            <ng-option
+              [value]="type.v"
+              *ngFor="
+                let type of [
+                  { v: 'I', desc: 'INDIRECTO' },
+                  { v: 'D', desc: 'DIRECTO' }
+                ]
+              "
+              >{{ type.desc }}</ng-option
+            >
+          </ng-select>
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field
+          [control]="formAmparo.get('protectionDate')"
+          label="Fecha Oficio">
+          <input
+            class="form-control"
+            formControlName="protectionDate"
+            bsDatepicker
+            [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <ngx-select
+          [data]="minItems"
+          bindLabel="description"
+          label="Min&#46; Pub&#46;"
+          value="id"
+          (fetchItems)="getMin($event)"
+          [showTooltip]="true"
+          [form]="formAmparo"
+          control="minpubNumber"
+          [searchOnInit]="true"
+          [labelTemplate]="documentTypeLabel2"
+          [optionTemplate]="documentTypeOption2">
+          <ng-template #documentTypeLabel2 let-item="item">
+            {{ item.id }} - {{ item.description }}
+          </ng-template>
+          <ng-template #documentTypeOption2 let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template>
+        </ngx-select>
+      </div>
+      <div class="col-sm-12 col-12 col-md-2 p-2">
+        <ngx-select
+          [data]="courtItems"
+          bindLabel="description"
+          label="No&#46; Juzgado"
+          value="id"
+          (fetchItems)="getCourt($event)"
+          [showTooltip]="true"
+          [form]="formAmparo"
+          control="courtNumber"
+          [searchOnInit]="true"
+          [labelTemplate]="documentTypeLabel3"
+          [optionTemplate]="documentTypeOption3">
+          <ng-template #documentTypeLabel3 let-item="item">
+            {{ item.id }} - {{ item.description }}
+          </ng-template>
+          <ng-template #documentTypeOption3 let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template>
+        </ngx-select>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <ngx-select
+          [data]="delegationItems"
+          bindLabel="description"
+          label="Delegaci&oacute;n"
+          value="id"
+          (fetchItems)="getDelegation($event)"
+          [showTooltip]="true"
+          [form]="formAmparo"
+          control="delegationNumber"
+          [searchOnInit]="true"
+          [labelTemplate]="documentTypeLabel"
+          [optionTemplate]="documentTypeOption">
+          <ng-template #documentTypeLabel let-item="item">
+            {{ item.id }} - {{ item.description }}
+          </ng-template>
+          <ng-template #documentTypeOption let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template>
+        </ngx-select>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field [control]="formAmparo.get('complainers')" label="Quejosos">
+          <textarea
+            oninput="if(this.value.length > 500) this.value = this.value.slice(0, 500)"
+            class="form-control"
+            formControlName="complainers"></textarea>
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field
+          [control]="formAmparo.get('actReclaimed')"
+          label="Acto Reclamado">
+          <textarea
+            oninput="if(this.value.length > 500) this.value = this.value.slice(0, 500)"
+            class="form-control"
+            formControlName="actReclaimed"></textarea>
+        </form-field>
+      </div>
+    </form>
+
     <!-- FORM formAmparo -->
     <hr class="row" />
 
     <!-- tabla Emisión Acuerdos -->
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-5 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"
-          (rowSelect)="selectGoodTable1($event)"></ng2-smart-table>
+        <div class="table-responsive" style="position: relative">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              id="table"
+              [attr.class]="'table-bordered'"
+              [settings]="tableSettings"
+              [source]="dataTable"
+              (rowSelect)="selectGoodTable1($event)"></ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="count"></app-pagination>
+          </div>
+        </div>
+
+        <input
+          type="text"
+          class="form-control mt-3"
+          placeholder="Bien cambiado a numerario por enajenación"
+          (dblclick)="callFormNumerary()" />
         <br />
-        <span class="badge bagde-3 bg-info"> Apostilla </span>
-        <span class="badge primary-3 bg-warning">
+        <span class="badge bagde-3 bg-success mr-3"> Disponibles </span>
+        <span class="badge primary-3 bg-danger">
           Asignados a alg&uacute;n Amparo
         </span>
       </div>
@@ -234,6 +314,22 @@
           [settings]="tableSettings2"
           [source]="dataTable2"
           (rowSelect)="selectGoodTable2($event)"></ng2-smart-table>
+        <div class="row d-flex justify-content-center">
+          <div class="col-auto mt-4">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active mr-2"
+              (click)="blockDelete = !blockDelete">
+              {{ blockDelete ? 'Bienes amparos protegidos' : 'Bienes amparos' }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="changeStatus()">
+              Regresar estatus
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

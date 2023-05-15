@@ -1,0 +1,11 @@
+<div
+  class="mx-1 my-1"
+  [class]="
+    formGood.invalid || loading || bienesPar.length === 0 ? 'disabled' : ''
+  "
+  size="small"
+  (click)="apply()">
+  Aplica
+</div>
+
+<!-- [disabled]="formGood.invalid || loading || bienesPar.length === 0" -->

@@ -966,9 +966,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   }
 
   selectEvent(e: any) {
-    console.log(e);
-    e.data.turnSelect = !e.data.turnSelect;
+    //console.log(e);
+    e.isSelected ? (e.data.turnSelect = true) : (e.data.turnSelect = false);
+
     this.dataTable.update(e.data, e.data);
+
     this.showPGRDocs = false;
     this.showScan = false;
     this.showValDoc = false;
@@ -1089,9 +1091,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 };
 
                 this.globalVarsService.updateGlobalVars(this.globalVars);
-                this.router.navigateByUrl(
-                  '/pages/juridical/juridical-ruling/12345'
-                );
+                this.router.navigateByUrl('/pages/juridical/juridical-ruling/');
               } else {
                 this.alert(
                   'info',

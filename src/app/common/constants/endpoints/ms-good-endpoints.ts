@@ -24,3 +24,15 @@ export enum GoodEndpoints {
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
 }
+
+export enum GoodProcessPoints {
+  basepath = `goodprocess`,
+  cuValNume = `application/cuValNume`,
+  cuValOtro = `application/cuValotro`,
+  vnNumerario = `application/getVnNumerario`,
+  lvlPrograma = `application/getLvlPrograma`,
+  goodAndDetail = `application/getBienAndDetailActa`,
+  acceptGoodActa = `application/acceptGoodActa`,
+  acceptGoodStatus = `application/acceptGoodStatus`,
+  acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+}

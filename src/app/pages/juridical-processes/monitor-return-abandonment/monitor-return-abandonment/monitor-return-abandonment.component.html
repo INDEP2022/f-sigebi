@@ -1,6 +1,24 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">MONITOR DE ABANDONO POR DEVOLUCI&Oacute;N</h5>
+
+    <div class="col-2 justify-content-end">
+      <div class="row">
+        <div class="col-6">
+          <div class="d-flex justify-content-end">
+            <app-columns-select [(settings)]="_settings"></app-columns-select>
+          </div>
+        </div>
+        <div class="col-6">
+          <button
+            (click)="Regresar()"
+            type="button"
+            class="btn btn-primary btn-sm active justify-content-end">
+            Regresar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div body>
@@ -9,17 +27,17 @@
         class="col-sm-12 col-12 col-md-12 p-2"
         [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
+          id="monitorABN"
           [attr.class]="'my-table table-bordered'"
-          [settings]="settings"
+          (edit)="edit($event.data)"
+          [settings]="_settings"
           [source]="goods"
           (userRowSelect)="goodSelect($event.data)">
         </ng2-smart-table>
         <br />
-        <div>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
-        </div>
+        <!-- <div>
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+        </div> -->
       </div>
     </div>
     <div class="row">
@@ -46,6 +64,7 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
           <div class="form-group">
+            <!-- <button [disabled]="validBtn == false" type="button" class="btn btn-primary btn-sm active" -->
             <button
               type="button"
               class="btn btn-primary btn-sm active"

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { IPaymentsGensDepositary } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -13,6 +14,7 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   @Input() nombrePantalla: string;
   @Input() btnDeshacerParam: string;
   @Input() deleteDateOption?: boolean = false;
+  @Input() listDateOptions?: IPaymentsGensDepositary[] = [];
 
   @Output() formValues = new EventEmitter<any>();
   @Output() formDepositariaValues = new EventEmitter<any>();
@@ -37,6 +39,7 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   btnDeshacer() {
     console.log('Deshacer');
     this.form.get(this.btnDeshacerParam).reset();
+    this.form.get(this.btnDeshacerParam).setValue('');
     this.deleteDateOption = true;
     // this.eliminarDispersionPagos.emit(
     //   this.form.get(this.btnDeshacerParam).valid
@@ -52,7 +55,10 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   btnValidacionPagos() {
     console.log('Validacion');
     console.log(this.formDepositario.value);
-    this.formValuesValidacion.emit(this.formDepositario);
+    this.formValuesValidacion.emit({
+      form: this.form,
+      depositario: this.formDepositario,
+    });
   }
 
   btnSearchGood() {
@@ -70,5 +76,13 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
       dateValue: this.form.get(this.btnDeshacerParam).value,
     };
     this.eliminarDispersionPagos.emit(resp);
+  }
+
+  formatTotalAmount(numberParam: number) {
+    if (numberParam) {
+      return new Intl.NumberFormat('es-MX').format(numberParam);
+    } else {
+      return '0.00';
+    }
   }
 }

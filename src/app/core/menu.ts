@@ -83,8 +83,12 @@ export const MENU: IMenuItem[] = [
         label: 'Applicaciones',
         subItems: [
           {
-            label: 'Solicitud de transferencia',
+            label: 'Solicitud de Transferencia',
             link: '/pages/request/list/new-transfer-request',
+          },
+          {
+            label: 'Programar Recepción',
+            link: '/pages/request/programming-request/schedule-reception',
           },
           {
             label: 'Muestreo Bienes',

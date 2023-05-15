@@ -47,6 +47,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   request: any;
   user: any;
   typeUser: string = '';
+  delegationUserLog: string = '';
   //injections
   deleRegionalId: any;
   validBtn: any = false;
@@ -81,7 +82,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
     this.params.value.addFilter('employeeType', this.typeUser);
     this.params.value.addFilter(
       'regionalDelegation',
-      this.deleRegionalId.substring(11),
+      this.delegationUserLog,
       SearchFilter.ILIKE
     );
     const filter = this.params.getValue().getParams();
@@ -125,6 +126,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   confirm(): void {
     this.triggerEvent(this.user);
     this.close();
+    this.modalRef.content.callback(this.user);
   }
 
   close(): void {

@@ -12,6 +12,7 @@
               (ngModelChange)="
                 toggleButton('search-goods-expedient', 'expediente')
               "
+              [min]="0"
               type="number"
               class="form-control"
               formControlName="expediente" />
@@ -37,23 +38,12 @@
       </div>
 
       <div class="row">
-        <div class="col-md-4">
-          <table class="table table-responsive" style="max-height: 300px">
-            <thead>
-              <tr>
-                <th>No Bien</th>
-                <th>Descrici&oacute;n</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="let item of dataGoods"
-                (dblclick)="getGoodData(item.id)">
-                <td>{{ item.id }}</td>
-                <td>{{ item.description }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="col-md-4 scroll-table">
+          <ng2-smart-table
+            class="col-md-12"
+            [settings]="settings1"
+            [source]="dataGoods"
+            (rowSelect)="getGoodData($event)"></ng2-smart-table>
         </div>
 
         <div class="col-md-8 md-tabs">
@@ -105,7 +95,8 @@
                       [control]="form.get('importe')"
                       label="Importe por Valor">
                       <input
-                        type="text"
+                        type="number"
+                        [min]="1"
                         class="form-control"
                         formControlName="importe"
                         (ngModelChange)="btnAppraisTab()" />

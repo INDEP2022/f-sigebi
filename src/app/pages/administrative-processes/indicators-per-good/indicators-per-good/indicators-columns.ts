@@ -35,7 +35,7 @@ export const INDICATORS_COLUMNS2 = {
     sort: false,
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      var formatted = new DatePipe('es-ES').transform(raw, 'dd/MM/aaaa');
       return formatted;
     },
   },

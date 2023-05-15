@@ -1,0 +1,200 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">ACEPTAR IMPROCEDENCIA</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="form" class="form-material">
+      <div
+        class="row"
+        *ngIf="
+          request.typeOfTransfer != 'SAT_SAE' ||
+          (request.typeOfTransfer == 'SAT_SAE' &&
+            notification.chatClarification.idClarificationType == '2')
+        ">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('addresseeName')"
+            label="Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="50"
+              formControlName="addresseeName" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('positionAddressee')"
+            label="Cargo Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="50"
+              formControlName="positionAddressee" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('senderName')"
+            label="Nombre Remitente">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="50"
+              formControlName="senderName" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('senderCharge')"
+            label="Cargo Remitente">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="50"
+              formControlName="senderCharge" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('clarification')"
+            label="Aclaraci&oacute;n">
+            <textarea
+              class="form-control"
+              maxlength="800"
+              formControlName="clarification"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div
+        class="row pt-3"
+        *ngIf="
+          request.typeOfTransfer != 'SAT_SAE' ||
+          (request.typeOfTransfer == 'SAT_SAE' &&
+            notification.chatClarification.idClarificationType == '2')
+        ">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('consistentIn')"
+            label="Consistente en">
+            <textarea
+              class="form-control"
+              maxlength="1000"
+              formControlName="consistentIn"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('paragraphInitial')"
+            label="P&aacute;rrafo Inicial">
+            <textarea
+              class="form-control"
+              maxlength="1000"
+              formControlName="paragraphInitial"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('paragraphFinal')"
+            label="P&aacute;rrafo Final">
+            <textarea
+              class="form-control"
+              maxlength="1000"
+              formControlName="paragraphFinal"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              maxlength="1000"
+              formControlName="observations"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <!--<div class="row pt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('foundation')"
+            label="Fundamentaci&oacute;n">
+            <textarea
+              class="form-control"
+              maxlength="4000"
+              formControlName="foundation"></textarea>
+          </form-field>
+        </div>
+      </div> -->
+
+      <!--<div class="row pt-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('transmitterId')" label="ID Emisor">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="15"
+              formControlName="transmitterId" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('invoiceLearned')"
+            label="Folio Documento">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="60"
+              formControlName="invoiceLearned" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('worthAppraisal')"
+            label="Valor Aval&uacute;o">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="60"
+              formControlName="worthAppraisal" />
+          </form-field>
+        </div>
+      </div> -->
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [text]="'Continuar'"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          [text]="'Aceptar'"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

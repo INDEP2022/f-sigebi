@@ -24,4 +24,10 @@ export class SpentService extends HttpService {
       params
     );
   }
+
+  getExpensesConceptById(id: number) {
+    return this.get<{ data: ISpentConcept }>(
+      `${this.route.ExpenseConcept}/${id}`
+    );
+  }
 }
