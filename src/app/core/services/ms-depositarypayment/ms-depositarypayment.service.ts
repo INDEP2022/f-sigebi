@@ -27,8 +27,10 @@ export class MsDepositaryPaymentService extends HttpService {
     params?: string
   ): Observable<IListResponse<IRefPayDepositary>> {
     return this.get<IListResponse<IRefPayDepositary>>(
-      `${DepositaryPaymentEndPoints.RefPayDepositories}?${params}`
+      `${DepositaryPaymentEndPoints.RefPayDepositories}`,
+      params
     );
+    //return this.get<IListResponse<IRefPayDepositary>>(`${DepositaryPaymentEndPoints.RefPayDepositories}?${params}` );
   }
 
   getPaymentsGensDepositories(

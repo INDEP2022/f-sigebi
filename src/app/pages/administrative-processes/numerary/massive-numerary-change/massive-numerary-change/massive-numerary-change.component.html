@@ -110,7 +110,8 @@
                 *ngFor="let item of columns; let i = index">
                 <label>Concepto {{ item }}:</label>
                 <input
-                  (dblclick)="onDobleClickInputGas(i + 1)"
+                  readonly
+                  (click)="onClickInputGas(i + 1)"
                   [formControlName]="'GAS' + (i + 1)"
                   type="text"
                   class="" />
