@@ -29,6 +29,11 @@ export class GoodService implements ICrudMethods<IGood> {
     return this.goodRepository.getById('good/good', id);
   }
 
+  getGoodByIds(id: string | number): Observable<any> {
+    const route = `good/good/getGoodById/${id}/${id}`;
+    return this.goodRepository.getGoodByIds(route);
+  }
+
   getDataByGoodFather(goodFather: number) {
     return this.goodRepository.getById(
       'good/good/getDataByGoodFather',
