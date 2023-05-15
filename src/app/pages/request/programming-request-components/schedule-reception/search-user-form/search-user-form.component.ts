@@ -170,6 +170,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   confirm() {
     console.log('Usuario a guardar', this.userInfo);
     if (this.userInfo.length > 0) {
+      let count: number = 0;
       this.userInfo.map(info => {
         let user: Object = {
           programmingId: this.idProgramming,
@@ -179,8 +180,11 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
         };
 
         this.programmingService.createUsersProgramming(user).subscribe(data => {
-          this.modalRef.content.callback(true);
-          this.modalRef.hide();
+          count = count + 1;
+          if (count == 1) {
+            this.modalRef.content.callback(true);
+            this.modalRef.hide();
+          }
         });
       });
     } else {

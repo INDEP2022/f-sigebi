@@ -10,6 +10,7 @@ import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
+import { MotiveRefuseModalComponent } from './registration-of-requests/motive-refuse-modal/motive-refuse-modal.component';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
 import { SelectTypeUserComponent } from './select-type-user/select-type-user.component';
 import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
@@ -93,6 +94,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     SelectInputComponent,
     InappropriatenessPgrSatFormComponent,
     InappropriatenessFormComponent,
+    MotiveRefuseModalComponent,
   ],
   imports: [
     CommonModule,

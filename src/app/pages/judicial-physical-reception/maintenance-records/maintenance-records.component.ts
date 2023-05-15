@@ -17,6 +17,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { getTrackedGoods } from '../../general-processes/goods-tracker/store/goods-tracker.selector';
 import { GOOD_TRACKER_ORIGINS } from '../../general-processes/goods-tracker/utils/constants/origins';
 import {
+  deliveryReceptionToInfo,
   IProceedingInfo,
   trackerGoodToDetailProceeding,
 } from './components/proceeding-info/models/proceeding-info';
@@ -137,6 +138,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           this.infoForm = response.data[0];
+          this.service.formValue = deliveryReceptionToInfo(this.infoForm);
           this.service.totalProceedings = response.count;
           console.log(this.params.getValue());
           this.loading = false;

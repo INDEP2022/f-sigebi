@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -9,7 +9,7 @@ import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ScanningFoilComponent implements OnInit {
   //Reactive Forms
-  form: FormGroup;
+  @Input() form: FormGroup;
 
   get scanningFoli() {
     return this.form.get('scanningFoli');
@@ -18,7 +18,8 @@ export class ScanningFoilComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.buildForm();
+    console.log(this.form.value);
+    // this.buildForm();
   }
 
   /**

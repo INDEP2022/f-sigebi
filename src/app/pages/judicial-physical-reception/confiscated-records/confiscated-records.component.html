@@ -357,7 +357,8 @@
               </button>
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-secondary active btn-sm">
+                class="my-1 mx-2 btn btn-secondary active btn-sm"
+                (click)="goCargaMasiva()">
                 Carga Masiva
               </button>
             </div>
@@ -491,7 +492,11 @@
           </div>
         </div>
         <div class="col-md-6">
-          <button type="button" size="small" class="mx-2 my-1">
+          <button
+            type="button"
+            size="small"
+            class="mx-2 my-1"
+            (click)="openEdoFisico()">
             Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
           <button

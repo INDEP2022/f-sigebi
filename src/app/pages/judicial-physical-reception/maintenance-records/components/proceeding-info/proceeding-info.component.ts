@@ -50,6 +50,7 @@ export class ProceedingInfoComponent implements OnInit {
   }
   @Input() loading = false;
   form: FormGroup;
+  hoy = new Date();
   @Output() filterEvent = new EventEmitter<IProceedingInfo>();
   constructor(
     private fb: FormBuilder,
@@ -63,6 +64,10 @@ export class ProceedingInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  some(event: any) {
+    console.log(event);
+  }
 
   get statusActa() {
     return this.form

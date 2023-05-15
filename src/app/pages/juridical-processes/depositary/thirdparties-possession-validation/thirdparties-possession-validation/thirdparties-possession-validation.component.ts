@@ -1,6 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, debounceTime } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -10,6 +13,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -107,6 +111,9 @@ export class ThirdpartiesPossessionValidationComponent
     private notificationService: NotificationService,
     private goodService: GoodService,
     private usersService: UsersService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
     private historyGoodService: HistoryGoodService,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
   ) {
@@ -469,14 +476,14 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   btnImprimir() {
-    this.loading = true;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+    // this.loading = true;
+    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
 
-    const downloadLink = document.createElement('a');
-    //console.log(linkSource);
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
+    // const downloadLink = document.createElement('a');
+    // //console.log(linkSource);
+    // downloadLink.href = pdfurl;
+    // downloadLink.target = '_blank';
+    // downloadLink.click();
 
     // console.log(this.flyersForm.value);
     let params = { ...this.form.value };
@@ -484,7 +491,43 @@ export class ThirdpartiesPossessionValidationComponent
       if (params[key] === null) delete params[key];
     }
     //let newWin = window.open(pdfurl, 'test.pdf');
-    this.alert('success', '', 'Reporte generado');
-    this.loading = false;
+    // this.alert('success', '', 'Reporte generado');
+    // this.loading = false;
+    this.siabService
+      // .fetchReport('RGEROFPRECEPDOCUM', params)
+      .fetchReport('blank', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 }

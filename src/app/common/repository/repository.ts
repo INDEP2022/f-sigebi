@@ -30,6 +30,11 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
+  getGoodByIds(route: string): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<T>(`${fullRoute}`);
+  }
+
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     // console.log(fullRoute);
@@ -270,5 +275,25 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<IListResponse<T>>(
       `${environment.API_URL}/catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
     );
+  }
+
+  getAllPaginatedFilter(
+    route: string,
+    _params?: ListParams | string
+  ): Observable<IListResponse<T>> {
+    const params = this.makeParams(_params);
+    const fullRoute = this.buildRouteFilter(route);
+    console.log(fullRoute);
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
+  }
+
+  buildRouteFilter(route: string) {
+    const paths = route.split('/');
+    paths.shift();
+    if (paths.length === 0) {
+      return `${environment.API_URL}notification/api/v1/${route}`;
+    }
+    const ms = route.split('/')[0];
+    return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
   }
 }

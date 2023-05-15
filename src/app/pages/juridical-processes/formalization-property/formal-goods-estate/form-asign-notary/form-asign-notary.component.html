@@ -1,0 +1,85 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Asignaci&oacute;n de Notario</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('notaryCli')"
+                label="Nombre del Notario Cliente">
+                <input
+                  maxlength="50"
+                  type="text"
+                  class="form-control"
+                  formControlName="notaryCli" />
+              </form-field>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('numNotaryCli')"
+                label="N&uacute;mero">
+                <input
+                  maxlength="9999999999"
+                  type="text"
+                  class="form-control"
+                  formControlName="numNotaryCli" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('cityNotary')">
+                <ngx-select
+                  (fetchItems)="getCities($event)"
+                  [data]="cities"
+                  [form]="form"
+                  value="nameCity"
+                  bindLabel="nameCity"
+                  label="Ciudad"
+                  control="cityNotary">
+                </ngx-select>
+              </form-field>
+            </div>
+            <!-- <div class="col-12 mt-2 mb-2">
+                            <form-field [control]="form.get('cityNotary')" label="Ciudad">
+                                <input maxlength="50" type="text" class="form-control" formControlName="cityNotary" />
+                            </form-field>
+                        </div> -->
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('assignmentnotDate')"
+                label="Asignaci&oacute;n Formalizador">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="assignmentnotDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

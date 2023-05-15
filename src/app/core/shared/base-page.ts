@@ -121,7 +121,7 @@ export abstract class BasePage implements OnDestroy {
   private _screenCode = inject(ScreenCodeService);
   private _alertsService = inject(AlertsQueueService);
   protected loader = inject(LoadingService);
-  private _toastrService = inject(ToastrService);
+  protected _toastrService = inject(ToastrService);
   constructor() {
     this.bsConfig = {
       minMode: this.minMode,
@@ -142,7 +142,7 @@ export abstract class BasePage implements OnDestroy {
       .subscribe();
   }
 
-  protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
+  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
     const throwToast = {
       success: (title: string, text: string) =>
         this._toastrService.success(text, title),
