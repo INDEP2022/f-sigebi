@@ -297,25 +297,26 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   //Obtener bienes de un expediente
 
   clearInputs() {
-    this.form.get('clasificacion').setValue(null);
-    this.form.get('remarks').setValue(null);
-    this.form.get('importe').setValue(null);
-    this.form.get('fechaAvaluo').setValue(null);
-    this.form.get('fechaVigencia').setValue(null);
-    this.form.get('perito').setValue(null);
-    this.form.get('institucion').setValue(null);
-    this.form.get('fechaDictamen').setValue(null);
-    this.form.get('dictamenPerito').setValue(null);
-    this.form.get('dictamenInstitucion').setValue(null);
-    this.form.get('dictamenPerenidad').setValue(null);
-    this.form.get('fechaAseg').setValue(null);
-    this.form.get('notificado').setValue(null);
-    this.form.get('lugar').setValue(null);
+    this.form.get('clasificacion').reset();
+    this.form.get('remarks').reset();
+    this.form.get('importe').reset();
+    this.form.get('fechaAvaluo').reset();
+    this.form.get('fechaVigencia').reset();
+    this.form.get('perito').reset();
+    this.form.get('institucion').reset();
+    this.form.get('fechaDictamen').reset();
+    this.form.get('dictamenPerito').reset();
+    this.form.get('dictamenInstitucion').reset();
+    this.form.get('dictamenPerenidad').reset();
+    this.form.get('fechaAseg').reset();
+    this.form.get('notificado').reset();
+    this.form.get('lugar').reset();
     this.disabledButton('first-notice-abandonment');
     this.disabledButton('opinion');
     this.disabledButton('apprais-good');
     this.disabledButton('apprasial-history');
     this.disabledButton('update-general-good');
+    this.goodSelected = null;
   }
 
   getGoodsByExpedient() {
@@ -590,20 +591,29 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
                   'El bien fue valuado exitosamente'
                 );
                 this.getAppraisalGood();
-                this.form.get('fechaAvaluo').setValue(null);
-                this.form.get('fechaVigencia').setValue(null);
-                this.form.get('importe').setValue(null);
-                this.form.get('moneda').setValue(null);
-                this.form.get('perito').setValue(null);
-                this.form.get('institucion').setValue(null);
+                this.form.get('fechaAvaluo').reset();
+                this.form.get('fechaVigencia').reset();
+                this.form.get('importe').reset();
+                this.form.get('moneda').reset();
+                this.form.get('perito').reset();
+                this.form.get('institucion').reset();
               },
               err => {
-                console.log(err);
+                this.alert(
+                  'error',
+                  'Ocurrió un error al valuar',
+                  'Ocurrió un error inesperado al valuar el bien'
+                );
               }
             );
           },
           err => {
             console.log(err);
+            this.alert(
+              'error',
+              'Ocurrió un error al valuar',
+              'Ocurrió un error inesperado al valuar el bien'
+            );
           }
         );
       }
