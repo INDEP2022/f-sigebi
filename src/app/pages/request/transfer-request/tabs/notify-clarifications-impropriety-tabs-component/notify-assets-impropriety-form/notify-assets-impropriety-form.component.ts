@@ -97,7 +97,7 @@ export class NotifyAssetsImproprietyFormComponent
       addresseeName: [
         '',
         [
-          //Validators.required,
+          Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(50),
         ],
@@ -107,7 +107,7 @@ export class NotifyAssetsImproprietyFormComponent
         '',
         [
           Validators.pattern(STRING_PATTERN),
-          //Validators.required,
+          Validators.required,
           Validators.maxLength(50),
         ],
       ],
