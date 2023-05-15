@@ -49,6 +49,7 @@ export class CustomSelectWidthLoading
   @Input() formControlName: string = '';
   @Input() path: string;
   @Input() label: string;
+  @Input() loadingText: string = 'Cargando...';
   @Input() typeToSearchText: string = 'Escriba 3 o mas caracteres';
   @Input() multiple: boolean = false;
   @Input() addTag: boolean = false;

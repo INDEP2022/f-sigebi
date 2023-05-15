@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs';
+import { TreeViewService } from 'src/app/@standalone/tree-view/tree-view.service';
 import { ITreeItem } from 'src/app/core/interfaces/menu.interface';
 import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
@@ -24,7 +25,7 @@ export class PartializesGoodsComponent
   @ViewChild('sideMenu') sideMenu: ElementRef;
   constructor(
     private fb: FormBuilder,
-
+    private treeViewService: TreeViewService,
     private goodPartializeService: GoodPartializeService
   ) {
     super();
@@ -125,6 +126,7 @@ export class PartializesGoodsComponent
   select(goodNumber: number) {
     // console.log(row);
     this.loadingTree = true;
+    this.treeViewService.selected = null;
     this.goodPartializeService
       .getTreePartialize(goodNumber)
       .pipe(takeUntil(this.$unSubscribe))

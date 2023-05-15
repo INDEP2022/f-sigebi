@@ -16,13 +16,7 @@ import { PartializeGeneralGoodService } from '../../services/partialize-general-
 @Component({
   selector: 'app-good-form',
   templateUrl: './good-form.component.html',
-  styles: [
-    `
-      .hide {
-        display: none;
-      }
-    `,
-  ],
+  styleUrls: ['./good-form.component.scss'],
 })
 export class GoodFormComponent extends AlertButton implements OnInit {
   @Input() firstCase: boolean = null;
