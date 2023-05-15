@@ -23,7 +23,7 @@
                 "
                 id="expedient-number"
                 class="btn btn-primary btn-sm active"
-                (click)="getGoodsByExpedient()">
+                (click)="goodsByExpediente()">
                 Buscar
               </button>
             </div>
@@ -206,6 +206,7 @@
                 label="Fecha Elaboraci&oacute;n">
                 <input
                   bsDatepicker
+                  (ngModelChange)="fecElab()"
                   class="form-control"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />

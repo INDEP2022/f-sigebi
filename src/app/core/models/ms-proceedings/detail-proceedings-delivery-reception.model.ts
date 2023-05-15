@@ -22,3 +22,9 @@ export interface IDetailProceedingsDeliveryReception {
   packageNumber?: number;
   exchangeValue?: number;
 }
+
+export interface IDeleteDetailProceeding {
+  numGoodId: string | number;
+  numGoodProceedingsId: string | number;
+  numDetailId: string | number;
+}
