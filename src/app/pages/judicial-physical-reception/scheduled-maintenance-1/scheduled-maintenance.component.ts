@@ -143,7 +143,7 @@ export class ScheduledMaintenanceComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.service.deleteById(item).subscribe({

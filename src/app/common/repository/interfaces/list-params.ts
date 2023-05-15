@@ -45,6 +45,10 @@ export class FilterParams {
     return this.filters.join('&');
   }
 
+  getFilterByParam(param: string) {
+    return this.filters.find(x => x.includes(param));
+  }
+
   removeAllFilters() {
     this.filters = [];
   }
