@@ -1,7 +1,20 @@
-<form class="form-material" [formGroup]="form">
+<form class="form-material" [formGroup]="form" id="good-form-partialized">
   <div class="row">
     <div class="col-md-4">
-      <app-select-form
+      <ng-custom-select-loading
+        [form]="form"
+        formControlName="noBien"
+        label="No&#46; Bien"
+        value="goodId"
+        bindLabel="goodId"
+        paramSearch="filter.goodId"
+        [prefixSearch]="goodFilter"
+        [moreParams]="moreParams"
+        loadingText="Cargando bienes..."
+        path="good/api/v1/good"
+        (valueChange)="selectGood($event)">
+      </ng-custom-select-loading>
+      <!-- <app-select-form
         [form]="form"
         formField="noBien"
         label="No&#46; Bien"
@@ -11,7 +24,7 @@
         [haveTodos]="false"
         [getListObservable]="goodsList"
         [(paramsFilter)]="paramsGoods"
-        (selectEvent)="selectGood($event)"></app-select-form>
+        (selectEvent)="selectGood($event)"></app-select-form> -->
     </div>
     <div class="col-md-8" style="text-align: right">
       <button
@@ -23,104 +36,108 @@
       </button>
     </div>
   </div>
-  <div class="row">
-    <h5 class="title">Información de la Solicitud</h5>
-  </div>
-  <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
-    <form-loader></form-loader>
-  </div>
-  <div [class]="formLoading ? 'hide' : ''">
-    <app-card [header]="false">
-      <div body>
-        <div class="row pt-2">
-          <div class="col-md-6">
-            <div>
-              <label for="">No&#46; Bien&#58;</label>
-              {{ form.get('noBien').value }}
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div>
-              <label for="">Cantidad de Bien Padre:</label>
-              {{ form.get('cantPadre').value }}
-            </div>
-          </div>
-        </div>
-        <div class="row pt-2">
-          <div class="col-md-12">
-            <div>
-              <label for="">Descripción: </label>
-              {{ form.get('descripcion').value }}
-            </div>
-          </div>
-        </div>
-        <div class="row pt-2">
-          <div class="col-md-12">
-            <div>
-              <label for="">Clasificador:</label>
-              <span> {{ form.get('clasificador').value }}</span>
-              <span class="ml-2">{{
-                form.get('clasificadorDescripcion').value
-              }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="row pt-2">
-          <div class="col-md-6">
-            <div>
-              <label for="">Cantidad:</label>
-              {{ form.get('cantidad').value }}
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div>
-              <label for="">Valor Avalúo:</label>
-              {{ form.get('avaluo').value }}
-            </div>
-          </div>
-        </div>
-        <div class="row pt-2">
-          <div class="col-md-12">
-            <div>
-              <label for="">Estatus:</label>
-              <span> {{ form.get('estatus').value }}</span>
-              <span class="ml-2">{{
-                form.get('estatusDescripcion').value
-              }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="row pt-2">
-          <div class="col-md-6">
-            <div>
-              <label for="">Ext. Dom:</label>
-              {{ form.get('extDom').value }}
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div>
-              <label for="">No Expediente:</label>
-              {{ form.get('expediente').value }}
-            </div>
-          </div>
-        </div>
-        <div class="row pt-2" *ngIf="firstCase">
-          <div class="col-md-6">
-            <div>
-              <label for="">Moneda:</label>
-              {{ form.get('moneda').value }}
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div>
-              <label for="">Importe:</label>
-              {{ form.get('importe').value }}
-            </div>
-          </div>
-        </div>
+  <accordion [isAnimated]="true">
+    <accordion-group [isOpen]="true">
+      <div accordion-heading class="row mt-3">
+        <h5 class="title">Información de la Solicitud</h5>
       </div>
-    </app-card>
-  </div>
+      <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+        <form-loader></form-loader>
+      </div>
+      <div [class]="formLoading ? 'hide' : ''">
+        <app-card [header]="false">
+          <div body>
+            <div class="row pt-2">
+              <div class="col-md-6">
+                <div>
+                  <label for="">No&#46; Bien&#58;</label>
+                  {{ form.get('noBien').value }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <label for="">Cantidad de Bien Padre:</label>
+                  {{ form.get('cantPadre').value }}
+                </div>
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-12">
+                <div>
+                  <label for="">Descripción: </label>
+                  {{ form.get('descripcion').value }}
+                </div>
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-12">
+                <div>
+                  <label for="">Clasificador:</label>
+                  <span> {{ form.get('clasificador').value }}</span>
+                  <span class="ml-2">{{
+                    form.get('clasificadorDescripcion').value
+                  }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-6">
+                <div>
+                  <label for="">Cantidad:</label>
+                  {{ form.get('cantidad').value }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <label for="">Valor Avalúo:</label>
+                  {{ form.get('avaluo').value }}
+                </div>
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-12">
+                <div>
+                  <label for="">Estatus:</label>
+                  <span> {{ form.get('estatus').value }}</span>
+                  <span class="ml-2">{{
+                    form.get('estatusDescripcion').value
+                  }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-6">
+                <div>
+                  <label for="">Ext. Dom:</label>
+                  {{ form.get('extDom').value }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <label for="">No Expediente:</label>
+                  {{ form.get('expediente').value }}
+                </div>
+              </div>
+            </div>
+            <div class="row pt-2" *ngIf="firstCase">
+              <div class="col-md-6">
+                <div>
+                  <label for="">Moneda:</label>
+                  {{ form.get('moneda').value }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <label for="">Importe:</label>
+                  {{ form.get('importe').value }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </accordion-group>
+  </accordion>
 
   <!-- <div class="row">
     <div class="col-md-12">
