@@ -330,7 +330,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
           if (
             resp.data.length > 0 &&
-            resp.data[0].good.processStatus == 'VERIFICAR_CUMPLIMIENTO'
+            (resp.data[0].good.processStatus == 'VERIFICAR_CUMPLIMIENTO' ||
+              resp.data[0].good.processStatus == 'CLASIFICAR_BIEN' ||
+              resp.data[0].good.processStatus == 'DESTINO_DOCUMENTAL')
           ) {
             this.updateGoodRespDevRegister = true;
           }
@@ -353,6 +355,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
+          this.triggerEvent('UPDATE-GOOD');
           resolve(true);
         },
         error: error => {
@@ -458,6 +461,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {},
     });
+  }
+
+  triggerEvent(item: any) {
+    this.event.emit(item);
   }
 
   close(): void {

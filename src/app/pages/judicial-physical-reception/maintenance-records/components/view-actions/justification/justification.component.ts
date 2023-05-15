@@ -12,14 +12,16 @@ import { AlertButton } from './../../../../scheduled-maintenance-1/models/alert-
   styles: [
     `
       .justificationText {
+        margin-left: 15px;
+      }
+      .justificationButton {
         align-items: center;
+        justify-content: center;
+        display: flex;
       }
       @media (max-width: 576px) {
         .justificationText {
-          margin-top: 2rem;
-        }
-        form > div > div {
-          padding-right: 0px;
+          margin-left: 0px;
         }
       }
     `,
@@ -60,6 +62,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
   }
 
   saveData() {
+    console.log(this.service.selectedAct);
     this.proceedingService
       .update2(
         this.parseToIProceedingDeliveryReception(
@@ -99,7 +102,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
             });
         },
         error: err => {
-          this.onLoadToast('error', this.id + '', err.error.message);
+          this.onLoadToast('error', this.id + '', 'No se pudo actualizar');
         },
       });
   }

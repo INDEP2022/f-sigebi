@@ -4,8 +4,12 @@ import { DictationEndpoints } from 'src/app/common/constants/endpoints/ms-dictat
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IDictation } from '../../models/ms-dictation/dictation-model';
-
+import {
+  ICopiesOfficeSendDictation,
+  IDictation,
+  IInitFormLegalOpinionOfficeBody,
+  IInitFormLegalOpinionOfficeResponse,
+} from '../../models/ms-dictation/dictation-model';
 @Injectable({
   providedIn: 'root',
 })
@@ -65,6 +69,22 @@ export class DictationService extends HttpService {
   getParamsOfTypeGood(model: Object) {
     const route = `${DictationEndpoints.getParamsOfTypeGood}`;
     return this.post(route, model);
+  }
+  getInitFormDictation(
+    body: IInitFormLegalOpinionOfficeBody
+  ): Observable<IListResponse<IInitFormLegalOpinionOfficeResponse>> {
+    return this.post<IListResponse<IInitFormLegalOpinionOfficeResponse>>(
+      DictationEndpoints.InitFormLegalOpinionOffice,
+      body
+    );
+  }
+  getCopiesOfficeSendDictation(
+    body: ICopiesOfficeSendDictation
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.CopiesOfficeSendDictation,
+      body
+    );
   }
 
   postCargaMasDesahogob(body: any) {
