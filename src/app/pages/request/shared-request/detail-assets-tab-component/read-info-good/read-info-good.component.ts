@@ -107,6 +107,23 @@ export class ReadInfoGoodComponent
     }, 4000);
   }
 
+  descriptionGoodSae: string = '';
+  getDescriptionGoodIndep(id: number | string) {
+    this.goodService.getByIdAndGoodId(id, id).subscribe({
+      next: response => {
+        console.log('Data del good', response);
+        console.log(
+          'Descripción del bien INDEP es: ',
+          response.descriptionGoodSae
+        );
+        this.descriptionGoodSae = response.descriptionGoodSae;
+      },
+      error: error => {
+        console.log('no se buscó');
+      },
+    });
+  }
+
   ngOnInit(): void {
     this.goodForm = this.fb.group({
       saeDestiny: [null],

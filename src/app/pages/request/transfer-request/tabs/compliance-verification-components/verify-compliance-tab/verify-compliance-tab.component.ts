@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -821,6 +822,9 @@ export class VerifyComplianceTabComponent
         const clarification = resp.data.map(async (item: any) => {
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
+
+          const formatDate = moment(item.rejectionDate).format('DD/MM/YYYY');
+          item.rejectionDate = formatDate;
         });
 
         Promise.all(clarification).then(data => {

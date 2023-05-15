@@ -86,18 +86,19 @@
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('userId')" label="Usuario">
-            <input
+            <!--input
               type="text"
               class="form-control"
               formControlName="userId"
-              [readonly]="true" />
-            <!--ng-select
+              [readonly]="true"/-->
+            <ng-select
               [items]="itemsJsonInterfazUser"
-              bindLabel="usuario.user"
+              bindLabel="id"
               bindValue="id"
-              formControlName="user"
-              class="form-control">
-            </ng-select-->
+              formControlName="userId"
+              class="form-control"
+              (change)="getDescUser($event)">
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">

@@ -31,9 +31,21 @@ export class GoodsJobManagementService extends HttpService {
   }
 
   // => Oficce Documents
-  getAllOfficialDocument() {
+  /*
+getAllOfficialDocument(params: _Params) {
+    return this.get<IListResponse<any>>(
+      GoodsJobManagementEndpoints.mJobManagement,params
+    );
+  }*/
+
+  getAllOfficialDocument(params: _Params) {
     return this.get<IListResponse<ImanagementOffice>>(
-      GoodsJobManagementEndpoints.mJobManagement
+      GoodsJobManagementEndpoints.mJobManagement,
+      params
     );
   }
+  /*
+   getBymanagementNumber(id: string | number) {
+    return this.get<IListResponse<ImanagementOffice>>(`${GoodsJobManagementEndpoints.API_URL}officemanagement/api/v1/m-job-management?filter.managementNumber/${id}`);
+  }*/
 }

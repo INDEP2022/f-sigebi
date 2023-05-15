@@ -18,27 +18,21 @@
                 label="No Expediente">
                 <input
                   class="form-control"
-                  (blur)="onLoadGoodList()"
+                  (blur)="changeNumExpediente()"
+                  (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field
-                [control]="expedientesForm.get('tipoDictaminacion')"
-                label="Tipo de dictaminaci&oacute;n">
-                <select
-                  class="form-control"
-                  formControlName="tipoDictaminacion">
-                  <option [value]="null" disabled>Seleccione un valor</option>
-                  <option [value]="null">Destrucción</option>
-                  <option [value]="null">Donación</option>
-                  <option [value]="null">Enajenación</option>
-                  <option [value]="null">Transferente</option>
-                  <option [value]="null">Procedencia</option>
-                  <option [value]="null">Devolución</option>
-                  <option [value]="null">Abandono</option>
-                  <option [value]="null">Resarcimiento</option>
-                </select>
+              <form-field [control]="expedientesForm.get('tipoDictaminacion')">
+                <ngx-select
+                  [searchOnInit]="true"
+                  [data]="typesDict"
+                  [form]="expedientesForm"
+                  label="Tipo de dictaminación"
+                  bindLabel="tipoDictaminacion"
+                  control="tipoDictaminacion"
+                  (change)="onTypeDictChange($event)"></ngx-select>
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-3 p-2">

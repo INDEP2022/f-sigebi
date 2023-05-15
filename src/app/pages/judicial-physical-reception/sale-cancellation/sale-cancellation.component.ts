@@ -61,7 +61,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
         sort: false,
       },
@@ -456,6 +456,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
+    this.nextProce = true;
+    this.prevProce = false;
+    this.navigateProceedings = false;
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
+    this.numberProceeding = 0;
+    this.form.get('folioEscaneo').reset();
     this.automaticFill();
     this.goodsByExpediente();
     this.clearInputs();
@@ -485,6 +492,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
+        this.getTransfer();
       }
     );
   }
@@ -842,7 +850,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Estatus no disponible',
-          'El bien tiene un estatus invalido para ser asignado a alguna acta'
+          'El bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         this.alert(
@@ -969,7 +977,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Problemas con el número de acta',
-          'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+          'Debe especificar/buscar el acta para después eliminar el bien de esta'
         );
       } else if (this.selectActData == null) {
         this.alert(

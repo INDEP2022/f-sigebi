@@ -93,4 +93,14 @@ export class UsersService extends HttpService {
       _params
     );
   }
+
+  getUsersJob() {
+    return this.get(UserEndpoints.SegUsers);
+  }
+
+  /*
+ getUsersJob() {
+    return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);
+  }
+*/
 }
