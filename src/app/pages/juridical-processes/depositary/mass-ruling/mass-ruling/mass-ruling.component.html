@@ -87,15 +87,20 @@
           </div>
           <div class="col-sm-12 col-12 col-md-12 p-2 pl-4">
             <form-check label="Eliminar" for="eliminar">
-              <input id="eliminar" type="checkbox" formControlName="delete" />
+              <input
+                (change)="changeCbDelete($event)"
+                id="eliminar"
+                type="checkbox"
+                formControlName="delete" />
             </form-check>
           </div>
           <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
             <div class="form-group mr-2">
               <button
                 type="button"
+                [disabled]="isDisabledBtnGoodDictation"
                 class="btn btn-primary active btn-sm text-wrap"
-                (click)="btnBienesDictamen()">
+                (click)="onClickGoodDictation()">
                 Bienes del Dictamen
               </button>
             </div>
@@ -105,7 +110,7 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm text-wrap"
-                (click)="btnDictamenes()">
+                (click)="onClickDictation()">
                 Dict&aacute;menes
               </button>
             </div>
@@ -158,7 +163,7 @@
           #uploadFile
           class="d-none"
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="btnExpedientesCsv($event)" />
+          (change)="onClickLoadFile($event)" />
       </div>
       <div class="d-flex justify-content-end">
         <div class="p-2">
@@ -197,16 +202,16 @@
                 <a
                   class="dropdown-item"
                   style="color: blue"
-                  (click)="onClickRelationGood()">
-                  <i class="bx bx-layer"></i> Imprimir Relacion Bienes
+                  (click)="onClickPrintRelationGood()">
+                  <i class="bx bx-layer"></i> Imprimir Relación Bienes
                 </a>
               </li>
               <li role="menuitem">
                 <a
                   class="dropdown-item"
                   style="color: blue"
-                  (click)="btnImprimeRelacionExpediente()">
-                  <i class="bx bx-layer"></i> Imprimir Relacion Expediente
+                  (click)="onClickPrintRelationExpedient()">
+                  <i class="bx bx-layer"></i> Imprimir Relación Expediente
                 </a>
               </li>
             </ul>

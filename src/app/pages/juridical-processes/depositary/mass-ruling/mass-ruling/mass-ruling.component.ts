@@ -11,11 +11,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import {
-  downloadReport,
-  getDataFromExcel,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -105,9 +101,10 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     userDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
     instructorDate: new FormControl(''),
     wheelNumber: new FormControl('', Validators.required),
-    delete: new FormControl(''),
+    delete: new FormControl({ value: false, disabled: true }),
   });
   public formCargaMasiva: FormGroup;
+  isDisabledBtnGoodDictation = true;
   // public searchForm: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -210,29 +207,30 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     });
   }
 
-  btnBienesDictamen() {
-    const identifier = this.formCargaMasiva.get(
-      'identificadorCargaMasiva'
-    ).value;
-
-    if (!identifier) {
-      this.showToasterError('Debe ingresar el identificador de carga masiva');
-      return;
-    }
-
-    if (this.dataTable.length === 0 || this.dataTable[0].id !== identifier) {
+  onClickGoodDictation() {
+    if (this.dataTable.length === 0) {
       this.showToasterError(
-        'No se tiene datos cargados de identificador o debe cargar el identificador'
+        'No se tiene datos cargados en la tabla de carga masiva'
       );
       return;
     }
 
-    if (this.dataTable[0].id !== identifier) {
+    let identifier: number = null;
+    if (this.dataTable[0].hasOwnProperty('id')) {
+      identifier = this.dataTable[0].id;
+    } else {
       this.showToasterError(
-        'El identificador ingresado no coincide con el de la tabla'
+        'No se tiene datos cargados en la tabla de carga masiva'
       );
       return;
     }
+
+    // if (this.dataTable[0].id !== identifier) {
+    //   this.showToasterError(
+    //     'El identificador ingresado no coincide con el de la tabla'
+    //   );
+    //   return;
+    // }
 
     this.alertQuestion(
       'warning',
@@ -241,9 +239,8 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     ).then(question => {
       if (question.isConfirmed) {
         this.loading = true;
-        const id = this.formCargaMasiva.get('identificadorCargaMasiva').value;
         // TODO: Esperando resolucion de incidencia 785 para comprobación eliminación de carga masiva
-        this.massiveDictationService.deleteGoodOpinion(id).subscribe({
+        this.massiveDictationService.deleteGoodOpinion(identifier).subscribe({
           next: data => {
             this.loading = false;
             console.log(data);
@@ -251,6 +248,11 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
               icon: 'success',
               text: 'Proceso Terminado',
             });
+            this.dataTable = [];
+            this.formCargaMasiva.reset();
+            this.form.get('delete').setValue(false);
+            this.isDisabledBtnGoodDictation = true;
+            this.form.get('delete').disable();
           },
           error: err => {
             this.loading = false;
@@ -266,7 +268,14 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     this.modalService.hide();
   }
 
-  btnDictamenes() {
+  async CountDictationGoodFile(armyOfficeKey: any) {
+    const result = await firstValueFrom(
+      this.documentsService.postCountDictationGoodFile(armyOfficeKey)
+    );
+    return result;
+  }
+
+  async onClickDictation() {
     const armyOfficeKey = this.form.get('passOfficeArmy').value;
     if (!armyOfficeKey) {
       showToast({
@@ -275,12 +284,22 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       });
       return;
     }
-    this.documentsService.postCountDictationGoodFile(armyOfficeKey).subscribe({
-      next: data => {},
-      error: err => {
-        this.alert('error', 'Error', err.error?.message);
-      },
-    });
+    try {
+      const result = await this.CountDictationGoodFile(armyOfficeKey);
+      this.alertQuestion(
+        'info',
+        'Información',
+        'Desea eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value
+      ).then(question => {
+        if (!question.isConfirmed) {
+          return;
+        }
+        //TODO: Esperando endpoint para eliminar dictamen
+      });
+    } catch (ex) {
+      // console.log(ex);
+      this.alert('error', 'Error', 'Error desconocido Consulte a su Analista');
+    }
     console.log('Dictamenes');
   }
 
@@ -316,22 +335,15 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     });
   }
 
-  // handleUpload(event: any): string {
-  //   if (event.target.files && event.target.files.length > 0) {
-  //     const file = event.target.files[0];
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = async () => {
-  //       const result: string = reader.result as string;
-  //       return result.split(',')[1];
-  //     };
-  //     return '';
-  //   } else {
-  //     return '';
-  //   }
-  // }
-
-  async btnExpedientesCsv(event: any) {
+  async onClickLoadFile(event: any) {
+    const { id, typeDict } = this.form.value;
+    if (!id && !typeDict) {
+      showToast({
+        icon: 'error',
+        text: 'Se debe ingresar un Dictamen.',
+      });
+      return;
+    }
     const data = await getDataFromExcel(event.target.files[0]);
     if (!this.validateExcel(data)) {
       return;
@@ -342,8 +354,10 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
         fileNumber: { id: item.NO_EXPEDIENTE },
       };
     });
-    // console.log({ data });
     this.form.get('id').setValue(null);
+    this.form.get('delete').enable();
+    this.form.get('delete').setValue(false);
+    this.isDisabledBtnGoodDictation = true;
   }
 
   async prePrints(): Promise<{
@@ -413,15 +427,41 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     };
   }
 
+  printReport(report: string, params: any) {
+    this.siabService.fetchReport(report, params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+      error: () => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
+  }
+
   async onClickPrintOffice() {
     try {
       const { CLAVE_ARMADA, PARAMFORM, P_OFICIO, TIPO_DIC, TIPO_VOL, vIDENTI } =
         await this.prePrints();
-      let reportPath = 'SIAB/RGENREPDICTAMASDES';
+      let report = 'RGENREPDICTAMASDES';
       if (vIDENTI.includes('4')) {
-        reportPath = 'SIAB/RGENREPDICTAMASDES_EXT';
+        report = 'RGENREPDICTAMASDES_EXT';
       }
-      downloadReport(reportPath, {
+
+      this.printReport(report, {
         CLAVE_ARMADA,
         PARAMFORM,
         P_OFICIO,
@@ -433,11 +473,28 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     }
   }
 
-  async onClickRelationGood() {
+  async onClickPrintRelationGood() {
     try {
       const { CLAVE_ARMADA, PARAMFORM, P_OFICIO, TIPO_DIC, TIPO_VOL } =
         await this.prePrints();
-      downloadReport('SIAB/RGENREPDICTAMASREL', {
+
+      this.printReport('RGENREPDICTAMASREL', {
+        CLAVE_ARMADA,
+        PARAMFORM,
+        P_OFICIO,
+        TIPO_DIC,
+        TIPO_VOL,
+      });
+    } catch (ex) {
+      console.log({ ex });
+    }
+  }
+
+  async onClickPrintRelationExpedient() {
+    try {
+      const { CLAVE_ARMADA, PARAMFORM, P_OFICIO, TIPO_DIC, TIPO_VOL } =
+        await this.prePrints();
+      this.printReport('RGENREPDICTAMASEXP', {
         CLAVE_ARMADA,
         PARAMFORM,
         P_OFICIO,
@@ -559,10 +616,6 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     return dictation;
   }
 
-  // btnImprimeOficio() {
-  //   console.log('Oficio');
-  // }
-
   getVolante() {
     if (this.form.get('wheelNumber').value) {
       console.log(this.form.get('wheelNumber').value);
@@ -582,87 +635,91 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     }
   }
 
-  btnImprimeRelacionBienes() {
-    if (!this.form.get('id').value && !this.form.get('typeDict').value) {
-      this.alert('info', 'Se debe ingresar un dictamen', '');
-      return;
-    }
-
-    let params = {
-      CLAVE_ARMADA: this.form.controls['passOfficeArmy'].value,
-      TIPO_DIC: this.form.controls['typeDict'].value,
-      TIPO_VOL: this.wheelType,
-    };
-
-    console.log(params);
-
-    this.siabService
-      .fetchReport('RGENREPDICTAMASREL', params)
-      .subscribe(response => {
-        if (response !== null) {
-          if (response.body === null || response.code === 500) {
-            this.alert('error', 'No existe el reporte', '');
-            return;
-          }
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            },
-            class: 'modal-lg modal-dialog-centered',
-            ignoreBackdropClick: true,
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
-        }
-      });
+  changeCbDelete(event: any) {
+    console.log({ event });
   }
 
-  btnImprimeRelacionExpediente() {
-    if (
-      !this.form.get('id').value &&
-      !this.form.get('typeDict').value &&
-      !this.form.get('passOfficeArmy')
-    ) {
-      this.alert('info', 'Se debe ingresar un dictamen', '');
-      return;
-    }
+  // btnImprimeRelacionBienes() {
+  //   if (!this.form.get('id').value && !this.form.get('typeDict').value) {
+  //     this.alert('info', 'Se debe ingresar un dictamen', '');
+  //     return;
+  //   }
 
-    let params = {
-      CLAVE_ARMADA: this.form.controls['passOfficeArmy'].value,
-      TIPO_DIC: this.form.controls['typeDict'].value,
-      TIPO_VOL: this.wheelType,
-    };
+  //   let params = {
+  //     CLAVE_ARMADA: this.form.controls['passOfficeArmy'].value,
+  //     TIPO_DIC: this.form.controls['typeDict'].value,
+  //     TIPO_VOL: this.wheelType,
+  //   };
 
-    this.siabService
-      .fetchReport('RGENREPDICTAMASEXP', params)
-      .subscribe(response => {
-        if (response !== null) {
-          console.log(response);
-          if (response.body === null || response.code === 500) {
-            this.alert('error', 'No existe el reporte', '');
-            return;
-          }
+  //   console.log(params);
 
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            },
-            class: 'modal-lg modal-dialog-centered',
-            ignoreBackdropClick: true,
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
-        }
-      });
-  }
+  //   this.siabService
+  //     .fetchReport('RGENREPDICTAMASREL', params)
+  //     .subscribe(response => {
+  //       if (response !== null) {
+  //         if (response.body === null || response.code === 500) {
+  //           this.alert('error', 'No existe el reporte', '');
+  //           return;
+  //         }
+  //         const blob = new Blob([response], { type: 'application/pdf' });
+  //         const url = URL.createObjectURL(blob);
+  //         let config = {
+  //           initialState: {
+  //             documento: {
+  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+  //               type: 'pdf',
+  //             },
+  //             callback: (data: any) => {},
+  //           },
+  //           class: 'modal-lg modal-dialog-centered',
+  //           ignoreBackdropClick: true,
+  //         };
+  //         this.modalService.show(PreviewDocumentsComponent, config);
+  //       }
+  //     });
+  // }
+
+  // btnImprimeRelacionExpediente() {
+  //   if (
+  //     !this.form.get('id').value &&
+  //     !this.form.get('typeDict').value &&
+  //     !this.form.get('passOfficeArmy')
+  //   ) {
+  //     this.alert('info', 'Se debe ingresar un dictamen', '');
+  //     return;
+  //   }
+
+  //   let params = {
+  //     CLAVE_ARMADA: this.form.controls['passOfficeArmy'].value,
+  //     TIPO_DIC: this.form.controls['typeDict'].value,
+  //     TIPO_VOL: this.wheelType,
+  //   };
+
+  //   this.siabService
+  //     .fetchReport('RGENREPDICTAMASEXP', params)
+  //     .subscribe(response => {
+  //       if (response !== null) {
+  //         console.log(response);
+  //         if (response.body === null || response.code === 500) {
+  //           this.alert('error', 'No existe el reporte', '');
+  //           return;
+  //         }
+
+  //         const blob = new Blob([response], { type: 'application/pdf' });
+  //         const url = URL.createObjectURL(blob);
+  //         let config = {
+  //           initialState: {
+  //             documento: {
+  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+  //               type: 'pdf',
+  //             },
+  //             callback: (data: any) => {},
+  //           },
+  //           class: 'modal-lg modal-dialog-centered',
+  //           ignoreBackdropClick: true,
+  //         };
+  //         this.modalService.show(PreviewDocumentsComponent, config);
+  //       }
+  //     });
+  // }
 }

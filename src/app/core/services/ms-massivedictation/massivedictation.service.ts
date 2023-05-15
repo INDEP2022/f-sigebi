@@ -15,4 +15,8 @@ export class MassiveDictationService extends HttpService {
   deleteGoodOpinion(id: number) {
     return this.delete(`${this.route.P_ELIMINA_BIENES_DICTAMENT}/${id}`);
   }
+
+  deleteDictationMoreTax(id: number) {
+    return this.delete(`${this.route.P_ELIMINA_DICTA_MAS_IVA}/${id}`);
+  }
 }
