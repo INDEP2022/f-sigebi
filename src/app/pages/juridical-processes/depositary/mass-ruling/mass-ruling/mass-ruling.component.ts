@@ -11,7 +11,11 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
+import {
+  getDataFromExcel,
+  getUser,
+  showToast,
+} from 'src/app/common/helpers/helpers';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -214,6 +218,22 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     return result;
   }
 
+  getRtdictaAarusr(toolbarUser: any): Promise<any> {
+    // select USUARIO
+    // 		INTO USUAR
+    // 		from R_TDICTA_AARUSR
+    // 	 WHERE nO_TIPO ='ELIMINAR'
+    // 		 AND USUARIO   =:TOOLBAR_USUARIO;
+    //TODO: Esperando endpoint
+    return Promise.resolve('USUARIO');
+  }
+
+  async procedureDeleteDictationMoreTax(passOfficeArmy: string) {
+    const result = await firstValueFrom(
+      this.massiveDictationService.deleteDictationMoreTax(passOfficeArmy)
+    );
+    return result;
+  }
   close() {
     this.modalService.hide();
   }
@@ -282,11 +302,34 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
         'info',
         'Información',
         'Desea eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value
-      ).then(question => {
+      ).then(async question => {
         if (!question.isConfirmed) {
           return;
         }
         //TODO: Esperando endpoint para eliminar dictamen
+        const user = getUser();
+        const usuar = this.getRtdictaAarusr(user);
+        if (usuar) {
+          try {
+            const passOfficeArmy = this.form.get('passOfficeArmy').value;
+            const result = await this.procedureDeleteDictationMoreTax(
+              passOfficeArmy
+            );
+            this.alert('success', 'Dictamen', 'Proceso terminado');
+          } catch (ex: any) {
+            this.alert(
+              'error',
+              'Error',
+              'Error desconocido Consulte a su Analista'
+            );
+          }
+        } else {
+          this.alert(
+            'error',
+            'Error',
+            'Su usuario no tiene permiso para eliminar registros'
+          );
+        }
       });
     } catch (ex) {
       // console.log(ex);
@@ -356,98 +399,6 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     this.isDisableCreateDictation = false;
   }
 
-  async prePrints(): Promise<{
-    PARAMFORM: string;
-    P_OFICIO: string;
-    TIPO_DIC: any;
-    CLAVE_ARMADA: any;
-    TIPO_VOL: any;
-    vIDENTI: any;
-  }> {
-    const { id, typeDict, passOfficeArmy } = this.form.value;
-    let vTIPO_VOLANTE = '';
-    let vIDENTI = '';
-    console.log({ id, typeDict, passOfficeArmy });
-    if (!id && !typeDict && !passOfficeArmy) {
-      this.alert('warning', 'Error', 'Se debe ingresar un Dictamen.');
-      return Promise.reject(null);
-    }
-
-    try {
-      const dictation = await this.getDictationForId();
-    } catch (error) {
-      this.alert('warning', 'Error', 'No se encontró un Dictamen ');
-      return null;
-    }
-
-    try {
-      vIDENTI = await this.findGoodAndDictXGood1();
-    } catch (error: any) {
-      this.alertQuestion('warning', 'Error', error?.message);
-      console.log({ error });
-      return null;
-    }
-
-    try {
-      const notification = await this.getNotificationWhereWheelNumber();
-      vTIPO_VOLANTE = notification?.wheelType;
-    } catch (error) {
-      this.alert(
-        'warning',
-        'Error',
-        'No se encontró la Notificación del Dictamen.'
-      );
-      return null;
-    }
-
-    //ERROR: este codigo no implementado de oracle forms
-    //   pl_id := Get_Parameter_List(pl_name);
-    //  IF Id_Null(pl_id) THEN
-    //     pl_id := Create_Parameter_List(pl_name);
-    //     IF Id_Null(pl_id) THEN
-    //        LIP_MENSAJE('Error al crear lista de parámetros. '||pl_name,'N');
-    //        RAISE Form_Trigger_Failure;
-    //     END IF;
-    //  ELSE
-    //     Destroy_Parameter_List(pl_id);
-    //     pl_id := Create_Parameter_List(pl_name);
-    //  END IF;
-
-    return {
-      PARAMFORM: 'NO',
-      P_OFICIO: id,
-      TIPO_DIC: typeDict,
-      CLAVE_ARMADA: passOfficeArmy,
-      TIPO_VOL: vTIPO_VOLANTE,
-      vIDENTI,
-    };
-  }
-
-  printReport(report: string, params: any) {
-    this.siabService.fetchReport(report, params).subscribe({
-      next: response => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          },
-          class: 'modal-lg modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-      },
-      error: () => {
-        this.loading = false;
-        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
-      },
-    });
-  }
-
   async onClickPrintOffice() {
     try {
       const { CLAVE_ARMADA, PARAMFORM, P_OFICIO, TIPO_DIC, TIPO_VOL, vIDENTI } =
@@ -502,62 +453,12 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     }
   }
 
-  async getNotificationWhereWheelNumber() {
-    const { wheelNumber } = this.form.value;
-    const queryParams = `filter.wheelNumber=${wheelNumber || ''}&limit=1`;
-    const notification = await firstValueFrom(
-      this.notificationsService.getAllFilter(queryParams)
-    );
-    console.log({ notification });
-    return notification.data[0];
-  }
-
-  async findGoodAndDictXGood1(): Promise<any> {
-    const body = {
-      NO_OF_DICTA: this.form.value.id,
-      TIPO_DICTAMINACION: this.form.value.typeDict,
-    };
-    const data: { data: any[] } = await firstValueFrom(
-      this.dictationService.postFindGoodDictGood1(body)
-    );
-    console.log({ findGoodAndDictXGood1: data });
-    if (data?.data.length > 1) {
-      throw new Error('Se tiene varios identificadores en el Dictamen.');
-    }
-
-    return data.data[0].substr;
-  }
-
   async btnExpedientesXls(event: any) {
     const data = await getDataFromExcel(event.target.files[0]);
     if (!this.validateExcel(data)) {
       return;
     }
     console.log({ data });
-  }
-
-  validateExcel(data: unknown): boolean {
-    if (!Array.isArray(data)) {
-      this.alert('error', 'No se encontraron datos en el archivo', '');
-      return false;
-    }
-    if (Array.isArray(data) && data.length === 0) {
-      this.alert('error', 'No se encontraron datos en el archivo', '');
-      return false;
-    }
-    const columns = ['NO_BIEN', 'NO_EXPEDIENTE'];
-    const keysExcel = Object.keys(data[0]);
-    if (!keysExcel.every(key => columns.includes(key))) {
-      this.alert(
-        'error',
-        `Columna(s) no encontrada(s), asegúrese de contener esta columnas ${columns.join(
-          ','
-        )}`,
-        ''
-      );
-      return false;
-    }
-    return true;
   }
 
   isDisableCreateDictation = false;
@@ -648,6 +549,148 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     }
 
     console.log({ event, value: target.checked });
+  }
+
+  async prePrints(): Promise<{
+    PARAMFORM: string;
+    P_OFICIO: string;
+    TIPO_DIC: any;
+    CLAVE_ARMADA: any;
+    TIPO_VOL: any;
+    vIDENTI: any;
+  }> {
+    const { id, typeDict, passOfficeArmy } = this.form.value;
+    let vTIPO_VOLANTE = '';
+    let vIDENTI = '';
+    console.log({ id, typeDict, passOfficeArmy });
+    if (!id && !typeDict && !passOfficeArmy) {
+      this.alert('warning', 'Error', 'Se debe ingresar un Dictamen.');
+      return Promise.reject(null);
+    }
+
+    try {
+      const dictation = await this.getDictationForId();
+    } catch (error) {
+      this.alert('warning', 'Error', 'No se encontró un Dictamen ');
+      return null;
+    }
+
+    try {
+      vIDENTI = await this.findGoodAndDictXGood1();
+    } catch (error: any) {
+      this.alertQuestion('warning', 'Error', error?.message);
+      console.log({ error });
+      return null;
+    }
+
+    try {
+      const notification = await this.getNotificationWhereWheelNumber();
+      vTIPO_VOLANTE = notification?.wheelType;
+    } catch (error) {
+      this.alert(
+        'warning',
+        'Error',
+        'No se encontró la Notificación del Dictamen.'
+      );
+      return null;
+    }
+
+    //ERROR: este codigo no implementado de oracle forms
+    //   pl_id := Get_Parameter_List(pl_name);
+    //  IF Id_Null(pl_id) THEN
+    //     pl_id := Create_Parameter_List(pl_name);
+    //     IF Id_Null(pl_id) THEN
+    //        LIP_MENSAJE('Error al crear lista de parámetros. '||pl_name,'N');
+    //        RAISE Form_Trigger_Failure;
+    //     END IF;
+    //  ELSE
+    //     Destroy_Parameter_List(pl_id);
+    //     pl_id := Create_Parameter_List(pl_name);
+    //  END IF;
+
+    return {
+      PARAMFORM: 'NO',
+      P_OFICIO: id,
+      TIPO_DIC: typeDict,
+      CLAVE_ARMADA: passOfficeArmy,
+      TIPO_VOL: vTIPO_VOLANTE,
+      vIDENTI,
+    };
+  }
+
+  validateExcel(data: unknown): boolean {
+    if (!Array.isArray(data)) {
+      this.alert('error', 'No se encontraron datos en el archivo', '');
+      return false;
+    }
+    if (Array.isArray(data) && data.length === 0) {
+      this.alert('error', 'No se encontraron datos en el archivo', '');
+      return false;
+    }
+    const columns = ['NO_BIEN', 'NO_EXPEDIENTE'];
+    const keysExcel = Object.keys(data[0]);
+    if (!keysExcel.every(key => columns.includes(key))) {
+      this.alert(
+        'error',
+        `Columna(s) no encontrada(s), asegúrese de contener esta columnas ${columns.join(
+          ','
+        )}`,
+        ''
+      );
+      return false;
+    }
+    return true;
+  }
+
+  printReport(report: string, params: any) {
+    this.siabService.fetchReport(report, params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+      error: () => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
+  }
+
+  async getNotificationWhereWheelNumber() {
+    const { wheelNumber } = this.form.value;
+    const queryParams = `filter.wheelNumber=${wheelNumber || ''}&limit=1`;
+    const notification = await firstValueFrom(
+      this.notificationsService.getAllFilter(queryParams)
+    );
+    console.log({ notification });
+    return notification.data[0];
+  }
+
+  async findGoodAndDictXGood1(): Promise<any> {
+    const body = {
+      NO_OF_DICTA: this.form.value.id,
+      TIPO_DICTAMINACION: this.form.value.typeDict,
+    };
+    const data: { data: any[] } = await firstValueFrom(
+      this.dictationService.postFindGoodDictGood1(body)
+    );
+    console.log({ findGoodAndDictXGood1: data });
+    if (data?.data.length > 1) {
+      throw new Error('Se tiene varios identificadores en el Dictamen.');
+    }
+
+    return data.data[0].substr;
   }
 
   // btnImprimeRelacionBienes() {
