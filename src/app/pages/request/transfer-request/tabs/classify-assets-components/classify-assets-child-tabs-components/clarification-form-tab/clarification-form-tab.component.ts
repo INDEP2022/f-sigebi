@@ -77,7 +77,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       next: val => {
         let type = this.clarificationTypes.find(type => type.value == val);
         let params = new BehaviorSubject<FilterParams>(new FilterParams());
-        params.value.addFilter('type', type.id);
+        //params.value.addFilter('type', type.id);
         //params.value.addFilter('type', Number(val));
         const filter = params.getValue().getParams();
         this.getClarification(filter);
@@ -91,7 +91,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       rejectNotificationId: [null], //id
       goodId: [null, [Validators.required]],
       clarificationType: [null, [Validators.required]],
-      clarificationId: [null, [Validators.required]],
+      clarificationId: [null, []], //El campo no es obligatorio
       reason: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(255)],
@@ -114,7 +114,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         ...this.clarificationForm,
         rejectNotificationId: this.docClarification.rejectNotificationId,
         clarificationType: this.docClarification.clarificationType,
-        clarificationId: this.docClarification.clarificationId,
+        clarificationId: this.docClarification?.clarificationId, //Cuando es improcedencia, irá vacio este campo
         reason: this.docClarification.reason,
       });
       this.clarificationForm.controls['clarificationType'].disable();
@@ -133,6 +133,14 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   async confirm() {
+    //Si es improcedencia, no debe llevar tipo de aclaracion
+    if (
+      this.clarificationForm.controls['clarificationType'].value ==
+      'SOLICITAR_IMPROCEDENCIA'
+    ) {
+      this.clarificationForm.controls['clarificationId'].setValue(null);
+    }
+
     if (
       this.haveGoodResDevRegister == true &&
       this.updateGoodRespDevRegister == false
@@ -330,7 +338,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
           if (
             resp.data.length > 0 &&
-            resp.data[0].good.processStatus == 'VERIFICAR_CUMPLIMIENTO'
+            (resp.data[0].good.processStatus == 'VERIFICAR_CUMPLIMIENTO' ||
+              resp.data[0].good.processStatus == 'CLASIFICAR_BIEN' ||
+              resp.data[0].good.processStatus == 'DESTINO_DOCUMENTAL')
           ) {
             this.updateGoodRespDevRegister = true;
           }
@@ -353,6 +363,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
+          this.triggerEvent('UPDATE-GOOD');
           resolve(true);
         },
         error: error => {
@@ -458,6 +469,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {},
     });
+  }
+
+  triggerEvent(item: any) {
+    this.event.emit(item);
   }
 
   close(): void {
