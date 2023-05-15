@@ -352,6 +352,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active mr-2 ml-2"
                 [disabled]="form.get('folioEscaneo').value == null"
+                (click)="replicateFolio()"
                 size="small">
                 Replicar Folio
               </button>
@@ -435,7 +436,7 @@
         </form-field>
       </div>
 
-      <hr class="row" />
+      <!-- <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <a
@@ -446,7 +447,7 @@
             Exportar Datos
           </a>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </app-card>

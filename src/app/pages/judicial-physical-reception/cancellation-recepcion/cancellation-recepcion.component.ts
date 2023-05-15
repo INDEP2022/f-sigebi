@@ -53,7 +53,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
         sort: false,
       },
@@ -518,6 +518,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
+    this.form.get('folioEscaneo').reset();
 
     this.clearInputs();
     const paramsF = new FilterParams();
@@ -573,8 +574,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  validations() {
-    this.form.get('fe');
+  replicateFolio() {
+    this.alert('info', 'El apartado de folios está en construcción', '');
   }
 
   checkChange() {
@@ -695,7 +696,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Estatus no disponible',
-          'El bien tiene un estatus invalido para ser asignado a alguna acta'
+          'El bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         this.alert(
@@ -815,7 +816,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Problemas con el número de acta',
-          'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+          'Debe especificar/buscar el acta para después eliminar el bien de esta'
         );
       } else if (this.selectActData == null) {
         this.alert(

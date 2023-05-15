@@ -753,6 +753,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
+    this.form.get('folioEscaneo').reset();
 
     this.clearInputs();
     const paramsF = new FilterParams();
@@ -1207,7 +1208,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Estatus no disponible',
-          'El bien tiene un estatus invalido para ser asignado a alguna acta'
+          'El bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         //Valida si hay clave de acta y es válida
@@ -1397,7 +1398,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Problemas con el número de acta',
-          'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+          'Debe especificar/buscar el acta para después eliminar el bien de esta'
         );
       } else {
         console.log(this.dataGoodAct);
