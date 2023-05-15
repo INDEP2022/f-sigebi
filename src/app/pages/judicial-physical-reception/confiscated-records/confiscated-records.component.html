@@ -27,7 +27,7 @@
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm disabled active"
-                (click)="getGoodsByExpedient()">
+                (click)="goodsByExpediente()">
                 Buscar
               </button>
               <span class="ml-3">{{ statusProceeding }}</span>
@@ -72,8 +72,7 @@
                   id="acta"
                   class="form-control"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  formControlName="acta"
-                  (ngModelChange)="verifyActAndTransfer()">
+                  formControlName="acta">
                   <option *ngFor="let record of records" [value]="record">
                     {{ record }}
                   </option>
@@ -84,7 +83,6 @@
             <div class="col-md-2">
               <form-field [control]="form.get('transfer')">
                 <ngx-select
-                  (change)="verifyTransferenteAndAct()"
                   [class]="initialdisabled ? 'disabled' : ''"
                   id="transfer"
                   control="transfer"
@@ -105,8 +103,7 @@
                 <input
                   type="text"
                   class="form-control disabled"
-                  formControlName="ident"
-                  (change)="fillActTwo()" />
+                  formControlName="ident" />
               </form-field>
             </div>
 
@@ -114,7 +111,6 @@
               <form-field [control]="form.get('recibe')">
                 <ngx-select
                   (fetchItems)="getRecibe($event)"
-                  (change)="fillActTwo()"
                   control="recibe"
                   [class]="initialdisabled ? 'disabled' : ''"
                   label="Recibe"
@@ -129,7 +125,6 @@
               <form-field [control]="form.get('admin')">
                 <ngx-select
                   (fetchItems)="getAdmin($event)"
-                  (change)="fillActTwo()"
                   [class]="initialdisabled ? 'disabled' : ''"
                   control="admin"
                   label="Admin"
@@ -152,8 +147,7 @@
                   [class]="initialdisabled ? 'disabled' : ''"
                   min="0"
                   [max-length]="5"
-                  formControlName="folio"
-                  (change)="fillActTwo()" />
+                  formControlName="folio" />
               </form-field>
             </div>
             <div class="col">
