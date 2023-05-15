@@ -8,6 +8,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DEPOSITARY_ROUTES_2 } from 'src/app/common/constants/juridical-processes/depositary-routes-2';
 import {
@@ -279,6 +280,7 @@ export class JuridicalRulingGComponent
 
   constructor(
     private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
     private service: GoodTypeService,
     private goodSubtypesService: GoodSubtypeService,
     private goodSsubtypeService: GoodSsubtypeService,
@@ -293,6 +295,19 @@ export class JuridicalRulingGComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+    this.getParams();
+  }
+
+  getParams() {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.expedientesForm
+          .get('noExpediente')
+          .setValue(
+            params['noExpediente'] ? Number(params['noExpediente']) : undefined
+          );
+      });
     this.onLoadGoodList();
     this.onLoadDocumentsByGood();
   }
