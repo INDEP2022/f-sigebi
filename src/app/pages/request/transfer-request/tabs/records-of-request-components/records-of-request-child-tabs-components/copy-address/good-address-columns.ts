@@ -29,6 +29,12 @@ export const GOOD_ADDRESS_COLUMNS = {
     sort: false,
   },
 
+  idRequest: {
+    title: 'Solicitud',
+    type: 'string',
+    sort: false,
+  },
+
   code: {
     title: 'Código Postal',
     type: 'string',

@@ -18,8 +18,19 @@
               bindLabel="description"
               label="Delegaci&oacute;n"
               [control]="'delegation'"
-              (change)="onDelegationsChange($event)">
+              (change)="onDelegationsChange($event)"
+              [showTooltip]="true"
+              [labelTemplate]="delegationLabel"
+              [optionTemplate]="delegationOption">
             </ngx-select>
+            <ng-template #delegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-3">
@@ -32,8 +43,19 @@
               bindLabel="description"
               label="Sub Delegaci&oacute;n"
               [control]="'subdelegation'"
-              (change)="onSubDelegationsChange($event)">
+              (change)="onSubDelegationsChange($event)"
+              [showTooltip]="true"
+              [labelTemplate]="subdelegationLabel"
+              [optionTemplate]="subdelegationOption">
             </ngx-select>
+            <ng-template #subdelegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #subdelegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-2">
@@ -43,7 +65,6 @@
             <input
               class="form-control"
               formControlName="rangeDate"
-              ngModel
               bsDaterangepicker
               [maxDate]="today"
               [bsConfig]="{

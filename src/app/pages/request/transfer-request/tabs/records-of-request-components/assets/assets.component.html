@@ -12,50 +12,21 @@
     </div>
   </div>
   <div class="row pt-4">
-    <div class="d-flex justify-content-end">
-      <!-- <div class="" style="margin-left: 1%">
-        <button
-          class="btn btn-success btn-sm ml-2"
-          type="button"
-          (click)="file.click()">
-          <i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
-        </button>
-        <input
-          type="file"
-          name="file"
-          #file
-          class="d-none"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-          (change)="onFileChange($event)" />
-      </div> -->
-
-      <!-- <div class="" style="margin-left: 1%">
-        <button
-          class="btn btn-info btn-sm active"
-          (click)="openSelectAddressModal()">
-          <i class="bx bx-home"></i> Seleccionar Domicilio
-        </button>
-      </div> -->
-      <!-- <div class="" style="margin-left: 1%">
-        <button class="btn btn-info btn-sm active" (click)="menajeModal()">
-          Menaje
-        </button>
-      </div> -->
-      <!-- <div class="" style="margin-left: 1%">
-        <button class="btn btn-danger btn-sm active" (click)="delete()">
-          Eliminar
-        </button>
-      </div> -->
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
       <div>
         <input
           type="file"
           name="file"
           #fileInmueble
+          #uploadFile
           class="d-none"
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event, 'inmueble')" />
       </div>
-      <div>
+      <div class="p-2">
         <div class="btn-group" dropdown placement="bottom right">
           <button
             id="button-alignment"
@@ -103,12 +74,11 @@
           </ul>
         </div>
       </div>
-      <div class="mr-4" style="margin-left: 1%">
+      <div class="p-2" style="margin-left: 1%">
         <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
           {{ btnCreate }}
         </button>
       </div>
-      <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
 

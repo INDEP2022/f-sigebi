@@ -121,17 +121,17 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL2}${route}`,
+      `${environment.API_URL}${route}`,
       { params }
     );
   }
 
   getById2(route: string, id: number | string): Observable<T> {
-    return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
+    return this.httpClient.get<T>(`${environment.API_URL}${route}/${id}`);
   }
   getById3(route: string, id: number | string): Observable<IListResponse<T>> {
     return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL2}${route}/${id}`
+      `${environment.API_URL}${route}/${id}`
     );
   }
   getById4(
@@ -141,26 +141,26 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = _params ? this.makeParams(_params) : {};
     return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL2}${route}/${id}`,
+      `${environment.API_URL}${route}/${id}`,
       { params }
     );
   }
 
   create2(route: string, formData: Object) {
-    return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
+    return this.httpClient.post<T>(`${environment.API_URL}${route}`, formData);
   }
 
   update2(route: string, id: number | string, formData: Object) {
     return this.httpClient.put(
-      `${environment.API_URL2}${route}/${id}`,
+      `${environment.API_URL}${route}/${id}`,
       formData
     );
   }
   update3(route: string, formData: Object) {
-    return this.httpClient.put(`${environment.API_URL2}${route}`, formData);
+    return this.httpClient.put(`${environment.API_URL}${route}`, formData);
   }
   remove2(route: string, id: number | string) {
-    return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
+    return this.httpClient.delete(`${environment.API_URL}${route}/${id}`);
   }
   remove3(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
@@ -169,23 +169,19 @@ export class Repository<T> implements IRepository<T> {
   updateByIds2(route: string, ids: Partial<T>, formData: Object) {
     const idsRoute: string = this.makeIdsRoute(ids);
     return this.httpClient.put(
-      `${environment.API_URL2}${route}/${idsRoute}`,
+      `${environment.API_URL}${route}/${idsRoute}`,
       formData
     );
   }
 
   getByIds2(route: string, ids: Partial<T>) {
     const idsRoute: string = this.makeIdsRoute(ids);
-    return this.httpClient.get<T>(
-      `${environment.API_URL2}${route}/${idsRoute}`
-    );
+    return this.httpClient.get<T>(`${environment.API_URL}${route}/${idsRoute}`);
   }
 
   removeByIds2(route: string, ids: Partial<T>) {
     const idsRoute: string = this.makeIdsRoute(ids);
-    return this.httpClient.delete(
-      `${environment.API_URL2}${route}/${idsRoute}`
-    );
+    return this.httpClient.delete(`${environment.API_URL}${route}/${idsRoute}`);
   }
 
   getByIdDelegationSubdelegation(
@@ -274,5 +270,25 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<IListResponse<T>>(
       `${environment.API_URL}/catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
     );
+  }
+
+  getAllPaginatedFilter(
+    route: string,
+    _params?: ListParams | string
+  ): Observable<IListResponse<T>> {
+    const params = this.makeParams(_params);
+    const fullRoute = this.buildRouteFilter(route);
+    console.log(fullRoute);
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
+  }
+
+  buildRouteFilter(route: string) {
+    const paths = route.split('/');
+    paths.shift();
+    if (paths.length === 0) {
+      return `${environment.API_URL}notification/api/v1/${route}`;
+    }
+    const ms = route.split('/')[0];
+    return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
   }
 }

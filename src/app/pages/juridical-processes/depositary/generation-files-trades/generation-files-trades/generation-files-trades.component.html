@@ -5,73 +5,145 @@
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-1">
-          <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
-            <input class="form-control" formControlName="noVolante" />
-          </form-field>
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-sm-12">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('noVolante')">
+                <ngx-select
+                  [form]="form"
+                  control="noVolante"
+                  (change)="getWheel($event)"
+                  (fetchItems)="listWheels($event)"
+                  [data]="selectWheel"
+                  label="No&#46; Volante"
+                  value="flyerNumber"
+                  bindLabel="flyerNumber">
+                </ngx-select>
+
+                <!-- <input class="form-control" formControlName="noVolante" /> -->
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('noOficio')"
+                label="No&#46; Oficio">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="noOficio" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('tipoOficio')"
+                label="Tipo Oficio">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="tipoOficio" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('destinatario')"
+                label="Destinatario">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="destinatario" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('nomPerExt')"
+                label="Nombre Persona Extenso">
+                <textarea
+                  readonly
+                  class="form-control"
+                  formControlName="nomPerExt"></textarea>
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-1">
-          <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field>
+
+        <div class="col-lg-5 col-sm-12">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('noExpediente')"
+                label="No&#46; Expediente">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="noExpediente" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('estatus')" label="Estatus">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="estatus" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('oficioPor')" label="Oficio Por">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="oficioPor" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('remitente')" label="Remitente">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="remitente" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('cveOficio')"
+                label="Clave Oficio">
+                <textarea
+                  readonly
+                  class="form-control"
+                  formControlName="cveOficio"></textarea>
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-1">
-          <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
-            <input class="form-control" formControlName="noOficio" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-1">
-          <form-field [control]="form.get('tipoOficio')" label="Tipo Oficio">
-            <input class="form-control" formControlName="tipoOficio" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-1">
-          <form-field [control]="form.get('estatus')" label="Estatus">
-            <input class="form-control" formControlName="estatus" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-1">
-          <form-field [control]="form.get('oficioPor')" label="Oficio Por">
-            <input class="form-control" formControlName="oficioPor" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-1">
-          <form-field [control]="form.get('remitente')" label="Remitente">
-            <input class="form-control" formControlName="remitente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-1">
-          <form-field [control]="form.get('destinatario')" label="Destinatario">
-            <input class="form-control" formControlName="destinatario" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 p-1">
-          <form-field [control]="form.get('cveOficio')" label="Clave Oficio">
-            <textarea
-              class="form-control"
-              formControlName="cveOficio"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 p-1">
-          <form-field
-            [control]="form.get('nomPerExt')"
-            label="Nombre Persona Extenso">
-            <textarea
-              class="form-control"
-              formControlName="nomPerExt"></textarea>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary active text-wrap btn-sm"
-              (click)="btnGenerarOficio()">
-              GENERAR ARCHIVO DE OFICIO
-            </button>
+
+        <div class="col-12">
+          <div class="row form-group justify-content-center">
+            <div class="col-lg-5 col-md-5 col-5 form-group">
+              <button
+                style="float: right"
+                [disabled]="!form.valid || loading"
+                type="button"
+                class="btn btn-primary active text-wrap btn-sm"
+                (click)="btnGenerarOficio()">
+                GENERAR ARCHIVO DE OFICIO
+              </button>
+            </div>
+            <div class="col-lg-5 col-md-5 col-5 form-group">
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm"
+                (click)="cleanForm()">
+                Limpiar
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ export type _Params = string | HttpParams | ListParams | ObjectParams;
   providedIn: 'root',
 })
 export class HttpWContentService {
-  private readonly url = environment.API_URL;
+  private readonly url = environment.API_CONTENT;
   //private readonly prefix = environment.URL_PREFIX;
   protected httpClient = inject(HttpClient);
   protected microservice: string;

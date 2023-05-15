@@ -50,48 +50,29 @@
             </ngx-select> -->
           </div>
         </div>
-        <div
-          class="row pt-2"
-          *ngIf="
+        <!-- <div class="row pt-2" *ngIf="
             typeDoc === 'doc-expedient' ||
             typeDoc === 'request-expedient' ||
             typeDoc === 'request-assets'
           ">
           <div class="col-md-4">
             <form-field [control]="docRequestForm.get('regDelega')">
-              <ngx-select
-                [form]="docRequestForm"
-                control="regDelega"
-                [data]="selectRegDelegation"
-                value="id"
-                bindLabel="description"
-                label="Delegaci&oacute;n Regional"
+              <ngx-select [form]="docRequestForm" control="regDelega" [data]="selectRegDelegation" value="id"
+                bindLabel="description" label="Delegaci&oacute;n Regional"
                 (fetchItems)="getRegDelegation($event)"></ngx-select>
             </form-field>
           </div>
           <div class="col-md-4">
-            <ngx-select
-              [form]="docRequestForm"
-              control="state"
-              (fetchItems)="getState($event)"
-              [data]="selectState"
-              label="Estado"
-              value="id"
-              bindLabel="descCondition">
+            <ngx-select [form]="docRequestForm" control="state" (fetchItems)="getState($event)" [data]="selectState"
+              label="Estado" value="id" bindLabel="descCondition">
             </ngx-select>
           </div>
           <div class="col-md-4">
-            <ngx-select
-              [form]="docRequestForm"
-              control="tranfe"
-              (fetchItems)="getTransfe($event)"
-              [data]="selectTransfe"
-              label="Transferente"
-              value="id"
-              bindLabel="nameTransferent">
+            <ngx-select [form]="docRequestForm" control="tranfe" (fetchItems)="getTransfe($event)"
+              [data]="selectTransfe" label="Transferente" value="id" bindLabel="nameTransferent">
             </ngx-select>
           </div>
-        </div>
+        </div> -->
         <div class="row pt-4">
           <div class="col-md-3">
             <form-field
@@ -283,6 +264,7 @@
         <div class="ml-auto p-2">
           <app-columns-select [(settings)]="settings"></app-columns-select>
           <button
+            [disabled]="statusTask == 'FINALIZADA'"
             class="btn btn-primary btn-sm active ml-2"
             (click)="openNewDocument()">
             Nuevo

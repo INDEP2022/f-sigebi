@@ -2,11 +2,14 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
+import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -29,10 +32,23 @@ export class DocumentTradeComponent
   implements OnInit, OnDestroy
 {
   @Output() formValues = new EventEmitter<any>();
-
+  mode: 'create' | 'update' = 'create';
   public form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  @Input() set data(value: IOfficialDictation) {
+    if (value) {
+      this.form.patchValue(value);
+      this.mode = 'update';
+    } else {
+      this.prepareForm();
+      this.form.reset();
+    }
+  }
+
+  constructor(
+    private fb: FormBuilder,
+    private officialDictationService: OficialDictationService
+  ) {
     super();
   }
 
@@ -43,7 +59,7 @@ export class DocumentTradeComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      officialNumber: '',
+      officialNumber: [null, Validators.required],
       sender: ['', [Validators.pattern(STRING_PATTERN)]],
       city: ['', [Validators.pattern(STRING_PATTERN)]],
       text1: ['', [Validators.pattern(STRING_PATTERN)]],
@@ -54,7 +70,7 @@ export class DocumentTradeComponent
       delegacionRecipientNumber: '',
       recipientDepartmentNumber: '',
       statusOf: ['', [Validators.pattern(STRING_PATTERN)]],
-      typeDict: ['', [Validators.pattern(STRING_PATTERN)]],
+      typeDict: ['', [Validators.pattern(STRING_PATTERN), Validators.required]],
       recipientEsxt: ['', [Validators.pattern(STRING_PATTERN)]],
       desSenderPa: ['', [Validators.pattern(STRING_PATTERN)]],
       notaryNumber: '',
@@ -64,5 +80,44 @@ export class DocumentTradeComponent
 
   public emitChange() {
     this.formValues.emit(this.form);
+  }
+
+  send() {
+    if (this.mode === 'update') {
+      this.update();
+    } else {
+      this.create();
+    }
+  }
+
+  create() {
+    console.log(this.form.value);
+    this.officialDictationService.create(this.form.value).subscribe({
+      next: data => {
+        this.alert(
+          'success',
+          'Se ha agregado la información correctamente',
+          ''
+        );
+      },
+      error: err => {
+        this.alert('error', 'No se ha podido agregar la información', '');
+      },
+    });
+  }
+
+  update() {
+    this.officialDictationService.update(this.form.value).subscribe({
+      next: data => {
+        this.alert(
+          'success',
+          'Se ha agregado la información correctamente',
+          ''
+        );
+      },
+      error: err => {
+        this.alert('error', 'No se ha podido agregar la información', '');
+      },
+    });
   }
 }

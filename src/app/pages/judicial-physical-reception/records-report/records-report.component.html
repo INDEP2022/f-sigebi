@@ -53,9 +53,9 @@
               <form-field [control]="form.get('actaInicial')">
                 <ngx-select
                   (fetchItems)="getInitialProceedings($event)"
-                  class="disabled"
+                  [class]="!initialProceedingBool ? 'disabled' : ''"
                   id="actaI"
-                  bindLabel="proceedingkey"
+                  bindLabel="cve_acta"
                   control="actaInicial"
                   label="Acta Inicial"
                   [form]="form"
@@ -71,8 +71,8 @@
                   (fetchItems)="getFinalProceedings($event)"
                   id="actaF"
                   control="actaFinal"
-                  class="disabled"
-                  bindLabel="proceedingkey"
+                  [class]="!finalProceedingBool ? 'disabled' : ''"
+                  bindLabel="cve_acta"
                   label="Acta Final"
                   [form]="form"
                   [data]="finalProceeding"></ngx-select>
@@ -88,6 +88,7 @@
                 label="No Expediente Desde el">
                 <input
                   type="number"
+                  [min]="0"
                   class="form-control"
                   formControlName="desde" />
               </form-field>
@@ -97,6 +98,7 @@
               <form-field [control]="form.get('hasta')" label="Hasta el">
                 <input
                   type="number"
+                  [min]="form.get('desde').value + 1"
                   class="form-control"
                   formControlName="hasta" />
               </form-field>
@@ -121,6 +123,7 @@
                 label="Fecha Elaboraci&oacute;n Hasta">
                 <input
                   bsDatepicker
+                  [minDate]="form.get('fechaDesde').value"
                   class="form-control"
                   formControlName="fechaHasta" />
               </form-field>

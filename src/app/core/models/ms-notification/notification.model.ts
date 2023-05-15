@@ -2,6 +2,31 @@ import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+
+export interface INotificationXProperty {
+  numberProperty: number | string;
+  notificationDate: Date | string;
+  notifiedTo: string;
+  notifiedPlace: string;
+  duct: string;
+  editPublicationDate: Date | string;
+  newspaperPublication: Date | string;
+  insertMethod: string;
+  periodEndDate: Date | string;
+  observation: string;
+  abandonmentExpirationDate: Date | string;
+  registerNumber: number;
+  nameInstitutionNotified: string;
+  namePersonNotified: string;
+  positionPersonNotified: string;
+  statusNotified: string;
+  responseNotifiedDate: Date | string;
+  resolutionDescription: string;
+  temporarySuspension: Date | string;
+  definitiveSuspension: Date | string;
+  userCorrectsKey: string;
+}
+
 export interface INotification {
   wheelNumber: number;
   receiptDate: Date | string;
@@ -266,4 +291,8 @@ export interface INotificationTransferentIndiciadoCity {
     depend: string;
     depDelegation: string;
   };
+}
+
+export interface INotificationDictum {
+  dictumKey: string;
 }

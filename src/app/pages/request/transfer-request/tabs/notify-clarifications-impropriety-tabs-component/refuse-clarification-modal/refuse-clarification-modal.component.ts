@@ -25,6 +25,7 @@ export class RefuseClarificationModalComponent
   today: Date;
   refuseObj: ClarificationGoodRejectNotification;
   dataClarifications2: ClarificationGoodRejectNotification;
+  idSolicitud: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -45,8 +46,8 @@ export class RefuseClarificationModalComponent
     this.observationForm = this.fb.group({
       rejectNotificationId: [this.refuseObj.rejectNotificationId],
       rejectionDate: [this.today],
-      answered: ['EN ACLARACION', []],
-      clarificationType: ['ACLARACIÓN', []],
+      answered: ['RECHAZADA', []],
+      //clarificationType: ['ACLARACIÓN', []],
       observations: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(255)],
@@ -91,7 +92,7 @@ export class RefuseClarificationModalComponent
       requestId: Number(this.refuseObj.chatClarification.id),
       goodId: this.refuseObj.chatClarification.idProperty,
       //clarifiNewsRejectId: Number(this.refuseObj.chatClarification.clarificationDate), //Establecer ID de bienes_recha_notif_aclara
-      clarificationStatus: 'EN_ACLARACION', //Este estado cambia cuando se manda a guardar el formulario, tanto largo como corto
+      clarificationStatus: 'RECHAZADO', //Este estado cambia cuando se manda a guardar el formulario, tanto largo como corto
     };
 
     console.log('Datos del objeto chatclarifications', modelChatClarifications);

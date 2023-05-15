@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
+import { NumBienShare } from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -52,6 +56,7 @@ export class IncomeOrdersDepositoryGoodsComponent
     return this.form.get('description');
   }
 
+  itemsPass: number;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   jsonInterfaz: IAppointmentDepositary;
@@ -63,54 +68,36 @@ export class IncomeOrdersDepositoryGoodsComponent
   objJsonInterfazUser: ISegUsers[] = [];
   itemsJsonInterfazUser: ISegUsers[] = [];
   itemsDepositaryUser = new DefaultSelect<ISegUsers>();
+  datosUser: TokenInfoModel;
 
+  interfasValorBienes: {
+    numBien: number;
+    cveContrato: string;
+    depositario: string;
+    desc: string;
+    nomPantall: string;
+  };
   constructor(
     private fb: FormBuilder,
     private depositaryService: MsDepositaryService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private valorBien: NumBienShare,
+    private router: Router,
+    private authService: AuthService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.valorBien.SharingNumbien.subscribe({
+      next: res => {
+        this.interfasValorBienes = res;
+      },
+      error: err => {
+        //alert('SharingNumbien' + err);
+      },
+    });
     this.buildForm();
-    this.getItemsNumberBienes();
-    this.getUserDepositary();
-
-    this.form.get('numberGood')?.valueChanges.subscribe(data => {
-      if (data) {
-        this.objJsonInterfaz = this.itemsJsonInterfaz.filter(
-          X => X.appointmentNumber === data
-        );
-        this.form.get('depositary').setValue('');
-        this.form.get('description').setValue('');
-        console.log(JSON.stringify(this.objJsonInterfaz[0]));
-        this.form
-          .get('depositary')
-          .setValue(this.objJsonInterfaz[0].responsible);
-        this.form
-          .get('description')
-          .setValue(this.objJsonInterfaz[0].observation);
-        this.form.patchValue(this.objJsonInterfaz[0]);
-      }
-    });
-    //
-    //
-    //
-
-    this.form.get('user')?.valueChanges.subscribe(data => {
-      this.form.get('username').setValue('');
-      this.form.get('charge').setValue('');
-      if (data) {
-        this.objJsonInterfazUser = this.itemsJsonInterfazUser.filter(
-          X => X.id === data
-        );
-        this.form.get('username').setValue(this.objJsonInterfazUser[0].name);
-        this.form
-          .get('charge')
-          .setValue(this.objJsonInterfazUser[0].profession);
-      }
-    });
   }
 
   getUserDepositary() {
@@ -118,7 +105,7 @@ export class IncomeOrdersDepositoryGoodsComponent
     let params = new FilterParams();
     this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: resp => {
-        console.log(JSON.stringify(resp.data));
+        // console.log(JSON.stringify(resp.data));
         this.itemsJsonInterfazUser = [...resp.data];
       },
       error: err => {
@@ -136,7 +123,6 @@ export class IncomeOrdersDepositoryGoodsComponent
   getItemsNumberBienes() {
     this.depositaryService.getGoodAppointmentDepositaryByNoGood().subscribe({
       next: resp => {
-        console.log(JSON.stringify(resp.data));
         this.itemsJsonInterfaz = [...resp.data];
       },
       error: err => {
@@ -152,6 +138,8 @@ export class IncomeOrdersDepositoryGoodsComponent
   }
   print() {
     alert(JSON.stringify(this.form.value)); //jesisca  jasper - report
+    /* this.router.navigate;
+   ("pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/"+3801);*/
   }
   /**
     @method: metodo para iniciar el formulario
@@ -159,6 +147,9 @@ export class IncomeOrdersDepositoryGoodsComponent
     @since: 27/09/2022
   */
   private buildForm() {
+    this.datosUser = this.authService.decodeToken();
+    this.getItemsNumberBienes();
+
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
       contractKey: [
@@ -174,9 +165,16 @@ export class IncomeOrdersDepositoryGoodsComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       date: [null, [Validators.required]],
-      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      userId: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       username: [null, [Validators.required]],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
+    this.form.get('userId').setValue(this.datosUser.username);
+    this.form.get('username').setValue(this.datosUser.name);
+    this.form.get('charge').setValue(this.datosUser.puesto);
+    this.form.get('numberGood').setValue(this.interfasValorBienes.numBien);
+    this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
+    this.form.get('depositary').setValue(this.interfasValorBienes.depositario);
+    this.form.get('description').setValue(this.interfasValorBienes.desc);
   }
 }

@@ -126,7 +126,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  maxlength="40"
+                  maxlength="150"
                   formControlName="docTitle" />
               </form-field>
             </div>
@@ -301,6 +301,7 @@
             [(settings)]="settings"></app-columns-select>
           <div class="ml-auto p-2">
             <button
+              [disabled]="statusTask == 'FINALIZADA'"
               class="btn btn-primary btn-sm active"
               (click)="openNewDocument()">
               Nuevo

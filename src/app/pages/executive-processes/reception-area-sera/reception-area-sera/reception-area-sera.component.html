@@ -8,7 +8,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [searchOnInit]="true"
@@ -19,11 +19,12 @@
               bindLabel="description"
               label="Delegaci&oacute;n"
               [control]="'delegation'"
-              (change)="onDelegationsChange($event)">
+              (change)="onDelegationsChange($event)"
+              [showTooltip]="true">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
               [form]="form"
@@ -33,18 +34,18 @@
               bindLabel="description"
               label="Sub Delegaci&oacute;n"
               [control]="'subdelegation'"
-              (change)="onSubDelegationsChange($event)">
+              (change)="onSubDelegationsChange($event)"
+              [showTooltip]="true">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('rangeDate')"
             label="Fechas de recepci&oacute;n">
             <input
               class="form-control"
               formControlName="rangeDate"
-              ngModel
               bsDaterangepicker
               [maxDate]="today"
               [bsConfig]="{
@@ -55,7 +56,7 @@
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="form.get('departamentDes')">
             <ngx-select
               [searchOnInit]="true"
@@ -66,11 +67,12 @@
               bindLabel="dsarea"
               label="Área Destino"
               [control]="'departamentDes'"
-              (change)="onValuesChange($event)">
+              (change)="onValuesChange($event)"
+              [showTooltip]="true">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             label="Delegación Destino"
             [control]="form.get('delegationDes')">
@@ -81,7 +83,7 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             label="Sub Delegación Destino"
             [control]="form.get('subdelegationDes')">
@@ -99,13 +101,12 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary active"
-          [disabled]="!form.valid"
-          (click)="confirm()">
-          Imprimir
-        </button>
+        <confirm-button
+          [loading]="loading"
+          text="Imprimir"
+          loadingText="Generando Reporte"
+          (confirm)="confirm()"
+          [disabled]="!form.valid"></confirm-button>
       </div>
       <div class="m-3">
         <button

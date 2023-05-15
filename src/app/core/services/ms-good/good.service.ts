@@ -15,7 +15,14 @@ import {
   IGoodSearchGoodByFile,
 } from '../../models/good/good.model';
 import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
-import { GoodGetData, IGood } from '../../models/ms-good/good';
+
+import {
+  GoodGetData,
+  IGood,
+  IGoodSami,
+  IVban,
+} from '../../models/ms-good/good';
+
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -37,6 +44,18 @@ export class GoodService extends HttpService {
 
   getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
+  }
+
+  getAllSiab(
+    params?: ListParams | string
+  ): Observable<IListResponse<IGoodSami>> {
+    return this.get<IListResponse<IGoodSami>>(
+      GoodEndpoints.GoodGetSiab,
+      params
+    );
+  }
+  getVBan(array: IVban) {
+    return this.post<IResponse>(GoodEndpoints.Vban, array);
   }
 
   getActAccount(model: IGoodStatusProcess) {
@@ -102,6 +121,12 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
 
+  getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(
+      `${GoodEndpoints.Good}/getAllGoodWDetail?${params}`
+    );
+  }
+
   getMeasurementUnits(unit: string) {
     return this.get<
       IResponse<{
@@ -121,7 +146,12 @@ export class GoodService extends HttpService {
   }
 
   getById(id: string | number) {
-    const route = `${GoodEndpoints.Good}/${id}`;
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IGood>(`${route}?filter.id=$eq:${id}`);
+  }
+
+  getByIdAndGoodId(id: string | number, goodId: string | number) {
+    const route = `${GoodEndpoints.GetGoodById}/${id}/${goodId}`;
     return this.get<IGood>(route);
   }
 
@@ -272,5 +302,15 @@ export class GoodService extends HttpService {
 
   changeGoodToNumerary(body: any) {
     return this.post(GoodEndpoints.CreateGoodNumerary, body);
+  }
+
+  updateWithParams(good: any) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
+
+  getGoodById(id: string | number) {
+    const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
+    return this.get<any>(route);
   }
 }

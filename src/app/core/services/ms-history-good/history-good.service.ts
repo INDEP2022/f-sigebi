@@ -4,7 +4,10 @@ import { HistoryGoodEndpoints } from 'src/app/common/constants/endpoints/ms-hist
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IHistoryGood } from '../../models/administrative-processes/history-good.model';
+import {
+  IHistoryGood,
+  ISentSirsae,
+} from '../../models/administrative-processes/history-good.model';
 
 @Injectable({
   providedIn: 'root',
@@ -42,6 +45,10 @@ export class HistoryGoodService extends HttpService {
     );
   }
 
+  sentSirsae(data: ISentSirsae) {
+    return this.post<ISentSirsae>(HistoryGoodEndpoints.SentSirsae, data);
+  }
+
   update(id: string | number, documents: IHistoryGood) {
     const route = `${HistoryGoodEndpoints.HistoryStatusGood}/${id}`;
     return this.put(route, documents);
@@ -59,5 +66,10 @@ export class HistoryGoodService extends HttpService {
     /* const route = `http://sigebimsqa.indep.gob.mx/historygood/api/v1/historical-status-good`;
     console.log(routess); */
     return this.get<IListResponse<IHistoryGood>>(route);
+  }
+
+  getHistoryStatusGoodById(query: any) {
+    const route = `${HistoryGoodEndpoints.HistoryStatusGoodFindById}`;
+    return this.post(route, query);
   }
 }

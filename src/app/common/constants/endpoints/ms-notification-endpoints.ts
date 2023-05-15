@@ -10,7 +10,9 @@ export enum NotificationEndpoints {
   //post
   NotifyRatification = `notify-ratification`,
   //post
-  NotificationxPropertyFilter = `notification/notification-x-property/filter`,
+  NotificationxPropertyFilter = `notification-x-property/filter`,
+  //post calculo de días
+  NotificationxPropertyFilterSort = `notification-x-property/filter?sortBy=notificationDate:ASC`,
   //get, post
   TmpNotification = `tmp-notification`,
   //get
@@ -25,4 +27,6 @@ export enum NotificationEndpoints {
   FindCountByInquiry = `notification/find-count-by-inquiri`,
   //Last-Flyer-id
   LastFlyerId = `notification/last-flyer-identification`,
+
+  NotificationxPropertyFilter2 = `notification-x-property/filter`,
 }

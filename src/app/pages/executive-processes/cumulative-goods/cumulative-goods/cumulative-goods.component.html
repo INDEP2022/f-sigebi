@@ -17,8 +17,18 @@
               bindLabel="description"
               label="Delegaci&oacute;n"
               [control]="'delegation'"
-              (change)="onDelegationsChange($event)">
+              (change)="onDelegationsChange($event)"
+              [labelTemplate]="delegationLabel"
+              [optionTemplate]="delegationOption">
             </ngx-select>
+            <ng-template #delegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-3">
@@ -31,12 +41,37 @@
               bindLabel="description"
               label="Sub Delegaci&oacute;n"
               [control]="'subdelegation'"
-              (change)="onSubDelegationsChange($event)">
+              (change)="onSubDelegationsChange($event)"
+              [labelTemplate]="subdelegationLabel"
+              [optionTemplate]="subdelegationOption">
             </ngx-select>
+            <ng-template #subdelegationLabel let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #subdelegationOption let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
           </form-field>
         </div>
         &acute;
-        <div class="col-md-2">
+        <!--<div class="col-md-2">
           <form-field [control]="form.get('fromMonth')" label="Del mes de">
             <input
               type="text"
@@ -59,20 +94,19 @@
               [minDate]="minDateEnd"
               bsDatepicker />
           </form-field>
-        </div>
+        </div>-->
       </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary active"
-          [disabled]="!form.valid"
-          (click)="confirm()">
-          Imprimir
-        </button>
+        <confirm-button
+          [loading]="loading"
+          text="Imprimir"
+          loadingText="Generando Reporte"
+          (confirm)="confirm()"
+          [disabled]="!form.valid"></confirm-button>
       </div>
       <div class="m-3">
         <button

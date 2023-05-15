@@ -61,13 +61,14 @@ export class RequestDetailTabComponent
   contribuyenteLabel: string = 'Contribuyente y/o Indiciado';
   asuntoLabel: string = 'Asunto';
   expedienteTransLabel: string = 'Expediente Transferente/PAMA';
+  extincionDomicile: string = 'Extinción de Dominio';
   tipoTransferenteLabel: string = 'Tipo Transferente';
   notasLabel: string = 'Notas Entidad Transferente';
   observaciones: string = 'Observaciones';
   causaPenal: string = 'Causa Penal';
   noAmparoLabel: string = 'No. Amparo';
   tocaPenal: string = 'Toca Penal';
-  gestionDestinoLabel: string = 'Gestión Destino';
+  gestionDestinoLabel: string = 'Gestión de Destino';
   actaCircunstacial: string = 'Acta Circunstanciada';
   averiguacionPreviaLabel: string = 'Averiguación Previa';
 
@@ -87,6 +88,9 @@ export class RequestDetailTabComponent
     this.tyepOfTransferent = this.requestForm.controls['typeOfTransfer'].value;
     this.reactiveFormCalls();
     this.showDataProg();
+    setTimeout(() => {
+      this.formLoading = false;
+    }, 600);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -102,7 +106,7 @@ export class RequestDetailTabComponent
   }
 
   ngAfterViewInit() {
-    this.formLoading = false;
+    //this.formLoading = false;
   }
 
   prepareForm(): void {

@@ -17,16 +17,11 @@
           <form-field
             [control]="searchForm.get('expedientNumber')"
             label="No&#46; Expediente">
-            <input class="form-control" formControlName="expedientNumber" />
+            <input
+              required
+              class="form-control"
+              formControlName="expedientNumber" />
           </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <button
-            type="submit"
-            class="btn btn-primary active btn-sm text-wrap"
-            (click)="searchDictation()">
-            Buscar
-          </button>
         </div>
       </div>
     </form>
@@ -81,14 +76,21 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2 pl-4">
+        <div class="col-sm-12 col-12 col-md-2 p-2 mb-2">
+          <button
+            type="submit"
+            class="btn btn-primary active btn-sm text-wrap"
+            (click)="searchDictation()">
+            Buscar
+          </button>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 pl-4">
           <form-check label="Eliminar" for="eliminar">
             <input id="eliminar" type="checkbox" formControlName="delete" />
           </form-check>
         </div>
-        <div
-          class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2 text-center">
-          <div class="form-group ml-2 mr-2">
+        <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
+          <div class="form-group mr-2">
             <button
               type="button"
               class="btn btn-primary active btn-sm text-wrap"
@@ -97,8 +99,7 @@
             </button>
           </div>
         </div>
-        <div
-          class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2 text-center">
+        <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
           <div class="form-group ml-2 mr-2">
             <button
               type="button"
@@ -110,6 +111,7 @@
         </div>
       </div>
     </form>
+
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-3 p-2">
         <form [formGroup]="formCargaMasiva" class="form-material">
@@ -120,98 +122,113 @@
               class="form-control"
               formControlName="identificadorCargaMasiva" />
           </form-field>
+          <div class="col-sm-12 col-12 col-md-12 pl-2 p-1 text-center">
+            <div class="form-group m-1 ml-2 mr-2">
+              <button
+                type="button"
+                (click)="btnCargarIdentificador()"
+                class="btn btn-primary active btn-sm text-wrap">
+                Cargar de Identificador
+              </button>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+              <div class="form-group m-1 ml-2 mr-2">
+                <button
+                  type="button"
+                  (click)="btnCrearDictamenes()"
+                  class="btn btn-primary active btn-sm text-wrap">
+                  Crear Dict&aacute;menes
+                </button>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
-      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-        <h6>Carga de Archivos</h6>
+    </div>
+
+    <div class="row pt-4 w-100">
+      <div>
+        <input
+          type="file"
+          name="file"
+          #fileExpedient
+          #uploadFile
+          class="d-none"
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          (change)="btnExpedientesCsv($event)" />
       </div>
-      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-        <div class="form-group m-1 ml-2 mr-2">
-          <button
-            type="button"
-            (click)="btnCargarIdentificador()"
-            class="btn btn-primary active btn-sm text-wrap">
-            Cargar de Identificador
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-        <div class="form-group m-1 ml-2 mr-2">
-          <button
-            (click)="btnExpedientesCsv($event)"
-            type="button"
-            class="btn btn-primary active btn-sm text-wrap">
-            Cargar Expedientes csv
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-        <div class="form-group m-1 ml-2 mr-2">
-          <button
-            type="button"
-            (click)="btnExpedientesXls()"
-            class="btn btn-primary active btn-sm text-wrap">
-            Carga Expedientes xls
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-        <h6>Imprimir Archivos y Crear Dict&aacute;menes</h6>
-      </div>
-      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-        <div class="form-group m-1 ml-2 mr-2">
-          <button
-            type="button"
-            (click)="btnCrearDictamenes()"
-            class="btn btn-primary active btn-sm text-wrap">
-            Crear Dict&aacute;menes
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-        <div class="form-group m-1 ml-2 mr-2">
-          <button
-            type="button"
-            (click)="btnImprimeOficio()"
-            class="btn btn-primary active btn-sm text-wrap">
-            Imprime Oficio
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-        <div class="form-group m-1 ml-2 mr-2">
-          <button
-            type="button"
-            (click)="btnImprimeRelacionBienes()"
-            class="btn btn-primary active btn-sm text-wrap">
-            Imprime Relaci&oacute;n Bienes
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-        <div class="form-group m-1 ml-2 mr-2">
-          <button
-            type="button"
-            (click)="btnImprimeRelacionExpediente()"
-            class="btn btn-primary active btn-sm text-wrap">
-            Imprime Relaci&oacute;n Expediente
-          </button>
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <div class="btn-group" dropdown placement="bottom right">
+            <button
+              id="button-alignment"
+              dropdownToggle
+              type="button"
+              class="btn btn-info btn-sm active dropdown-toggle"
+              aria-controls="dropdown-alignment">
+              Acciones <span class="caret"></span>
+            </button>
+            <ul
+              id="dropdown-alignment"
+              *dropdownMenu
+              class="dropdown-menu dropdown-menu-right"
+              role="menu"
+              aria-labelledby="button-alignment">
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  style="color: green"
+                  (click)="fileExpedient.click()">
+                  <i class="bx bx-import"></i> Cargar Expediente
+                </a>
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  style="color: blue"
+                  (click)="btnImprimeOficio()">
+                  <i class="bx bx-layer"></i> Imprimir Oficio
+                </a>
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  style="color: blue"
+                  (click)="btnImprimeRelacionBienes()">
+                  <i class="bx bx-layer"></i> Imprimir Relacion Bienes
+                </a>
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  style="color: blue"
+                  (click)="btnImprimeRelacionExpediente()">
+                  <i class="bx bx-layer"></i> Imprimir Relacion Expediente
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
+
     <!-- TABLAS  -->
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"></ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettings"
+            [source]="dataTable"></ng2-smart-table>
+        </div>
       </div>
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings1"
-          [source]="dataTable1"></ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettings1"
+            [source]="dataTable1"></ng2-smart-table>
+        </div>
       </div>
     </div>
     <!-- TABLAS  -->

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ROOT_REDUCERS } from './app.reducers';
 import { ToastrComponent } from './common/components/toastr/toastr.component';
+import { AppInitializer } from './common/config/app-init.service';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
@@ -23,11 +24,17 @@ import { TransferorsModule } from './pages/catalogs/transferors/transferors.modu
 import { AuthorizationKeysModule } from './pages/commercialization/catalogs/authorization-keys/authorization-keys.module';
 import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
 import { MailModule } from './pages/parameterization/mail/mail.module';
+import { DatePickerModule } from './shared/components/datepicker-element-smarttable/datapicker.module';
 import { LoadingComponent } from './shared/components/loading/loading.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
+
+export function servicesOnRun(app: AppInitializer) {
+  return () => app.load();
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,6 +46,7 @@ export function tokenGetter() {
   imports: [
     BrowserModule,
     FullModule,
+    DatePickerModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
@@ -83,6 +91,13 @@ export function tokenGetter() {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
+    },
+    AppInitializer,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: servicesOnRun,
+      multi: true,
+      deps: [AppInitializer],
     },
     JwtInterceptor,
     DatePipe,

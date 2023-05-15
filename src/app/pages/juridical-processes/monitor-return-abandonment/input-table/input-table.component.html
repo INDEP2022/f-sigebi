@@ -1,0 +1,80 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      Agregar observaciones y la fecha de ratificación judicial
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('goodId')" label="No. Bien">
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="goodId" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('leaveObservations')"
+                label="Observaciones Abandono">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="leaveObservations" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripci&oacute;n">
+                <input
+                  maxlength="1000"
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="description" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('judicialLeaveDate')"
+                label="Fecha ratificaci&oacute;n judicial">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="judicialLeaveDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

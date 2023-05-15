@@ -12,6 +12,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AssignationGoodsProtectionRoutingModule } from './assignation-goods-protection-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { ExpedientSharedComponent } from 'src/app/@standalone/shared-forms/expedient-shared/expedient-shared.component';
 import { AssignationGoodsProtectionComponent } from './assignation-goods-protection/assignation-goods-protection.component';
 
 @NgModule({
@@ -19,6 +20,7 @@ import { AssignationGoodsProtectionComponent } from './assignation-goods-protect
   imports: [
     CommonModule,
     AssignationGoodsProtectionRoutingModule,
+    ExpedientSharedComponent,
     SharedModule,
   ],
 })

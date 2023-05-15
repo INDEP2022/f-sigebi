@@ -19,6 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class TurnPaperworkComponent extends BasePage implements OnInit {
+  paperworks: any = null;
   paperwork: any = null;
   form = this.fb.group({
     user: new FormControl<string>(null, Validators.required),
@@ -41,7 +42,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.paperwork);
+    this.paperwork = this.paperworks[0];
   }
 
   getUsers(params: ListParams) {
@@ -147,6 +148,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       tap(response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
+        console.log({ blob: blob, url: url });
         let config = {
           initialState: {
             documento: {
@@ -164,6 +166,7 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   }
 
   getPaperwork() {
+    console.log(this.paperwork.processNumber);
     return this.procedureManagementService.getById(
       this.paperwork.processNumber
     );

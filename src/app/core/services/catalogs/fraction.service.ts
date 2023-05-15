@@ -12,6 +12,7 @@ import { IFraction } from '../../models/catalogs/fraction.model';
 })
 export class FractionService implements ICrudMethods<IFraction> {
   private readonly route: string = ENDPOINT_LINKS.Fraction;
+  private readonly find: string = ENDPOINT_LINKS.SubTypeGood;
   private fractionExtRepository = inject(CatFractionExtendRepository);
 
   constructor(private fractionRepository: Repository<IFraction>) {}
@@ -42,5 +43,8 @@ export class FractionService implements ICrudMethods<IFraction> {
 
   getByParentId(id: string | number): Observable<any> {
     return this.fractionExtRepository.getByParendId(this.route, id);
+  }
+  getSubTypeFraction(id: string | number): Observable<any> {
+    return this.fractionExtRepository.getByParendId(this.find, id);
   }
 }

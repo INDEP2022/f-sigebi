@@ -2,19 +2,90 @@
   <div header>
     <h5 class="modal-title">Domicilios</h5>
   </div>
-  <div body>
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        id="tableGoods"
-        [attr.class]="'table-bordered table-responsive'"
-        [settings]="settings"
-        [source]="addresses"
-        (userRowSelect)="addressSelect($event.data)">
-      </ng2-smart-table>
+  <div body style="margin-top: -30px">
+    <div class="row">
+      <strong>B&uacute;squeda de Domicilios</strong>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+
+    <form [formGroup]="form" class="form-material pt-4">
+      <div class="row">
+        <label class="col-lg-6">Correspondencia&#58;</label>
+        <div class="form-group">
+          <div class="col-sm-4">
+            <form-radio label="Todo" class="radio-inline">
+              <input
+                type="radio"
+                formControlName="correspondence"
+                value="TODO" />
+            </form-radio>
+            <form-radio label="Cualquiera" class="radio-inline">
+              <input
+                type="radio"
+                formControlName="correspondence"
+                value="CUALQUIERA" />
+            </form-radio>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('requestId')" label="No. Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="requestId" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('warehouseAlias')"
+            label="Alias Almac&eacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="warehouseAlias" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="form.get('typeAddress')">
+          <ngx-select
+            [form]="form"
+            control="typeAddress"
+            [data]="typesAddress"
+            value="id"
+            bindLabel="typeAddress"
+            label="Tipo Direcci&oacute;n"></ngx-select>
+        </form-field>
+      </div>
+
+      <div class="justify-content-end btn-toolbar">
+        <button (click)="searchAddress()" class="btn btn-primary btn-sm active">
+          Buscar
+        </button>
+        <button (click)="resetSearch()" class="btn btn-danger btn-sm active">
+          Limpiar
+        </button>
+      </div>
+    </form>
+    <div class="row pt-5">
+      <div [class]="loading ? 'table-loading' : ''">
+        <div class="justify-content-start">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+        <ng2-smart-table
+          id="tableGoods"
+          [attr.class]="'table-bordered table-responsive pt-1'"
+          [settings]="settings"
+          [source]="addresses"
+          (userRowSelect)="addressSelect($event.data)">
+        </ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">

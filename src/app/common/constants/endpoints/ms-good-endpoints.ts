@@ -1,5 +1,7 @@
 export enum GoodEndpoints {
   Good = `good`,
+  GoodGetSiab = `goods-siab`,
+  GetGoodById = `good/getGoodById`,
   GoodGetDat = `good/getData`,
   Domicilies = `domicilies`,
   SearchByExpedient = `good/expedient/search`,
@@ -20,4 +22,14 @@ export enum GoodEndpoints {
   GoodsExtensionFields = 'goods-extension-fields',
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
+  Vban = 'good/getBan',
+}
+
+export enum GoodProcessPoints {
+  basepath = `goodprocess`,
+  cuValNume = `cuValNume`,
+  cuValOtro = `cuValotro`,
+  vnNumerario = `getVnNumerario`,
+  lvlPrograma = `getLvlPrograma`,
+  goodAndDetail = `application/getBienAndDetailActa`,
 }

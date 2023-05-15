@@ -79,13 +79,7 @@ export class DocReceivedSeraComponent extends BasePage implements OnInit {
         this.delegations = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.delegations = new DefaultSelect([], 0);
       },
       () => {}
     );
@@ -93,8 +87,8 @@ export class DocReceivedSeraComponent extends BasePage implements OnInit {
 
   onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
-    this.subdelegations = new DefaultSelect();
-    // console.log(this.PN_NODELEGACION.value);
+    this.subdelegations = new DefaultSelect([], 0);
+    this.form.controls['subdelegation'].setValue(null);
     if (this.delegation.value)
       this.getSubDelegations({ page: 1, limit: 10, text: '' });
   }
@@ -116,14 +110,7 @@ export class DocReceivedSeraComponent extends BasePage implements OnInit {
         this.subdelegations = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
+        this.subdelegations = new DefaultSelect([], 0);
       },
     });
   }
@@ -144,9 +131,49 @@ export class DocReceivedSeraComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    this.siabService.fetchReportBlank('blank').subscribe({
+    this.loading = true;
+
+    const { rangeDate, delegation, subdelegation } = this.form.value;
+
+    const startTemp = `${rangeDate[0].getFullYear()}-${
+      rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[0].getUTCMonth() + 1}-${
+      rangeDate[0].getDate() <= 9 ? 0 : ''
+    }${rangeDate[0].getDate()}`;
+
+    const endTemp = `${rangeDate[1].getFullYear()}-${
+      rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[1].getUTCMonth() + 1}-${
+      rangeDate[1].getDate() <= 9 ? 0 : ''
+    }${rangeDate[1].getDate()}`;
+
+    let reportParams: any = {
+      PFECHARECINI: startTemp,
+      PFECHARECFIN: endTemp,
+    };
+
+    if (delegation) {
+      reportParams = {
+        ...reportParams,
+        PDELEGACION: delegation,
+      };
+    }
+
+    if (subdelegation) {
+      reportParams = {
+        ...reportParams,
+        PSUBDELEGACION: subdelegation,
+      };
+    }
+
+    console.log(reportParams);
+    //TODO: VALIDAR REPORTE
+    this.getReport('RCONDIRRECEPDOCTO', reportParams);
+  }
+
+  getReport(report: string, params: any): void {
+    this.siabService.fetchReport(report, params).subscribe({
       next: response => {
-        console.log('información del blob', response);
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         let config = {
@@ -155,21 +182,43 @@ export class DocReceivedSeraComponent extends BasePage implements OnInit {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (response: any) => {},
+            callback: (data: any) => {},
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
         };
         this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
       },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
+  }
+
+  getReportBlank(report: string): void {
+    this.siabService.fetchReportBlank(report).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
       },
     });
   }

@@ -52,7 +52,7 @@ export class PrintReportRestitutionModalComponent
   }
 
   attachDoc(): void {
-    let message = '¿Esta seguro que quiere cargar el documento?';
+    let message = '¿Está seguro que quiere cargar el documento?';
     this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {

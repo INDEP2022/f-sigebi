@@ -3,12 +3,15 @@ import { map, Observable } from 'rxjs';
 import { NotificationEndpoints } from 'src/app/common/constants/endpoints/ms-notification-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationRepository } from 'src/app/common/repository/repositories/ms-notification-repository';
+import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import { IListResponse } from './../../interfaces/list-response.interface';
+
 import {
   INotification,
   INotificationInquiry,
   INotificationTransferentIndiciadoCityGetData,
+  INotificationXProperty,
   ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
 
@@ -17,9 +20,10 @@ import {
 })
 export class NotificationService extends HttpService {
   private readonly route = NotificationEndpoints;
-
+  private readonly endpoint: string = 'notification';
   constructor(
-    private notificationRepository: NotificationRepository<INotification>
+    private notificationRepository: NotificationRepository<INotification>,
+    private notificationRepository2: Repository<INotification>
   ) {
     super();
     this.microservice = this.route.Notification;
@@ -158,5 +162,59 @@ export class NotificationService extends HttpService {
     return this.httpClient.get<
       IListResponse<ItVolanteNotificacionesByNoExpedient>
     >('notification/notification/find-count-by-expedient/' + expedient);
+  }
+
+  getNotificationxPropertyFilter(
+    body: any
+  ): Observable<IListResponse<INotificationXProperty>> {
+    return this.post<IListResponse<INotificationXProperty>>(
+      this.route.NotificationxPropertyFilter,
+      body
+    );
+  }
+
+  postNotificationxPropertyFilterDates(
+    body: any
+  ): Observable<IListResponse<INotificationXProperty>> {
+    return this.post<IListResponse<INotificationXProperty>>(
+      this.route.NotificationxPropertyFilterSort,
+      body
+    );
+  }
+
+  updateObservacion(
+    bienNumber: number,
+    notificationDate: string,
+    observation: any
+  ): Observable<{ statusCode: number; message: string[] }> {
+    return this.put(
+      `${this.route.NotificationxPropertyPut}/${bienNumber}/notification/${notificationDate}`,
+      observation
+    );
+  }
+
+  getByNotificationxProperty2(
+    params: any
+  ): Observable<IListResponse<INotification>> {
+    return this.post(this.route.NotificationxPropertyFilter2, params);
+  }
+
+  updateNotiXProperty(
+    numberProperty: number | string,
+    notificationDate: Date | string,
+    formData: any
+  ): Observable<IListResponse<INotificationXProperty>> {
+    const route = `${this.route.NotificationxProperty}/property/${numberProperty}/notification/${notificationDate}`;
+    console.log('ROUT', route);
+    return this.put(route, formData);
+  }
+
+  getAllWithFilter(
+    params?: ListParams | string
+  ): Observable<IListResponse<INotification>> {
+    return this.notificationRepository2.getAllPaginatedFilter(
+      this.endpoint,
+      params
+    );
   }
 }
