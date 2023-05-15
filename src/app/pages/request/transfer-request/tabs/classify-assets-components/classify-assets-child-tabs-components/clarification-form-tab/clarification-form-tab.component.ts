@@ -45,9 +45,12 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   //idGood: number = 0;
   request: any;
   haveGoodResDevRegister: boolean = false;
+  updateGoodRespDevRegister: boolean = false;
   task: any;
   statusTask: any = '';
   typeClarification: number = 0;
+  goodresdevId: number = 0;
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -130,11 +133,14 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   }
 
   async confirm() {
-    if (this.haveGoodResDevRegister == true) {
+    if (
+      this.haveGoodResDevRegister == true &&
+      this.updateGoodRespDevRegister == false
+    ) {
       this.onLoadToast(
         'info',
-        'Bien aclarado',
-        'El bien ya cuenta con una aclaración'
+        'Bien Sin Aclarar',
+        'El bien cuenta con una aclaración'
       );
       return;
     }
@@ -155,6 +161,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       if (this.haveGoodResDevRegister === false) {
         await this.createGoodResDev();
         await this.updateGood();
+      }
+      if (this.updateGoodRespDevRegister === true) {
+        this.updateGoodResDev();
+        this.updateGood();
       }
     }
   }
@@ -284,6 +294,25 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
+  updateGoodResDev() {
+    return new Promise((resolve, reject) => {
+      let goodResDev: IPostGoodResDev = {};
+      goodResDev.goodresdevId = this.goodresdevId;
+      goodResDev.statusProcess = '9';
+      this.goodResDevService.update(goodResDev).subscribe({
+        next: resp => {
+          console.log('good-res-dev updated', resp);
+          resolve(true);
+          //this.updateGood(resp.goodresdevId)
+        },
+        error: error => {
+          console.log('good-res-dec no actualizado', error);
+          reject(true);
+        },
+      });
+    });
+  }
+
   getGoodResDev(goodId: number) {
     if (goodId) {
       let params = new FilterParams();
@@ -291,8 +320,21 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       let filter = params.getParams();
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
+          console.log(resp);
+          this.goodresdevId = resp.data[0].goodresdevId
+            ? resp.data[0].goodresdevId
+            : 0;
           if (resp.data.length > 0) {
             this.haveGoodResDevRegister = true;
+          }
+
+          if (
+            resp.data.length > 0 &&
+            (resp.data[0].good.processStatus == 'VERIFICAR_CUMPLIMIENTO' ||
+              resp.data[0].good.processStatus == 'CLASIFICAR_BIEN' ||
+              resp.data[0].good.processStatus == 'DESTINO_DOCUMENTAL')
+          ) {
+            this.updateGoodRespDevRegister = true;
           }
         },
         error: error => {},
@@ -313,6 +355,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
+          this.triggerEvent('UPDATE-GOOD');
           resolve(true);
         },
         error: error => {
@@ -418,6 +461,10 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.rejectedGoodService.update(id, data).subscribe({
       next: () => {},
     });
+  }
+
+  triggerEvent(item: any) {
+    this.event.emit(item);
   }
 
   close(): void {

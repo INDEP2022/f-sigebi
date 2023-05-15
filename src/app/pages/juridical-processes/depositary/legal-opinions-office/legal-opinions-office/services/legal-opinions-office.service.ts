@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
-import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import {
+  ICopiesOfficeSendDictation,
+  IDictation,
+  IInitFormLegalOpinionOfficeBody,
+} from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
@@ -56,6 +60,15 @@ export class LegalOpinionsOfficeService {
   }
   getOfficeTextDictation(params: _Params) {
     return this.msJobDictumTextsService.getAll(params);
+  }
+  getInitFormDictation(body: IInitFormLegalOpinionOfficeBody) {
+    return this.msDictationService.getInitFormDictation(body);
+  }
+  getCopiesOfficeSendDictation(body: ICopiesOfficeSendDictation) {
+    return this.msDictationService.getCopiesOfficeSendDictation(body);
+  }
+  getInfoUserLogued(params: string) {
+    return this.msUsersService.getInfoUserLogued(params);
   }
 
   getTexto3FromOfficeDictation(

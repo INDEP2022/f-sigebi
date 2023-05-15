@@ -18,7 +18,7 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(route, params);
   }
 
-  addGoodToProceedings(model: IDetailProceedingsDeliveryReception) {
+  addGoodToProceedings(model: Partial<IDetailProceedingsDeliveryReception>) {
     return this.post(
       ProceedingsEndpoints.DetailProceedingsDeliveryReception,
       model
