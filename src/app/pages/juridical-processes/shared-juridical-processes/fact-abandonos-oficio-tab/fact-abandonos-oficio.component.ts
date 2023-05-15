@@ -38,10 +38,12 @@ export class FormFactAbandonosOficioComponent
   @Output() formValues = new EventEmitter<any>();
 
   /** Tabla bienes */
-  data2: [// {
-  //   cveDocumento: 25,
-  //   description: 'UNA BOLSA',
-  // },];
+  data2: [
+    {
+      cveDocumento: 25;
+      description: 'UNA BOLSA';
+    }
+  ];
   settings2 = { ...this.settings };
   // settings2 = {
   //   pager: {
