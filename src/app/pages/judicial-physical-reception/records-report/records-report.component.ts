@@ -26,7 +26,7 @@ enum REPORT_TYPE {
 @Component({
   selector: 'app-records-report',
   templateUrl: './records-report.component.html',
-  styles: [],
+  styleUrls: ['records-report.component.css'],
 })
 export class RecordsReportComponent extends BasePage implements OnInit {
   REPORT_TYPES = REPORT_TYPE;
@@ -44,6 +44,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   initialProceedingBool: boolean = false;
   finalProceedingBool: boolean = false;
   loadingText = 'Cargando ...';
+  keyProceedingInitial = '';
+  keyProceedingFinal = '';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -87,6 +89,15 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       }
 
       this.activeProceedings();
+    });
+
+    this.form.get('actaInicial').valueChanges.subscribe(res => {
+      console.log(res);
+      this.keyProceedingInitial = res.proceedingskey;
+    });
+
+    this.form.get('actaFinal').valueChanges.subscribe(res => {
+      this.keyProceedingFinal = res.proceedingskey;
     });
 
     this.form.get('subdelegation').valueChanges.subscribe(res => {
@@ -136,7 +147,21 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaDesde').value != null &&
       this.form.get('fechaHasta').value != null
     ) {
-      return true;
+      if (
+        this.form.get('desde').valid &&
+        this.form.get('hasta').valid &&
+        this.form.get('fechaDesde').valid &&
+        this.form.get('fechaHasta').valid
+      ) {
+        return true;
+      } else {
+        this.alert(
+          'warning',
+          'Debe registrar datos validos',
+          'Alguno de los campos que lleno no son válidos'
+        );
+        return false;
+      }
     } else {
       this.alert(
         'warning',
@@ -158,8 +183,10 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaHasta').value != null
     ) {
       if (
-        this.form.get('desde').value < this.form.get('hasta').value &&
-        this.form.get('fechaDesde').valid <= this.form.get('fechaHasta').valid
+        this.form.get('desde').valid &&
+        this.form.get('hasta').valid &&
+        this.form.get('fechaDesde').valid &&
+        this.form.get('fechaHasta').valid
       ) {
         return true;
       } else {
@@ -254,38 +281,73 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     });
   }
 
-  getInitialProceedings(params: any) {
-    const model: IGoodAndDetailProceeding = {
-      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-      pTiNumberSubdel: this.form.get('subdelegation').value.id,
-    };
-    console.log(model);
-    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
-      res => {
-        console.log(res.data);
-        this.initialProceeding = new DefaultSelect(res.data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  validateString(params: string) {
+    return /[a-zA-Z]/.test(params);
+  }
+
+  validateSpecialCharacters(params: string) {
+    return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(params);
+  }
+
+  getInitialProceedings(params: ListParams) {
+    if (
+      this.validateString(params.text) ||
+      this.validateSpecialCharacters(params.text)
+    ) {
+      this.alert(
+        'warning',
+        'Datos inválidos',
+        'Este campo solo acepta campos númericos y está introduciendo alguno diferente.'
+      );
+      this.form.get('actaInicial').reset();
+    } else {
+      const model: IGoodAndDetailProceeding = {
+        pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+        pTiNumberSubdel: this.form.get('subdelegation').value.id,
+      };
+      this.serviceGoodProcess
+        .getDetailProceedingGoodFilterNumber(model, params.text)
+        .subscribe(
+          res => {
+            console.log(res.data);
+            this.initialProceeding = new DefaultSelect(res.data);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   getFinalProceedings(params: ListParams) {
-    const model: IGoodAndDetailProceeding = {
-      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-      pTiNumberSubdel: this.form.get('subdelegation').value.id,
-    };
-    console.log(model);
-    this.serviceGoodProcess.getDetailProceedginGood(model).subscribe(
-      res => {
-        console.log(res.data);
-        this.finalProceeding = new DefaultSelect(res.data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    if (
+      this.validateString(params.text) ||
+      this.validateSpecialCharacters(params.text)
+    ) {
+      this.alert(
+        'warning',
+        'Datos inválidos',
+        'Este campo solo acepta campos númericos y está introduciendo alguno diferente.'
+      );
+      this.form.get('actaFinal').reset();
+    } else {
+      const model: IGoodAndDetailProceeding = {
+        pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+        pTiNumberSubdel: this.form.get('subdelegation').value.id,
+      };
+      console.log(model);
+      this.serviceGoodProcess
+        .getDetailProceedingGoodFilterNumber(model, params.text)
+        .subscribe(
+          res => {
+            console.log(res.data);
+            this.finalProceeding = new DefaultSelect(res.data);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   print() {
