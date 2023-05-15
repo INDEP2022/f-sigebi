@@ -46,7 +46,7 @@ export class PartializesGoodsComponent
         },
       },
     };
-    this.ilikeFilters.push('goodNumber');
+    // this.ilikeFilters.push('goodNumber');
     this.prepareForm();
   }
 
@@ -77,21 +77,33 @@ export class PartializesGoodsComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(params, this.columnFilters);
+    // debugger;
+    if (
+      this.columnFilters['filter.goodNumber'] ||
+      this.columnFilters['filter.description']
+    ) {
+      params.page = 1;
+    }
     if (this.service) {
       this.service.getAll(params).subscribe({
         next: (response: any) => {
           if (response) {
+            this.totalItems = response.count || 0;
+            this.items = response.data;
+            this.data.load(response.data);
+            // debugger;
             if (
-              this.columnFilters['filter.goodNumber'] &&
+              (this.columnFilters['filter.goodNumber'] ||
+                this.columnFilters['filter.description']) &&
               response.data &&
               response.data.length > 0
             ) {
               this.select(response.data[0].goodNumber);
+              this.data.setPage(1, true);
             }
-            this.totalItems = response.count || 0;
-            this.items = response.data;
-            this.data.load(response.data);
             this.data.refresh();
+
             this.loading = false;
           }
         },
