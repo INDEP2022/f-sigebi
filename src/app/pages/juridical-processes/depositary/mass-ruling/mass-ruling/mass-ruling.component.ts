@@ -334,6 +334,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
         icon: 'error',
         text: 'Se debe ingresar un Dictamen.',
       });
+      event.target.value = null;
       return;
     }
     const data = await getDataFromExcel(event.target.files[0]);
@@ -635,7 +636,7 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     const { id, typeDict, expedientNumber } = this.form.value;
     if ((!id && !typeDict) || (!id && !expedientNumber)) {
       this.alert('info', 'No se han cargado los bienes a borrar', '');
-      target.checked = !target.checked;
+      event.target.checked = !target.checked;
       return;
     }
 
