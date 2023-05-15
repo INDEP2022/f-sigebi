@@ -70,4 +70,16 @@ export class MsDepositaryService extends HttpService {
       params
     );
   }
+
+  getPaymentRefPrepOI(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DepositaryEndPoints.PaymentRefPrepOI,
+      params
+    );
+  }
+  getValidBlackListAppointment(id?: number): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DepositaryEndPoints.ValidBlackListAppointment}/${id}`
+    );
+  }
 }

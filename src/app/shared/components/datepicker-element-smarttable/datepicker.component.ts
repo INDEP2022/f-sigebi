@@ -3,13 +3,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 @Component({
   selector: 'app-checkbox-element',
   template: `
-    <div class="row justify-content-center">
+    <div class="row justify-content-center w-80 px-4">
       <input
         class="form-control"
         bsDatepicker
-        type="date"
-        [value]="bsValue"
-        (change)="onToggle($event)" />
+        [(ngModel)]="bsValue"
+        (ngModelChange)="onToggle($event)" />
     </div>
   `,
   styles: [],
@@ -29,9 +28,20 @@ export class DatePickerElementComponent<T = any> implements OnInit {
     this.bsValue = this.value;
   }
 
-  onToggle($event: Event) {
+  onToggle($event: any) {
     let row = this.rowData;
-    let toggle = ($event.currentTarget as HTMLInputElement).value;
+    let date = new Date($event);
+    let toggle =
+      this.fLessTen(date.getDate()) +
+      '/' +
+      this.fLessTen(date.getMonth() + 1) +
+      '/' +
+      date.getFullYear();
     this.toggle.emit({ row, toggle });
+  }
+
+  fLessTen(value: any) {
+    let elm = parseInt(value);
+    return elm < 10 ? '0' + value : value;
   }
 }

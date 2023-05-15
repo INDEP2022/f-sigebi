@@ -36,52 +36,50 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-          [control]="form.get('delBien')">
-          <ngx-select
-            (fetchItems)="getGoodIdDescription($event)"
-            [data]="good"
-            [form]="form"
-            value="id"
-            label="Desde el No&#46; Bien&#58;"
-            bindLabel="description"
-            [control]="'delBien'"
-            (change)="onGoodIdDescription($event)"
-            [labelTemplate]="GoodLabel"
-            [optionTemplate]="GoodOption">
-          </ngx-select>
-        </form-field>
+          <form-field [control]="form.get('delBien')">
+            <ngx-select
+              (fetchItems)="getGoodIdDescription($event)"
+              [data]="good"
+              [form]="form"
+              value="id"
+              label="Desde el No&#46; Bien&#58;"
+              bindLabel="description"
+              [control]="'delBien'"
+              (change)="onGoodIdDescription($event)"
+              [labelTemplate]="GoodLabel"
+              [optionTemplate]="GoodOption">
+            </ngx-select>
+          </form-field>
 
-        <ng-template #GoodLabel let-item="item"
-          >{{ item.id }} - {{ item.description }}</ng-template
-        >
-        <ng-template #GoodOption let-item="item"
-          >{{ item.id }} - {{ item.description }}</ng-template
-        >
+          <ng-template #GoodLabel let-item="item"
+            >{{ item.id }} - {{ item.description }}</ng-template
+          >
+          <ng-template #GoodOption let-item="item"
+            >{{ item.id }} - {{ item.description }}</ng-template
+          >
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-          [control]="form.get('alBien')">
-          <ngx-select
-            (fetchItems)="getGoodAlIdDescription($event)"
-            [data]="goodAl"
-            [form]="form"
-            value="id"
-            label="Al No&#46; Bien&#58;"
-            bindLabel="description"
-            [control]="'alBien'"
-            (change)="onGoodAlIdDescription($event)"
-            [labelTemplate]="GoodAlLabe"
-            [optionTemplate]="GoodAlOption">
-          </ngx-select>
-        </form-field>
+          <form-field [control]="form.get('alBien')">
+            <ngx-select
+              (fetchItems)="getGoodAlIdDescription($event)"
+              [data]="goodAl"
+              [form]="form"
+              value="id"
+              label="Al No&#46; Bien&#58;"
+              bindLabel="description"
+              [control]="'alBien'"
+              (change)="onGoodAlIdDescription($event)"
+              [labelTemplate]="GoodAlLabe"
+              [optionTemplate]="GoodAlOption">
+            </ngx-select>
+          </form-field>
 
-        <ng-template #GoodAlLabe let-item="item"
-          >{{ item.id }} - {{ item.description }}</ng-template
-        >
-        <ng-template #GoodAlOption let-item="item"
-          >{{ item.id }} - {{ item.description }}</ng-template
-        >
+          <ng-template #GoodAlLabe let-item="item"
+            >{{ item.id }} - {{ item.description }}</ng-template
+          >
+          <ng-template #GoodAlOption let-item="item"
+            >{{ item.id }} - {{ item.description }}</ng-template
+          >
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <h6>Fecha Presentaci&oacute;n Recurso&#58;</h6>
@@ -93,34 +91,29 @@
             <input
               class="form-control"
               formControlName="startDate"
-              bsDatepicker
-               />
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('endDate')"
-            label="Fecha hasta&#58;">
+          <form-field [control]="form.get('endDate')" label="Fecha hasta&#58;">
             <input
               class="form-control"
               formControlName="endDate"
-              bsDatepicker
-              />
+              bsDatepicker />
           </form-field>
           <div
-          class="invalid-feedback animated fadeInUp"
-          style="display: block;"
-          *ngIf="endDate.touched"
-           >
-            {{ getEndDateErrorMessage(endDate ,startDate ) }}
+            class="invalid-feedback animated fadeInUp"
+            style="display: block"
+            *ngIf="endDate.touched">
+            {{ getEndDateErrorMessage(endDate, startDate) }}
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
           <div class="form-group">
             <button
-            class="btn btn-primary active"
-            (click)="btnGenerarReporte()"
-            [disabled]="!form.valid">
+              class="btn btn-primary active"
+              (click)="btnGenerarReporte()"
+              [disabled]="!form.valid">
               Generar Reporte
             </button>
           </div>

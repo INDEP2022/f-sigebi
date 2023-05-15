@@ -13,9 +13,13 @@ import { CaptureFormalizingLawyersRoutingModule } from './capture-formalizing-la
 
 /** COMPONENTS IMPORTS */
 import { CaptureFormalizingLawyersComponent } from './capture-formalizing-lawyers/capture-formalizing-lawyers.component';
+import { FormCaptureLawyersComponent } from './form-capture-lawyers/form-capture-lawyers.component';
 
 @NgModule({
-  declarations: [CaptureFormalizingLawyersComponent],
+  declarations: [
+    CaptureFormalizingLawyersComponent,
+    FormCaptureLawyersComponent,
+  ],
   imports: [CommonModule, CaptureFormalizingLawyersRoutingModule, SharedModule],
 })
 export class CaptureFormalizingLawyersModule {}

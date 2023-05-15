@@ -1,13 +1,15 @@
 import { DatePipe } from '@angular/common';
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -39,11 +41,14 @@ export class ClarificationListTabComponent
   @Input() request: any;
   paragraphs: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  @Output() updateGoodTable: EventEmitter<any> = new EventEmitter();
   totalItems: number = 0;
   idClarification: number = 0;
   clarificationsLength: any;
   task: any;
   statusTask: any = '';
+  bsModalRef: BsModalRef;
+
   constructor(
     private modalService: BsModalService,
     private rejectedGoodService: RejectedGoodService,
@@ -131,7 +136,7 @@ export class ClarificationListTabComponent
   }
 
   openForm(clarification?: IRejectGood): void {
-    if (clarification?.answered == 'CONTESTADA') {
+    if (clarification?.answered == 'ACLARADA') {
       this.onLoadToast(
         'warning',
         'No se puede editar una aclaración ya contestada',
@@ -153,12 +158,24 @@ export class ClarificationListTabComponent
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-      this.modalService.show(ClarificationFormTabComponent, config);
+
+      this.bsModalRef = this.modalService.show(
+        ClarificationFormTabComponent,
+        config
+      );
+      this.bsModalRef.content.event.subscribe((res: any) => {
+        if (res === 'UPDATE-GOOD') {
+          this.updateGoodTable.emit({
+            processStatus: 'SOLICITAR_ACLARACION',
+            goodStatus: 'SOLICITUD DE ACLARACION',
+          });
+        }
+      });
     }
   }
 
   delete(clarification: any) {
-    if (clarification.answered == 'CONTESTADA') {
+    if (clarification.answered == 'ACLARADA') {
       this.onLoadToast(
         'warning',
         'No se puede eliminar una aclaración ya contestada',
@@ -192,18 +209,34 @@ export class ClarificationListTabComponent
                 'cantidad de aclaraciones:',
                 this.clarificationsLength
               );
+              let body: any = {};
+              //si existe solo una aclaracion
               if (this.clarificationsLength === 1) {
                 const goodResDev: any = await this.getGoodResDev(
                   Number(this.good.id)
                 );
                 await this.removeDevGood(Number(goodResDev));
-                let body: any = {};
+
                 body['id'] = this.good.id;
                 body['goodId'] = this.good.goodId;
-                body.processStatus = 'REGISTRO_SOLICITUD';
-                body.goodStatus = 'REGISTRO_SOLICITUD';
+                body.processStatus = 'CLASIFICAR_BIEN';
+                body.goodStatus = 'CLASIFICAR_BIEN';
+                await this.updateGoods(body);
+              } else {
+                //si existe mas de una aclaracion
+                body['id'] = this.good.id;
+                body['goodId'] = this.good.goodId;
+                body.goodStatus =
+                  this.good.goodStatus != 'ACLARADO'
+                    ? 'ACLARADO'
+                    : 'CLASIFICAR_BIEN';
+                body.processStatus = 'CLASIFICAR_BIEN';
                 await this.updateGoods(body);
               }
+              this.updateGoodTable.emit({
+                processStatus: body.processStatus,
+                goodStatus: body.goodStatus,
+              });
               setTimeout(() => {
                 this.getData();
               }, 400);

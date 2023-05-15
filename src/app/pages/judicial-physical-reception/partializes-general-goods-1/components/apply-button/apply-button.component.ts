@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { format } from 'date-fns';
 import { firstValueFrom, map } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -8,7 +8,6 @@ import {
 } from 'src/app/common/repository/interfaces/ms-partialize-good';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
@@ -21,8 +20,20 @@ import { FunctionButtons } from '../../models/function-buttons';
   styleUrls: ['./apply-button.component.scss'],
 })
 export class ApplyButtonComponent extends FunctionButtons implements OnInit {
+  @Input() set press(value: boolean) {
+    // debugger;
+    if (this.service) {
+      if (
+        this.formGood?.invalid ||
+        this.loading ||
+        this.bienesPar.length === 0
+      ) {
+        return;
+      }
+      this.apply();
+    }
+  }
   constructor(
-    private goodService: GoodService,
     private partializeGoodService: PartializeGoodService,
     private goodSSSubtypeService: GoodSssubtypeService,
     private detailReceptionService: ProceedingsDetailDeliveryReceptionService,
@@ -34,8 +45,6 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   get saldo() {
     return this.form.get('saldo');
   }
-
-  ngOnInit() {}
 
   private async getNoActa() {
     return firstValueFrom(

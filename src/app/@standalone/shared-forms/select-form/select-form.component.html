@@ -1,12 +1,17 @@
 <ng-container>
-  <div class="row">
-    <div class="col-md-12">
+  <div class="row" id="select-form">
+    <div class="row" *ngIf="loading" style="margin-bottom: 3rem">
+      <form-loader></form-loader>
+    </div>
+    <div class="col-md-12" *ngIf="!loading">
+      <!-- {{ data.data.length }} -->
       <form-field [control]="form.get(formField)">
         <ngx-select
           (fetchItems)="setParams($event)"
           (fetchByParamsItems)="setFilterParams($event)"
           [data]="data"
           [form]="form"
+          [fetchByList]="fetchByListParams"
           [value]="value"
           [bindLabel]="bindLabel"
           [label]="label"
@@ -16,7 +21,12 @@
           [readonly]="readonly"
           [clearable]="clearable"
           [operator]="operator"
-          (change)="onChange($event)">
+          [typeToSearchText]="typeToSearchText"
+          [labelTemplate]="labelTemplate"
+          [optionTemplate]="optionTemplate"
+          (change)="onChange($event)"
+          [closeOnSelect]="false"
+          (clear)="clear()">
         </ngx-select>
       </form-field>
     </div>

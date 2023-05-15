@@ -48,9 +48,11 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('info de request', this.requestData);
-    //Crea la clave armada o el folio
+    console.log('Crear folio');
     this.dictamenSeq();
+
+    //Crea la clave armada o el folio
+
     this.initForm();
   }
 
@@ -102,12 +104,17 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       next: data => {
         this.handleSuccess(), this.signDictum();
       },
-      error: error => (this.loading = false),
+      error: error => (
+        this.onLoadToast('warning', 'No se pudo actualizar', error.error),
+        (this.loading = false)
+      ),
     });
   }
 
   update() {
     this.loading = true;
+    let token = this.authService.decodeToken();
+    const name = token.name;
     //Objeto para actualizar el reporte con datos del formulario
     const obj: IRequest = {
       ccpRuling: this.dictumForm.controls['ccpRuling'].value,
@@ -123,6 +130,8 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       postSignatoryRuling:
         this.dictumForm.controls['postSignatoryRuling'].value,
       reportSheet: this.folioReporte,
+      rulingCreatorName: name,
+      recordId: this.requestData.recordId,
     };
     console.log('Actualizar reporte', this.folioReporte);
 
@@ -131,7 +140,14 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       next: data => {
         this.handleSuccess(), this.signDictum();
       },
-      error: error => (this.loading = false),
+      error: error => (
+        this.onLoadToast(
+          'warning',
+          'No se pudo actualizar',
+          error.error.message[0]
+        ),
+        (this.loading = false)
+      ),
     });
   }
 

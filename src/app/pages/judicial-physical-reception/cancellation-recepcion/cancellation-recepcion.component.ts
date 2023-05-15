@@ -9,13 +9,14 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IVban } from 'src/app/core/models/ms-good/good';
+import { IAcceptGoodActa, IVban } from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -52,7 +53,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
         sort: false,
       },
@@ -163,7 +164,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceProcVal: ProceedingsDeliveryReceptionService,
     private serviceRNomencla: ParametersService,
     private serviceSssubtypeGood: GoodSssubtypeService,
-    private serviceDocuments: DocumentsService
+    private serviceDocuments: DocumentsService,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super();
   }
@@ -219,15 +221,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      estatusPrueba: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      etiqueta: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      estatusBienActa: [null, [Validators.required]],
+      estatusPrueba: [null, [Validators.pattern(STRING_PATTERN)]],
+      etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
+      estatusBienActa: [null],
     });
   }
 
@@ -261,6 +257,53 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     } else {
       this.form.get('fecCierreActa').setValue(this.form.get('fecElab').value);
     }
+  }
+
+  validateGood(element: any) {
+    let di_disponible = false;
+    let bamparo: boolean;
+
+    return new Promise((resolve, reject) => {
+      if (this.form.get('expediente').value != null) {
+        const modelActa: IAcceptGoodActa = {
+          pNumberGood: parseInt(element.id),
+          pVcScreen: 'FACTREFACTAVENT',
+          pIdentify: element.identifier,
+        };
+        this.serviceGoodProcess.getAccepGoodActa(modelActa).subscribe(
+          res => {
+            di_disponible = true;
+            this.serviceGood
+              .getById(`${element.id}&filter.labelNumber=$eq:6`)
+              .subscribe(
+                res => {
+                  bamparo = true;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                },
+                err => {
+                  bamparo = false;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                }
+              );
+          },
+          err => {
+            di_disponible = false;
+            this.serviceGood
+              .getById(`${element.id}&filter.labelNumber=$eq:6`)
+              .subscribe(
+                res => {
+                  bamparo = true;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                },
+                err => {
+                  bamparo = false;
+                  resolve({ avalaible: di_disponible, bamparo: bamparo });
+                }
+              );
+          }
+        );
+      }
+    });
   }
 
   //Catalogs and data
@@ -354,26 +397,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             console.log(res);
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
-                let disponible: boolean = false;
-                if (e.detail != null) {
-                  if (
-                    format(
-                      new Date(e.detail.approvedXAdmonDate),
-                      'yyyy-MM-dd'
-                    ) <= format(new Date(), 'yyyy-MM-dd') &&
-                    format(
-                      new Date(e.detail.indicatesUserApprovalDate),
-                      'yyyy-MM-dd'
-                    ) >= format(new Date(), 'yyyy-MM-dd')
-                  ) {
-                    disponible = true;
-                  } else {
-                    disponible = false;
-                  }
-                } else {
-                  disponible = false;
-                }
-
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                disponible = JSON.parse(JSON.stringify(resp)).avalaible;
                 return { ...e, avalaible: disponible };
               })
             );
@@ -389,6 +415,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         error: (err: any) => {
           console.error(err);
           if (err.status === 404) {
+            this.alert(
+              'warning',
+              'No hay bienes para este expediente',
+              'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+            );
+          }
+          if (err.status === 400) {
             this.alert(
               'warning',
               'No hay bienes para este expediente',
@@ -456,8 +489,38 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     );
   }
 
+  clearInputs() {
+    this.form.get('acta2').setValue(null);
+    this.form.get('fecElab').setValue(null);
+    this.form.get('fecCierreActa').setValue(null);
+    this.form.get('fecCaptura').setValue(null);
+    this.form.get('direccion').setValue(null);
+    this.form.get('observaciones').setValue(null);
+    this.form.get('autoridadCancela').setValue(null);
+    this.form.get('elabora').setValue(null);
+    this.form.get('testigo').setValue(null);
+    this.form.get('acta').reset();
+    this.form.get('autoridad').reset();
+    this.form.get('ident').reset();
+    this.form.get('recibe').reset();
+    this.form.get('admin').reset();
+    this.form.get('folio').reset();
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
+  }
+
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
+    this.initialBool = false;
+    this.nextProce = true;
+    this.prevProce = false;
+    this.navigateProceedings = false;
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
+    this.numberProceeding = 0;
+    this.form.get('folioEscaneo').reset();
+
+    this.clearInputs();
     const paramsF = new FilterParams();
     paramsF.addFilter(
       'numFile',
@@ -483,6 +546,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
+        this.maxDate = new Date();
+        this.getTransfer();
       }
     );
 
@@ -509,8 +574,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  validations() {
-    this.form.get('fe');
+  replicateFolio() {
+    this.alert('info', 'El apartado de folios está en construcción', '');
   }
 
   checkChange() {
@@ -593,6 +658,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   rowSelect(e: any) {
     const { data } = e;
     console.log(data);
+    const resp = this.validateGood(data);
+    console.log(resp);
     this.selectData = data;
     this.form.get('estatusPrueba').setValue(data.goodStatus);
   }
@@ -629,7 +696,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Estatus no disponible',
-          'El bien tiene un estatus invalido para ser asignado a alguna acta'
+          'El bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         this.alert(
@@ -749,7 +816,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Problemas con el número de acta',
-          'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+          'Debe especificar/buscar el acta para después eliminar el bien de esta'
         );
       } else if (this.selectActData == null) {
         this.alert(
@@ -836,8 +903,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   openProceeding() {
-    console.log(typeof this.form.get('folio').value);
-    /* if (this.form.get('folioEscaneo').value.length > 15) {
+    if (this.statusProceeding === 'CERRADO') {
+    } else {
+      console.log(typeof this.form.get('folio').value);
+      /* if (this.form.get('folioEscaneo').value.length > 15) {
       this.alert(
         'error',
         'Número de folio incorrecto',
@@ -845,92 +914,93 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       );
     } else { */
 
-    /* } */
-    if (this.goodData.length <= 0) {
-      this.alert(
-        'warning',
-        'No hay bienes registrados',
-        'Necesita registrar bienes en el acta para crearla'
-      );
-    } else {
-      let userDelegation: any;
+      /* } */
+      if (this.goodData.length <= 0) {
+        this.alert(
+          'warning',
+          'No hay bienes registrados',
+          'Necesita registrar bienes en el acta para crearla'
+        );
+      } else {
+        let userDelegation: any;
 
-      let newProceeding: IProccedingsDeliveryReception = {
-        keysProceedings: this.form.get('acta2').value,
-        elaborationDate: format(
-          this.form.get('fecElab').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        datePhysicalReception: format(
-          this.form.get('fecReception').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        address: this.form.get('direccion').value,
-        statusProceedings: 'ABIERTA',
-        elaborate: localStorage.getItem('username'),
-        numFile: this.form.get('expediente').value,
-        witness1: this.form.get('entrega').value,
-        witness2: this.form.get('recibe2').value,
-        typeProceedings:
-          this.form.get('acta').value == 'C' ? 'RECEPCAN' : 'SUSPENSION',
-        dateElaborationReceipt: format(
-          this.form.get('fecElabRec').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        dateDeliveryGood: format(
-          this.form.get('fecEntBien').value,
-          'yyyy-MM,dd HH:mm'
-        ),
-        responsible: null,
-        destructionMethod: null,
-        observations: this.form.get('observaciones').value,
-        approvalDateXAdmon: null,
-        approvalUserXAdmon: null,
-        numRegister: null,
-        captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
-        numDelegation1: this.form.get('admin').value.numberDelegation2,
-        numDelegation2:
-          this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
-        identifier: null,
-        label: null,
-        universalFolio: null,
-        numeraryFolio: null,
-        numTransfer: null,
-        idTypeProceedings: this.form.get('acta').value,
-        receiptKey: null,
-        comptrollerWitness: this.form.get('testigo').value,
-        numRequest: null,
-        closeDate: null,
-        maxDate: null,
-        indFulfilled: null,
-        dateCaptureHc: null,
-        dateCloseHc: null,
-        dateMaxHc: null,
-        receiveBy: null,
-        affair: null,
-      };
-      console.log(newProceeding);
-      this.serviceProcVal.postProceeding(newProceeding).subscribe(
-        res => {
-          const paramsF = new FilterParams();
-          paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-          this.serviceProcVal
-            .getByFilter(paramsF.getParams())
-            .subscribe(res => {
-              const resData = JSON.parse(JSON.stringify(res.data))[0];
-              this.saveDetailProceeding(resData);
-              this.form.get('fecCaptura').setValue(new Date());
-              this.statusProceeding = 'ABIERTA';
-              this.labelActa = 'Cerrar acta';
-              this.btnCSSAct = 'btn-primary';
-            });
-        },
-        err => {
-          console.log(err);
-          console.log('Error al guardar');
-        }
-      );
-      console.log(newProceeding);
+        let newProceeding: IProccedingsDeliveryReception = {
+          keysProceedings: this.form.get('acta2').value,
+          elaborationDate: format(
+            this.form.get('fecElab').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          datePhysicalReception: format(
+            this.form.get('fecReception').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          address: this.form.get('direccion').value,
+          statusProceedings: 'ABIERTA',
+          elaborate: localStorage.getItem('username'),
+          numFile: this.form.get('expediente').value,
+          witness1: this.form.get('entrega').value,
+          witness2: this.form.get('recibe2').value,
+          typeProceedings:
+            this.form.get('acta').value == 'C' ? 'RECEPCAN' : 'SUSPENSION',
+          dateElaborationReceipt: format(
+            this.form.get('fecElabRec').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          dateDeliveryGood: format(
+            this.form.get('fecEntBien').value,
+            'yyyy-MM,dd HH:mm'
+          ),
+          responsible: null,
+          destructionMethod: null,
+          observations: this.form.get('observaciones').value,
+          approvalDateXAdmon: null,
+          approvalUserXAdmon: null,
+          numRegister: null,
+          captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+          numDelegation1: this.form.get('admin').value.numberDelegation2,
+          numDelegation2:
+            this.form.get('admin').value.numberDelegation2 === 11 ? 11 : null,
+          identifier: null,
+          label: null,
+          universalFolio: null,
+          numeraryFolio: null,
+          numTransfer: null,
+          idTypeProceedings: this.form.get('acta').value,
+          receiptKey: null,
+          comptrollerWitness: this.form.get('testigo').value,
+          numRequest: null,
+          closeDate: null,
+          maxDate: null,
+          indFulfilled: null,
+          dateCaptureHc: null,
+          dateCloseHc: null,
+          dateMaxHc: null,
+          receiveBy: null,
+          affair: null,
+        };
+        console.log(newProceeding);
+        this.serviceProcVal.postProceeding(newProceeding).subscribe(
+          res => {
+            const paramsF = new FilterParams();
+            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+            this.serviceProcVal
+              .getByFilter(paramsF.getParams())
+              .subscribe(res => {
+                const resData = JSON.parse(JSON.stringify(res.data))[0];
+                this.saveDetailProceeding(resData);
+                this.form.get('fecCaptura').setValue(new Date());
+                this.statusProceeding = 'ABIERTA';
+                this.labelActa = 'Cerrar acta';
+                this.btnCSSAct = 'btn-primary';
+              });
+          },
+          err => {
+            console.log(err);
+            console.log('Error al guardar');
+          }
+        );
+        console.log(newProceeding);
+      }
     }
   }
 
@@ -1008,26 +1078,27 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       '¿Desea eliminar completamente el acta?',
-      `Se eliminará el acta ${this.idProceeding}`,
+      `Se eliminará el acta ${this.form.get('acta2').value}`,
       'Eliminar'
     ).then(q => {
       if (q.isConfirmed) {
-        this.serviceProcVal
-          .newDeleteProceeding(this.idProceeding.toString())
-          .subscribe(
-            res => {
-              console.log(res);
-              this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
-            },
-            err => {
-              console.log(err);
-              this.alert(
-                'error',
-                'No se pudo eliminar acta',
-                'Secudió un problema al eliminar el acta'
-              );
-            }
-          );
+        const paramsF = new FilterParams();
+        paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            console.log();
+            const realData = JSON.parse(JSON.stringify(res.data[0]));
+            this.alert('success', 'Éxito', `${realData.id}`);
+          },
+          err => {
+            console.log(err);
+            this.alert(
+              'error',
+              'No se pudo eliminar acta',
+              'Secudió un problema al eliminar el acta'
+            );
+          }
+        );
       }
     });
   }
@@ -1036,7 +1107,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
+      console.log(this.prevProce);
+      console.log(this.numberProceeding);
+      console.log(this.proceedingData.length - 1);
       if (this.numberProceeding <= this.proceedingData.length - 1) {
+        console.log(this.prevProce);
+        console.log(this.numberProceeding);
         this.prevProce = true;
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
@@ -1061,6 +1137,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.act2Valid = false;
         this.navigateProceedings = true;
         this.nextProce = false;
+        this.prevProce = true;
         this.initialBool = false;
         this.goodData = [];
         this.dataGoodAct.load(this.goodData);

@@ -167,6 +167,16 @@
                     {{ registRequestForm?.get('recordId').value }}
                   </div>
                 </div>
+                <div
+                  class="col-md-4"
+                  *ngIf="infoRequest?.rejectionComment != null">
+                  <div>
+                    <label class="text-danger" for=""
+                      >Solicitud Rechazada por el Siguiente Motivo:
+                    </label>
+                    {{ infoRequest?.rejectionComment }}
+                  </div>
+                </div>
               </div>
             </div>
           </app-card>

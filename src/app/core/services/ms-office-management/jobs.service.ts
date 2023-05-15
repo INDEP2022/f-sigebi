@@ -36,4 +36,10 @@ export class JobsService extends HttpService {
       `${environment.API_URL}officemanagement/api/v1/m-job-management?filter.managementNumber/${params}`
     );
   }
+
+  getById_(id: number | string) {
+    return this.httpClient.get<IListResponse<IJob>>(
+      `${environment.API_URL}officemanagement/api/v1/jobs/${id}`
+    );
+  }
 }

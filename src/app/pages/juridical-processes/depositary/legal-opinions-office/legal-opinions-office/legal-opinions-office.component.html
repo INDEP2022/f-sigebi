@@ -4,6 +4,16 @@
   </div>
   <div body>
     <div class="row">
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+          </div>
+        </div>
+      </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p2">
         <form [formGroup]="form" class="container-fluid form-material p-0">
           <div class="card">
@@ -66,9 +76,23 @@
                 </form-field>
                 <div class="col-sm-12 col-12 col-md-12 p-2">
                   <strong>Estatus oficio:</strong>
-                  <div class="badge badge-pill bg-info text-wrap ml-2 mr-2">
-                    &#91;Aquí va el estatus&#93;
-                  </div>
+                  <ng-container *ngIf="officeDictationData; else noStatus">
+                    <div
+                      class="badge badge-pill text-wrap ml-2 mr-2"
+                      [ngClass]="
+                        officeDictationData.statusOf == 'ENVIADO'
+                          ? 'bg-success'
+                          : 'bg-info'
+                      ">
+                      &#91;&nbsp;{{ officeDictationData.statusOf }}&nbsp;&#93;
+                    </div>
+                  </ng-container>
+                  <ng-template #noStatus>
+                    <div
+                      class="badge badge-pill bg-default text-wrap ml-2 mr-2">
+                      &#91;Aquí va el estatus&#93;
+                    </div>
+                  </ng-template>
                 </div>
               </div>
               <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -81,6 +105,8 @@
                     (fetchItems)="getIssuingUserByDetail($event)"
                     [form]="form"
                     [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="100"
                     control="issuingUser"></ngx-select>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -93,6 +119,8 @@
                     (change)="changeAddreseeDetail($event)"
                     [form]="form"
                     [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="100"
                     control="addressee"></ngx-select>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -104,6 +132,8 @@
                     (fetchItems)="getCityByDetail($event)"
                     [form]="form"
                     [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="60"
                     control="city"></ngx-select>
                 </div>
               </div>
@@ -250,33 +280,52 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-footer">
+            <div class="card-footer row">
               <div class="col-12 col-sm-12 col-md-12">
                 <h6>C.C.P.</h6>
               </div>
               <form-field
-                class="col-sm-12 col-12 col-md-2 p-2"
+                class="col-sm-12 col-12 col-md-4 p-2"
                 [control]="form.get('ccp_person')"
                 label="Tipo Destinatario">
-                <select class="form-control" formControlName="ccp_person">
+                <select
+                  class="form-control"
+                  formControlName="ccp_person"
+                  (change)="changeCopiesType($event, 1)">
                   <option value="">Seleccione un valor</option>
                   <option value="E">EXTERNA</option>
                   <option value="I">INTERNA</option>
                 </select>
               </form-field>
-              <div class="col-sm-12 col-12 col-md-5 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-8 p-2"
+                *ngIf="
+                  form.get('ccp_person').value != 'I' &&
+                  form.get('ccp_person').value != 'E'
+                ">
+                <div class="alert alert-info">
+                  Selecciona el "Tipo Destinatario" para ingresar el Nombre o
+                  Seleccionar un Usuario desde el catálogo
+                </div>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-8 p-2"
+                *ngIf="form.get('ccp_person').value == 'I'">
                 <ngx-select
-                  [data]="cityData"
-                  bindLabel="description"
-                  label="Destinatario"
+                  [data]="userCopies1"
+                  bindLabel="name"
+                  label="C.C.P."
                   value="id"
-                  (fetchItems)="getCityByDetail($event)"
+                  (fetchItems)="getUsersCopies($event, 1)"
                   [form]="form"
                   [showTooltip]="true"
+                  [searchOnInit]="true"
+                  termMaxLength="100"
                   control="ccp_addressee"></ngx-select>
               </div>
               <form-field
-                class="col-sm-12 col-12 col-md-5 p-2"
+                *ngIf="form.get('ccp_person').value == 'E'"
+                class="col-sm-12 col-12 col-md-8 p-2"
                 [control]="form.get('ccp_TiPerson')"
                 label="Nombre Destinatario">
                 <input
@@ -285,28 +334,47 @@
                   formControlName="ccp_TiPerson" />
               </form-field>
               <form-field
-                class="col-sm-12 col-12 col-md-2 p-2"
+                class="col-sm-12 col-12 col-md-4 p-2"
                 [control]="form.get('ccp_person_1')"
                 label="Tipo Destinatario">
-                <select class="form-control" formControlName="ccp_person_1">
+                <select
+                  class="form-control"
+                  formControlName="ccp_person_1"
+                  (change)="changeCopiesType($event, 2)">
                   <option value="">Seleccione un valor</option>
                   <option value="E">EXTERNA</option>
                   <option value="I">INTERNA</option>
                 </select>
               </form-field>
-              <div class="col-sm-12 col-12 col-md-5 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-8 p-2"
+                *ngIf="
+                  form.get('ccp_person_1').value != 'I' &&
+                  form.get('ccp_person_1').value != 'E'
+                ">
+                <div class="alert alert-info">
+                  Selecciona el "Tipo Destinatario" para ingresar el Nombre o
+                  Seleccionar un Usuario desde el catálogo
+                </div>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-8 p-2"
+                *ngIf="form.get('ccp_person_1').value == 'I'">
                 <ngx-select
-                  [data]="cityData"
-                  bindLabel="description"
-                  label="Destinatario"
+                  [data]="userCopies2"
+                  bindLabel="name"
+                  label="C.C.P."
                   value="id"
-                  (fetchItems)="getCityByDetail($event)"
+                  (fetchItems)="getUsersCopies($event, 2)"
                   [form]="form"
                   [showTooltip]="true"
+                  [searchOnInit]="true"
+                  termMaxLength="100"
                   control="ccp_addressee_1"></ngx-select>
               </div>
               <form-field
-                class="col-sm-12 col-12 col-md-5 p-2"
+                *ngIf="form.get('ccp_person_1').value == 'E'"
+                class="col-sm-12 col-12 col-md-8 p-2"
                 [control]="form.get('ccp_TiPerson_1')"
                 label="Nombre Destinatario">
                 <input
@@ -327,18 +395,21 @@
           Detalle
           <i class="fa fa-info-circle" aria-hidden="true"></i>
         </button>
-        <button type="button" class="btn btn-success btn-sm active m-3">
+        <button
+          type="button"
+          class="btn btn-success btn-sm active m-3"
+          (click)="sendOffice()">
           Enviar
           <i class="fa fa-paper-plane" aria-hidden="true"></i>
         </button>
       </div>
     </div>
     <hr />
-    <div class="row">
+    <div class="row" *ngIf="showScanForm">
       <div class="col-12 col-sm-12 col-md-12">
         <div class="card">
           <div class="card-body">
-            <app-scanning-foil></app-scanning-foil>
+            <app-scanning-foil [form]="formScan"></app-scanning-foil>
           </div>
         </div>
       </div>

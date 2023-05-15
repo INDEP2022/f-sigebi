@@ -486,8 +486,6 @@ export class ClassifyAssetsTabComponent
       }
     }
     this.getSection1(new ListParams());
-
-    // console.log(listReverse);
   }
   getLevels4(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
@@ -605,7 +603,6 @@ export class ClassifyAssetsTabComponent
         next: data => {
           this.showHideErrorInterceptorService.showHideError(false);
           this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
-          console.log(this.selectSection);
           if (this.advSearch === true) {
             this.listAdvancedFractions.push(data.data[0].id);
             const listReverse = this.listAdvancedFractions.reverse();
@@ -616,7 +613,6 @@ export class ClassifyAssetsTabComponent
           if (this.goodObject != null && this.advSearch == false) {
             this.classiGoodsForm.controls['ligieSection'].setValue(id);
           }
-          console.log(this.advSearch + '<advance search>>>>>>>>>>>><');
           this.advSearch = false;
         },
         error: error => {},
@@ -984,7 +980,6 @@ export class ClassifyAssetsTabComponent
   getReactiveFormActions() {
     this.classiGoodsForm.controls['ligieSection'].valueChanges.subscribe(
       (data: any) => {
-        console.log('data', data);
         if (data != null) {
           if (this.advSearch === false) {
             // this.classiGoodsForm.controls['ligieChapter'].setValue(null);
@@ -1015,11 +1010,9 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
         if (dataChapter != null) {
-          console.log('dataChapter', dataChapter);
           let fraction = this.selectChapter.filter(
             (x: any) => x.id === dataChapter
           )[0];
-          console.log('fraccion', fraction);
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
             this.setNoClasifyGood(fraction);
@@ -1056,8 +1049,6 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
         if (dataLevel1 != null) {
-          console.log('dataLevel1', dataLevel1);
-
           let fractionCodes =
             this.selectLevel1.filter((x: any) => x.id === dataLevel1)[0]
               .fractionCode ?? '';
@@ -1065,7 +1056,6 @@ export class ClassifyAssetsTabComponent
           let fraction = this.selectLevel1.filter(
             (x: any) => x.id === dataLevel1
           )[0];
-          console.log('fraccion', fraction);
           this.fractionCode = fractionCodes;
           this.setNoClasifyGood(fraction);
           this.setUnidLigieMeasure(fraction);
@@ -1100,12 +1090,9 @@ export class ClassifyAssetsTabComponent
       (dataLevel2: any) => {
         //this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         if (dataLevel2 != null) {
-          console.log('dataLevel2', dataLevel2);
-          console.log('dataLevel2', this.selectLevel2);
           let fraction = this.selectLevel2.filter(
             (x: any) => x.id === dataLevel2
           )[0];
-          console.log('fraccion', fraction);
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
             this.setNoClasifyGood(fraction);
@@ -1138,12 +1125,9 @@ export class ClassifyAssetsTabComponent
       (dataLevel3: any) => {
         //this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
         if (dataLevel3 != null) {
-          console.log('fraccion lvl3', dataLevel3);
-          console.log('fraccion lvl3', this.selectLevel3);
           let fraction = this.selectLevel3.filter(
             (x: any) => x.id === dataLevel3
           )[0];
-          console.log('fraccion', fraction);
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
             this.setNoClasifyGood(fraction);
@@ -1173,7 +1157,6 @@ export class ClassifyAssetsTabComponent
     this.classiGoodsForm.controls['ligieLevel4'].valueChanges.subscribe(
       (dataLevel4: any) => {
         if (dataLevel4 !== null) {
-          console.log('fraccion lvl4', dataLevel4);
           const relevantTypeId = this.getRelevantTypeId(
             this.selectLevel4,
             dataLevel4
@@ -1183,7 +1166,6 @@ export class ClassifyAssetsTabComponent
           let fraction = this.selectLevel4.filter(
             (x: any) => x.id === dataLevel4
           )[0];
-          console.log('fraccion', fraction);
           if (fraction) {
             this.fractionCode = fraction.fractionCode;
             this.setNoClasifyGood(fraction);
@@ -1197,7 +1179,6 @@ export class ClassifyAssetsTabComponent
   }
 
   getRelevantTypeId(arrayData: any, id: number): any {
-    // console.log(arrayData);
     if (arrayData) {
       return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
     }

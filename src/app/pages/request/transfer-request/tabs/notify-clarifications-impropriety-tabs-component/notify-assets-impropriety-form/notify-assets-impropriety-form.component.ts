@@ -74,9 +74,11 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    this.generateClave();
+    if (this.folioReporte === null) {
+      console.log('Crear folio');
+      this.dictamenSeq();
+    }
     this.withDocumentation = this.idAclara === '1' ? true : false;
-    this.dictamenSeq();
     this.initForm1();
     const applicationId = this.idRequest;
     const rejectNoticeId = this.dataClarifications2.rejectNotificationId;
@@ -95,7 +97,7 @@ export class NotifyAssetsImproprietyFormComponent
       addresseeName: [
         '',
         [
-          //Validators.required,
+          Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(50),
         ],
@@ -105,7 +107,7 @@ export class NotifyAssetsImproprietyFormComponent
         '',
         [
           Validators.pattern(STRING_PATTERN),
-          //Validators.required,
+          Validators.required,
           Validators.maxLength(50),
         ],
       ],

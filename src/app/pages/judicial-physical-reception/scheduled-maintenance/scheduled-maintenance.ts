@@ -1,5 +1,6 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -8,8 +9,10 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
@@ -22,6 +25,9 @@ export abstract class ScheduledMaintenance extends BasePage {
   first = true;
   @ViewChild(Ng2SmartTableComponent) table: Ng2SmartTableComponent;
   elementToExport: any[];
+
+  like = SearchFilter.LIKE;
+  hoy = new Date();
   settings1 = {
     ...TABLE_SETTINGS,
     pager: {
@@ -37,7 +43,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         sort: false,
       },
       keysProceedings: {
-        title: 'Programa Recepcion Entrega',
+        title: 'Programa Recepción Entrega',
         type: 'string',
         sort: false,
       },
@@ -45,6 +51,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         title: 'Fecha Captura',
         type: Date,
         sort: false,
+        // width: '150px'
       },
       elaborate: {
         title: 'Ingreso',
@@ -94,6 +101,10 @@ export abstract class ScheduledMaintenance extends BasePage {
   tiposEvento: { id: string; description: string }[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new FilterParams();
+  paramsCoords = new ListParams();
+  paramsUsers = new FilterParams();
+  delegationService = inject(DelegationService);
+  userService = inject(UsersService);
   constructor(
     protected fb: FormBuilder,
     protected service: ProceedingsDeliveryReceptionService,
@@ -107,6 +118,14 @@ export abstract class ScheduledMaintenance extends BasePage {
 
   get fechaInicio() {
     return this.form.get('fechaInicio');
+  }
+
+  get coordRegional() {
+    return this.delegationService.getAll(this.paramsCoords);
+  }
+
+  get usuarios() {
+    return this.userService.getAllSegUsers(this.paramsUsers.getParams());
   }
 
   ngOnInit(): void {
@@ -194,12 +213,15 @@ export abstract class ScheduledMaintenance extends BasePage {
         SearchFilter.BTW
       );
     }
-    if (coordRegional)
+    console.log(coordRegional);
+    if (coordRegional && coordRegional.length > 0) {
       this.filterParams.addFilter(
         'numDelegation_1.description',
         coordRegional,
         SearchFilter.IN
       );
+    }
+
     if (cveActa) {
       this.filterParams.addFilter('keysProceedings', cveActa);
     }
@@ -217,7 +239,14 @@ export abstract class ScheduledMaintenance extends BasePage {
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           console.log(response);
-          this.data = [...response.data];
+          this.data = [
+            ...response.data.map(x => {
+              return {
+                ...x,
+                captureDate: format(new Date(x.captureDate), 'dd-MM-yyyy'),
+              };
+            }),
+          ];
           this.totalItems = response.count;
           this.loading = false;
           // setTimeout(() => {
