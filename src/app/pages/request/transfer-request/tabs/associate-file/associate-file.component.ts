@@ -38,6 +38,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   ddcId: number = null;
   transferentName: string = '';
   regionalDelegacionName: string = '';
+  DscUnidad: string = '';
 
   constructor(
     private modalRef: BsModalRef,
@@ -339,6 +340,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   saveExpedientSami() {
     return new Promise((resolve, reject) => {
       let expedient = this.associateFileForm.getRawValue();
+      expedient.adminUnit = this.DscUnidad;
       this.expedientSamiService.create(expedient).subscribe({
         next: resp => {
           resolve(resp);
@@ -537,5 +539,9 @@ export class AssociateFileComponent extends BasePage implements OnInit {
     /*this.bsModalRef.content.event.subscribe((res: any) => {
       this.matchLevelFraction(res);
     });*/
+  }
+
+  getUnit(event: any) {
+    this.DscUnidad = event.DscUnidad;
   }
 }

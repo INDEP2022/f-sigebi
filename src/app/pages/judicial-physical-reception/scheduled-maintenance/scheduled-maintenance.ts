@@ -43,7 +43,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         sort: false,
       },
       keysProceedings: {
-        title: 'Programa Recepcion Entrega',
+        title: 'Programa Recepción Entrega',
         type: 'string',
         sort: false,
       },

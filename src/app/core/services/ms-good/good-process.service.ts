@@ -3,7 +3,11 @@ import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-en
 import { HttpService } from 'src/app/common/services/http.service';
 import { IResponse } from '../../interfaces/list-response.interface';
 import {
+  IAcceptGoodActa,
+  IAcceptGoodStatus,
+  IAcceptGoodStatusScreen,
   IGoodAndDetailProceeding,
+  ILvlPrograma,
   IValNumeOtro,
 } from '../../models/ms-good/good';
 
@@ -24,7 +28,40 @@ export class GoodProcessService extends HttpService {
     return this.post<IResponse>(GoodProcessPoints.cuValOtro, model);
   }
 
+  getVnNumerario(id: string | number) {
+    return this.get(`${GoodProcessPoints.vnNumerario}?no_bien=${id}`);
+  }
+
+  getLvlPrograma(model: ILvlPrograma) {
+    return this.post<IResponse>(GoodProcessPoints.lvlPrograma, model);
+  }
+
   getDetailProceedginGood(model: IGoodAndDetailProceeding) {
     return this.post<IResponse>(GoodProcessPoints.goodAndDetail, model);
+  }
+
+  getDetailProceedingGoodFilterNumber(
+    model: IGoodAndDetailProceeding,
+    noActa: string
+  ) {
+    return this.post<IResponse>(
+      `${GoodProcessPoints.goodAndDetail}?filter.proceedingsnumber=${noActa}`,
+      model
+    );
+  }
+
+  getacceptGoodStatus(model: IAcceptGoodStatus) {
+    return this.post<IResponse>(GoodProcessPoints.acceptGoodStatus, model);
+  }
+
+  getAccepGoodActa(model: IAcceptGoodActa) {
+    return this.post<IResponse>(GoodProcessPoints.acceptGoodActa, model);
+  }
+
+  getacceptGoodStatusScreen(model: IAcceptGoodStatusScreen) {
+    return this.post<IResponse>(
+      GoodProcessPoints.acceptGoodStatusScreen,
+      model
+    );
   }
 }

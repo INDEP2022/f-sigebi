@@ -227,8 +227,8 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
         this.handleErrorGoHome(GOOD_WITHOUT_ACT);
         return throwError(() => error);
       }),
-      map(response => response.data.map(detail => detail.numberProceedings)),
-      switchMap(proceedingsIds => this.getProceedingsByIds(proceedingsIds))
+      map(response => response.data.map(detail => detail.numberProceedings))
+      //switchMap(proceedingsIds => this.getProceedingsByIds(proceedingsIds))
     );
   }
 

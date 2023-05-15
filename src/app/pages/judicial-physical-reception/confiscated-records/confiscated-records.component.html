@@ -175,6 +175,7 @@
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <div class="row">
@@ -251,7 +252,13 @@
             </div>
 
             <div class="col-md-4 pt-3">
-              <button type="button" size="small">Replicar Folio</button>
+              <button
+                class="btn btn-primary btn-sm active"
+                type="button"
+                size="small"
+                (click)="replicateFolio()">
+                Replicar Folio
+              </button>
             </div>
           </div>
         </div>
@@ -357,7 +364,8 @@
               </button>
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-secondary active btn-sm">
+                class="my-1 mx-2 btn btn-secondary active btn-sm"
+                (click)="goCargaMasiva()">
                 Carga Masiva
               </button>
             </div>
@@ -491,7 +499,11 @@
           </div>
         </div>
         <div class="col-md-6">
-          <button type="button" size="small" class="mx-2 my-1">
+          <button
+            type="button"
+            size="small"
+            class="mx-2 my-1"
+            (click)="openEdoFisico()">
             Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
           <button
@@ -501,14 +513,14 @@
             (click)="applyWarehouseSafe()">
             Aplica Alm&#46;&#47;Bov&#46;
           </button>
-          <a
+          <!--  <a
             [routerLink]="['flat-file']"
             type="button"
             nbButton
             size="small"
             class="mx-2 my-1"
             >Exportar Datos</a
-          >
+          > -->
         </div>
       </div>
     </form>
