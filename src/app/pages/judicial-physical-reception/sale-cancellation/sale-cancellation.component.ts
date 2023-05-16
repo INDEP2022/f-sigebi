@@ -458,6 +458,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     //Validar si hay un acta abierta
     this.nextProce = true;
     this.prevProce = false;
+    this.act2Valid = false;
     this.navigateProceedings = false;
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
