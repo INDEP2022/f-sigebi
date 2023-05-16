@@ -89,6 +89,12 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
         'filter.goodNumber': '$eq:' + this.form.get('noBien').value,
       };
     }
+    if (this.form.get('description').value) {
+      params = {
+        ...params,
+        'filter.description': '$ilike:' + this.form.get('description').value,
+      };
+    }
     // console.log(params, this.columnFilters);
     // debugger;
     // if (
@@ -172,6 +178,7 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       noBien: [null],
+      description: [null],
     });
   }
 }
