@@ -27,9 +27,17 @@ export enum GoodEndpoints {
 
 export enum GoodProcessPoints {
   basepath = `goodprocess`,
-  cuValNume = `cuValNume`,
-  cuValOtro = `cuValotro`,
-  vnNumerario = `getVnNumerario`,
-  lvlPrograma = `getLvlPrograma`,
+  cuValNume = `application/cuValNume`,
+  cuValOtro = `application/cuValotro`,
+  vnNumerario = `application/getVnNumerario`,
+  lvlPrograma = `application/getLvlPrograma`,
   goodAndDetail = `application/getBienAndDetailActa`,
+  acceptGoodActa = `application/acceptGoodActa`,
+  acceptGoodStatus = `application/acceptGoodStatus`,
+  acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+}
+
+export enum GoodFinderEndpoint {
+  GoodFinderBase = 'goodfinder',
+  GoodQuery = 'good-query',
 }

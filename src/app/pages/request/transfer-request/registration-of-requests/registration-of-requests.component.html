@@ -171,7 +171,9 @@
                   class="col-md-4"
                   *ngIf="infoRequest?.rejectionComment != null">
                   <div>
-                    <label for="">Motivo de rechazo</label>
+                    <label class="text-danger" for=""
+                      >Solicitud Rechazada por el Siguiente Motivo:
+                    </label>
                     {{ infoRequest?.rejectionComment }}
                   </div>
                 </div>

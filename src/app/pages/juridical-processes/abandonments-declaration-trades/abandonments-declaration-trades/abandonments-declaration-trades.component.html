@@ -75,6 +75,7 @@
                     label="No. Expediente">
                     <input
                       type="text"
+                      (blur)="onLoadGoodList()"
                       formControlName="expedientNumber"
                       class="form-control"
                       readonly />
@@ -203,24 +204,13 @@
                 <h6 class="title">BIENES</h6>
                 <hr class="row" />
               </div>
-              <div class="col-sm-12 col-12 col-md-2">
-                <form-field
-                  [control]="formDeclaratoriaTabla.get('noExpediente')"
-                  label="No&#46; Expediente">
-                  <input
-                    type="text"
-                    formControlName="noExpediente"
-                    (blur)="onLoadGoodList()"
-                    class="form-control" />
-                  <!-- <select class="form-control" formControlName="noExpediente">
-                    <option [value]="null">Seleccione un valor</option>
-                    <option [value]="'3767'">3767</option>
-                    <option [value]="'3921'">3921</option>
-                  </select> -->
+              <!-- <div class="col-sm-12 col-12 col-md-2">
+                <form-field [control]="formDeclaratoriaTabla.get('noExpediente')" label="No&#46; Expediente">
+                  <input type="text" formControlName="noExpediente" (blur)="onLoadGoodList()" class="form-control" />
                 </form-field>
-              </div>
+              </div> -->
 
-              <div class="col-sm-12 col-12 col-md-10">
+              <div class="col-sm-12 col-12 col-md-12">
                 <form-field
                   [control]="formDeclaratoriaTabla.get('averiPrevia')"
                   label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
@@ -238,20 +228,31 @@
 
           <div class="row pt-2 mb-2">
             <div class="col-sm-12 col-12 col-md-12 pr-3">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings1"
-                [source]="data1">
-              </ng2-smart-table>
+              <div>
+                <ng2-smart-table
+                  (userRowSelect)="selectProceedings($event)"
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings1"
+                  [source]="data1">
+                </ng2-smart-table>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-6">
-              <span class="badge bagde-danger">
-                Bien entregado en administraci&oacute;n
-              </span>
+
+          <form [formGroup]="di_status" class="container-fluid form-material">
+            <div class="row">
+              <div class="col-sm-12 col-12 col-md-6 mt-5">
+                <form-field [control]="di_status.get('di_desc_estatus')">
+                  <input
+                    type="text"
+                    formControlName="di_desc_estatus"
+                    class="form-control"
+                    readonly />
+                </form-field>
+              </div>
             </div>
-          </div>
+          </form>
+
           <br />
           <!-- Tabla de bienes DECLARATORIA -->
 

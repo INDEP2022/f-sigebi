@@ -8,7 +8,8 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -50,9 +51,10 @@ export class ClarificationsComponent
   goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   @Output() response = new EventEmitter<string>();
+  bsModalRef: BsModalRef;
   paragraphs: any[] = [];
   goodSetting: any;
-  assetsArray: any[] = [];
+  assetsArray = new LocalDataSource();
   assetsSelected: any[] = [];
   //dataSelected: any[] = [];
   // clarifiArray: any[] = [];
@@ -407,6 +409,8 @@ export class ClarificationsComponent
         ],
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      descriptionGoodSae: [null],
+      saeMeasureUnit: [null],
     });
   }
 
@@ -452,7 +456,7 @@ export class ClarificationsComponent
         });
 
         Promise.all(result).then(data => {
-          this.assetsArray = resp.data;
+          this.assetsArray.load(resp.data);
           this.loading = false;
           this.totalItems = resp.count;
         });
@@ -560,7 +564,7 @@ export class ClarificationsComponent
     this.rowSelected = event;
   }
 
-  selectAll(event?: any) {
+  /*selectAll(event?: any) {
     this.assetsSelected = [];
     if (event.target.checked) {
       this.assetsArray.forEach(x => {
@@ -574,7 +578,7 @@ export class ClarificationsComponent
       });
     }
     console.log(this.assetsSelected);
-  }
+  }*/
 
   /*   selectOne(event: any) {
     if (event.target.checked == true) {
@@ -593,7 +597,6 @@ export class ClarificationsComponent
   } */
 
   clarifiRowSelected(event: any) {
-    console.log(event);
     if (event.isSelected == true) {
       this.showClarificationButtons =
         event.data.answered == 'ACLARADA' ? false : true;
@@ -637,11 +640,26 @@ export class ClarificationsComponent
               'La aclaración fue eliminada con éxito'
             );
 
+            let body: any = {};
             if (clarifycationLength === 1) {
               const goodResDev: any = await this.getGoodResDev(this.good.id);
               await this.removeDevGood(Number(goodResDev));
-              await this.updateGood(this.good.id);
+              body['id'] = this.good.id;
+              body['goodId'] = this.good.goodId;
+              body.processStatus = 'DESTINO_DOCUMENTAL';
+              body.goodStatus = 'DESTINO_DOCUMENTAL';
+              await this.updateGood(body);
+            } else {
+              body['id'] = this.good.id;
+              body['goodId'] = this.good.goodId;
+              body.goodStatus =
+                this.good.goodStatus != 'ACLARADO'
+                  ? 'ACLARADO'
+                  : 'DESTINO_DOCUMENTAL';
+              body.processStatus = 'DESTINO_DOCUMENTAL';
+              await this.updateGood(body);
             }
+            this.updateStatusTable(body);
           },
           complete: () => {
             this.getClarifications();
@@ -658,6 +676,19 @@ export class ClarificationsComponent
       }
     });
   }
+
+  updateStatusTable(body: any) {
+    this.assetsArray.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === this.good.id) {
+          item.processStatus = body.processStatus;
+          item.goodStatus = body.goodStatus;
+        }
+      });
+      this.assetsArray.load(data);
+    });
+  }
+
   editForm() {
     let data = this.clariArraySelected;
     if (data.length === 1) {
@@ -681,7 +712,23 @@ export class ClarificationsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(ClarificationFormTabComponent, config);
+    this.bsModalRef = this.modalService.show(
+      ClarificationFormTabComponent,
+      config
+    );
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      if (res === 'UPDATE-GOOD') {
+        this.assetsArray.getElements().then(data => {
+          data.map((item: any) => {
+            if (item.id === this.good.id) {
+              item.processStatus = 'SOLICITAR_ACLARACION';
+              item.goodStatus = 'SOLICITUD DE ACLARACION';
+            }
+          });
+        });
+      }
+    });
   }
 
   removeDevGood(id: number) {
@@ -703,17 +750,12 @@ export class ClarificationsComponent
     });
   }
 
-  updateGood(id: number) {
+  updateGood(body: any) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
-      body.id = this.good.id;
-      body.goodId = this.good.goodId;
-      //body.goodResdevId = Number(id);
-      body.processStatus = 'DESTINO_DOCUMENTAL';
-      body.goodStatus = 'DESTINO_DOCUMENTAL';
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
+          resolve(true);
         },
         error: error => {
           console.log('good updated', error);
@@ -722,6 +764,7 @@ export class ClarificationsComponent
             'Erro Interno',
             'No se actualizo el campo bien-res-dev en bien'
           );
+          reject(false);
         },
       });
     });

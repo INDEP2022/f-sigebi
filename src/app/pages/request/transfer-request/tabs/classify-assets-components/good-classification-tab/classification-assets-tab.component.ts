@@ -263,6 +263,7 @@ export class ClassificationAssetsTabComponent
         this.paragraphs.load(data);
       });
     });
+    this.goodObject = null;
   }
 
   selectGood(event: any) {
@@ -313,6 +314,18 @@ export class ClassificationAssetsTabComponent
           item.goodClassNumber = event.goodClassNumber;
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
+        }
+      });
+      this.paragraphs.load(data);
+    });
+  }
+
+  updateStatusGood(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map(async (item: any) => {
+        if (item.id === this.goodObject.id) {
+          item.processStatus = event.processStatus;
+          item.goodStatus = event.goodStatus;
         }
       });
       this.paragraphs.load(data);

@@ -373,16 +373,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     // if (!isfilterUsed) {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
-    this.taskService
-      .getTasksByUser(
-        this.filterParams.getValue().getParams().concat('&sortBy=id:DESC')
-      )
-      .subscribe({
-        next: response => {
-          console.log('Response: ', response);
-          this.loading = false;
-          console.log('Hay un filtro activo? ', isfilterUsed);
-          /*  if (isfilterUsed) {
+    const filter = this.filterParams
+      .getValue()
+      .getParams()
+      .concat('&sortBy=id:DESC');
+    this.taskService.getTasksByUser(filter).subscribe({
+      next: response => {
+        console.log('Response: ', response);
+        this.loading = false;
+        console.log('Hay un filtro activo? ', isfilterUsed);
+        /*  if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
             );
@@ -391,15 +391,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             this.tasks = response.data;
             this.totalItems = response.count;
           } */
-          response.data.map((item: any) => {
-            item.taskNumber = item.id;
-          });
+        response.data.map((item: any) => {
+          item.taskNumber = item.id;
+        });
 
-          this.tasks = response.data;
-          this.totalItems = response.count;
-        },
-        error: () => ((this.tasks = []), (this.loading = false)),
-      });
+        this.tasks = response.data;
+        this.totalItems = response.count;
+      },
+      error: () => ((this.tasks = []), (this.loading = false)),
+    });
   }
 
   cleanFilter() {
