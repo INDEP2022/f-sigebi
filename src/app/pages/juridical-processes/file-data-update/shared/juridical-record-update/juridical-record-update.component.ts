@@ -1060,38 +1060,31 @@ export class JuridicalRecordUpdateComponent
     if (catalog.e == 'S') {
       officeType = 'EXTERNO';
     }
-    if (catalog.g_of == 'S') {
-      let procedure;
-      if (
-        this.pageParams.pNoTramite != null &&
-        this.pageParams.pNoTramite != undefined
-      ) {
-        procedure = this.pageParams.pNoTramite;
-      } else if (this.procedureId != undefined) {
-        procedure = this.procedureId;
-      }
-      this.fileUpdComService.juridicalDocumentManagementParams = {
-        expediente: this.formControls.expedientNumber.value,
-        volante: this.formControls.wheelNumber.value,
-        pDictamen: this.formControls.dictumKey.value?.id,
-        pGestOk: this.pageParams.pGestOk,
-        pNoTramite: procedure,
-        tipoOf: officeType,
-        bien: catalog.property,
-        sale: sale,
-        doc: catalog.doc,
-      };
-      console.log(this.fileUpdComService.juridicalDocumentManagementParams);
-      this.router.navigateByUrl(
-        '/pages/documents-reception/flyers-registration/related-document-management/1'
-      );
-    } else {
-      this.alert(
-        'warning',
-        'No se encontró información',
-        'De acuerdo al Asunto y Dictamen NO puede generar un Oficio Gestión.'
-      );
+
+    let procedure;
+    if (
+      this.pageParams.pNoTramite != null &&
+      this.pageParams.pNoTramite != undefined
+    ) {
+      procedure = this.pageParams.pNoTramite;
+    } else if (this.procedureId != undefined) {
+      procedure = this.procedureId;
     }
+    this.fileUpdComService.juridicalDocumentManagementParams = {
+      expediente: this.formControls.expedientNumber.value,
+      volante: this.formControls.wheelNumber.value,
+      pDictamen: this.formControls.dictumKey.value?.id,
+      pGestOk: this.pageParams.pGestOk,
+      pNoTramite: procedure,
+      tipoOf: officeType,
+      bien: catalog.property,
+      sale: sale,
+      doc: catalog.doc,
+    };
+    console.log(this.fileUpdComService.juridicalDocumentManagementParams);
+    this.router.navigateByUrl(
+      '/pages/documents-reception/flyers-registration/related-document-management/1'
+    );
   }
 
   sendToJuridicalRuling() {
