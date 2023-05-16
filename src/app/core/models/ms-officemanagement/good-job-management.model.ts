@@ -43,3 +43,13 @@ export interface ImanagementOffice {
   cveChargeRem: string;
   justification: string;
 }
+
+export interface ICopiesJobManagementDto {
+  managementNumber: number | string;
+  addresseeCopy: number | string;
+  delDestinationCopyNumber: number | string;
+  personExtInt: number | string;
+  nomPersonExt: number | string;
+  recordNumber: number | string;
+  id: number | string;
+}
