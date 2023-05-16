@@ -20,6 +20,7 @@ import {
   GoodGetData,
   IGood,
   IGoodSami,
+  IValidaCambioEstatus,
   IVban,
 } from '../../models/ms-good/good';
 
@@ -56,6 +57,10 @@ export class GoodService extends HttpService {
   }
   getVBan(array: IVban) {
     return this.post<IResponse>(GoodEndpoints.Vban, array);
+  }
+
+  PAValidaCambio(model: IValidaCambioEstatus) {
+    return this.post<IResponse>(GoodEndpoints.PAValidaCambioEstatus, model);
   }
 
   getActAccount(model: IGoodStatusProcess) {
