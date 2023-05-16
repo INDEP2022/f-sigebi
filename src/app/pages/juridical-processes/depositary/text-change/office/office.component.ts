@@ -92,7 +92,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       managementNumber: [null, [Validators.required]],
       numberGestion: [null, [Validators.required]],
-      flywheel: [
+      flyerNumber: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -168,7 +168,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.form
             .get('numberGestion')
             .setValue(resp.data[0].proceedingsNumber);
-          this.form.get('flywheel').setValue(resp.data[0].flyerNumber);
+          this.form.get('flyerNumber').setValue(resp.data[0].flyerNumber);
           this.form.get('officio').setValue(resp.data[0].cveManagement);
           this.form.get('senderUser').setValue(resp.data[0].sender);
           this.form.get('addressee').setValue(resp.data[0].addressee);
@@ -291,13 +291,13 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    if (!this.form.get('flywheel').invalid) {
-      if (!(this.form.get('flywheel').value.trim() === '')) {
+    if (!this.form.get('flyerNumber').invalid) {
+      if (!(this.form.get('flyerNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
           .addFilter(
-            'flywheel',
-            this.form.get('flywheel').value,
+            'flyerNumber',
+            this.form.get('flyerNumber').value,
             SearchFilter.EQ
           );
       }

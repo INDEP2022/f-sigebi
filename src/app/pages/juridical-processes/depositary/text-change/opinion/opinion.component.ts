@@ -137,30 +137,32 @@ export class OpinionComponent extends BasePage implements OnInit {
   }
 
   onEnterSearch(filterParams: BehaviorSubject<FilterParams>) {
-    let params = new FilterParams();
-    params.addFilter('id', this.form.value.expedientNumber, SearchFilter.EQ);
-    this.dictationService.findByIdsOficNum(params.getParams()).subscribe({
-      next: resp => {
-        console.log('findByIdsOficNum =>>  ' + JSON.stringify(resp.data[0]));
-        this.intIDictation = resp.data[0];
-        console.warn(JSON.stringify(this.intIDictation));
-        this.form.get('expedientNumber').setValue(this.intIDictation.id);
-        this.form
-          .get('registerNumber')
-          .setValue(this.intIDictation.expedientNumber);
-        this.form.get('wheelNumber').setValue(this.intIDictation.wheelNumber);
-        this.form.get('typeDict').setValue(this.intIDictation.statusDict);
-        this.form.get('key').setValue(this.intIDictation.registerNumber);
-        let obj = {
-          officialNumber: this.intIDictation.id,
-          typeDict: this.intIDictation.typeDict,
-        };
-        this.complementoFormulario(obj);
-      },
-      error: err => {
-        this.onLoadToast('error', 'error', err.error.message);
-      },
-    });
+    /*  let params = new FilterParams();
+    params.addFilter('id', this.form.value.expedientNumber, SearchFilter.EQ);*/
+    this.dictationService
+      .findByIdsOficNum(filterParams.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          console.log('findByIdsOficNum =>>  ' + JSON.stringify(resp.data[0]));
+          this.intIDictation = resp.data[0];
+          console.warn(JSON.stringify(this.intIDictation));
+          this.form.get('expedientNumber').setValue(this.intIDictation.id);
+          this.form
+            .get('registerNumber')
+            .setValue(this.intIDictation.expedientNumber);
+          this.form.get('wheelNumber').setValue(this.intIDictation.wheelNumber);
+          this.form.get('typeDict').setValue(this.intIDictation.statusDict);
+          this.form.get('key').setValue(this.intIDictation.registerNumber);
+          let obj = {
+            officialNumber: this.intIDictation.id,
+            typeDict: this.intIDictation.typeDict,
+          };
+          this.complementoFormulario(obj);
+        },
+        error: err => {
+          this.onLoadToast('error', 'error', err.error.message);
+        },
+      });
 
     //dictation?filter.id=486064
   }
