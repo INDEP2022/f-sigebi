@@ -880,45 +880,45 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   sendOffice(count: number = 0) {
-    // console.log(this.form.get('issuingUser').value, this.dataUserLogged);
-    // if (this.blockSender) {
-    //   return;
-    // }
-    // if (!this.officeDictationData) {
-    //   this.alertInfo(
-    //     'warning',
-    //     'Se requiere cargar la información del Oficio para continuar',
-    //     'Revisa los parámetros y vuelve a intentar'
-    //   );
-    //   return;
-    // }
-    // if (!this.dictationData) {
-    //   this.alertInfo(
-    //     'warning',
-    //     'Se requiere cargar la información de la Dictaminación para continuar',
-    //     'Revisa los parámetros y vuelve a intentar'
-    //   );
-    //   return;
-    // }
-    // if (!this.addresseeDataSelect) {
-    //   this.alertInfo(
-    //     'warning',
-    //     'Se requiere seleccionar un Destinatario para continuar',
-    //     'Selecciona un Destinatario y vuelve a intentar'
-    //   );
-    //   return;
-    // }
-    // if (
-    //   this.form.get('issuingUser').value.toLocaleLowerCase() !=
-    //   this.dataUserLogged.user.toLocaleLowerCase()
-    // ) {
-    //   this.alertInfo(
-    //     'warning',
-    //     'El usuario actual no corresponde al del campo "Autoriza Dictaminación"',
-    //     'Sólo el usuario del campo "Autoriza Dictaminación" puede realizar está acción'
-    //   );
-    //   return;
-    // }
+    console.log(this.form.get('issuingUser').value, this.dataUserLogged);
+    if (this.blockSender) {
+      return;
+    }
+    if (!this.officeDictationData) {
+      this.alertInfo(
+        'warning',
+        'Se requiere cargar la información del Oficio para continuar',
+        'Revisa los parámetros y vuelve a intentar'
+      );
+      return;
+    }
+    if (!this.dictationData) {
+      this.alertInfo(
+        'warning',
+        'Se requiere cargar la información de la Dictaminación para continuar',
+        'Revisa los parámetros y vuelve a intentar'
+      );
+      return;
+    }
+    if (!this.addresseeDataSelect) {
+      this.alertInfo(
+        'warning',
+        'Se requiere seleccionar un Destinatario para continuar',
+        'Selecciona un Destinatario y vuelve a intentar'
+      );
+      return;
+    }
+    if (
+      this.form.get('issuingUser').value.toLocaleLowerCase() !=
+      this.dataUserLogged.user.toLocaleLowerCase()
+    ) {
+      this.alertInfo(
+        'warning',
+        'El usuario actual no corresponde al del campo "Autoriza Dictaminación"',
+        'Sólo el usuario del campo "Autoriza Dictaminación" puede realizar está acción'
+      );
+      return;
+    }
     this.loadingSend = true;
     console.log('SEND OFFICE');
 
