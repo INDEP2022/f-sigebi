@@ -186,33 +186,24 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       expediente: [null, [Validators.required]],
-      averPrev: [null, [Validators.required]],
-      acta: [null, [Validators.required]],
-      autoridad: [null, [Validators.required]],
-      ident: [null, [Validators.required]],
-      recibe: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      year: [null, [Validators.required]],
-      mes: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      nombre: [null, [Validators.required]],
+      acta: [null, []],
+      autoridad: [null, []],
+      ident: [null, []],
+      recibe: [null, []],
+      admin: [null, []],
+      folio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      year: [null, []],
+      mes: [null, []],
       acta2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       direccion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
-      folioEscaneo: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+      folioEscaneo: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       fecElab: [null, [Validators.required]],
       fecCierreActa: [null, [Validators.required]],
-      fecCaptura: [null, [Validators.required]],
+      fecCaptura: [null, []],
       autoridadCancela: [null, [Validators.required]],
       elabora: [
         null,
@@ -387,6 +378,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.initialBool = true;
     this.nextProce = true;
     this.prevProce = false;
+    this.act2Valid = false;
     this.navigateProceedings = false;
     this.statusProceeding = '';
     this.goodData = [];
@@ -543,7 +535,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'SUSPENSION');
+    paramsF.addFilter(
+      'typeProceedings',
+      'SUSPENSION,RECEPCAN',
+      SearchFilter.IN
+    );
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -978,7 +974,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             'yyyy-MM,dd HH:mm'
           ),
           datePhysicalReception: format(
-            this.form.get('fecReception').value,
+            this.form.get('fecCierreActa').value,
             'yyyy-MM,dd HH:mm'
           ),
           address: this.form.get('direccion').value,
@@ -989,14 +985,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           witness2: this.form.get('elabora').value,
           typeProceedings:
             this.form.get('acta').value == 'C' ? 'RECEPCAN' : 'SUSPENSION',
-          dateElaborationReceipt: format(
-            this.form.get('fecElabRec').value,
-            'yyyy-MM,dd HH:mm'
-          ),
-          dateDeliveryGood: format(
-            this.form.get('fecEntBien').value,
-            'yyyy-MM,dd HH:mm'
-          ),
           responsible: null,
           destructionMethod: null,
           observations: this.form.get('observaciones').value,
@@ -1031,7 +1019,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.form.get('fecElab').value != null &&
           this.form.get('fecCierreActa').value != null &&
           this.form.get('direccion').value != null &&
-          this.form.get('observaciones').value != null &&
           this.form.get('autoridadCancela').value != null &&
           this.form.get('elabora').value != null &&
           this.form.get('testigo').value != null
@@ -1052,6 +1039,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   this.statusProceeding = 'ABIERTA';
                   this.labelActa = 'Cerrar acta';
                   this.btnCSSAct = 'btn-primary';
+                  this.alert(
+                    'success',
+                    'Acta creada con éxito',
+                    `El acta ${
+                      this.form.get('acta2').value
+                    } fue abierta exitosamente`
+                  );
                 });
             },
             err => {
@@ -1155,7 +1149,21 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           res => {
             console.log();
             const realData = JSON.parse(JSON.stringify(res.data[0]));
-            this.alert('success', 'Éxito', `${realData.id}`);
+            this.serviceDetailProc
+              .PADelActaEntrega(realData.id)
+              .subscribe(res => {
+                this.form.get('expediente').setValue(this.numberExpedient);
+                this.dataGoods['data'].map((e: any) => {
+                  for (let element of this.dataGoodAct['data']) {
+                    if (e.id === element.id) {
+                      return { ...e, avalaible: true };
+                    }
+                  }
+                });
+                this.clearInputs();
+                this.getGoodsByExpedient();
+                this.alert('success', 'Acta eliminada con éxito', '');
+              });
           },
           err => {
             console.log(err);

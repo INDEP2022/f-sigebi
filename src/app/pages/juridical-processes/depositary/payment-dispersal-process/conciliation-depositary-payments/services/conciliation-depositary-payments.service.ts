@@ -47,4 +47,7 @@ export class ConciliationDepositaryPaymentsService {
   getValidBlackListProcess(params: number) {
     return this.msDepositaryService.getValidBlackListAppointment(params);
   }
+  deletePaymentRefRemove(params: any) {
+    return this.msDepositaryService.deletePaymentRefRemove(params);
+  }
 }
