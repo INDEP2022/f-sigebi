@@ -83,13 +83,6 @@
           [formGroup]="dictaminacionesForm"
           class="container-fluid form-material col-12 p-4">
           <div class="row p-4">
-            <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field
-                [control]="dictaminacionesForm.get('etiqueta')"
-                label="Etiqueta">
-                <input class="form-control" formControlName="etiqueta" />
-              </form-field>
-            </div> -->
             <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaInstructora')"
@@ -145,6 +138,33 @@
                   class="form-control"
                   formControlName="fechaNotificacion"
                   bsDatepicker />
+              </form-field>
+            </div>
+            <!--  -->
+            <div class="col-md-4">
+              <form-field
+                [control]="dictaminacionesForm.get('autoriza_remitente')"
+                label="Remitente">
+                <input
+                  class="form-control"
+                  formControlName="autoriza_remitente" />
+              </form-field>
+            </div>
+            <div class="col-md-8">
+              <form-field
+                [control]="dictaminacionesForm.get('autoriza_nombre')"
+                label="Nombre">
+                <input class="form-control" formControlName="autoriza_nombre" />
+              </form-field>
+            </div>
+            <div class="col-12">
+              <form-field
+                [control]="dictaminacionesForm.get('cveOficio')"
+                label="Cve. Oficio">
+                <input
+                  class="form-control"
+                  #cveOficio
+                  formControlName="cveOficio" />
               </form-field>
             </div>
             <div class="col-12 p-2">
@@ -288,7 +308,6 @@
       <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
-          [disabled]="isDocsEmpty()"
           (click)="btnApprove()">
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar

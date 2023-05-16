@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DictationEndpoints } from 'src/app/common/constants/endpoints/ms-dictation-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ICopiesOfficeSendDictation,
   IDictation,
+  IDictationCopies,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
 } from '../../models/ms-dictation/dictation-model';
@@ -70,6 +71,19 @@ export class DictationService extends HttpService {
     const route = `${DictationEndpoints.getParamsOfTypeGood}`;
     return this.post(route, model);
   }
+
+  //***********************************************************/
+  findByIdsOficNum(param: _Params) {
+    return this.get<IListResponse<IDictation>>(this.route.Dictation, param);
+  }
+
+  findUserByOficNum(param: _Params) {
+    return this.get<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      param
+    );
+  }
+
   getInitFormDictation(
     body: IInitFormLegalOpinionOfficeBody
   ): Observable<IListResponse<IInitFormLegalOpinionOfficeResponse>> {
@@ -78,6 +92,7 @@ export class DictationService extends HttpService {
       body
     );
   }
+
   getCopiesOfficeSendDictation(
     body: ICopiesOfficeSendDictation
   ): Observable<IListResponse<any>> {

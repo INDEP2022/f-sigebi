@@ -345,6 +345,8 @@ export class JuridicalRulingGComponent
       fechaDictaminacion: [null],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
+      autoriza_remitente: [null, [Validators.pattern(STRING_PATTERN)]],
+      autoriza_nombre: [null, [Validators.pattern(STRING_PATTERN)]],
       cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       estatus: [null],
     });
@@ -401,6 +403,12 @@ export class JuridicalRulingGComponent
     let noExpediente = this.expedientesForm.get('noExpediente').value || '';
     this.expedientServices.getById(noExpediente).subscribe({
       next: response => {
+        // this.dictaminacionesForm
+        //   .get('autoriza_remitente')
+        //   .setValue(response.identifier);
+        this.dictaminacionesForm
+          .get('autoriza_nombre')
+          .setValue(response.indicatedName);
         // ..Datos del expediente
         this.expedientesForm.get('causaPenal').setValue(response.criminalCase);
         this.expedientesForm
@@ -419,7 +427,6 @@ export class JuridicalRulingGComponent
     this.loadExpedientInfo(noExpediente).then(({ json }) => {
       json
         .then(res => {
-          debugger; //FIXME: quitar antes de PR
           this.dictNumber = res.data[0].id;
           // this.wheelNumber = res.data[0].wheelNumber;
           this.delegationDictNumber = res.data[0].delegationDictNumber;
@@ -432,6 +439,9 @@ export class JuridicalRulingGComponent
           this.expedientesForm
             .get('noDictaminacion')
             .setValue(res.data[0].id || undefined);
+          this.dictaminacionesForm
+            .get('cveOficio')
+            .setValue(res.data[0].passOfficeArmy || undefined);
           this.dictaminacionesForm
             .get('fechaInstructora')
             .setValue(new Date(res.data[0]?.instructorDate) || undefined);
@@ -460,7 +470,7 @@ export class JuridicalRulingGComponent
             .setValue(new Date(res.data[0].instructorDate) || undefined);
           this.dictaminacionesForm
             .get('estatus')
-            .setValue(new Date(res.data[0].statusDict) || undefined);
+            .setValue(res.data[0].statusDict || undefined);
         })
         .catch(err => {
           this.expedientesForm.get('tipoDictaminacion').setValue(null);
@@ -934,25 +944,34 @@ export class JuridicalRulingGComponent
   btnApprove() {
     let token = this.authService.decodeToken();
     const pNumber = Number(token.department);
-    this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
-      next: (response: any) => {
-        this.generateCveOficio(response.dictamenDelregSeq);
-        // document.getElementById('cveOficio').focus();
-        this.cveOficio.nativeElement.focus();
-        setTimeout(
-          () =>
-            this.alert(
-              'success',
-              '',
-              'Clave de oficio generada correctamente.'
-            ),
-          1000
-        );
-      },
-    });
-    window.location.replace(
-      baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link
-    );
+    const status =
+      this.dictaminacionesForm.get('estatus').value || this.statusDict;
+    if (status === 'DICTAMINADO') {
+      this.alert('error', '', 'Ya se encuentra dictaminado.');
+    } else {
+      this.applicationGoodsQueryService.getDictamenSeq(pNumber).subscribe({
+        next: (response: any) => {
+          this.generateCveOficio(response.dictamenDelregSeq);
+          this.cveOficio.nativeElement.focus();
+          setTimeout(
+            () =>
+              Swal.fire(
+                '',
+                'Clave de oficio generada correctamente.',
+                'success'
+              ).then(() => {
+                window.location.replace(
+                  baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link
+                );
+              }),
+            1000
+          );
+        },
+        error: (err: any) => {
+          this.alert('error', '', err);
+        },
+      });
+    }
   }
 
   generateCveOficio(noDictamen: string) {
