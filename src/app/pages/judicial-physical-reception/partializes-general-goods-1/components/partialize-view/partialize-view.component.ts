@@ -92,10 +92,10 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   get stateApply() {
-    if (this.formGood.invalid || this.bienesPar.length === 0) {
-      return 'disabled';
+    if (this.formGood?.valid && this.bienesPar.length > 0) {
+      return 'active';
     }
-    return 'active';
+    return 'disabled';
   }
 
   pressed(state: number) {
