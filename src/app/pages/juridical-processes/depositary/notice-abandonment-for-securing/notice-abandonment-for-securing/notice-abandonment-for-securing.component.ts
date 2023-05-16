@@ -184,7 +184,7 @@ export class NoticeAbandonmentForSecuringComponent
     });
   }
   onGoodIdDescription(goodChange: any) {
-    let param = `filter.goodId=$eq:${goodChange.goodId}`;
+    let param = `filter.registerNumber=$eq:${goodChange.goodId}`;
     this.goodService.getAll(param).subscribe({
       next: data => {
         console.log('data filter', data.data[0].quantity);
