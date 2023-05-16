@@ -888,8 +888,14 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
+        'Algunos bienes aun no se aclararon'
       );
+      return;
+    }
+
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === true) {
+      this.onLoadToast('info', '', 'Ya se genero un dictamen');
       return;
     }
 
@@ -920,17 +926,26 @@ export class RegistrationOfRequestsComponent
   /** Proceso de aprobacion */
   async approveRequest() {
     const sign: boolean = await this.ableToSignDictamen();
-
     if (sign == false) {
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
+        'Algunos bienes aun no se aclararon'
       );
       return;
     }
 
-    this.deleteMsjRefuse(); //Movel al lugar correcto al finalizar tarea
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'No se puede aprobar la solicitud',
+        'Es requerido previamente tener firmado el dictamen'
+      );
+      this.deleteMsjRefuse();
+      this.loader.load = false;
+      return;
+    }
 
     this.msgSaveModal(
       'Aprobar',
@@ -943,26 +958,6 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     this.loader.load = true;
-    const sign: boolean = await this.ableToSignDictamen();
-    if (sign == false) {
-      this.onLoadToast(
-        'error',
-        'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
-      );
-      return;
-    }
-    const existDictamen = await this.getDictamen(this.requestData.id);
-    console.log(existDictamen);
-    if (existDictamen === false) {
-      this.onLoadToast(
-        'info',
-        'No se puede aprobar la solicitud',
-        'Es requerido previamente tener firmado el dictamen'
-      );
-      this.loader.load = false;
-      return;
-    }
 
     const title = ``;
     const url = '';
@@ -1017,17 +1012,6 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
-    const haveClarifications = await this.haveNotificacions();
-    if (haveClarifications === 'POR_ACLARAR') {
-      this.onLoadToast(
-        'info',
-        'No se puede rechazar la solicitud',
-        'La solicitud aun cuenta con bienes por aclarar!'
-      );
-      this.loader.load = false;
-      return;
-    }
-
     const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
     const url = 'pages/request/transfer-request/verify-compliance';
     const from = 'SOLICITAR_APROBACION';
@@ -1345,6 +1329,18 @@ export class RegistrationOfRequestsComponent
         good.processStatus != 'SOLICITAR_ACLARACION' &&
         good.processStatus != 'IMPROCEDENTE' &&
         good.processStatus != 'SOLICITAR_APROBACION'
+      ) {
+        let body: any = {};
+        body.id = good.id;
+        body.goodId = good.goodId;
+        body.processStatus = newProcessStatus;
+        await this.updateGood(body);
+      }
+
+      console.log(this.process);
+      if (
+        this.process === 'process-approval' &&
+        good.processStatus == 'SOLICITAR_APROBACION'
       ) {
         let body: any = {};
         body.id = good.id;

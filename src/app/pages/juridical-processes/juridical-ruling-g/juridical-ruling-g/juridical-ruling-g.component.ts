@@ -28,6 +28,7 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -78,6 +79,20 @@ export class JuridicalRulingGComponent
   subtypes = new DefaultSelect();
   ssubtypes = new DefaultSelect();
   sssubtypes = new DefaultSelect();
+
+  typesDict = new DefaultSelect(
+    [
+      { id: 'DESTRUCCION', typeDict: 'DESTRUCCIÓN' },
+      { id: 'DONACION', typeDict: 'DONACION' },
+      { id: 'ENAJENACION', typeDict: 'ENAJENACIÓN' },
+      { id: 'TRANSFERENTE', typeDict: 'TRANSFERENTE' },
+      { id: 'PROCEDENCIA', typeDict: 'PROCEDENCIA' },
+      { id: 'DEVOLUCIÓN', typeDict: 'DEVOLUCIÓN' },
+      { id: 'ABANDONO', typeDict: 'ABANDONO' },
+      { id: 'RESARCIMIENTO', typeDict: 'RESARCIMIENTO' },
+    ],
+    2
+  );
 
   typeField: string = 'type';
   subtypeField: string = 'subtype';
@@ -287,6 +302,7 @@ export class JuridicalRulingGComponent
     private goodSssubtypeService: GoodSssubtypeService,
     private readonly goodServices: GoodService,
     private readonly documentService: DocumentsService,
+    private readonly expedientServices: ExpedientService,
     private readonly authService: AuthService
   ) {
     super();
@@ -298,20 +314,9 @@ export class JuridicalRulingGComponent
     this.getParams();
   }
 
-  getParams() {
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.expedientesForm
-          .get('noExpediente')
-          .setValue(
-            params['noExpediente'] ? Number(params['noExpediente']) : undefined
-          );
-      });
-    this.onLoadGoodList();
-    this.onLoadDocumentsByGood();
-  }
-
+  /**
+   * Preparar formularios
+   */
   prepareForm() {
     this.expedientesForm = this.fb.group({
       tipoDictaminacion: [null, [Validators.required]],
@@ -345,6 +350,102 @@ export class JuridicalRulingGComponent
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+
+  changeNumExpediente() {
+    this.onLoadGoodList();
+    this.onLoadExpedientData();
+    this.onLoadDictationInfo();
+    this.resetALL();
+  }
+
+  onKeyPress($event: any) {
+    if ($event.key === 'Enter') $event.currentTarget.blur();
+    $event.currentTarget.focus();
+  }
+
+  resetALL() {
+    this.selectedDocuments = [];
+    this.selectedGooods = [];
+    this.selectedGooodsValid = [];
+    this.goodsValid = [];
+    this.data4 = [];
+  }
+
+  getParams() {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.expedientesForm
+          .get('noExpediente')
+          .setValue(
+            params['noExpediente'] ? Number(params['noExpediente']) : undefined
+          );
+      });
+    this.changeNumExpediente();
+  }
+
+  onLoadExpedientData() {
+    let noExpediente = this.expedientesForm.get('noExpediente').value || '';
+    this.expedientServices.getById(noExpediente).subscribe({
+      next: response => {
+        // ..Datos del expediente
+        this.expedientesForm.get('causaPenal').setValue(response.criminalCase);
+        this.expedientesForm
+          .get('averiguacionPrevia')
+          .setValue(response.preliminaryInquiry);
+      },
+    });
+  }
+
+  /**
+   * Trae información de dictamen
+   * según # de expediente
+   */
+  onLoadDictationInfo() {
+    let noExpediente = this.expedientesForm.get('noExpediente').value || '';
+    this.loadExpedientInfo(noExpediente).then(({ json }) => {
+      json
+        .then(res => {
+          debugger;
+          this.dictNumber = res.data[0].id;
+          this.wheelNumber = res.data[0].wheelNumber;
+          this.delegationDictNumber = res.data[0].delegationDictNumber;
+          this.expedientesForm
+            .get('tipoDictaminacion')
+            .setValue(res.data[0].typeDict || undefined);
+          this.dictaminacionesForm
+            .get('fechaNotificacion')
+            .setValue(new Date(res.data[0].entryDate) || undefined);
+          this.dictaminacionesForm
+            .get('fechaNotificacionAseg')
+            .setValue(new Date(res.data[0].entryHcDate) || undefined);
+          this.dictaminacionesForm
+            .get('fechaResolucion')
+            .setValue(new Date(res.data[0].dictDate) || undefined);
+          this.expedientesForm
+            .get('observaciones')
+            .setValue(res.data[0].observations || undefined);
+          this.keyArmyNumber = res.data[0].keyArmyNumber;
+          this.statusDict = res.data[0].statusDict;
+          this.dictaminacionesForm
+            .get('etiqueta')
+            .setValue(new Date(res.data[0].instructorDate) || undefined);
+          this.dictaminacionesForm
+            .get('estatus')
+            .setValue(new Date(res.data[0].statusDict) || undefined);
+        })
+        .catch(err => {
+          this.expedientesForm.get('tipoDictaminacion').setValue(null);
+          this.dictaminacionesForm.get('cveOficio').setValue(null);
+          this.expedientesForm.get('observaciones').setValue(null);
+          this.dictaminacionesForm.get('fechaNotificacion').setValue(null);
+          this.dictaminacionesForm.get('etiqueta').setValue(null);
+          this.dictaminacionesForm.get('estatus').setValue(null);
+          this.dictaminacionesForm.get('cveOficio').setValue(null);
+        });
+    });
+  }
+
   btnDocumentos() {
     console.log('btnDocumentos');
     this.listadoDocumentos = true;
@@ -740,6 +841,11 @@ export class JuridicalRulingGComponent
       .catch(err => {});
   }
 
+  onTypeDictChange($event: any) {
+    // ..activar para ver cambio
+    // console.log($event);
+  }
+
   async checkout1(object: object) {
     let response = await fetch(
       'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
@@ -771,6 +877,17 @@ export class JuridicalRulingGComponent
         headers: { 'content-type': 'application/json' },
         method: 'POST',
         body: JSON.stringify(object),
+      }
+    );
+    return { status: response.status, json: response.json() };
+  }
+
+  async loadExpedientInfo(id: number | string) {
+    const response = await fetch(
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation?filter.expedientNumber=' +
+        id,
+      {
+        method: 'GET',
       }
     );
     return { status: response.status, json: response.json() };
