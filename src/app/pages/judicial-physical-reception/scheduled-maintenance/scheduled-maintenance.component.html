@@ -6,7 +6,8 @@
     <div class="row mb-5">
       <app-clean-filters-shared
         [form]="form"
-        formStorage="filtersActa"></app-clean-filters-shared>
+        formStorage="filtersIndica"
+        (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
     </div>
     <form class="form-material" [formGroup]="form">
       <div class="row">
@@ -78,11 +79,11 @@
           <ng-custom-select-loading
             [form]="form"
             formControlName="coordRegional"
-            [multiple]="true"
             label="Coordinación Regional"
-            value="id"
+            value="description"
             bindLabel="description"
             paramSearch="search"
+            [multiple]="true"
             path="catalog/api/v1/delegation">
           </ng-custom-select-loading>
           <!-- <ng-template #coordinationLabel let-item="item">
@@ -143,7 +144,10 @@
       </div>
       <div class="row">
         <form-field [control]="form.get('claveActa')" label="Clave Acta">
-          <input class="form-control" formControlName="claveActa" />
+          <input
+            class="form-control"
+            formControlName="claveActa"
+            maxlength="75" />
         </form-field>
       </div>
       <!-- <app-key-proceedings-form
@@ -179,7 +183,7 @@
         <div class="col-md-4 righButtons">
           <app-columns-select
             [(settings)]="settings1"
-            [defaultColumns]="4"></app-columns-select>
+            [defaultColumns]="5"></app-columns-select>
           <div
             [class]="
               loading || loadingExcel || data.length === 0 ? 'disabled' : ''

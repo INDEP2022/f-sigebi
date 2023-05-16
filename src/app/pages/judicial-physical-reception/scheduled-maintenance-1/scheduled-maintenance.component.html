@@ -69,7 +69,7 @@
             formControlName="coordRegional"
             [multiple]="true"
             label="Coordinación Regional"
-            value="id"
+            value="description"
             bindLabel="description"
             paramSearch="search"
             path="catalog/api/v1/delegation">
@@ -165,7 +165,7 @@
     <div class="mt-2 righButtons">
       <app-columns-select
         [(settings)]="settings1"
-        [defaultColumns]="4"></app-columns-select>
+        [defaultColumns]="5"></app-columns-select>
       <button
         class="btn btn-primary btn-sm active"
         type="submit"
