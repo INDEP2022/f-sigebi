@@ -3,8 +3,6 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IBienesPar } from '../../models/bienesPar.model';
-import { PartializeGeneralGoodTab2Service } from '../../services/partialize-general-good-tab2.service';
-import { PartializeGeneralGoodV2Tab2Service } from '../../services/partialize-general-good-v2-tab2.service';
 import { PartializeGeneralGoodV2Service } from '../../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
@@ -14,7 +12,7 @@ import { PartializeGeneralGoodService } from '../../services/partialize-general-
   styleUrls: ['./partialize-view.component.scss'],
 })
 export class PartializeViewComponent extends BasePage implements OnInit {
-  @Input() firstCase: boolean = null;
+  // @Input() firstCase: boolean = null;
   @Input() version: number;
   params = new BehaviorSubject<ListParams>(new ListParams());
   v_numerario: any;
@@ -24,23 +22,24 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   pressApply = false;
   page = 1;
   constructor(
-    private serviceTab1: PartializeGeneralGoodService,
-    private serviceTab2: PartializeGeneralGoodTab2Service,
-    private service2Tab1: PartializeGeneralGoodV2Service,
-    private service2Tab2: PartializeGeneralGoodV2Tab2Service
-  ) {
+    private service1: PartializeGeneralGoodService,
+    // private serviceTab2: PartializeGeneralGoodTab2Service,
+    private service2: PartializeGeneralGoodV2Service
+  ) // private service2Tab2: PartializeGeneralGoodV2Tab2Service
+  {
     super();
     this.params.value.limit = 11;
   }
 
   get service() {
-    return this.version === 1
-      ? this.firstCase === true
-        ? this.serviceTab1
-        : this.serviceTab2
-      : this.firstCase === true
-      ? this.service2Tab1
-      : this.service2Tab2;
+    return this.version === 1 ? this.service1 : this.service2;
+    // return this.version === 1
+    //   ? this.firstCase === true
+    //     ? this.serviceTab1
+    //     : this.serviceTab2
+    //   : this.firstCase === true
+    //   ? this.service2Tab1
+    //   : this.service2Tab2;
   }
 
   get formGood() {
@@ -113,7 +112,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   // }
 
   ngOnInit(): void {
-    if (this.firstCase === null) {
+    if (this.version === null) {
       return;
     }
     this.service.initFormControl();
