@@ -326,7 +326,8 @@
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
-              size="small">
+              size="small"
+              (click)="goCargaMasiva()">
               Carga Masiva
             </button>
           </div>
@@ -403,6 +404,7 @@
           <button
             type="button"
             class="mx-2 btn btn-secondary btn-sm active"
+            [disabled]="dataGoodAct['data'].length == 0"
             (click)="deleteGoods()">
             <i class="fa fa-angle-up"></i>
           </button>
