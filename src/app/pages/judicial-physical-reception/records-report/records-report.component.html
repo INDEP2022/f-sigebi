@@ -87,16 +87,6 @@
               <span className="labelActa">{{ keyProceedingFinal }}</span>
             </div>
           </div>
-
-          <div class="col-md-6">
-            <form-field [control]="form.get('hasta')" label="Hasta el">
-              <input
-                type="number"
-                [min]="form.get('desde').value + 1"
-                class="form-control"
-                formControlName="hasta" />
-            </form-field>
-          </div>
         </div>
 
         <div class="col-md-6">
@@ -106,6 +96,7 @@
                 <input
                   type="number"
                   [min]="0"
+                  [maxlength]="15"
                   class="form-control"
                   formControlName="desde" />
               </form-field>
@@ -115,6 +106,7 @@
                 <input
                   type="number"
                   [min]="form.get('desde').value + 1"
+                  [maxlength]="15"
                   class="form-control"
                   formControlName="hasta" />
               </form-field>
@@ -126,6 +118,7 @@
                 <input
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
                   formControlName="fechaDesde" />
               </form-field>
             </div>
@@ -136,6 +129,7 @@
                 label="Fecha Elaboraci&oacute;n Hasta">
                 <input
                   bsDatepicker
+                  [maxlength]="10"
                   [minDate]="form.get('fechaDesde').value"
                   class="form-control"
                   formControlName="fechaHasta" />
