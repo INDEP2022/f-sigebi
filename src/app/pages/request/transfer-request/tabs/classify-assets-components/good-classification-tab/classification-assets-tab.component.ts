@@ -263,6 +263,7 @@ export class ClassificationAssetsTabComponent
         this.paragraphs.load(data);
       });
     });
+    this.goodObject = null;
   }
 
   selectGood(event: any) {
