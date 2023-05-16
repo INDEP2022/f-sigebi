@@ -82,6 +82,68 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
+  getExcelContinue(data: IProceedingDeliveryReception[]) {
+    const array: Observable<any>[] = [];
+    if (data && data.length > 0) {
+      data.forEach(item => {
+        console.log(item);
+        const paramsDetail = new FilterParams();
+        paramsDetail.limit = 100000;
+        paramsDetail.addFilter('numberProceedings', item.id);
+        array.push(
+          this.detailService.getAll(paramsDetail.getParams()).pipe(
+            catchError(err => of({ data: [] })),
+            map(details => {
+              const arrayDetails: any[] = [];
+              const dataDetail = details.data;
+              if (dataDetail && dataDetail.length > 0) {
+                dataDetail.forEach(detail => {
+                  console.log(detail);
+                  arrayDetails.push({
+                    PROGRAMA: item.keysProceedings,
+                    'LOCALIDAD/DICTAMEN': item.numTransfer?.description ?? '',
+                    'NO BIEN': detail.numberGood,
+                    ESTATUS: detail.good?.status,
+                    DESCRIPCION: detail.good?.description,
+                    'TIPO BIEN': detail.good?.goodsCategory,
+                    EXPEDIENTE: item.numFile,
+                    EVENTO: detail.numberProceedings,
+                    CANTIDAD: detail.amount,
+                    FEC_RECEPCION: detail.approvedXAdmon,
+                    FEC_FINALIZACION: detail.dateIndicatesUserApproval
+                      ? format(
+                          new Date(detail.dateIndicatesUserApproval),
+                          'dd/MM/yyyy'
+                        )
+                      : '',
+                    INDICADOR_DEST: detail.good?.identifier,
+                  });
+                });
+              }
+              return arrayDetails;
+            })
+          )
+        );
+      });
+    }
+    return array;
+  }
+
+  getExcel2(data: IProceedingDeliveryReception[]) {
+    return of(this.getExcelContinue(data)).pipe(
+      mergeMap(array => this.validationObs(array)),
+      map(arrays => {
+        const result: any = [];
+        arrays.forEach(array => {
+          array.forEach((item: any) => {
+            result.push(item);
+          });
+        });
+        return result;
+      })
+    );
+  }
+
   getExcel(filterParams?: FilterParams) {
     const params = new FilterParams(filterParams);
     params.limit = 10000;
@@ -91,52 +153,8 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     ).pipe(
       map(items => {
         console.log(items);
-        const data = items.data;
-        const array: Observable<any>[] = [];
-        if (data && data.length > 0) {
-          data.forEach(item => {
-            console.log(item);
-            const paramsDetail = new FilterParams();
-            paramsDetail.limit = 100000;
-            paramsDetail.addFilter('numberProceedings', item.id);
-            array.push(
-              this.detailService.getAll(paramsDetail.getParams()).pipe(
-                catchError(err => of({ data: [] })),
-                map(details => {
-                  const arrayDetails: any[] = [];
-                  const dataDetail = details.data;
-                  if (dataDetail && dataDetail.length > 0) {
-                    dataDetail.forEach(detail => {
-                      console.log(detail);
-                      arrayDetails.push({
-                        PROGRAMA: item.keysProceedings,
-                        'LOCALIDAD/DICTAMEN':
-                          item.numTransfer?.description ?? '',
-                        'NO BIEN': detail.numberGood,
-                        ESTATUS: detail.good?.status,
-                        DESCRIPCION: detail.good?.description,
-                        'TIPO BIEN': detail.good?.goodsCategory,
-                        EXPEDIENTE: item.numFile,
-                        EVENTO: detail.numberProceedings,
-                        CANTIDAD: detail.amount,
-                        FEC_RECEPCION: detail.approvedXAdmon,
-                        FEC_FINALIZACION: detail.dateIndicatesUserApproval
-                          ? format(
-                              new Date(detail.dateIndicatesUserApproval),
-                              'dd/MM/yyyy'
-                            )
-                          : '',
-                        INDICADOR_DEST: detail.good?.identifier,
-                      });
-                    });
-                  }
-                  return arrayDetails;
-                })
-              )
-            );
-          });
-        }
-        return array;
+        // const data = items.data;
+        return this.getExcelContinue(items.data);
       }),
       mergeMap(array => this.validationObs(array)),
       map(arrays => {

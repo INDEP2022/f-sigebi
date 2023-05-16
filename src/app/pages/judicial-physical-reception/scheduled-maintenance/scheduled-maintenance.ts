@@ -42,6 +42,11 @@ export abstract class ScheduledMaintenance extends BasePage {
         type: 'string',
         sort: false,
       },
+      typeProceedings: {
+        title: 'Tipo de Evento',
+        type: 'string',
+        sort: false,
+      },
       keysProceedings: {
         title: 'Programa Recepción Entrega',
         type: 'string',
@@ -120,9 +125,9 @@ export abstract class ScheduledMaintenance extends BasePage {
     return this.form.get('fechaInicio');
   }
 
-  get coordRegional() {
-    return this.delegationService.getAll(this.paramsCoords);
-  }
+  // get coordRegional() {
+  //   return this.delegationService.getAll(this.paramsCoords);
+  // }
 
   get usuarios() {
     return this.userService.getAllSegUsers(this.paramsUsers.getParams());
