@@ -114,4 +114,10 @@ export class DictationService extends HttpService {
     const route = `${DictationEndpoints.FindGoodDictGood1}`;
     return this.post(route, body);
   }
+
+  getDocumentsForDictation(body: {
+    id: string | number;
+  }): Observable<IDictation> {
+    return this.get(this.route.DocumentByDictation, body);
+  }
 }
