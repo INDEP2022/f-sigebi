@@ -65,7 +65,7 @@
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
               <ng-option value="ABIERTA">Abierto</ng-option>
-              <ng-option value="ABIERTA">Cerrado</ng-option>
+              <ng-option value="CERRADA">Cerrado</ng-option>
             </ng-select>
           </form-field>
 
@@ -176,7 +176,10 @@
             Captura de Evento
           </button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 righButtons">
+          <app-columns-select
+            [(settings)]="settings1"
+            [defaultColumns]="4"></app-columns-select>
           <div
             [class]="
               loading || loadingExcel || data.length === 0 ? 'disabled' : ''

@@ -2,6 +2,12 @@
   width: 20px;
 }
 
+.righButtons {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 10px;
+}
+
 .form-date {
   background-color: white !important;
 }

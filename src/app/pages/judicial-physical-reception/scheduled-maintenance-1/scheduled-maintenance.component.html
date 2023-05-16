@@ -57,7 +57,7 @@
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
               <ng-option value="ABIERTA">Abierto</ng-option>
-              <ng-option value="ABIERTA">Cerrado</ng-option>
+              <ng-option value="CERRADA">Cerrado</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -162,7 +162,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Programaciones</h5>
-    <div class="buttons mt-2">
+    <div class="mt-2 righButtons">
       <app-columns-select
         [(settings)]="settings1"
         [defaultColumns]="4"></app-columns-select>
