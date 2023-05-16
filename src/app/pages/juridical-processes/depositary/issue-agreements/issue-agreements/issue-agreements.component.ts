@@ -219,8 +219,6 @@ export class IssueAgreementsComponent
   }
 
   async updateHistory(data: any) {
-    console.log(data);
-
     if (
       data.aceptaSuspencion == 'SI' &&
       data.statusResourceReview == 'DICTAMINADO RECURSO DE REVISION'
@@ -257,6 +255,11 @@ export class IssueAgreementsComponent
           this.onLoadToast('success', 'Ha sido actualizado', '');
         },
       });
+    } else {
+      this.onLoadToast(
+        'info',
+        'Estatus recurso revisión no es "Dictaminado recurso de revisión"'
+      );
     }
   }
 
@@ -393,6 +396,7 @@ export class IssueAgreementsComponent
           this.message('info', 'No se encontraron registros', '');
           this.loading = false;
           this.dataTable = [];
+          this.totalItems = 0;
         },
         complete: () => {
           this.loading = false;
@@ -433,6 +437,7 @@ export class IssueAgreementsComponent
     this.searchForm.reset();
     this.params.getValue().removeAllFilters();
     this.params.getValue().page = 1;
+    this.totalItems = 0;
   }
   search() {
     if (
@@ -459,6 +464,7 @@ export class IssueAgreementsComponent
       if (form[key] !== null) {
         if (key === 'physicalReceptionDate') {
           form[key] = new DatePipe('en-EN').transform(form[key], 'dd/MM/yyyy');
+          this.params.value.addFilter(key, form[key]);
         } else if (key === 'description') {
           this.params.value.addFilter(key, form[key], SearchFilter.ILIKE);
         } else {
