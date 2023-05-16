@@ -129,6 +129,22 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('hasta').reset();
       this.form.get('fechaDesde').reset();
       this.form.get('fechaHasta').reset();
+      this.keyProceedingFinal = '';
+      this.keyProceedingInitial = '';
+      this.initialProceedingBool = false;
+      this.finalProceedingBool = false;
+    });
+
+    this.form.get('actaInicial').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingInitial = '';
+      }
+    });
+
+    this.form.get('actaFinal').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingFinal = '';
+      }
     });
   }
 
