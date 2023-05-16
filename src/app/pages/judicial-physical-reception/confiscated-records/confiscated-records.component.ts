@@ -16,6 +16,7 @@ import { transferenteAndAct } from 'src/app/common/validations/custom.validators
 import {
   IGood,
   ILvlPrograma,
+  IValidaCambioEstatus,
   IValNumeOtro,
   IVban,
 } from 'src/app/core/models/ms-good/good';
@@ -493,7 +494,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods-1',
+      '/pages/judicial-physical-reception/partializes-general-goods/v1',
     ]);
   }
 
@@ -1017,15 +1018,48 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const scanStatus = data.data[0]['scanStatus'];
 
           if (scanStatus === 'ESCANEADO') {
-            this.statusProceeding = 'CERRADO';
-            this.labelActa = 'Abrir acta';
-            this.btnCSSAct = 'btn-info';
             const paramsF = new FilterParams();
 
             paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
             this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
               res => {
                 console.log(res);
+                const resData = JSON.parse(JSON.stringify(res.data[0]));
+                console.log(resData.id);
+                const model: IValidaCambioEstatus = {
+                  p1: 3,
+                  p2: resData.id.toString(),
+                  p3: null,
+                  p4: null,
+                };
+                this.serviceGood.PAValidaCambio(model).subscribe(res => {
+                  const { P5 } = JSON.parse(JSON.stringify(res));
+                  if (P5 < 0) {
+                    this.alert(
+                      'warning',
+                      'Bienes sin informacion requerida',
+                      'Se encontraron bienes sin información requerida para este proceso'
+                    );
+                  } else {
+                    const modelEdit: IProccedingsDeliveryReception = {
+                      statusProceedings: 'CERRADA',
+                    };
+                    console.log(modelEdit);
+                    this.serviceProcVal
+                      .editProceeding(resData.id, modelEdit)
+                      .subscribe(
+                        res => {
+                          console.log(res);
+                          this.statusProceeding = 'CERRADO';
+                          this.labelActa = 'Abrir acta';
+                          this.btnCSSAct = 'btn-info';
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+                  }
+                });
               },
               err => {}
             );
@@ -1380,8 +1414,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             );
           } else if (
             this.form.get('fecElab').value != null &&
-            format(this.form.get('fecElab').value, 'dd-MM-yyyy') <
-              format(this.form.get('fecElab').value, 'dd-MM-yyyy')
+            format(this.form.get('fecElab').value, 'dd-MM-yyyy') <=
+              format(new Date(), 'dd-MM-yyyy')
           ) {
             this.alert(
               'error',
