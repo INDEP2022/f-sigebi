@@ -2,6 +2,10 @@
   width: 20px;
 }
 
+.form-date {
+  background-color: white !important;
+}
+
 .scroll-table::-webkit-scrollbar-track {
   background-color: transparent;
 }
@@ -28,10 +32,12 @@
 ng2-smart-table {
   padding: 0px;
 }
+
 .list-group {
   overflow: auto;
   height: 45px;
 }
+
 .list-group .list-group-item:last-child {
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
@@ -39,10 +45,12 @@ ng2-smart-table {
 
 .table-container {
   margin-right: 14px;
+
   .table-responsive {
     padding: 0px;
     margin-left: 15px;
   }
+
   @media screen and (max-width: 767px) {
     .table-responsive {
       padding: 0px;
@@ -54,9 +62,11 @@ ng2-smart-table {
   text-align: right;
   position: absolute;
   top: 12px;
+
   @media (max-width: 576px) {
     position: relative;
     top: -10px;
+
     > div {
       padding: 0px;
     }
@@ -68,17 +78,21 @@ ng2-smart-table {
     margin-top: 1rem;
     padding: 0px;
     text-align: center;
+
     &:first-child {
       text-align: left;
     }
+
     &:last-child {
       text-align: right;
     }
   }
+
   @media (max-width: 767px) {
     > div {
       text-align: center !important;
     }
+
     ::ng-deep button {
       width: 100%;
     }

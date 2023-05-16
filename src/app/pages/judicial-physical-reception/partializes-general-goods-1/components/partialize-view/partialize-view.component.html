@@ -1,4 +1,4 @@
-<app-good-form [version]="version" [firstCase]="firstCase"></app-good-form>
+<app-good-form [version]="version"></app-good-form>
 <!-- <hr /> -->
 <form class="form-material mt-5" [formGroup]="form">
   <div class="row">
@@ -53,15 +53,13 @@
         <div (click)="pressed(1)">1</div>
         <app-partialize-button
           [version]="version"
-          [press]="pressPartialize"
-          [firstCase]="firstCase"></app-partialize-button>
+          [press]="pressPartialize"></app-partialize-button>
       </div>
       <div [class]="stateApply">
         <div (click)="pressed(2)">2</div>
         <app-apply-button
           [version]="version"
-          [press]="pressApply"
-          [firstCase]="firstCase"></app-apply-button>
+          [press]="pressApply"></app-apply-button>
       </div>
       <!-- Second Step -->
     </div>

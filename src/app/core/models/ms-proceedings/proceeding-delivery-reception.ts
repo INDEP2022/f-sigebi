@@ -47,6 +47,54 @@ export interface IProceedingDeliveryReception {
   file?: NumFile;
 }
 
+export interface IEditProceedingDeliveryReception {
+  keysProceedings?: string;
+  elaborationDate?: string;
+  datePhysicalReception?: string;
+  address?: string;
+  statusProceedings?: string;
+  elaborate?: string;
+  elaborateDetail?: { [key: string]: null | string };
+  numFile?: number;
+  witness1?: string;
+  witness2?: string;
+  typeProceedings?: string;
+  dateElaborationReceipt?: string;
+  dateDeliveryGood?: string;
+  responsible?: string;
+  destructionMethod?: string;
+  observations?: string;
+  approvedXAdmon?: string;
+  approvalDateXAdmon?: string;
+  approvalUserXAdmon?: string;
+  numRegister?: string;
+  captureDate?: string;
+  numDelegation1?: string;
+  numDelegation2?: string;
+  identifier?: Identifier;
+  label?: string;
+  universalFolio?: string;
+  numeraryFolio?: string;
+  numTransfer?: NumTransfer;
+  idTypeProceedings?: string;
+  receiptKey?: string;
+  comptrollerWitness?: string;
+  numRequest?: string;
+  closeDate?: string;
+  maxDate?: string;
+  indFulfilled?: string;
+  dateCaptureHc?: string;
+  dateCloseHc?: string;
+  dateMaxHc?: string;
+  receiveBy?: string;
+  affair?: string;
+  numDelegation_1?: NumDelegation;
+  numDelegation_2?: NumDelegation;
+  numDelegation1Description?: string;
+  numDelegation2Description?: string;
+  file?: NumFile;
+}
+
 export interface Identifier {
   code: string;
   description: string;
