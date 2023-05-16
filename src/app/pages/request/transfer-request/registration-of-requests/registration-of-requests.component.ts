@@ -942,6 +942,7 @@ export class RegistrationOfRequestsComponent
         'No se puede aprobar la solicitud',
         'Es requerido previamente tener firmado el dictamen'
       );
+      this.deleteMsjRefuse();
       this.loader.load = false;
       return;
     }
@@ -978,6 +979,7 @@ export class RegistrationOfRequestsComponent
     );
     if (taskResult === true) {
       this.loader.load = false;
+      //this.cleanMotiveRefuse();
       this.msgGuardado(
         'success',
         'Turnado Exitoso',
@@ -985,6 +987,7 @@ export class RegistrationOfRequestsComponent
       );
     }
   }
+
   /** fin de proceso */
 
   /* Inicio de rechazar aprovacion */
@@ -1100,7 +1103,7 @@ export class RegistrationOfRequestsComponent
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
-          this.deleteMsjRefuse();
+          //this.deleteMsjRefuse();
         },
         error: error => {
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');

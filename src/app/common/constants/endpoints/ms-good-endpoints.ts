@@ -23,6 +23,7 @@ export enum GoodEndpoints {
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
+  PAValidaCambioEstatus = 'good/testValid',
 }
 
 export enum GoodProcessPoints {

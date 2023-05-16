@@ -725,6 +725,13 @@ export interface IVban {
   ];
 }
 
+export interface IValidaCambioEstatus {
+  p2: number | string | null;
+  p1: number | string | null;
+  p3: string | number | null;
+  p4: string | number | null;
+}
+
 export interface IValNumeOtro {
   pc_pantalla: string;
   no_bien: number;
