@@ -118,6 +118,18 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.r2.addClass(final, 'disabled');
       }
     });
+
+    this.type.valueChanges.subscribe(res => {
+      this.form.get('delegacionRecibe').reset();
+      this.form.get('subdelegation').reset();
+      this.form.get('estatusActa').reset();
+      this.form.get('actaInicial').reset();
+      this.form.get('actaFinal').reset();
+      this.form.get('desde').reset();
+      this.form.get('hasta').reset();
+      this.form.get('fechaDesde').reset();
+      this.form.get('fechaHasta').reset();
+    });
   }
 
   prepareForm() {

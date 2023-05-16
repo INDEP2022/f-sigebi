@@ -23,6 +23,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ConciliationDepositaryPaymentsService } from '../services/conciliation-depositary-payments.service';
 import {
+  CORRECT_REMOVE_PAYMENTS,
   ERROR_APOINTMENT_NUMBER_NULL,
   ERROR_DATE_DISPERSAL_NULL,
   ERROR_GOOD_NULL,
@@ -34,6 +35,7 @@ import {
   NOT_FOUND_GOOD_APPOINTMENT,
   NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS,
   NOT_FOUND_PERSONS_DEPOSITARY,
+  NOT_FOUND_REMOVE_PAYMENTS,
 } from '../utils/conciliation-depositary-payments.messages';
 
 /** SERVICE IMPORTS */
@@ -168,21 +170,65 @@ export class ConciliationDepositaryPaymentsComponent
     console.log('btnDispersar', dispersar);
     if (dispersar.validDate) {
       console.log(dispersar);
-      // PAGOSREF_DEPOSITARIA.ELIM_DISPER_PAGOREF(:BLK_CTRL.NO_NOMBRAMIENTO,:LIST_FECHA);
+      this.alertQuestion(
+        'question',
+        '¿Seguro que deseá eliminar todas las dispersiones de la la fecha: ' +
+          this.datePipe.transform(dispersar.dateValue, 'dd/MM/yyyy') +
+          '?',
+        ''
+      ).then(res => {
+        if (res.isConfirmed) {
+          this.deletePaymentRefRemove(dispersar.dateValue);
+        }
+      });
     } else {
       this.alert('warning', '', ERROR_DATE_DISPERSAL_NULL);
     }
   }
-  btnAplicarPagos() {
-    console.log('btnAplicarPagos');
+
+  async deletePaymentRefRemove(dateParam: string) {
+    this.loading = true;
+    let params: any = {
+      pOne: Number(this.depositaryAppointment.appointmentNumber),
+      pDate: new Date(dateParam),
+    };
+    await this.svConciliationDepositaryPaymentsService
+      .deletePaymentRefRemove(params)
+      .subscribe({
+        next: res => {
+          this.loading = false;
+          console.log(res.data);
+          this.btnSearchGood(this.noBienReadOnly);
+          this.alertInfo(
+            'success',
+            '',
+            CORRECT_REMOVE_PAYMENTS(
+              Number(this.depositaryAppointment.appointmentNumber),
+              this.datePipe.transform(dateParam, 'dd/MM/yyyy')
+            )
+          );
+        },
+        error: err => {
+          this.loading = false;
+          console.log(err);
+          this.alertInfo(
+            'error',
+            '',
+            NOT_FOUND_REMOVE_PAYMENTS(
+              err.error.message,
+              Number(this.depositaryAppointment.appointmentNumber),
+              dateParam
+            )
+          );
+        },
+      });
   }
-  btnDispersarPagos() {
-    console.log('btnDispersarPagos');
-  }
+
   btnDepositaryRecharge(formDepositario: any): any {
     console.log(formDepositario.value);
 
     if (this.form.get('noBien').valid && this.noBienReadOnly) {
+      // Recargar los clientes
     } else {
       this.alert(
         'warning',
@@ -194,13 +240,8 @@ export class ConciliationDepositaryPaymentsComponent
   btnValidacionPagos(form: any): any {
     this.formDepositario = form.depositario;
     this.form = form.form;
-    console.log(form, this.form.value, this.formDepositario);
-    console.log('btnValidacionPagos');
     // Llama la forma FCONDEPODISPAGOS
     if (this.form.get('noBien').valid && this.noBienReadOnly) {
-      // this.router.navigateByUrl(
-      //   this.rutaValidacionPagos + '/' + this.form.get('noBien').value
-      // );
       this.router.navigate(
         [this.rutaValidacionPagos + '/' + this.form.get('noBien').value],
         {
@@ -333,6 +374,7 @@ export class ConciliationDepositaryPaymentsComponent
   }
 
   async getParamsDep() {
+    this.loading = true;
     let params: IPaymendtDepParamsDep = {
       name: Number(this.depositaryAppointment.appointmentNumber),
       address: 'D',
@@ -345,6 +387,7 @@ export class ConciliationDepositaryPaymentsComponent
             console.log(res.data);
             this.getValidStatus();
           } else {
+            this.loading = false;
             this.alertInfo(
               'warning',
               '',
@@ -356,6 +399,7 @@ export class ConciliationDepositaryPaymentsComponent
           }
         },
         error: err => {
+          this.loading = false;
           console.log(err);
           this.alertInfo(
             'warning',
@@ -379,6 +423,7 @@ export class ConciliationDepositaryPaymentsComponent
           console.log('VALID STATUS');
           console.log(res.data);
           if (res.data.length > 0) {
+            this.loading = false;
             this.alertInfo(
               'warning',
               '',
@@ -393,6 +438,7 @@ export class ConciliationDepositaryPaymentsComponent
           }
         },
         error: err => {
+          this.loading = false;
           console.log(err);
           this.alertInfo(
             'warning',
@@ -419,6 +465,7 @@ export class ConciliationDepositaryPaymentsComponent
             // Valida Params Dep
             this.getValidaDep();
           } else {
+            this.loading = false;
             this.alertInfo(
               'warning',
               '',
@@ -430,6 +477,7 @@ export class ConciliationDepositaryPaymentsComponent
           }
         },
         error: err => {
+          this.loading = false;
           console.log(err);
           this.alertInfo(
             'warning',
@@ -444,9 +492,17 @@ export class ConciliationDepositaryPaymentsComponent
   }
 
   getValidaDep() {
+    if (!this.form.get('fecha').value) {
+      this.loading = false;
+      this.alertInfo('warning', 'Se requiere una Fecha para continuar', '');
+      return;
+    }
+    let fecha = new Date();
+    this.actualDate = this.datePipe.transform(fecha, 'dd/MM/yyyy');
+    this.form.get('fecha').setValue(this.actualDate);
     let params: any = {
-      pOne: Number(this.depositaryAppointment.appointmentNumber),
-      pDate: this.form.get('fecha').value,
+      name: Number(this.depositaryAppointment.appointmentNumber),
+      date: fecha,
     };
     this.svConciliationDepositaryPaymentsService
       .getPaymentRefValidDep(params)
@@ -456,6 +512,7 @@ export class ConciliationDepositaryPaymentsComponent
           this.gotToConciliationPays();
         },
         error: err => {
+          this.loading = false;
           console.log(err);
           this.alertInfo(
             'warning',
@@ -471,34 +528,37 @@ export class ConciliationDepositaryPaymentsComponent
   }
 
   gotToConciliationPays() {
-    this.alertInfo('info', '', 'LLAMAR LA PANTALLA FCONDEPOCONCILPAG');
-    this.router
-      .navigate(['PENDIENTE'], {
-        queryParams: {
-          origin: this.screenKey,
-          P_CONTRA: this.depositaryAppointment.importConsideration,
-          P_FECHA: this.form.get('fecha').value,
-          P_PERSONA: this.depositaryAppointment.personNumber.id,
-        },
-      })
-      .then(() => {
-        this.getPrepOI();
-      });
-    // FCONDEPOCONCILPAG
+    // this.alertInfo('info', '', 'LLAMAR LA PANTALLA FCONDEPOCONDISPAG');
+    // this.router
+    //   .navigate(['PENDIENTE'], {
+    //     queryParams: {
+    //       origin: this.screenKey,
+    //       P_CONTRA: this.depositaryAppointment.importConsideration,
+    //       P_FECHA: this.form.get('fecha').value,
+    //       P_PERSONA: this.depositaryAppointment.personNumber.id,
+    //     },
+    //   })
+    //   .then(() => {
+    //     this.getPrepOI();
+    //   });
+    this.getPrepOI();
+    // FCONDEPOCONDISPAG
   }
 
   async getPrepOI() {
     let params: any = {
-      pOne: Number(this.depositaryAppointment.appointmentNumber),
-      pTwo: this.form.get('fecha').value,
+      name: Number(this.depositaryAppointment.appointmentNumber),
+      description: this.depositaryAppointment.contractKey,
     };
     await this.svConciliationDepositaryPaymentsService
       .getPaymentRefPrepOI(params)
       .subscribe({
         next: res => {
+          this.loading = false;
           console.log(res.data);
         },
         error: err => {
+          this.loading = false;
           console.log(err);
           this.alertInfo(
             'warning',

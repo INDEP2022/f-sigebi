@@ -12,15 +12,26 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-6">
-          <app-proceeding-types-shared
-            [form]="form"></app-proceeding-types-shared>
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="tipoEvento"
+            label="Tipo de Evento"
+            value="id"
+            bindLabel="description"
+            [searchable]="false"
+            loadingText="Cargando tipos de evento..."
+            path="proceeding/api/v1/proceedings-delivery-reception/get-types">
+          </ng-custom-select-loading>
+          <!-- <app-proceeding-types-shared
+            [form]="form"></app-proceeding-types-shared> -->
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               formControlName="fechaInicio"
+              readonly
               [maxDate]="hoy" />
           </form-field>
         </div>
@@ -28,9 +39,10 @@
           <form-field [control]="form.get('fechaFin')" label="Fecha Fin">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               [minDate]="fechaInicio.value"
               [maxDate]="hoy"
+              readonly
               formControlName="fechaFin" />
           </form-field>
         </div>
@@ -38,17 +50,39 @@
           <form-field
             [control]="form.get('statusEvento')"
             label="Estatus Evento">
-            <select class="form-control" formControlName="statusEvento">
-              <option value="TODOS">Todos</option>
-              <option value="ABIERTA">Abierto</option>
-              <option value="CERRADA">Cerrado</option>
-            </select>
+            <ng-select
+              formControlName="statusEvento"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="TODOS">Todos</ng-option>
+              <ng-option value="ABIERTA">Abierto</ng-option>
+              <ng-option value="CERRADA">Cerrado</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-3" style="margin-top: 20px">
-        <div class="col-md-6">
-          <app-select-form
+        <div class="col-md-12 mt-2">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="coordRegional"
+            [multiple]="true"
+            label="Coordinación Regional"
+            value="description"
+            bindLabel="description"
+            paramSearch="search"
+            path="catalog/api/v1/delegation">
+          </ng-custom-select-loading>
+          <!-- <ng-template #coordinationLabel let-item="item">
+            {{ item.id }} - {{ item.description }}
+          </ng-template> -->
+          <!-- <ng-template #coordinationOption let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template> -->
+          <!-- <app-select-form
             [form]="form"
             [multiple]="true"
             formField="coordRegional"
@@ -56,26 +90,51 @@
             value="description"
             [haveTodos]="false"
             [getListObservable]="coordRegional"
-            [(params)]="paramsCoords"></app-select-form>
+            [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-6">
-          <app-select-form
+        <div class="col-md-12 mt-4">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="usuario"
+            label="Usuarios"
+            value="id"
+            bindLabel="name"
+            loadingText="Cargando usuarios..."
+            typeToSearchText="Escriba el nombre del usuario"
+            path="users/api/v1/seg-users"
+            [labelTemplate]="usuarioLabel"
+            [optionTemplate]="usuarioOption">
+          </ng-custom-select-loading>
+
+          <ng-template #usuarioLabel let-item="item">
+            {{ item.id }} - {{ item.name }}
+          </ng-template>
+          <ng-template #usuarioOption let-item="item">
+            <div [title]="item.id + '-' + item.name">
+              {{ item.id }} - {{ item.name }}
+            </div>
+          </ng-template>
+
+          <!-- <app-select-form
             [form]="form"
             formField="usuario"
             label="Usuarios"
             bindLabel="name"
             [haveTodos]="false"
             [operator]="like"
+            paramFilter="goodId"
             [getListObservable]="usuarios"
-            [(paramsFilter)]="paramsUsers"></app-select-form>
+            [(paramsFilter)]="paramsUsers"></app-select-form> -->
           <!-- <app-elaborate-users-shared
             [form]="form"></app-elaborate-users-shared> -->
         </div>
       </div>
 
       <div class="action-buttons">
-        <div class="col-md-6" [class]="loading ? 'disabled' : ''">
+        <div
+          class="col-md-6"
+          [class]="loading || form.invalid ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -103,10 +162,10 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Programaciones</h5>
-    <div class="buttons mt-2">
+    <div class="mt-2 righButtons">
       <app-columns-select
         [(settings)]="settings1"
-        [defaultColumns]="4"></app-columns-select>
+        [defaultColumns]="5"></app-columns-select>
       <button
         class="btn btn-primary btn-sm active"
         type="submit"
