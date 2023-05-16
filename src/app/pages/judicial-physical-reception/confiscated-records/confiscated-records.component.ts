@@ -592,6 +592,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.prevProce = false;
     this.navigateProceedings = false;
     this.initialdisabled = true;
+    this.act2Valid = false;
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
@@ -625,6 +626,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.dataGoods.load(newData);
             this.getGoodsByExpedient();
           } else {
+            this.initialdisabled = false;
+            this.getTransfer();
+            console.log('Fue en este checkChange');
+            this.checkChange();
+            this.minDateFecElab = new Date();
             this.alert(
               'warning',
               'Sin bienes válidos',
@@ -636,6 +642,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           console.error(err);
           this.dataGoods.load([]);
           if (err.status === 404) {
+            this.initialdisabled = false;
+            this.getTransfer();
+            console.log('Fue en este checkChange');
+            this.checkChange();
+            this.minDateFecElab = new Date();
             this.alert(
               'warning',
               'No hay bienes para este expediente',
@@ -643,6 +654,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             );
           }
           if (err.status === 400) {
+            this.initialdisabled = false;
+            this.getTransfer();
+            console.log('Fue en este checkChange');
+            this.checkChange();
+            this.minDateFecElab = new Date();
             this.alert(
               'warning',
               'No hay bienes para este expediente',
@@ -751,6 +767,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.fillIncomeProceeding(dataRes);
       } else {
         this.getTransfer();
+        console.log('Fue en este checkChange');
         this.checkChange();
         this.minDateFecElab = new Date();
         this.clearInputs();
@@ -810,6 +827,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         } else {
           this.initialdisabled = false;
           this.minDateFecElab = new Date();
+          console.log('Fue en este checkChange');
+          this.checkChange();
           this.getTransfer();
         }
       },
@@ -818,6 +837,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.initialdisabled = false;
         this.minDateFecElab = new Date();
         this.getTransfer();
+        console.log('Fue en este checkChange');
+        this.checkChange();
       }
     );
   }
@@ -1527,6 +1548,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           });
         }
         this.alert('success', 'Se registró el almacen en los bienes', '');
+      } else {
+        this.alert(
+          'warning',
+          'No se seleccionó almacén',
+          'Debe seleccionar un almacén válido'
+        );
       }
       console.log(this.form.get('boveda').value);
       if (this.form.get('boveda').value != null) {
@@ -1569,6 +1596,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           });
         }
       }
+    } else {
+      this.alert('warning', 'Estus de acta inválido', '');
     }
   }
 
