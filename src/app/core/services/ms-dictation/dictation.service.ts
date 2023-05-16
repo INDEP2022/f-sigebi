@@ -45,7 +45,10 @@ export class DictationService extends HttpService {
     return this.get(this.route.Dictation, body);
   }
 
-  findByIds(body: { id: string | number }): Observable<IDictation> {
+  findByIds(body: {
+    id: string | number;
+    typeDict?: string | number;
+  }): Observable<IDictation> {
     return this.post(this.route.FindByIds, body);
   }
 
@@ -97,5 +100,18 @@ export class DictationService extends HttpService {
       DictationEndpoints.CopiesOfficeSendDictation,
       body
     );
+  }
+
+  postCargaMasDesahogob(body: any) {
+    const route = `${DictationEndpoints.CargaMasDesahogob}`;
+    return this.post(route, body);
+  }
+
+  postFindGoodDictGood1(body: {
+    NO_OF_DICTA: any;
+    TIPO_DICTAMINACION: string;
+  }) {
+    const route = `${DictationEndpoints.FindGoodDictGood1}`;
+    return this.post(route, body);
   }
 }

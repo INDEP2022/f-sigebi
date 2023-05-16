@@ -1,7 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IBienesPar } from '../../models/bienesPar.model';
 import { PartializeGeneralGoodTab2Service } from '../../services/partialize-general-good-tab2.service';
+import { PartializeGeneralGoodV2Tab2Service } from '../../services/partialize-general-good-v2-tab2.service';
+import { PartializeGeneralGoodV2Service } from '../../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
@@ -11,20 +15,32 @@ import { PartializeGeneralGoodService } from '../../services/partialize-general-
 })
 export class PartializeViewComponent extends BasePage implements OnInit {
   @Input() firstCase: boolean = null;
+  @Input() version: number;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   v_numerario: any;
   vfactor: any;
   statePresed = 0;
   pressPartialize = false;
   pressApply = false;
+  page = 1;
   constructor(
     private serviceTab1: PartializeGeneralGoodService,
-    private serviceTab2: PartializeGeneralGoodTab2Service
+    private serviceTab2: PartializeGeneralGoodTab2Service,
+    private service2Tab1: PartializeGeneralGoodV2Service,
+    private service2Tab2: PartializeGeneralGoodV2Tab2Service
   ) {
     super();
+    this.params.value.limit = 11;
   }
 
   get service() {
-    return this.firstCase === true ? this.serviceTab1 : this.serviceTab2;
+    return this.version === 1
+      ? this.firstCase === true
+        ? this.serviceTab1
+        : this.serviceTab2
+      : this.firstCase === true
+      ? this.service2Tab1
+      : this.service2Tab2;
   }
 
   get formGood() {
@@ -36,6 +52,17 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
   set bienesPar(value) {
     this.service.bienesPar = value;
+  }
+
+  get pagedBienesPar() {
+    const final = this.page * 10 - 1;
+    const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
+    return bienesNotTotal
+      .slice(
+        (this.page - 1) * 10,
+        final > bienesNotTotal.length ? final : bienesNotTotal.length
+      )
+      .concat(this.bienesPar[this.bienesPar.length - 1]);
   }
 
   get settingsGoods() {
@@ -65,10 +92,10 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   get stateApply() {
-    if (this.formGood.invalid || this.bienesPar.length === 0) {
-      return 'disabled';
+    if (this.formGood?.valid && this.bienesPar.length > 0) {
+      return 'active';
     }
-    return 'active';
+    return 'disabled';
   }
 
   pressed(state: number) {
@@ -90,7 +117,12 @@ export class PartializeViewComponent extends BasePage implements OnInit {
       return;
     }
     this.service.initFormControl();
-    this.bienesPar = [...this.service.getSavedPartializedGoods()];
+    // this.bienesPar = [...this.service.getSavedPartializedGoods()];
+    this.params.pipe().subscribe({
+      next: resp => {
+        this.page = resp.page;
+      },
+    });
   }
 
   get form() {
