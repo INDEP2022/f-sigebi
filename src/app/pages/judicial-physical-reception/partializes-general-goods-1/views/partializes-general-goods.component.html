@@ -6,7 +6,9 @@
   </div>
   <div body>
     <div class="md-tabs">
-      <tabset>
+      <app-partialize-view [version]="version"></app-partialize-view>
+
+      <!-- <tabset>
         <tab [heading]="clasificators">
           <app-partialize-view
             [version]="version"
@@ -17,7 +19,7 @@
             [version]="version"
             [firstCase]="false"></app-partialize-view>
         </tab>
-      </tabset>
+      </tabset> -->
     </div>
   </div>
 </app-card>
