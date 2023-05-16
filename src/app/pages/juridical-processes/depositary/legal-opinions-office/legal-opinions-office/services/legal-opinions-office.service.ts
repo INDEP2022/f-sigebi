@@ -10,6 +10,7 @@ import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-di
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
+import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
@@ -17,6 +18,7 @@ import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electroni
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +33,9 @@ export class LegalOpinionsOfficeService {
     private msOficialDictationService: OficialDictationService,
     private msSsf3SignatureElecDocsService: Ssf3SignatureElecDocsService,
     private msCopiesOfficialOpinionService: CopiesOfficialOpinionService,
-    private msJobDictumTextsService: JobDictumTextsService
+    private msJobDictumTextsService: JobDictumTextsService,
+    private msDictationXGood1Service: DictationXGood1Service,
+    private msProcedureManagement: ProcedureManagementService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -69,6 +73,12 @@ export class LegalOpinionsOfficeService {
   }
   getInfoUserLogued(params: string) {
     return this.msUsersService.getInfoUserLogued(params);
+  }
+  getGoods(params: _Params) {
+    return this.msDictationXGood1Service.getAll(params);
+  }
+  getProcedureManagement(params: string) {
+    return this.msProcedureManagement.getAllFiltered(params);
   }
 
   getTexto3FromOfficeDictation(

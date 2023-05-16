@@ -1,7 +1,8 @@
 {
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
+  "editor.minimap.enabled": true,
   "terminal.integrated.env.windows": {
-    "node_options": "--max_old_space_size=4048"
+    "node_options": "--max_old_space_size=8192"
   }
 }
