@@ -20,19 +20,27 @@ const NOT_FOUND_GET_PARAMSDEP_PAYMENTS = (
   error: string,
   no_nombramiento: number
 ) =>
-  `Error al validar los parámetros para el número de nombramientro ${no_nombramiento}. ${error}`;
+  `Error al validar los parámetros para el número de Nombramientro ${no_nombramiento}. ${error}`;
 const NOT_FOUND_GET_VALIDADEP_PAYMENTS = (
   error: string,
   no_nombramiento: number
 ) =>
-  `Error al validar la Depositaría para el número de nombramientro ${no_nombramiento}. ${error}`;
+  `Error al validar la Depositaría para el número de Nombramientro ${no_nombramiento}. ${error}`;
 const NOT_FOUND_GET_VALID_STATUS = (error: string, no_nombramiento: number) =>
-  `Error al validar los estatus de los bienes para el número de nombramientro ${no_nombramiento}. ${error}`;
+  `Error al validar los estatus de los bienes para el número de Nombramientro ${no_nombramiento}. ${error}`;
 const NOT_FOUND_GET_VALID_BLACKLIST = (
   error: string,
   no_nombramiento: number
 ) =>
-  `Error al validar si el Depositario se encuentra en Lista Negra para el número de nombramientro ${no_nombramiento}. ${error}`;
+  `Error al validar si el Depositario se encuentra en Lista Negra para el número de Nombramientro ${no_nombramiento}. ${error}`;
+const NOT_FOUND_REMOVE_PAYMENTS = (
+  error: string,
+  no_nombramiento: number,
+  date_param: string
+) =>
+  `Error al Remover la Depositaría para el número de Nombramientro: ${no_nombramiento} y la Fecha: ${date_param}. ${error}`;
+const CORRECT_REMOVE_PAYMENTS = (no_nombramiento: number, date_param: string) =>
+  `Se realizó correctamente la Eliminación de la Disperción de Pagos para el número de Nombramientro: ${no_nombramiento} y la Fecha: ${date_param}`;
 
 export {
   ERROR_GOOD_PARAM,
@@ -50,4 +58,6 @@ export {
   NOT_FOUND_GET_VALID_BLACKLIST,
   ERROR_APOINTMENT_NUMBER_NULL,
   NOT_FOUND_GET_VALIDADEP_PAYMENTS,
+  NOT_FOUND_REMOVE_PAYMENTS,
+  CORRECT_REMOVE_PAYMENTS,
 };
