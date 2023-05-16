@@ -17,7 +17,7 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div style="display: flex; column-gap: 15px">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <form-field [control]="form.get('noBien')" label="N° de bien">
               <input
                 type="number"
@@ -33,7 +33,7 @@
                 formControlName="description"></textarea>
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <button
               [disabled]="loading"
               class="btn btn-primary btn-sm active"
