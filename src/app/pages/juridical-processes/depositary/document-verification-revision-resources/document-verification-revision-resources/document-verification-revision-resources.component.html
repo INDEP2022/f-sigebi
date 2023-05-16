@@ -6,74 +6,115 @@
   </div>
 
   <div body>
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="formExp" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-12 p-2">
+        <div class="col-sm-12 col-12 col-md-12">
           <h6>Informaci&oacute;n de Expediente</h6>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-2">
           <app-expedient-shared
             expedientField="id"
-            [form]="form"
+            [form]="formExp"
             (selectExpedient)="expedientSelect($event)"></app-expedient-shared>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-3">
           <form-field
-            [control]="form.get('protectionKey')"
+            [control]="formExp.get('protectionKey')"
             label="No&#46; Amparo">
-            <input class="form-control" formControlName="protectionKey" />
+            <input
+              class="form-control"
+              formControlName="protectionKey"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-3">
           <form-field
-            [control]="form.get('fechaPresentacionRecursoRevision')"
+            [control]="formExp.get('dateAgreementAssurance')"
             label="Fecha Presentaci&oacute;n Recurso Revisi&oacute;n">
             <input
               class="form-control"
-              formControlName="fechaPresentacionRecursoRevision"
-              bsDatepicker />
+              formControlName="dateAgreementAssurance"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-3">
           <form-field
-            [control]="form.get('preliminaryInquiry')"
+            [control]="formExp.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
-            <input class="form-control" formControlName="preliminaryInquiry" />
+            <input
+              class="form-control"
+              formControlName="preliminaryInquiry"
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('criminalCase')" label="Causa Penal">
-            <input class="form-control" formControlName="criminalCase" />
+        <div class="col-sm-12 col-12 col-md-3 p-3">
+          <form-field
+            [control]="formExp.get('criminalCase')"
+            label="Causa Penal">
+            <input
+              class="form-control"
+              formControlName="criminalCase"
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
           </form-field>
         </div>
+      </div>
+    </form>
+    <form [formGroup]="form" class="form-material">
+      <div clas="row w-100">
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <h6>Informaci&oacute;n de Bienes</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('goodId')" label="No&#46; Bien">
-            <input class="form-control" formControlName="goodId" />
+            <input
+              class="form-control"
+              formControlName="goodId"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-8 p-2">
           <form-field
             [control]="form.get('description')"
             label="No&#46; Bien Descripción">
-            <input class="form-control" formControlName="description" />
+            <input
+              class="form-control"
+              formControlName="description"
+              oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('initialAgreementDate')"
-            label="Fecha Notificaci&oacute;n">
+            [control]="form.get('agreementDate')"
+            label="Fecha Acuerdo Inicial">
             <input
               class="form-control"
-              formControlName="initialAgreementDate"
-              bsDatepicker />
+              formControlName="agreementDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('status')" label="Estatus Bien">
-            <input class="form-control" formControlName="status" />
+            <input
+              class="form-control"
+              formControlName="status"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Descripción Estatus">
+            <input
+              (dblclick)="showHistory()"
+              class="form-control"
+              formControlName="descriptionStatus"
+              oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -83,14 +124,20 @@
             <input
               class="form-control"
               formControlName="notificationDate"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('statusDictaminacion')"
+            [control]="form.get('di_situacion_bien')"
             label="Estatus Dictaminaci&oacute;n">
-            <input class="form-control" formControlName="statusDictaminacion" />
+            <input
+              class="form-control"
+              formControlName="di_situacion_bien"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -105,12 +152,12 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
-            [control]="form.get('motivoRecursoRevision')"
+            [control]="form.get('revRecCause')"
             label="Motivo Recurso Revisi&oacute;n">
             <textarea
               rows="3"
               class="form-control"
-              formControlName="motivoRecursoRevision"></textarea>
+              formControlName="revRecCause"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -123,11 +170,11 @@
               formControlName="observations"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-          <div class="form-group">
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-left">
+          <div class="buttons">
             <button
               type="button"
-              class="btn btn-primary active"
+              class="btn btn-primary active btn-sm"
               (click)="btnAprobar()">
               Aprobar
             </button>
@@ -166,6 +213,23 @@
     </form>
   </div>
 </app-card>
+
+<div class="col-12 text-center">
+  <button
+    *ngIf="isHistory"
+    type="button"
+    class="btn btn-danger btn-sm active p-3"
+    (click)="isHistory = !isHistory; goodId = null">
+    Cerrar Ventana
+    <i class="bx bx-window-close"></i>
+  </button>
+</div>
+
+<div #df>
+  <app-historical-situation-goods
+    *ngIf="isHistory"
+    [noBien]="goodId"></app-historical-situation-goods>
+</div>
 
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
