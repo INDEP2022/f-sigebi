@@ -101,6 +101,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   totalCurrent: number = 0;
   totalCorrect: number = 0;
   totalIncorrect: number = 0;
+  blockSender: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -466,19 +467,59 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
     this.form.get('moreInformation3').setValue(this.officeDictationData.text3);
     if (this.officeDictationData.statusOf == 'ENVIADO') {
-      this.form.get('issuingUser').disable();
-      this.form.get('addressee').disable();
-      this.form.get('city').disable();
+      this.blockSender = true;
+      this.disabledDataOffice();
+      this.disabledDataCopies();
       // this.form.get('numberNotary').disable();
     } else {
-      this.form.get('issuingUser').enable();
-      this.form.get('addressee').enable();
-      this.form.get('city').enable();
+      this.blockSender = false;
+      this.enabledDataOffice();
+      this.enabledDataCopies();
       // this.form.get('numberNotary').enable();
     }
     this.getCityByDetail(new ListParams(), true);
     this.getIssuingUserByDetail(new ListParams(), true);
     this.getAddresseeByDetail(new ListParams(), true);
+  }
+
+  enabledDataOffice() {
+    this.form.get('issuingUser').enable();
+    this.form.get('addressee').enable();
+    this.form.get('city').enable();
+    this.form.get('introductoryParagraph').enable();
+    this.form.get('finalParagraph').enable();
+    this.form.get('moreInformation1').enable();
+    this.form.get('moreInformation2').enable();
+    this.form.get('moreInformation3').enable();
+  }
+
+  enabledDataCopies() {
+    this.form.get('ccp_person').enable();
+    this.form.get('ccp_addressee').enable();
+    this.form.get('ccp_TiPerson').enable();
+    this.form.get('ccp_person_1').enable();
+    this.form.get('ccp_addressee_1').enable();
+    this.form.get('ccp_TiPerson_1').enable();
+  }
+
+  disabledDataOffice() {
+    this.form.get('issuingUser').disable();
+    this.form.get('addressee').disable();
+    this.form.get('city').disable();
+    this.form.get('introductoryParagraph').disable();
+    this.form.get('finalParagraph').disable();
+    this.form.get('moreInformation1').disable();
+    this.form.get('moreInformation2').disable();
+    this.form.get('moreInformation3').disable();
+  }
+
+  disabledDataCopies() {
+    this.form.get('ccp_person').disable();
+    this.form.get('ccp_addressee').disable();
+    this.form.get('ccp_TiPerson').disable();
+    this.form.get('ccp_person_1').disable();
+    this.form.get('ccp_addressee_1').disable();
+    this.form.get('ccp_TiPerson_1').disable();
   }
 
   getProcedureManagment() {
@@ -839,6 +880,45 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   sendOffice(count: number = 0) {
+    // console.log(this.form.get('issuingUser').value, this.dataUserLogged);
+    // if (this.blockSender) {
+    //   return;
+    // }
+    // if (!this.officeDictationData) {
+    //   this.alertInfo(
+    //     'warning',
+    //     'Se requiere cargar la información del Oficio para continuar',
+    //     'Revisa los parámetros y vuelve a intentar'
+    //   );
+    //   return;
+    // }
+    // if (!this.dictationData) {
+    //   this.alertInfo(
+    //     'warning',
+    //     'Se requiere cargar la información de la Dictaminación para continuar',
+    //     'Revisa los parámetros y vuelve a intentar'
+    //   );
+    //   return;
+    // }
+    // if (!this.addresseeDataSelect) {
+    //   this.alertInfo(
+    //     'warning',
+    //     'Se requiere seleccionar un Destinatario para continuar',
+    //     'Selecciona un Destinatario y vuelve a intentar'
+    //   );
+    //   return;
+    // }
+    // if (
+    //   this.form.get('issuingUser').value.toLocaleLowerCase() !=
+    //   this.dataUserLogged.user.toLocaleLowerCase()
+    // ) {
+    //   this.alertInfo(
+    //     'warning',
+    //     'El usuario actual no corresponde al del campo "Autoriza Dictaminación"',
+    //     'Sólo el usuario del campo "Autoriza Dictaminación" puede realizar está acción'
+    //   );
+    //   return;
+    // }
     this.loadingSend = true;
     console.log('SEND OFFICE');
 
@@ -881,7 +961,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.totalCorrect = 0;
       this.totalIncorrect = 0;
     }
-    this.sendGoodDataToSendOffice(0, body);
+    this.sendGoodDataToSendOffice(count, body);
   }
 
   sendGoodDataToSendOffice(count: number, body: any) {
@@ -890,10 +970,24 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     body.no_bien = infoGood.good.goodId;
     body.iden = infoGood.good.identifier;
     body.proceso_ext_dom = infoGood.good.extDomProcess;
-    this.sendOfficeAndGoodData(infoGood, count, body);
+    console.log(
+      'COPIAS OFICIO DICTAMEN',
+      count,
+      this.totalCurrent,
+      this.goodData.length,
+      this.totalData
+    );
+    this.sendOfficeAndGoodData(count, body);
   }
 
-  sendOfficeAndGoodData(data: any, count: number, body: any) {
+  sendOfficeAndGoodData(count: number, body: any) {
+    console.log(
+      'COPIAS OFICIO DICTAMEN',
+      count,
+      this.totalCurrent,
+      this.goodData.length,
+      this.totalData
+    );
     let subscription = this.svLegalOpinionsOfficeService
       .getCopiesOfficeSendDictation(body)
       .subscribe({
@@ -906,9 +1000,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
             res,
             count,
             this.totalCurrent,
-            this.goodData.length
+            this.goodData.length,
+            this.totalData
           );
-          if (this.totalData < count) {
+          if (this.totalData > count) {
             this.sendOffice(count);
           }
           if (this.totalData == count) {
@@ -931,8 +1026,14 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           count++;
           this.totalCurrent++;
           this.totalIncorrect++;
-          console.log(error, count, this.totalCurrent, this.goodData.length);
-          if (this.totalData < count) {
+          console.log(
+            error,
+            count,
+            this.totalCurrent,
+            this.goodData.length,
+            this.totalData
+          );
+          if (this.totalData > count) {
             this.sendOffice(count);
           }
           if (this.totalData == count) {

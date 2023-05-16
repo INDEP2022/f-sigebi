@@ -1033,8 +1033,8 @@ export class RegistrationOfRequestsComponent
     if (taskResult === true) {
       this.msgGuardado(
         'success',
-        'Turnado Exitoso',
-        `Se guardó la solicitud con el folio: ${this.requestData.id}`
+        'Solicitud Rechazada',
+        `Se Rechazo la Solicitud con el Folio: ${this.requestData.id}`
       );
     }
   }
@@ -1215,12 +1215,13 @@ export class RegistrationOfRequestsComponent
         }
         if (typeCommit === 'validar-destino-bien') {
           this.loader.load = true;
+          this.deleteMsjRefuse();
           await this.updateGoodStatus('SOLICITAR_APROBACION');
+          //tiene aclaraciones
           const clarification = await this.haveNotificacions();
           console.log(clarification);
           this.loader.load = false;
           if (clarification === 'POR_ACLARAR') {
-            debugger;
             //consultar si ya exise una tarea de solicitar aprovacion creada
             const existApprovalTask = await this.existApprobalTask();
             if (existApprovalTask === true) {
@@ -1259,7 +1260,6 @@ export class RegistrationOfRequestsComponent
         if (typeCommit === 'refuse') {
           await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
           this.motivoRechazo();
-          //this.refuseMethod();
         }
       }
     });
@@ -1337,7 +1337,6 @@ export class RegistrationOfRequestsComponent
         await this.updateGood(body);
       }
 
-      console.log(this.process);
       if (
         this.process === 'process-approval' &&
         good.processStatus == 'SOLICITAR_APROBACION'
