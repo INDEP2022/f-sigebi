@@ -930,6 +930,8 @@ export class RegistrationOfRequestsComponent
       return;
     }
 
+    this.deleteMsjRefuse(); //Movel al lugar correcto al finalizar tarea
+
     this.msgSaveModal(
       'Aprobar',
       '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
@@ -982,6 +984,7 @@ export class RegistrationOfRequestsComponent
     );
     if (taskResult === true) {
       this.loader.load = false;
+      //this.cleanMotiveRefuse();
       this.msgGuardado(
         'success',
         'Turnado Exitoso',
@@ -989,6 +992,7 @@ export class RegistrationOfRequestsComponent
       );
     }
   }
+
   /** fin de proceso */
 
   /* Inicio de rechazar aprovacion */
@@ -1115,7 +1119,7 @@ export class RegistrationOfRequestsComponent
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
-          this.deleteMsjRefuse();
+          //this.deleteMsjRefuse();
         },
         error: error => {
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
