@@ -39,6 +39,19 @@
               formControlName="scanningFoli" />
           </form-field>
         </div>
+        <div class="col-md-12 col-sm-12 col-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                [disabled]="disabled"
+                (click)="replicate()"
+                type="button"
+                class="btn btn-warning btn-sm active">
+                Replicar Folio
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
     <div class="col-md-2 col-sm-12 col-xs-12">

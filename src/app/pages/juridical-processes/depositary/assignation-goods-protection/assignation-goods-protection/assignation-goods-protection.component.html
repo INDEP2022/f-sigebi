@@ -99,7 +99,7 @@
             class="form-control"
             formControlName="reportPreviousDate"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }" />
+            [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }" />
         </form-field>
       </div>
       <div class="col-sm-12 col-12 col-md-5 p-2">
@@ -110,7 +110,7 @@
             class="form-control"
             formControlName="reportJustifiedDate"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }" />
+            [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }" />
         </form-field>
       </div>
       <div class="col-sm-12 col-12 col-md-7 p-2">
@@ -164,7 +164,7 @@
             class="form-control"
             formControlName="protectionDate"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }" />
+            [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }" />
         </form-field>
       </div>
       <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -319,7 +319,7 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active mr-2"
-              (click)="blockDelete = !blockDelete">
+              (click)="alertMsg()">
               {{ blockDelete ? 'Bienes amparos protegidos' : 'Bienes amparos' }}
             </button>
             <button

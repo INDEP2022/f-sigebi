@@ -6,7 +6,7 @@
           type="text"
           class="form-control"
           formControlName="managementNumber"
-          (keyup.enter)="onmanagementNumberEnter()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
@@ -17,16 +17,16 @@
           type="text"
           class="form-control"
           formControlName="numberGestion"
-          (keyup.enter)="onNumberGestionEnter()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flywheel')" label="Volante">
+      <form-field [control]="form.get('flyerNumber')" label="Volante">
         <input
           type="text"
           class="form-control"
-          formControlName="flywheel"
-          (keyup.enter)="onFlywheelEnter()" />
+          formControlName="flyerNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
@@ -35,10 +35,25 @@
           type="text"
           class="form-control"
           formControlName="officio"
-          (keyup.enter)="onOfficioEnter()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="!verBoton">
+      <button class="btn btn-primary btn-sm active" (click)="buscarOficio()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        (click)="nuevaBusquedaOficio()">
+        Nueva Busqueda <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+
   <hr />
   <div class="row">
     <div class="col-md-4 col-sm-12 col-xs-12">
@@ -108,18 +123,14 @@
     </div>
   </div>
   <div class="row pl-3">C&#46;C&#46;P&#46;</div>
+
   <div class="row mt-5">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-        <select
-          class="form-control"
-          formControlName="typePerson"
-          (change)="validaCampos($event)">
-          <option
-            *ngFor="let option of options"
-            [selected]="option.value === nrSelecttypePerson"
-            [value]="option.value">
-            {{ option.label }} {{ option.value === nrSelecttypePerson }}
+        <select class="form-control" formControlName="typePerson">
+          <!--(change)="validaCampos($event)"-->
+          <option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
           </option>
         </select>
       </form-field>
@@ -130,6 +141,7 @@
           [items]="UserDestinatario"
           bindLabel="id"
           bindValue="id"
+          [readonly]="form.get('typePerson').value === 'E'"
           formControlName="senderUser"
           class="form-control"
           (change)="getDescUser('control', $event)">
@@ -138,18 +150,20 @@
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <form-field [control]="form.get('personaExt')" label="Nom. Persona Ext">
-        <input type="text" class="form-control" formControlName="personaExt" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="personaExt"
+          [readonly]="!(form.get('typePerson').value === 'E')" />
       </form-field>
     </div>
   </div>
+
   <div class="row mt-3">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson_I">
-          <option
-            *ngFor="let option of options"
-            [selected]="option.value === nrSelecttypePerson_I"
-            [value]="option.value">
+          <option *ngFor="let option of options" [value]="option.value">
             {{ option.label }}
           </option>
         </select>
@@ -164,6 +178,7 @@
           bindLabel="id"
           bindValue="id"
           formControlName="senderUser_I"
+          [readonly]="form.get('typePerson_I').value === 'E'"
           class="form-control"
           (change)="getDescUser('control_I', $event)">
         </ng-select>
@@ -174,7 +189,8 @@
         <input
           type="text"
           class="form-control"
-          formControlName="personaExt_I" />
+          formControlName="personaExt_I"
+          [readonly]="!(form.get('typePerson_I').value === 'E')" />
       </form-field>
     </div>
   </div>
