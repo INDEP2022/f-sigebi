@@ -1,12 +1,12 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
+      <form-field [control]="form.get('managementNumber')" label="Expediente">
         <input
           type="text"
           class="form-control"
-          formControlName="proceedingsNumber"
-          (keyup.enter)="onNumberGoodEnter()" />
+          formControlName="managementNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
@@ -17,16 +17,16 @@
           type="text"
           class="form-control"
           formControlName="numberGestion"
-          (keyup.enter)="onNumberGestionEnter()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flywheel')" label="Volante">
+      <form-field [control]="form.get('flyerNumber')" label="Volante">
         <input
           type="text"
           class="form-control"
-          formControlName="flywheel"
-          (keyup.enter)="onFlywheelEnter()" />
+          formControlName="flyerNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
@@ -35,20 +35,30 @@
           type="text"
           class="form-control"
           formControlName="officio"
-          (keyup.enter)="onOfficioEnter()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="!verBoton">
+      <button class="btn btn-primary btn-sm active" (click)="buscarOficio()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        (click)="nuevaBusquedaOficio()">
+        Nueva Busqueda <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+
   <hr />
   <div class="row">
     <div class="col-md-4 col-sm-12 col-xs-12">
       <form-field [control]="form.get('senderUser')" label="Remitente">
         <input type="text" class="form-control" formControlName="senderUser" />
-        <!--app-user-shared
-        [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Remitente'">
-      </app-user-shared-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -69,8 +79,10 @@
         label="P&aacute;rrafo Inicial">
         <textarea
           type="text"
+          rows="4"
           class="form-control"
-          formControlName="paragraphInitial"></textarea>
+          formControlName="paragraphInitial">
+        </textarea>
       </form-field>
     </div>
   </div>
@@ -111,74 +123,94 @@
     </div>
   </div>
   <div class="row pl-3">C&#46;C&#46;P&#46;</div>
+
   <div class="row mt-5">
-    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <form-field [control]="form.get('typePerson')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="1">PERSONA EXTERNA</option>
-          <option [value]="2">PERSONA INTERNA</option>
+          <!--(change)="validaCampos($event)"-->
+          <option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+          </option>
         </select>
       </form-field>
     </div>
-    <div class="col-md-7 col-sm-12 col-xs-12">
-      <app-user-shared
-        [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Detinatario Copia'">
-      </app-user-shared>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+      <form-field [control]="form.get('senderUser')" label="Detinatario Copia">
+        <ng-select
+          [items]="UserDestinatario"
+          bindLabel="id"
+          bindValue="id"
+          [readonly]="form.get('typePerson').value === 'E'"
+          formControlName="senderUser"
+          class="form-control"
+          (change)="getDescUser('control', $event)">
+        </ng-select>
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+      <form-field [control]="form.get('personaExt')" label="Nom. Persona Ext">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="personaExt"
+          [readonly]="!(form.get('typePerson').value === 'E')" />
+      </form-field>
     </div>
   </div>
+
   <div class="row mt-3">
-    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson_I">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="1">PERSONA EXTERNA</option>
-          <option [value]="2">PERSONA INTERNA</option>
+          <option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+          </option>
         </select>
       </form-field>
     </div>
-    <div class="col-md-7 col-sm-12 col-xs-12">
-      <app-user-shared
-        [form]="form"
-        [userField]="'senderUser_I'"
-        [label]="'Detinatario Copia'"></app-user-shared>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field
+        [control]="form.get('senderUser_I')"
+        label="Detinatario Copia">
+        <ng-select
+          [items]="UserDestinatario"
+          bindLabel="id"
+          bindValue="id"
+          formControlName="senderUser_I"
+          [readonly]="form.get('typePerson_I').value === 'E'"
+          class="form-control"
+          (change)="getDescUser('control_I', $event)">
+        </ng-select>
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
+      <form-field [control]="form.get('personaExt_I')" label="Nom. Persona Ext">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="personaExt_I"
+          [readonly]="!(form.get('typePerson_I').value === 'E')" />
+      </form-field>
     </div>
   </div>
   <hr />
   <div class="row mb-5">
     <div class="col-md-8 col-sm-12 col-xs-12">
-      <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('key')" label="Clave">
-            <input type="text" class="form-control" formControlName="key" />
-          </form-field>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('document')" label="Documento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="document" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('key_I')" label="Clave">
-            <input type="text" class="form-control" formControlName="key_I" />
-          </form-field>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('document_I')" label="Documento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="document_I" />
-          </form-field>
-        </div>
-      </div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Descripci&oacute;n documento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of IAttDocument; let i = index">
+            <td>{{ item.cveDocument }}</td>
+            <td>{{ item.description }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">

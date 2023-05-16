@@ -23,6 +23,7 @@ import {
 
 /** SERVICE IMPORTS */
 /*Redux NgRX Global Vars Service*/
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -309,6 +310,7 @@ export class JuridicalRulingComponent
 
   constructor(
     private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
     private service: GoodTypeService,
     private globalVarsService: GlobalVarsService,
     private readonly goodServices: GoodService,
@@ -332,8 +334,20 @@ export class JuridicalRulingComponent
         this.globalVars = globalVars;
         console.log(globalVars);
       });
-    this.onLoadGoodList();
-    this.onLoadDocumentsByGood();
+    this.getParams();
+  }
+
+  getParams() {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.legalForm
+          .get('noExpediente')
+          .setValue(
+            params['noExpediente'] ? Number(params['noExpediente']) : undefined
+          );
+      });
+    this.changeNumExpediente();
   }
 
   onKeyPress($event: any) {

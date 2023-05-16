@@ -158,6 +158,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   rec_adm: string = '';
   v_atrib_del = 0;
   scanStatus = false;
+  numberExpedient = '';
 
   constructor(
     private fb: FormBuilder,
@@ -456,16 +457,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
-    this.nextProce = true;
-    this.prevProce = false;
-    this.navigateProceedings = false;
-    this.goodData = [];
-    this.dataGoodAct.load(this.goodData);
-    this.numberProceeding = 0;
-    this.form.get('folioEscaneo').reset();
-    this.automaticFill();
-    this.goodsByExpediente();
-    this.clearInputs();
 
     const paramsF = new FilterParams();
     paramsF.addFilter(
@@ -498,11 +489,24 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   goodsByExpediente() {
+    this.nextProce = true;
+    this.prevProce = false;
+    this.navigateProceedings = false;
+    this.act2Valid = false;
+    this.initialBool = true;
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
+    this.numberProceeding = 0;
+    this.statusProceeding = '';
+    this.numberExpedient = this.form.get('expediente').value;
+    this.form.get('folioEscaneo').reset();
+    this.automaticFill();
+    this.goodsByExpediente();
+    this.clearInputs();
+
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${
-          this.form.get('expediente').value
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+        `filter.fileNumber=$eq:${this.form.get('expediente').value}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -1010,23 +1014,33 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods-1',
+      '/pages/judicial-physical-reception/partializes-general-goods/v1',
     ]);
+  }
+
+  goCargaMasiva() {
+    this.router.navigate(['/pages/general-processes/goods-tracker']);
   }
 
   //NAVIGATE
   //NAVIGATE PROCEEDING
   clearInputs() {
-    this.form.get('acta2').setValue(null);
-    this.form.get('entrega').setValue(null);
-    this.form.get('fecElabRecibo').setValue(null);
-    this.form.get('fecEntregaBienes').setValue(null);
-    this.form.get('fecElab').setValue(null);
-    this.form.get('fecRecepFisica').setValue(null);
-    this.form.get('fecCaptura').setValue(null);
-    this.form.get('observaciones').setValue(null);
-    this.form.get('recibe2').setValue(null);
-    this.form.get('direccion').setValue(null);
+    this.form.get('acta2').reset();
+    this.form.get('entrega').reset();
+    this.form.get('fecElabRecibo').reset();
+    this.form.get('fecEntregaBienes').reset();
+    this.form.get('fecElab').reset();
+    this.form.get('fecRecepFisica').reset();
+    this.form.get('fecCaptura').reset();
+    this.form.get('observaciones').reset();
+    this.form.get('recibe2').reset();
+    this.form.get('direccion').reset();
+    this.form.get('acta').reset();
+    this.form.get('transfer').reset();
+    this.form.get('ident').reset();
+    this.form.get('entrego').reset();
+    this.form.get('recibe').reset();
+    this.form.get('folio').reset();
   }
 
   nextProceeding() {
@@ -1107,22 +1121,38 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         'Eliminar'
       ).then(q => {
         if (q.isConfirmed) {
-          this.serviceProcVal
-            .deleteProceeding(this.idProceeding.toString())
-            .subscribe(
-              res => {
-                console.log(res);
-                this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
-              },
-              err => {
-                console.log(err);
-                this.alert(
-                  'error',
-                  'No se pudo eliminar acta',
-                  'Secudió un problema al eliminar el acta'
-                );
-              }
-            );
+          const paramsF = new FilterParams();
+          paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+          this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+            res => {
+              const realData = JSON.parse(JSON.stringify(res.data[0]));
+              this.serviceDetailProc.PADelActaEntrega(realData.id).subscribe(
+                res => {
+                  this.form.get('expediente').setValue(this.numberExpedient);
+                  this.clearInputs();
+                  this.getGoodsByExpedient();
+                  this.alert('success', 'Acta eliminada con éxito', '');
+                },
+                err => {
+                  console.log(err);
+
+                  this.alert(
+                    'error',
+                    'No se pudo eliminar acta',
+                    'Secudió un problema al eliminar el acta'
+                  );
+                }
+              );
+            },
+            err => {
+              console.log(err);
+              this.alert(
+                'error',
+                'No se pudo eliminar acta',
+                'Secudió un problema al eliminar el acta'
+              );
+            }
+          );
         }
       });
     } else {

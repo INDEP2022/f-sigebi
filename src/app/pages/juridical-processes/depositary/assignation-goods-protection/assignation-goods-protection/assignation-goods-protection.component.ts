@@ -292,6 +292,29 @@ export class AssignationGoodsProtectionComponent
         .subscribe({
           next: value => {
             let amparo: any = value.data[0];
+
+            if (amparo.protectionDate) {
+              const dateFormat = amparo.protectionDate
+                .split('-')
+                .reverse()
+                .join('-');
+              amparo.protectionDate = dateFormat;
+            }
+            if (amparo.reportJustifiedDate) {
+              const dateFormat = amparo.reportJustifiedDate
+                .split('-')
+                .reverse()
+                .join('-');
+              amparo.reportJustifiedDate = dateFormat;
+            }
+            if (amparo.reportPreviousDate) {
+              const dateFormat = amparo.reportPreviousDate
+                .split('-')
+                .reverse()
+                .join('-');
+              amparo.reportPreviousDate = dateFormat;
+            }
+
             this.formAmparo.patchValue(amparo);
             if (amparo.minpubNumber) {
               const paramsD = new ListParams();
@@ -644,6 +667,13 @@ export class AssignationGoodsProtectionComponent
           );
         },
       });
+    }
+  }
+
+  alertMsg() {
+    this.blockDelete = !this.blockDelete;
+    if (this.blockDelete) {
+      this.onLoadToast('info', 'Bienes protegidos contra eliminación');
     }
   }
 

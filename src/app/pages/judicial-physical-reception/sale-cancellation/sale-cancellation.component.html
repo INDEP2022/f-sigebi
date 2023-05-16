@@ -12,6 +12,7 @@
                 <input
                   type="number"
                   class="form-control"
+                  [min]="0"
                   formControlName="expediente" />
               </form-field>
             </div>
@@ -19,7 +20,7 @@
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm active"
-                (click)="getGoodsByExpedient()"
+                (click)="goodsByExpediente()"
                 [disabled]="
                   form.get('expediente').value == null ||
                   form.get('expediente').value < 0
@@ -369,7 +370,8 @@
               </button>
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-secondary active btn-sm">
+                class="my-1 mx-2 btn btn-secondary active btn-sm"
+                (click)="goCargaMasiva()">
                 Carga Masiva
               </button>
             </div>
