@@ -45,6 +45,17 @@ export class ScheduledMaintenanceComponent
     ];
   }
 
+  updateCoord(event: any) {
+    console.log(event);
+  }
+
+  resetView() {
+    console.log('RESET VIEW');
+    this.data = [];
+    this.data2 = [];
+    this.totalItems = 0;
+  }
+
   captureEvent() {
     console.log(this.form.value);
     if (!this.form.get('tipoEvento').value) {
@@ -81,7 +92,7 @@ export class ScheduledMaintenanceComponent
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
     );
-    this.service.getExcel(this.filterParams).subscribe(x => {
+    this.service.getExcel2(this.data).subscribe(x => {
       this.elementToExport = x;
       this.flagDownload = !this.flagDownload;
       console.log(x);
@@ -90,6 +101,15 @@ export class ScheduledMaintenanceComponent
         this._toastrService.clear();
       }, 1000);
     });
+    // this.service.getExcel(this.filterParams).subscribe(x => {
+    //   this.elementToExport = x;
+    //   this.flagDownload = !this.flagDownload;
+    //   console.log(x);
+    //   this.loadingExcel = false;
+    //   setTimeout(() => {
+    //     this._toastrService.clear();
+    //   }, 1000);
+    // });
     console.log(this.table);
   }
 }
