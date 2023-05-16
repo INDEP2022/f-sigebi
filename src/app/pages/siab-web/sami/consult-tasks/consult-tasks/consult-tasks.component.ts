@@ -373,7 +373,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     // if (!isfilterUsed) {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
-
     this.taskService
       .getTasksByUser(
         this.filterParams.getValue().getParams().concat('&sortBy=id:DESC')
