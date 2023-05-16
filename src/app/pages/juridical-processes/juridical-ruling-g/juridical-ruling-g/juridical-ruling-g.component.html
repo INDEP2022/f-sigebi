@@ -5,14 +5,14 @@
   </div>
 
   <div body>
-    <form [formGroup]="expedientesForm" class="container-fluid form-material">
+    <div>
       <div class="row">
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <h6>Expedientes</h6>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+        <!-- INICIA FORM #1 -->
+        <form
+          [formGroup]="expedientesForm"
+          class="container-fluid form-material col-12 p-4">
+          <div class="row p-4">
+            <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('noExpediente')"
                 label="No Expediente">
@@ -23,7 +23,17 @@
                   formControlName="noExpediente" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
+
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                [control]="expedientesForm.get('noDictaminacion')"
+                label="No Dictaminación">
+                <input class="form-control" formControlName="noDictaminacion" />
+              </form-field>
+            </div>
+            <!-- 
+              Tipo de dictaminación..
+              <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field [control]="expedientesForm.get('tipoDictaminacion')">
                 <ngx-select
                   [searchOnInit]="true"
@@ -34,8 +44,8 @@
                   control="tipoDictaminacion"
                   (change)="onTypeDictChange($event)"></ngx-select>
               </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            </div> -->
+            <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('averiguacionPrevia')"
                 label="Averiguaci&oacute;n Previa">
@@ -44,74 +54,80 @@
                   formControlName="averiguacionPrevia" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('causaPenal')"
                 label="Causa Penal">
                 <input class="form-control" formControlName="causaPenal" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
-              <form-check label="Delito" for="delito">
-                <input id="delito" type="checkbox" formControlName="delito" />
-              </form-check>
-            </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field
-                [control]="expedientesForm.get('observaciones')"
-                label="Observaciones">
-                <textarea
-                  class="form-control"
-                  formControlName="observaciones"></textarea>
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+              <form-field [control]="expedientesForm.get('delito')">
+                <form-check label="¿Es delito?" for="delito">
+                  <input
+                    id="delito"
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="delito" />
+                </form-check>
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
-              <div class="col-md-12 text-center text-danger">
-                <b>Observaciones</b>
-              </div>
+            <div class="col-12 text-danger p-2">
+              <b>Observaciones</b>
+              {{ expedientesForm.get('observaciones').value }}
             </div>
           </div>
-        </div>
-      </div>
-    </form>
-
-    <form
-      [formGroup]="dictaminacionesForm"
-      class="container-fluid form-material">
-      <div class="row">
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <h6>Dictaminaciones</h6>
-        </div>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <div class="row">
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+        </form>
+        <!-- INICIA FORM #2 TODO: -->
+        <form
+          [formGroup]="dictaminacionesForm"
+          class="container-fluid form-material col-12 p-4">
+          <div class="row p-4">
+            <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('etiqueta')"
                 label="Etiqueta">
                 <input class="form-control" formControlName="etiqueta" />
               </form-field>
+            </div> -->
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaInstructora')"
+                label="Fecha Instructora">
+                <input
+                  class="form-control"
+                  formControlName="fechaInstructora"
+                  bsDatepicker />
+              </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('wheelNumber')"
+                label="Volante">
+                <input class="form-control" formControlName="wheelNumber" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaDictaminacion')"
+                label="Fecha Dictaminación">
+                <input
+                  class="form-control"
+                  formControlName="fechaDictaminacion"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-md-offset-8 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaResolucion')"
-                label="Fecha Resoluci&oacute;n">
+                label="Fecha Resolución">
                 <input
                   class="form-control"
                   formControlName="fechaResolucion"
                   bsDatepicker />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
-              <form-field
-                [control]="dictaminacionesForm.get('fechaNotificacion')"
-                label="Fecha Notificaci&oacute;n">
-                <input
-                  class="form-control"
-                  formControlName="fechaNotificacion"
-                  bsDatepicker />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-2 p-2">
+            <div class="col-md-offset-4 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaNotificacionAseg')"
                 label="Fecha Notificaci&oacute;n Aseg">
@@ -121,151 +137,67 @@
                   bsDatepicker />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
+            <div class="col-md-4 p-2">
               <form-field
-                [control]="dictaminacionesForm.get('cveOficio')"
-                label="Clave Oficio">
-                <input class="form-control" formControlName="cveOficio" />
+                [control]="dictaminacionesForm.get('fechaNotificacion')"
+                label="Fecha Notificación">
+                <input
+                  class="form-control"
+                  formControlName="fechaNotificacion"
+                  bsDatepicker />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
-              <form-field
-                [control]="dictaminacionesForm.get('estatus')"
-                label="Estatus">
-                <input class="form-control" formControlName="estatus" />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-3 p-2">
-              <div class="col-md-12 text-center text-danger">
-                <b>Estatus</b>
+            <div class="col-12 p-2">
+              <div class="col-md-12 text-danger text-end">
+                <b>Estatus </b>
+                <b> {{ statusDict }}</b>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
-    </form>
+    </div>
 
-    <form [formGroup]="subtipoForm" class="container-fluid form-material">
+    <hr class="row" />
+
+    <!-- INICIA FORM #3 TODO: -->
+    <form
+      [formGroup]="subtipoForm"
+      class="container-fluid form-material col-12 px-2 pt-4">
       <div class="row">
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-          <div class="row">
-            <div class="col-md-4">
-              <form-field
-                [control]="subtipoForm.get('tipoDictaminacion')"
-                label="Ident&#46;">
-                <select
-                  class="form-control"
-                  formControlName="tipoDictaminacion">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'Alta'">Alta</option>
-                  <option [value]="'Normal'">Normal</option>
-                </select>
-              </form-field>
-            </div>
-            <!-- <div class="col-md-8">
-              <form-field
-                [control]="subtipoForm.get('noExpediente')"
-                label="Subtipo &#45; Ssubtipo &#45; Sssubtipo">
-                <select class="form-control" formControlName="noExpediente">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'Alta'">Alta</option>
-                  <option [value]="'Normal'">Normal</option>
-                </select>
-              </form-field>
-            </div> -->
-            <div class="mb-5 b-block w-100"></div>
-            <!-- <div class="col-md-3">
-              <form-field [control]="subtipoForm.get('type')">
-                <ngx-select
-                  class="form-control"
-                  [searchOnInit]="true"
-                  (fetchItems)="getTypes($event)"
-                  [data]="types"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Tipo de bien"
-                  bindLabel="nameGoodType"
-                  control="type"
-                  (change)="onTypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div> -->
+        <div class="col-md-4">
+          <form-field
+            [control]="subtipoForm.get('tipoDictaminacion')"
+            label="Ident&#46;">
+            <select class="form-control" formControlName="tipoDictaminacion">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'Alta'">Alta</option>
+              <option [value]="'Normal'">Normal</option>
+            </select>
+          </form-field>
+        </div>
 
-            <!--  -->
-            <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('subtype')">
-                <ngx-select
-                  class="form-control"
-                  [searchOnInit]="true"
-                  (fetchItems)="getSubtypes($event)"
-                  [data]="subtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Subtipo"
-                  bindLabel="nameGoodType"
-                  control="subtype"
-                  (change)="onSubtypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div>
-            <!--  -->
-
-            <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('ssubtype')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  (fetchItems)="getSsubtypes($event)"
-                  [data]="ssubtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Ssubtipo"
-                  bindLabel="description"
-                  control="ssubtype"
-                  (change)="onSsubtypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div>
-
-            <div class="col-md-4">
-              <form-field [control]="subtipoForm.get('sssubtype')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  (fetchItems)="getSssubtypes($event)"
-                  [data]="sssubtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  label="Sssubtipo"
-                  bindLabel="description"
-                  control="sssubtype"
-                  (change)="onSssubtypesChange($event)"
-                  (change)="onValuesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div>
-
-            <!-- <div class="col-md-3">
-              <form-field [control]="subtipoForm.get('subtype')">
-                <ngx-select
-                  class="form-control"
-                  [searchOnInit]="true"
-                  (fetchItems)="getSubtypes($event)"
-                  [data]="subtypes"
-                  [form]="subtipoForm"
-                  value="id"
-                  bindLabel="nameSubtypeGood"
-                  control="subtype"
-                  (change)="onSubtypesChange($event)">
-                </ngx-select>
-              </form-field>
-            </div> -->
-          </div>
+        <div class="col-md-8">
+          <form-field [control]="subtipoForm.get('type')">
+            <ngx-select
+              class="form-control"
+              [searchOnInit]="true"
+              (fetchItems)="getTypes($event)"
+              [data]="types"
+              [form]="subtipoForm"
+              value="id"
+              label="Subtipo - Ssubtipo - Sssubtipo"
+              bindLabel="nameGoodType"
+              control="type"
+              (change)="onTypesChange($event)">
+            </ngx-select>
+          </form-field>
         </div>
       </div>
     </form>
 
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
-        <hr class="row" />
         <h5 class="title">BIENES</h5>
         <br />
         <ng2-smart-table
@@ -356,8 +288,9 @@
       <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnAprobar()"
-          [routerLink]="rutaAprobado">
+          [disabled]="isDocsEmpty()"
+          (click)="btnApprove()">
+          <!-- [routerLink]="rutaAprobado" -->
           Aprobar
         </button>
         <button
@@ -417,10 +350,24 @@
           [settings]="settings4"
           [source]="data4"></ng2-smart-table>
       </div>
-      <div class="col-sm-12 col-12 col-md-12 text-right p-2">
+      <!-- <div class="col-sm-12 col-12 col-md-12 text-right p-2">
         <div class="form-group">
           <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
             Cerrar Ventana
+          </button>
+        </div>
+      </div> -->
+      <div class="col-12 flex p-2">
+        <div class="form-group text-right">
+          <button
+            class="btn btn-danger active btn-sm m-3"
+            (click)="btnCloseDocs()">
+            Cerrar Ventana
+          </button>
+          <button
+            class="btn btn-primary active btn-sm m-3"
+            (click)="btnSalir()">
+            Cargar documentos
           </button>
         </div>
       </div>
