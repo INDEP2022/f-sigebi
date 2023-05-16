@@ -33,6 +33,7 @@ export abstract class PartializeGeneralGood {
   };
   sumCant = 0;
   sumVal14 = 0;
+  noActa: number = 0;
   clasificators: string = '1424, 1426, 1427, 1575, 1590';
   constructor(
     protected dbPartialize: string,
