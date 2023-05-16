@@ -457,6 +457,7 @@ export class JuridicalRecordUpdateComponent
     });
   }
 
+  // numero de prueba 624187
   fillForm(notif: INotification) {
     this.fileDataUpdateForm.enable();
     this.fileDataUpdateForm.reset();
@@ -658,6 +659,8 @@ export class JuridicalRecordUpdateComponent
         error: () => {},
       });
     }
+    ('DESAHOGOS MASIVO, POR TENER RELACION CON EXPEDIENTES DE BIENES DICTAMINADOS');
+    ('DESAHOGO MASIVO, POR TENER RELACION CON EXPEDIENTES DE BIENES DICTAMINADOS');
     filterParams.removeAllFilters();
     filterParams.addFilter('expedient', notif.expedientNumber);
     filterParams.addFilter('flierNumber', notif.wheelNumber);
@@ -1046,9 +1049,9 @@ export class JuridicalRecordUpdateComponent
       this.fileDataUpdateForm.value;
     let sale: string = '',
       officeType: string = '';
-    if (catalog.property == 'S') {
+    if (catalog.property == 'N') {
       sale = 'C';
-    } else if (catalog.property == 'N') {
+    } else if (catalog.property == 'S') {
       sale = 'D';
     }
     if (catalog.i == 'S') {
@@ -1057,29 +1060,38 @@ export class JuridicalRecordUpdateComponent
     if (catalog.e == 'S') {
       officeType = 'EXTERNO';
     }
-    let procedure;
-    if (
-      this.pageParams.pNoTramite != null &&
-      this.pageParams.pNoTramite != undefined
-    ) {
-      procedure = this.pageParams.pNoTramite;
-    } else if (this.procedureId != undefined) {
-      procedure = this.procedureId;
+    if (catalog.g_of == 'S') {
+      let procedure;
+      if (
+        this.pageParams.pNoTramite != null &&
+        this.pageParams.pNoTramite != undefined
+      ) {
+        procedure = this.pageParams.pNoTramite;
+      } else if (this.procedureId != undefined) {
+        procedure = this.procedureId;
+      }
+      this.fileUpdComService.juridicalDocumentManagementParams = {
+        expediente: this.formControls.expedientNumber.value,
+        volante: this.formControls.wheelNumber.value,
+        pDictamen: this.formControls.dictumKey.value?.id,
+        pGestOk: this.pageParams.pGestOk,
+        pNoTramite: procedure,
+        tipoOf: officeType,
+        bien: catalog.property,
+        sale: sale,
+        doc: catalog.doc,
+      };
+      console.log(this.fileUpdComService.juridicalDocumentManagementParams);
+      this.router.navigateByUrl(
+        '/pages/documents-reception/flyers-registration/related-document-management/1'
+      );
+    } else {
+      this.alert(
+        'warning',
+        'No se encontró información',
+        'De acuerdo al Asunto y Dictamen NO puede generar un Oficio Gestión.'
+      );
     }
-    this.fileUpdComService.juridicalDocumentManagementParams = {
-      expediente: this.formControls.expedientNumber.value,
-      volante: this.formControls.wheelNumber.value,
-      pDictamen: this.formControls.dictumKey.value?.id,
-      pGestOk: this.pageParams.pGestOk,
-      pNoTramite: procedure,
-      tipoOf: officeType,
-      bien: catalog.property,
-      sale: sale,
-      doc: catalog.doc,
-    };
-    this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management/1'
-    );
   }
 
   sendToJuridicalRuling() {
@@ -1133,6 +1145,7 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
+    console.log(this.fileUpdComService.juridicalRulingParams);
     // const params = {
     //   expediente: 791477,
     //   volante: 1558180,
@@ -1142,9 +1155,10 @@ export class JuridicalRecordUpdateComponent
     //   pGestOk: 1,
     //   pNoTramite: 1044141,
     // };
-    this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/juridical-dictums'
-    );
+    // this.router.navigateByUrl(
+    //   '/pages/documents-reception/flyers-registration/juridical-dictums'
+    // );
+    this.router.navigateByUrl('/pages/juridical/juridical-ruling-g');
   }
 
   openToShiftChange() {
