@@ -1,9 +1,9 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component,OnInit,Renderer2 } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
+FormBuilder,
+FormControl,
+FormGroup,
+Validators
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { format } from 'date-fns';
@@ -133,6 +133,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.keyProceedingInitial = '';
       this.initialProceedingBool = false;
       this.finalProceedingBool = false;
+      this.finalProceeding = new DefaultSelect();
+      this.initialProceeding = new DefaultSelect();
     });
 
     this.form.get('actaInicial').valueChanges.subscribe(res => {
