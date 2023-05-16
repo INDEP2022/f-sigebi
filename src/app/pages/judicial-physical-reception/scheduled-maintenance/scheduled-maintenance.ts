@@ -239,6 +239,9 @@ export abstract class ScheduledMaintenance extends BasePage {
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           console.log(response);
+          if (response.data.length === 0) {
+            this.onLoadToast('error', 'No se encontraron datos');
+          }
           this.data = [
             ...response.data.map(x => {
               return {
@@ -255,6 +258,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         },
         error: error => {
           console.log(error);
+          this.onLoadToast('error', 'No se encontraron datos');
           this.loading = false;
           this.data = [];
         },

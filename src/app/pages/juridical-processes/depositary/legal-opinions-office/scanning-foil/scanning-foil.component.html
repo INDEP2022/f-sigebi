@@ -3,8 +3,12 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-primary btn-sm active">
-            scanner
+          <button
+            [disabled]="disabled"
+            (click)="createScannerFoil()"
+            type="button"
+            class="btn btn-primary btn-sm active">
+            Solicitud Escaneo
           </button>
         </div>
       </div>
@@ -12,8 +16,13 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-info btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="disabled"
+            (click)="openScannerPage()"
+            [disabled]="!officeDictationData && !dictationData"
+            type="button"
+            class="btn btn-info btn-sm active">
+            Escaneo
           </button>
         </div>
       </div>
@@ -35,8 +44,12 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-info btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="disabled"
+            (click)="showMessageDigitalization()"
+            type="button"
+            class="btn btn-info btn-sm active">
+            Solicitud Digitalizaci&oacute;n
           </button>
         </div>
       </div>
@@ -44,8 +57,12 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-primary btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="disabled"
+            (click)="showScannerFoil()"
+            type="button"
+            class="btn btn-primary btn-sm active">
+            Ver Im&aacute;genes
           </button>
         </div>
       </div>

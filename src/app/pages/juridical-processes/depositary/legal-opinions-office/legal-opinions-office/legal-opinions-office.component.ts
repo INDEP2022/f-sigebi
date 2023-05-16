@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -13,14 +17,18 @@ import {
   IDictation,
   IInitFormLegalOpinionOfficeBody,
 } from 'src/app/core/models/ms-dictation/dictation-model';
+import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { MailboxModalTableComponent } from 'src/app/pages/general-processes/work-mailbox/components/mailbox-modal-table/mailbox-modal-table.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { COLUMNS, officeTypeOption } from './columns';
+import { COLUMNS, officeTypeOption, RELATED_FOLIO_COLUMNS } from './columns';
 import { LegalOpinionsOfficeService } from './services/legal-opinions-office.service';
 
 export interface IParamsLegalOpinionsOffice {
@@ -37,45 +45,6 @@ export interface IParamsLegalOpinionsOffice {
   styles: [],
 })
 export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
-  data: any[] = [
-    {
-      number: 'Bien 1',
-      description: 'Descripcion del bien 1',
-      kitchenware: 'Menaje 1',
-      quantityDict: '2.000',
-      status: 'Estatus 1',
-      ident: 'Ident 1',
-      processes: 'Procesos 1',
-    },
-    {
-      number: 'Bien 1',
-      description: 'Descripcion del bien 1',
-      kitchenware: 'Menaje 1',
-      quantityDict: '2.000',
-      status: 'Estatus 1',
-      ident: 'Ident 1',
-      processes: 'Procesos 1',
-    },
-    {
-      number: 'Bien 1',
-      description: 'Descripcion del bien 1',
-      kitchenware: 'Menaje 1',
-      quantityDict: '2.000',
-      status: 'Estatus 1',
-      ident: 'Ident 1',
-      processes: 'Procesos 1',
-    },
-    {
-      number: 'Bien 1',
-      description: 'Descripcion del bien 1',
-      kitchenware: 'Menaje 1',
-      quantityDict: '2.000',
-      status: 'Estatus 1',
-      ident: 'Ident 1',
-      processes: 'Procesos 1',
-    },
-  ];
-
   form: FormGroup;
   formScan: FormGroup;
   totalItems: number = 0;
@@ -121,18 +90,40 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   ];
   showEnableTypeOffice: boolean = false;
   showScanForm: boolean = true;
+  loadingGoods: boolean = false;
+  loadingSend: boolean = false;
   screenKey: string = 'FACTJURDICTAMOFICIO';
   dataUserLogged: any;
+  dataTable: LocalDataSource = new LocalDataSource();
+  goodsByDictation = new BehaviorSubject<ListParams>(new ListParams());
+  goodData: IDictationXGood1[] = [];
+  totalData: number = 0;
+  totalCurrent: number = 0;
+  totalCorrect: number = 0;
+  totalIncorrect: number = 0;
 
   constructor(
     private fb: FormBuilder,
     private svLegalOpinionsOfficeService: LegalOpinionsOfficeService,
     private activatedRoute: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private documentsService: DocumentsService,
+    private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = COLUMNS;
-    this.settings.actions = false;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
+      hideSubHeader: true, //oculta subheaader de filtro
+      columns: COLUMNS,
+    };
+    // this.settings.columns = COLUMNS;
+    // this.settings.actions = false;
   }
 
   ngOnInit(): void {
@@ -169,7 +160,20 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         console.log(params, this.paramsScreen);
       });
     if (this.paramsScreen) {
-      this.initForm();
+      if (this.paramsScreen.TIPO && this.paramsScreen.P_VALOR) {
+        this.initForm();
+      } else {
+        console.log('SIN PARAMETROS');
+        this.alertInfo(
+          'info',
+          'Error en los paramétros',
+          'Los paramétros No. Oficio: ' +
+            this.paramsScreen.P_VALOR +
+            ' y el Tipo Oficio: ' +
+            this.paramsScreen.TIPO +
+            ' al iniciar la pantalla son requeridos'
+        );
+      }
     }
   }
 
@@ -223,6 +227,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
         error: error => {
           console.log(error);
+          this.alertInfo(
+            'info',
+            'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
+            ''
+          );
           subscription.unsubscribe();
         },
       });
@@ -243,9 +252,15 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       file: [{ value: '', disabled: false }, [Validators.maxLength(11)]],
-      numberOfficeDic: [{ value: '', disabled: false }, [Validators.required]],
+      numberOfficeDic: [
+        { value: '', disabled: false },
+        [Validators.required, Validators.maxLength(40)],
+      ],
       typeOffice: [{ value: '', disabled: true }],
-      cveOfficeGenerate: [{ value: '', disabled: true }, [Validators.required]],
+      cveOfficeGenerate: [
+        { value: '', disabled: true },
+        [Validators.required, Validators.maxLength(100)],
+      ],
       authorizedDic: [
         { value: '', disabled: false },
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -276,25 +291,25 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       ],
       introductoryParagraph: [
         { value: '', disabled: false },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(2000)],
       ],
       finalParagraph: [
         { value: '', disabled: false },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       moreInformation1: [
         { value: '', disabled: false },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       moreInformation2: [
         { value: '', disabled: false },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
       moreInformation3: [
         { value: '', disabled: false },
-        [Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      numberNotary: [{ value: '', disabled: false }, [Validators.required]],
+      numberNotary: [{ value: '', disabled: false }, [Validators.maxLength(6)]],
       ccp_person: [{ value: '', disabled: false }],
       ccp_addressee: [
         { value: null, disabled: false },
@@ -411,7 +426,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
               this.getElectronicFirmData();
             }
           }
+          this.goodsByDictation
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.loadGoodsByOfficeDictation());
           this.setDataOfficeDictation();
+          this.getProcedureManagment();
           this.getExpedientData();
           this.getOfficeCopiesDictation();
           this.getOfficeTextDictation();
@@ -450,16 +469,77 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.form.get('issuingUser').disable();
       this.form.get('addressee').disable();
       this.form.get('city').disable();
-      this.form.get('numberNotary').disable();
+      // this.form.get('numberNotary').disable();
     } else {
       this.form.get('issuingUser').enable();
       this.form.get('addressee').enable();
       this.form.get('city').enable();
-      this.form.get('numberNotary').enable();
+      // this.form.get('numberNotary').enable();
     }
     this.getCityByDetail(new ListParams(), true);
     this.getIssuingUserByDetail(new ListParams(), true);
     this.getAddresseeByDetail(new ListParams(), true);
+  }
+
+  getProcedureManagment() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('affairSij', SearchFilter.NULL, SearchFilter.NOT);
+    params.addFilter('flierNumber', this.dictationData.wheelNumber);
+    let subscription = this.svLegalOpinionsOfficeService
+      .getProcedureManagement(params.getParams())
+      .subscribe({
+        next: data => {
+          console.log('PROCEDURE MANAGEMENT', data);
+          // Visible true
+          this.form.get('numberNotary').enable();
+          subscription.unsubscribe();
+        },
+        error: error => {
+          console.log(error);
+          this.form.get('numberNotary').disable();
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  loadGoodsByOfficeDictation() {
+    this.loadingGoods = true;
+    this.totalData = 0;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('typeDict', this.paramsScreen.TIPO);
+    params.addFilter('ofDictNumber', this.paramsScreen.P_VALOR);
+    params.limit = this.goodsByDictation.value.limit;
+    params.page = this.goodsByDictation.value.page;
+    let subscription = this.svLegalOpinionsOfficeService
+      .getGoods(params.getParams())
+      .subscribe({
+        next: res => {
+          this.loadingGoods = false;
+          console.log('GOODS', res);
+          this.goodData = res.data;
+          let dataResponse = res.data.map((i: any) => {
+            i.good ? (i.good['amountDict'] = i.amountDict) : '';
+            i.menaje && i.good
+              ? (i.good['menaje'] = i.menaje['noGoodMenaje'])
+              : '';
+            return i.good;
+          });
+          console.log(dataResponse);
+          this.totalData = res.count;
+          this.dataTable.load(dataResponse);
+          this.dataTable.refresh();
+          subscription.unsubscribe();
+        },
+        error: error => {
+          this.loadingGoods = false;
+          console.log(error);
+          this.dataTable.load([]);
+          this.dataTable.refresh();
+          subscription.unsubscribe();
+        },
+      });
   }
 
   getExpedientData() {
@@ -758,7 +838,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     }
   }
 
-  sendOffice() {
+  sendOffice(count: number = 0) {
+    this.loadingSend = true;
     console.log('SEND OFFICE');
 
     let body: ICopiesOfficeSendDictation = {
@@ -779,7 +860,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.officeDictationData.recipientDepartmentNumber,
       no_delegacion_destinatario:
         this.officeDictationData.delegacionRecipientNumber,
-      no_delegacion_dictam: null, // Data del usuario
+      no_delegacion_dictam: this.dictationData.delegationDictNumber, // Data del usuario
       tipo: this.paramsScreen.TIPO,
       usuario:
         this.dataUserLogged.user == 'SIGEBIADMON'
@@ -795,26 +876,141 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       paquete: Number(this.paramsScreen.PAQUETE),
     };
     console.log(body);
-    // let subscription = this.svLegalOpinionsOfficeService
-    //   .getCopiesOfficeSendDictation(body)
-    //   .subscribe({
-    //     next: (res: any) => {
-    //       console.log('INIT FORM OFICIO', res);
-    //       this.variables.identi = res.data['identi'];
-    //       this.variables.cveActa = res.data['cve_acta'];
-    //       this.variables.fecha = res.data['fecha'];
-    //       if (
-    //         this.variables.identi.includes('4') &&
-    //         this.paramsScreen.TIPO == 'RESARCIMIENTO'
-    //       ) {
-    //         this.form.get('addressee').disable();
-    //       }
-    //       subscription.unsubscribe();
-    //     },
-    //     error: error => {
-    //       console.log(error);
-    //       subscription.unsubscribe();
-    //     },
-    //   });
+    if (count == 0) {
+      this.totalCurrent = 1;
+      this.totalCorrect = 0;
+      this.totalIncorrect = 0;
+    }
+    this.sendGoodDataToSendOffice(0, body);
+  }
+
+  sendGoodDataToSendOffice(count: number, body: any) {
+    let infoGood = this.goodData[count];
+    body.no_clasif_bien = infoGood.good.goodClassNumber;
+    body.no_bien = infoGood.good.goodId;
+    body.iden = infoGood.good.identifier;
+    body.proceso_ext_dom = infoGood.good.extDomProcess;
+    this.sendOfficeAndGoodData(infoGood, count, body);
+  }
+
+  sendOfficeAndGoodData(data: any, count: number, body: any) {
+    let subscription = this.svLegalOpinionsOfficeService
+      .getCopiesOfficeSendDictation(body)
+      .subscribe({
+        next: (res: any) => {
+          count++;
+          this.totalCurrent++;
+          this.totalCorrect++;
+          console.log(
+            'COPIAS OFICIO DICTAMEN',
+            res,
+            count,
+            this.totalCurrent,
+            this.goodData.length
+          );
+          if (this.totalData < count) {
+            this.sendOffice(count);
+          }
+          if (this.totalData == count) {
+            this.loadingSend = false;
+            this.alertInfo(
+              'info',
+              'Se enviaron correctamente ' +
+                this.totalCorrect +
+                ' Bien(es) de ' +
+                this.totalData +
+                '. Con ' +
+                this.totalIncorrect +
+                ' Error(es)',
+              ''
+            );
+          }
+          subscription.unsubscribe();
+        },
+        error: error => {
+          count++;
+          this.totalCurrent++;
+          this.totalIncorrect++;
+          console.log(error, count, this.totalCurrent, this.goodData.length);
+          if (this.totalData < count) {
+            this.sendOffice(count);
+          }
+          if (this.totalData == count) {
+            this.loadingSend = false;
+            this.alertInfo(
+              'info',
+              'Se enviaron correctamente ' +
+                this.totalCorrect +
+                ' Bien(es) de ' +
+                this.totalData +
+                '. Con ' +
+                this.totalIncorrect +
+                ' Error(es)',
+              ''
+            );
+          }
+          subscription.unsubscribe();
+        },
+      });
+  }
+
+  viewPictures(event: any) {
+    console.log(event);
+    if (!this.dictationData.wheelNumber) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'Este trámite no tiene volante asignado'
+      );
+      return;
+    }
+    this.getDocumentsByFlyer(this.dictationData.wheelNumber);
+  }
+
+  openDocumentsModal(flyerNum: string | number, title: string) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $params = new BehaviorSubject(params);
+    const $obs = this.documentsService.getAllFilter;
+    const service = this.documentsService;
+    const columns = RELATED_FOLIO_COLUMNS;
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+        showConfirmButton: true,
+      },
+    };
+    return this.modalService.show(
+      MailboxModalTableComponent<IDocuments>,
+      config
+    );
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const title = 'Folios relacionados al expediente';
+    const modalRef = this.openDocumentsModal(flyerNum, title);
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  getPicturesFromFolio(document: IDocuments) {
+    let folio = document.id;
+    if (document.associateUniversalFolio) {
+      folio = document.associateUniversalFolio;
+    }
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
 }

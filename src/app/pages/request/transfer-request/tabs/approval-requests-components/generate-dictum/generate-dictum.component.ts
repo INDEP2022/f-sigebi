@@ -48,8 +48,10 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Crear folio');
-    this.dictamenSeq();
+    if (this.folioReporte === null || this.folioReporte === '') {
+      console.log('Crear folio');
+      this.dictamenSeq();
+    }
 
     //Crea la clave armada o el folio
 

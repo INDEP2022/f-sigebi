@@ -33,6 +33,8 @@ export abstract class PartializeGeneralGood {
   };
   sumCant = 0;
   sumVal14 = 0;
+  noActa: number = 0;
+  clasificators: string = '1424, 1426, 1427, 1575, 1590';
   constructor(
     protected dbPartialize: string,
     protected dbSelectedGood: string,
@@ -52,7 +54,9 @@ export abstract class PartializeGeneralGood {
   }
 
   validationClasif() {
-    return [1424, 1426, 1427, 1575, 1590].includes(+this.good.goodClassNumber);
+    return this.good
+      ? this.clasificators.includes(this.good.goodClassNumber + '')
+      : false;
   }
 
   savePartializeds() {
