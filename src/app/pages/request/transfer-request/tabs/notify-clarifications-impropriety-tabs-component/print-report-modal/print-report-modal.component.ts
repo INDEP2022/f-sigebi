@@ -103,7 +103,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('request info ver', this.requestInfo);
     this.idSolicitud = this.requestInfo.id;
     //Borrar firmantes existentes
     this.verificateFirm();
