@@ -45,7 +45,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.goodService.getByGoodNumber(this.noBien.value).subscribe({
       next: response => {
         console.log(response);
-        this.selectGoodContent(response.data[0]);
+        this.selectGood(response.data[0]);
         // this.selectGood(response)
       },
       error: err => {
@@ -301,7 +301,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   async selectGoodContent(good: IGood) {
     let bandera;
     let clasif: number;
-    debugger;
+    // debugger;
     if (!good) {
       this.service.good = null;
       const lastGood = this.form.get('noBien').value;
