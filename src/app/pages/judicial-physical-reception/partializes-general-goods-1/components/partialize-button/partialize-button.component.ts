@@ -55,7 +55,7 @@ export class PartializeButtonComponent
 
   private validationImporte() {
     // debugger;
-    const cantidad = this.good.quantity;
+    const cantidad = +(this.good.quantity + '');
     if (!this.validationClasif()) {
       if (this.version === 1 ? cantidad < 0.1 : cantidad < 2) {
         this.onLoadToast(

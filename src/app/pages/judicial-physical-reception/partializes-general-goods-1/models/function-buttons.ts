@@ -4,8 +4,6 @@ import { firstValueFrom } from 'rxjs';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { SweetalertModel } from 'src/app/core/shared/base-page';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
-import { PartializeGeneralGoodTab2Service } from '../services/partialize-general-good-tab2.service';
-import { PartializeGeneralGoodV2Tab2Service } from '../services/partialize-general-good-v2-tab2.service';
 import { PartializeGeneralGoodV2Service } from '../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
 
@@ -15,31 +13,32 @@ import { PartializeGeneralGoodService } from '../services/partialize-general-goo
   styles: [``],
 })
 export class FunctionButtons {
-  @Input() firstCase: boolean = null;
+  // @Input() firstCase: boolean = null;
   @Input() version: number = null;
-  private serviceTab1 = inject(PartializeGeneralGoodService);
-  private serviceTab2 = inject(PartializeGeneralGoodTab2Service);
-  private service2Tab1 = inject(PartializeGeneralGoodV2Service);
-  private service2Tab2 = inject(PartializeGeneralGoodV2Tab2Service);
+  private service1 = inject(PartializeGeneralGoodService);
+  // private serviceTab2 = inject(PartializeGeneralGoodTab2Service);
+  private service2 = inject(PartializeGeneralGoodV2Service);
+  // private service2Tab2 = inject(PartializeGeneralGoodV2Tab2Service);
   protected goodService = inject(GoodService);
   private _toastrService = inject(ToastrService);
   v_numerario: number;
   vfactor: number;
 
   ngOnInit() {
-    if (this.firstCase === null) {
+    if (this.version === null) {
       return;
     }
   }
 
   get service() {
-    return this.version === 1
-      ? this.firstCase === true
-        ? this.serviceTab1
-        : this.serviceTab2
-      : this.firstCase === true
-      ? this.service2Tab1
-      : this.service2Tab2;
+    return this.version === 1 ? this.service1 : this.service2;
+    // return this.version === 1
+    //   ? this.firstCase === true
+    //     ? this.serviceTab1
+    //     : this.serviceTab2
+    //   : this.firstCase === true
+    //   ? this.service2Tab1
+    //   : this.service2Tab2;
   }
 
   get loading() {

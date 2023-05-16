@@ -133,17 +133,21 @@ export class CustomSelectWidthLoading
 
   onSelectChange(event: any) {
     console.log(event);
-
-    this.onChange?.(event[this.value] || null);
     if (!event) {
+      this.input$.next('');
       this.valueChange.emit(null);
       return;
     }
+    this.onChange?.(event[this.value] || null);
     const data = this.items.find(
       item => item[this.value] === event[this.value]
     );
     this.valueChange.emit(data);
     this.form.updateValueAndValidity();
+  }
+
+  clear(event: any) {
+    console.log(event);
   }
 
   getItemsObservable(text: string = '') {

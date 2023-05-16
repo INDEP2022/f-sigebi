@@ -186,33 +186,24 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       expediente: [null, [Validators.required]],
-      averPrev: [null, [Validators.required]],
-      acta: [null, [Validators.required]],
-      autoridad: [null, [Validators.required]],
-      ident: [null, [Validators.required]],
-      recibe: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      year: [null, [Validators.required]],
-      mes: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      nombre: [null, [Validators.required]],
+      acta: [null, []],
+      autoridad: [null, []],
+      ident: [null, []],
+      recibe: [null, []],
+      admin: [null, []],
+      folio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      year: [null, []],
+      mes: [null, []],
       acta2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       direccion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
-      folioEscaneo: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+      folioEscaneo: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       fecElab: [null, [Validators.required]],
       fecCierreActa: [null, [Validators.required]],
-      fecCaptura: [null, [Validators.required]],
+      fecCaptura: [null, []],
       autoridadCancela: [null, [Validators.required]],
       elabora: [
         null,
@@ -249,12 +240,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   fecElab() {
-    if (this.form.get('fecElab').value > new Date()) {
-      this.alert(
-        'warning',
-        'Problema con la fecha de elaboración',
-        'La fecha de elaboración debe de ser menor o igual a la fecha de hoy'
-      );
+    if (
+      format(this.form.get('fecElab').value, 'dd-MM-yyyy') >
+      format(this.maxDate, 'dd-MM-yyyy')
+    ) {
+      this.form.get('fecElab').setValue(new Date());
+      this.form.get('fecCierreActa').setValue(new Date());
     } else {
       this.form.get('fecCierreActa').setValue(this.form.get('fecElab').value);
     }
@@ -387,6 +378,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.initialBool = true;
     this.nextProce = true;
     this.prevProce = false;
+    this.act2Valid = false;
     this.navigateProceedings = false;
     this.statusProceeding = '';
     this.goodData = [];
@@ -517,15 +509,15 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   clearInputs() {
-    this.form.get('acta2').setValue(null);
-    this.form.get('fecElab').setValue(null);
-    this.form.get('fecCierreActa').setValue(null);
-    this.form.get('fecCaptura').setValue(null);
-    this.form.get('direccion').setValue(null);
-    this.form.get('observaciones').setValue(null);
-    this.form.get('autoridadCancela').setValue(null);
-    this.form.get('elabora').setValue(null);
-    this.form.get('testigo').setValue(null);
+    this.form.get('acta2').reset();
+    this.form.get('fecElab').reset();
+    this.form.get('fecCierreActa').reset();
+    this.form.get('fecCaptura').reset();
+    this.form.get('direccion').reset();
+    this.form.get('observaciones').reset();
+    this.form.get('autoridadCancela').reset();
+    this.form.get('elabora').reset();
+    this.form.get('testigo').reset();
     this.form.get('acta').reset();
     this.form.get('autoridad').reset();
     this.form.get('ident').reset();
@@ -543,7 +535,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'SUSPENSION');
+    paramsF.addFilter(
+      'typeProceedings',
+      'SUSPENSION,RECEPCAN',
+      SearchFilter.IN
+    );
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -869,10 +865,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods-1',
+      '/pages/judicial-physical-reception/partializes-general-goods/v1',
     ]);
   }
 
+  goCargaMasiva() {
+    this.router.navigate(['/pages/general-processes/goods-tracker']);
+  }
   //Validations
 
   validateFolio() {
@@ -978,7 +977,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             'yyyy-MM,dd HH:mm'
           ),
           datePhysicalReception: format(
-            this.form.get('fecReception').value,
+            this.form.get('fecCierreActa').value,
             'yyyy-MM,dd HH:mm'
           ),
           address: this.form.get('direccion').value,
@@ -989,14 +988,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           witness2: this.form.get('elabora').value,
           typeProceedings:
             this.form.get('acta').value == 'C' ? 'RECEPCAN' : 'SUSPENSION',
-          dateElaborationReceipt: format(
-            this.form.get('fecElabRec').value,
-            'yyyy-MM,dd HH:mm'
-          ),
-          dateDeliveryGood: format(
-            this.form.get('fecEntBien').value,
-            'yyyy-MM,dd HH:mm'
-          ),
           responsible: null,
           destructionMethod: null,
           observations: this.form.get('observaciones').value,
@@ -1031,7 +1022,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.form.get('fecElab').value != null &&
           this.form.get('fecCierreActa').value != null &&
           this.form.get('direccion').value != null &&
-          this.form.get('observaciones').value != null &&
           this.form.get('autoridadCancela').value != null &&
           this.form.get('elabora').value != null &&
           this.form.get('testigo').value != null
@@ -1052,11 +1042,23 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   this.statusProceeding = 'ABIERTA';
                   this.labelActa = 'Cerrar acta';
                   this.btnCSSAct = 'btn-primary';
+                  this.alert(
+                    'success',
+                    'Acta creada con éxito',
+                    `El acta ${
+                      this.form.get('acta2').value
+                    } fue abierta exitosamente`
+                  );
                 });
             },
             err => {
               console.log(err);
               console.log('Error al guardar');
+              this.alert(
+                'warning',
+                'Se presento un error',
+                'Se presento un error al intentar crear el acta, intentelo nuevamente'
+              );
             }
           );
         } else {
@@ -1155,7 +1157,23 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           res => {
             console.log();
             const realData = JSON.parse(JSON.stringify(res.data[0]));
-            this.alert('success', 'Éxito', `${realData.id}`);
+            this.serviceDetailProc
+              .PADelActaEntrega(realData.id)
+              .subscribe(res => {
+                this.form.get('expediente').setValue(this.numberExpedient);
+                this.dataGoods.load(
+                  this.dataGoods['data'].map((e: any) => {
+                    for (let element of this.dataGoodAct['data']) {
+                      if (e.id === element.id) {
+                        return { ...e, avalaible: true };
+                      }
+                    }
+                  })
+                );
+                this.clearInputs();
+                this.getGoodsByExpedient();
+                this.alert('success', 'Acta eliminada con éxito', '');
+              });
           },
           err => {
             console.log(err);
