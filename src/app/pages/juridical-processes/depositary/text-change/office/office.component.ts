@@ -8,6 +8,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
@@ -21,10 +22,7 @@ import { GoodsJobManagementService } from 'src/app/core/services/ms-office-manag
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-office',
@@ -35,16 +33,20 @@ export class OfficeComponent extends BasePage implements OnInit {
   goodJobManagement = new Observable<IListResponse<IGoodJobManagement>>();
   numberManage = new Observable<IListResponse<IAttachedDocument>>();
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  filterParams1 = new BehaviorSubject<FilterParams>(new FilterParams());
+  filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
+  filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
   comboOfficeFlayer: IGoodJobManagement[] = [];
   comboOffice: ImanagementOffice[] = [];
   objOffice: ImanagementOffice[] = [];
   options: any[];
-  nrSelecttypePerson: string;
-  nrSelecttypePerson_I: string;
+  nrSelecttypePerson: string | number;
+  nrSelecttypePerson_I: string | number;
   UserDestinatario: ISegUsers[] = [];
   IAttDocument: IAttachedDocument[] = [];
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
+  verBoton: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -60,13 +62,25 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadUserDestinatario();
-    this.buildForm();
     this.options = [
       { value: null, label: 'Seleccione un valor' },
-      { value: 'S', label: 'PERSONA EXTERNA' },
+      { value: 'E', label: 'PERSONA EXTERNA' },
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
+    this.loadUserDestinatario();
+    this.buildForm();
+    this.form.get('typePerson').valueChanges.subscribe(value => {
+      if (value === 'E') {
+        this.form.get('senderUser').setValue(null);
+      } else {
+        this.form.get('senderUser').setValue('');
+      }
+    });
+    this.form.get('typePerson_I').valueChanges.subscribe(value => {
+      if (value === 'E') {
+        this.form.get('senderUser_I').setValue(null);
+      }
+    });
   }
 
   /**
@@ -76,13 +90,13 @@ export class OfficeComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      proceedingsNumber: [null, [Validators.required]],
       managementNumber: [null, [Validators.required]],
       numberGestion: [null, [Validators.required]],
       flywheel: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      // proceedingsNumber: [null, [Validators.required]],
       officio: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -109,33 +123,17 @@ export class OfficeComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       typePerson: [null, [Validators.required]],
-      senderUser: [null, [Validators.required]],
+      senderUser: [null, null],
       personaExt: [null, [Validators.required]],
       typePerson_I: [null, [Validators.required]],
-      senderUser_I: [null, [Validators.required]],
+      senderUser_I: [null, null],
       personaExt_I: [null, [Validators.required]],
-      key: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      document: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      key_I: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      document_I: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
     });
   }
 
   public confirm() {
     const params = {
-      no_of_ges: this.form.value.proceedingsNumber,
+      no_of_ges: this.form.value.numberGestion,
     };
     this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
       next: response => {
@@ -154,26 +152,19 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.modalService.show(PreviewDocumentsComponent, config);
       },
     });
+    this.cleanfields();
   }
 
-  onmanagementNumberEnter() {
-    this.filterParams.getValue().removeAllFilters;
-    this.filterParams
-      .getValue()
-      .addFilter(
-        'managementNumber',
-        this.form.get('managementNumber').value,
-        SearchFilter.EQ
-      );
+  onmanagementNumberEnter(filterParams: BehaviorSubject<FilterParams>) {
     this.serviceOficces
-      .getAllOfficialDocument(this.filterParams.getValue().getParams())
+      .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.warn(resp);
-          console.warn(
-            '>>>>>===>==>=>=>=>=>==>=>=>>=>=>=>==>=>=>=>=>=>==>=>=>=>='
-          );
-          this.form.get('proceedingsNumber').value;
+          console.warn('1: >===>>', JSON.stringify(resp));
+          this.form
+            .get('managementNumber')
+            .setValue(resp.data[0].managementNumber);
+
           this.form
             .get('numberGestion')
             .setValue(resp.data[0].proceedingsNumber);
@@ -194,25 +185,11 @@ export class OfficeComponent extends BasePage implements OnInit {
       });
   }
 
-  onNumberGestionEnter() {}
-  onFlywheelEnter() {}
-  onOfficioEnter() {}
-  cleanFilters() {
-    this.form.get('numberGestion').setValue('');
-    this.form.get('flywheel').setValue('');
-    this.form.get('officio').setValue('');
-    this.form.get('senderUser').setValue('');
-    this.form.get('addressee').setValue('');
-    this.form.get('charge').setValue('');
-    this.form.get('paragraphInitial').setValue('');
-    this.form.get('paragraphFinish').setValue('');
-    this.form.get('paragraphOptional').setValue('');
-  }
-
   validaCampos(event: Event) {
     alert(this.form.value.typePerson);
     alert(this.nrSelecttypePerson);
   }
+
   getDescUser(control: string, event: Event) {
     this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
     if (control === 'control') {
@@ -240,8 +217,8 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
 
   loadbyAttachedDocuments() {
-    this.filterParams.getValue().removeAllFilters();
-    this.filterParams
+    this.filterParams1.getValue().removeAllFilters();
+    this.filterParams1
       .getValue()
       .addFilter(
         'managementNumber',
@@ -249,14 +226,105 @@ export class OfficeComponent extends BasePage implements OnInit {
         SearchFilter.EQ
       );
     this.AtachedDocumenServ.getAllFilter(
-      this.filterParams.getValue().getParams()
+      this.filterParams1.getValue().getParams()
     ).subscribe({
       next: resp => {
+        console.log('2 >=====>  ', JSON.stringify(resp.data));
         this.IAttDocument = resp.data;
       },
       error: error => {
-        console.log(error.error.message);
+        this.onLoadToast('error', 'Error', error.error.message);
       },
     });
+    this.filterParams2.getValue().removeAllFilters();
+    if (this.form.value.managementNumber) {
+      this.filterParams2
+        .getValue()
+        .addFilter(
+          'managementNumber',
+          this.form.value.managementNumber,
+          SearchFilter.EQ
+        );
+      this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
+    }
+  }
+
+  getPersonaExt_Int(params: _Params) {
+    this.serviceOficces.getPersonaExt_Int(params).subscribe({
+      next: resp => {
+        this.nrSelecttypePerson = resp.data[0].personExtInt;
+        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
+        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
+        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
+
+        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
+        this.form.get('personaExt_I').setValue(resp.data[0].nomPersonExt);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  buscarOficio() {
+    this.filterParamsLocal.getValue().removeAllFilters();
+    if (!this.form.get('managementNumber').invalid) {
+      if (!(this.form.get('managementNumber').value.trim() === '')) {
+        this.filterParamsLocal
+          .getValue()
+          .addFilter(
+            'managementNumber',
+            this.form.get('managementNumber').value,
+            SearchFilter.EQ
+          );
+      }
+    }
+    if (!this.form.get('numberGestion').invalid) {
+      if (!(this.form.get('numberGestion').value.trim() === '')) {
+        this.filterParamsLocal
+          .getValue()
+          .addFilter(
+            'numberGestion',
+            this.form.get('numberGestion').value,
+            SearchFilter.EQ
+          );
+      }
+    }
+
+    if (!this.form.get('flywheel').invalid) {
+      if (!(this.form.get('flywheel').value.trim() === '')) {
+        this.filterParamsLocal
+          .getValue()
+          .addFilter(
+            'flywheel',
+            this.form.get('flywheel').value,
+            SearchFilter.EQ
+          );
+      }
+    }
+
+    if (!this.form.get('officio').invalid) {
+      if (!(this.form.get('officio').value.trim() === '')) {
+        this.filterParamsLocal
+          .getValue()
+          .addFilter(
+            'officio',
+            this.form.get('officio').value,
+            SearchFilter.EQ
+          );
+      }
+    }
+    this.onmanagementNumberEnter(this.filterParamsLocal);
+    this.verBoton = true;
+  }
+
+  nuevaBusquedaOficio() {
+    this.cleanfields();
+  }
+
+  cleanfields() {
+    this.form.reset();
+    this.verBoton = false;
+    this.filterParamsLocal.getValue().removeAllFilters();
   }
 }
