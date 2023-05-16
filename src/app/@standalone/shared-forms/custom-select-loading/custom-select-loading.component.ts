@@ -45,6 +45,7 @@ export class CustomSelectWidthLoading
   implements ControlValueAccessor, OnInit, OnDestroy
 {
   @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;
+  @Input() searchable = true;
   @Input() form: FormGroup;
   @Input() formControlName: string = '';
   @Input() path: string;
@@ -58,7 +59,7 @@ export class CustomSelectWidthLoading
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
   @Input() bindLabel: string = '';
-  @Input() paramSearch: string = 'text';
+  @Input() paramSearch: string = 'search';
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
   @Input() paramPageName: string = 'page';

@@ -16,21 +16,32 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4" style="display: flex; column-gap: 15px">
-          <form-field [control]="form.get('noBien')" label="N° de bien">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noBien"
-              min="1" />
-          </form-field>
-          <button
-            [disabled]="loading"
-            class="btn btn-primary btn-sm active"
-            type="button"
-            (click)="searchGood()">
-            Buscar
-          </button>
+        <div style="display: flex; column-gap: 15px">
+          <div class="col-md-4">
+            <form-field [control]="form.get('noBien')" label="N° de bien">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="noBien"
+                min="1" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('description')" label="Descripción">
+              <textarea
+                class="form-control"
+                formControlName="description"></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <button
+              [disabled]="loading"
+              class="btn btn-primary btn-sm active"
+              type="button"
+              (click)="searchGood()">
+              Buscar
+            </button>
+          </div>
         </div>
       </div>
       <div class="col-lg-7 col-md-12">
