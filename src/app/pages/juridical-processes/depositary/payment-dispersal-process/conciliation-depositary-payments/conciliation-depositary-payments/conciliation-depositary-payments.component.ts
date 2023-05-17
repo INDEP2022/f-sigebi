@@ -574,10 +574,15 @@ export class ConciliationDepositaryPaymentsComponent
   }
 
   goBack() {
+    // if (this.origin == 'FCONDEPOCONCILPAG') {
+    //   this.router.navigate([
+    //     '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments/' +
+    //       this.noBienParams,
+    //   ]);
+    // } else
     if (this.origin == 'FCONDEPOCARGAPAG') {
       this.router.navigate([
-        '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments/' +
-          this.noBienParams,
+        '/pages/juridical/depositary/depositary-payment-charges',
       ]);
     }
   }
