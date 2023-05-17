@@ -241,14 +241,16 @@
   <div body>
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-        <ng2-smart-table
-          id="table"
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable.data"></ng2-smart-table>
-        <app-pagination
-          [totalItems]="dataTable.count"
-          [filterParams]="params"></app-pagination>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="table"
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettings"
+            [source]="dataTable.data"></ng2-smart-table>
+          <app-pagination
+            [totalItems]="dataTable.count"
+            [filterParams]="params"></app-pagination>
+        </div>
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
         <div class="form-group">
@@ -317,3 +319,37 @@
     </div>
   </div>
 </app-card>
+
+<div #docTable>
+  <app-card *ngIf="activeBlocDoc" [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">DOCUMENTOS PARA DICTAMEN</h5>
+    </div>
+    <div body>
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <div [class]="loadingDoc ? 'table-loading' : ''">
+            <ng2-smart-table
+              id="table"
+              [attr.class]="'table-bordered'"
+              [settings]="tableSettingsDoc"
+              [source]="dataTableDoc.data"></ng2-smart-table>
+            <app-pagination
+              [totalItems]="dataTableDoc.count"
+              [filterParams]="paramsDoc"></app-pagination>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
+              (click)="btnSalirDoc()">
+              Salir de selección de documentos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</div>

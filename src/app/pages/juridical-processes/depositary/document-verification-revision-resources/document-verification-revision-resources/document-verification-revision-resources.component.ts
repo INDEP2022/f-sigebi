@@ -17,8 +17,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
 import { IDocumentsDictumXState } from 'src/app/core/models/ms-documents/documents-dictum-x-state.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { DocumentsDictumXStateService } from 'src/app/core/services/ms-documents-dictum-x-state/documents-dictum-x-state.service';
@@ -80,9 +82,9 @@ export class DocumentVerificationRevisionResourcesComponent
             const { notifyRevRecDate, di_disponible } = this.form.value;
             let day;
             if (notifyRevRecDate) {
-              day = sumarDias(new Date(notifyRevRecDate), 7);
+              day = this.sumarDias(new Date(notifyRevRecDate), 7);
             } else {
-              day = sumarDias(new Date(), 7);
+              day = this.sumarDias(new Date(), 7);
             }
 
             if (now > day.valueOf()) {
@@ -110,19 +112,56 @@ export class DocumentVerificationRevisionResourcesComponent
                 data.row.cb_solicitar_doctos = 'N';
               }
             }
+          });
+        },
+      },
+    },
+  };
 
-            function sumarDias(fecha: Date, dias: number) {
-              fecha.setDate(fecha.getDate() + dias);
-              return fecha;
+  tableSettingsDoc = {
+    actions: {
+      columnTitle: '',
+      add: false,
+      edit: false,
+      delete: false,
+    },
+    hideSubHeader: true, //oculta subheaader de filtro
+    mode: 'external', // ventana externa
+    columns: {
+      id: {
+        title: 'Cve. Documento',
+      },
+      description: {
+        title: 'Descripción',
+        type: 'string',
+      },
+      solicitarDocumentacion: {
+        title: 'Seleccionar',
+        type: 'custom',
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: any) => {
+          console.log(instance);
+
+          instance.toggle.subscribe((data: any) => {
+            if (data.toggle) {
+              if (!this.buffer(data.row)) {
+                instance.box.nativeElement.checked = false;
+                data.toggle = false;
+              }
+            } else {
             }
           });
         },
       },
     },
   };
+
   // Data table
-  dataTable: IListResponse<IDocumentsDictumXState> =
+  public dataTable: IListResponse<IDocumentsDictumXState> =
     {} as IListResponse<IDocumentsDictumXState>;
+
+  public dataTableDoc: IListResponse<IDocumentsForDictum> =
+    {} as IListResponse<IDocumentsForDictum>;
 
   public form: FormGroup;
   public formExp: FormGroup;
@@ -133,8 +172,12 @@ export class DocumentVerificationRevisionResourcesComponent
   public isHistory: boolean = false;
   public goodId: any = null;
   @ViewChild('df', { static: false }) histo: ElementRef<HTMLElement>;
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  @ViewChild('docTable', { static: false }) doc: ElementRef<HTMLElement>;
+  public params = new BehaviorSubject<FilterParams>(new FilterParams());
+  public paramsDoc = new BehaviorSubject<FilterParams>(new FilterParams());
+  public loadingDoc: boolean = false;
 
+  public activeBlocDoc: boolean = false;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
@@ -144,15 +187,40 @@ export class DocumentVerificationRevisionResourcesComponent
     private readonly solicServ: DocumentsRequestPerGoodService,
     private readonly user: AuthService,
     private readonly jasperService: SiabService,
-    private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private readonly sanitizer: DomSanitizer,
+    private readonly modalService: BsModalService,
+    private readonly dictumForService: DocumentsForDictumService
   ) {
     super();
   }
 
+  sumarDias(fecha: Date, dias: number) {
+    fecha.setDate(fecha.getDate() + dias);
+    return fecha;
+  }
+
+  buffer(data: IDocumentsForDictum) {
+    const sysdate = new Date();
+    let change = true;
+    for (let index = 0; index < this.dataTable.data.length; index++) {
+      const doc = this.dataTable.data[index];
+      if (doc.key == data.id) {
+        this.onLoadToast(
+          'info',
+          'Documento ya seleccionado para este expediente'
+        );
+        change = false;
+      }
+      if (!doc.key) {
+        break;
+      }
+    }
+
+    return change;
+  }
+
   ngOnInit(): void {
     this.prepareForm();
-    this.loading = true;
   }
 
   insertSolic(data: any) {
@@ -344,15 +412,18 @@ export class DocumentVerificationRevisionResourcesComponent
 
   getDocuments() {
     const filter = new FilterParams();
-    // filter.addFilter('typeDictum', 'RECREVISION');
-    // filter.sortBy = 'key:ASC';
+    filter.addFilter('typeDictum', 'RECREVISION');
+    filter.sortBy = 'key:ASC';
+    this.loading = true;
     this.documents.getAllFirters(filter.getParams()).subscribe({
       next: resp => {
         this.dataTable = resp;
+        this.loading = false;
       },
       error: () => {
         this.dataTable.data = [];
         this.dataTable.count = 0;
+        this.loading = false;
       },
     });
   }
@@ -450,8 +521,86 @@ export class DocumentVerificationRevisionResourcesComponent
     }
   }
   btnSeleccionarDocumentos() {
-    console.log('SeleccionarDocumentos');
+    const now = new Date().valueOf();
+    const { notifyRevRecDate, di_disponible, di_situacion_bien, goodId } =
+      this.form.value;
+    const { id, dateAgreementAssurance } = this.formExp.value;
+    let vquery: string[] = [];
+    let day;
+    if (notifyRevRecDate) {
+      day = this.sumarDias(new Date(notifyRevRecDate), 7);
+    } else {
+      day = this.sumarDias(new Date(), 7);
+    }
+
+    if (now > day.valueOf()) {
+      this.onLoadToast(
+        'info',
+        'No puedes solicitar documentación después de 5 días hábiles'
+      );
+    } else {
+      if (di_situacion_bien == 'DICTAMINADO') {
+        this.onLoadToast('info', 'Bien ya dictaminado');
+      } else {
+        if (!id) {
+          this.onLoadToast('info', 'Obligatorio seleccionar un expediente');
+        } else {
+          if (!goodId) {
+            this.onLoadToast('info', 'Obligatorio seleccionar un bien');
+          } else {
+            if (!dateAgreementAssurance) {
+              this.onLoadToast(
+                'info',
+                'Obligatorio la fecha de presentación del recurso de revisión'
+              );
+            } else {
+              for (let index = 0; index < this.dataTable.data.length; index++) {
+                const doc = this.dataTable.data[index];
+                if (doc.key) {
+                  vquery.push(doc.key);
+                } else {
+                  break;
+                }
+              }
+
+              if (
+                id &&
+                dateAgreementAssurance &&
+                goodId &&
+                di_situacion_bien != 'DICTAMINADO'
+              ) {
+                this.activeBlocDoc = true;
+                this.getData();
+              } else {
+                this.activeBlocDoc = true;
+                this.getData();
+              }
+            }
+          }
+        }
+      }
+    }
   }
+
+  getData() {
+    this.loadingDoc = true;
+    this.dictumForService.getAll(new ListParams()).subscribe({
+      next: resp => {
+        this.loadingDoc = false;
+        this.dataTableDoc = resp;
+        this.doc.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      },
+      error: err => {
+        this.loadingDoc = false;
+        this.dataTableDoc.data = [];
+        this.dataTable.count = 0;
+      },
+    });
+  }
+
   btnEjecutarAutoridad() {
     const { ti_autoridad_ordena_dictamen } = this.form.value;
     if (ti_autoridad_ordena_dictamen) {
@@ -502,6 +651,13 @@ export class DocumentVerificationRevisionResourcesComponent
         .subscribe();
     }, 1000);
   }
+
+  btnSalirDoc() {
+    this.activeBlocDoc = false;
+    this.dataTableDoc.data = [];
+    this.dataTableDoc.count = 0;
+  }
+
   btnSalir() {
     this.formInforme.reset();
     this.informes = false;
