@@ -57,6 +57,8 @@
             [control]="form.get('diEstatusBien')"
             label="Estatus Bien">
             <input
+              (click)="callForm($event)"
+              style="cursor: pointer"
               class="form-control"
               formControlName="diEstatusBien"
               readonly />

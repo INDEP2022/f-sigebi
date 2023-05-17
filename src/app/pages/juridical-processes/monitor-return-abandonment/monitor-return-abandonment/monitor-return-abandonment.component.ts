@@ -331,4 +331,11 @@ export class MonitorReturnAbandonmentComponent
     const route = `pages/juridical/depositary/notice-of-abandonment-by-return`;
     this.route.navigate([route]);
   }
+
+  callForm(event: any) {
+    if (event.target.value) {
+      const route = `pages/general-processes/historical-good-situation`;
+      this.route.navigate([route]);
+    }
+  }
 }
