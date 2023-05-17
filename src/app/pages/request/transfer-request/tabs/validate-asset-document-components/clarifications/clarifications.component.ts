@@ -409,6 +409,8 @@ export class ClarificationsComponent
         ],
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      descriptionGoodSae: [null],
+      saeMeasureUnit: [null],
     });
   }
 

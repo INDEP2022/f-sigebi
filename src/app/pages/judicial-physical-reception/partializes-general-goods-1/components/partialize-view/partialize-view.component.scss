@@ -71,8 +71,8 @@
         content: '';
         position: relative;
         top: 2rem;
-        left: calc(50% + 20px);
-        width: calc(100% - 40px);
+        left: calc(50% + 30px);
+        width: calc(100% - 60px);
         height: 2px;
         order: -1;
         display: block;
@@ -106,9 +106,9 @@
     }
 
     > div {
-      width: 40px;
+      width: 60px;
       height: 40px;
-      border-radius: 50%;
+      border-radius: 5px;
       margin: auto;
       display: flex;
       justify-content: center;

@@ -12,6 +12,7 @@
               (ngModelChange)="
                 toggleButton('search-goods-expedient', 'expediente')
               "
+              [min]="0"
               type="number"
               class="form-control"
               formControlName="expediente" />
@@ -37,12 +38,16 @@
       </div>
 
       <div class="row">
+        <span *ngIf="dataGoods['data'].length != 0" class="fw-bold mb-3">{{
+          goodSelected
+        }}</span>
         <div class="col-md-4 scroll-table">
           <ng2-smart-table
             class="col-md-12"
             [settings]="settings1"
             [source]="dataGoods"
-            (rowSelect)="getGoodData($event)"></ng2-smart-table>
+            (rowSelect)="getGoodData($event)"
+            (rowDeselect)="deselectRow()"></ng2-smart-table>
         </div>
 
         <div class="col-md-8 md-tabs">
@@ -56,7 +61,8 @@
                     <textarea
                       (ngModelChange)="btnGeneralTab()"
                       rows="5"
-                      class="form-control"
+                      class="form-control pt-4"
+                      [maxlength]="500"
                       formControlName="clasificacion">
                     </textarea>
                   </form-field>
@@ -68,7 +74,8 @@
                     <textarea
                       (ngModelChange)="btnGeneralTab()"
                       rows="5"
-                      class="form-control"
+                      class="form-control pt-4"
+                      [maxlength]="500"
                       formControlName="remarks">
                     </textarea>
                   </form-field>
@@ -114,6 +121,7 @@
                       label="Fecha Aval&uacute;o">
                       <input
                         bsDatepicker
+                        [maxlength]="10"
                         class="form-control"
                         formControlName="fechaAvaluo"
                         (ngModelChange)="validarFechaAvaluo()" />
@@ -187,6 +195,7 @@
                       <input
                         bsDatepicker
                         class="form-control"
+                        [maxlength]="10"
                         formControlName="fechaDictamen"
                         (ngModelChange)="btnOpinion()" />
                     </form-field>
@@ -226,7 +235,8 @@
                       label="Dictamen Perenidad">
                       <textarea
                         rows="5"
-                        class="form-control mr-3"
+                        class="form-control mr-3 pt-4"
+                        [maxlength]="500"
                         formControlName="dictamenPerenidad"
                         (ngModelChange)="btnOpinion()"></textarea>
                     </form-field>
@@ -255,6 +265,7 @@
                         label="Fecha Aseg">
                         <input
                           bsDatepicker
+                          [maxlength]="10"
                           class="form-control"
                           formControlName="fechaAseg"
                           (ngModelChange)="btnAbandonment()" />
@@ -268,8 +279,9 @@
                       label="Notificado">
                       <textarea
                         rows="5"
-                        class="form-control mr-3"
+                        class="form-control mr-3 pt-4"
                         formControlName="notificado"
+                        [maxlength]="100"
                         (ngModelChange)="btnAbandonment()"></textarea>
                     </form-field>
                   </div>
@@ -278,8 +290,9 @@
                     <form-field [control]="form.get('lugar')" label="Lugar">
                       <textarea
                         rows="5"
-                        class="form-control mr-3"
+                        class="form-control mr-3 pt-4"
                         formControlName="lugar"
+                        [maxlength]="300"
                         (ngModelChange)="btnAbandonment()"></textarea>
                     </form-field>
                   </div>
@@ -299,7 +312,6 @@
           </tabset>
         </div>
       </div>
-      <span>{{ goodSelected }}</span>
     </form>
   </div>
 </app-card>

@@ -118,6 +118,36 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.r2.addClass(final, 'disabled');
       }
     });
+
+    this.type.valueChanges.subscribe(res => {
+      this.form.get('delegacionRecibe').reset();
+      this.form.get('subdelegation').reset();
+      this.form.get('estatusActa').reset();
+      this.form.get('actaInicial').reset();
+      this.form.get('actaFinal').reset();
+      this.form.get('desde').reset();
+      this.form.get('hasta').reset();
+      this.form.get('fechaDesde').reset();
+      this.form.get('fechaHasta').reset();
+      this.keyProceedingFinal = '';
+      this.keyProceedingInitial = '';
+      this.initialProceedingBool = false;
+      this.finalProceedingBool = false;
+      this.finalProceeding = new DefaultSelect();
+      this.initialProceeding = new DefaultSelect();
+    });
+
+    this.form.get('actaInicial').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingInitial = '';
+      }
+    });
+
+    this.form.get('actaFinal').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingFinal = '';
+      }
+    });
   }
 
   prepareForm() {
@@ -281,42 +311,73 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     });
   }
 
+  validateString(params: string) {
+    return /[a-zA-Z]/.test(params);
+  }
+
+  validateSpecialCharacters(params: string) {
+    return /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(params);
+  }
+
   getInitialProceedings(params: ListParams) {
-    const model: IGoodAndDetailProceeding = {
-      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-      pTiNumberSubdel: this.form.get('subdelegation').value.id,
-    };
-    this.serviceGoodProcess
-      .getDetailProceedingGoodFilterNumber(model, params.text)
-      .subscribe(
-        res => {
-          console.log(res.data);
-          this.initialProceeding = new DefaultSelect(res.data);
-        },
-        err => {
-          console.log(err);
-        }
+    if (
+      this.validateString(params.text) ||
+      this.validateSpecialCharacters(params.text)
+    ) {
+      this.alert(
+        'warning',
+        'Datos inválidos',
+        'Este campo solo acepta campos númericos y está introduciendo alguno diferente.'
       );
+      this.form.get('actaInicial').reset();
+    } else {
+      const model: IGoodAndDetailProceeding = {
+        pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+        pTiNumberSubdel: this.form.get('subdelegation').value.id,
+      };
+      this.serviceGoodProcess
+        .getDetailProceedingGoodFilterNumber(model, params.text)
+        .subscribe(
+          res => {
+            console.log(res.data);
+            this.initialProceeding = new DefaultSelect(res.data);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   getFinalProceedings(params: ListParams) {
-    console.log(params);
-    const model: IGoodAndDetailProceeding = {
-      pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-      pTiNumberSubdel: this.form.get('subdelegation').value.id,
-    };
-    console.log(model);
-    this.serviceGoodProcess
-      .getDetailProceedingGoodFilterNumber(model, params.text)
-      .subscribe(
-        res => {
-          console.log(res.data);
-          this.finalProceeding = new DefaultSelect(res.data);
-        },
-        err => {
-          console.log(err);
-        }
+    if (
+      this.validateString(params.text) ||
+      this.validateSpecialCharacters(params.text)
+    ) {
+      this.alert(
+        'warning',
+        'Datos inválidos',
+        'Este campo solo acepta campos númericos y está introduciendo alguno diferente.'
       );
+      this.form.get('actaFinal').reset();
+    } else {
+      const model: IGoodAndDetailProceeding = {
+        pTiNumberDeleg: this.form.get('delegacionRecibe').value,
+        pTiNumberSubdel: this.form.get('subdelegation').value.id,
+      };
+      console.log(model);
+      this.serviceGoodProcess
+        .getDetailProceedingGoodFilterNumber(model, params.text)
+        .subscribe(
+          res => {
+            console.log(res.data);
+            this.finalProceeding = new DefaultSelect(res.data);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   print() {

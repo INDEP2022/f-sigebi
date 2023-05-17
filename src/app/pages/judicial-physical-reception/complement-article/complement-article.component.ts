@@ -63,7 +63,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   goodDataSave: any;
   dataApprasialGood: any[];
   idGood: number | string;
-  goodSelected: string = 'No se seleccionó bien';
+  goodSelected: string = 'Seleccione un Bien';
   getgoodCategory: string;
   getoriginSignals: string;
   getnotifyDate: string | Date;
@@ -95,6 +95,9 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getStatusView();
+    this.form.get('fechaAvaluo').valueChanges.subscribe(res => {
+      console.log(res);
+    });
   }
 
   prepareForm() {
@@ -137,8 +140,6 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   add() {
     this.openModal();
   }
-
-  fillContent() {}
 
   openModal(context?: Partial<AppraisalHistoryComponent>) {
     const modalRef = this.modalService.show(AppraisalHistoryComponent, {
@@ -297,28 +298,30 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   //Obtener bienes de un expediente
 
   clearInputs() {
-    this.form.get('clasificacion').setValue(null);
-    this.form.get('remarks').setValue(null);
-    this.form.get('importe').setValue(null);
-    this.form.get('fechaAvaluo').setValue(null);
-    this.form.get('fechaVigencia').setValue(null);
-    this.form.get('perito').setValue(null);
-    this.form.get('institucion').setValue(null);
-    this.form.get('fechaDictamen').setValue(null);
-    this.form.get('dictamenPerito').setValue(null);
-    this.form.get('dictamenInstitucion').setValue(null);
-    this.form.get('dictamenPerenidad').setValue(null);
-    this.form.get('fechaAseg').setValue(null);
-    this.form.get('notificado').setValue(null);
-    this.form.get('lugar').setValue(null);
+    this.form.get('clasificacion').reset();
+    this.form.get('remarks').reset();
+    this.form.get('importe').reset();
+    this.form.get('fechaAvaluo').reset();
+    this.form.get('fechaVigencia').reset();
+    this.form.get('perito').reset();
+    this.form.get('institucion').reset();
+    this.form.get('fechaDictamen').reset();
+    this.form.get('dictamenPerito').reset();
+    this.form.get('dictamenInstitucion').reset();
+    this.form.get('dictamenPerenidad').reset();
+    this.form.get('fechaAseg').reset();
+    this.form.get('notificado').reset();
+    this.form.get('lugar').reset();
     this.disabledButton('first-notice-abandonment');
     this.disabledButton('opinion');
     this.disabledButton('apprais-good');
     this.disabledButton('apprasial-history');
     this.disabledButton('update-general-good');
+    this.goodSelected = 'Seleccione un Bien';
   }
 
   getGoodsByExpedient() {
+    this.disabledButton('search-goods-expedient');
     this.clearInputs();
     this.serviceGood
       .getByExpedient(this.form.get('expediente').value, {
@@ -336,9 +339,17 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
             })
           );
           this.dataGoods.load(newData);
+          this.enableButton('search-goods-expedient');
         },
         error: (err: any) => {
           console.error(err);
+          this.dataGoods.load([]);
+          this.alert(
+            'warning',
+            'El expediente presento error',
+            'El número de expediente no existe o presentó un error inesperado'
+          );
+          this.enableButton('search-goods-expedient');
         },
       });
   }
@@ -368,6 +379,16 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     );
   }
 
+  deselectRow() {
+    this.disabledButton('update-general-good');
+    this.disabledButton('apprasial-history');
+    this.disabledButton('apprais-good');
+    this.disabledButton('opinion');
+    this.disabledButton('first-notice-abandonment');
+    this.isEnableGood = false;
+    this.clearInputs();
+  }
+
   getGoodData(object: any) {
     if (object.data.available) {
       this.isEnableGood = true;
@@ -386,7 +407,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         console.log(JSON.parse(JSON.stringify(res)).data);
         const data = JSON.parse(JSON.stringify(res)).data[0];
         this.goodDataSave = data;
-        this.goodSelected = data.description;
+        this.goodSelected = `Seleccionó el Bien con id: ${data.id}`;
         this.idGood = data.id;
         this.getgoodCategory = data.goodCategory;
         this.getoriginSignals = data.originSignals;
@@ -422,8 +443,6 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     );
   }
 
-  enabledGroup() {}
-
   updateGoodData() {
     if (!this.isEnableGood) {
       this.alert(
@@ -432,27 +451,38 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         'Esta intentando registrar en un bien con un tipo no valido'
       );
     } else {
-      const updateData: IGood = {
-        id: parseInt(this.idGood.toString()),
-        goodId: parseInt(this.idGood.toString()),
-        goodCategory: this.form.get('clasificacion').value,
-        originSignals: this.form.get('remarks').value,
-      };
-      this.serviceGood.updateWithoutId(updateData).subscribe(
-        res => {
-          this.alert(
-            'success',
-            'Actualización exitosa',
-            'Los datos fueron modificados con éxito'
-          );
-          this.disabledButton('update-general-good');
-          this.getgoodCategory = updateData.goodCategory;
-          this.getoriginSignals = updateData.originSignals;
-        },
-        err => {
-          console.log(err);
-        }
-      );
+      if (
+        !this.form.get('clasificacion').valid ||
+        !this.form.get('remarks').valid
+      ) {
+        this.alert(
+          'error',
+          'Error en los campos',
+          'Esta intentando actualizar el bien con campos inválidos'
+        );
+      } else {
+        const updateData: IGood = {
+          id: parseInt(this.idGood.toString()),
+          goodId: parseInt(this.idGood.toString()),
+          goodCategory: this.form.get('clasificacion').value,
+          originSignals: this.form.get('remarks').value,
+        };
+        this.serviceGood.updateWithoutId(updateData).subscribe(
+          res => {
+            this.alert(
+              'success',
+              'Actualización exitosa',
+              'Los datos fueron modificados con éxito'
+            );
+            this.disabledButton('update-general-good');
+            this.getgoodCategory = updateData.goodCategory;
+            this.getoriginSignals = updateData.originSignals;
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
     }
   }
 
@@ -464,38 +494,51 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         'Esta intentando registrar en un bien con un tipo no valido'
       );
     } else {
-      const opinionData: IGood = {
-        id: parseInt(this.idGood.toString()),
-        goodId: parseInt(this.idGood.toString()),
-        dateOpinion: this.form.get('fechaDictamen').value,
-        proficientOpinion: this.form.get('dictamenPerito').value.name,
-        valuerOpinion: this.form.get('dictamenInstitucion').value.description,
-        opinion: this.form.get('dictamenPerenidad').value,
-      };
-      console.log(opinionData);
-      this.serviceGood.updateWithoutId(opinionData).subscribe(
-        res => {
-          this.alert(
-            'success',
-            'Actualización exitosa',
-            'Los datos fueron modificados con éxito'
-          );
+      if (
+        !this.form.get('fechaDictamen').valid ||
+        !this.form.get('dictamenPerito').valid ||
+        !this.form.get('dictamenInstitucion').valid ||
+        !this.form.get('dictamenPerenidad').valid
+      ) {
+        this.alert(
+          'error',
+          'Error en los campos',
+          'Esta intentando actualizar el bien con campos inválidos'
+        );
+      } else {
+        const opinionData: IGood = {
+          id: parseInt(this.idGood.toString()),
+          goodId: parseInt(this.idGood.toString()),
+          dateOpinion: new Date(this.form.get('fechaDictamen').value),
+          proficientOpinion: this.form.get('dictamenPerito').value.name,
+          valuerOpinion: this.form.get('dictamenInstitucion').value.description,
+          opinion: this.form.get('dictamenPerenidad').value,
+        };
+        console.log(opinionData);
+        this.serviceGood.updateWithoutId(opinionData).subscribe(
+          res => {
+            this.alert(
+              'success',
+              'Actualización exitosa',
+              'Los datos fueron modificados con éxito'
+            );
 
-          this.disabledButton('opinion');
-          this.getfechaDictamen = opinionData.dateOpinion;
-          this.getdictamenPerenidad = opinionData.opinion;
-          this.getdictamenPerito = opinionData.proficientOpinion;
-          this.getdictamenInstitucion = opinionData.valuerOpinion;
-        },
-        err => {
-          console.log(err);
-          this.alert(
-            'error',
-            'No se pudo registrar el dictamen',
-            'Ocurrió un error inesperado que no permitió guardar el dictamen'
-          );
-        }
-      );
+            this.disabledButton('opinion');
+            this.getfechaDictamen = opinionData.dateOpinion;
+            this.getdictamenPerenidad = opinionData.opinion;
+            this.getdictamenPerito = opinionData.proficientOpinion;
+            this.getdictamenInstitucion = opinionData.valuerOpinion;
+          },
+          err => {
+            console.log(err);
+            this.alert(
+              'error',
+              'No se pudo registrar el dictamen',
+              'Ocurrió un error inesperado que no permitió guardar el dictamen'
+            );
+          }
+        );
+      }
     }
   }
 
@@ -507,30 +550,42 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         'Esta intentando registrar en un bien con un tipo no valido'
       );
     } else {
-      const notifyData = {
-        id: parseInt(this.idGood.toString()),
-        goodId: parseInt(this.idGood.toString()),
-        notifyDate: new Date(this.form.get('fechaAseg').value),
-        notifyA: this.form.get('notificado').value.trim(),
-        placeNotify: this.form.get('lugar').value.trim(),
-      };
-      this.serviceGood.updateWithoutId(notifyData).subscribe(
-        res => {
-          this.alert(
-            'success',
-            'Actualización exitosa',
-            'Los datos fueron modificados con éxito'
-          );
+      if (
+        !this.form.get('fechaAseg').valid ||
+        !this.form.get('notificado').valid ||
+        !this.form.get('notificado').valid
+      ) {
+        this.alert(
+          'error',
+          'Error en los campos',
+          'Esta intentando actualizar el bien con campos inválidos'
+        );
+      } else {
+        const notifyData = {
+          id: parseInt(this.idGood.toString()),
+          goodId: parseInt(this.idGood.toString()),
+          notifyDate: new Date(this.form.get('fechaAseg').value),
+          notifyA: this.form.get('notificado').value.trim(),
+          placeNotify: this.form.get('lugar').value.trim(),
+        };
+        this.serviceGood.updateWithoutId(notifyData).subscribe(
+          res => {
+            this.alert(
+              'success',
+              'Actualización exitosa',
+              'Los datos fueron modificados con éxito'
+            );
 
-          this.disabledButton('first-notice-abandonment');
-          this.getnotifyDate = notifyData.notifyDate;
-          this.getnotifyA = notifyData.notifyA;
-          this.getplaceNotify = notifyData.placeNotify;
-        },
-        err => {
-          console.log(err);
-        }
-      );
+            this.disabledButton('first-notice-abandonment');
+            this.getnotifyDate = notifyData.notifyDate;
+            this.getnotifyA = notifyData.notifyA;
+            this.getplaceNotify = notifyData.placeNotify;
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
     }
   }
 
@@ -550,6 +605,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   }
 
   postAppraisGood() {
+    this.disabledButton('apprais-good');
     if (!this.isEnableGood) {
       this.alert(
         'error',
@@ -557,55 +613,80 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         'Esta intentando registrar en un bien con un tipo no valido'
       );
     } else {
-      let dataAG: IAppraisersGood = {
-        noGood: this.idGood,
-        appraisalDate: this.form.get('fechaAvaluo').value,
-        effectiveDate: this.form.get('fechaVigencia').value,
-        valueAppraisal: this.form.get('importe').value,
-        noRequest: '1234',
-      };
-
-      const rxa: IRequestAppraisal = {
-        requestDate: format(new Date(), 'yyyy-MM-dd'),
-        requestType: 'E',
-        cveCurrencyAppraisal: this.form.get('moneda').value,
-        cveCurrencyCost: this.form.get('moneda').value,
-        noExpert: this.form.get('perito').value.id,
-        noAppraiser: this.form.get('institucion').value.id,
-      };
       if (
-        this.form.get('fechaAvaluo').value >
-        this.form.get('fechaVigencia').value
+        !this.form.get('importe').valid ||
+        !this.form.get('moneda').valid ||
+        !this.form.get('fechaAvaluo').valid ||
+        !this.form.get('fechaVigencia').valid ||
+        !this.form.get('perito').valid ||
+        !this.form.get('institucion').valid
       ) {
-      } else {
-        this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(
-          res => {
-            const id = JSON.parse(JSON.stringify(res)).id;
-            dataAG.noRequest = id;
-            this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
-              res => {
-                this.alert(
-                  'success',
-                  'El bien se avaluó con éxito',
-                  'El bien fue valuado exitosamente'
-                );
-                this.getAppraisalGood();
-                this.form.get('fechaAvaluo').setValue(null);
-                this.form.get('fechaVigencia').setValue(null);
-                this.form.get('importe').setValue(null);
-                this.form.get('moneda').setValue(null);
-                this.form.get('perito').setValue(null);
-                this.form.get('institucion').setValue(null);
-              },
-              err => {
-                console.log(err);
-              }
-            );
-          },
-          err => {
-            console.log(err);
-          }
+        this.alert(
+          'error',
+          'Error en los campos',
+          'Esta intentando actualizar el bien con campos inválidos'
         );
+      } else {
+        let dataAG: IAppraisersGood = {
+          noGood: this.idGood,
+          appraisalDate: this.form.get('fechaAvaluo').value,
+          effectiveDate: this.form.get('fechaVigencia').value,
+          valueAppraisal: this.form.get('importe').value,
+          noRequest: '1234',
+        };
+
+        const rxa: IRequestAppraisal = {
+          requestDate: format(new Date(), 'yyyy-MM-dd'),
+          requestType: 'E',
+          cveCurrencyAppraisal: this.form.get('moneda').value,
+          cveCurrencyCost: this.form.get('moneda').value,
+          noExpert: this.form.get('perito').value.id,
+          noAppraiser: this.form.get('institucion').value.id,
+        };
+        if (
+          this.form.get('fechaAvaluo').value >
+          this.form.get('fechaVigencia').value
+        ) {
+        } else {
+          this.serviceReqAppr.postRequestAppraisal(rxa).subscribe(
+            res => {
+              const id = JSON.parse(JSON.stringify(res)).id;
+              dataAG.noRequest = id;
+              this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
+                res => {
+                  this.alert(
+                    'success',
+                    'El Bien se avaluó con éxito',
+                    'El Bien fué valuado exitosamente'
+                  );
+                  this.getAppraisalGood();
+                  this.form.get('fechaAvaluo').reset();
+                  this.form.get('fechaVigencia').reset();
+                  this.form.get('importe').reset();
+                  this.form.get('moneda').reset();
+                  this.form.get('perito').reset();
+                  this.form.get('institucion').reset();
+                },
+                err => {
+                  this.alert(
+                    'error',
+                    'Ocurrió un error al valuar',
+                    'Ocurrió un error inesperado al valuar el bien'
+                  );
+                  this.enableButton('apprais-good');
+                }
+              );
+            },
+            err => {
+              console.log(err);
+              this.alert(
+                'error',
+                'Ocurrió un error al valuar',
+                'Ocurrió un error inesperado al valuar el bien'
+              );
+            }
+          );
+        }
       }
     }
   }

@@ -20,9 +20,11 @@ import {
   GoodGetData,
   IGood,
   IGoodSami,
+  IValidaCambioEstatus,
   IVban,
 } from '../../models/ms-good/good';
 
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -56,6 +58,10 @@ export class GoodService extends HttpService {
   }
   getVBan(array: IVban) {
     return this.post<IResponse>(GoodEndpoints.Vban, array);
+  }
+
+  PAValidaCambio(model: IValidaCambioEstatus) {
+    return this.post<IResponse>(GoodEndpoints.PAValidaCambioEstatus, model);
   }
 
   getActAccount(model: IGoodStatusProcess) {
@@ -148,6 +154,13 @@ export class GoodService extends HttpService {
   getById(id: string | number) {
     const route = `${GoodEndpoints.Good}`;
     return this.get<IGood>(`${route}?filter.id=$eq:${id}`);
+  }
+
+  getByGoodNumber(goodId: string | number) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IListResponseMessage<IGood>>(
+      `${route}?filter.goodId=$eq:${goodId}`
+    );
   }
 
   getByIdAndGoodId(id: string | number, goodId: string | number) {

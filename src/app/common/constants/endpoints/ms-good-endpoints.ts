@@ -24,6 +24,7 @@ export enum GoodEndpoints {
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
   GetAllGoodQuery = 'good/getAllGoodQuery',
+  PAValidaCambioEstatus = 'good/testValid',
 }
 
 export enum GoodProcessPoints {
@@ -36,4 +37,9 @@ export enum GoodProcessPoints {
   acceptGoodActa = `application/acceptGoodActa`,
   acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+}
+
+export enum GoodFinderEndpoint {
+  GoodFinderBase = 'goodfinder',
+  GoodQuery = 'good-query',
 }
