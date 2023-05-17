@@ -422,6 +422,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['requestId'] = request.id;
       task['expedientId'] = 0;
       task['urlNb'] = url;
+      task['processName'] = 'SolicitudTransferencia';
       body['task'] = task;
 
       let orderservice: any = {};
