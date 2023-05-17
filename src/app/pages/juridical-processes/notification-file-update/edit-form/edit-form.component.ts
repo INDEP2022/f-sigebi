@@ -74,13 +74,16 @@ export class EditFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    this.loading = true;
-    this.deductiveService
-      .update(this.dict.id, this.deductiveForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    // this.loading = true;
+    // let parsedID = parseInt(this.dict.wheelNumber);
+    // this.dict.wheelNumber = parsedID;
+    // http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation
+    this.dictationServices.update(this.dict).subscribe({
+      next: data => {
+        this.handleSuccess();
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

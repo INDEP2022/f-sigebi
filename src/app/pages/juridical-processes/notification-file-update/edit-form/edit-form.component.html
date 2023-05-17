@@ -99,10 +99,8 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="deductiveForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <!-- [disabled]="deductiveForm.invalid" -->
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
