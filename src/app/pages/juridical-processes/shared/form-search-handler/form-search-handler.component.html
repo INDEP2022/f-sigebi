@@ -38,7 +38,11 @@
     </button>
   </div>
 </div>
-<div #modal="bs-modal" bsModal class="modal fade">
+<div
+  #modal="bs-modal"
+  [config]="{ ignoreBackdropClick: true }"
+  bsModal
+  class="modal fade">
   <app-modal class="modal-dialog modal-lg modal-dialog-centered">
     <div header>
       <h5 class="modal-title">&nbsp;&nbsp;Seleccionar {{ title }}</h5>

@@ -135,7 +135,7 @@ export class FormSearchHandlerComponent
   }
 
   getData(): void {
-    console.log('FILTER', this.filterParams.getValue().getParams());
+    // console.log('FILTER', this.filterParams.getValue().getParams());
 
     this.loading = true;
     if (this.dataObservableFn) {
@@ -184,7 +184,6 @@ export class FormSearchHandlerComponent
   }
 
   buildFilters() {
-    // console.log('building...');
     const params = new FilterParams();
     if (this.fieldsToSearch.length > 0 && this.formData != null) {
       console.log('fieldsToSearch', this.fieldsToSearch);
