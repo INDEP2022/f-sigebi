@@ -17,7 +17,6 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
-import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -75,10 +74,7 @@ export class ReadInfoGoodComponent
   private readonly typeRelevantSevice = inject(TypeRelevantService);
   private readonly goodFinderService = inject(GoodFinderService);
 
-  constructor(
-    private fb: FormBuilder,
-    private fractionService: FractionsService
-  ) {
+  constructor(private fb: FormBuilder) {
     super();
   }
 
@@ -160,6 +156,9 @@ export class ReadInfoGoodComponent
           ? good.measureTlUnitView
           : '';
         this.fraction = good.fractionCodeFracction;
+      },
+      error: error => {
+        console.log(error);
       },
     });
   }

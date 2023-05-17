@@ -6,7 +6,8 @@
     <div class="row mb-5">
       <app-clean-filters-shared
         [form]="form"
-        formStorage="filtersActa"></app-clean-filters-shared>
+        formStorage="filtersActa"
+        (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
     </div>
 
     <form class="form-material" [formGroup]="form">

@@ -90,7 +90,7 @@ export class RequestDetailTabComponent
     this.showDataProg();
     setTimeout(() => {
       this.formLoading = false;
-    }, 600);
+    }, 1100);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
