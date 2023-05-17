@@ -9,7 +9,6 @@ import {
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
-import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
@@ -17,6 +16,7 @@ import { OficialDictationService } from 'src/app/core/services/ms-dictation/ofic
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 
@@ -27,7 +27,6 @@ export class LegalOpinionsOfficeService {
   constructor(
     private msUsersService: UsersService,
     private msCityService: CityService,
-    private msMsDepositaryService: MsDepositaryService,
     private msDictationService: DictationService,
     private msExpedientService: ExpedientService,
     private msOficialDictationService: OficialDictationService,
@@ -35,7 +34,8 @@ export class LegalOpinionsOfficeService {
     private msCopiesOfficialOpinionService: CopiesOfficialOpinionService,
     private msJobDictumTextsService: JobDictumTextsService,
     private msDictationXGood1Service: DictationXGood1Service,
-    private msProcedureManagement: ProcedureManagementService
+    private msProcedureManagement: ProcedureManagementService,
+    private msParametersService: ParametersService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -68,6 +68,9 @@ export class LegalOpinionsOfficeService {
   getInitFormDictation(body: IInitFormLegalOpinionOfficeBody) {
     return this.msDictationService.getInitFormDictation(body);
   }
+  getInitFormDictation2(body: IInitFormLegalOpinionOfficeBody) {
+    return this.msDictationService.getInitFormDictation2(body);
+  }
   getCopiesOfficeSendDictation(body: ICopiesOfficeSendDictation) {
     return this.msDictationService.getCopiesOfficeSendDictation(body);
   }
@@ -80,7 +83,9 @@ export class LegalOpinionsOfficeService {
   getProcedureManagement(params: string) {
     return this.msProcedureManagement.getAllFiltered(params);
   }
-
+  getParameters(params: ListParams) {
+    return this.msParametersService.getAll(params);
+  }
   getTexto3FromOfficeDictation(
     officeDictationData: IOfficialDictation,
     type_of: string

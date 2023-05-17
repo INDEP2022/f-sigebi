@@ -215,15 +215,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       .subscribe({
         next: (res: any) => {
           console.log('INIT FORM OFICIO', res);
-          this.variables.identi = res.data['identi'];
-          this.variables.cveActa = res.data['cve_acta'];
-          this.variables.fecha = res.data['fecha'];
-          if (
-            this.variables.identi.includes('4') &&
-            this.paramsScreen.TIPO == 'RESARCIMIENTO'
-          ) {
-            this.form.get('addressee').disable();
-          }
+          this.variables.identi = res['identi'];
+          this.getInitForm2(body);
           subscription.unsubscribe();
         },
         error: error => {
@@ -237,6 +230,28 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
       });
     // this.btnSearchAppointment();
+  }
+
+  getInitForm2(body: any) {
+    let subscription = this.svLegalOpinionsOfficeService
+      .getInitFormDictation2(body)
+      .subscribe({
+        next: (res: any) => {
+          console.log('INIT FORM OFICIO 2', res);
+          this.variables.cveActa = res['cve_acta'];
+          this.variables.fecha = res['fecha'];
+          subscription.unsubscribe();
+        },
+        error: error => {
+          console.log(error);
+          this.alertInfo(
+            'info',
+            'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
+            ''
+          );
+          subscription.unsubscribe();
+        },
+      });
   }
 
   showMoreInformationField(show: boolean, option: number) {
@@ -713,7 +728,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       });
   }
   getIssuingUserByDetail(paramsData: ListParams, getByValue: boolean = false) {
-    const params = new FilterParams();
+    const params: any = new FilterParams();
     if (paramsData['search'] == undefined) {
       paramsData['search'] = '';
     }
@@ -721,7 +736,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     if (getByValue) {
       params.addFilter('id', this.form.get('issuingUser').value);
     } else {
-      params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+      params.search = paramsData['search'];
+      // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
     }
     params['sortBy'] = 'name:ASC';
     let subscription = this.svLegalOpinionsOfficeService
@@ -759,7 +775,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     if (getByValue) {
       paramsData['filter.user'] = '$eq:' + this.form.get('addressee').value;
     } else {
-      paramsData['filter.userDetail.name'] = '$ilike:' + paramsData['search'];
+      // paramsData['filter.userDetail.name'] = '$ilike:' + paramsData['search'];
     }
     delete paramsData['text'];
     paramsData['sortBy'] = 'userDetail.name:ASC';
@@ -792,7 +808,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     ccp: number,
     getByValue: boolean = false
   ) {
-    const params = new FilterParams();
+    const params: any = new FilterParams();
     if (paramsData['search'] == undefined) {
       paramsData['search'] = '';
     }
@@ -803,7 +819,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.form.get('ccp_addressee' + (ccp == 1 ? '' : '_1')).value
       );
     } else {
-      params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
+      params.search = paramsData['search'];
+      // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
     }
     params['sortBy'] = 'name:ASC';
     let subscription = this.svLegalOpinionsOfficeService
@@ -1113,5 +1130,39 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
+
+  btnDetail() {
+    let obj: any = {
+      c_ESTATUS_OF: 'ENVIADO',
+      V_NOMBRE: this.dictationData.passOfficeArmy
+        .replaceAll('/', '-')
+        .replaceAll('?', '0')
+        .replaceAll(' ', ''),
+    };
+    console.log(obj);
+    this.getParameters();
+  }
+
+  getParameters() {
+    const paramsData = new ListParams();
+    paramsData['filter.id'] = '$eq:SSF3_FIRMA_ELEC_DOCS';
+    let subscription = this.svLegalOpinionsOfficeService
+      .getOfficeTextDictation(paramsData)
+      .subscribe({
+        next: data => {
+          console.log('PARAMETERS', data);
+          subscription.unsubscribe();
+        },
+        error: error => {
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'No se encontró la ruta para depositar el XML',
+            error.error.message
+          );
+          subscription.unsubscribe();
+        },
+      });
   }
 }
