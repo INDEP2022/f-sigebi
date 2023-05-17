@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -11,6 +14,7 @@ import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-dep
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { NumBienShare } from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -86,7 +90,10 @@ export class IncomeOrdersDepositoryGoodsComponent
     private valorBien: NumBienShare,
     private router: Router,
     private authService: AuthService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -141,7 +148,47 @@ export class IncomeOrdersDepositoryGoodsComponent
     });
   }
   print() {
-    alert(JSON.stringify(this.form.value)); //jesisca  jasper - report
+    let params = {
+      P_VALORES: this.form.value,
+    };
+    this.siabService
+      // .fetchReport('RDEPINGXBIEN.', params)
+      .fetchReport('blank', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+
+    //alert(JSON.stringify(this.form.value)); //jesisca  jasper - report
     /* this.router.navigate;
    ("pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/"+3801);*/
   }
