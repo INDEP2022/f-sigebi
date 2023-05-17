@@ -18,6 +18,7 @@
             [control]="form.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
             <input
+              [readOnly]="true"
               oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
               class="form-control"
               formControlName="preliminaryInquiry" />
@@ -26,6 +27,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-3">
           <form-field [control]="form.get('criminalCase')" label="Causa Penal">
             <input
+              [readOnly]="true"
               oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
               class="form-control"
               formControlName="criminalCase" />
