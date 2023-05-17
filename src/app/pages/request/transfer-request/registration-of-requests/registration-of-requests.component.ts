@@ -1403,11 +1403,13 @@ export class RegistrationOfRequestsComponent
       },
       error: error => {
         console.log(error);
-        this.onLoadToast(
-          'error',
-          'Error en la solicitud',
-          'Error al verificar si la solicitud ya fue aprobada'
-        );
+        if (error.error.message != 'No se encontrarón registros.') {
+          this.onLoadToast(
+            'error',
+            'Error en la solicitud',
+            'Error al verificar si la solicitud ya fue aprobada'
+          );
+        }
       },
     });
   }
