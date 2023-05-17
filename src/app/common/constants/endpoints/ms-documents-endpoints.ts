@@ -4,4 +4,5 @@ export enum DocumentsEndpoints {
   DocumentsDictuXStateM = 'documents-dictum-x-state-m',
   DocumentsDictuXState = 'documents-dictum-x-state',
   ClarificationDocumentsImpro = 'clarification-documents-impro',
+  DocumentRequestPerGood = 'documents-request-per-good',
 }

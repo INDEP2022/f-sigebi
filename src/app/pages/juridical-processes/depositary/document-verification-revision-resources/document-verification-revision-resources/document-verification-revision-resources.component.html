@@ -36,7 +36,7 @@
               formControlName="dateAgreementAssurance"
               bsDatepicker
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD-MM-YYYY'
               }" />
           </form-field>
         </div>
@@ -94,7 +94,7 @@
               formControlName="agreementDate"
               bsDatepicker
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD-MM-YYYY'
               }" />
           </form-field>
         </div>
@@ -119,14 +119,14 @@
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
-            [control]="form.get('notificationDate')"
+            [control]="form.get('notifyRevRecDate')"
             label="Fecha Notificaci&oacute;n">
             <input
               class="form-control"
-              formControlName="notificationDate"
+              formControlName="notifyRevRecDate"
               bsDatepicker
               [bsConfig]="{
-                dateInputFormat: 'YYYY-MM-DD'
+                dateInputFormat: 'DD-MM-YYYY'
               }" />
           </form-field>
         </div>
@@ -184,26 +184,28 @@
     </form>
   </div>
   <div footer *ngIf="autoridad" class="alert alert-info">
-    <form [formGroup]="formAutoridad" class="form-material">
+    <form [formGroup]="form" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-auto p-2">
           <form-field
-            [control]="formAutoridad.get('autoridad')"
-            label="Autoridad que aprueba el Dictamen">
-            <input class="form-control" formControlName="autoridad" />
+            [control]="form.get('ti_autoridad_ordena_dictamen')"
+            label="Ingrese la autoridad que aprueba el dictámen">
+            <input
+              class="form-control"
+              formControlName="ti_autoridad_ordena_dictamen" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-auto p-2">
           <div class="form-group">
             <button
               type="button"
-              class="btn btn-primary active ml-2 mr-2"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
               (click)="btnEjecutarAutoridad()">
               Aceptar
             </button>
             <button
               type="button"
-              class="btn btn-primary active ml-2 mr-2"
+              class="btn btn-primary btn-sm active ml-2 mr-2"
               (click)="btnSalirAutoridad()">
               Cancelar
             </button>
@@ -214,7 +216,7 @@
   </div>
 </app-card>
 
-<div class="col-12 text-center">
+<div class="col-12 text-center mb-3">
   <button
     *ngIf="isHistory"
     type="button"
@@ -240,21 +242,25 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
         <ng2-smart-table
+          id="table"
           [attr.class]="'table-bordered'"
           [settings]="tableSettings"
-          [source]="dataTable"></ng2-smart-table>
+          [source]="dataTable.data"></ng2-smart-table>
+        <app-pagination
+          [totalItems]="dataTable.count"
+          [filterParams]="params"></app-pagination>
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
         <div class="form-group">
           <button
             type="button"
-            class="btn btn-primary active ml-2 mr-2"
+            class="btn btn-primary btn-sm active ml-2 mr-2"
             (click)="btnRecursos()">
             Recursos
           </button>
           <button
             type="button"
-            class="btn btn-primary active ml-2 mr-2"
+            class="btn btn-primary btn-sm active ml-2 mr-2"
             (click)="btnSeleccionarDocumentos()">
             Seleccionar Documentos
           </button>
@@ -276,27 +282,29 @@
             <div class="row w-100">
               <div class="col-sm-12 col-12 col-md-6 p-2">
                 <form-field
-                  [control]="form.get('noExpediente')"
+                  [control]="formInforme.get('id')"
                   label="No&#46; Expediente">
-                  <input class="form-control" formControlName="noExpediente" />
+                  <input class="form-control" formControlName="id" />
                 </form-field>
               </div>
               <div class="col-sm-12 col-12 col-md-6 p-2">
-                <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-                  <input class="form-control" formControlName="noBien" />
+                <form-field
+                  [control]="formInforme.get('goodId')"
+                  label="No&#46; Bien">
+                  <input class="form-control" formControlName="goodId" />
                 </form-field>
               </div>
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <div class="form-group">
                   <button
                     type="button"
-                    class="btn btn-primary active ml-2 mr-2"
+                    class="btn btn-primary active ml-2 mr-2 btn-sm"
                     (click)="btnEjecutarInformes()">
-                    Ejecutar Informes
+                    Reporte
                   </button>
                   <button
                     type="button"
-                    class="btn btn-primary active ml-2 mr-2"
+                    class="btn btn-primary active ml-2 mr-2 btn-sm"
                     (click)="btnSalir()">
                     Salir
                   </button>
