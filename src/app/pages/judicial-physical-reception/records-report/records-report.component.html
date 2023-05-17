@@ -87,34 +87,30 @@
               <span className="labelActa">{{ keyProceedingFinal }}</span>
             </div>
           </div>
-
-          <div class="col-md-6">
-            <form-field [control]="form.get('hasta')" label="Hasta el">
-              <input
-                type="number"
-                [min]="form.get('desde').value + 1"
-                class="form-control"
-                formControlName="hasta" />
-            </form-field>
-          </div>
         </div>
 
         <div class="col-md-6">
           <div class="row">
             <div class="col-md-6">
-              <form-field [control]="form.get('desde')" label="Desde el">
+              <form-field
+                [control]="form.get('desde')"
+                label="Desde el expediente">
                 <input
                   type="number"
                   [min]="0"
+                  [maxlength]="15"
                   class="form-control"
                   formControlName="desde" />
               </form-field>
             </div>
             <div class="col-md-6">
-              <form-field [control]="form.get('hasta')" label="Hasta el">
+              <form-field
+                [control]="form.get('hasta')"
+                label="Hasta el expediente">
                 <input
                   type="number"
                   [min]="form.get('desde').value + 1"
+                  [maxlength]="15"
                   class="form-control"
                   formControlName="hasta" />
               </form-field>
@@ -126,6 +122,7 @@
                 <input
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
                   formControlName="fechaDesde" />
               </form-field>
             </div>
@@ -136,6 +133,7 @@
                 label="Fecha Elaboraci&oacute;n Hasta">
                 <input
                   bsDatepicker
+                  [maxlength]="10"
                   [minDate]="form.get('fechaDesde').value"
                   class="form-control"
                   formControlName="fechaHasta" />

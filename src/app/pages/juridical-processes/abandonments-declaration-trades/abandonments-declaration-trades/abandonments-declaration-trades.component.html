@@ -75,7 +75,6 @@
                     label="No. Expediente">
                     <input
                       type="text"
-                      (blur)="onLoadGoodList()"
                       formControlName="expedientNumber"
                       class="form-control"
                       readonly />
@@ -108,21 +107,22 @@
                     [control]="declarationForm.get('officeType')"
                     label="Tipo Oficio">
                     <ng-select
+                      (change)="addText($event)"
                       formControlName="officeType"
                       [searchable]="false"
                       class="form-control"
                       [clearable]="false">
                       <ng-option value="DAN"
-                        >DECLARATORIA ABANDONO NUMERARIO</ng-option
+                        >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
                       >
                       <ng-option value="DAB"
-                        >DECLARATORIA ABANDONO BIENES</ng-option
+                        >DAB - DECLARATORIA ABANDONO BIENES</ng-option
                       >
                       <ng-option value="FGR"
-                        >DECLARATORIA ABANDONO FGR</ng-option
+                        >FGR - DECLARATORIA ABANDONO FGR</ng-option
                       >
                       <ng-option value="PJF"
-                        >DECLARATORIA ABANDONO PJF</ng-option
+                        >PJF - DECLARATORIA ABANDONO PJF</ng-option
                       >
                     </ng-select>
                   </form-field>
@@ -228,13 +228,19 @@
 
           <div class="row pt-2 mb-2">
             <div class="col-sm-12 col-12 col-md-12 pr-3">
-              <div>
+              <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   (userRowSelect)="selectProceedings($event)"
                   [attr.class]="'table-bordered'"
                   [settings]="settings1"
                   [source]="data1">
                 </ng2-smart-table>
+                <br />
+                <div>
+                  <app-pagination
+                    [params]="params"
+                    [totalItems]="totalItems"></app-pagination>
+                </div>
               </div>
             </div>
           </div>
@@ -262,22 +268,24 @@
             class="container-fluid form-material">
             <div class="row w-100">
               <hr class="row" />
-              <div class="col-sm-12 col-12 col-md-6 pr-3">
+              <div class="col-sm-12 col-12 col-md-12 mt-2 mb-2">
                 <form-field
                   [control]="formDeclaratoriapageFin.get('page')"
-                  label="page">
+                  label="Inicio">
                   <!-- <label class="label w-100">page</label> -->
                   <textarea
+                    rows="5"
                     class="form-control w-100"
                     formControlName="page"></textarea>
                 </form-field>
               </div>
-              <div class="col-sm-12 col-12 col-md-6 pr-3">
+              <div class="col-sm-12 col-12 col-md-12 mt-2 mb-2">
                 <form-field
                   [control]="formDeclaratoriapageFin.get('fin')"
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
+                    rows="7"
                     class="form-control w-100"
                     formControlName="fin"></textarea>
                 </form-field>
@@ -291,10 +299,14 @@
             <div class="col-sm-12 col-12 col-md-8">
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-3 text-center">
-                  <button class="btn btn-secondary btn-sm active m-1">
+                  <button
+                    (click)="imgSolicitud()"
+                    class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file-find"></i>
                   </button>
-                  <button class="btn btn-secondary btn-sm active m-1">
+                  <button
+                    (click)="escanearFolioEscaneo()"
+                    class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file"></i>
                   </button>
                 </div>
@@ -306,11 +318,15 @@
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 text-center">
-                  <button class="btn btn-secondary btn-sm active m-1">
-                    <i class="bx bxs-file"></i>
-                  </button>
-                  <button class="btn btn-secondary btn-sm active m-1">
+                  <button
+                    (click)="imprimirFolioEscaneo()"
+                    class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file-find"></i>
+                  </button>
+                  <button
+                    (click)="visualizacionFolioEscaneo()"
+                    class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file"></i>
                   </button>
                 </div>
               </div>
@@ -319,6 +335,7 @@
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 text-center">
                   <button
+                    (click)="aprobar()"
                     type="button"
                     class="btn btn-primary btn-sm active ml-2 mr-2">
                     Aprobar
@@ -330,10 +347,15 @@
                   </button>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 text-center">
-                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+                  <button
+                    (click)="imprimir()"
+                    [disabled]="!disabledIMPRIMIR"
+                    class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i class="bx bxs-printer"></i>
                   </button>
-                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+                  <button
+                    [disabled]="!disabledENVIAR"
+                    class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i class="bx bx-send"></i>
                   </button>
                 </div>

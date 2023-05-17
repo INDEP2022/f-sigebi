@@ -1,7 +1,20 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('managementNumber')" label="Expediente">
+      <form-field
+        [control]="form.get('proceedingsNumber')"
+        label="N&uacute;m. Expediente">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="proceedingsNumber"
+          [readOnly]="verBoton" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('managementNumber')"
+        label="N&uacute;m. de Gesti&oacute;n">
         <input
           type="text"
           class="form-control"
@@ -11,17 +24,8 @@
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
-        [control]="form.get('numberGestion')"
-        label="No de Gesti&oacute;n">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="numberGestion"
-          [readOnly]="verBoton" />
-      </form-field>
-    </div>
-    <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flyerNumber')" label="Volante">
+        [control]="form.get('flyerNumber')"
+        label="N&uacute;m. Volante">
         <input
           type="text"
           class="form-control"
@@ -30,7 +34,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('officio')" label="Oficio">
+      <form-field [control]="form.get('officio')" label="N&uacute;m. Oficio">
         <input
           type="text"
           class="form-control"
@@ -49,16 +53,19 @@
       <button
         class="btn btn-primary btn-sm active"
         (click)="nuevaBusquedaOficio()">
-        Nueva Busqueda <i class="fa fa-search ml-2"></i>
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
       </button>
     </div>
   </div>
 
   <hr />
   <div class="row">
-    <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('senderUser')" label="Remitente">
-        <input type="text" class="form-control" formControlName="senderUser" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="RemitenteSenderUser" />
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -136,7 +143,34 @@
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('senderUser')" label="Detinatario Copia">
+      <form-field class="mb-3 mt-3" [control]="form.get('senderUser')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control', $event)"
+          [readonly]="form.get('typePerson').value === 'E'"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="senderUser"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+      </form-field>
+
+      <!--form-field [control]="form.get('senderUser')" label="Detinatario Copia">
         <ng-select
           [items]="UserDestinatario"
           bindLabel="id"
@@ -146,10 +180,10 @@
           class="form-control"
           (change)="getDescUser('control', $event)">
         </ng-select>
-      </form-field>
+      </form-field-->
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('personaExt')" label="Nom. Persona Ext">
+      <form-field [control]="form.get('personaExt')" label="Nombre Persona">
         <input
           type="text"
           class="form-control"
@@ -170,10 +204,32 @@
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field
-        [control]="form.get('senderUser_I')"
-        label="Detinatario Copia">
-        <ng-select
+      <form-field [control]="form.get('senderUser_I')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control_I', $event)"
+          [readonly]="form.get('typePerson_I').value === 'E'"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="senderUser_I"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+
+        <!--ng-select
           [items]="UserDestinatario"
           bindLabel="id"
           bindValue="id"
@@ -181,11 +237,11 @@
           [readonly]="form.get('typePerson_I').value === 'E'"
           class="form-control"
           (change)="getDescUser('control_I', $event)">
-        </ng-select>
+        </ng-select-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('personaExt_I')" label="Nom. Persona Ext">
+      <form-field [control]="form.get('personaExt_I')" label="Nombre Persona">
         <input
           type="text"
           class="form-control"
@@ -197,7 +253,7 @@
   <hr />
   <div class="row mb-5">
     <div class="col-md-8 col-sm-12 col-xs-12">
-      <table class="table table-bordered">
+      <table class="table table-bordered" style="width: 100%">
         <thead>
           <tr>
             <th>Clave</th>

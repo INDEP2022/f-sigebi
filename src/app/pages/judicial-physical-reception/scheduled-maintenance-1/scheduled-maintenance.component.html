@@ -6,7 +6,8 @@
     <div class="row mb-5">
       <app-clean-filters-shared
         [form]="form"
-        formStorage="filtersActa"></app-clean-filters-shared>
+        formStorage="filtersActa"
+        (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
     </div>
 
     <form class="form-material" [formGroup]="form">
@@ -57,7 +58,7 @@
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
               <ng-option value="ABIERTA">Abierto</ng-option>
-              <ng-option value="ABIERTA">Cerrado</ng-option>
+              <ng-option value="CERRADA">Cerrado</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -69,7 +70,7 @@
             formControlName="coordRegional"
             [multiple]="true"
             label="Coordinación Regional"
-            value="id"
+            value="description"
             bindLabel="description"
             paramSearch="search"
             path="catalog/api/v1/delegation">
@@ -162,10 +163,10 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Programaciones</h5>
-    <div class="buttons mt-2">
+    <div class="mt-2 righButtons">
       <app-columns-select
         [(settings)]="settings1"
-        [defaultColumns]="4"></app-columns-select>
+        [defaultColumns]="5"></app-columns-select>
       <button
         class="btn btn-primary btn-sm active"
         type="submit"
