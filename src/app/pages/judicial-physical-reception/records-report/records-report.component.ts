@@ -1,9 +1,9 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component,OnInit,Renderer2 } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
+FormBuilder,
+FormControl,
+FormGroup,
+Validators
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { format } from 'date-fns';
@@ -116,6 +116,36 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.activeTwo = false;
         this.r2.addClass(initial, 'disabled');
         this.r2.addClass(final, 'disabled');
+      }
+    });
+
+    this.type.valueChanges.subscribe(res => {
+      this.form.get('delegacionRecibe').reset();
+      this.form.get('subdelegation').reset();
+      this.form.get('estatusActa').reset();
+      this.form.get('actaInicial').reset();
+      this.form.get('actaFinal').reset();
+      this.form.get('desde').reset();
+      this.form.get('hasta').reset();
+      this.form.get('fechaDesde').reset();
+      this.form.get('fechaHasta').reset();
+      this.keyProceedingFinal = '';
+      this.keyProceedingInitial = '';
+      this.initialProceedingBool = false;
+      this.finalProceedingBool = false;
+      this.finalProceeding = new DefaultSelect();
+      this.initialProceeding = new DefaultSelect();
+    });
+
+    this.form.get('actaInicial').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingInitial = '';
+      }
+    });
+
+    this.form.get('actaFinal').valueChanges.subscribe(res => {
+      if (res === null) {
+        this.keyProceedingFinal = '';
       }
     });
   }

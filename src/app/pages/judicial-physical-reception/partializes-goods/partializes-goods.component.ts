@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TreeViewService } from 'src/app/@standalone/tree-view/tree-view.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -7,6 +7,10 @@ import { ITreeItem } from 'src/app/core/interfaces/menu.interface';
 import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-partializes-goods',
@@ -54,7 +58,10 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    this.getData();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
+      // console.log(x);
+      this.getData();
+    });
   }
 
   exportExcel() {
@@ -78,21 +85,12 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
     // console.log(this.table);
   }
 
-  getData() {
+  getData(params?: ListParams) {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-    };
-    if (this.form.get('noBien').value) {
+    // console.log(params);
+    if (!params) {
       params = {
-        ...params,
-        'filter.goodNumber': '$eq:' + this.form.get('noBien').value,
-      };
-    }
-    if (this.form.get('description').value) {
-      params = {
-        ...params,
-        'filter.description': '$ilike:' + this.form.get('description').value,
+        ...this.params.getValue(),
       };
     }
     // console.log(params, this.columnFilters);
@@ -141,7 +139,25 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
   }
 
   searchGood() {
-    this.getData();
+    let params = {
+      ...this.params.getValue(),
+    };
+    if (this.form.get('noBien').value || this.form.get('description').value) {
+      if (this.form.get('noBien').value) {
+        params = {
+          ...params,
+          'filter.goodNumber': '$eq:' + this.form.get('noBien').value,
+        };
+      }
+      if (this.form.get('description').value) {
+        params = {
+          ...params,
+          'filter.description': '$ilike:' + this.form.get('description').value,
+        };
+      }
+      params = { ...params, page: 1 };
+    }
+    this.getData(params);
     // if (this.form.get('noBien').value) {
     //   this.getData()
     // } else {
@@ -177,8 +193,8 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      noBien: [null],
-      description: [null],
+      noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 }
