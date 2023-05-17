@@ -93,6 +93,15 @@ export class DictationService extends HttpService {
     );
   }
 
+  getInitFormDictation2(
+    body: IInitFormLegalOpinionOfficeBody
+  ): Observable<IListResponse<IInitFormLegalOpinionOfficeResponse>> {
+    return this.post<IListResponse<IInitFormLegalOpinionOfficeResponse>>(
+      DictationEndpoints.InitFormLegalOpinionOffice2,
+      body
+    );
+  }
+
   getCopiesOfficeSendDictation(
     body: ICopiesOfficeSendDictation
   ): Observable<IListResponse<any>> {
