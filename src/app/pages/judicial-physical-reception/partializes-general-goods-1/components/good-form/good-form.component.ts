@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import {
   FilterParams,
   SearchFilter,
@@ -9,9 +9,8 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { AlertButton } from '../../../scheduled-maintenance-1/models/alert-button';
-import { PartializeGeneralGoodTab2Service } from '../../services/partialize-general-good-tab2.service';
-import { PartializeGeneralGoodV2Tab2Service } from '../../services/partialize-general-good-v2-tab2.service';
 import { PartializeGeneralGoodV2Service } from '../../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
@@ -21,63 +20,86 @@ import { PartializeGeneralGoodService } from '../../services/partialize-general-
   styleUrls: ['./good-form.component.scss'],
 })
 export class GoodFormComponent extends AlertButton implements OnInit {
-  @Input() firstCase: boolean = null;
+  // @Input() firstCase: boolean = null;
   @Input() version: number;
   paramsGoods = new FilterParams();
-  moreParams: string[] = [];
+  // moreParams: string[] = [];
   goodFilter = SearchFilter.EQ;
   toggleInformation = true;
+  firstCase = true;
   // operator = SearchFilter.LIKE;
   constructor(
-    private serviceTab1: PartializeGeneralGoodService,
-    private serviceTab2: PartializeGeneralGoodTab2Service,
-    private service2Tab1: PartializeGeneralGoodV2Service,
-    private service2Tab2: PartializeGeneralGoodV2Tab2Service,
+    private service1: PartializeGeneralGoodService,
+    // private serviceTab2: PartializeGeneralGoodTab2Service,
+    private service2: PartializeGeneralGoodV2Service,
+    // private service2Tab2: PartializeGeneralGoodV2Tab2Service,
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
-    private statusService: StatusGoodService
+    private statusService: StatusGoodService,
+    private statusScreenService: StatusXScreenService
   ) {
     super();
   }
 
+  searchGood() {
+    this.goodService.getByGoodNumber(this.noBien.value).subscribe({
+      next: response => {
+        console.log(response);
+        this.selectGood(response.data[0]);
+        // this.selectGood(response)
+      },
+      error: err => {
+        this.onLoadToast(
+          'error',
+          'N° Bien ' + this.noBien.value,
+          'No encontrado'
+        );
+      },
+    });
+  }
+
   ngOnInit(): void {
-    if (this.firstCase === null || this.version === null) {
+    if (this.version === null) {
       return;
     }
-    this.moreParams = [];
+    // if (this.firstCase === null || this.version === null) {
+    //   return;
+    // }
+    // this.moreParams = [];
     this.service.initFormGood();
-    if (this.firstCase === true) {
-      // this.service.initFormGood();
-      this.selectGood(this.serviceTab1.getSavedGood());
-      this.moreParams.push(
-        'filter.goodClassNumber=$in:' + this.service.clasificators
-      );
-    }
-    if (this.firstCase === false) {
-      // this.service.initFormGood();
-      this.selectGood(this.serviceTab2.getSavedGood());
-      this.moreParams.push(
-        'filter.goodClassNumber=$not:$null',
-        'filter.goodClassNumber=$not:$in:' + this.service.clasificators
-      );
-    }
-    if (this.version === 1) {
-      this.moreParams.push('filter.unit=$not:$null');
-      this.moreParams.push('filter.extDomProcess=$not:$null');
-      this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
-      this.moreParams.push('filter.appraisedValue=$not:$null');
-      this.moreParams.push('filter.val14=$not:$null');
-    }
+    // if (this.firstCase === true) {
+    // this.service.initFormGood();
+    // this.selectGood(this.serviceTab1.getSavedGood());
+    // this.moreParams.push(
+    //   'filter.goodClassNumber=$in:' + this.service.clasificators
+    // );
+    // }
+    // if (this.firstCase === false) {
+    // this.service.initFormGood();
+    // this.selectGood(this.serviceTab2.getSavedGood());
+    // this.moreParams.push(
+    //   'filter.goodClassNumber=$not:$null',
+    //   'filter.goodClassNumber=$not:$in:' + this.service.clasificators
+    // );
+    // }
+    // if (this.version === 1) {
+    // this.moreParams.push('filter.unit=$not:$null');
+    // this.moreParams.push('filter.extDomProcess=$not:$null');
+    // this.moreParams.push('filter.appraisalCurrencyKey=$not:$null');
+    // this.moreParams.push('filter.appraisedValue=$not:$null');
+    // this.moreParams.push('filter.val14=$not:$null');
+    // }
   }
 
   get service() {
-    return this.version === 1
-      ? this.firstCase === true
-        ? this.serviceTab1
-        : this.serviceTab2
-      : this.firstCase === true
-      ? this.service2Tab1
-      : this.service2Tab2;
+    return this.version === 1 ? this.service1 : this.service2;
+    // return this.version === 1
+    //   ? this.firstCase === true
+    //     ? this.serviceTab1
+    //     : this.serviceTab2
+    //   : this.firstCase === true
+    //     ? this.service2Tab1
+    //     : this.service2Tab2;
   }
 
   get formLoading() {
@@ -104,55 +126,55 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     return this.service.formControl;
   }
 
-  get goodsList() {
-    // this.paramsGoods = new FilterParams();
-    // 1424, 1426, 1427, 1575, 1590;
-    // this.paramsGoods.addFilter2('filter.goodClassNumber=$eq:1424');
-    if (!this.paramsGoods.getParams().includes('goodClassNumber')) {
-      if (this.firstCase) {
-        this.paramsGoods.addFilter2(
-          'filter.goodClassNumber=$in:1424,1426,1427,1575,1590'
-        );
-      } else {
-        this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
-        this.paramsGoods.addFilter2(
-          'filter.goodClassNumber=$not:$in:1424,1426,1427,1575,1590'
-        );
-      }
-    }
-    // if (!this.paramsGoods.getParams().includes('unit')) {
-    //   this.paramsGoods.addFilter2('filter.unit=$in:LITRO,METRO,PAR,PIEZA,JUEGO,CAJAS,M3,KILOGRAMO,UNIDAD,MEDIDA');
-    // }
+  // get goodsList() {
+  //   // this.paramsGoods = new FilterParams();
+  //   // 1424, 1426, 1427, 1575, 1590;
+  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$eq:1424');
+  //   if (!this.paramsGoods.getParams().includes('goodClassNumber')) {
+  //     if (this.firstCase) {
+  //       this.paramsGoods.addFilter2(
+  //         'filter.goodClassNumber=$in:1424,1426,1427,1575,1590'
+  //       );
+  //     } else {
+  //       this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
+  //       this.paramsGoods.addFilter2(
+  //         'filter.goodClassNumber=$not:$in:1424,1426,1427,1575,1590'
+  //       );
+  //     }
+  //   }
+  //   // if (!this.paramsGoods.getParams().includes('unit')) {
+  //   //   this.paramsGoods.addFilter2('filter.unit=$in:LITRO,METRO,PAR,PIEZA,JUEGO,CAJAS,M3,KILOGRAMO,UNIDAD,MEDIDA');
+  //   // }
 
-    // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1427');
-    // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1575');
-    // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1590');
-    // this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
-    if (!this.paramsGoods.getParams().includes('extDomProcess')) {
-      this.paramsGoods.addFilter2('filter.extDomProcess=$not:$null');
-    }
-    // this.paramsGoods.addFilter2('filter.unit=$not:$null');
-    if (!this.paramsGoods.getParams().includes('appraisalCurrencyKey')) {
-      this.paramsGoods.addFilter2('filter.appraisalCurrencyKey=$not:$null');
-    }
-    // this.paramsGoods.addFilter2('filter.locationType=$not:$null');
-    // this.paramsGoods.addFilter2('filter.originSignals=$not:$null');
-    // this.paramsGoods.addFilter2('filter.registerInscrSol=$not:$null');
-    // this.paramsGoods.addFilter2('filter.proficientOpinion=$not:$null');
-    // this.paramsGoods.addFilter2('filter.valuerOpinion=$not:$null');
-    // this.paramsGoods.addFilter2('filter.opinion=$not:$null');
-    if (!this.paramsGoods.getParams().includes('appraisedValue')) {
-      this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
-    }
-    if (!this.paramsGoods.getParams().includes('val14')) {
-      this.paramsGoods.addFilter2('filter.val14=$not:$null');
-    }
-    // this.paramsGoods.addFilter2('filter.rackNumber=$not:$null');
-    // this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
-    // this.paramsGoods.addFilter2('filter.statusResourceRevision=$not:$null');
-    // this.paramsGoods.addFilter2('filter.fractionId=$not:$null');
-    return this.goodService.getAll(this.paramsGoods.getParams());
-  }
+  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1427');
+  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1575');
+  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$or:1590');
+  //   // this.paramsGoods.addFilter2('filter.goodClassNumber=$not:$null');
+  //   if (!this.paramsGoods.getParams().includes('extDomProcess')) {
+  //     this.paramsGoods.addFilter2('filter.extDomProcess=$not:$null');
+  //   }
+  //   // this.paramsGoods.addFilter2('filter.unit=$not:$null');
+  //   if (!this.paramsGoods.getParams().includes('appraisalCurrencyKey')) {
+  //     this.paramsGoods.addFilter2('filter.appraisalCurrencyKey=$not:$null');
+  //   }
+  //   // this.paramsGoods.addFilter2('filter.locationType=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.originSignals=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.registerInscrSol=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.proficientOpinion=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.valuerOpinion=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.opinion=$not:$null');
+  //   if (!this.paramsGoods.getParams().includes('appraisedValue')) {
+  //     this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
+  //   }
+  //   if (!this.paramsGoods.getParams().includes('val14')) {
+  //     this.paramsGoods.addFilter2('filter.val14=$not:$null');
+  //   }
+  //   // this.paramsGoods.addFilter2('filter.rackNumber=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.appraisedValue=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.statusResourceRevision=$not:$null');
+  //   // this.paramsGoods.addFilter2('filter.fractionId=$not:$null');
+  //   return this.goodService.getAll(this.paramsGoods.getParams());
+  // }
 
   get cantidadRows() {
     return this.form.get('cantidad2');
@@ -192,6 +214,10 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     return this.form.get('importe');
   }
 
+  get good() {
+    return this.service.good;
+  }
+
   private async validateGood(good: IGood) {
     let mensaje = await firstValueFrom(
       this.goodService.getValigFlag(good.goodId)
@@ -221,56 +247,136 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.sumVal14 = 0;
   }
 
+  private validateStatusXPantalla(good: IGood) {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('screenKey', 'FACTGENPARCBIEN');
+    filterParams.addFilter('processExtSun', good.extDomProcess);
+    filterParams.addFilter('status', good.status);
+    return firstValueFrom(
+      this.statusScreenService
+        .getList(filterParams.getFilterParams())
+        .pipe(map(x => x.data[0]))
+    );
+  }
+
+  private async getNoActa(good: IGood) {
+    return firstValueFrom(
+      this.goodService.getActAccount({
+        goodNumber: good.goodId,
+        status: good.status,
+        process: good.extDomProcess,
+      })
+    );
+    /**
+     * BEGIN
+         SELECT NVL(MAX(NO_ACTA),0)
+           INTO vno_acta
+           FROM DETALLE_ACTA_ENT_RECEP
+          WHERE NO_ACTA IN (SELECT NO_ACTA
+                              FROM ACTAS_ENTREGA_RECEPCION
+                             WHERE TIPO_ACTA = 'EVENTREC')
+            AND NO_BIEN = :BIENES.NO_BIEN;
+
+         IF vno_acta > 0 THEN
+            SELECT COUNT(0)
+              INTO v_cuantos
+              FROM ESTATUS_X_PANTALLA
+             WHERE CVE_PANTALLA = 'FINDICA_0035_1'
+               AND ACCION = 'RF'
+               AND ESTATUS_FINAL = :BIENES.ESTATUS
+               AND PROCESO_EXT_DOM = :BIENES.PROCESO_EXT_DOM;
+
+            IF v_cuantos = 0 THEN
+               vno_acta := 0;
+            END IF;
+         END IF;
+
+      EXCEPTION
+         WHEN OTHERS THEN
+            vno_acta := 0;
+      END;
+     */
+  }
+
   async selectGoodContent(good: IGood) {
     let bandera;
     let clasif: number;
+    // debugger;
     if (!good) {
+      this.service.good = null;
+      const lastGood = this.form.get('noBien').value;
+      this.resetForm();
+      this.noBien.setValue(lastGood);
       return;
     }
-    console.log(good.goodClassNumber);
-    const newBinesPar = this.service.bienesPar.filter(bien => {
-      bien.noBien = good.goodId;
-    });
-    this.service.bienesPar = newBinesPar;
-    this.service.savePartializeds();
-    if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
-      bandera = 0;
-      const validacion = await this.validateGood(good);
-      bandera = validacion.bandera;
-      if (bandera === 0) {
-        this.onLoadToast('error', 'Parcialización', validacion.mensaje);
+    if (this.version === 1) {
+      let vb_estatus_valido;
+      // vb_estatus_valido = await this.validateStatusXPantalla(good);
+      try {
+        vb_estatus_valido = await this.validateStatusXPantalla(good);
+        console.log(vb_estatus_valido);
+      } catch (x) {
+        console.log(x);
+        this.onLoadToast(
+          'error',
+          'Error',
+          'El Bien no cuenta con un estatus correcto'
+        );
         return;
       }
-    } else {
-      clasif = 1;
-    }
-    if (!good.goodClassNumber) {
-      this.onLoadToast(
-        'error',
-        'Parcialización',
-        'Bien ' + good.goodId + ' no cuenta con clasificador'
-      );
-      return;
-    }
-    this.service.good = good;
-    if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodClassNumber)) {
-      // this.service.setSettingsFirstCase();
-      const val14 = good.val14 ? +good.val14.trim() : 0;
-      if (isNaN(+good.val2) || val14 <= 0 || good.appraisedValue <= 0) {
+
+      console.log(good.goodClassNumber);
+      // const newBienesPar = this.service.bienesPar.filter(bien => {
+      //   bien.noBien = good.goodId;
+      // });
+      // this.service.bienesPar = newBienesPar;
+      // this.service.savePartializeds();
+      if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
+        bandera = 0;
+        const validacion = await this.validateGood(good);
+        bandera = validacion.bandera;
+        if (bandera === 0) {
+          this.onLoadToast('error', 'Parcialización', validacion.mensaje);
+          return;
+        }
+      } else {
+        clasif = 1;
+      }
+      if (!good.goodClassNumber) {
         this.onLoadToast(
           'error',
           'Parcialización',
-          'Bien ' + good.goodId + ' no cuenta con importe'
+          'Bien ' + good.goodId + ' no cuenta con clasificador'
         );
-        this.service.good = null;
         return;
       }
-      this.saldo.setValue(
-        good.appraisedValue ? good.appraisedValue : good.val14
-      );
+      try {
+        this.service.noActa = await this.getNoActa(good);
+      } catch (x) {
+        this.service.noActa = 0;
+      }
+      this.service.good = good;
+      if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodClassNumber)) {
+        this.firstCase = true;
+        const val14 = good.val14 ? +good.val14.trim() : 0;
+        if (isNaN(+good.val2) || val14 <= 0 || good.appraisedValue <= 0) {
+          this.onLoadToast(
+            'error',
+            'Parcialización',
+            'Bien ' + good.goodId + ' no cuenta con importe'
+          );
+          this.service.good = null;
+          return;
+        }
+        this.saldo.setValue(
+          good.appraisedValue ? good.appraisedValue : good.val14
+        );
+      } else {
+        this.firstCase = false;
+        this.service.formControl.get('saldo').setValue(good.quantity);
+      }
     } else {
-      this.service.formControl.get('saldo').setValue(good.quantity);
-      // this.service.setSettingsSecondCase();
+      this.service.good = good;
     }
     const statusGood = good.status
       ? await firstValueFrom(this.statusService.getById(good.status))

@@ -66,20 +66,20 @@
           
         </div> -->
       </form>
+      <div class="form-inline justify-content-end btn-toolbar">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="searchForm.invalid"
+          (click)="search()">
+          <i class="fa fa-search"></i> Buscar
+        </button>
+
+        <button class="btn btn-danger btn-sm active" (click)="clean()">
+          Limpiar
+        </button>
+      </div>
     </div>
 
-    <div class="form-inline justify-content-end btn-toolbar">
-      <button
-        class="btn btn-primary btn-sm active"
-        [disabled]="searchForm.invalid"
-        (click)="search()">
-        <i class="fa fa-search"></i> Buscar
-      </button>
-
-      <button class="btn btn-danger btn-sm active" (click)="clean()">
-        Limpiar
-      </button>
-    </div>
     <!-- tabla Emisión Acuerdos -->
     <div class="row w-100">
       <app-columns-select

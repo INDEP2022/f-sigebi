@@ -240,12 +240,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   fecElab() {
-    if (this.form.get('fecElab').value > new Date()) {
-      this.alert(
-        'warning',
-        'Problema con la fecha de elaboración',
-        'La fecha de elaboración debe de ser menor o igual a la fecha de hoy'
-      );
+    if (
+      format(this.form.get('fecElab').value, 'dd-MM-yyyy') >
+      format(this.maxDate, 'dd-MM-yyyy')
+    ) {
+      this.form.get('fecElab').setValue(new Date());
+      this.form.get('fecCierreActa').setValue(new Date());
     } else {
       this.form.get('fecCierreActa').setValue(this.form.get('fecElab').value);
     }
@@ -509,15 +509,15 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   clearInputs() {
-    this.form.get('acta2').setValue(null);
-    this.form.get('fecElab').setValue(null);
-    this.form.get('fecCierreActa').setValue(null);
-    this.form.get('fecCaptura').setValue(null);
-    this.form.get('direccion').setValue(null);
-    this.form.get('observaciones').setValue(null);
-    this.form.get('autoridadCancela').setValue(null);
-    this.form.get('elabora').setValue(null);
-    this.form.get('testigo').setValue(null);
+    this.form.get('acta2').reset();
+    this.form.get('fecElab').reset();
+    this.form.get('fecCierreActa').reset();
+    this.form.get('fecCaptura').reset();
+    this.form.get('direccion').reset();
+    this.form.get('observaciones').reset();
+    this.form.get('autoridadCancela').reset();
+    this.form.get('elabora').reset();
+    this.form.get('testigo').reset();
     this.form.get('acta').reset();
     this.form.get('autoridad').reset();
     this.form.get('ident').reset();
@@ -865,10 +865,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods-1',
+      '/pages/judicial-physical-reception/partializes-general-goods/v1',
     ]);
   }
 
+  goCargaMasiva() {
+    this.router.navigate(['/pages/general-processes/goods-tracker']);
+  }
   //Validations
 
   validateFolio() {
@@ -1051,6 +1054,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             err => {
               console.log(err);
               console.log('Error al guardar');
+              this.alert(
+                'warning',
+                'Se presento un error',
+                'Se presento un error al intentar crear el acta, intentelo nuevamente'
+              );
             }
           );
         } else {
@@ -1153,13 +1161,15 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               .PADelActaEntrega(realData.id)
               .subscribe(res => {
                 this.form.get('expediente').setValue(this.numberExpedient);
-                this.dataGoods['data'].map((e: any) => {
-                  for (let element of this.dataGoodAct['data']) {
-                    if (e.id === element.id) {
-                      return { ...e, avalaible: true };
+                this.dataGoods.load(
+                  this.dataGoods['data'].map((e: any) => {
+                    for (let element of this.dataGoodAct['data']) {
+                      if (e.id === element.id) {
+                        return { ...e, avalaible: true };
+                      }
                     }
-                  }
-                });
+                  })
+                );
                 this.clearInputs();
                 this.getGoodsByExpedient();
                 this.alert('success', 'Acta eliminada con éxito', '');

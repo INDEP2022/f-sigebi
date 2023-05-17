@@ -51,10 +51,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    this.dictamenSeq();
     this.prepareForm();
   }
 

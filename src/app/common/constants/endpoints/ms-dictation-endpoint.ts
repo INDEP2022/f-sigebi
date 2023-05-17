@@ -14,4 +14,5 @@ export enum DictationEndpoints {
   FindGoodDictGood1 = 'additional-queries/find-good-dictxgood1',
   InitFormLegalOpinionOffice = 'application/pupInicializaForma',
   CopiesOfficeSendDictation = 'application/copiasOficioDictamenEnviar',
+  DocumentByDictation = 'r-dictation-doc',
 }
