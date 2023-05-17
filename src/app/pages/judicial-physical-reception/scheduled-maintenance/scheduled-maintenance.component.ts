@@ -49,13 +49,6 @@ export class ScheduledMaintenanceComponent
     console.log(event);
   }
 
-  resetView() {
-    console.log('RESET VIEW');
-    this.data = [];
-    this.data2 = [];
-    this.totalItems = 0;
-  }
-
   captureEvent() {
     console.log(this.form.value);
     if (!this.form.get('tipoEvento').value) {

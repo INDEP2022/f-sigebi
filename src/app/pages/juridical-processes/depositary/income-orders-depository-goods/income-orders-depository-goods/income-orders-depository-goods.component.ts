@@ -10,6 +10,7 @@ import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.mo
 import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { NumBienShare } from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -67,6 +68,7 @@ export class IncomeOrdersDepositoryGoodsComponent
   ========================================*/
   objJsonInterfazUser: ISegUsers[] = [];
   itemsJsonInterfazUser: ISegUsers[] = [];
+  userPuesto: ISegUsers[] = [];
   itemsDepositaryUser = new DefaultSelect<ISegUsers>();
   datosUser: TokenInfoModel;
 
@@ -83,7 +85,8 @@ export class IncomeOrdersDepositoryGoodsComponent
     private usersService: UsersService,
     private valorBien: NumBienShare,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
   }
@@ -95,7 +98,7 @@ export class IncomeOrdersDepositoryGoodsComponent
         this.interfasValorBienes = res;
       },
       error: err => {
-        //alert('SharingNumbien' + err);
+        alert('SharingNumbien' + err);
       },
     });
     this.buildForm();
@@ -170,9 +173,7 @@ export class IncomeOrdersDepositoryGoodsComponent
       username: [null, [Validators.required]],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
-    this.form.get('userId').setValue(this.datosUser.username);
-    this.form.get('username').setValue(this.datosUser.name);
-    this.form.get('charge').setValue(this.datosUser.puesto);
+
     this.form.get('date').setValue(new Date(Date.now()));
     this.form.get('numberGood').setValue(this.interfasValorBienes.numBien);
     this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
@@ -181,7 +182,19 @@ export class IncomeOrdersDepositoryGoodsComponent
   }
 
   getDescUser(event: Event) {
-    alert(JSON.stringify(event));
-    //this.itemsJsonInterfaz.filter(X => {X.registerNumber==event.target});
+    let userDatos = JSON.parse(JSON.stringify(event));
+    console.warn(userDatos);
+    this.form.get('username').setValue(userDatos.name);
+    this.dynamicCatalogsService
+      .getPuestovalue(userDatos.positionKey)
+      .subscribe({
+        next: resp => {
+          this.form.get('charge').setValue(resp.data.value);
+        },
+        error: err => {
+          this.form.get('charge').setValue('');
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
   }
 }
