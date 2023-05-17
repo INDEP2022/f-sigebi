@@ -63,7 +63,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   goodDataSave: any;
   dataApprasialGood: any[];
   idGood: number | string;
-  goodSelected: string = 'No se seleccionó bien';
+  goodSelected: string = 'Seleccione un Bien';
   getgoodCategory: string;
   getoriginSignals: string;
   getnotifyDate: string | Date;
@@ -317,7 +317,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     this.disabledButton('apprais-good');
     this.disabledButton('apprasial-history');
     this.disabledButton('update-general-good');
-    this.goodSelected = 'No se seleccionó bien';
+    this.goodSelected = 'Seleccione un Bien';
   }
 
   getGoodsByExpedient() {
@@ -407,7 +407,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         console.log(JSON.parse(JSON.stringify(res)).data);
         const data = JSON.parse(JSON.stringify(res)).data[0];
         this.goodDataSave = data;
-        this.goodSelected = data.description;
+        this.goodSelected = `Seleccionó el Bien con id: ${data.id}`;
         this.idGood = data.id;
         this.getgoodCategory = data.goodCategory;
         this.getoriginSignals = data.originSignals;
@@ -656,8 +656,8 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
                 res => {
                   this.alert(
                     'success',
-                    'El bien se avaluó con éxito',
-                    'El bien fue valuado exitosamente'
+                    'El Bien se avaluó con éxito',
+                    'El Bien fué valuado exitosamente'
                   );
                   this.getAppraisalGood();
                   this.form.get('fechaAvaluo').reset();

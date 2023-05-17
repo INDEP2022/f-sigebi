@@ -92,7 +92,9 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-md-6">
-              <form-field [control]="form.get('desde')" label="Desde el">
+              <form-field
+                [control]="form.get('desde')"
+                label="Desde el expediente">
                 <input
                   type="number"
                   [min]="0"
@@ -102,7 +104,9 @@
               </form-field>
             </div>
             <div class="col-md-6">
-              <form-field [control]="form.get('hasta')" label="Hasta el">
+              <form-field
+                [control]="form.get('hasta')"
+                label="Hasta el expediente">
                 <input
                   type="number"
                   [min]="form.get('desde').value + 1"

@@ -20,22 +20,23 @@
           <div class="col-md-3">
             <form-field [control]="form.get('noBien')" label="N° de bien">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="noBien"
-                min="1" />
+                maxlength="10" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('description')" label="Descripción">
               <textarea
                 class="form-control"
-                formControlName="description"></textarea>
+                formControlName="description"
+                maxlength="600"></textarea>
             </form-field>
           </div>
           <div class="col-md-3">
             <button
-              [disabled]="loading"
+              [disabled]="loading || form.invalid"
               class="btn btn-primary btn-sm active"
               type="button"
               (click)="searchGood()">
