@@ -187,6 +187,7 @@ export class NotificationsFileComponent
       .getNotificationByFileNumber(params.getParams())
       .subscribe({
         next: res => {
+          console.log(res.data);
           this.loading = false;
           res.data.map((i: any) => {
             // Área destino
