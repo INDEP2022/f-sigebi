@@ -326,4 +326,12 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
     return this.get<any>(route);
   }
+
+  getByExpedientAndParams(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.GetAllGoodQuery;
+    return this.get<IListResponse<IGood>>(route, params);
+  }
 }

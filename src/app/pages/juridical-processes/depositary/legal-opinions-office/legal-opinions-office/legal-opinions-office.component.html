@@ -396,6 +396,7 @@
         </button> -->
         <button
           [disabled]="loadingSend"
+          (click)="btnDetail()"
           type="button"
           class="btn btn-info btn-sm active m-3">
           Detalle
@@ -403,7 +404,7 @@
           <!-- <i class="fa fa-info-circle" aria-hidden="true"></i> -->
         </button>
         <button
-          [disabled]="loadingSend"
+          [disabled]="loadingSend || blockSender"
           type="button"
           class="btn btn-success btn-sm active m-3"
           (click)="sendOffice()">

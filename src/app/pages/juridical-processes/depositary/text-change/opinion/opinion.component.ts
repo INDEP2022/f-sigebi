@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -15,6 +15,7 @@ import {
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
@@ -24,6 +25,7 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-opinion',
@@ -44,6 +46,9 @@ export class OpinionComponent extends BasePage implements OnInit {
   verBoton: boolean = false;
   filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
 
+  //===================
+  users$ = new DefaultSelect<ISegUsers>();
+
   constructor(
     private fb: FormBuilder,
     private oficialDictationService: OficialDictationService,
@@ -51,7 +56,8 @@ export class OpinionComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private siabServiceReport: SiabService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
   }
@@ -175,9 +181,9 @@ carga la  información de la parte media de la página
       next: resp => {
         //console.log(" 2 => " + JSON.stringify(resp));
         console.log('getById =>>  ' + JSON.stringify(resp));
-        this.form.get('senderUser').setValue(resp.sender);
+        this.form.get('senderUserRemitente').setValue(resp.sender);
         this.form.get('addressee').setValue(resp.recipient);
-        this.form.get('charge').setValue(resp.cveChargeRem);
+        this.getPuestoUser(resp.cveChargeRem);
         this.form.get('addressee_I').setValue(resp.sender);
         this.form.get('numberDictamination').setValue(resp.officialNumber);
         this.form.get('paragraphInitial').setValue(resp.text1);
@@ -276,33 +282,19 @@ carga la  información de la parte media de la página
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      addressee: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      addressee_I: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      paragraphInitial: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      paragraphFinish: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      senderUserRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
+      addressee: [null, [Validators.pattern(STRING_PATTERN)]],
+      addressee_I: [null, [Validators.pattern(STRING_PATTERN)]],
+      paragraphInitial: [null, [Validators.pattern(STRING_PATTERN)]],
+      paragraphFinish: [null, [Validators.pattern(STRING_PATTERN)]],
       paragraphOptional: [null, [Validators.pattern(STRING_PATTERN)]],
-      descriptionSender: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      descriptionSender: [null, [Validators.pattern(STRING_PATTERN)]],
       typePerson: [null, [Validators.required]],
       senderUser: [null, null],
-      personaExt: [null, [Validators.required]],
-      typePerson_I: [null, [Validators.required]],
+      personaExt: [null, null],
+      typePerson_I: [null, null],
       senderUser_I: [null, null],
-      personaExt_I: [null, [Validators.required]],
+      personaExt_I: [null, null],
 
       key: [
         null,
@@ -374,5 +366,37 @@ carga la  información de la parte media de la página
     this.form.reset();
     this.verBoton = false;
     this.filterParamsLocal.getValue().removeAllFilters();
+  }
+
+  getPuestoUser(idCode: string) {
+    this.dynamicCatalogsService.getPuestovalue(idCode).subscribe({
+      next: resp => {
+        this.form.get('charge').setValue(resp.data.value);
+      },
+      error: err => {
+        this.form.get('charge').setValue('');
+        this.onLoadToast('error', 'Error', err.error.message);
+      },
+    });
+  }
+
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 }

@@ -250,3 +250,12 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
     this.form.get('loand').setValue('');
   }
 }
+/*
+
+Riicho — hoy a las 11:58
+p_nom_bien
+origin
+Oscar Ibarra — hoy a las 11:59
+FCONDEPOCARGAPAG
+
+*/
