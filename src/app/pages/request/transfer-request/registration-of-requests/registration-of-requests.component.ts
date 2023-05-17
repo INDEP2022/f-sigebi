@@ -1089,6 +1089,7 @@ export class RegistrationOfRequestsComponent
       task['requestId'] = request.id;
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
+      task['processName'] = 'SolicitudTransferencia';
       body['task'] = task;
 
       let orderservice: any = {};
