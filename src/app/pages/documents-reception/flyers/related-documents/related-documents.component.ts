@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -12,10 +15,12 @@ import {
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
 import { FlyersService } from '../services/flyers.service';
 import {
   IDataGoodsTable,
@@ -115,6 +120,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private flyerService: FlyersService,
     private route: ActivatedRoute,
     private router: Router,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
     private serviceRelatedDocumentsService: RelatedDocumentsService
   ) {
     super();
@@ -912,31 +920,62 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     });
   }
 
-  public send(): void {
-    this.loading = true;
-    // const pdfurl =
-    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGENADBNUMEFISICO.pdf?PARAMFORM=NO&DESTYPE=` +
-    //   this.managementForm.controls['screenKey'].value +
-    //   `&NO_OF_GES=` +
-    //   this.managementForm.controls['numero'].value +
-    //   `&TIPO_OF=` +
-    //   this.managementForm.controls['tipoOficio'].value +
-    //   `&VOLANTE=` +
-    //   this.managementForm.controls['noVolante'].value +
-    //   `&EXP=` +
-    //   this.managementForm.controls['noExpediente'].value +
-    //   `&ESTAT_DIC=` +
-    //   this.oficioGestion.statusOf;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
-    let params = { ...this.managementForm.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
+  send(): any {
+    let params = {
+      PARAMFORM: 'NO',
+      DESTYPE: this.screenKey,
+      NO_OF_GES: this.managementForm.controls['numero'].value,
+      TIPO_OF: this.managementForm.controls['tipoOficio'].value,
+      VOLANTE: this.managementForm.controls['noVolante'].value,
+      EXP: this.managementForm.controls['noExpediente'].value,
+      ESTAT_DIC: 'NO',
+    };
+    if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
+      this.siabService
+        .fetchReport('RGERJURDECLARABAND', params)
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert('warning', ERROR_REPORT, '');
+          }
+        });
+    } else if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
+      this.siabService
+        .fetchReport('RGEROFGESTION_EXT', params)
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert('warning', ERROR_REPORT, '');
+          }
+        });
     }
-    this.onLoadToast('success', '', 'Reporte generado');
-    this.loading = false;
   }
 }

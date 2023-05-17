@@ -14,13 +14,6 @@
               class="form-control"
               formControlName="numberGood"
               [readonly]="true" />
-            <!--ng-select
-              [items]="itemsJsonInterfaz"
-              bindLabel="goodNumber"
-              bindValue="appointmentNumber"
-              formControlName="numberGood"
-              class="form-control">
-            </ng-select-->
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -86,11 +79,6 @@
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('userId')" label="Usuario">
-            <!--input
-              type="text"
-              class="form-control"
-              formControlName="userId"
-              [readonly]="true"/-->
             <ng-select
               [items]="itemsJsonInterfazUser"
               bindLabel="id"
