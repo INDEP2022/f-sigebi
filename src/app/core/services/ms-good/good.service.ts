@@ -199,7 +199,6 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     if (params) {
       params['expedient'] = expedient;
-      // params['filter.status'] = `$eq:ADM`
     }
     const route = GoodEndpoints.SearchByExpedient;
     return this.get<IListResponse<IGood>>(route, params);
@@ -313,5 +312,13 @@ export class GoodService extends HttpService {
   getGoodById(id: string | number) {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
     return this.get<any>(route);
+  }
+
+  getByExpedientAndParams(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.GetAllGoodQuery;
+    return this.get<IListResponse<IGood>>(route, params);
   }
 }
