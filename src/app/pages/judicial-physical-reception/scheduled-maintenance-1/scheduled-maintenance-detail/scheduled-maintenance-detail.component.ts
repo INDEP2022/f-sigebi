@@ -151,7 +151,7 @@ export class ScheduledMaintenanceDetailComponent
     );
     this.form = this.fb.group({
       acta: [acta.id],
-      fechaCaptura: [new Date(acta.captureDate)],
+      fechaCaptura: [acta.captureDate],
       statusActa: [acta.statusProceedings],
       claveActa: [acta.keysProceedings],
       tipoEvento: [acta.typeProceedings],

@@ -258,7 +258,7 @@ export abstract class ScheduledMaintenance extends BasePage {
             ...response.data.map(x => {
               return {
                 ...x,
-                captureDate: format(new Date(x.captureDate), 'dd-MM-yyyy'),
+                captureDate: format(new Date(x.captureDate), 'dd/MM/yyyy'),
               };
             }),
           ];
