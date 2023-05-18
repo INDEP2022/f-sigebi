@@ -237,33 +237,33 @@ export class JuridicalRecordUpdateComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(changes);
     if (
       changes['searchMode']?.currentValue &&
       !changes['searchMode']?.isFirstChange()
     ) {
-      // console.log('SearchMode');
+      console.log('SearchMode');
       this.activateSearch();
     } else if (changes['searchMode']?.currentValue === false) {
-      // console.log('SearchMode false');
+      console.log('SearchMode false');
       this.deactivateSearch();
     }
     if (
       changes['confirmSearch']?.currentValue &&
       !changes['confirmSearch']?.isFirstChange()
     ) {
-      // console.log('confirmSearch');
+      console.log('confirmSearch');
       if (changes['confirmSearch']?.currentValue) {
-        // console.log(this.fileDataUpdateForm.value);
+        console.log(this.fileDataUpdateForm.value);
         this.onSearch.emit(this.fileDataUpdateForm.value);
       }
-      // this.deactivateSearch();
+      this.deactivateSearch();
     }
+
     if (
       changes['selectedNotification']?.currentValue &&
       !changes['selectedNotification']?.isFirstChange()
     ) {
-      // console.log('selectedNotification');
+      console.log('selectedNotification');
       this.fillForm(changes['selectedNotification'].currentValue);
     }
   }
