@@ -33,6 +33,7 @@ import { NotificationService } from 'src/app/core/services/ms-notification/notif
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { WarehouseFilterService } from 'src/app/core/services/ms-warehouse-filter/warehouse-filter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -166,6 +167,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   isEnableObservaciones = true;
   isEnableRecibe2 = true;
   isEnableTestigo = true;
+  isBoveda = false;
+  isAlmacen = false;
 
   constructor(
     private fb: FormBuilder,
@@ -183,7 +186,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceUser: UsersService,
     private router: Router,
     private serviceGoodProcess: GoodProcessService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private serviceExpediente: ExpedientService,
+    private serviceProgrammingGood: ProgrammingGoodService
   ) {
     super();
   }
@@ -283,6 +288,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else if (this.labelActa === 'Cerrar acta') {
       this.closeProceeding();
     }
+  }
+
+  getDataExpedient() {
+    this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
+      resp => {
+        console.log(resp);
+        console.log(resp.criminalCase);
+        this.form.get('causaPenal').setValue(resp.criminalCase);
+        console.log(resp.preliminaryInquiry);
+        this.form.get('averPrev').setValue(resp.preliminaryInquiry);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   //Conditional functions
@@ -641,6 +661,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(newData);
             this.dataGoods.load(newData);
             this.getGoodsByExpedient();
+            this.getDataExpedient();
             this.alert(
               'success',
               'Se encontraron Bienes',
@@ -702,6 +723,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.isEnableObservaciones = false;
     this.isEnableRecibe2 = false;
     this.isEnableTestigo = false;
+  }
+
+  inputsNewProceeding() {
+    this.isEnableDireccion = true;
+    this.isEnableEntrega = true;
+    this.isEnablefecElab = true;
+    this.isEnablefecElabRec = true;
+    this.isEnableObservaciones = true;
+    this.isEnableRecibe2 = true;
+    this.isEnableTestigo = true;
   }
 
   fillIncomeProceeding(dataRes: any) {
@@ -804,6 +835,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       } else {
         console.log('Primer else');
         this.getTransfer();
+        this.inputsNewProceeding();
         this.clearInputs();
         this.form.get('ident').setValue('ADM');
         this.checkChange();
@@ -834,6 +866,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       console.log(this.numberProceeding);
       if (this.numberProceeding <= this.proceedingData.length - 1) {
         this.nextProce = true;
+        this.act2Valid = false;
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
@@ -940,6 +973,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         ''
       ).then(q => {
         if (q.isConfirmed) {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('valUser', localStorage.getItem('username'));
+          paramsF.addFilter('valMinutesNumber', this.idProceeding);
+          this.serviceProgrammingGood
+            .getTmpProgValidation(paramsF.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+              },
+              err => {
+                console.log(err);
+              }
+            );
           const tipo_acta = ['D', 'ND'].includes(this.form.get('acta').value)
             ? 'DECOMISO'
             : 'ENTREGA';
@@ -1489,6 +1535,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               v_tipo_acta = 'DECOMISO';
             } else {
               v_tipo_acta = 'ENTREGA';
+            }
+
+            if (no_type === 7 || (no_type === 5 && no_subtype === 16)) {
+              this.isBoveda = true;
+            }
+            if (no_type === 5) {
+              this.isAlmacen = true;
             }
             console.log(v_tipo_acta);
             //NECESARIO ENDPOINT QUE VALIDE EL QUERY
