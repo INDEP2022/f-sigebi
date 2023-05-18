@@ -17,7 +17,7 @@
                     [searchOnInit]="true"
                     [data]="typesDict"
                     [form]="legalForm"
-                    label="Tipo de dictaminación"
+                    label="Tipo Dictaminación"
                     bindLabel="typeDict"
                     control="tipoDictaminacion"
                     (change)="onTypeDictChange($event)"></ngx-select>
@@ -26,7 +26,7 @@
               <div class="row mt-3">
                 <form-field
                   [control]="expedientesForm.get('noExpediente')"
-                  label="No Expediente">
+                  label="No. Expediente">
                   <input
                     type="number"
                     class="form-control"
@@ -81,7 +81,7 @@
                 <div class="row">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
-                    label="Fec&#46; Dictamina">
+                    label="Fecha Dictaminación">
                     <input
                       formControlName="fecDicta"
                       class="form-control"
@@ -105,7 +105,7 @@
                 <div class="row">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
-                    label="Fecha resolución">
+                    label="Fecha Resolución">
                     <input
                       formControlName="fecDicta"
                       class="form-control"
@@ -117,7 +117,7 @@
                 <div class="row">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
-                    label="Fecha notificación">
+                    label="Fecha Notificación">
                     <input
                       formControlName="fecDicta"
                       class="form-control"
@@ -194,7 +194,7 @@
                 <select
                   class="form-control"
                   formControlName="tipoDictaminacion">
-                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="null"></option>
                   <option [value]="'Alta'">Alta</option>
                   <option [value]="'Normal'">Normal</option>
                 </select>
