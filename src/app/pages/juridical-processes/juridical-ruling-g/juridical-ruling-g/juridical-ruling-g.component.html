@@ -15,7 +15,7 @@
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('noExpediente')"
-                label="No Expediente">
+                label="No. Expediente">
                 <input
                   class="form-control"
                   (blur)="changeNumExpediente()"
@@ -27,7 +27,7 @@
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('noDictaminacion')"
-                label="No Dictaminación">
+                label="No. Dictaminación">
                 <input class="form-control" formControlName="noDictaminacion" />
               </form-field>
             </div>
@@ -123,7 +123,7 @@
             <div class="col-md-offset-4 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaNotificacionAseg')"
-                label="Fecha Notificaci&oacute;n Aseg">
+                label="Fecha Notificaci&oacute;n Aseg.">
                 <input
                   class="form-control"
                   formControlName="fechaNotificacionAseg"
@@ -190,7 +190,7 @@
             [control]="subtipoForm.get('tipoDictaminacion')"
             label="Ident&#46;">
             <select class="form-control" formControlName="tipoDictaminacion">
-              <option [value]="null">Seleccione un valor</option>
+              <option [value]="null"></option>
               <option [value]="'Alta'">Alta</option>
               <option [value]="'Normal'">Normal</option>
             </select>

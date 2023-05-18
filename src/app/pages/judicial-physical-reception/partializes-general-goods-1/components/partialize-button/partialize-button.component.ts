@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { FunctionButtons } from '../../models/function-buttons';
@@ -27,6 +27,7 @@ export class PartializeButtonComponent
       this.partialize();
     }
   }
+  @Output() filledRow = new EventEmitter();
   v_inmueble: number;
   vres: number;
   vident: number;
@@ -351,6 +352,8 @@ export class PartializeButtonComponent
       val13: 0,
     });
     this.bienesPar = [...this.bienesPar];
+    this.filledRow.emit();
+    this.form.get('saldo').setValue(this.vres);
   }
 
   private async partializeContent() {
