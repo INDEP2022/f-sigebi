@@ -84,14 +84,19 @@ export class ReadInfoGoodComponent
     console.log('bien', this.goodData);
     if (this.goodData) {
       this.getGood(this.goodData.id);
+      this.getDestiny(this.goodData.destiny);
+      this.getTransferentUnit(this.goodData.unitMeasure);
 
-      this.getConcervationState(
-        new ListParams(),
-        this.goodData.stateConservation
-      );
-      this.getUnitMeasureSae(new ListParams(), this.goodData.saeMeasureUnit);
-      this.getPhysicalState(new ListParams(), this.goodData.physicalStatus);
-      this.getDestinoSAE(new ListParams(), this.goodData.saeDestiny);
+      if (this.process == 'classify-assets') {
+        this.getUnitMeasureSae(new ListParams(), this.goodData.saeMeasureUnit);
+        this.getDestinoSAE(new ListParams(), this.goodData.saeDestiny);
+        this.getConcervationState(
+          new ListParams(),
+          this.goodData.stateConservation
+        );
+        this.getPhysicalState(new ListParams(), this.goodData.physicalStatus);
+      }
+
       this.getTypeGood();
 
       this.getDuplicity();
@@ -142,19 +147,27 @@ export class ReadInfoGoodComponent
         this.relevantTypeName = good.typeDescriptionSiabClassification
           ? good.typeDescriptionSiabClassification
           : '';
-        this.physicalStatus = good.descriptionGenerics
-          ? good.descriptionGenerics
+        this.physicalStatus = good.descriptionPhysicalStatus
+          ? good.descriptionPhysicalStatus
           : '';
-        this.unitMeasureLigie = await this.getUnitMeasureLigie(
-          new ListParams(),
-          this.goodData.ligieUnit
-        );
-        this.transferentDestiny = await this.getDestinyTransferent(
-          this.goodData.transferentDestiny
-        );
-        this.unitMeasureTransferent = good.measureTlUnitView
-          ? good.measureTlUnitView
+        this.destinySAE = good.descriptionDestinySae
+          ? good.descriptionDestinySae
           : '';
+
+        this.unitMeasureLigie = good.measureUnitLigie
+          ? good.measureUnitLigie
+          : '';
+
+        this.transferentDestiny = good.descriptionDestinyTransferent
+          ? good.descriptionDestinyTransferent
+          : '';
+
+        this.conservationState = good.descriptionConservationStatus
+          ? good.descriptionConservationStatus
+          : '';
+
+        this.saeMeasureUnit = good.measureUnitSae ? good.measureUnitSae : '';
+
         this.fraction = good.fractionCodeFracction;
       },
       error: error => {
@@ -163,6 +176,7 @@ export class ReadInfoGoodComponent
     });
   }
 
+  //ver
   getDestinoSAE(params: ListParams, id?: string | number) {
     params['filter.name'] = '$eq:Destino';
     if (id && this.process != 'classify-assets') {
@@ -178,7 +192,7 @@ export class ReadInfoGoodComponent
             this.destiniSaeSelected = new DefaultSelect(resp.data, resp.count);
           }
         }
-        this.destinySAE = resp.data[0].description;
+        //this.destinySAE = resp.data[0].description;
       },
       error: error => {
         console.log('destinoSae ', error);
@@ -186,6 +200,7 @@ export class ReadInfoGoodComponent
     });
   }
 
+  //ver
   getPhysicalState(params: ListParams, id?: string) {
     params['filter.name'] = '$eq:Estado Fisico';
     if (id && this.process != 'classify-assets') {
@@ -210,11 +225,12 @@ export class ReadInfoGoodComponent
               );
             }
           }
-          this.physicalStatus = data.data[0].description;
+          //this.physicalStatus = data.data[0].description;
         },
       });
   }
 
+  //ver
   getConcervationState(params: ListParams, id?: string | number) {
     params['filter.name'] = '$eq:Estado Conservacion';
 
@@ -243,7 +259,7 @@ export class ReadInfoGoodComponent
             }
           }
 
-          this.conservationState = data.data[0].description;
+          //this.conservationState = data.data[0].description;
         },
       });
   }
@@ -265,25 +281,7 @@ export class ReadInfoGoodComponent
     });
   }
 
-  getDestinyTransferent(id: string | number) {
-    return new Promise((resolve, reject) => {
-      let params = new ListParams();
-      params['filter.name'] = '$eq:Destino';
-      params['filter.keyId'] = `$eq:${id}`;
-      this.genericService
-        .getAll(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: ({ data }: any) => {
-            resolve(data[0].description.toString());
-          },
-          error: error => {
-            resolve('');
-          },
-        });
-    });
-  }
-
+  //ver
   getUnitMeasureSae(params: ListParams, id?: string | number) {
     if (id && this.process != 'classify-assets') {
       params['filter.uomCode'] = `$eq:${id}`;
@@ -307,26 +305,47 @@ export class ReadInfoGoodComponent
               );
             }
           }
-          this.saeMeasureUnit = id ? resp.data[0].measureTlUnit : '';
+          //this.saeMeasureUnit = id ? resp.data[0].measureTlUnit : '';
         },
       });
   }
 
-  getUnitMeasureLigie(params: ListParams, id?: string) {
-    return new Promise((resolve, reject) => {
-      params['filter.uomCode'] = `$eq:${id}`;
-      this.goodsQueryService
-        .getCatMeasureUnitView(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            resolve(resp.data[0].measureTlUnit.toString());
-          },
-          error: error => {
-            resolve('');
-          },
-        });
-    });
+  getTransferentUnit(id: string) {
+    if (id == null) {
+      this.unitMeasureTransferent = '';
+      return;
+    }
+    const params = new ListParams();
+    params['filter.uomCode'] = `$eq:${id}`;
+    this.goodsQueryService
+      .getCatMeasureUnitView(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: resp => {
+          this.unitMeasureTransferent = resp.data[0].measureTlUnit;
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+  }
+
+  getDestiny(id: number | string) {
+    if (id == null) {
+      this.destinyLigie = '';
+      return;
+    }
+    let params = new ListParams();
+    params['filter.name'] = '$eq:Destino';
+    params['filter.keyId'] = `$eq:${id}`;
+    this.genericService
+      .getAll(params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: ({ data }: any) => {
+          this.destinyLigie = data[0].description;
+        },
+      });
   }
 
   getAvaluo() {

@@ -94,6 +94,8 @@ export class RegistrationOfRequestsComponent
   authorityName: string = '';
   haveDictamen: boolean = false;
 
+  requestApproved: boolean = false;
+
   requestList: IRequest;
 
   formLoading: boolean = true;
@@ -136,7 +138,7 @@ export class RegistrationOfRequestsComponent
     console.log(authService);
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
-
+    this.isRequestAlreadyApproved(id);
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
@@ -925,6 +927,16 @@ export class RegistrationOfRequestsComponent
 
   /** Proceso de aprobacion */
   async approveRequest() {
+    console.log(this.requestApproved);
+    if (this.requestApproved == true) {
+      this.onLoadToast(
+        'error',
+        'Solicitud aprovado',
+        'La solicitud ya fue aprovada'
+      );
+      return;
+    }
+
     const sign: boolean = await this.ableToSignDictamen();
     if (sign == false) {
       this.onLoadToast(
@@ -987,11 +999,19 @@ export class RegistrationOfRequestsComponent
       );
     }
   }
-
   /** fin de proceso */
 
   /* Inicio de rechazar aprovacion */
   async refuseRequest() {
+    if (this.requestApproved == true) {
+      this.onLoadToast(
+        'error',
+        'Solicitud aprovado',
+        'La solicitud ya fue aprovada'
+      );
+      return;
+    }
+
     const sign: boolean = await this.ableToSignDictamen();
     if (sign == false) {
       this.onLoadToast(
@@ -1369,6 +1389,28 @@ export class RegistrationOfRequestsComponent
           );
         },
       });
+    });
+  }
+
+  isRequestAlreadyApproved(id: string | number) {
+    const params = new ListParams();
+    params['filter.requestId'] = `$eq:${id}`;
+    this.goodService.getAll(params).subscribe({
+      next: resp => {
+        const filter = resp.data.filter(x => x.processStatus === 'APROBADO');
+        const response = filter.length > 0 ? true : false;
+        this.requestApproved = response;
+      },
+      error: error => {
+        console.log(error);
+        if (error.error.message != 'No se encontrarón registros.') {
+          this.onLoadToast(
+            'error',
+            'Error en la solicitud',
+            'Error al verificar si la solicitud ya fue aprobada'
+          );
+        }
+      },
     });
   }
 
