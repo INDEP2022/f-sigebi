@@ -469,6 +469,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   validAttachDoc() {
     console.log('this.idSolicitud:', this.idSolicitud);
+    console.log('this.idReportAclara:', this.idReportAclara);
     let token = this.authService.decodeToken();
     const extension = '.pdf';
     const nombreDoc = `DOC_${this.date}${extension}`;
