@@ -401,19 +401,13 @@ export class FormalGoodsEstateComponent
       (response: any) => {
         console.log('AQUI', response);
         // let result = response.data.map(async (item: any) => {
-        //   item['processKey'] =
-        //     item.eventId == null
-        //       ? 'Evento Inválido'
-        //       : item.eventDetails.processKey;
-        // });
-
         // Promise.all(result).then(data => {
         this._dataTableTodos = response.data;
         this.totalItems4 = response.count;
         this.loading = false;
         // });
       },
-      error => (this.loading = false)
+      error => (console.log('ERR', error), (this.loading = false))
     );
   }
 

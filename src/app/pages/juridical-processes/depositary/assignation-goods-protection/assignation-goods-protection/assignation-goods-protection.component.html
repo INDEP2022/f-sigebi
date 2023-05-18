@@ -18,6 +18,7 @@
             [control]="form.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
             <input
+              [readOnly]="true"
               oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
               class="form-control"
               formControlName="preliminaryInquiry" />
@@ -26,6 +27,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-3">
           <form-field [control]="form.get('criminalCase')" label="Causa Penal">
             <input
+              [readOnly]="true"
               oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
               class="form-control"
               formControlName="criminalCase" />
@@ -190,7 +192,7 @@
           </ng-template>
         </ngx-select>
       </div>
-      <div class="col-sm-12 col-12 col-md-2 p-2">
+      <div class="col-sm-12 col-12 col-md-2 p-3">
         <ngx-select
           [data]="courtItems"
           bindLabel="description"
@@ -213,7 +215,7 @@
           </ng-template>
         </ngx-select>
       </div>
-      <div class="col-sm-12 col-12 col-md-3 p-2">
+      <div class="col-sm-12 col-12 col-md-3 p-3">
         <ngx-select
           [data]="delegationItems"
           bindLabel="description"
@@ -284,7 +286,7 @@
         <br />
         <span class="badge bagde-3 bg-success mr-3"> Disponibles </span>
         <span class="badge primary-3 bg-danger">
-          Asignados a alg&uacute;n Amparo
+          Asignados a Alg&uacute;n Amparo
         </span>
       </div>
       <div class="col-sm-12 col-12 col-md-2 p-2 text-center">
@@ -320,13 +322,13 @@
               type="button"
               class="btn btn-primary btn-sm active mr-2"
               (click)="alertMsg()">
-              {{ blockDelete ? 'Bienes amparos protegidos' : 'Bienes amparos' }}
+              {{ blockDelete ? 'Bienes Amparos Protegidos' : 'Bienes Amparos' }}
             </button>
             <button
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="changeStatus()">
-              Regresar estatus
+              Regresar Estatus
             </button>
           </div>
         </div>
