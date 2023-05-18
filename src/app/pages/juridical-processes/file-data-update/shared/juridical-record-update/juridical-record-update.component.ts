@@ -663,8 +663,6 @@ export class JuridicalRecordUpdateComponent
         error: () => {},
       });
     }
-    ('DESAHOGOS MASIVO, POR TENER RELACION CON EXPEDIENTES DE BIENES DICTAMINADOS');
-    ('DESAHOGO MASIVO, POR TENER RELACION CON EXPEDIENTES DE BIENES DICTAMINADOS');
     filterParams.removeAllFilters();
     filterParams.addFilter('expedient', notif.expedientNumber);
     filterParams.addFilter('flierNumber', notif.wheelNumber);
@@ -767,7 +765,7 @@ export class JuridicalRecordUpdateComponent
       }
     }
     this.fileUpdateService
-      .getRecipientUser({ copyNumber: 1, flierNumber: notif.wheelNumber })
+      .getRecipientUser({ copyNumber: 1, flierNumber: notif.wheelNumber }) //trae desde tabla copias_x_volante
       .subscribe({
         next: data => {
           filterParams.removeAllFilters();
@@ -1151,8 +1149,23 @@ export class JuridicalRecordUpdateComponent
         doc,
       };
       console.log(this.fileUpdComService.juridicalDocumentManagementParams);
-      this.router.navigateByUrl(
-        '/pages/documents-reception/flyers-registration/related-document-management/1'
+      this.router.navigate(
+        [
+          '/pages/documents-reception/flyers-registration/related-document-management/1',
+        ],
+        {
+          queryParams: {
+            expediente: this.formControls.expedientNumber.value,
+            volante: this.formControls.wheelNumber.value,
+            pDictamen: this.formControls.dictumKey.value?.id,
+            pGestOk: this.pageParams.pGestOk,
+            pNoTramite: procedure,
+            tipoOf: officeType,
+            bien: property,
+            sale: sale,
+            doc,
+          },
+        }
       );
       try {
         const result2 = await Promise.allSettled([
