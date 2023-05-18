@@ -118,7 +118,6 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
     if (changes['data']?.currentValue?.reset == true) {
       this.buffer = [];
       this.page = 1;

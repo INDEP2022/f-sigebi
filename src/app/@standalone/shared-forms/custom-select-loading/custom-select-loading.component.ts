@@ -73,6 +73,7 @@ export class CustomSelectWidthLoading
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
   @Output() valueChange = new EventEmitter<any>();
+  // @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
   items: any[] = [];
   totalItems: number = 0;
