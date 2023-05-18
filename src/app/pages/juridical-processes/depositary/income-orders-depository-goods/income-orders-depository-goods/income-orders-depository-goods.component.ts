@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -10,6 +13,8 @@ import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.mo
 import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { NumBienShare } from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -67,6 +72,7 @@ export class IncomeOrdersDepositoryGoodsComponent
   ========================================*/
   objJsonInterfazUser: ISegUsers[] = [];
   itemsJsonInterfazUser: ISegUsers[] = [];
+  userPuesto: ISegUsers[] = [];
   itemsDepositaryUser = new DefaultSelect<ISegUsers>();
   datosUser: TokenInfoModel;
 
@@ -83,18 +89,23 @@ export class IncomeOrdersDepositoryGoodsComponent
     private usersService: UsersService,
     private valorBien: NumBienShare,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.getUserDepositary();
     this.valorBien.SharingNumbien.subscribe({
       next: res => {
         this.interfasValorBienes = res;
       },
       error: err => {
-        //alert('SharingNumbien' + err);
+        alert('SharingNumbien' + err);
       },
     });
     this.buildForm();
@@ -103,9 +114,9 @@ export class IncomeOrdersDepositoryGoodsComponent
   getUserDepositary() {
     console.log('====================================');
     let params = new FilterParams();
-    this.usersService.getAllSegUsers(params.getParams()).subscribe({
+    this.usersService.getUsersJob().subscribe({
       next: resp => {
-        // console.log(JSON.stringify(resp.data));
+        console.log(JSON.stringify(resp.data));
         this.itemsJsonInterfazUser = [...resp.data];
       },
       error: err => {
@@ -137,7 +148,47 @@ export class IncomeOrdersDepositoryGoodsComponent
     });
   }
   print() {
-    alert(JSON.stringify(this.form.value)); //jesisca  jasper - report
+    let params = {
+      P_VALORES: this.form.value,
+    };
+    this.siabService
+      // .fetchReport('RDEPINGXBIEN.', params)
+      .fetchReport('blank', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+
+    //alert(JSON.stringify(this.form.value)); //jesisca  jasper - report
     /* this.router.navigate;
    ("pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/"+3801);*/
   }
@@ -169,12 +220,28 @@ export class IncomeOrdersDepositoryGoodsComponent
       username: [null, [Validators.required]],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
-    this.form.get('userId').setValue(this.datosUser.username);
-    this.form.get('username').setValue(this.datosUser.name);
-    this.form.get('charge').setValue(this.datosUser.puesto);
+
+    this.form.get('date').setValue(new Date(Date.now()));
     this.form.get('numberGood').setValue(this.interfasValorBienes.numBien);
     this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
     this.form.get('depositary').setValue(this.interfasValorBienes.depositario);
     this.form.get('description').setValue(this.interfasValorBienes.desc);
+  }
+
+  getDescUser(event: Event) {
+    let userDatos = JSON.parse(JSON.stringify(event));
+    console.warn(userDatos);
+    this.form.get('username').setValue(userDatos.name);
+    this.dynamicCatalogsService
+      .getPuestovalue(userDatos.positionKey)
+      .subscribe({
+        next: resp => {
+          this.form.get('charge').setValue(resp.data.value);
+        },
+        error: err => {
+          this.form.get('charge').setValue('');
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
   }
 }

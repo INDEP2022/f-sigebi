@@ -234,24 +234,24 @@ export class JuridicalRecordUpdateComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    // console.log(changes);
     if (
       changes['searchMode']?.currentValue &&
       !changes['searchMode']?.isFirstChange()
     ) {
-      console.log('SearchMode');
+      // console.log('SearchMode');
       this.activateSearch();
     } else if (changes['searchMode']?.currentValue === false) {
-      console.log('SearchMode false');
+      // console.log('SearchMode false');
       this.deactivateSearch();
     }
     if (
       changes['confirmSearch']?.currentValue &&
       !changes['confirmSearch']?.isFirstChange()
     ) {
-      console.log('confirmSearch');
+      // console.log('confirmSearch');
       if (changes['confirmSearch']?.currentValue) {
-        console.log(this.fileDataUpdateForm.value);
+        // console.log(this.fileDataUpdateForm.value);
         this.onSearch.emit(this.fileDataUpdateForm.value);
       }
       // this.deactivateSearch();
@@ -260,7 +260,7 @@ export class JuridicalRecordUpdateComponent
       changes['selectedNotification']?.currentValue &&
       !changes['selectedNotification']?.isFirstChange()
     ) {
-      console.log('selectedNotification');
+      // console.log('selectedNotification');
       this.fillForm(changes['selectedNotification'].currentValue);
     }
   }
@@ -271,7 +271,7 @@ export class JuridicalRecordUpdateComponent
     //   this.fileDataUpdateForm.patchValue(
     //     this.fileUpdateService.juridicalFileDataUpdateForm
     //   );
-    console.log(this.pageParams);
+    // console.log(this.pageParams);
     if (
       (this.pageParams.pGestOk == 1 || this.globals.gnuActivaGestion == 1) &&
       this.pageParams.pNoTramite
@@ -305,7 +305,7 @@ export class JuridicalRecordUpdateComponent
       .getGlobalVars$()
       .subscribe((globalVars: IGlobalVars) => {
         this.globals = globalVars;
-        console.log(this.globals);
+        // console.log(this.globals);
       });
   }
 
@@ -419,12 +419,12 @@ export class JuridicalRecordUpdateComponent
     this.formLoading = true;
     this.fileUpdateService.getProcedure(this.pageParams.pNoTramite).subscribe({
       next: data => {
-        console.log(data);
+        // console.log(data);
         const param = new FilterParams();
         param.addFilter('wheelNumber', data.flierNumber);
         this.fileUpdateService.getNotification(param.getParams()).subscribe({
           next: data => {
-            console.log(data);
+            // console.log(data);
             if (data.count > 0) {
               this.fillForm(data.data[0]);
             } else {
@@ -457,12 +457,13 @@ export class JuridicalRecordUpdateComponent
     });
   }
 
+  // numero de prueba 624187
   fillForm(notif: INotification) {
     this.fileDataUpdateForm.enable();
     this.fileDataUpdateForm.reset();
     const filterParams = new FilterParams();
     this.formLoading = true;
-    const values = {
+    const values: any = {
       wheelType: notif.wheelType,
       externalRemitter: notif.externalRemitter,
       priority: notif.priority,
@@ -483,6 +484,7 @@ export class JuridicalRecordUpdateComponent
       captureDate: notif.captureDate,
       wheelStatus: notif.wheelStatus,
       entryProcedureDate: notif.entryProcedureDate,
+      dictumKey: notif.dictumKey,
     };
     this.fileDataUpdateForm.patchValue({ ...values });
     if (notif.expedientNumber == null) {
@@ -658,6 +660,8 @@ export class JuridicalRecordUpdateComponent
         error: () => {},
       });
     }
+    ('DESAHOGOS MASIVO, POR TENER RELACION CON EXPEDIENTES DE BIENES DICTAMINADOS');
+    ('DESAHOGO MASIVO, POR TENER RELACION CON EXPEDIENTES DE BIENES DICTAMINADOS');
     filterParams.removeAllFilters();
     filterParams.addFilter('expedient', notif.expedientNumber);
     filterParams.addFilter('flierNumber', notif.wheelNumber);
@@ -785,7 +789,7 @@ export class JuridicalRecordUpdateComponent
     if (this.formControls.wheelNumber.value != null) {
       this.canViewDocuments = true;
     }
-    console.log(this.canViewDocuments);
+    // console.log(this.canViewDocuments);
     // TODO: Deshabilitar dictamen si no es nulo y no cumple condiciones SAT
     // if (this.formControls.dictumKey != null) {
     // } else {
@@ -803,7 +807,7 @@ export class JuridicalRecordUpdateComponent
   }
 
   activateSearch() {
-    console.log(this.searchMode);
+    // console.log(this.searchMode);
     this.fileDataUpdateForm.enable();
     this.prevDictumKey = this.formControls.dictumKey.value;
     this.prevInitialCondition = this.initialCondition;
@@ -813,22 +817,22 @@ export class JuridicalRecordUpdateComponent
     if (this.layout == 'ABANDONMENT')
       this.abandonmentsService.abandonmentsFlyerForm =
         this.fileDataUpdateForm.value;
-    console.log(
-      this.fileUpdateService.juridicalFileDataUpdateForm,
-      this.abandonmentsService.abandonmentsFlyerForm
-    );
+    // console.log(
+    //   this.fileUpdateService.juridicalFileDataUpdateForm,
+    //   this.abandonmentsService.abandonmentsFlyerForm
+    // );
     this.fileDataUpdateForm.reset();
     this.fileDataUpdateForm.enable();
   }
 
   deactivateSearch() {
-    console.log(this.searchMode);
-    console.log(this.confirmSearch);
+    // console.log(this.searchMode);
+    // console.log(this.confirmSearch);
     this.fileDataUpdateForm.enable();
-    console.log(
-      this.fileUpdateService.juridicalFileDataUpdateForm,
-      this.abandonmentsService.abandonmentsFlyerForm
-    );
+    // console.log(
+    //   this.fileUpdateService.juridicalFileDataUpdateForm,
+    //   this.abandonmentsService.abandonmentsFlyerForm
+    // );
     if (this.layout == 'FILE-UPDATE') {
       this.fileDataUpdateForm.patchValue(
         this.fileUpdateService.juridicalFileDataUpdateForm
@@ -1046,9 +1050,9 @@ export class JuridicalRecordUpdateComponent
       this.fileDataUpdateForm.value;
     let sale: string = '',
       officeType: string = '';
-    if (catalog.property == 'S') {
+    if (catalog.property == 'N') {
       sale = 'C';
-    } else if (catalog.property == 'N') {
+    } else if (catalog.property == 'S') {
       sale = 'D';
     }
     if (catalog.i == 'S') {
@@ -1057,6 +1061,7 @@ export class JuridicalRecordUpdateComponent
     if (catalog.e == 'S') {
       officeType = 'EXTERNO';
     }
+
     let procedure;
     if (
       this.pageParams.pNoTramite != null &&
@@ -1077,6 +1082,7 @@ export class JuridicalRecordUpdateComponent
       sale: sale,
       doc: catalog.doc,
     };
+    console.log(this.fileUpdComService.juridicalDocumentManagementParams);
     this.router.navigateByUrl(
       '/pages/documents-reception/flyers-registration/related-document-management/1'
     );
@@ -1133,6 +1139,7 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
+    console.log(this.fileUpdComService.juridicalRulingParams);
     // const params = {
     //   expediente: 791477,
     //   volante: 1558180,
@@ -1142,9 +1149,10 @@ export class JuridicalRecordUpdateComponent
     //   pGestOk: 1,
     //   pNoTramite: 1044141,
     // };
-    this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/juridical-dictums'
-    );
+    // this.router.navigateByUrl(
+    //   '/pages/documents-reception/flyers-registration/juridical-dictums'
+    // );
+    this.router.navigateByUrl('/pages/juridical/juridical-ruling-g');
   }
 
   openToShiftChange() {
@@ -1199,7 +1207,7 @@ export class JuridicalRecordUpdateComponent
     // params.addFilter('scanStatus', 'ESCANEADO');
     this.fileUpdateService.getDocuments(params.getParams()).subscribe({
       next: data => {
-        console.log(data);
+        // console.log(data);
         this.getDocumentsByFlyer(this.formControls.wheelNumber.value);
       },
       error: err => {
@@ -1272,7 +1280,7 @@ export class JuridicalRecordUpdateComponent
   }
 
   changeDictum(dictum: IOpinion) {
-    console.log(dictum);
+    // console.log(dictum);
     this.dictum = dictum.description;
     this.dictOffice = dictum.dict_ofi;
     if (this.dictum == 'CONOCIMIENTO') {

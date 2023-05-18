@@ -42,7 +42,7 @@
         <div class="row pt-4">
           <div class="col-md-5">
             <label>Destino INDEP: </label>
-            <span class="fs-4">{{ goodData?.saeDestiny }}</span>
+            <span class="fs-4">{{ destinySAE }}</span>
           </div>
           <div class="col-md-5">
             <label>Color: </label>
@@ -52,8 +52,8 @@
 
         <div class="row pt-4">
           <div class="col-md-5">
-            <label>Descripción Bien INDEP: </label>
-            <span class="fs-4">{{ descriptionGoodSae }}</span>
+            <label>Descripci&oacute;n Bien INDEP</label>
+            <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-5">
             <label>Capacidad: </label>
@@ -111,8 +111,8 @@
             <span class="fs-4">{{ unitMeasureTransferent }}</span>
           </div>
           <div class="col-md-5">
-            <label>No. Norma: </label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <label>No. Norma</label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
 
@@ -134,7 +134,7 @@
             <span class="fs-4">{{ goodData?.quantity | number }}</span>
           </div>
           <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única: </label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
         </div>
@@ -208,7 +208,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <label>Descripci&oacute;n Bien INDEP: </label>
-            <span class="fs-4">{{ descriptionGoodSae }}</span>
+            <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-6">
             <label>Capacidad (lts): </label>
@@ -266,8 +266,8 @@
             <span class="fs-4">{{ conservationState }}</span>
           </div>
           <div class="col-md-6">
-            <label>No. Norma: </label>
-            <span class="fs-4"> {{ cumplyNorma }}</span>
+            <label>No. Norma</label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
 
@@ -275,7 +275,7 @@
           <div
             class="col-md-6"
             *ngIf="typeOfRequest == 'MANUAL' || typeOfRequest == 'SAT_SAE'">
-            <div style="width: 20rem">
+            <div>
               <label>Unidad medida INDEP: </label>
               <span class="fs-4"> {{ saeMeasureUnit }}</span>
             </div>
@@ -300,7 +300,7 @@
         </div>
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única: </label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
@@ -389,8 +389,8 @@
             <span class="fs-4">{{ goodData?.type }}</span>
           </div> -->
           <div class="col-md-6">
-            <label>No. Norma: </label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <label>No. Norma</label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
           <div class="col-md-6">
             <label>Destino INDEP: </label>
@@ -422,7 +422,7 @@
 
         <div class="row pt-4">
           <div class="col-md-6" *ngIf="typeOfRequest == 'SAT_SAE'">
-            <label>Clave Única: </label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6">
@@ -444,8 +444,8 @@
 
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Descripción Bien INDEP: </label>
-            <span class="fs-4">{{ descriptionGoodSae }}</span>
+            <label>Descripci&oacute;n Bien INDEP</label>
+            <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
           </div>
           <div class="col-md-6">
             <label>Procedencia: </label>
@@ -523,17 +523,17 @@
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
-                [searchable]="false"
+                [searchable]="true"
                 bindLabel="measureTlUnit"
                 value="uomCode"
                 [readonly]="false"
                 (change)="unidMediIndep($event)"></ngx-select>
             </div>
           </div>
-          <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
+          <!-- <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
             <label>Clave &Uacute;nica: </label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
-          </div>
+          </div> -->
         </div>
       </form>
     </div>
@@ -616,13 +616,13 @@
             <span class="fs-4">{{ conservationState }}</span>
           </div>
           <div class="col-md-6">
-            <label>No. Norma: </label>
-            <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
+            <label>No. Norma</label>
+            <span class="fs-4"> {{ norm }}</span>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <label>Clave Única: </label>
+            <label>Clave &Uacute;nica</label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6">

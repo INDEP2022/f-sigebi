@@ -3,6 +3,7 @@ import { GoodsJobManagementEndpoints } from 'src/app/common/constants/endpoints/
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  ICopiesJobManagementDto,
   IGoodJobManagement,
   IGoodJobManagementByIds,
   ImanagementOffice,
@@ -31,9 +32,17 @@ export class GoodsJobManagementService extends HttpService {
   }
 
   // => Oficce Documents
-  getAllOfficialDocument() {
+  getAllOfficialDocument(params: _Params) {
     return this.get<IListResponse<ImanagementOffice>>(
-      GoodsJobManagementEndpoints.mJobManagement
+      GoodsJobManagementEndpoints.mJobManagement,
+      params
+    );
+  }
+
+  getPersonaExt_Int(params: _Params) {
+    return this.get<IListResponse<ICopiesJobManagementDto>>(
+      GoodsJobManagementEndpoints.OfficeManagementCopies,
+      params
     );
   }
 }

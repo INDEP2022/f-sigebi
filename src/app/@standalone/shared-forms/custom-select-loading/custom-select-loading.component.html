@@ -12,7 +12,7 @@
       [clearable]="true"
       [hideSelected]="true"
       [virtualScroll]="true"
-      [searchable]="true"
+      [searchable]="searchable"
       [multiple]="multiple"
       [addTag]="addTag"
       [loadingText]="loadingText"
@@ -26,6 +26,7 @@
       [inputAttrs]="inputAttrs"
       [formControlName]="formControlName"
       (change)="onSelectChange($event)"
+      (clear)="clear($event)"
       (scrollToEnd)="fetchMore(select.searchTerm)">
       <!-- <ng-template *ngIf="showTooltip" ng-option-tmp let-item="item">
         <div [title]="item[bindLabel]">{{ item[bindLabel] }}</div>

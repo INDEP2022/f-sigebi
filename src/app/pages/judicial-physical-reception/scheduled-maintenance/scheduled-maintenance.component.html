@@ -1,12 +1,13 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Mantenimiento y Seguimiento de Eventos</h5>
+    <h5 class="title">Programación de Recepciones</h5>
   </div>
   <div body>
     <div class="row mb-5">
       <app-clean-filters-shared
         [form]="form"
-        formStorage="filtersActa"></app-clean-filters-shared>
+        formStorage="filtersIndica"
+        (cleanFiltersEvent)="resetView()"></app-clean-filters-shared>
     </div>
     <form class="form-material" [formGroup]="form">
       <div class="row">
@@ -17,9 +18,19 @@
               <option value="EVENTREC">RECEPCIÓN FÍSICA</option>
             </select>
           </form-field> -->
-          <app-proceeding-types-shared
-            [form]="form"></app-proceeding-types-shared>
 
+          <!-- <app-proceeding-types-shared
+            [form]="form"></app-proceeding-types-shared> -->
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="tipoEvento"
+            label="Tipo de Evento"
+            value="id"
+            bindLabel="description"
+            [searchable]="false"
+            loadingText="Cargando tipos de evento..."
+            path="proceeding/api/v1/proceedings-delivery-reception/get-types">
+          </ng-custom-select-loading>
           <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
             [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
         </div>
@@ -27,8 +38,9 @@
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               formControlName="fechaInicio"
+              readonly
               [maxDate]="hoy" />
           </form-field>
         </div>
@@ -36,9 +48,10 @@
           <form-field [control]="form.get('fechaFin')" label="Fecha Fin">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control form-date"
               [minDate]="fechaInicio.value"
               [maxDate]="hoy"
+              readonly
               formControlName="fechaFin" />
           </form-field>
         </div>
@@ -53,7 +66,7 @@
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
               <ng-option value="ABIERTA">Abierto</ng-option>
-              <ng-option value="ABIERTA">Cerrado</ng-option>
+              <ng-option value="CERRADA">Cerrado</ng-option>
             </ng-select>
           </form-field>
 
@@ -61,18 +74,26 @@
             [(params)]="paramsStatus" [haveTodos]="false"></app-select-form> -->
         </div>
       </div>
-      <div class="row mb-3" style="margin-top: 20px">
-        <div class="col-md-6">
+      <div class="row mb-3">
+        <div class="col-md-12 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="coordRegional"
-            [multiple]="true"
             label="Coordinación Regional"
             value="description"
             bindLabel="description"
             paramSearch="search"
+            [multiple]="true"
             path="catalog/api/v1/delegation">
           </ng-custom-select-loading>
+          <!-- <ng-template #coordinationLabel let-item="item">
+            {{ item.id }} - {{ item.description }}
+          </ng-template> -->
+          <!-- <ng-template #coordinationOption let-item="item">
+            <div [title]="item.id + '-' + item.description">
+              {{ item.id }} - {{ item.description }}
+            </div>
+          </ng-template> -->
           <!-- <app-select-form
             [form]="form"
             [multiple]="true"
@@ -84,8 +105,30 @@
             [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-6">
-          <app-select-form
+        <div class="col-md-12 mt-2">
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="usuario"
+            label="Usuarios"
+            value="id"
+            bindLabel="name"
+            loadingText="Cargando usuarios..."
+            typeToSearchText="Escriba el nombre del usuario"
+            path="users/api/v1/seg-users"
+            [labelTemplate]="usuarioLabel"
+            [optionTemplate]="usuarioOption">
+          </ng-custom-select-loading>
+
+          <ng-template #usuarioLabel let-item="item">
+            {{ item.id }} - {{ item.name }}
+          </ng-template>
+          <ng-template #usuarioOption let-item="item">
+            <div [title]="item.id + '-' + item.name">
+              {{ item.id }} - {{ item.name }}
+            </div>
+          </ng-template>
+
+          <!-- <app-select-form
             [form]="form"
             formField="usuario"
             label="Usuarios"
@@ -94,14 +137,17 @@
             [operator]="like"
             paramFilter="goodId"
             [getListObservable]="usuarios"
-            [(paramsFilter)]="paramsUsers"></app-select-form>
+            [(paramsFilter)]="paramsUsers"></app-select-form> -->
           <!-- <app-elaborate-users-shared
             [form]="form"></app-elaborate-users-shared> -->
         </div>
       </div>
       <div class="row">
         <form-field [control]="form.get('claveActa')" label="Clave Acta">
-          <input class="form-control" formControlName="claveActa" />
+          <input
+            class="form-control"
+            formControlName="claveActa"
+            maxlength="75" />
         </form-field>
       </div>
       <!-- <app-key-proceedings-form
@@ -109,7 +155,9 @@
         statusActaValue="ABIERTA"></app-key-proceedings-form> -->
 
       <div class="action-buttons">
-        <div class="col-md-4" [class]="loading ? 'disabled' : ''">
+        <div
+          class="col-md-4"
+          [class]="loading || form.invalid ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -123,7 +171,6 @@
           class="col-md-4"
           [class]="loading || data.length === 0 ? 'disabled' : ''">
           <button
-            *ngIf="!showTable1"
             class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
@@ -132,7 +179,10 @@
             Captura de Evento
           </button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 righButtons">
+          <app-columns-select
+            [(settings)]="settings1"
+            [defaultColumns]="5"></app-columns-select>
           <div
             [class]="
               loading || loadingExcel || data.length === 0 ? 'disabled' : ''
@@ -153,7 +203,7 @@
               class="table-responsive"
               [settings]="settings1"
               [source]="data"
-              (edit)="rowsSelected($event)"></ng2-smart-table>
+              (edit)="rowsSelected($event.data)"></ng2-smart-table>
           </div>
         </div>
         <div class="col-md-12" [class]="showTable1 ? 'hide' : ''">
@@ -166,8 +216,13 @@
         </div>
       </div>
       <app-pagination
+        *ngIf="!showTable1"
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
+      <app-pagination
+        *ngIf="showTable1"
+        [params]="paramsIndicators"
+        [totalItems]="totalItemsIndicators"></app-pagination>
     </form>
   </div>
 </app-card>

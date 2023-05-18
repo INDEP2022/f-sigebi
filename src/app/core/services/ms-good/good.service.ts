@@ -20,9 +20,11 @@ import {
   GoodGetData,
   IGood,
   IGoodSami,
+  IValidaCambioEstatus,
   IVban,
 } from '../../models/ms-good/good';
 
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -56,6 +58,10 @@ export class GoodService extends HttpService {
   }
   getVBan(array: IVban) {
     return this.post<IResponse>(GoodEndpoints.Vban, array);
+  }
+
+  PAValidaCambio(model: IValidaCambioEstatus) {
+    return this.post<IResponse>(GoodEndpoints.PAValidaCambioEstatus, model);
   }
 
   getActAccount(model: IGoodStatusProcess) {
@@ -150,6 +156,13 @@ export class GoodService extends HttpService {
     return this.get<IGood>(`${route}?filter.id=$eq:${id}`);
   }
 
+  getByGoodNumber(goodId: string | number) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IListResponseMessage<IGood>>(
+      `${route}?filter.goodId=$eq:${goodId}`
+    );
+  }
+
   getByIdAndGoodId(id: string | number, goodId: string | number) {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${goodId}`;
     return this.get<IGood>(route);
@@ -199,7 +212,6 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     if (params) {
       params['expedient'] = expedient;
-      // params['filter.status'] = `$eq:ADM`
     }
     const route = GoodEndpoints.SearchByExpedient;
     return this.get<IListResponse<IGood>>(route, params);
@@ -313,5 +325,13 @@ export class GoodService extends HttpService {
   getGoodById(id: string | number) {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
     return this.get<any>(route);
+  }
+
+  getByExpedientAndParams(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.GetAllGoodQuery;
+    return this.get<IListResponse<IGood>>(route, params);
   }
 }

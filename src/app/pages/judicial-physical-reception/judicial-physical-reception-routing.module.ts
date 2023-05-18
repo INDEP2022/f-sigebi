@@ -31,7 +31,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'partializes-general-goods-1',
+    path: 'partializes-general-goods',
     loadChildren: () =>
       import(
         './partializes-general-goods-1/partializes-general-goods.module'

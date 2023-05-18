@@ -42,6 +42,11 @@ export abstract class ScheduledMaintenance extends BasePage {
         type: 'string',
         sort: false,
       },
+      typeProceedings: {
+        title: 'Tipo de Evento',
+        type: 'string',
+        sort: false,
+      },
       keysProceedings: {
         title: 'Programa Recepción Entrega',
         type: 'string',
@@ -94,6 +99,7 @@ export abstract class ScheduledMaintenance extends BasePage {
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
+  stringPattern = STRING_PATTERN;
   data: IProceedingDeliveryReception[] = [];
   totalItems: number = 0;
   paramsTypes: ListParams = new ListParams();
@@ -120,12 +126,18 @@ export abstract class ScheduledMaintenance extends BasePage {
     return this.form.get('fechaInicio');
   }
 
-  get coordRegional() {
-    return this.delegationService.getAll(this.paramsCoords);
-  }
+  // get coordRegional() {
+  //   return this.delegationService.getAll(this.paramsCoords);
+  // }
 
   get usuarios() {
     return this.userService.getAllSegUsers(this.paramsUsers.getParams());
+  }
+
+  resetView() {
+    console.log('RESET VIEW');
+    this.data = [];
+    this.totalItems = 0;
   }
 
   ngOnInit(): void {
@@ -172,7 +184,7 @@ export abstract class ScheduledMaintenance extends BasePage {
       statusEvento: [null],
       coordRegional: [null, [Validators.pattern(STRING_PATTERN)]],
       usuario: [null, [Validators.pattern(STRING_PATTERN)]],
-      claveActa: [null],
+      claveActa: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.setForm();
     console.log(this.form.value);
@@ -239,11 +251,14 @@ export abstract class ScheduledMaintenance extends BasePage {
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           console.log(response);
+          if (response.data.length === 0) {
+            this.onLoadToast('error', 'No se encontraron datos');
+          }
           this.data = [
             ...response.data.map(x => {
               return {
                 ...x,
-                captureDate: format(new Date(x.captureDate), 'dd-MM-yyyy'),
+                captureDate: format(new Date(x.captureDate), 'dd/MM/yyyy'),
               };
             }),
           ];
@@ -255,6 +270,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         },
         error: error => {
           console.log(error);
+          this.onLoadToast('error', 'No se encontraron datos');
           this.loading = false;
           this.data = [];
         },
