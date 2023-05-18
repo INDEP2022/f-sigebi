@@ -237,33 +237,33 @@ export class JuridicalRecordUpdateComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log(changes);
     if (
       changes['searchMode']?.currentValue &&
       !changes['searchMode']?.isFirstChange()
     ) {
-      // console.log('SearchMode');
+      console.log('SearchMode');
       this.activateSearch();
     } else if (changes['searchMode']?.currentValue === false) {
-      // console.log('SearchMode false');
+      console.log('SearchMode false');
       this.deactivateSearch();
     }
     if (
       changes['confirmSearch']?.currentValue &&
       !changes['confirmSearch']?.isFirstChange()
     ) {
-      // console.log('confirmSearch');
+      console.log('confirmSearch');
       if (changes['confirmSearch']?.currentValue) {
-        // console.log(this.fileDataUpdateForm.value);
+        console.log(this.fileDataUpdateForm.value);
         this.onSearch.emit(this.fileDataUpdateForm.value);
       }
-      // this.deactivateSearch();
+      this.deactivateSearch();
     }
+
     if (
       changes['selectedNotification']?.currentValue &&
       !changes['selectedNotification']?.isFirstChange()
     ) {
-      // console.log('selectedNotification');
+      console.log('selectedNotification');
       this.fillForm(changes['selectedNotification'].currentValue);
     }
   }
@@ -1303,18 +1303,29 @@ export class JuridicalRecordUpdateComponent
       pNoTramite: procedure,
     };
     console.log(this.fileUpdComService.juridicalRulingParams);
-
-    this.router.navigate([`/pages/juridical/juridical-ruling-g`], {
+    // const params = {
+    //   expediente: 791477,
+    //   volante: 1558180,
+    //   tipoVo: 'P',
+    //   tipoDic: 'PROCEDENCIA',
+    //   consulta: 'N',
+    //   pGestOk: 1,
+    //   pNoTramite: 1044141,
+    // };
+    // this.router.navigateByUrl(
+    //   '/pages/documents-reception/flyers-registration/juridical-dictums'
+    // );
+    this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
       queryParams: {
-        noExpediente: this.formControls.expedientNumber.value,
+        origin: '/pages/juridical/file-data-update',
+        form: 'FACTGENACTDATEX',
+        expediente: this.formControls.expedientNumber.value,
         volante: this.formControls.wheelNumber.value,
         tipoVo: this.formControls.wheelType.value,
         tipoDic: dictumType,
         consulta: this.dictConsultOnly,
         pGestOk: this.pageParams.pGestOk,
         pNoTramite: procedure,
-        origin: '/pages/juridical/file-data-update',
-        form: 'FACTGENACTDATEX',
       },
     });
   }
