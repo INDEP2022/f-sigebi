@@ -7,10 +7,10 @@
       <div class="md-tabs">
         <tabset>
           <tab heading="OFICIO" id="tab1">
-            <app-office></app-office>
+            <app-office [(oficnum)]="oficnum"></app-office>
           </tab>
           <tab heading="DICTAMEN">
-            <app-opinion></app-opinion>
+            <app-opinion [oficnum]="oficnum"></app-opinion>
           </tab>
         </tabset>
       </div>

@@ -7,6 +7,8 @@ import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/atta
   styles: [],
 })
 export class TextChangeComponent implements OnInit {
+  oficnum: number | string;
+
   constructor(private atachedDocumentsService: AtachedDocumentsService) {}
 
   ngOnInit(): void {
