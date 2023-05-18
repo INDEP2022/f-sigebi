@@ -100,7 +100,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     this.loading = true;
     const typeEmployee = this.userForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', typeEmployee);
-    //this.params.value.addFilter('regionalDelegation', this.deleRegionalUserId);
+    this.params.value.addFilter('regionalDelegation', this.deleRegionalUserId);
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
@@ -422,6 +422,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['requestId'] = request.id;
       task['expedientId'] = 0;
       task['urlNb'] = url;
+      task['processName'] = 'SolicitudTransferencia';
       body['task'] = task;
 
       let orderservice: any = {};

@@ -139,7 +139,11 @@ export class CustomSelectWidthLoading
       this.valueChange.emit(null);
       return;
     }
-    this.onChange?.(event[this.value] || null);
+    if (this.multiple) {
+      this.onChange?.(event.map((x: any) => x[this.value]) || null);
+    } else {
+      this.onChange?.(event[this.value] || null);
+    }
     const data = this.items.find(
       item => item[this.value] === event[this.value]
     );

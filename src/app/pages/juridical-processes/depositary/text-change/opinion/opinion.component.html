@@ -1,36 +1,64 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('expedientNumber')" label="Expediente">
+      <form-field
+        [control]="form.get('expedientNumber')"
+        label="No. Expediente">
         <input
           type="text"
           class="form-control"
           formControlName="expedientNumber"
-          (keyup.enter)="onEnterSearch()" />
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('registerNumber')"
-        label="No de Gesti&oacute;n">
+        label="No. de Gesti&oacute;n">
         <input
           type="text"
           class="form-control"
-          senderUser
-          formControlName="registerNumber" />
+          formControlName="registerNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('wheelNumber')" label="Volante">
-        <input type="text" class="form-control" formControlName="wheelNumber" />
+      <form-field [control]="form.get('wheelNumber')" label="No. Volante">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="wheelNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('typeDict')" label="Dictaminaci&oacute;n">
-        <input type="text" class="form-control" formControlName="typeDict" />
+      <form-field
+        [control]="form.get('typeDict')"
+        label="No. Dictaminaci&oacute;n">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="typeDict"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="!verBoton">
+      <button class="btn btn-primary btn-sm active" (click)="buscardictamen()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12" *ngIf="verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        (click)="nuevaBusquedaOficio()">
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+
   <div class="row mt-5">
     <div class="col-md-8 col-sm-12 col-xs-12">
       <form-field [control]="form.get('key')" label="Clave">
@@ -40,14 +68,13 @@
   </div>
   <hr />
   <div class="row">
-    <div class="col-md-4 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('senderUser')" label="Remitente">
-        <input type="text" class="form-control" formControlName="senderUser" />
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('senderUserRemitente')" label="Remitente">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="senderUserRemitente" />
       </form-field>
-      <!--app-user-shared
-        [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Remitente'"></app-user-shared-->
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
@@ -64,7 +91,7 @@
     <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
       <form-field
         [control]="form.get('numberDictamination')"
-        label="No de Dictaminaci&oacute;n">
+        label="N&uacute; de Dictaminaci&oacute;n">
         <input
           type="text"
           class="form-control"
@@ -129,34 +156,57 @@
   <div class="row mt-5">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-        <select
-          class="form-control"
-          formControlName="typePerson"
-          (change)="validaCampos($event)">
-          <option
-            *ngFor="let option of options"
-            [selected]="option.value === nrSelecttypePerson"
-            [value]="option.value">
+        <select class="form-control" formControlName="typePerson">
+          <option *ngFor="let option of options" [value]="option.value">
             {{ option.label }}
           </option>
         </select>
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('senderUser')" label="Detinatario Copia">
-        <ng-select
+      <form-field [control]="form.get('senderUser')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control', $event)"
+          [readonly]="form.get('typePerson').value === 'S'"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="senderUser"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+
+        <!--ng-select
           [items]="UserDestinatario"
           bindLabel="id"
           bindValue="id"
+          [readonly]="form.get('typePerson').value === 'S'"
           formControlName="senderUser"
           class="form-control"
           (change)="getDescUser('control', $event)">
-        </ng-select>
+        </ng-select-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('personaExt')" label="Nom. Persona Ext">
-        <input type="text" class="form-control" formControlName="personaExt" />
+      <form-field [control]="form.get('personaExt')" label="Nombre Persona">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="personaExt"
+          [readonly]="!(form.get('typePerson').value === 'S')" />
       </form-field>
     </div>
   </div>
@@ -164,39 +214,55 @@
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson_I">
-          <option
-            *ngFor="let option of options"
-            [selected]="option.value === nrSelecttypePerson_I"
-            [value]="option.value">
+          <option *ngFor="let option of options" [value]="option.value">
             {{ option.label }}
           </option>
         </select>
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field
-        [control]="form.get('senderUser_I')"
-        label="Detinatario Copia">
-        <ng-select
+      <form-field [control]="form.get('senderUser_I')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control_I', $event)"
+          [readonly]="form.get('typePerson_I').value === 'S'"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="senderUser_I"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+        <!--ng-select
           [items]="UserDestinatario"
           bindLabel="id"
           bindValue="id"
           formControlName="senderUser_I"
+          [readonly]="form.get('typePerson_I').value === 'S'"
           class="form-control"
           (change)="getDescUser('control_I', $event)">
-        </ng-select>
+        </ng-select-->
       </form-field>
-
-      <!--form-field [control]="form.get('senderUser_I')" label="Detinatario Copia">
-        <input type="text" class="form-control" formControlName="senderUser_I" />
-      </form-field-->
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('personaExt_I')" label="Nom. Persona Ext">
+      <form-field [control]="form.get('personaExt_I')" label="Nombre Persona">
         <input
           type="text"
           class="form-control"
-          formControlName="personaExt_I" />
+          formControlName="personaExt_I"
+          [readonly]="!(form.get('typePerson_I').value === 'S')" />
       </form-field>
     </div>
   </div>

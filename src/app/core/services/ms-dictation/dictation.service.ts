@@ -93,6 +93,15 @@ export class DictationService extends HttpService {
     );
   }
 
+  getInitFormDictation2(
+    body: IInitFormLegalOpinionOfficeBody
+  ): Observable<IListResponse<IInitFormLegalOpinionOfficeResponse>> {
+    return this.post<IListResponse<IInitFormLegalOpinionOfficeResponse>>(
+      DictationEndpoints.InitFormLegalOpinionOffice2,
+      body
+    );
+  }
+
   getCopiesOfficeSendDictation(
     body: ICopiesOfficeSendDictation
   ): Observable<IListResponse<any>> {
@@ -113,5 +122,11 @@ export class DictationService extends HttpService {
   }) {
     const route = `${DictationEndpoints.FindGoodDictGood1}`;
     return this.post(route, body);
+  }
+
+  getDocumentsForDictation(body: {
+    id: string | number;
+  }): Observable<IDictation> {
+    return this.get(this.route.DocumentByDictation, body);
   }
 }

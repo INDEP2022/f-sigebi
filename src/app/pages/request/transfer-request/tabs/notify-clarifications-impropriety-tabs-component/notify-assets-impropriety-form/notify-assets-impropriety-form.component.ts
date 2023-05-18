@@ -74,10 +74,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
     const applicationId = this.idRequest;
