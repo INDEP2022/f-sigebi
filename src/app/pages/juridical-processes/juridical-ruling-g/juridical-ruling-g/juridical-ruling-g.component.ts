@@ -333,6 +333,7 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm = this.fb.group({
       wheelNumber: [null],
       etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
+      fechaPPFF: [null],
       fechaInstructora: [null],
       fechaResolucion: [null],
       fechaDictaminacion: [null],
