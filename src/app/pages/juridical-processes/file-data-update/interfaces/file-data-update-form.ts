@@ -53,7 +53,7 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
     Validators.maxLength(60),
     Validators.pattern(STRING_PATTERN),
   ]),
-  affairKey: new FormControl<IAffair>(null),
+  affairKey: new FormControl<IAffair>(null), // CVE_DICTAMEN
   affair: new FormControl<string | number>(null, Validators.required),
   receiptDate: new FormControl<string | Date>(null),
   priority: new FormControl<string>(null),

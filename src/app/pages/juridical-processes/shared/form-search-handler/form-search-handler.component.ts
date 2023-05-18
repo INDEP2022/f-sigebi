@@ -134,6 +134,19 @@ export class FormSearchHandlerComponent
     this.onSearchStart.emit(false);
   }
 
+  // searchForFilter() {
+  //   const values: any = this.formSearch.value;
+  //   console.log(values);
+  //   const params = this.filterParams.getValue();
+  //   Object.keys(values).forEach((key: any) => {
+  //     if (values[key]) {
+  //       console.log(values[key]);
+  //       params.addFilter(key, values[key]);
+  //     }
+  //   });
+  //   this.filterParams.next(params);
+  // }
+
   getData(): void {
     // console.log('FILTER', this.filterParams.getValue().getParams());
 
@@ -184,7 +197,6 @@ export class FormSearchHandlerComponent
   }
 
   buildFilters() {
-    // console.log('building...');
     const params = new FilterParams();
     if (this.fieldsToSearch.length > 0 && this.formData != null) {
       // console.log('fieldsToSearch', this.fieldsToSearch);
