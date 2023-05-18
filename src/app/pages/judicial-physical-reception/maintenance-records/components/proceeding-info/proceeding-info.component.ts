@@ -41,7 +41,7 @@ import {
         }
       }
       .notInputDatePicker {
-        background: white;
+        background-color: white !important;
       }
     `,
   ],
@@ -75,6 +75,14 @@ export class ProceedingInfoComponent implements OnInit {
     console.log(event);
   }
 
+  get registro() {
+    return this.service.registro;
+  }
+
+  set registro(value) {
+    this.service.registro = value;
+  }
+
   get statusActa() {
     return this.form
       ? this.form.get('statusActa')
@@ -85,6 +93,11 @@ export class ProceedingInfoComponent implements OnInit {
 
   deleteProceedings() {
     this.service.totalProceedings = 0;
+    this.registro = false;
+    this.service.formJustification.reset();
+    this.service.data = [];
+    this.service.totalGoods = 0;
+    this.service.dataForAdd = [];
   }
 
   filter() {

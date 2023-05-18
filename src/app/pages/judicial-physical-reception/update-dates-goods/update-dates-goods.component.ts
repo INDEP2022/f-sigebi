@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { RangePickerModalComponent } from 'src/app/@standalone/modals/range-picker-modal/range-picker-modal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -23,8 +23,8 @@ export class UpdateDatesGoodsComponent implements OnInit {
   form: FormGroup;
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     this.form = this.fb.group({
-      inicio: [null, [Validators.required]],
-      fin: [null, [Validators.required]],
+      inicio: [null],
+      fin: [null],
     });
   }
 
@@ -32,22 +32,39 @@ export class UpdateDatesGoodsComponent implements OnInit {
     return this.form.get('inicio');
   }
 
-  ngOnInit(): void {
-    this.form.valueChanges.subscribe(({ inicio, fin }) => {
-      console.log(inicio, fin, this.form.valid);
+  get fin() {
+    return this.form.get('fin');
+  }
 
-      if (this.form.valid) {
-        this.updateGoodEvent.emit(
-          this.data.map(x => {
-            return {
-              ...x,
-              [this.inicioColumn]: firstFormatDate(new Date(inicio)),
-              [this.finColumn]: firstFormatDate(new Date(fin)),
-            };
-          })
-        );
-      }
-    });
+  update() {
+    this.updateGoodEvent.emit(
+      this.data.map(x => {
+        return {
+          ...x,
+          [this.inicioColumn]: firstFormatDate(
+            new Date(this.fechaInicio.value)
+          ),
+          [this.finColumn]: firstFormatDate(new Date(this.fin.value)),
+        };
+      })
+    );
+  }
+
+  ngOnInit(): void {
+    // this.form.valueChanges.subscribe(({ inicio, fin }) => {
+    //   console.log(inicio, fin, this.form.valid);
+    //   if (this.form.valid) {
+    //     this.updateGoodEvent.emit(
+    //       this.data.map(x => {
+    //         return {
+    //           ...x,
+    //           [this.inicioColumn]: firstFormatDate(new Date(inicio)),
+    //           [this.finColumn]: firstFormatDate(new Date(fin)),
+    //         };
+    //       })
+    //     );
+    //   }
+    // });
   }
 
   private updateGoods() {

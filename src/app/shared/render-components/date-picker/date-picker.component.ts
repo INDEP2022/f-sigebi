@@ -22,7 +22,7 @@ export class DatePickerComponent extends DefaultEditor implements OnInit {
   ngOnInit() {
     if (this.cell.newValue !== '') {
       if (this.cell.getValue() !== null) {
-        debugger;
+        // debugger;
         let date = new Date(this.cell.getValue());
         if (dateIsValid(date)) {
         } else {

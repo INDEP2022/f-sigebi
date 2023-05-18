@@ -836,6 +836,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         console.log('Primer else');
         this.getTransfer();
         this.inputsNewProceeding();
+
         this.clearInputs();
         this.form.get('ident').setValue('ADM');
         this.checkChange();
@@ -986,6 +987,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 console.log(err);
               }
             );
+
           const tipo_acta = ['D', 'ND'].includes(this.form.get('acta').value)
             ? 'DECOMISO'
             : 'ENTREGA';
