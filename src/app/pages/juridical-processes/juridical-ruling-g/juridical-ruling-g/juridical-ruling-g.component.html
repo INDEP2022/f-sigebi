@@ -10,42 +10,44 @@
         <!-- INICIA FORM #1 -->
         <form
           [formGroup]="expedientesForm"
-          class="container-fluid form-material col-12 p-4">
+          class="container-fluid form-material col-6 p-4">
           <div class="row p-4">
-            <div class="col-sm-12 col-12 col-md-6 p-2">
+            <!-- No. Expediente -->
+            <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                [control]="expedientesForm.get('noDictaminacion')"
+                label="No. Dictaminación">
+                <input class="form-control" formControlName="noDictaminacion" />
+              </form-field>
+            </div> -->
+
+            <div class="col-12 p-2">
+              <form-field [control]="expedientesForm.get('tipoDictaminacion')">
+                <ngx-select
+                  [searchOnInit]="true"
+                  [data]="typesDict"
+                  [form]="expedientesForm"
+                  label="Tipo Dictaminación"
+                  bindLabel="tipoDictaminacion"
+                  control="tipoDictaminacion"
+                  (change)="onTypeDictChange($event)"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="col-12 p-2">
               <form-field
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
+                  type="number"
                   class="form-control"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
               </form-field>
             </div>
-
-            <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field
-                [control]="expedientesForm.get('noDictaminacion')"
-                label="No. Dictaminación">
-                <input class="form-control" formControlName="noDictaminacion" />
-              </form-field>
-            </div>
-            <!-- 
-              Tipo de dictaminación..
-              <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field [control]="expedientesForm.get('tipoDictaminacion')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  [data]="typesDict"
-                  [form]="expedientesForm"
-                  label="Tipo de dictaminación"
-                  bindLabel="tipoDictaminacion"
-                  control="tipoDictaminacion"
-                  (change)="onTypeDictChange($event)"></ngx-select>
-              </form-field>
-            </div> -->
-            <div class="col-sm-12 col-12 col-md-6 p-2">
+            <!-- Averiguación Previa -->
+            <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('averiguacionPrevia')"
                 label="Averiguaci&oacute;n Previa">
@@ -53,15 +55,18 @@
                   class="form-control"
                   formControlName="averiguacionPrevia" />
               </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-6 p-2">
+            </div> -->
+            <!-- Causa Penal -->
+            <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 [control]="expedientesForm.get('causaPenal')"
                 label="Causa Penal">
                 <input class="form-control" formControlName="causaPenal" />
               </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-12 p-2">
+            </div> -->
+
+            <!-- Check Delito -->
+            <!-- <div class="col-sm-12 col-12 col-md-12 p-2">
               <form-field [control]="expedientesForm.get('delito')">
                 <form-check label="¿Es delito?" for="delito">
                   <input
@@ -71,19 +76,21 @@
                     formControlName="delito" />
                 </form-check>
               </form-field>
-            </div>
-            <div class="col-12 text-danger p-2">
+            </div> -->
+            <!-- Observaciones -->
+            <!-- <div class="col-12 text-danger p-2">
               <b>Observaciones</b>
               {{ expedientesForm.get('observaciones').value }}
-            </div>
+            </div> -->
           </div>
         </form>
-        <!-- INICIA FORM #2 TODO: -->
+        <!-- INICIA FORM #2 -->
         <form
           [formGroup]="dictaminacionesForm"
-          class="container-fluid form-material col-12 p-4">
+          class="container-fluid form-material col-6 p-4">
           <div class="row p-4">
-            <div class="col-sm-12 col-12 col-md-4 p-2">
+            <!-- Fecha Instructora -->
+            <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaInstructora')"
                 label="Fecha Instructora">
@@ -92,7 +99,19 @@
                   formControlName="fechaInstructora"
                   bsDatepicker />
               </form-field>
+            </div> -->
+
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('fechaPPFF')"
+                label="Fecha P.P.F.F">
+                <input
+                  class="form-control"
+                  formControlName="fechaPPFF"
+                  bsDatepicker />
+              </form-field>
             </div>
+
             <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('wheelNumber')"
@@ -100,6 +119,7 @@
                 <input class="form-control" formControlName="wheelNumber" />
               </form-field>
             </div>
+
             <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaDictaminacion')"
@@ -110,7 +130,9 @@
                   bsDatepicker />
               </form-field>
             </div>
-            <div class="col-md-offset-8 col-md-4 p-2">
+
+            <!-- Fecha Resolución -->
+            <!-- <div class="col-md-offset-8 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaResolucion')"
                 label="Fecha Resolución">
@@ -119,8 +141,8 @@
                   formControlName="fechaResolucion"
                   bsDatepicker />
               </form-field>
-            </div>
-            <div class="col-md-offset-4 col-md-4 p-2">
+            </div> -->
+            <!-- <div class="col-md-offset-4 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaNotificacionAseg')"
                 label="Fecha Notificaci&oacute;n Aseg.">
@@ -129,8 +151,9 @@
                   formControlName="fechaNotificacionAseg"
                   bsDatepicker />
               </form-field>
-            </div>
-            <div class="col-md-4 p-2">
+            </div> -->
+
+            <!-- <div class="col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaNotificacion')"
                 label="Fecha Notificación">
@@ -139,25 +162,26 @@
                   formControlName="fechaNotificacion"
                   bsDatepicker />
               </form-field>
-            </div>
+            </div> -->
             <!--  -->
-            <div class="col-md-4">
+            <div class="col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_remitente')"
-                label="Remitente">
+                label="Autoriza Dict.">
                 <input
                   class="form-control"
                   formControlName="autoriza_remitente" />
               </form-field>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_nombre')"
-                label="Nombre">
+                label="">
                 <input class="form-control" formControlName="autoriza_nombre" />
               </form-field>
             </div>
-            <div class="col-12">
+
+            <div class="col-12 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('cveOficio')"
                 label="Cve. Oficio">
@@ -168,7 +192,7 @@
               </form-field>
             </div>
             <div class="col-12 p-2">
-              <div class="col-md-12 text-danger text-end">
+              <div class="col-md-12 text-danger text-center">
                 <b>Estatus </b>
                 <b> {{ statusDict }}</b>
               </div>
