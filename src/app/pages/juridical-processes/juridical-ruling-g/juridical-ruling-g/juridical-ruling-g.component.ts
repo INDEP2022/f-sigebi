@@ -147,7 +147,7 @@ export class JuridicalRulingGComponent
         type: 'number',
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
       },
       quantity: {
@@ -159,7 +159,7 @@ export class JuridicalRulingGComponent
         type: 'string',
       },
       status: {
-        title: 'Est',
+        title: 'Estado',
         type: 'string',
       },
       processStatus: {
@@ -195,7 +195,7 @@ export class JuridicalRulingGComponent
         type: 'number',
       },
       description: {
-        title: 'Descripcion Dictaminada',
+        title: 'Descripción Dictaminación',
         type: 'string',
       },
       menaje: {
@@ -203,11 +203,11 @@ export class JuridicalRulingGComponent
         type: 'string',
       },
       quantity: {
-        title: 'Cant. Dic..',
+        title: 'Cant. Dictaminación',
         type: 'string',
       },
       status: {
-        title: 'Est',
+        title: 'Estado',
         type: 'string',
       },
       processStatus: {

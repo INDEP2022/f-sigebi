@@ -101,7 +101,7 @@ export class DocRequestTabComponent
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    //console.log('statustask', this.statusTask);
 
     this.prepareForm();
     this.getRegDelegation(new ListParams());
@@ -223,7 +223,7 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async data => {
-          console.log('docs', data);
+          //console.log('docs', data);
           const transferent = await this.getInfoRequest();
           if (transferent == 1) {
             const filterDoc = data.data.filter((item: any) => {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { MaintenanceRecordsService } from '../../../services/maintenance-records.service';
 import { IProceedingInfo } from '../../proceeding-info/models/proceeding-info';
 import { AlertButton } from './../../../../scheduled-maintenance-1/models/alert-button';
@@ -38,8 +39,14 @@ export class JustificationComponent extends AlertButton implements OnInit {
     super();
     this.form = this.fb.group({
       usuario: [null, [Validators.required]],
-      userName: [null, [Validators.required]],
-      justification: [null, [Validators.required]],
+      userName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      justification: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
@@ -135,11 +142,11 @@ export class JustificationComponent extends AlertButton implements OnInit {
       captureDate: value.captureDate,
       numDelegation1: value.numDelegation1,
       numDelegation2: value.numDelegation2,
-      identifier: value.identifier,
+      identifier: value.identifier ? value.identifier.code : '',
       label: value.labelActa,
       universalFolio: value.universalFolio,
       numeraryFolio: value.numeraryFolio,
-      numTransfer: value.numTransfer,
+      numTransfer: value.numTransfer ? value.numTransfer.id : 0,
       idTypeProceedings: value.idTypeProceedings,
       receiptKey: value.receiptKey,
       comptrollerWitness: value.comptrollerWitness,
