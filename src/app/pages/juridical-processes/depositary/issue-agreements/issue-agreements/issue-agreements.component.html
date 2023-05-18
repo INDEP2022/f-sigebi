@@ -7,7 +7,7 @@
       <p>
         <a class="text-color" (click)="showSearchForm = !showSearchForm">
           <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-          bienes</a
+          Bienes</a
         >
       </p>
     </h5>
@@ -43,7 +43,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('physicalReceptionDate')"
-              label="Fecha de recepción">
+              label="Fecha de Recepción">
               <input
                 type="text"
                 class="form-control"
@@ -102,7 +102,7 @@
       </div>
     </div>
     <span class="badge bagde-3 bg-success mr-3"> Disponibles </span>
-    <span class="badge primary-3 bg-black"> No disponibles </span>
+    <span class="badge primary-3 bg-black"> No Disponibles </span>
     <!-- tabla Emisión Acuerdos -->
   </div>
   <div footer *ngIf="mostrarHistoricalSituationGoods == true">

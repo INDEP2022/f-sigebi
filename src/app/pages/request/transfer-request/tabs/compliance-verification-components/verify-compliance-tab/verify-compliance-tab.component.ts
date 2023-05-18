@@ -985,6 +985,9 @@ export class VerifyComplianceTabComponent
               'Los datos se guardaron correctamente'
             );
             this.confirmation = true;
+            this.goodData.refresh();
+            this.isGoodSelected = false;
+            this.clarificationData = [];
           }
         }
       });
