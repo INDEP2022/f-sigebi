@@ -26,6 +26,17 @@ export class GoodprocessService extends HttpService {
     );
   }
 
+  getExpedientePostQuery(params: any) {
+    return this.post(`${GoodprocessEndpoints.ExpedientePostQuery}`, params);
+  }
+
+  getCountBienStaScreen(params: any) {
+    return this.post(
+      `${GoodprocessEndpoints.CountBienEstatusXPantalla}`,
+      params
+    );
+  }
+
   getDictaminacionesCount(params?: ListParams) {
     return this.get<IListResponse<any>>(
       GoodprocessEndpoints.ApplicationDictaminacionesCount,
