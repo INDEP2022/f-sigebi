@@ -24,9 +24,8 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   constructor(
     private service1: PartializeGeneralGoodService,
     // private serviceTab2: PartializeGeneralGoodTab2Service,
-    private service2: PartializeGeneralGoodV2Service
-  ) // private service2Tab2: PartializeGeneralGoodV2Tab2Service
-  {
+    private service2: PartializeGeneralGoodV2Service // private service2Tab2: PartializeGeneralGoodV2Tab2Service
+  ) {
     super();
     this.params.value.limit = 11;
   }

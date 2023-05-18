@@ -311,7 +311,10 @@ export class QueryRelatedPaymentsDepositoriesComponent
       }
       this.svQueryRelatedPaymentsService.setGoodParamGood(
         this.noBienReadOnly,
-        this.screenKey
+        this.screenKey,
+        this.depositaryAppointment.contractKey,
+        this.depositaryAppointment.personNumber.id,
+        this.good.description
       ); // Set good param
       this.router.navigate(
         ['/pages/juridical/depositary/income-orders-depository-goods'],
