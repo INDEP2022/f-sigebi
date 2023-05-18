@@ -8,6 +8,7 @@ import {
   IListResponse,
   IResponse,
 } from '../../interfaces/list-response.interface';
+import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceeding-delivery-reception';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
@@ -44,6 +45,56 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get<IListResponse<{ id: string; description: string }>>(
       this.endpoint + '/get-types'
     );
+  }
+
+  createMassiveDetail(selecteds?: IDetailProceedingsDeliveryReception[]) {
+    return forkJoin(
+      selecteds.map(selected => {
+        // selected.numberGood
+        delete selected.good;
+        delete selected.description;
+        delete selected.status;
+        delete selected.warehouse;
+        delete selected.vault;
+        return this.createDetail(selected).pipe(
+          map(item => {
+            return { deleted: selected.numberGood + '' } as IDeleted;
+          }),
+          catchError(err =>
+            of({ error: selected.numberGood + '' } as INotDeleted)
+          )
+        );
+      })
+    );
+  }
+
+  createDetail(model: IDetailProceedingsDeliveryReception) {
+    return this.post<{
+      message: string[];
+      data: IDetailProceedingsDeliveryReception;
+    }>('detail-proceedings-delivery-reception', model);
+  }
+
+  deleteMassiveDetails(selecteds?: IDetailProceedingsDeliveryReception[]) {
+    return forkJoin(
+      selecteds.map(selected =>
+        this.deleteDetail(selected.numberGood, selected.numberProceedings).pipe(
+          map(item => {
+            return { deleted: selected.numberGood + '' } as IDeleted;
+          }),
+          catchError(err =>
+            of({ error: selected.numberGood + '' } as INotDeleted)
+          )
+        )
+      )
+    );
+  }
+
+  deleteDetail(numberGood: number, numberProceedings: number) {
+    return this.delete('detail-proceedings-delivery-reception', {
+      numberGood,
+      numberProceedings,
+    });
   }
 
   paMaintenance(pusuarioDeti: string, pUsuarioReq: string, pObserv: string) {
