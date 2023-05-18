@@ -21,14 +21,14 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   pressPartialize = false;
   pressApply = false;
   page = 1;
+  pagedBienesPar: any[] = [];
   constructor(
     private service1: PartializeGeneralGoodService,
     // private serviceTab2: PartializeGeneralGoodTab2Service,
-    private service2: PartializeGeneralGoodV2Service
-  ) // private service2Tab2: PartializeGeneralGoodV2Tab2Service
-  {
+    private service2: PartializeGeneralGoodV2Service // private service2Tab2: PartializeGeneralGoodV2Tab2Service
+  ) {
     super();
-    this.params.value.limit = 11;
+    // this.params.value.limit = 11;
   }
 
   get service() {
@@ -53,16 +53,39 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     this.service.bienesPar = value;
   }
 
-  get pagedBienesPar() {
-    const final = this.page * 10 - 1;
-    const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
-    return bienesNotTotal
-      .slice(
-        (this.page - 1) * 10,
-        final > bienesNotTotal.length ? final : bienesNotTotal.length
-      )
-      .concat(this.bienesPar[this.bienesPar.length - 1]);
+  filledRow() {
+    debugger;
+    const final = this.page * this.params.value.limit;
+    if (this.bienesPar && this.bienesPar.length > 0) {
+      debugger;
+      const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
+      this.pagedBienesPar = [
+        ...bienesNotTotal
+          .slice((this.page - 1) * this.params.value.limit, final)
+          .concat(this.bienesPar[this.bienesPar.length - 1]),
+      ];
+    } else {
+      this.pagedBienesPar = [...this.service.bienesPar];
+    }
+    this.loading = false;
   }
+  // get pagedBienesPar() {
+
+  //   const final = (this.page * 10) - 1;
+  //   if (this.bienesPar && this.bienesPar.length > 0) {
+  //     // debugger;
+  //     const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
+  //     return bienesNotTotal
+  //       .slice(
+  //         (this.page - 1) * 10,
+  //         final
+  //       )
+  //       .concat(this.bienesPar[this.bienesPar.length - 1]);
+  //   } else {
+  //     return this.service.bienesPar;
+  //   }
+
+  // }
 
   get settingsGoods() {
     return this.service.settingsGoods;
@@ -100,6 +123,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   pressed(state: number) {
     this.statePresed = state;
     if (state === 1) {
+      this.loading = true;
       this.pressPartialize = !this.pressPartialize;
     }
     if (state === 2) {
@@ -120,6 +144,8 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     this.params.pipe().subscribe({
       next: resp => {
         this.page = resp.page;
+        this.loading = true;
+        this.filledRow();
       },
     });
   }
@@ -158,6 +184,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
           this.bienesPar.pop();
         }
         this.bienesPar = [...this.bienesPar];
+        this.filledRow();
         this.service.savePartializeds();
       }
     });

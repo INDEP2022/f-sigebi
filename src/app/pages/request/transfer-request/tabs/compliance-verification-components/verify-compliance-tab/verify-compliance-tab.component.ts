@@ -169,10 +169,10 @@ export class VerifyComplianceTabComponent
     };
 
     /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
-    if (this.process === 'approval-process') {
+    if (this.process == 'process-approval') {
       this.checkboxReadOnly = true;
       this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
-    } else if ((this.process = 'verify-compliance')) {
+    } else if (this.process == 'verify-compliance') {
       this.checkboxReadOnly = false;
       this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
     }
@@ -985,6 +985,9 @@ export class VerifyComplianceTabComponent
               'Los datos se guardaron correctamente'
             );
             this.confirmation = true;
+            this.goodData.refresh();
+            this.isGoodSelected = false;
+            this.clarificationData = [];
           }
         }
       });

@@ -99,6 +99,7 @@ export abstract class ScheduledMaintenance extends BasePage {
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
+  stringPattern = STRING_PATTERN;
   data: IProceedingDeliveryReception[] = [];
   totalItems: number = 0;
   paramsTypes: ListParams = new ListParams();
@@ -131,6 +132,12 @@ export abstract class ScheduledMaintenance extends BasePage {
 
   get usuarios() {
     return this.userService.getAllSegUsers(this.paramsUsers.getParams());
+  }
+
+  resetView() {
+    console.log('RESET VIEW');
+    this.data = [];
+    this.totalItems = 0;
   }
 
   ngOnInit(): void {
@@ -177,7 +184,7 @@ export abstract class ScheduledMaintenance extends BasePage {
       statusEvento: [null],
       coordRegional: [null, [Validators.pattern(STRING_PATTERN)]],
       usuario: [null, [Validators.pattern(STRING_PATTERN)]],
-      claveActa: [null],
+      claveActa: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.setForm();
     console.log(this.form.value);
@@ -251,7 +258,7 @@ export abstract class ScheduledMaintenance extends BasePage {
             ...response.data.map(x => {
               return {
                 ...x,
-                captureDate: format(new Date(x.captureDate), 'dd-MM-yyyy'),
+                captureDate: format(new Date(x.captureDate), 'dd/MM/yyyy'),
               };
             }),
           ];

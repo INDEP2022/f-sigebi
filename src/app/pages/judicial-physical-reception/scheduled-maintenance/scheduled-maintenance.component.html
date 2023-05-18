@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Mantenimiento y Seguimiento de Eventos</h5>
+    <h5 class="title">Programación de Recepciones</h5>
   </div>
   <div body>
     <div class="row mb-5">
@@ -171,7 +171,6 @@
           class="col-md-4"
           [class]="loading || data.length === 0 ? 'disabled' : ''">
           <button
-            *ngIf="!showTable1"
             class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
@@ -204,7 +203,7 @@
               class="table-responsive"
               [settings]="settings1"
               [source]="data"
-              (edit)="rowsSelected($event)"></ng2-smart-table>
+              (edit)="rowsSelected($event.data)"></ng2-smart-table>
           </div>
         </div>
         <div class="col-md-12" [class]="showTable1 ? 'hide' : ''">
@@ -217,8 +216,13 @@
         </div>
       </div>
       <app-pagination
+        *ngIf="!showTable1"
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
+      <app-pagination
+        *ngIf="showTable1"
+        [params]="paramsIndicators"
+        [totalItems]="totalItemsIndicators"></app-pagination>
     </form>
   </div>
 </app-card>
