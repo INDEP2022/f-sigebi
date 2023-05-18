@@ -3,7 +3,7 @@
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('proceedingsNumber')"
-        label="N&uacute;m. Expediente">
+        label="No. Expediente">
         <input
           type="text"
           class="form-control"
@@ -14,7 +14,7 @@
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('managementNumber')"
-        label="N&uacute;m. de Gesti&oacute;n">
+        label="No. de Gesti&oacute;n">
         <input
           type="text"
           class="form-control"
@@ -23,9 +23,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('flyerNumber')"
-        label="N&uacute;m. Volante">
+      <form-field [control]="form.get('flyerNumber')" label="No. Volante">
         <input
           type="text"
           class="form-control"
@@ -34,7 +32,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('officio')" label="N&uacute;m. Oficio">
+      <form-field [control]="form.get('officio')" label="No. Oficio">
         <input
           type="text"
           class="form-control"
@@ -228,16 +226,6 @@
             {{ item.id }} - {{ item.name }}
           </div>
         </ng-template>
-
-        <!--ng-select
-          [items]="UserDestinatario"
-          bindLabel="id"
-          bindValue="id"
-          formControlName="senderUser_I"
-          [readonly]="form.get('typePerson_I').value === 'E'"
-          class="form-control"
-          (change)="getDescUser('control_I', $event)">
-        </ng-select-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
@@ -277,6 +265,12 @@
             [loading]="loading"
             (confirm)="confirm()">
           </confirm-button>
+
+          <!--button type="button" 
+                  class="btn btn-outline-success"
+                  (click)="updateOficio()">
+              Actualizar
+          </button-->
         </div>
       </div>
     </div>

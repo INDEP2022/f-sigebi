@@ -111,7 +111,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     };
     return this.post(
       this.endpoint + '/' + ProceedingsEndpoints.DeleteProceedinGood,
-      { body }
+      body
     );
   }
 
