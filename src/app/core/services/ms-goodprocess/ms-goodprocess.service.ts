@@ -25,4 +25,32 @@ export class GoodprocessService extends HttpService {
       params
     );
   }
+
+  getDictaminacionesCount(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationDictaminacionesCount,
+      params
+    );
+  }
+
+  getCuEmisora(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationCuDelRem,
+      params
+    );
+  }
+
+  getCuDelRem(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationCuDelRem,
+      params
+    );
+  }
+
+  getCuDelDest(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationCuDelDest,
+      params
+    );
+  }
 }
