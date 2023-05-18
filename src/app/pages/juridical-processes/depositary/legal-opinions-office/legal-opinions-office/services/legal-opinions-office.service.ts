@@ -15,6 +15,8 @@ import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -35,7 +37,9 @@ export class LegalOpinionsOfficeService {
     private msJobDictumTextsService: JobDictumTextsService,
     private msDictationXGood1Service: DictationXGood1Service,
     private msProcedureManagement: ProcedureManagementService,
-    private msParametersService: ParametersService
+    private msParametersService: ParametersService,
+    private msGoodprocessService: GoodprocessService,
+    private msNotificationService: NotificationService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -85,6 +89,21 @@ export class LegalOpinionsOfficeService {
   }
   getParameters(params: ListParams) {
     return this.msParametersService.getAll(params);
+  }
+  getDictaminacionesCount(params: ListParams) {
+    return this.msGoodprocessService.getDictaminacionesCount(params);
+  }
+  getWheelsByFilters(params: _Params) {
+    return this.msNotificationService.getAllFilter(params);
+  }
+  getCuEmisora(params: ListParams) {
+    return this.msGoodprocessService.getCuEmisora(params);
+  }
+  getCuDelRem(params: ListParams) {
+    return this.msGoodprocessService.getCuDelRem(params);
+  }
+  getCuDelDest(params: ListParams) {
+    return this.msGoodprocessService.getCuDelDest(params);
   }
   getTexto3FromOfficeDictation(
     officeDictationData: IOfficialDictation,

@@ -4,4 +4,8 @@ export enum GoodprocessEndpoints {
   ApplicationAllFill = 'application/all-fill',
   CountBienEstatusXPantalla = 'application/countBienEstatusXPantalla',
   ExpedientePostQuery = 'application/expedientePostQuery',
+  ApplicationDictaminacionesCount = 'application/getDictaminacionesCount',
+  ApplicationCuEmisora = 'application/cuEmisora',
+  ApplicationCuDelRem = 'application/cuDelRem',
+  ApplicationCuDelDest = 'application/cuDelDest',
 }
