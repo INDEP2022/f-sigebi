@@ -63,7 +63,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="print()"
-                [disabled]="form.invalid">
+                [disabled]="!form.invalid">
                 Imprimir
               </button>
             </div>
@@ -77,7 +77,7 @@
       <div class="row pl-3">Firmante</div>
 
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field [control]="form.get('userId')" label="Usuario">
             <ng-select
               [items]="itemsJsonInterfazUser"
@@ -89,7 +89,7 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field [control]="form.get('username')" label="Nombre">
             <input
               type="text"
@@ -98,7 +98,7 @@
               [readonly]="true" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field [control]="form.get('charge')" label="Puesto">
             <input
               type="text"
