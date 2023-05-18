@@ -407,41 +407,31 @@ export class GeneralDocumentsFormComponent
       confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
-        this.onLoadToast(
-          'success',
-          'Expediente relacionado a la solicitud correctamente',
-          ''
-        );
-        this.updateStateRequestTab();
+        console.log(this.requestId, request);
         this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
-            if (resp.stateCode != null) {
-              this.onLoadToast(
-                'error',
-                'Error',
-                `Ocurrio un error al asociar la socitud con el expediente ${resp.message[0]}`
-              );
-            }
-
-            if (resp.id != null) {
-              Swal.fire({
-                title: 'Solicitud asociada al expediente: ' + this.requestId,
-                showDenyButton: false,
-                showCancelButton: false,
-                confirmButtonText: 'Aceptar',
-                denyButtonText: `Don't save`,
-                confirmButtonColor: '#9D2449',
-              }).then(result => {
-                if (result.isConfirmed) {
-                  this.onLoadToast(
-                    'success',
-                    'Expediente asociado a la solicitud correctamente',
-                    ''
-                  );
-                  this.updateStateRequestTab();
-                }
-              });
-            }
+            Swal.fire({
+              title: `Se asocio la solicitud correctamente`,
+              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de la caratula INAI`,
+              icon: 'success',
+              showDenyButton: false,
+              showCancelButton: false,
+              confirmButtonText: 'Aceptar',
+              denyButtonText: `Cancelar`,
+              confirmButtonColor: '#9D2449',
+            }).then(result => {
+              if (result.isConfirmed) {
+                this.updateStateRequestTab();
+              }
+            });
+          },
+          error: error => {
+            console.log(error);
+            this.onLoadToast(
+              'error',
+              'Error',
+              `Ocurrio un error al asociar la socitud con el expediente ${error.error.message}`
+            );
           },
         });
       }

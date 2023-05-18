@@ -29,6 +29,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   typeUser: string = 'TE';
   user: any;
   username: string = '';
+  deleRegionalId: string = '';
+
   requestService = inject(RequestService);
   userProcessService = inject(UserProcessService);
   taskService = inject(TaskService);
@@ -53,7 +55,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.removeUnNecessaryData();
-
+    const storeData = this.authService.decodeToken();
+    this.deleRegionalId = storeData.delegacionreg;
     this.requestForm.controls['typeUser'].valueChanges.subscribe(
       (data: any) => {
         this.typeUser = data;
@@ -77,6 +80,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.loading = true;
     this.typeUser = this.requestForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', this.typeUser);
+    //this.params.value.addFilter('regionalDelegation', this.deleRegionalId);
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {

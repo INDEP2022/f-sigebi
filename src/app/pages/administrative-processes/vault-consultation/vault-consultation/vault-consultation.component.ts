@@ -98,6 +98,9 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
 
   getVaults() {
     this.loading = true;
+    this.params.getValue()['filter.description'] = `$ilike:${
+      this.params.getValue().text
+    }`;
     this.safeService.getAll(this.params.getValue()).subscribe({
       next: response => {
         console.log(response);

@@ -8,7 +8,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
 
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
@@ -38,7 +37,9 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   loadingGoods = true;
   loadingNewGoods = true;
   newLimit = new FormControl(1);
-  rowsSelected: any[] = [];
+  // rowsSelected: any[] = [];
+  rowsSelectedLocal: any[] = [];
+  rowsSelectedNotLocal: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -67,6 +68,10 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     this.service.selectedAct = value;
   }
 
+  get rowsSelected() {
+    return this.rowsSelectedLocal.concat(this.rowsSelectedNotLocal);
+  }
+
   get data() {
     return this.service.data ? this.service.data : [];
   }
@@ -89,6 +94,14 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
         ? this.service.formValue.statusActa
         : 'CERRADA'
       : 'CERRADA';
+  }
+
+  get registro() {
+    return this.service.registro;
+  }
+
+  set registro(value) {
+    this.service.registro = value;
   }
 
   ngOnInit(): void {
@@ -122,7 +135,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     });
   }
 
-  private addFilter(
+  private addFilter2(
     name: string,
     value: any,
     operator: SearchFilter = SearchFilter.EQ
@@ -137,11 +150,15 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       this.loading = true;
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
+          // debugger;
           this.infoForm = response.data[0];
           this.service.formValue = deliveryReceptionToInfo(this.infoForm);
-          this.service.totalProceedings = response.count;
+          if (!this.registro) {
+            this.service.totalProceedings = response.count;
+          }
           console.log(this.params.getValue());
           this.loading = false;
+          this.registro = true;
           this.getGoods();
         },
         error: error => {
@@ -170,17 +187,20 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     }
   }
 
-  addGood(good: IDetailProceedingsDeliveryReception) {
-    this.service.dataForAdd.push(good);
-    this.service.dataForAdd = [...this.service.dataForAdd];
-  }
+  // addGood(good: IDetailProceedingsDeliveryReception) {
+  //   this.service.dataForAdd.push(good);
+  //   this.service.dataForAdd = [...this.service.dataForAdd];
+  // }
 
   private fillParams(form: IProceedingInfo) {
     if (!form) return false;
     this.service.formValue = form;
-    this.filterParams = new FilterParams();
+    if (this.registro === false) {
+      this.filterParams = new FilterParams();
+    }
     this.filterParams.limit = 1;
     this.filterParams.page = this.params.getValue().page;
+    if (this.registro === true) return true;
     const {
       id,
       cveActa,
@@ -215,40 +235,41 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       this.filterParams.addFilter('keysProceedings', cveActa.trim());
       return true;
     }
-    this.addFilter('numFile', numFile);
-    this.addFilter('typeProceedings', tipoActa);
-    this.addFilter('label', labelActa, SearchFilter.ILIKE);
-    this.addFilter('receiptKey', receiptKey);
-    this.addFilter('statusProceedings', statusActa);
-    this.addFilter('address', address, SearchFilter.ILIKE);
-    this.addFilter('observations', observations, SearchFilter.ILIKE);
-    this.addFilter('numDelegation1', numDelegation1);
-    this.addFilter('numDelegation2', numDelegation2);
-    this.addFilter('elaborationDate', elaborationDate, SearchFilter.ILIKE);
-    this.addFilter('closeDate', closeDate, SearchFilter.ILIKE);
-    this.addFilter(
+    this.addFilter2('numFile', numFile);
+    this.addFilter2('typeProceedings', tipoActa);
+    this.addFilter2('label', labelActa, SearchFilter.ILIKE);
+    this.addFilter2('receiptKey', receiptKey);
+    this.addFilter2('statusProceedings', statusActa);
+    this.addFilter2('address', address, SearchFilter.ILIKE);
+    this.addFilter2('observations', observations, SearchFilter.ILIKE);
+    this.addFilter2('numDelegation1', numDelegation1);
+    this.addFilter2('numDelegation2', numDelegation2);
+    this.addFilter2('elaborationDate', elaborationDate, SearchFilter.ILIKE);
+    this.addFilter2('closeDate', closeDate, SearchFilter.ILIKE);
+    this.addFilter2(
       'datePhysicalReception',
       datePhysicalReception,
       SearchFilter.ILIKE
     );
-    this.addFilter('maxDate', maxDate, SearchFilter.ILIKE);
-    this.addFilter(
+    this.addFilter2('maxDate', maxDate, SearchFilter.ILIKE);
+    this.addFilter2(
       'dateElaborationReceipt',
       dateElaborationReceipt,
       SearchFilter.ILIKE
     );
-    this.addFilter('dateCaptureHc', dateCaptureHc, SearchFilter.ILIKE);
-    this.addFilter('dateDeliveryGood', dateDeliveryGood, SearchFilter.ILIKE);
-    this.addFilter('dateCloseHc', dateCloseHc, SearchFilter.ILIKE);
-    this.addFilter('captureDate', captureDate, SearchFilter.ILIKE);
-    this.addFilter('dateMaxHc', dateMaxHc, SearchFilter.ILIKE);
-    this.addFilter('witness1', witness1, SearchFilter.ILIKE);
-    this.addFilter('witness2', witness2, SearchFilter.ILIKE);
-    this.addFilter(
+    this.addFilter2('dateCaptureHc', dateCaptureHc, SearchFilter.ILIKE);
+    this.addFilter2('dateDeliveryGood', dateDeliveryGood, SearchFilter.ILIKE);
+    this.addFilter2('dateCloseHc', dateCloseHc, SearchFilter.ILIKE);
+    this.addFilter2('captureDate', captureDate, SearchFilter.ILIKE);
+    this.addFilter2('dateMaxHc', dateMaxHc, SearchFilter.ILIKE);
+    this.addFilter2('witness1', witness1, SearchFilter.ILIKE);
+    this.addFilter2('witness2', witness2, SearchFilter.ILIKE);
+    this.addFilter2(
       'comptrollerWitness',
       comptrollerWitness,
       SearchFilter.ILIKE
     );
+
     if (this.filterParams.getFilterParams()) {
       return true;
     }

@@ -12,7 +12,7 @@
         </div>
         <div class="col-md-6">
           <button
-            [class]="disabled ? 'disabled' : ''"
+            [class]="disabled || form.invalid ? 'disabled' : ''"
             class="btn btn-primary btn-sm active"
             (click)="filter()">
             <i class="fa fa-search"></i> Filtrar
@@ -65,7 +65,7 @@
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
               <ng-option value="ABIERTA">Abierta</ng-option>
-              <ng-option value="ABIERTA">Cerrada</ng-option>
+              <ng-option value="CERRADA">Cerrada</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -77,6 +77,7 @@
               type="text"
               class="form-control"
               formControlName="cveActa"
+              maxlength="30"
               [readonly]="loading" />
           </form-field>
         </div>
@@ -88,6 +89,7 @@
               type="text"
               class="form-control"
               formControlName="receiptKey"
+              maxlength="10"
               [readonly]="disabled" />
           </form-field>
         </div>
@@ -106,6 +108,7 @@
               type="text"
               class="form-control"
               formControlName="labelActa"
+              maxlength="30"
               [readonly]="disabled" />
           </form-field>
         </div>
@@ -116,6 +119,7 @@
             rows="3"
             class="form-control"
             formControlName="address"
+            maxlength="600"
             [readonly]="disabled"></textarea>
         </form-field>
       </div>
@@ -125,6 +129,7 @@
             rows="3"
             class="form-control"
             formControlName="observations"
+            maxlength="600"
             [readonly]="disabled"></textarea>
         </form-field>
       </div>
@@ -169,20 +174,20 @@
             label="Fecha Elaboraci&oacute;n">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="elaborationDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="form.get('closeDate')" label="Fecha Cierre">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="closeDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
@@ -193,10 +198,10 @@
             label="Fecha Recepci&oacute;n F&iacute;sica">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="datePhysicalReception"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -205,10 +210,10 @@
             label="Fecha M&aacute;xima">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="maxDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
@@ -219,10 +224,10 @@
             label="Fecha Elaboraci&oacute;n Recibo">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateElaborationReceipt"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -231,10 +236,10 @@
             label="Fecha Captura Hc">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateCaptureHc"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
@@ -245,10 +250,10 @@
             label="Fecha Entrega de bienes">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateDeliveryGood"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -257,10 +262,10 @@
             label="Fecha Cierre Hc">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateCloseHc"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
@@ -269,10 +274,10 @@
           <form-field [control]="form.get('captureDate')" label="Fecha Captura">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="captureDate"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -281,10 +286,10 @@
             label="Fecha M&aacute;xima Hc">
             <input
               bsDatepicker
-              class="form-control"
+              class="form-control notInputDatePicker"
               formControlName="dateMaxHc"
               [maxDate]="hoy"
-              [readonly]="disabled" />
+              readonly />
           </form-field>
         </div>
       </div>
@@ -294,6 +299,7 @@
             type="text"
             class="form-control"
             formControlName="witness1"
+            maxlength="100"
             [readonly]="disabled" />
         </form-field>
       </div>
@@ -303,6 +309,7 @@
             type="text"
             class="form-control"
             formControlName="witness2"
+            maxlength="100"
             [readonly]="disabled" />
         </form-field>
       </div>
@@ -314,6 +321,7 @@
             type="text"
             class="form-control"
             formControlName="comptrollerWitness"
+            maxlength="100"
             [readonly]="disabled" />
         </form-field>
       </div>

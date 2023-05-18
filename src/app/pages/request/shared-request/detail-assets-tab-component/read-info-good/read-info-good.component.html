@@ -42,7 +42,7 @@
         <div class="row pt-4">
           <div class="col-md-5">
             <label>Destino INDEP: </label>
-            <span class="fs-4">{{ goodData?.saeDestiny }}</span>
+            <span class="fs-4">{{ destinySAE }}</span>
           </div>
           <div class="col-md-5">
             <label>Color: </label>
@@ -275,7 +275,7 @@
           <div
             class="col-md-6"
             *ngIf="typeOfRequest == 'MANUAL' || typeOfRequest == 'SAT_SAE'">
-            <div style="width: 20rem">
+            <div>
               <label>Unidad medida INDEP: </label>
               <span class="fs-4"> {{ saeMeasureUnit }}</span>
             </div>
@@ -523,17 +523,17 @@
                 (fetchItems)="getUnitMeasureSae($event)"
                 [data]="selectMeasureUnitSae"
                 label=""
-                [searchable]="false"
+                [searchable]="true"
                 bindLabel="measureTlUnit"
                 value="uomCode"
                 [readonly]="false"
                 (change)="unidMediIndep($event)"></ngx-select>
             </div>
           </div>
-          <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
+          <!-- <div class="col-md-5" *ngIf="typeOfRequest == 'SAT_SAE'">
             <label>Clave &Uacute;nica: </label>
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
-          </div>
+          </div> -->
         </div>
       </form>
     </div>
@@ -644,7 +644,7 @@
           <div class="col-md-6">
             <label>Fecha ingreso: </label>
             <span class="fs-4">
-              {{ goodData?.admissionDate | date : 'dd/MM/yyyy' }}
+              {{ goodData?.admissionDate | date: 'dd/MM/yyyy' }}
             </span>
           </div>
           <div class="col-md-6">

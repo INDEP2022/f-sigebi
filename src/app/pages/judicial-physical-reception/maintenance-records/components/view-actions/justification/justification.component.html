@@ -1,6 +1,6 @@
 <form class="form-material" [formGroup]="form">
-  <div class="row mb-4" style="align-items: center">
-    <div class="row col-lg-6" style="align-items: center">
+  <div class="row mb-4" style="align-items: center; column-gap: 15px">
+    <div class="row col-lg-6 pl-0" style="align-items: center">
       <div class="col-md-6">
         <form-field [control]="form.get('userName')" label="Nombre Usuario">
           <input
@@ -25,6 +25,7 @@
           rows="2"
           class="form-control"
           formControlName="justification"
+          maxlength="300"
           [readOnly]="statusActa !== 'ABIERTA'"></textarea>
       </form-field>
     </div>
