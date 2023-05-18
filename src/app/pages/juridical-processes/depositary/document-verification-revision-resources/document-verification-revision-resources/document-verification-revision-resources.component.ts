@@ -19,17 +19,20 @@ import {
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
 import { IDocumentsDictumXState } from 'src/app/core/models/ms-documents/documents-dictum-x-state.model';
+import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictation-x-good.service';
 import { DocumentsDictumXStateService } from 'src/app/core/services/ms-documents-dictum-x-state/documents-dictum-x-state.service';
 import { DocumentsRequestPerGoodService } from 'src/app/core/services/ms-documents-request-per-good/ms-documents-request-per-good.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-document-verification-revision-resources',
@@ -140,8 +143,6 @@ export class DocumentVerificationRevisionResourcesComponent
         type: 'custom',
         renderComponent: CheckboxElementComponent,
         onComponentInitFunction: (instance: any) => {
-          console.log(instance);
-
           instance.toggle.subscribe((data: any) => {
             if (data.toggle) {
               if (!this.buffer(data.row)) {
@@ -176,7 +177,7 @@ export class DocumentVerificationRevisionResourcesComponent
   public params = new BehaviorSubject<FilterParams>(new FilterParams());
   public paramsDoc = new BehaviorSubject<FilterParams>(new FilterParams());
   public loadingDoc: boolean = false;
-
+  public expedient: DefaultSelect<IExpedient> = new DefaultSelect();
   public activeBlocDoc: boolean = false;
   constructor(
     private fb: FormBuilder,
@@ -189,9 +190,11 @@ export class DocumentVerificationRevisionResourcesComponent
     private readonly jasperService: SiabService,
     private readonly sanitizer: DomSanitizer,
     private readonly modalService: BsModalService,
-    private readonly dictumForService: DocumentsForDictumService
+    private readonly dictumForService: DocumentsForDictumService,
+    private readonly expedienteSer: ExpedientService
   ) {
     super();
+    this.dataTable.count = 0;
   }
 
   sumarDias(fecha: Date, dias: number) {
@@ -221,6 +224,22 @@ export class DocumentVerificationRevisionResourcesComponent
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+
+  getExpedient(params?: ListParams) {
+    const fil: FilterParams = new FilterParams();
+    if (params.text)
+      fil.addFilter('protectionKey', params.text, SearchFilter.ILIKE);
+    fil.sortBy = 'id:ASC';
+    fil.page = params.page;
+    this.expedienteSer.getAllFilter(fil.getParams()).subscribe({
+      next: resp => {
+        this.expedient = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.expedient = new DefaultSelect();
+      },
+    });
   }
 
   insertSolic(data: any) {
@@ -275,7 +294,7 @@ export class DocumentVerificationRevisionResourcesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      goodId: [null],
+      goodId: [null, Validators.required],
       initialAgreement: [null, [Validators.pattern(STRING_PATTERN)]],
       description: [null, [Validators.pattern(STRING_PATTERN)]],
       agreementDate: [null],
@@ -296,11 +315,11 @@ export class DocumentVerificationRevisionResourcesComponent
       cb_solicitar_doctos: [null],
     });
     this.formExp = this.fb.group({
-      id: [null],
+      id: [null, Validators.required],
       preliminaryInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       dateAgreementAssurance: [null],
-      protectionKey: [null],
+      protectionKey: [null, Validators.required],
     });
     this.formInforme = this.fb.group({
       id: [null],
@@ -325,8 +344,11 @@ export class DocumentVerificationRevisionResourcesComponent
   }
 
   expedientSelect(expedient: any) {
-    if (expedient.id) {
-      console.log(expedient);
+    if (expedient) {
+      this.form.reset();
+      this.formExp.reset();
+      this.isHistory = false;
+      if (!expedient.id) return;
       const format = expedient.dateAgreementAssurance
         ? expedient.dateAgreementAssurance.split('-').reverse().join('-')
         : '';
@@ -339,7 +361,8 @@ export class DocumentVerificationRevisionResourcesComponent
       this.goodService.getByExpedient(expedient.id, params).subscribe({
         next: value => {
           const good = value.data[0];
-
+          this.form.patchValue(good);
+          this.checkAvaliable();
           if (good.agreementDate) {
             good.agreementDate = good.agreementDate
               .toString()
@@ -363,7 +386,6 @@ export class DocumentVerificationRevisionResourcesComponent
               good.estatus ? good.estatus.descriptionStatus : 'NO DEFINIDO'
             );
           this.getDateAndStatus();
-          this.checkAvaliable();
           this.getDocuments();
         },
         error: () => {
@@ -373,6 +395,7 @@ export class DocumentVerificationRevisionResourcesComponent
     } else {
       this.form.reset();
       this.formExp.reset();
+      this.isHistory = false;
     }
   }
 
@@ -426,6 +449,27 @@ export class DocumentVerificationRevisionResourcesComponent
         this.loading = false;
       },
     });
+
+    setTimeout(() => {
+      const { di_disponible, di_situacion_bien } = this.form.value;
+      const { id, dateAgreementAssurance } = this.formExp.value;
+      if (di_disponible == 'S') {
+        if (di_situacion_bien == 'DICTAMINADO') {
+          this.onLoadToast(
+            'info',
+            'No se pueden realizar modificaciones porque el bien está dictaminado'
+          );
+        }
+        if (!id) {
+          this.onLoadToast('info', 'Obligatorio seleccionar un expediente');
+        } else if (!dateAgreementAssurance) {
+          this.onLoadToast(
+            'info',
+            'Obligatorio la fecha de presentación del recurso de revisión'
+          );
+        }
+      }
+    }, 1000);
   }
 
   selectGood(good: any) {
@@ -624,7 +668,7 @@ export class DocumentVerificationRevisionResourcesComponent
     const params = {
       PN_EXPINI: id,
       PN_BIEN: goodId,
-      PC_TIPO_DICTAM: '',
+      PC_TIPO_DICTAM: 'RECREVISION',
     };
     const msg = setTimeout(() => {
       this.jasperService

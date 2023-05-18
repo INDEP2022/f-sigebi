@@ -11,23 +11,50 @@
         <div class="col-sm-12 col-12 col-md-12">
           <h6>Informaci&oacute;n de Expediente</h6>
         </div>
-        <div class="col-sm-12 col-12 col-md-2">
+        <div class="col-sm-12 col-12 col-md-4">
           <app-expedient-shared
             expedientField="id"
             [form]="formExp"
             (selectExpedient)="expedientSelect($event)"></app-expedient-shared>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-3">
+        <div class="col-sm-12 col-12 col-md-4 p-3">
           <form-field
-            [control]="formExp.get('protectionKey')"
-            label="No&#46; Amparo">
+            [control]="formExp.get('criminalCase')"
+            label="Causa Penal">
             <input
               class="form-control"
-              formControlName="protectionKey"
-              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+              formControlName="criminalCase"
+              [readOnly]="true"
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-3">
+        <div class="col-sm-12 col-12 col-md-4 p-3">
+          <form-field [control]="formExp.get('protectionKey')">
+            <ngx-select
+              (fetchItems)="getExpedient($event)"
+              [data]="expedient"
+              [form]="formExp"
+              value="protectionKey"
+              bindLabel="protectionKey"
+              (change)="expedientSelect($event)"
+              label="No&#46; Amparo"
+              [searchOnInit]="true"
+              [control]="'protectionKey'">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-3">
+          <form-field
+            [control]="formExp.get('preliminaryInquiry')"
+            label="Averiguaci&oacute;n Previa">
+            <input
+              class="form-control"
+              [readOnly]="true"
+              formControlName="preliminaryInquiry"
+              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-3">
           <form-field
             [control]="formExp.get('dateAgreementAssurance')"
             label="Fecha Presentaci&oacute;n Recurso Revisi&oacute;n">
@@ -38,26 +65,6 @@
               [bsConfig]="{
                 dateInputFormat: 'DD-MM-YYYY'
               }" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-3">
-          <form-field
-            [control]="formExp.get('preliminaryInquiry')"
-            label="Averiguaci&oacute;n Previa">
-            <input
-              class="form-control"
-              formControlName="preliminaryInquiry"
-              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-3">
-          <form-field
-            [control]="formExp.get('criminalCase')"
-            label="Causa Penal">
-            <input
-              class="form-control"
-              formControlName="criminalCase"
-              oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)" />
           </form-field>
         </div>
       </div>
@@ -71,6 +78,9 @@
           <form-field [control]="form.get('goodId')" label="No&#46; Bien">
             <input
               class="form-control"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"
               formControlName="goodId"
               oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
           </form-field>
@@ -81,7 +91,11 @@
             label="No&#46; Bien Descripción">
             <input
               class="form-control"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"
               formControlName="description"
+              [readOnly]="true"
               oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)" />
           </form-field>
         </div>
@@ -93,8 +107,12 @@
               class="form-control"
               formControlName="agreementDate"
               bsDatepicker
+              [readOnly]="form.get('di_disponible').value == 'N'"
               [bsConfig]="{
                 dateInputFormat: 'DD-MM-YYYY'
+              }"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
               }" />
           </form-field>
         </div>
@@ -103,7 +121,11 @@
             <input
               class="form-control"
               formControlName="status"
-              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)" />
+              [readOnly]="true"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -114,7 +136,11 @@
               (dblclick)="showHistory()"
               class="form-control"
               formControlName="descriptionStatus"
-              oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)" />
+              [readOnly]="true"
+              oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -125,8 +151,12 @@
               class="form-control"
               formControlName="notifyRevRecDate"
               bsDatepicker
+              [readOnly]="form.get('di_disponible').value == 'N'"
               [bsConfig]="{
                 dateInputFormat: 'DD-MM-YYYY'
+              }"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
               }" />
           </form-field>
         </div>
@@ -137,7 +167,11 @@
             <input
               class="form-control"
               formControlName="di_situacion_bien"
-              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+              [readOnly]="true"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -147,7 +181,11 @@
             <textarea
               rows="3"
               class="form-control"
-              formControlName="initialAgreement"></textarea>
+              formControlName="initialAgreement"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -157,7 +195,11 @@
             <textarea
               rows="3"
               class="form-control"
-              formControlName="revRecCause"></textarea>
+              formControlName="revRecCause"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -167,7 +209,11 @@
             <textarea
               rows="3"
               class="form-control"
-              formControlName="observations"></textarea>
+              formControlName="observations"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 text-left">
@@ -175,7 +221,8 @@
             <button
               type="button"
               class="btn btn-primary active btn-sm"
-              (click)="btnAprobar()">
+              (click)="btnAprobar()"
+              [disabled]="form.get('di_disponible').value == 'N'">
               Aprobar
             </button>
           </div>
@@ -244,7 +291,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             id="table"
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="tableSettings"
             [source]="dataTable.data"></ng2-smart-table>
           <app-pagination
@@ -263,7 +310,8 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active ml-2 mr-2"
-            (click)="btnSeleccionarDocumentos()">
+            (click)="btnSeleccionarDocumentos()"
+            [disabled]="form.get('di_disponible').value == 'N'">
             Seleccionar Documentos
           </button>
         </div>
@@ -331,7 +379,7 @@
           <div [class]="loadingDoc ? 'table-loading' : ''">
             <ng2-smart-table
               id="table"
-              [attr.class]="'table-bordered'"
+              [attr.class]="'table-bordered table-responsive'"
               [settings]="tableSettingsDoc"
               [source]="dataTableDoc.data"></ng2-smart-table>
             <app-pagination
