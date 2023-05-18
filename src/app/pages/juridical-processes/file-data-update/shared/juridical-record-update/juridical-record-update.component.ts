@@ -951,20 +951,24 @@ export class JuridicalRecordUpdateComponent
     );
   }
 
+  isLoadingOfficeOfRelief = false;
   async onClickOfficeOfRelief() {
     let dictumId: number;
+    this.isLoadingOfficeOfRelief = true;
     if (!this.formControls.affairKey.value) {
       this.alert(
         'warning',
         'No especificado',
         'Es necesario especificar el tipo de desahogo'
       );
+      this.isLoadingOfficeOfRelief = false;
       return;
     }
     if (this.formControls.dictumKey.value?.id) {
       dictumId = this.formControls.dictumKey.value.id;
       if ([24, 26].includes(dictumId)) {
         this.openSatChat();
+        this.isLoadingOfficeOfRelief = false;
         return;
       }
     }
@@ -977,6 +981,7 @@ export class JuridicalRecordUpdateComponent
           'No encontrado',
           'Este asunto con este dictámen no esta registrado en el catálogo de Asuntos - Dictamen'
         );
+        this.isLoadingOfficeOfRelief = false;
         return;
       }
     } catch (ex) {
@@ -988,7 +993,8 @@ export class JuridicalRecordUpdateComponent
       return;
     }
     if (this.affair && (!this.dictOffice || this.dictOffice === 'D')) {
-      this.pupValidaOf(catRAsuntDict.data[0]);
+      await this.pupValidaOf(catRAsuntDict.data[0]);
+      this.isLoadingOfficeOfRelief = false;
       return;
     }
     if (this.affair && this.dictOffice) {
@@ -999,19 +1005,22 @@ export class JuridicalRecordUpdateComponent
         if (dictumId == 1) {
           try {
             await this.fetchForForm.getGoodAll();
-            this.pupValidaOf(catRAsuntDict.data[0]);
+            await this.pupValidaOf(catRAsuntDict.data[0]);
           } catch (ex) {
             this.alert(
               'warning',
               'No encontrado',
               'Este volante no tiene bienes para Desahogar.'
             );
+            this.isLoadingOfficeOfRelief = false;
             return;
           }
+          this.isLoadingOfficeOfRelief = false;
           return;
         }
       }
-      this.pupValidaOf(catRAsuntDict.data[0]);
+      await this.pupValidaOf(catRAsuntDict.data[0]);
+      this.isLoadingOfficeOfRelief = false;
     }
     // try {
     //   const result = await this.fetchForForm.searchCatRAsuntDic();
@@ -1262,6 +1271,7 @@ export class JuridicalRecordUpdateComponent
       );
       return;
     }
+
     if ([1, 16, 23].includes(dictumId)) dictumType = 'PROCEDENCIA';
     if (dictumId == 15) dictumType = 'DESTRUCCION';
     if (dictumId == 2) dictumType = 'DECOMISO';

@@ -135,9 +135,14 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="affair == null || dictOffice == ''"
+            [disabled]="
+              affair == null || dictOffice == '' || isLoadingOfficeOfRelief
+            "
             (click)="onClickOfficeOfRelief()">
             Oficio de Desahogo
+            <ng-container *ngIf="isLoadingOfficeOfRelief"
+              ><span class="spinner-border"></span
+            ></ng-container>
           </button>
           <button
             type="button"
