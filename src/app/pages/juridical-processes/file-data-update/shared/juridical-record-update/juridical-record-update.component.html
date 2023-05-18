@@ -14,6 +14,7 @@
               label="No. Volante">
               <input
                 type="number"
+                min="1"
                 formControlName="wheelNumber"
                 class="form-control" />
             </form-field>
@@ -34,7 +35,7 @@
           <div class="row pt-4">
             <form-field
               [control]="fileDataUpdateForm.get('consecutiveNumber')"
-              label="Consecutivo diario">
+              label="Consecutivo Diario">
               <input
                 type="number"
                 formControlName="consecutiveNumber"
@@ -136,7 +137,7 @@
             class="btn btn-sm btn-primary active ml-3"
             [disabled]="affair == null || dictOffice == ''"
             (click)="onClickOfficeOfRelief()">
-            Oficio de desahogo
+            Oficio de Desahogo
           </button>
           <button
             type="button"
