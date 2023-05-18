@@ -21,4 +21,9 @@ export interface IDetailProceedingsDeliveryReception {
   good?: any;
   fileId?: string;
   associatedExpId?: string;
+  warehouse?: any;
+  vault?: any;
+  createdLocal?: boolean;
+  description?: string;
+  status?: string;
 }

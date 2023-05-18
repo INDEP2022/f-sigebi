@@ -222,7 +222,7 @@ export class JuridicalRulingComponent
         type: 'number',
       },
       description: {
-        title: 'Descripcion Dictaminada',
+        title: 'Descripción Dictaminación',
         type: 'string',
       },
       menaje: {
@@ -230,11 +230,11 @@ export class JuridicalRulingComponent
         type: 'string',
       },
       quantity: {
-        title: 'Cant. Dic..',
+        title: 'Cant. Dictaminación',
         type: 'string',
       },
       status: {
-        title: 'Est',
+        title: 'Estado',
         type: 'string',
       },
       processStatus: {

@@ -42,6 +42,42 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     }>(this.endpoint, model);
   }
 
+  createMassive(selecteds?: IDetailProceedingsDeliveryReception[]) {
+    return forkJoin(
+      selecteds.map(selected => {
+        // selected.numberGood
+        delete selected.good;
+        delete selected.description;
+        delete selected.status;
+        delete selected.warehouse;
+        delete selected.vault;
+        return this.create(selected).pipe(
+          map(item => {
+            return { deleted: selected.good.id } as IDeleted;
+          }),
+          catchError(err => of({ error: selected.good.id } as INotDeleted))
+        );
+      })
+    );
+  }
+
+  deleteMassiveByIds(selecteds?: IDetailProceedingsDeliveryReception[]) {
+    return forkJoin(
+      selecteds.map(selected =>
+        this.deleteById(selected.good.goodId, selected.numberProceedings).pipe(
+          map(item => {
+            return { deleted: selected.good.goodId } as IDeleted;
+          }),
+          catchError(err => of({ error: selected.good.goodId } as INotDeleted))
+        )
+      )
+    );
+  }
+
+  // deleteById(numberGood: number, numberProceedings: number) {
+  //   return this.delete(this.endpoint, { numberGood, numberProceedings });
+  // }
+
   deleteMasive(
     selecteds: IGoodsByProceeding[],
     processingArea: string,
@@ -109,10 +145,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
       processingArea,
       user: localStorage.getItem('username'),
     };
-    return this.post(
-      this.endpoint + '/' + ProceedingsEndpoints.DeleteProceedinGood,
-      { body }
-    );
+    return this.post(ProceedingsEndpoints.DeleteProceedinGood, body);
   }
 
   deleteById(numberGood: number, numberProceedings: number) {
@@ -161,6 +194,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
                 item.dateIndicatesUserApproval + '',
                 'string'
               ),
+              amount: item.good.quantity,
               status: item.good.status,
               warehouse: item.good.storeNumber,
               vault: item.good.vaultNumber,

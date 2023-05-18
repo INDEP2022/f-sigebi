@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -32,8 +38,36 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './opinion.component.html',
   styles: [],
 })
-export class OpinionComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
+export class OpinionComponent extends BasePage implements OnInit, OnChanges {
+  form: FormGroup = this.fb.group({
+    expedientNumber: [null, [Validators.required]],
+    registerNumber: [null, [Validators.required]],
+    wheelNumber: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
+    typeDict: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+    charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+    senderUserRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
+    addressee: [null, [Validators.pattern(STRING_PATTERN)]],
+    addressee_I: [null, [Validators.pattern(STRING_PATTERN)]],
+    paragraphInitial: [null, [Validators.pattern(STRING_PATTERN)]],
+    paragraphFinish: [null, [Validators.pattern(STRING_PATTERN)]],
+    paragraphOptional: [null, [Validators.pattern(STRING_PATTERN)]],
+    descriptionSender: [null, [Validators.pattern(STRING_PATTERN)]],
+    typePerson: [null, [Validators.required]],
+    senderUser: [null, null],
+    personaExt: [null, null],
+    typePerson_I: [null, null],
+    senderUser_I: [null, null],
+    personaExt_I: [null, null],
+
+    key: [
+      null,
+      [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+    ],
+    numberDictamination: [null, [Validators.required]],
+  });
   intIDictation: IDictation;
   localInterfazOfficialDictation: IOfficialDictation;
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -48,6 +82,7 @@ export class OpinionComponent extends BasePage implements OnInit {
 
   //===================
   users$ = new DefaultSelect<ISegUsers>();
+  @Input() oficnum: number | string;
 
   constructor(
     private fb: FormBuilder,
@@ -60,6 +95,12 @@ export class OpinionComponent extends BasePage implements OnInit {
     private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.oficnum != null) {
+      this.form.get('expedientNumber').setValue(this.oficnum);
+      this.buscardictamen();
+    }
   }
 
   ngOnInit(): void {
@@ -270,38 +311,7 @@ carga la  información de la parte media de la página
           FORMULARIO
 ==============================================================*/
   private buildForm() {
-    this.form = this.fb.group({
-      expedientNumber: [null, [Validators.required]],
-      registerNumber: [null, [Validators.required]],
-      wheelNumber: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      typeDict: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      senderUserRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
-      addressee: [null, [Validators.pattern(STRING_PATTERN)]],
-      addressee_I: [null, [Validators.pattern(STRING_PATTERN)]],
-      paragraphInitial: [null, [Validators.pattern(STRING_PATTERN)]],
-      paragraphFinish: [null, [Validators.pattern(STRING_PATTERN)]],
-      paragraphOptional: [null, [Validators.pattern(STRING_PATTERN)]],
-      descriptionSender: [null, [Validators.pattern(STRING_PATTERN)]],
-      typePerson: [null, [Validators.required]],
-      senderUser: [null, null],
-      personaExt: [null, null],
-      typePerson_I: [null, null],
-      senderUser_I: [null, null],
-      personaExt_I: [null, null],
-
-      key: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      numberDictamination: [null, [Validators.required]],
-    });
+    //this.form
   }
 
   /*====================================================================
