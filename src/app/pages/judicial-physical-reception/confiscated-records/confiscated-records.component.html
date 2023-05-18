@@ -32,14 +32,6 @@
                 Buscar
               </button>
               <span class="ml-3">{{ statusProceeding }}</span>
-              <!-- <form-field
-                [control]="form.get('averPrev')"
-                label="Averiguaci&oacute;n Previa">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="averPrev" />
-              </form-field> -->
             </div>
           </div>
         </div>
@@ -64,38 +56,59 @@
           </div>
         </div>
       </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field
+              [control]="form.get('averPrev')"
+              label="Averiguaci&oacute;n Previa">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="averPrev" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="causaPenal" />
+            </form-field>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta')" label="Acta 1">
-                <select
+              <form-field [control]="form.get('acta')">
+                <ngx-select
                   id="acta"
-                  class="form-control"
+                  control="acta"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  formControlName="acta">
-                  <option *ngFor="let record of records" [value]="record">
-                    {{ record }}
-                  </option>
-                </select>
+                  label="Acta 1"
+                  bindLabel="records"
+                  [data]="records"
+                  [searchable]="false"
+                  [form]="form"></ngx-select>
               </form-field>
             </div>
 
             <div class="col-md-2">
               <form-field [control]="form.get('transfer')">
                 <ngx-select
-                  [class]="initialdisabled ? 'disabled' : ''"
                   id="transfer"
                   control="transfer"
+                  [class]="initialdisabled ? 'disabled' : ''"
                   label="Transfer"
                   bindLabel="transferentkey"
+                  [searchable]="false"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
-                <!-- <input
-                  type="number"
-                  class="form-control"
-                  formControlName="transfer"
-                  (ngModelChange)="fillActTwo()" /> -->
               </form-field>
             </div>
 
@@ -191,6 +204,8 @@
                 <textarea
                   rows="2"
                   class="form-control"
+                  [maxlength]="1000"
+                  [class]="!isEnableDireccion ? 'disabled' : ''"
                   formControlName="direccion"></textarea>
               </form-field>
             </div>
@@ -202,6 +217,8 @@
                 <input
                   type="text"
                   class="form-control"
+                  [maxlength]="100"
+                  [class]="!isEnableEntrega ? 'disabled' : ''"
                   formControlName="entrega" />
               </form-field>
             </div>
@@ -215,6 +232,8 @@
                 <input
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
+                  [class]="!isEnablefecElabRec ? 'disabled' : ''"
                   formControlName="fecElabRec" />
               </form-field>
             </div>
@@ -228,6 +247,8 @@
                 <input
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
+                  [class]="!isEnablefecElabRec ? 'disabled' : ''"
                   formControlName="fecEntBien" />
               </form-field>
             </div>
@@ -239,7 +260,7 @@
                 [control]="form.get('folioEscaneo')"
                 label="Folio de Escaneo">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="folioEscaneo"
                   maxlength="15" />
@@ -267,6 +288,8 @@
                   (ngModelChange)="verifyDateAndFill()"
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
+                  [class]="!isEnablefecElab ? 'disabled' : ''"
                   [minDate]="minDateFecElab"
                   formControlName="fecElab" />
               </form-field>
@@ -303,6 +326,8 @@
                 <textarea
                   rows="2"
                   class="form-control"
+                  [maxlength]="1000"
+                  [class]="!isEnableObservaciones ? 'disabled' : ''"
                   formControlName="observaciones"></textarea>
               </form-field>
             </div>
@@ -314,6 +339,8 @@
                 <input
                   type="text"
                   class="form-control"
+                  [maxlength]="100"
+                  [class]="!isEnableRecibe2 ? 'disabled' : ''"
                   formControlName="recibe2" />
               </form-field>
             </div>
@@ -326,6 +353,8 @@
                 label="Testigo de la Contr&#46;">
                 <input
                   type="text"
+                  [maxlength]="100"
+                  [class]="!isEnableTestigo ? 'disabled' : ''"
                   class="form-control"
                   formControlName="testigo" />
               </form-field>
@@ -337,7 +366,6 @@
               <button
                 type="button"
                 [class]="btnCSSAct"
-                [disabled]="!form.valid"
                 class="btn btn-sm active mr-2 ml-2"
                 (click)="toggleActaBtn()"
                 size="small">
@@ -446,9 +474,9 @@
               [readOnly]="true"
               formControlName="edoFisico" />
           </form-field>
-          <form-check label="Requerido" for="label">
+          <!--  <form-check label="Requerido" for="label">
             <input id="label" type="checkbox" formControlName="requerido" />
-          </form-check>
+          </form-check> -->
           <form-field
             class="col-md-3"
             [control]="form.get('estatusBienActa')"
@@ -465,7 +493,7 @@
       <hr class="row" />
       <div class="row">
         <div class="col-md-6">
-          <div class="row">
+          <div class="row" *ngIf="isAlmacen">
             <div class="col-md-9">
               <form-field [control]="form.get('almacen')">
                 <ngx-select
@@ -479,7 +507,7 @@
             </div>
           </div>
 
-          <div class="row" *ngIf="false">
+          <div class="row" *ngIf="isBoveda">
             <div class="col-md-9">
               <form-field [control]="form.get('boveda')">
                 <ngx-select
