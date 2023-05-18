@@ -1,9 +1,9 @@
-import { Component,OnInit,Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import {
-FormBuilder,
-FormControl,
-FormGroup,
-Validators
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { format } from 'date-fns';
@@ -46,6 +46,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   loadingText = 'Cargando ...';
   keyProceedingInitial = '';
   keyProceedingFinal = '';
+  title = 'Entrega Recepción';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -135,6 +136,15 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.finalProceedingBool = false;
       this.finalProceeding = new DefaultSelect();
       this.initialProceeding = new DefaultSelect();
+      if (res === 'RECEPTION') {
+        this.title = 'Entrega Recepción';
+        this.form.get('delegacionRecibe').setValidators([Validators.required]);
+        this.form.get('subdelegation').setValidators([Validators.required]);
+      } else {
+        this.title = 'Decomiso';
+        this.form.get('delegacionRecibe').setValidators([]);
+        this.form.get('subdelegation').setValidators([]);
+      }
     });
 
     this.form.get('actaInicial').valueChanges.subscribe(res => {
@@ -204,8 +214,6 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   validateDecomiso() {
     if (
-      this.form.get('delegacionRecibe').value != null &&
-      this.form.get('subdelegation').value != null &&
       this.form.get('estatusActa').value != null &&
       this.form.get('desde').value != null &&
       this.form.get('hasta').value != null &&
@@ -274,15 +282,19 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   generateDecomiso() {
     const params = {
-      PN_DELEG: this.form.get('delegacionRecibe').value,
-      PN_SUBDEL: this.form.get('subdelegation').value.id,
+      PN_DELEG:
+        this.form.get('delegacionRecibe').value != null
+          ? this.form.get('delegacionRecibe').value
+          : '',
+      PN_SUBDEL:
+        this.form.get('subdelegation').value != null
+          ? this.form.get('subdelegation').value.id
+          : '',
       PN_EXPEDI_INICIAL: this.form.get('desde').value,
       PN_EXPEDI_FINAL: this.form.get('hasta').value,
       PC_ESTATUS_ACTA1: this.form.get('estatusActa').value,
       PF_F_RECEP_INI: format(this.form.get('fechaDesde').value, 'dd-MM-yyyy'),
       PF_F_RECEP_FIN: format(this.form.get('fechaHasta').value, 'dd-MM-yyyy'),
-      PN_ACTA_INICIAL: this.form.get('actaInicial').value,
-      PN_ACTA_FINAL: this.form.get('actaFinal').value,
     };
     console.log(params);
     this.downloadReport('blank', params);
