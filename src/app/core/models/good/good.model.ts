@@ -10,6 +10,7 @@ export interface IGood {
   complianceLeaveDate?: string;
   quantity?: number;
   goodStatus?: string;
+  aliasWarehouse?: string;
   cant: string;
   notifyDate?: string | Date;
   dateEntry: string;
