@@ -110,7 +110,7 @@ export class FormSearchHandlerComponent
       changes['formData']?.currentValue &&
       !changes['formData']?.isFirstChange()
     ) {
-      // console.log('formData', this.formData);
+      console.log('onChange formSearchHandler', this.formData);
       this.searchOnInput = true;
       this.loading = true;
       this.buildFilters();
