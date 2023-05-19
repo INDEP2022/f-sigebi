@@ -56,6 +56,11 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     });
   }
 
+  showReportGoodProgramming(dataObject: Object) {
+    const route = `${this.route}/programminggood/apps/programmableGoods`;
+    return this.httpClient.post(`${environment.API_URL}/${route}`, dataObject);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

@@ -15,6 +15,7 @@ import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../../../shared-request/users-selected-to-turn/users-selected-to-turn.component';
 import { userData } from '../../perform-programming/perform-programming-form/data-perfom-programming';
 
@@ -31,7 +32,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
   typeUserLog: string = '';
   regionalDelegationNum: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  typeUser: string = 'INDEP';
+  typeUser: string = 'SAE';
   checked: string = 'checked';
   userName: string = '';
   nickName: string = '';
@@ -39,6 +40,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
   typeEvent: string = '';
   taskId: number = 0;
   programmingId: number = 0;
+  role: string = '';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -65,48 +67,11 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
 
   getUserInfo() {
     this.programmingRequestService.getUserInfo().subscribe((data: any) => {
+      console.log('data user log', data);
       this.nameUser = data.name;
       this.typeUserLog = data.employeetype;
       this.regionalDelegationNum = data.department;
-    });
-  }
-
-  async generateFirstTask() {
-    const programmingResult: any = await this.createProgramming();
-    if (programmingResult) {
-      this.programmingId = programmingResult.id;
-      const user: any = this.authService.decodeToken();
-
-      let task: any = {};
-      task['id'] = 0;
-      task['assignees'] = user.username;
-      task['assigneesDisplayname'] = user.username;
-      task['creator'] = user.username;
-      task['taskNumber'] = Number(this.programmingId);
-      task['title'] = 'Realizar Programación con folio: ' + this.programmingId;
-      task['programmingId'] = this.programmingId;
-      task['requestId'] = 0;
-      task['expedientId'] = 0;
-      task['urlNb'] = 'pages/request/programming-request/schedule-reception';
-
-      const taskResult: any = await this.createOnlyTask(task);
-      if (taskResult) {
-        this.taskId = Number(taskResult.data[0].id);
-        console.log('task Id', this.taskId);
-      }
-    }
-  }
-
-  createOnlyTask(task: any) {
-    return new Promise((resolve, reject) => {
-      this.taskService.createTask(task).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {
-          console.log(error.error.message);
-        },
-      });
+      this.role = data.puesto;
     });
   }
 
@@ -169,7 +134,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
-      `¿Deseas turnar la solicitud a ${this.userName}?`
+      `¿Deseas turnar la solicitud a ${this.nickName}?`
     ).then(async question => {
       if (question.isConfirmed) {
         const programmingResult: any = await this.createProgramming();
@@ -186,15 +151,16 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
 
           let task: any = {};
           task['id'] = 0;
-          task['assignees'] = this.userName;
+          task['assignees'] = this.nickName;
           task['assigneesDisplayname'] = this.userName;
           task['creator'] = user.username;
-          task['taskNumber'] = this.programmingId;
+          task['taskNumber'] = Number(this.programmingId);
           task['title'] =
             'Realizar Programación con folio: ' + this.programmingId;
           task['programmingId'] = this.programmingId;
-          task['requestId'] = 0;
+          //task['requestId'] = this.programmingId;
           task['expedientId'] = 0;
+          task['regionalDelegationNumber'] = this.regionalDelegationNum;
           task['urlNb'] =
             'pages/request/programming-request/perform-programming';
           task['processName'] = 'SolicitudProgramacion';
@@ -202,7 +168,14 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
 
           console.log('task', body);
           const taskResult = await this.createTaskOrderService(body);
-          console.log('tarea creada ', taskResult);
+          this.loading = false;
+          if (taskResult) {
+            this.msgGuardado(
+              'success',
+              'Creación de tarea exitosa',
+              `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
+            );
+          }
         }
       }
     });
@@ -225,14 +198,21 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
 
   openModalSelectUser() {
     const delegationUserLog = this.delegationUser;
+    const role = this.role;
+    const process = 'schedule';
+    const typeUserSelect = this.requestForm.get('targetUserType').value;
     let config: ModalOptions = {
       initialState: {
         request: this.requestForm.value,
         delegationUserLog,
+        role,
+        process,
+        typeUserSelect,
         callback: (user: IUserTurn) => {
           if (user) {
             console.log('user', user);
-            this.userName = user.firstName + ' ' + user.lastName;
+            this.userName = user.firstName;
+            this.nickName = user.username;
           }
         },
       },
@@ -240,5 +220,21 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(UsersSelectedToTurnComponent, config);
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+      }
+    });
   }
 }

@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import {
   IGoodProgramming,
   IGoodProgrammingSelect,
 } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -21,16 +23,15 @@ import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-programming/confirm-programming.component';
 import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
-import { ShowProgrammingComponent } from '../../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
+import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 import {
   settingGuard,
-  settingTransGoods,
   settingWarehouse,
 } from '../../perform-programming/perform-programming-form/settings-tables';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { RejectProgrammingFormComponent } from '../../shared-components-programming/reject-programming-form/reject-programming-form.component';
-import { ESTATE_COLUMNS } from '../columns/estate-columns';
+import { ESTATE_COLUMNS, ESTATE_COLUMNS_VIEW } from '../columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../columns/users-columns';
 
 @Component({
@@ -45,7 +46,19 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     columns: ESTATE_COLUMNS,
   };
 
-  settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
+  settingsTransportableGoods = {
+    ...this.settings,
+    actions: {
+      delete: false,
+      edit: true,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    edit: {
+      editButtonContent: '<i class="fa fa-eye"></i>',
+    },
+    columns: ESTATE_COLUMNS_VIEW,
+  };
 
   settingGuardGoods = {
     ...this.settings,
@@ -72,7 +85,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   usersData: LocalDataSource = new LocalDataSource();
   estateData: any[] = [];
   programmingId: number = 0;
-
+  formLoading: boolean = false;
   goodsTranportables: LocalDataSource = new LocalDataSource();
   goodsGuards: LocalDataSource = new LocalDataSource();
   goodsWarehouse: LocalDataSource = new LocalDataSource();
@@ -90,7 +103,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private authorityService: AuthorityService,
     private typeRelevantService: TypeRelevantService,
     private warehouseService: WarehouseService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -105,30 +119,31 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getProgrammingId();
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getUsersProgramming()); */
+      .subscribe(() => this.getUsersProgramming());
 
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.showGoodProgramming()); */
+      .subscribe(() => this.showGoodProgramming());
   }
 
   getProgrammingId() {
+    this.formLoading = true;
     return this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
         console.log('programming', data);
         this.programming = data;
-        /*this.idTransferent = data.tranferId;
+        this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation();
-        this.gettransferent();
+        this.getTransferent();
         this.getStation();
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
-        this.statusProgramming(); */
+        /*this.statusProgramming(); */
       });
   }
 
@@ -140,7 +155,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       });
   }
 
-  gettransferent() {
+  getTransferent() {
     return this.transferentService
       .getById(this.programming.tranferId)
       .subscribe(data => {
@@ -185,6 +200,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .getById(this.programming.storeId)
       .subscribe(data => {
         this.programming.storeId = data.description;
+        this.formLoading = false;
       });
   }
 
@@ -231,9 +247,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   signOffice() {
     const config = MODAL_CONFIG;
     config.initialState = {
-      callback: (next: boolean) => {
-        if (next) {
-          this.showProg();
+      callback: (userInfo: IUser) => {
+        if (userInfo) {
+          console.log('user', userInfo);
+          this.openReport(userInfo);
         }
       },
     };
@@ -244,17 +261,37 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     );
   }
 
-  showProg() {
+  openReport(userInfo: IUser) {
+    const idReportAclara = this.programmingId;
+    const idTypeDoc = 221;
+    let config: ModalOptions = {
+      initialState: {
+        idReportAclara,
+        idTypeDoc,
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(PrintReportModalComponent, config);
+  }
+
+  /*showProg(user: IUser) {
     const config = MODAL_CONFIG;
     config.initialState = {
       callback: (next: boolean) => {
         if (next) {
-          this.electronicSign();
+          console.log('next', next);
+          
+          //this.electronicSign();
         }
       },
     };
     const showProg = this.modalService.show(ShowProgrammingComponent, config);
-  }
+  } */
 
   electronicSign() {
     const config = MODAL_CONFIG;
@@ -299,7 +336,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     goodsTrans.map(items => {
-      this.goodService.getById(items.goodId).subscribe({
+      this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
           if (response.saePhysicalState == 1)
             response.saePhysicalState = 'BUENO';
@@ -325,7 +362,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     goodsTrans.map(items => {
-      this.goodService.getById(items.goodId).subscribe({
+      this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
           if (response.saePhysicalState == 1)
             response.saePhysicalState = 'BUENO';
@@ -351,7 +388,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     goodswarehouse.map(items => {
-      this.goodService.getById(items.goodId).subscribe({
+      this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
           if (response.saePhysicalState == 1)
             response.saePhysicalState = 'BUENO';
@@ -367,6 +404,57 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  aprobateProgramming() {
+    this.alertQuestion(
+      'question',
+      'Aprobar Programación',
+      `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.sendEmailUsers();
+      }
+    });
+  }
+
+  sendEmailUsers() {
+    //Creando la primera parte del correo electronico
+    /*const template = `<div class='row'><h1>Notificamos que tiene una programación.</h1></div>
+        <table>
+        <thead align='left'>
+          <tr style='margin-left='0px'><th style='margin-left='0px';'>Folio de la programación:</th> <th><strong><b> ${
+            this.programming.folio
+          }<strong><b></th></tr>
+          <tr style='margin-left='0px'><th style='margin-left='0px';'>Fecha y hora de inicio de Operativo:</th> <th><strong><b> ${
+            this.programming.startDate
+          }<strong><b></th></tr>
+          <tr style='margin-left='0px'><th style='margin-left='0px';'>Período del Operativo:</th> <th><strong><b> ${
+            this.programming.startDate
+          } - ${this.programming.endDate}  <strong><b></th></tr>
+          <tr style='margin-left='0px'><th style='margin-left='0px';'>Lugar del Operativo:</th> <th><strong><b> ${
+            this.programming.city
+          } ' ' ${this.programming.address}  <strong><b></th></tr>
+          </thead>
+        </table>
+        <br> 
+        <br> 
+        <div class='row' style='margin-left:10%'>Personal que participará</div>
+        <table>
+          <thead>
+            <tr>
+              <th><strong><b>Nombre del participante</strong></b></th>
+              <th><strong><b>Correo electrónico del participante</strong></b></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${user.nb_name + ' ' + user.nb_surname}</td>
+              <td>${user.nb_email} </td>
+            </tr>
+          </tbody>
+        </table>
+        `; */
   }
 
   showGood(item: IGoodProgrammingSelect) {
