@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IncidentMaintenanceService } from 'src/app/core/services/ms-generalproc/incident-maintenance.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -17,7 +22,7 @@ Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium non placeat 
   templateUrl: './incident-maintenance.component.html',
   styles: [],
 })
-export class IncidentMaintenanceComponent implements OnInit {
+export class IncidentMaintenanceComponent extends BasePage implements OnInit {
   form = this.fb.group({
     aprueba: [null, [Validators.required]],
     incidencia: [null, [Validators.required]],
@@ -37,7 +42,28 @@ export class IncidentMaintenanceComponent implements OnInit {
     scripts: [lorem, [Validators.required, Validators.pattern(STRING_PATTERN)]],
   });
   select = new DefaultSelect();
-  constructor(private fb: FormBuilder) {}
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
-  ngOnInit(): void {}
+  constructor(
+    private fb: FormBuilder,
+    private securityService: SecurityService,
+    private incidentMaintenanceService: IncidentMaintenanceService
+  ) {
+    super();
+  }
+
+  ngOnInit(): void {
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.securityService.getAllUsersTracker(params).subscribe(datos => {
+      console.log(datos); // Mostrar los datos en la consola
+      //this.datos = datos; // Asignar los datos a una variable del componente para mostrarlos en la plantilla
+    });
+
+    this.securityService.getAllUsersAccessTracking(params).subscribe(datos => {
+      console.log(datos); // Mostrar los datos en la consola
+      //this.datos = datos; // Asignar los datos a una variable del componente para mostrarlos en la plantilla
+    });
+  }
 }

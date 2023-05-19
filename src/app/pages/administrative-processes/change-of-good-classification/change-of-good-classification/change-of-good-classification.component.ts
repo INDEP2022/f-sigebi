@@ -169,9 +169,9 @@ export class ChangeOfGoodClassificationComponent
   loadGood() {
     this.loading = true;
     this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
+      next: (response: any) => {
         console.log(response);
-        this.good = response;
+        this.good = response.data[0];
         this.loadClassifDescription(this.good.goodClassNumber);
         this.loading = false;
         this.classificationOfGoods.enable();

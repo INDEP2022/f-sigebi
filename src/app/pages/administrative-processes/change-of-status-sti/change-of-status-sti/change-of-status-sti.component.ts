@@ -103,11 +103,15 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     try {
       goodCheck.forEach(item => {
         const good: IGood = item.row;
-        console.log(good);
-        good.status = this.goodStatus.value;
-        good.observations = `${good.observations}. ${this.description.value}`;
-        good.userModification = this.token.decodeToken().preferred_username;
-        this.goodServices.update(good).subscribe({
+        const updateGood: IGood = {
+          id: Number(good.id),
+          goodId: Number(good.id),
+          status: this.goodStatus.value,
+          observations: `${good.observations}. ${this.description.value}`,
+          userModification: this.token.decodeToken().preferred_username,
+        };
+
+        this.goodServices.update(updateGood).subscribe({
           next: response => {
             console.log(response);
             this.postHistoryGood(good);
