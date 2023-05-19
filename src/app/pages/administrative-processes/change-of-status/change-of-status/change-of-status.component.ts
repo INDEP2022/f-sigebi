@@ -4,9 +4,9 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
-import { IGood } from 'src/app/core/models/good/good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -93,23 +93,14 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      numberGood: [null, [Validators.required]],
-      descriptionGood: [
+      numberGood: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      currentStatus: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      descriptionStatus: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      processesGood: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      descriptionGood: [null],
+      currentStatus: [null],
+      descriptionStatus: [null],
+      processesGood: [null],
     });
   }
   private buildFormNew() {
@@ -118,15 +109,9 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      dateStatus: [null, [Validators.required]],
-      extDomProcess: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      issuingUser: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      dateStatus: [null],
+      extDomProcess: [null, [Validators.pattern(STRING_PATTERN)]],
+      issuingUser: [null, [Validators.pattern(STRING_PATTERN)]],
       description: [null, [Validators.required]],
     });
   }
@@ -134,13 +119,16 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   loadGood() {
     this.loading = true;
     this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
-        this.good = response;
+      next: (response: any) => {
+        this.good = response.data[0];
         this.loadDescriptionStatus(this.good);
         this.loading = false;
         this.formNew.enable();
         this.dateStatus.disable();
         this.endProcess = true;
+      },
+      error: error => {
+        this.onLoadToast('error', 'Error', 'Este bien no existe');
       },
     });
   }
@@ -153,7 +141,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   }
 
   loadDescriptionStatus(good: IGood) {
-    let status: any;
     this.goodServices.getStatusByGood(good.id).subscribe({
       next: response => {
         this.setGood(good, response);
@@ -166,17 +153,22 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
 
   accept() {
     //5457740
-    this.good.status =
-      this.goodStatus.value === null ? this.good.status : this.goodStatus.value;
-    this.good.observations = this.description.value;
-    this.good.extDomProcess =
-      this.extDomProcess.value === null
-        ? this.good.extDomProcess
-        : this.extDomProcess.value;
-    this.good.userModification = this.token.decodeToken().preferred_username;
-    this.goodServices.updateStatusGood(this.good).subscribe({
+    const putGood: IGood = {
+      id: Number(this.good.id),
+      goodId: Number(this.good.id),
+      status:
+        this.goodStatus.value === null
+          ? this.good.status
+          : this.goodStatus.value,
+      extDomProcess:
+        this.extDomProcess.value === null
+          ? this.good.extDomProcess
+          : this.extDomProcess.value,
+      userModification: this.token.decodeToken().preferred_username,
+      observations: `${this.good.observations}. ${this.description.value}`,
+    };
+    this.goodServices.update(putGood).subscribe({
       next: response => {
-        console.log(response);
         this.postHistoryGood();
         this.form.reset();
         this.formNew.reset();
@@ -186,10 +178,18 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           'Actualizado',
           'Se le ha cambiado el Estatus al bien'
         );
+        this.endProcess = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        console.error(error);
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Error al cambiar el estatus del bien'
+        );
+      },
     });
-    this.endProcess = false;
   }
   postHistoryGood() {
     const historyGood: IHistoryGood = {
@@ -205,7 +205,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           ? this.good.extDomProcess
           : this.extDomProcess.value,
     };
-
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {},
       error: error => {
