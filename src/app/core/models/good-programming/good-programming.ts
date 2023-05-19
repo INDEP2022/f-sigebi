@@ -55,6 +55,13 @@ export interface IView {
   uniqueKey: string;
 }
 
+export interface IPAAbrirActasPrograma {
+  P_NOACTA: number;
+  P_AREATRA: string;
+  P_PANTALLA: string;
+  P_TIPOMOV: number;
+}
+
 export interface ITmpProgValidation {
   valmovement: number;
   valMessage: string;
