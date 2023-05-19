@@ -354,6 +354,7 @@
         <!-- [disabled]="isDocsEmpty()" -->
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
+          [disabled]="isDocsEmpty()"
           (click)="btnApprove()">
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar
