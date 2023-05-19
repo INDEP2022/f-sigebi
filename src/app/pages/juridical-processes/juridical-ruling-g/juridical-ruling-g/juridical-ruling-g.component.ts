@@ -1010,7 +1010,20 @@ export class JuridicalRulingGComponent
   // }
 
   btnApprove() {
+    if (this.documents.length === 0) {
+      this.alert('warning', '', 'Debes seleccionar un documento.');
+      return; // Si 'documents' está vacío, detiene la ejecución aquí
+    }
+    /*  if (this.dictaminacionesForm.get('estatus').invalid) {
+    // Dentro de este bloque, comprueba si this.documents.length es 0
+    if (this.documents.length === 0) {
+      this.alert('warning', '', 'Debes seleccionar un documento.');
+      return;  // Detiene la ejecución de la función aquí
+    }
+    return;
+  } */
     let token = this.authService.decodeToken();
+
     const pNumber = Number(token.department);
     const status =
       this.dictaminacionesForm.get('estatus').value || this.statusDict;

@@ -27,6 +27,7 @@
                   [searchOnInit]="true"
                   [data]="typesDict"
                   [form]="expedientesForm"
+                  [searchable]="false"
                   label="Tipo Dictaminación"
                   bindLabel="typeDict"
                   control="tipoDictaminacion"
@@ -39,6 +40,7 @@
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
+                  min="0"
                   type="number"
                   class="form-control"
                   (blur)="changeNumExpediente()"
@@ -349,6 +351,7 @@
           (click)="btnDocumentos()">
           Documentos
         </button>
+        <!-- [disabled]="isDocsEmpty()" -->
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
           [disabled]="isDocsEmpty()"
