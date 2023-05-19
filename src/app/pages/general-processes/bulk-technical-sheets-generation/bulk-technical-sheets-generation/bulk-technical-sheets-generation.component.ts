@@ -77,11 +77,7 @@ export class BulkTechnicalSheetsGenerationComponent
     const { forfeitureKey } = this.form.value;
 
     if (!forfeitureKey) {
-      this.onLoadToast(
-        'info',
-        'Es necesario contar con la Clave del Decomiso',
-        ''
-      );
+      this.onLoadToast('info', 'Es necesario contar con ', '');
     } else {
       const params = {
         goodNumber: this.form.controls['goodNumber'].value,
