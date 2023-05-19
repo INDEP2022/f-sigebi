@@ -5,7 +5,11 @@ import { ProgrammingGoodEndpoints } from 'src/app/common/constants/endpoints/ms-
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
+import {
+  IGoodProgramming,
+  IPAAbrirActasPrograma,
+  ITmpProgValidation,
+} from 'src/app/core/models/good-programming/good-programming';
 import { environment } from 'src/environments/environment';
 import { IUser } from '../../models/catalogs/user.model';
 
@@ -29,6 +33,19 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     );
   }
 
+  paOpenProceedingProgam(model: IPAAbrirActasPrograma) {
+    return this.httpClient.post(
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/open-minutes-program`,
+      model
+    );
+  }
+
+  getTmpProgValidation(params: string) {
+    return this.httpClient.get<IListResponse<ITmpProgValidation>>(
+      `${environment.API_URL}/programminggood/api/v1/tmp-prog-validation${params}`
+    );
+  }
+
   updateProgramming(id: number | string, formData: Object) {
     const route = `${this.route}/programming/${id}`;
     return this.httpClient.put(`${environment.API_URL}/${route}`, formData);
@@ -37,6 +54,11 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
   updateGoodByBody(formData: Object) {
     const route = `good/api/v1/good`;
     return this.httpClient.put(`${environment.API_URL}/${route}`, formData);
+  }
+
+  createProgramming(formData: IGoodProgramming) {
+    const route = `${this.route}/programming`;
+    return this.httpClient.post(`${environment.API_URL}/${route}`, formData);
   }
 
   createGoodsService(formData: Object) {
@@ -49,6 +71,11 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.delete(`${environment.API_URL}/${route}`, {
       body: formData,
     });
+  }
+
+  showReportGoodProgramming(dataObject: Object) {
+    const route = `${this.route}/programminggood/apps/programmableGoods`;
+    return this.httpClient.post(`${environment.API_URL}/${route}`, dataObject);
   }
 
   private makeParams(params: ListParams): HttpParams {

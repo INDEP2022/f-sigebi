@@ -62,10 +62,7 @@ import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change
 export class RdFShiftChangeComponent extends BasePage implements OnInit {
   turnForm = this.fb.group({
     wheelNumber: new FormControl<number>(null, Validators.required),
-    affair: new FormControl<string>(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
+    affair: new FormControl<string>(null, [Validators.pattern(STRING_PATTERN)]),
     receiptDate: new FormControl<string | Date>(null, Validators.required),
     captureDate: new FormControl<string | Date>(null, Validators.required),
     externalRemitter: new FormControl<string>(null, [
@@ -138,6 +135,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     //TODO: Deshablitar controles de fecha
     this.checkParams();
+    console.log('AQUI', this.pageParams.affair);
   }
 
   checkParams() {
@@ -157,11 +155,13 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     param.addFilter('wheelNumber', this.pageParams.iden);
     this.notifService.getAllFilter(param.getParams()).subscribe({
       next: data => {
+        console.log('DATAAAa', data);
         if (data.count > 0) {
           const notif = data.data[0];
           this.notifData = notif;
           this.formControls.wheelNumber.setValue(notif.wheelNumber);
           this.formControls.externalRemitter.setValue(notif.externalRemitter);
+          this.formControls.affair.setValue(this.pageParams.affair.nameAndId);
           this.formControls.receiptDate.setValue(
             format(new Date(notif.receiptDate), 'dd/MM/yyyy')
           );
@@ -170,12 +170,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           );
           this.formControls.captureDate.disable();
           this.formControls.receiptDate.disable();
-          if (notif.affairKey != null)
-            this.affairService.getById(notif.affairKey).subscribe({
-              next: data => {
-                this.formControls.affair.setValue(data.description);
-              },
-            });
+          // if (notif.affairKey != null)
+          //   this.affairService.getById(notif.affairKey).subscribe({
+          //     next: data => {
+          //       this.formControls.affair.setValue(data.description);
+          //     },
+          //   });
           this.fileUpdateService
             .getRecipientUser({ copyNumber: 1, flierNumber: notif.wheelNumber })
             .subscribe({
@@ -190,10 +190,14 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                         this.formControls.prevUser.setValue(data.data[0]);
                       }
                     },
-                    error: () => {},
+                    error: error => {
+                      console.log('ERROR', error.error.message);
+                    },
                   });
               },
-              error: () => {},
+              error: error => {
+                console.log('ERROR', error.error.message);
+              },
             });
         }
       },
@@ -208,12 +212,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.dictationService.getAllWithFilters(param.getParams()).subscribe({
       next: data => {
         if (data.count > 0) {
-          console.log(data.data);
+          console.log('DICTUMS', data.data);
           this.dictumColumns = data.data;
         }
       },
       error: err => {
-        console.log(err);
+        console.log('DICTUMS', err.error.message);
       },
     });
   }
@@ -263,11 +267,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
         this.loading = false;
-        this.alert(
-          'error',
-          'Turno no actualizado',
-          'Hubo un error al actualizar el turno'
-        );
+        this.alert('error', 'Turno no actualizado', err.error.message);
       },
     });
   }
@@ -336,6 +336,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       });
   }
 
+  // UPDATE DICTÁMENES //
   updateDictums() {
     if (this.selectedDictums.length > 0) {
       this.selectedDictums.forEach(d => {
@@ -352,6 +353,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     }
   }
 
+  // UPDATE ACTAS //
   updateProceedings() {
     if (this.selectedProceedings.length > 0) {
       this.selectedProceedings.forEach(p => {

@@ -37,6 +37,7 @@ type Attr = { [key: string]: string };
 })
 export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() form: FormGroup;
+  @Input() fetchByList = true;
   @Input() control: string = '';
   @Input() value: string = '';
   @Input() bindLabel: string = '';
@@ -50,9 +51,11 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() maxSelectedItems: number;
   @Input() searchable: boolean = true;
   @Input() searchOnInit: boolean = false;
+  @Input() typeToSearchText: string = 'Escriba 3 o mas caracteres';
   @Input() paramFilter = 'search';
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();
+  @Output() clear = new EventEmitter();
   @Input() operator = SearchFilter.EQ;
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
@@ -78,8 +81,13 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     if (this.searchOnInit) {
-      const params = new ListParams();
-      this.fetchItems.emit(params);
+      if (this.fetchByList) {
+        const params = new ListParams();
+        this.fetchItems.emit(params);
+      } else {
+        const params = new FilterParams();
+        this.fetchByParamsItems.emit(params);
+      }
     }
     this.onSearch();
     this.checkMaxAttribute();
@@ -153,8 +161,11 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
       this.page++;
       this.loading = true;
       this.concat = true;
-      this.emitListParams(text);
-      this.filterParams(text);
+      if (this.fetchByList) {
+        this.emitListParams(text);
+      } else {
+        this.filterParams(text);
+      }
     }
   }
 
@@ -167,12 +178,16 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
           if (text === null) {
             return of([]);
           }
+          console.log(text);
           this.page = 1;
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-          this.emitListParams(text);
-          this.filterParams(text);
+          if (this.fetchByList) {
+            this.emitListParams(text);
+          } else {
+            this.filterParams(text);
+          }
           return of([]);
         })
       )

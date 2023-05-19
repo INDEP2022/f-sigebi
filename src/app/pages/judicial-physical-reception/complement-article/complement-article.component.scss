@@ -1,5 +1,6 @@
 .scroll-table {
-  height: 250px;
+  height: 455px;
+  width: 100%;
   overflow-y: auto;
 }
 
@@ -24,12 +25,6 @@
 
 :host ::ng-deep ng2-smart-table tr.available td {
   color: #28a745 !important;
-}
-
-:host ::ng-deep ng2-smart-table tr:last-child td:last-child.ng2-smart-actions {
-  > * {
-    display: none;
-  }
 }
 
 :host ::ng-deep ng2-smart-table tr.not-available td {

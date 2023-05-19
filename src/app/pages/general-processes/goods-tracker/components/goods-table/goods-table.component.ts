@@ -4,14 +4,25 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, take, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  forkJoin,
+  map,
+  switchMap,
+  take,
+  takeUntil,
+  throwError,
+} from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
+import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { SetTrackedGoods } from '../../store/goods-tracker.actions';
 import { getTrackedGoods } from '../../store/goods-tracker.selector';
 import {
@@ -34,7 +45,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   @Input() override loading: boolean = false;
   private selectedGooods: ITrackedGood[] = [];
   origin: string = null;
+  ngGlobal: any = null;
   $trackedGoods = this.store.select(getTrackedGoods);
+  includeLoading: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -42,7 +55,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private store: Store,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private goodTrackerService: GoodTrackerService,
+    private globalVarService: GlobalVarsService
   ) {
     super();
     this.settings.actions = false;
@@ -121,7 +136,16 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe), take(1))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+        },
+      });
+  }
 
   viewImages() {
     const modalConfig = MODAL_CONFIG;
@@ -160,8 +184,64 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   backTo() {
     if (this.origin == GOOD_TRACKER_ORIGINS.GoodsLocation) {
       this.router.navigate(['/pages/administrative-processes/location-goods']);
-    } else {
-      this.location.back();
+      return;
     }
+
+    if (this.origin == GOOD_TRACKER_ORIGINS.DestructionManagement) {
+      this.router.navigate([
+        '/pages/executive-processes/destruction-authorization-management',
+      ]);
+      return;
+    }
+    this.location.back();
+  }
+
+  include() {
+    if (this.selectedGooods.length == 0) {
+      this.onLoadToast('info', 'Info', 'Debe seleccionar almenos un bien');
+      return;
+    }
+    const goodIds = this.selectedGooods.map(good => good.goodNumber);
+    this.includeLoading = true;
+    this.getTmpNextVal()
+      .pipe(
+        switchMap(identificator => {
+          const $obs = goodIds.map(goodNumber =>
+            this.saveTmpGood(identificator, goodNumber)
+          );
+          return forkJoin($obs).pipe(map(() => identificator));
+        })
+      )
+      .subscribe({
+        next: identificator => {
+          this.includeLoading = false;
+          this.globalVarService.updateGlobalVars({
+            ...this.ngGlobal,
+            REL_BIENES: identificator,
+          });
+          this.backTo();
+        },
+        error: error => {
+          this.includeLoading = false;
+          this.onLoadToast('error', 'Error', 'Ocurrió un error');
+        },
+      });
+  }
+
+  saveTmpGood(identificator: number, goodNumber: number | string) {
+    return this.goodTrackerService.createTmpTracker({
+      identificator,
+      goodNumber: Number(goodNumber),
+    });
+  }
+
+  getTmpNextVal() {
+    return this.goodTrackerService.getIdentifier().pipe(
+      catchError(error => {
+        this.onLoadToast('error', 'Error', 'Ocurrió un error');
+        return throwError(() => error);
+      }),
+      map((response: any) => response.nextval)
+    );
   }
 }

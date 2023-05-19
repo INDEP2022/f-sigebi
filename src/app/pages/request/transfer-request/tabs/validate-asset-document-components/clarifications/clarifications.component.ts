@@ -8,18 +8,21 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -48,9 +51,10 @@ export class ClarificationsComponent
   goodForm: ModelForm<IGood>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   @Output() response = new EventEmitter<string>();
+  bsModalRef: BsModalRef;
   paragraphs: any[] = [];
   goodSetting: any;
-  assetsArray: any[] = [];
+  assetsArray = new LocalDataSource();
   assetsSelected: any[] = [];
   //dataSelected: any[] = [];
   // clarifiArray: any[] = [];
@@ -60,6 +64,7 @@ export class ClarificationsComponent
   typeDoc: string = 'clarification';
   good: any;
   totalItems: number = 0;
+  showClarificationButtons: boolean = true;
 
   domicilieObject: any;
   articleColumns = CLARIFICATION_COLUMNS;
@@ -76,7 +81,8 @@ export class ClarificationsComponent
     private readonly rejectGoodService: RejectedGoodService,
     private readonly typeRelevantService: TypeRelevantService,
     private readonly genericService: GenericService,
-    private readonly goodResDevService: GetGoodResVeService
+    private readonly goodResDevService: GetGoodResVeService,
+    private readonly chatClarificationService: ChatClarificationsService
   ) {
     super();
   }
@@ -171,11 +177,7 @@ export class ClarificationsComponent
       ],
       origin: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       ligieUnit: [
@@ -251,11 +253,7 @@ export class ClarificationsComponent
       ], //numero motor
       tuition: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
       serie: [
         null,
@@ -403,17 +401,22 @@ export class ClarificationsComponent
         ],
       ],
       fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      descriptionGoodSae: [null],
+      saeMeasureUnit: [null],
     });
   }
 
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
+    this.params.value.addFilter(
+      'processStatus',
+      'DESTINO_DOCUMENTAL,SOLICITAR_ACLARACION',
+      SearchFilter.IN
+    );
     const filter = this.params.getValue().getParams();
-
     this.goodService.getAll(filter).subscribe({
       next: resp => {
-        console.log(resp.data);
         let result = resp.data.map(async (item: any) => {
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
@@ -445,7 +448,7 @@ export class ClarificationsComponent
         });
 
         Promise.all(result).then(data => {
-          this.assetsArray = resp.data;
+          this.assetsArray.load(resp.data);
           this.loading = false;
           this.totalItems = resp.count;
         });
@@ -489,7 +492,8 @@ export class ClarificationsComponent
 
   selectGoods(event: any) {
     if (event.selected.length === 1) {
-      console.log(event);
+      this.showClarificationButtons =
+        event.data.processStatus != 'SOLICITAR_ACLARACION' ? true : false;
       this.good = event.data;
       this.goodForm.reset();
       this.goodForm.patchValue({ ...this.good });
@@ -547,11 +551,12 @@ export class ClarificationsComponent
 
   clicked(event: any) {
     this.goodForm.reset();
+    console.log(...event);
     this.goodForm.patchValue({ ...event });
     this.rowSelected = event;
   }
 
-  selectAll(event?: any) {
+  /*selectAll(event?: any) {
     this.assetsSelected = [];
     if (event.target.checked) {
       this.assetsArray.forEach(x => {
@@ -565,7 +570,7 @@ export class ClarificationsComponent
       });
     }
     console.log(this.assetsSelected);
-  }
+  }*/
 
   /*   selectOne(event: any) {
     if (event.target.checked == true) {
@@ -584,8 +589,13 @@ export class ClarificationsComponent
   } */
 
   clarifiRowSelected(event: any) {
-    console.log(event);
-    this.clariArraySelected = event.selected;
+    if (event.isSelected == true) {
+      this.showClarificationButtons =
+        event.data.answered == 'ACLARADA' ? false : true;
+      this.clariArraySelected = event.selected;
+    } else {
+      this.showClarificationButtons = true;
+    }
   }
 
   newClarification() {
@@ -609,33 +619,70 @@ export class ClarificationsComponent
       'warning',
       'Eliminar',
       'Desea eliminar el registro?'
-    ).then(val => {
+    ).then(async val => {
       if (val.isConfirmed) {
+        const idChatClarification = data.chatClarification.idClarification;
+        const result = await this.removeChatClarification(idChatClarification);
+
         this.rejectGoodService.remove(data.rejectNotificationId).subscribe({
           next: async val => {
             this.onLoadToast(
               'success',
               'Eliminada con exito',
-              'La aclaración fue eliminada con éxito.'
+              'La aclaración fue eliminada con éxito'
             );
 
+            let body: any = {};
             if (clarifycationLength === 1) {
               const goodResDev: any = await this.getGoodResDev(this.good.id);
               await this.removeDevGood(Number(goodResDev));
-              await this.updateGood(this.good.id);
+              body['id'] = this.good.id;
+              body['goodId'] = this.good.goodId;
+              body.processStatus = 'DESTINO_DOCUMENTAL';
+              body.goodStatus = 'DESTINO_DOCUMENTAL';
+              await this.updateGood(body);
+            } else {
+              body['id'] = this.good.id;
+              body['goodId'] = this.good.goodId;
+              body.goodStatus =
+                this.good.goodStatus != 'ACLARADO'
+                  ? 'ACLARADO'
+                  : 'DESTINO_DOCUMENTAL';
+              body.processStatus = 'DESTINO_DOCUMENTAL';
+              await this.updateGood(body);
             }
+            this.updateStatusTable(body);
           },
           complete: () => {
             this.getClarifications();
+          },
+          error: error => {
+            console.log(error);
+            this.onLoadToast(
+              'error',
+              'Error al eliminar',
+              `No se pudo eliminar la aclaración ${error.error.message}`
+            );
           },
         });
       }
     });
   }
+
+  updateStatusTable(body: any) {
+    this.assetsArray.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === this.good.id) {
+          item.processStatus = body.processStatus;
+          item.goodStatus = body.goodStatus;
+        }
+      });
+      this.assetsArray.load(data);
+    });
+  }
+
   editForm() {
-    console.log(this.clariArraySelected);
     let data = this.clariArraySelected;
-    console.log(data);
     if (data.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
@@ -649,6 +696,7 @@ export class ClarificationsComponent
       initialState: {
         goodTransfer: this.goodForm.value,
         docClarification,
+        request: this.requestObject,
         callback: (next: boolean) => {
           if (next) this.getClarifications();
         },
@@ -656,7 +704,23 @@ export class ClarificationsComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(ClarificationFormTabComponent, config);
+    this.bsModalRef = this.modalService.show(
+      ClarificationFormTabComponent,
+      config
+    );
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      if (res === 'UPDATE-GOOD') {
+        this.assetsArray.getElements().then(data => {
+          data.map((item: any) => {
+            if (item.id === this.good.id) {
+              item.processStatus = 'SOLICITAR_ACLARACION';
+              item.goodStatus = 'SOLICITUD DE ACLARACION';
+            }
+          });
+        });
+      }
+    });
   }
 
   removeDevGood(id: number) {
@@ -678,17 +742,12 @@ export class ClarificationsComponent
     });
   }
 
-  updateGood(id: number) {
+  updateGood(body: any) {
     return new Promise((resolve, reject) => {
-      let body: any = {};
-      body.id = this.good.id;
-      body.goodId = this.good.goodId;
-      //body.goodResdevId = Number(id);
-      body.processStatus = 'REGISTRO_SOLICITUD';
-      body.goodStatus = 'REGISTRO_SOLICITUD';
       this.goodService.update(body).subscribe({
         next: resp => {
           console.log('good updated', resp);
+          resolve(true);
         },
         error: error => {
           console.log('good updated', error);
@@ -696,6 +755,27 @@ export class ClarificationsComponent
             'error',
             'Erro Interno',
             'No se actualizo el campo bien-res-dev en bien'
+          );
+          reject(false);
+        },
+      });
+    });
+  }
+
+  removeChatClarification(id: number | string) {
+    return new Promise((resolve, reject) => {
+      this.chatClarificationService.remove(id).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          this.loader.load = false;
+          reject(false);
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error al eliminar',
+            'No se pudo eliminar el registro de la tabla Chat Aclaraciones'
           );
         },
       });

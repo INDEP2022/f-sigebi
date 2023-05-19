@@ -51,7 +51,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.generateClave();
+    this.dictamenSeq();
     this.prepareForm();
   }
 
@@ -87,6 +87,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    console.log('improcedenciaTransferentesVoluntarias DESDE EL PEQUEÑO');
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -94,10 +95,10 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     const modelReport: IClarificationDocumentsImpro = {
       clarification: this.notification.clarificationType,
       sender: this.form.controls['senderName'].value,
-      foundation: this.form.controls['foundation'].value,
+      //foundation: this.form.controls['foundation'].value,
       //id: 1, //ID primaria
       version: 1,
-      transmitterId: this.form.controls['transmitterId'].value,
+      //transmitterId: this.form.controls['transmitterId'].value,
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
       positionSender: this.form.controls['senderCharge'].value,
@@ -111,7 +112,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       creationUser: token.name,
       documentTypeId: '216', //Aclaración tipo 2 -> ImprocedenciaTransferentesVoluntarias
       modificationUser: token.name,
-      worthAppraisal: this.form.controls['worthAppraisal'].value,
+      //worthAppraisal: this.form.controls['worthAppraisal'].value,
       creationDate: new Date(),
       //rejectNoticeId: 1,
       assignmentInvoiceDate: new Date(),
@@ -124,7 +125,6 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: response => {
-        this.changeStatusAnswered();
         this.openReport(response);
         this.loading = false;
         this.close();
@@ -211,6 +211,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   //Método para generar reporte y posteriormente la firma
   openReport(data?: IClarificationDocumentsImpro) {
+    const notificationValidate = 'Y';
     const idReportAclara = data.id;
     //const idDoc = data.id;
     const idTypeDoc = 216;
@@ -225,7 +226,15 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         //idDoc,
         idReportAclara,
         idSolicitud,
-        callback: (next: boolean) => {},
+        notificationValidate,
+        callback: (next: boolean) => {
+          if (next) {
+            console.log('Modal cerrado');
+            this.changeStatusAnswered();
+          } else {
+            console.log('Modal no cerrado');
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

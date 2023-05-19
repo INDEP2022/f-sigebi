@@ -12,29 +12,23 @@
             <!-- <div class="col-md-6"> -->
             <div class="col-md-4">
               <div class="row">
-                <form-field
-                  [control]="legalForm.get('tipoDictaminacion')"
-                  label="Tipo de dictaminaci&oacute;n">
-                  <select
-                    class="form-control"
-                    formControlName="tipoDictaminacion">
-                    <option [value]="null" disabled>Seleccione un valor</option>
-                    <option value="DESTRUCCIÓN">Destrucción</option>
-                    <option value="DONACIÓN">Donación</option>
-                    <option value="ENAJENACIÓN">Enajenación</option>
-                    <option value="TRANSFERENTE">Transferente</option>
-                    <option value="PROCEDENCIA">Procedencia</option>
-                    <option value="DEVOLUCIÓN">Devolución</option>
-                    <option value="ABANDONO">Abandono</option>
-                    <option value="RESARCIMIENTO">Resarcimiento</option>
-                  </select>
+                <form-field [control]="legalForm.get('tipoDictaminacion')">
+                  <ngx-select
+                    [searchOnInit]="true"
+                    [data]="typesDict"
+                    [form]="legalForm"
+                    label="Tipo Dictaminación"
+                    bindLabel="typeDict"
+                    control="tipoDictaminacion"
+                    (change)="onTypeDictChange($event)"></ngx-select>
                 </form-field>
               </div>
               <div class="row mt-3">
                 <form-field
                   [control]="expedientesForm.get('noExpediente')"
-                  label="No Expediente">
+                  label="No. Expediente">
                   <input
+                    type="number"
                     class="form-control"
                     (blur)="changeNumExpediente()"
                     formControlName="noExpediente"
@@ -87,7 +81,7 @@
                 <div class="row">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
-                    label="Fec&#46; Dictamina">
+                    label="Fecha Dictaminación">
                     <input
                       formControlName="fecDicta"
                       class="form-control"
@@ -111,7 +105,7 @@
                 <div class="row">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
-                    label="Fecha resolución">
+                    label="Fecha Resolución">
                     <input
                       formControlName="fecDicta"
                       class="form-control"
@@ -123,7 +117,7 @@
                 <div class="row">
                   <form-field
                     [control]="legalForm.get('fecDicta')"
-                    label="Fecha notificación">
+                    label="Fecha Notificación">
                     <input
                       formControlName="fecDicta"
                       class="form-control"
@@ -200,7 +194,7 @@
                 <select
                   class="form-control"
                   formControlName="tipoDictaminacion">
-                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="null"></option>
                   <option [value]="'Alta'">Alta</option>
                   <option [value]="'Normal'">Normal</option>
                 </select>
@@ -350,6 +344,11 @@
         <button class="btn btn-warning btn-sm active m-3" (click)="btnVerify()">
           Parcializar
         </button>
+        <button
+          class="btn btn-warning btn-sm active m-3"
+          (click)="btnDeleteListDocs()">
+          Limpiar documentos
+        </button>
       </div>
     </div>
   </div>
@@ -368,10 +367,18 @@
           [settings]="settings4"
           [source]="data4"></ng2-smart-table>
       </div>
-      <div class="col-sm-12 col-12 col-md-12 text-right p-2">
-        <div class="form-group">
-          <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
+
+      <div class="col-12 flex p-2">
+        <div class="form-group text-right">
+          <button
+            class="btn btn-danger active btn-sm m-3"
+            (click)="btnCloseDocs()">
             Cerrar Ventana
+          </button>
+          <button
+            class="btn btn-primary active btn-sm m-3"
+            (click)="btnSalir()">
+            Cargar documentos
           </button>
         </div>
       </div>

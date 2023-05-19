@@ -5,7 +5,6 @@
         <h5 class="title">{{ title }}</h5>
       </div>
       <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
-        111
         <button
           type="button"
           class="btn btn-primary btn-sm active"
@@ -166,6 +165,16 @@
                   <div>
                     <label for="">No&#46; Expediente&#58;</label>
                     {{ registRequestForm?.get('recordId').value }}
+                  </div>
+                </div>
+                <div
+                  class="col-md-4"
+                  *ngIf="infoRequest?.rejectionComment != null">
+                  <div>
+                    <label class="text-danger" for=""
+                      >Solicitud Rechazada por el Siguiente Motivo:
+                    </label>
+                    {{ infoRequest?.rejectionComment }}
                   </div>
                 </div>
               </div>

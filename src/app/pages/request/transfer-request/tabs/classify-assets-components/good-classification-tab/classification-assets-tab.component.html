@@ -68,7 +68,10 @@
       <tab heading="Aclaraciones">
         <app-clarification-list-tab
           [good]="goodObject"
-          [request]="request"></app-clarification-list-tab>
+          [request]="request"
+          (updateGoodTable)="
+            updateStatusGood($event)
+          "></app-clarification-list-tab>
       </tab>
     </tabset>
   </div>

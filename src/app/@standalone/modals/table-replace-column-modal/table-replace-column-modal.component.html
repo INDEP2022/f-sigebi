@@ -9,7 +9,17 @@
           <!-- <form-field [control]="form.get('newValue')" label="">
             <input class="form-control" formControlName="newValue" />
           </form-field> -->
-          <app-select-form
+          <ng-custom-select-loading
+            [form]="form"
+            [formControlName]="formField"
+            label="No&#46; Acta"
+            value="id"
+            bindLabel="id"
+            paramSearch="filter.id"
+            prefixSearch="$eq"
+            path="proceeding/api/v1/proceedings-delivery-reception">
+          </ng-custom-select-loading>
+          <!-- <app-select-form
             [form]="form"
             [formField]="formField"
             label=""
@@ -19,7 +29,7 @@
             [getListObservable]="getListObservableSelect"
             [paramFilter]="paramFilter"
             [operator]="operator"
-            [(paramsFilter)]="paramsControl"></app-select-form>
+            [(paramsFilter)]="paramsControl"></app-select-form> -->
         </div>
         <div class="form-material col-md-8" *ngIf="otherFormField">
           <form-field

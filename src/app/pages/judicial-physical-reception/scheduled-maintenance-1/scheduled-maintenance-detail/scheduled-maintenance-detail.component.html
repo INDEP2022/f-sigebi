@@ -11,10 +11,15 @@
       <div class="row mr-0">
         <div class="col-md-2">
           <form-field [control]="form.get('statusActa')" label="Status Acta">
-            <select class="form-control" formControlName="statusActa">
-              <option value="ABIERTA">Abierto</option>
-              <option value="CERRADA">Cerrado</option>
-            </select>
+            <ng-select
+              formControlName="statusActa"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="TODOS">Todos</ng-option>
+              <ng-option value="ABIERTA">Abierto</ng-option>
+              <ng-option value="CERRADA">Cerrado</ng-option>
+            </ng-select>
           </form-field>
           <!-- <app-select-form
             [form]="form"
@@ -57,8 +62,8 @@
       <app-key-proceedings-form
         [form]="form"
         [statusActaValue]="statusActaValue"></app-key-proceedings-form>
-      <div class="action-buttons mr-4">
-        <div class="col-sm-4">
+      <!-- <div class="mr-4">
+        <div class="col-sm-4 pl-0">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -68,28 +73,7 @@
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <div class="col-sm-4">
-          <app-goodtracker-button
-            [disabled]="statusActaValue === 'CERRADA'"
-            [data]="data"
-            [origin]="origin"></app-goodtracker-button>
-        </div>
-
-        <div class="col-sm-4">
-          <app-massive-delete-button
-            [disabled]="
-              !(
-                statusActaValue === 'ABIERTA' &&
-                selecteds &&
-                selecteds.length > 0
-              )
-            "
-            [actaId]="actaId"
-            [selecteds]="selecteds"
-            (finishDelete)="getData()">
-          </app-massive-delete-button>
-        </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </app-card>
@@ -97,8 +81,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Bienes</h5>
-    <div class="buttons mt-2">
+    <div class="buttons mt-2" style="column-gap: 10px">
       <app-columns-select
+        *ngIf="data && data.length > 0"
         [(settings)]="settingsGoods"
         [defaultColumns]="6"></app-columns-select>
       <app-excel-button
@@ -109,7 +94,7 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <app-update-dates-goods
           [disabled]="statusActaValue !== 'ABIERTA' && data && data.length > 0"
           [data]="data"
@@ -118,6 +103,26 @@
           (updateGoodEvent)="
             data = $event; updateDatesTable()
           "></app-update-dates-goods>
+      </div>
+      <div class="col-md-4" style="text-align: center">
+        <app-goodtracker-button
+          [disabled]="statusActaValue === 'CERRADA'"
+          [data]="data"
+          [origin]="origin"></app-goodtracker-button>
+      </div>
+      <div class="col-md-4" style="text-align: right">
+        <app-massive-delete-button
+          [disabled]="
+            !(
+              statusActaValue === 'ABIERTA' &&
+              selecteds &&
+              selecteds.length > 0
+            )
+          "
+          [actaId]="actaId"
+          [selecteds]="selecteds"
+          (finishDelete)="getData()">
+        </app-massive-delete-button>
       </div>
     </div>
     <div *ngIf="dataForAdd && dataForAdd.length > 0">

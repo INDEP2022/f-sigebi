@@ -48,9 +48,11 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('info de request', this.requestData);
-    //Crea la clave armada o el folio
+    console.log('Crear folio');
     this.dictamenSeq();
+
+    //Crea la clave armada o el folio
+
     this.initForm();
   }
 
@@ -73,7 +75,46 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     }
   }
 
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    //Objeto para actualizar el reporte con datos del formulario
+    const obj: IRequest = {
+      ccpRuling: this.dictumForm.controls['ccpRuling'].value,
+      //id: this.dictumForm.controls['id'].value,
+      nameRecipientRuling:
+        this.dictumForm.controls['nameRecipientRuling'].value,
+      nameSignatoryRuling:
+        this.dictumForm.controls['nameSignatoryRuling'].value,
+      paragraphOneRuling: this.dictumForm.controls['paragraphOneRuling'].value,
+      paragraphTwoRuling: this.dictumForm.controls['paragraphTwoRuling'].value,
+      postRecipientRuling:
+        this.dictumForm.controls['postRecipientRuling'].value,
+      postSignatoryRuling:
+        this.dictumForm.controls['postSignatoryRuling'].value,
+      reportSheet: this.folioReporte,
+    };
+    console.log('Crear reporte', this.folioReporte);
+
+    //const idDoc = this.idSolicitud;
+    this.requestService.create(obj).subscribe({
+      next: data => {
+        this.handleSuccess(), this.signDictum();
+      },
+      error: error => (
+        this.onLoadToast('warning', 'No se pudo actualizar', error.error),
+        (this.loading = false)
+      ),
+    });
+  }
+
   update() {
+    this.loading = true;
+    let token = this.authService.decodeToken();
+    const name = token.name;
     //Objeto para actualizar el reporte con datos del formulario
     const obj: IRequest = {
       ccpRuling: this.dictumForm.controls['ccpRuling'].value,
@@ -89,6 +130,8 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       postSignatoryRuling:
         this.dictumForm.controls['postSignatoryRuling'].value,
       reportSheet: this.folioReporte,
+      rulingCreatorName: name,
+      recordId: this.requestData.recordId,
     };
     console.log('Actualizar reporte', this.folioReporte);
 
@@ -97,21 +140,28 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
       next: data => {
         this.handleSuccess(), this.signDictum();
       },
-      error: error => (this.loading = false),
+      error: error => (
+        this.onLoadToast(
+          'warning',
+          'No se pudo actualizar',
+          error.error.message[0]
+        ),
+        (this.loading = false)
+      ),
     });
   }
 
   signDictum(): void {
     console.log('id de solicitud', this.requestData.id);
     const requestInfo = this.requestData;
-    const idSolicitud = this.idSolicitud;
+    const idReportAclara = this.idSolicitud;
     const typeAnnex = 'approval-request';
     const idTypeDoc = this.idTypeDoc;
     const nameTypeDoc = 'DictamenProcendecia';
 
     let config: ModalOptions = {
       initialState: {
-        idSolicitud,
+        idReportAclara,
         idTypeDoc,
         typeAnnex,
         requestInfo,

@@ -1,46 +1,87 @@
-import { inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { firstValueFrom } from 'rxjs';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { SweetalertModel } from 'src/app/core/shared/base-page';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
+import { PartializeGeneralGoodV2Service } from '../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
 
+@Component({
+  selector: 'app-good-partialize-function-buttons',
+  template: ``,
+  styles: [``],
+})
 export class FunctionButtons {
-  protected service = inject(PartializeGeneralGoodService);
+  // @Input() firstCase: boolean = null;
+  @Input() version: number = null;
+  private service1 = inject(PartializeGeneralGoodService);
+  // private serviceTab2 = inject(PartializeGeneralGoodTab2Service);
+  private service2 = inject(PartializeGeneralGoodV2Service);
+  // private service2Tab2 = inject(PartializeGeneralGoodV2Tab2Service);
+  protected goodService = inject(GoodService);
   private _toastrService = inject(ToastrService);
   v_numerario: number;
   vfactor: number;
-  loading: boolean = false;
+
+  ngOnInit() {
+    if (this.version === null) {
+      return;
+    }
+  }
+
+  get service() {
+    return this.version === 1 ? this.service1 : this.service2;
+    // return this.version === 1
+    //   ? this.firstCase === true
+    //     ? this.serviceTab1
+    //     : this.serviceTab2
+    //   : this.firstCase === true
+    //   ? this.service2Tab1
+    //   : this.service2Tab2;
+  }
+
+  get loading() {
+    return this.service ? this.service.buttonsLoading : false;
+  }
+  set loading(value) {
+    if (this.service) {
+      this.service.buttonsLoading = value;
+    }
+  }
   get good() {
-    return this.service.good;
+    return this.service?.good;
   }
 
   get form() {
-    return this.service.formControl;
+    return this.service?.formControl;
   }
 
   get formGood() {
-    return this.service.formGood;
+    return this.service?.formGood;
   }
 
   get bienesPar() {
-    return this.service.bienesPar;
+    return this.service?.bienesPar;
   }
   set bienesPar(value) {
-    this.service.bienesPar = value;
+    if (this.service) {
+      this.service.bienesPar = value;
+    }
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
     const throwToast = {
       success: (title: string, text: string) =>
-        this._toastrService.success(text, title),
+        this._toastrService.success(text, title, { timeOut: 5000 }),
       info: (title: string, text: string) =>
-        this._toastrService.info(text, title),
+        this._toastrService.info(text, title, { timeOut: 5000 }),
       warning: (title: string, text: string) =>
-        this._toastrService.warning(text, title),
+        this._toastrService.warning(text, title, { timeOut: 5000 }),
       error: (title: string, text: string) =>
-        this._toastrService.error(text, title),
+        this._toastrService.error(text, title, { timeOut: 5000 }),
       question: (title: string, text: string) =>
-        this._toastrService.info(text, title),
+        this._toastrService.info(text, title, { timeOut: 5000 }),
     };
     return throwToast[icon](title, text);
   }
@@ -64,7 +105,7 @@ export class FunctionButtons {
   }
 
   protected validationClasif() {
-    return [1424, 1426, 1427, 1575, 1590].includes(+this.good.goodClassNumber);
+    return this.service?.validationClasif();
   }
 
   protected async setMeasureData() {
@@ -77,24 +118,24 @@ export class FunctionButtons {
     //   cve_moneda_avaluo: this.good.appraisalCurrencyKey,
     // };
 
-    return {
-      v_cantidad: this.good.quantity,
-      v_unidad: this.good.fraccion.description,
-      v_avaluo: this.good.appraisalCurrencyKey,
-    };
-    // let cantidad, descripcion, cve_moneda_avaluo;
-    // try {
-    //   const data = await firstValueFrom(
-    //     this.goodService.getGoodWidthMeasure(this.good.goodId)
-    //   );
-    //   cantidad = data.data[0].cantidad;
-    //   descripcion = data.data[0].descripcion;
-    //   cve_moneda_avaluo = data.data[0].cve_moneda_avaluo;
-    // } catch (x) {}
     // return {
-    //   v_cantidad: cantidad ? +cantidad : null,
-    //   v_unidad: descripcion,
-    //   v_avaluo: cve_moneda_avaluo,
+    //   v_cantidad: this.good.quantity,
+    //   v_unidad: this.good.fraccion.description,
+    //   v_avaluo: this.good.appraisalCurrencyKey,
     // };
+    let cantidad, descripcion, cve_moneda_avaluo;
+    try {
+      const data = await firstValueFrom(
+        this.goodService.getGoodWidthMeasure(this.good.goodId)
+      );
+      cantidad = data.data[0].cantidad;
+      descripcion = data.data[0].descripcion;
+      cve_moneda_avaluo = data.data[0].cve_moneda_avaluo;
+    } catch (x) {}
+    return {
+      v_cantidad: cantidad ? +cantidad : 0,
+      v_unidad: descripcion ?? '',
+      v_avaluo: cve_moneda_avaluo ?? '',
+    };
   }
 }

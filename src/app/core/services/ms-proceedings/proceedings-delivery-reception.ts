@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
@@ -29,7 +29,15 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   deleteProceeding(id: string) {
-    return this.delete(this.endpoint, id);
+    return this.delete(`${this.endpoint}/${id}`);
+  }
+
+  editProceeding(id: string, model: IProccedingsDeliveryReception) {
+    return this.put(`${this.endpoint}/${id}`, model);
+  }
+
+  newDeleteProceeding(id: string) {
+    return this.delete(`${this.endpoint}/${id}`);
   }
 
   getProceedingsByDelAndSub(
@@ -50,11 +58,12 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   }
 
   getByFilter(params?: string): Observable<IListResponse<IValidations>> {
-    let partials = this.endpoint;
-    console.log(partials);
+    // let partials = this.endpoint;
+    // console.log(partials);
     /* this.microservice = partials[0]; */
-    return this.get<IListResponse<IValidations>>(partials, params).pipe(
-      tap(() => (this.microservice = ''))
-    );
+    return this.get<IListResponse<IValidations>>(`${this.endpoint}`, params);
+    // return this.get<IListResponse<IValidations>>(partials, params).pipe(
+    //   tap(() => (this.microservice = ''))
+    // );
   }
 }

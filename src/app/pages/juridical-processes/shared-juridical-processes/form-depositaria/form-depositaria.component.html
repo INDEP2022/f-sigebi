@@ -16,6 +16,7 @@
               </form-field>
               <div class="col-sm-12 col-12 col-md-4 p-2">
                 <button
+                  [disabled]="loading"
                   type="button"
                   class="btn btn-primary btn-sm active"
                   (click)="btnSearchGood()">
@@ -59,12 +60,14 @@
           <div class="card-footer">
             <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <button
+                [disabled]="loading"
                 type="button"
                 class="btn btn-primary btn-sm active m-2"
                 (click)="btnEjecutar()">
-                Ejecuta para Conciliar Pagos
+                Ejecutar Conciliaci&oacute;n de Pagos
               </button>
               <button
+                [disabled]="loading"
                 *ngIf="!deleteDateOption"
                 type="button"
                 class="btn btn-danger btn-sm active m-2"
@@ -89,21 +92,30 @@
                   formControlName="fechaEliminarDispersion">
                   <option value="">Seleccione una Fecha</option>
                   <ng-container *ngFor="let optionDate of listDateOptions">
-                    <option [value]="optionDate.payIdGens">
-                      {{ '#' + optionDate.payIdGens }} ---
-                      {{ optionDate.processDate | date: 'dd/MM/yyyy' }}
+                    <option [value]="optionDate.processDate">
+                      {{
+                        '#PAGO_DESTINO: ' + optionDate.payIdGens
+                      }}&nbsp;---&nbsp;{{
+                        '#PAGO_ORIGEN: ' + optionDate.payId
+                      }}&nbsp;---&nbsp;{{
+                        'MONTO:$ ' + formatTotalAmount(optionDate.payId)
+                      }}&nbsp;---&nbsp;FECHA:{{
+                        optionDate.processDate | date : 'dd/MM/yyyy'
+                      }}
                     </option>
                   </ng-container>
                 </select>
               </form-field>
               <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
                 <button
+                  [disabled]="loading"
                   type="button"
                   class="btn btn-primary btn-sm active m-2"
                   (click)="btnDeleteDispersalPay()">
-                  Deshacer Dispersi&oacute;n de Pagos
+                  Eliminar Dispersi&oacute;n de Pagos
                 </button>
                 <button
+                  [disabled]="loading"
                   type="button"
                   class="btn btn-danger btn-sm active m-2"
                   (click)="btnExit()">
@@ -162,11 +174,13 @@
         <div class="card-footer">
           <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
             <button
+              [disabled]="loading"
               class="btn btn-info btn-sm active text-wrap m-2"
               (click)="btnRecargaDepositario()">
               Recarga Depositario
             </button>
             <button
+              [disabled]="loading"
               class="btn btn-primary btn-sm active text-wrap m-2"
               (click)="btnValidacionPagos()">
               Validaci&oacute;n de Pagos

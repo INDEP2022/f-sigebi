@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { DictationEndpoints } from 'src/app/common/constants/endpoints/ms-dictation-endpoint';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDictationXGoodByFileNumber } from '../../models/ms-dictation/dictation-x-good.model';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -18,5 +18,27 @@ export class DictationXGoodService extends HttpService {
     return this.get<IListResponse<IDictationXGoodByFileNumber>>(
       this.route.DictationXGood + '/getByFileNumber/' + fileNumber
     );
+  }
+
+  getByAct(goodNumbers: string | number[], params?: _Params) {
+    return this.post<IListResponse<{ cve_acta: string }>>(
+      this.route.DictationXGood + '/getByAct',
+      {
+        array: goodNumbers,
+      }
+    );
+  }
+
+  getByDictation(goodNumbers: string | number[], params?: _Params) {
+    return this.post<IListResponse<{ clave_oficio_armada: string }>>(
+      this.route.DictationXGood + '/getByDictation',
+      {
+        array: goodNumbers,
+      }
+    );
+  }
+
+  getAllFilter(params?: string): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(this.route.DictationXGood, params);
   }
 }

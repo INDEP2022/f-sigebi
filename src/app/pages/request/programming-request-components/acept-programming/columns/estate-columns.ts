@@ -23,7 +23,7 @@ export const ESTATE_COLUMNS = {
   },
 
   decriptionGoodSae: {
-    title: 'Descripción INDEP',
+    title: 'Descripción Bien SAE',
     type: 'string',
     sort: false,
   },
@@ -78,12 +78,12 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  description: {
+  goodDescription: {
     title: 'Descripción',
     sort: false,
   },
 
-  decriptionGoodSae: {
+  descriptionGoodSae: {
     title: 'Descripción INDEP',
     type: 'string',
     sort: false,
@@ -107,7 +107,7 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  warehouseCode: {
+  aliasWarehouse: {
     title: 'Alias almacén',
     type: 'string',
     sort: false,

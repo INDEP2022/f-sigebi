@@ -15,8 +15,10 @@ import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
+
 @Component({
   selector: 'app-print-report-modal',
   templateUrl: './print-report-modal.component.html',
@@ -25,7 +27,7 @@ import { LIST_REPORTS_COLUMN } from './list-reports-column';
 export class PrintReportModalComponent extends BasePage implements OnInit {
   //idDoc: number;
   idTypeDoc: any; //ID Tipo de documento
-  idReportAclara: any; //ID del reporte de Oficio_Aclaracion
+  idReportAclara: any; //ID de los reportes
   sign: boolean = true;
   date: string = '';
   signatories: ISignatories[] = [];
@@ -61,9 +63,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   msjCheck: boolean = false;
   formLoading: boolean = true;
-  urlBaseReport =
-    'http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=';
+  urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   idSolicitud: any;
+  idRegionalDelegation: any;
+  notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
   constructor(
     public modalService: BsModalService,
@@ -102,29 +105,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('ID tipo de documento', this.idTypeDoc);
-    console.log('idReportAclara', this.idReportAclara);
-    console.log('idSolicitud', this.idSolicitud);
-    //Recupera información del usuario logeando para luego registrarlo como firmante
-    let token = this.authService.decodeToken();
-
-    //Verifica si ya existe ese usuario en la lista de firmantes
-    this.signatoriesService
-      .getSignatoriesName(this.idTypeDoc, this.idSolicitud, token.name)
-      .subscribe({
-        next: response => {
-          this.signatories = response.data;
-          console.log(
-            'Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más'
-          );
-          //Ya hay firmantes con el mismo nombre del logeado, no se pueden crear más
-        },
-        error: error => {
-          //Si no hay firmantes, entonces asignar nuevos
-          console.log('Si no hay firmantes, entonces asignar nuevos');
-          this.registerSign();
-        },
-      });
+    this.idSolicitud = this.requestInfo.id;
+    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
+    //Borrar firmantes existentes
+    this.verificateFirm();
 
     this.signParams();
 
@@ -132,7 +116,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     switch (this.idTypeDoc) {
       case 50: {
         console.log('Tipo 50, Aclaración');
-        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idSolicitud}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
+        let linkDoc: string = `${this.urlBaseReport}Dictamen_Procedencia.jasper&ID_SOLICITUD=${this.idReportAclara}&ID_TIPO_DOCTO=${this.idTypeDoc}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
         break;
@@ -180,6 +164,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         console.log('URL reporte ', linkDoc);
         break;
       }
+      case 221: {
+        let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idReportAclara}`;
+        this.src = linkDoc;
+        break;
+      }
 
       default: {
         console.log('No hay ID tipo de documento');
@@ -188,22 +177,66 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     }
   }
 
-  registerSign() {
-    let token = this.authService.decodeToken();
-    const formData: Object = {
-      name: token.name,
-      post: token.cargonivel1,
-      learnedType: this.idTypeDoc,
-      learnedId: this.idSolicitud,
-    };
+  //Verifica si ya existen usuarios, para eliminarlo (Evitar duplicidad)
+  verificateFirm() {
+    this.signatoriesService
+      .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+      //.getSignatoriesName(this.idTypeDoc, this.idSolicitud)
+      .subscribe({
+        next: response => {
+          console.log('Existe firmante, proceder a eliminarlo');
+          this.signatories = response.data;
+          //Ciclo para eliminar todos los posibles firmantes existentes para esa solicitud
+          const count = response.count;
+          for (let i = 0; i < count; i++) {
+            this.signatoriesService
+              .deleteFirmante(this.signatories[i].signatoryId)
+              .subscribe({
+                next: response => console.log('Firmante borrado'),
+              });
+          }
+        },
+        error: error => {
+          //Si no hay firmantes, entonces asignar nuevos
+          console.log('Si no hay firmantes, entonces crear nuevo');
+          this.registerSign();
+        },
+      });
+  }
 
-    //Asigna un firmante según el usuario logeado
-    this.signatoriesService.create(formData).subscribe({
-      next: response => {
-        this.signParams(), console.log('Firmante creado: ', response);
-      },
-      error: error => console.log('No se puede crear: ', error),
+  deleteSignatories() {
+    this.signatoriesService.deleteFirmante(this.idReportAclara).subscribe({
+      next: response => console.log('Firmante borrado'),
     });
+  }
+
+  registerSign() {
+    this.signatoriesService
+      .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+      .subscribe({
+        next: response => {
+          console.log('Existe firmante, ya no crear');
+        },
+        error: error => {
+          console.log('Si no hay firmantes, entonces crear nuevo');
+          let token = this.authService.decodeToken();
+          const formData: Object = {
+            name: token.name,
+            post: token.cargonivel1,
+            learnedType: this.idTypeDoc,
+            learnedId: this.idReportAclara, // Para los demás reportes
+            //learnedId: this.idSolicitud, Para DictamenProdcedencia
+          };
+
+          //Asigna un firmante según el usuario logeado
+          this.signatoriesService.create(formData).subscribe({
+            next: response => {
+              this.signParams(), console.log('Firmante creado: ', response);
+            },
+            error: error => console.log('No se puede crear: ', error),
+          });
+        },
+      });
   }
 
   signParams() {
@@ -215,7 +248,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    const learnedId = this.idSolicitud;
+    //const learnedId = this.idSolicitud; //Para reporte dictamenProcedencia
+    const learnedId = this.idReportAclara;
     this.loading = true;
     console.log('Traer firmantes');
     this.signatoriesService
@@ -238,6 +272,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     //mostrar listado de reportes
 
     if (!this.listSigns && this.printReport && !this.isAttachDoc) {
+      // if(this.notificationValidate == 'Y'){
+      //   console.log('Soy una notificación, no es necesario validar firmante creado');
+      // } else {
+      //   console.log('Soy un dictamen, es necesario validar firmante para evitar duplicidad');
+      //   this.verificateFirm();
+      // }
+      this.registerSign();
       this.printReport = false;
       this.listSigns = true;
       this.title = 'Firma electrónica';
@@ -270,8 +311,10 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   uploadData(signatories: ISignatories): void {
+    const idReportAclara = this.idReportAclara;
     let config: ModalOptions = {
       initialState: {
+        idReportAclara,
         signatories,
         typeReport: this.typeReport,
         callback: (next: boolean) => {
@@ -392,6 +435,16 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   backStep() {
+    if (this.notificationValidate == 'Y') {
+      console.log(
+        'Soy una notificación, no es necesario validar firmante creado'
+      );
+    } else {
+      console.log(
+        'Soy un dictamen, es necesario validar firmante para evitar duplicidad'
+      );
+      this.verificateFirm();
+    }
     this.listSigns = false;
     this.isAttachDoc = false;
     this.printReport = true;
@@ -444,6 +497,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       dInDate: new Date(), //Fecha de creación del documento
       xidSolicitud: this.idSolicitud,
       xtipoDocumento: this.idTypeDoc,
+      xdelegacionRegional: this.idRegionalDelegation,
     };
 
     this.pdf.getData().then(u8 => {
@@ -465,7 +519,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
               'Documento Guardado',
               'El documento se guardó correctamente'
             );
-
+            this.modalRef.content.callback(true);
             this.close();
           },
           error: error => {
@@ -500,96 +554,79 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       };
       console.log(formData);
 
-      this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(requestInfo.id, nameTypeReport, formData);
     }
     //Firmar reporte Oficio improcedencia / Oficio_Aclaracion
     if (this.idTypeDoc == 111) {
-      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'OficioImprocedencia';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
-
-      this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
     if (this.idTypeDoc == 104) {
-      const requestInfo = this.requestInfo; //ID solicitud
-      console.log('ID de solicitud', this.requestInfo);
       const nameTypeReport = 'OficioAclaracionTransferente';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
-
-      this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
 
     if (this.idTypeDoc == 212) {
-      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionComercioExterior';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
-
-      this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
 
     if (this.idTypeDoc == 211) {
-      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionAsegurados';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
-
-      this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
 
     if (this.idTypeDoc == 213) {
-      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'AclaracionTransferentesVoluntarias';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
-
-      this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
 
     if (this.idTypeDoc == 216) {
-      const requestInfo = this.requestInfo; //ID solicitud
       const nameTypeReport = 'ImprocedenciaTransferentesVoluntarias';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
       console.log(formData);
-
-      this.firmReport(requestInfo, nameTypeReport, formData);
+      this.firmReport(this.idReportAclara, nameTypeReport, formData);
     }
   }
 
   //Método para plasmar firma en reporte generado
-  firmReport(
-    requestInfo?: IRequest,
-    nameTypeReport?: string,
-    formData?: Object
-  ) {
+  firmReport(requestInfo?: number, nameTypeReport?: string, formData?: Object) {
     this.gelectronicFirmService
-      .firmDocument(requestInfo.id, nameTypeReport, formData)
+      .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
         next: data => (console.log('correcto', data), this.handleSuccess()),
         error: error => {
@@ -602,7 +639,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             this.alert(
               'info',
               'Error al generar firma electrónic',
-              error.error + '.2 Verificar datos del firmante'
+              error.error + 'Verificar datos del firmante'
             );
             this.updateStatusSigned();
           }
@@ -641,7 +678,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     formData.append('pass', this.valuesSign.pass);
     formData.append('post', this.valuesSign.post);
     formData.append('rfcUser', this.valuesSign.rfcUser);
-    formData.append('validationocsp', 'false');
+    formData.append('validationocsp', 'true');
     formData.append('identifierSystem', '1');
     formData.append('identifierSignatory', '1');
     this.signatoriesService

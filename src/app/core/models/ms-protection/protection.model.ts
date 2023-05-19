@@ -18,3 +18,11 @@ export interface IProtection {
   actReclaimed?: string;
   reportJustifiedDate?: Date;
 }
+
+export interface IProtectionPerGood {
+  goodNumber: number;
+  cveProtection: string;
+  recordDate: Date;
+  recordUser?: string;
+  recordNumber?: number;
+}

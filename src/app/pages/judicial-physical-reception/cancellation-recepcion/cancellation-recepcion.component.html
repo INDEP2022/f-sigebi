@@ -23,7 +23,7 @@
                 "
                 id="expedient-number"
                 class="btn btn-primary btn-sm active"
-                (click)="getGoodsByExpedient()">
+                (click)="goodsByExpediente()">
                 Buscar
               </button>
             </div>
@@ -318,14 +318,16 @@
             </a>
             <button
               type="button"
-              class="btn btn-secondary btn-sm active mr-2 ml-2"
-              size="small">
+              class="my-1 mx-2 btn btn-danger active btn-sm"
+              size="small"
+              (click)="deleteProceeding()">
               Eliminar Acta
             </button>
             <button
               type="button"
               class="btn btn-secondary btn-sm active mr-2 ml-2"
-              size="small">
+              size="small"
+              (click)="goCargaMasiva()">
               Carga Masiva
             </button>
           </div>
@@ -352,6 +354,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active mr-2 ml-2"
                 [disabled]="form.get('folioEscaneo').value == null"
+                (click)="replicateFolio()"
                 size="small">
                 Replicar Folio
               </button>
@@ -377,10 +380,11 @@
           <form-field
             class="col-md-3"
             [control]="form.get('estatusPrueba')"
-            label="Status ">
+            label="Estatus ">
             <input
               type="text"
               class="form-control"
+              [readOnly]="true"
               formControlName="estatusPrueba" />
           </form-field>
 
@@ -400,6 +404,7 @@
           <button
             type="button"
             class="mx-2 btn btn-secondary btn-sm active"
+            [disabled]="dataGoodAct['data'].length == 0"
             (click)="deleteGoods()">
             <i class="fa fa-angle-up"></i>
           </button>
@@ -429,11 +434,12 @@
           <input
             type="text"
             class="form-control"
+            [readOnly]="true"
             formControlName="estatusBienActa" />
         </form-field>
       </div>
 
-      <hr class="row" />
+      <!-- <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <a
@@ -444,7 +450,7 @@
             Exportar Datos
           </a>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </app-card>

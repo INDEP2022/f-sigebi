@@ -35,4 +35,22 @@ export class ScreenStatusService extends HttpService {
   getAllFiltered(params: _Params) {
     return this.get<IListResponse<IStatusXScreen>>('status-x-screen', params);
   }
+
+  getAllFiltro(params: any) {
+    return this.get<IListResponse<IStatusXScreen>>(
+      `status-x-screen?filter.status=$eq:${params.estatus}&filter.screenKey=$eq:${params.vc_pantalla}`
+    );
+  }
+
+  getAllFiltroScreenKey(params: any) {
+    return this.get<IListResponse<IStatusXScreen>>(
+      `status-x-screen?filter.screenKey=$eq:${params.vc_pantalla}`
+    );
+  }
+
+  getAllFiltro_(params: any) {
+    return this.get<IListResponse<IStatusXScreen>>(
+      `status-x-screen?filter.status=$eq:${params.estatus}&filter.screenKey=$eq:${params.vc_pantalla}&filter.identifier=$eq:${params.identifier}&filter.processExtSun=$eq:${params.processExtSun}`
+    );
+  }
 }

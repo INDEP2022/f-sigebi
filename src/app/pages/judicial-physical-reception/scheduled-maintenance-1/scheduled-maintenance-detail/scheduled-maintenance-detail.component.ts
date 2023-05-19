@@ -151,7 +151,7 @@ export class ScheduledMaintenanceDetailComponent
     );
     this.form = this.fb.group({
       acta: [acta.id],
-      fechaCaptura: [new Date(acta.captureDate)],
+      fechaCaptura: [acta.captureDate],
       statusActa: [acta.statusProceedings],
       claveActa: [acta.keysProceedings],
       tipoEvento: [acta.typeProceedings],
@@ -263,6 +263,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   private fillColumnsGoods() {
+    debugger;
     let columnGoodId = {
       title: 'Localidad Ent. Transferente.',
       type: 'string',
@@ -276,10 +277,11 @@ export class ScheduledMaintenanceDetailComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          // debugger;
+          debugger;
           let newColumns;
           this.proceedingIndicators = response.data.filter(
-            indicator => indicator.description === 'ENTREGA FISICA'
+            indicator =>
+              indicator.description === 'ENTREGA FISICA' || 'RECEPCION FISICA'
           );
           const indicator = this.proceedingIndicators.find(
             indicator => indicator.typeActa === this.typeProceeding
@@ -314,6 +316,7 @@ export class ScheduledMaintenanceDetailComponent
             ...this.settingsGoodsForAdd,
             columns: newColumns,
           };
+          console.log(this.settingsGoods);
         },
       });
   }

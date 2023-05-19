@@ -14,6 +14,7 @@
                   (ngModelChange)="
                     toggleByLength('expedient-number', 'expediente')
                   "
+                  [min]="0"
                   type="number"
                   class="form-control"
                   formControlName="expediente" />
@@ -27,18 +28,10 @@
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm disabled active"
-                (click)="getGoodsByExpedient()">
+                (click)="goodsByExpediente()">
                 Buscar
               </button>
               <span class="ml-3">{{ statusProceeding }}</span>
-              <!-- <form-field
-                [control]="form.get('averPrev')"
-                label="Averiguaci&oacute;n Previa">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="averPrev" />
-              </form-field> -->
             </div>
           </div>
         </div>
@@ -63,40 +56,59 @@
           </div>
         </div>
       </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field
+              [control]="form.get('averPrev')"
+              label="Averiguaci&oacute;n Previa">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="averPrev" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="causaPenal" />
+            </form-field>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta')" label="Acta 1">
-                <select
+              <form-field [control]="form.get('acta')">
+                <ngx-select
                   id="acta"
-                  class="form-control"
+                  control="acta"
                   [class]="initialdisabled ? 'disabled' : ''"
-                  formControlName="acta"
-                  (ngModelChange)="verifyActAndTransfer()">
-                  <option *ngFor="let record of records" [value]="record">
-                    {{ record }}
-                  </option>
-                </select>
+                  label="Acta 1"
+                  bindLabel="records"
+                  [data]="records"
+                  [searchable]="false"
+                  [form]="form"></ngx-select>
               </form-field>
             </div>
 
             <div class="col-md-2">
               <form-field [control]="form.get('transfer')">
                 <ngx-select
-                  (change)="verifyTransferenteAndAct()"
-                  [class]="initialdisabled ? 'disabled' : ''"
                   id="transfer"
                   control="transfer"
+                  [class]="initialdisabled ? 'disabled' : ''"
                   label="Transfer"
                   bindLabel="transferentkey"
+                  [searchable]="false"
                   [data]="transferSelect"
                   [form]="form"></ngx-select>
-                <!-- <input
-                  type="number"
-                  class="form-control"
-                  formControlName="transfer"
-                  (ngModelChange)="fillActTwo()" /> -->
               </form-field>
             </div>
 
@@ -105,8 +117,7 @@
                 <input
                   type="text"
                   class="form-control disabled"
-                  formControlName="ident"
-                  (change)="fillActTwo()" />
+                  formControlName="ident" />
               </form-field>
             </div>
 
@@ -114,7 +125,6 @@
               <form-field [control]="form.get('recibe')">
                 <ngx-select
                   (fetchItems)="getRecibe($event)"
-                  (change)="fillActTwo()"
                   control="recibe"
                   [class]="initialdisabled ? 'disabled' : ''"
                   label="Recibe"
@@ -129,7 +139,6 @@
               <form-field [control]="form.get('admin')">
                 <ngx-select
                   (fetchItems)="getAdmin($event)"
-                  (change)="fillActTwo()"
                   [class]="initialdisabled ? 'disabled' : ''"
                   control="admin"
                   label="Admin"
@@ -152,8 +161,7 @@
                   [class]="initialdisabled ? 'disabled' : ''"
                   min="0"
                   [max-length]="5"
-                  formControlName="folio"
-                  (change)="fillActTwo()" />
+                  formControlName="folio" />
               </form-field>
             </div>
             <div class="col">
@@ -175,6 +183,7 @@
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <div class="row">
@@ -195,6 +204,8 @@
                 <textarea
                   rows="2"
                   class="form-control"
+                  [maxlength]="1000"
+                  [class]="!isEnableDireccion ? 'disabled' : ''"
                   formControlName="direccion"></textarea>
               </form-field>
             </div>
@@ -206,6 +217,8 @@
                 <input
                   type="text"
                   class="form-control"
+                  [maxlength]="100"
+                  [class]="!isEnableEntrega ? 'disabled' : ''"
                   formControlName="entrega" />
               </form-field>
             </div>
@@ -219,6 +232,8 @@
                 <input
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
+                  [class]="!isEnablefecElabRec ? 'disabled' : ''"
                   formControlName="fecElabRec" />
               </form-field>
             </div>
@@ -232,6 +247,8 @@
                 <input
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
+                  [class]="!isEnablefecElabRec ? 'disabled' : ''"
                   formControlName="fecEntBien" />
               </form-field>
             </div>
@@ -243,7 +260,7 @@
                 [control]="form.get('folioEscaneo')"
                 label="Folio de Escaneo">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="folioEscaneo"
                   maxlength="15" />
@@ -251,7 +268,13 @@
             </div>
 
             <div class="col-md-4 pt-3">
-              <button type="button" size="small">Replicar Folio</button>
+              <button
+                class="btn btn-primary btn-sm active"
+                type="button"
+                size="small"
+                (click)="replicateFolio()">
+                Replicar Folio
+              </button>
             </div>
           </div>
         </div>
@@ -265,6 +288,8 @@
                   (ngModelChange)="verifyDateAndFill()"
                   bsDatepicker
                   class="form-control"
+                  [maxlength]="10"
+                  [class]="!isEnablefecElab ? 'disabled' : ''"
                   [minDate]="minDateFecElab"
                   formControlName="fecElab" />
               </form-field>
@@ -301,6 +326,8 @@
                 <textarea
                   rows="2"
                   class="form-control"
+                  [maxlength]="1000"
+                  [class]="!isEnableObservaciones ? 'disabled' : ''"
                   formControlName="observaciones"></textarea>
               </form-field>
             </div>
@@ -312,6 +339,8 @@
                 <input
                   type="text"
                   class="form-control"
+                  [maxlength]="100"
+                  [class]="!isEnableRecibe2 ? 'disabled' : ''"
                   formControlName="recibe2" />
               </form-field>
             </div>
@@ -324,6 +353,8 @@
                 label="Testigo de la Contr&#46;">
                 <input
                   type="text"
+                  [maxlength]="100"
+                  [class]="!isEnableTestigo ? 'disabled' : ''"
                   class="form-control"
                   formControlName="testigo" />
               </form-field>
@@ -335,7 +366,6 @@
               <button
                 type="button"
                 [class]="btnCSSAct"
-                [disabled]="!form.valid"
                 class="btn btn-sm active mr-2 ml-2"
                 (click)="toggleActaBtn()"
                 size="small">
@@ -357,7 +387,8 @@
               </button>
               <button
                 type="button"
-                class="my-1 mx-2 btn btn-secondary active btn-sm">
+                class="my-1 mx-2 btn btn-secondary active btn-sm"
+                (click)="goCargaMasiva()">
                 Carga Masiva
               </button>
             </div>
@@ -387,10 +418,10 @@
 
           <p class="pt-4">
             <span class="text-success mr-5"
-              ><i class="fa fa-square"></i> Disponibles</span
+              ><i class="fa fa-square"></i>Disponibles</span
             >
             <span class="text-danger"
-              ><i class="fa fa-square"></i> No disponibles</span
+              ><i class="fa fa-square"></i>No disponibles</span
             >
           </p>
         </div>
@@ -443,9 +474,9 @@
               [readOnly]="true"
               formControlName="edoFisico" />
           </form-field>
-          <form-check label="Requerido" for="label">
+          <!--  <form-check label="Requerido" for="label">
             <input id="label" type="checkbox" formControlName="requerido" />
-          </form-check>
+          </form-check> -->
           <form-field
             class="col-md-3"
             [control]="form.get('estatusBienActa')"
@@ -462,7 +493,7 @@
       <hr class="row" />
       <div class="row">
         <div class="col-md-6">
-          <div class="row">
+          <div class="row" *ngIf="isAlmacen">
             <div class="col-md-9">
               <form-field [control]="form.get('almacen')">
                 <ngx-select
@@ -476,7 +507,7 @@
             </div>
           </div>
 
-          <div class="row" *ngIf="false">
+          <div class="row" *ngIf="isBoveda">
             <div class="col-md-9">
               <form-field [control]="form.get('boveda')">
                 <ngx-select
@@ -491,7 +522,11 @@
           </div>
         </div>
         <div class="col-md-6">
-          <button type="button" size="small" class="mx-2 my-1">
+          <button
+            type="button"
+            size="small"
+            class="mx-2 my-1"
+            (click)="openEdoFisico()">
             Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
           <button
@@ -501,14 +536,14 @@
             (click)="applyWarehouseSafe()">
             Aplica Alm&#46;&#47;Bov&#46;
           </button>
-          <a
+          <!--  <a
             [routerLink]="['flat-file']"
             type="button"
             nbButton
             size="small"
             class="mx-2 my-1"
             >Exportar Datos</a
-          >
+          > -->
         </div>
       </div>
     </form>

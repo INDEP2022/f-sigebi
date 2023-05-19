@@ -15,16 +15,19 @@
   background-image: url('./assets/images/toastr-icons/success.png');
   background-size: 100%;
 }
+
 .toast-error {
   background-color: white;
   background-image: url('./assets/images/toastr-icons/error.png');
   background-size: 100%;
 }
+
 .toast-info {
   background-color: white;
   background-image: url('./assets/images/toastr-icons/info.png');
   background-size: 100%;
 }
+
 .toast-warning {
   background-color: white;
   background-image: url('./assets/images/toastr-icons/warning.png');
@@ -34,6 +37,7 @@
 .toast-close-button {
   display: block;
 }
+
 * {
   font-size: 14px;
 }
@@ -452,9 +456,11 @@ ng-scrollbar.table-scrollbar {
 
 .table-container {
   margin-right: 14px !important;
+
   > div {
     padding: 0px;
     margin-left: 15px;
+
     ng2-smart-table {
       padding: 0px;
     }
@@ -473,4 +479,42 @@ ng-scrollbar.table-scrollbar {
   background-size: 100px 100px;
   z-index: 100;
   content: '';
+}
+
+.bg-black-unavailable {
+  background-color: rgb(14, 14, 14) !important;
+  color: white;
+  padding: 0.3rem;
+  font-weight: 900;
+}
+
+.bg-black-unavailable-roj {
+  background-color: rgb(14, 14, 14) !important;
+  color: red;
+  padding: 0.3rem;
+  font-weight: 900;
+}
+
+.bg-green-to-confirm {
+  background-color: #28a745 !important;
+  color: white;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+.bg-green-to-confirm-verdadero {
+  background-color: #28a745 !important;
+  color: black;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+#monitorABN table:not(.normal-hover) tbody tr.selected {
+  color: black;
+  // #28a745
+  background: rgb(240, 228, 209) !important;
+}
+
+#monitorABN table:not(.normal-hover) tbody tr:hover {
+  color: black;
 }

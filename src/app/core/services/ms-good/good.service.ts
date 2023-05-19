@@ -20,9 +20,11 @@ import {
   GoodGetData,
   IGood,
   IGoodSami,
+  IValidaCambioEstatus,
   IVban,
 } from '../../models/ms-good/good';
 
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 import {
   IGoodScreenACtionStatusProcess,
@@ -56,6 +58,10 @@ export class GoodService extends HttpService {
   }
   getVBan(array: IVban) {
     return this.post<IResponse>(GoodEndpoints.Vban, array);
+  }
+
+  PAValidaCambio(model: IValidaCambioEstatus) {
+    return this.post<IResponse>(GoodEndpoints.PAValidaCambioEstatus, model);
   }
 
   getActAccount(model: IGoodStatusProcess) {
@@ -146,8 +152,15 @@ export class GoodService extends HttpService {
   }
 
   getById(id: string | number) {
-    const route = `${GoodEndpoints.Good}/${id}`;
-    return this.get<IGood>(route);
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IGood>(`${route}?filter.id=$eq:${id}`);
+  }
+
+  getByGoodNumber(goodId: string | number) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.get<IListResponseMessage<IGood>>(
+      `${route}?filter.goodId=$eq:${goodId}`
+    );
   }
 
   getByIdAndGoodId(id: string | number, goodId: string | number) {
@@ -213,8 +226,8 @@ export class GoodService extends HttpService {
     body: Object,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
-
+    console.log(params);
+    const route = `${GoodEndpoints.Good}/getGoodByWarehouse?search=${params.text}`;
     return this.post<IListResponse<IGood>>(route, body);
   }
   getByExpedientAndStatus(
@@ -302,5 +315,23 @@ export class GoodService extends HttpService {
 
   changeGoodToNumerary(body: any) {
     return this.post(GoodEndpoints.CreateGoodNumerary, body);
+  }
+
+  updateWithParams(good: any) {
+    const route = `${GoodEndpoints.Good}`;
+    return this.put(route, good);
+  }
+
+  getGoodById(id: string | number) {
+    const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
+    return this.get<any>(route);
+  }
+
+  getByExpedientAndParams(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.GetAllGoodQuery;
+    return this.get<IListResponse<IGood>>(route, params);
   }
 }

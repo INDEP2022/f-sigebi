@@ -189,7 +189,15 @@ export class DetailAssetsTabComponentComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     const address: IAddress = this.detailAssets.controls['addressId'].value;
-
+    // console.log(this.detailAssets.value);
+    for (const campo in this.detailAssets.controls) {
+      if (this.detailAssets.controls.hasOwnProperty(campo)) {
+        const control = this.detailAssets.get(campo);
+        if (control.value === undefined || control.value === 'undefined') {
+          this.detailAssets.get(campo).setValue(null);
+        }
+      }
+    }
     this.typeOfRequest = this.requestObject.typeOfTransfer
       ? this.requestObject.typeOfTransfer
       : this.requestObject.controls['typeOfTransfer'].value;
@@ -206,7 +214,7 @@ export class DetailAssetsTabComponentComponent
 
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
-        console.log(this.detailAssets.value);
+
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
         console.log('inicia<>>>><<<<<>>>>>');
@@ -543,7 +551,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       certLibLienDate: [null],
@@ -621,7 +629,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       photosAttached: [
@@ -1026,7 +1034,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string, description?: string) {
-    console.log(this.detailAssets.value);
     const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;

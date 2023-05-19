@@ -1,4 +1,14 @@
-app-elaborate-users-shared,
-app-regional-coord-shared {
-  width: 100%;
+.scheduledTable {
+  ng2-smart-table {
+    ::ng-deep {
+      table {
+        tr {
+          td:not(:first-child),
+          th:not(:first-child) {
+            min-width: 110px;
+          }
+        }
+      }
+    }
+  }
 }

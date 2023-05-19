@@ -14,6 +14,7 @@ export const initialState: GlobalVarsState = {
     RAST_BIEN_REL: null,
     NO_EXPEDIENTE: null,
     RAST_EXPEDIENTE_REL: null,
+    REL_BIENES: null,
     CREA_EXPEDIENTE: null,
     RAST_EXPEDIENTE: null,
     RAST_DESCRIPCION_BIEN: null,

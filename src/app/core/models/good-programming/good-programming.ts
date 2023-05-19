@@ -1,53 +1,53 @@
 export interface IGoodProgramming {
-  id: number;
-  typeGoodId: string;
-  goodId: number;
-  subTypeGoodId: string;
-  startDate: Date;
-  endDate: Date;
-  creationUser: string;
-  creationDate: Date;
-  modificationUser: string;
-  modificationDate: Date;
-  storeId: number;
-  tranferId: number;
-  regionalDelegationNumber: number;
-  typeUser: string;
-  version: number;
-  status: string;
-  programmingLee: string;
-  folio: string;
-  typeRelevantId: number;
-  statusEbs: string;
-  concurrentNumber: string;
-  concurrentMsg: string;
-  validateGood: string;
-  instanceBpm: number;
-  emailTransfer: string;
-  termEjecutionDate: string;
-  city: string;
-  address: string;
-  nameTe: string;
-  observation: string;
-  eventId: string;
-  msgSise: string;
-  instanceSise: string;
-  acuseEvent: string;
-  nameSignatore: string;
-  chargeSignatore: string;
-  typeSignature: string;
-  contentId: string;
-  formalizationEndDate: string;
-  indFulfillTime: string;
-  stationId: number;
-  autorityId: number;
-  delregAttentionId: number;
-  stateKey: number;
-  instanceBpel: string;
-  regSendSat: string;
-  subtypegood: string;
-  typegood: string;
-  view: IView[];
+  id?: number;
+  typeGoodId?: string;
+  goodId?: number;
+  subTypeGoodId?: string;
+  startDate?: Date;
+  endDate?: Date;
+  creationUser?: string;
+  creationDate?: Date;
+  modificationUser?: string;
+  modificationDate?: Date;
+  storeId?: number;
+  tranferId?: number;
+  regionalDelegationNumber?: number;
+  typeUser?: string;
+  version?: number;
+  status?: string;
+  programmingLee?: string;
+  folio?: string;
+  typeRelevantId?: number;
+  statusEbs?: string;
+  concurrentNumber?: string;
+  concurrentMsg?: string;
+  validateGood?: string;
+  instanceBpm?: number;
+  emailTransfer?: string;
+  termEjecutionDate?: string;
+  city?: string;
+  address?: string;
+  nameTe?: string;
+  observation?: string;
+  eventId?: string;
+  msgSise?: string;
+  instanceSise?: string;
+  acuseEvent?: string;
+  nameSignatore?: string;
+  chargeSignatore?: string;
+  typeSignature?: string;
+  contentId?: string;
+  formalizationEndDate?: string;
+  indFulfillTime?: string;
+  stationId?: number;
+  autorityId?: number;
+  delregAttentionId?: number;
+  stateKey?: number;
+  instanceBpel?: string;
+  regSendSat?: string;
+  subtypegood?: string;
+  typegood?: string;
+  view?: IView[];
 }
 
 export interface IView {
@@ -55,11 +55,26 @@ export interface IView {
   uniqueKey: string;
 }
 
+export interface IPAAbrirActasPrograma {
+  P_NOACTA: number;
+  P_AREATRA: string;
+  P_PANTALLA: string;
+  P_TIPOMOV: number;
+}
+
+export interface ITmpProgValidation {
+  valmovement: number;
+  valMessage: string;
+  valUser: string;
+  valMinutesNumber: number;
+}
+
 export interface IGoodProgrammingSelect {
   id: string;
   addressGood: number;
   aliasWarehouse: string;
   code: number;
+  googId: number;
   cveSettlement: number;
   cveState: number;
   cveTownship: number;
@@ -73,6 +88,7 @@ export interface IGoodProgrammingSelect {
   idDelegationRegionalSol: number;
   idGood: number;
   idGoodProperty: number;
+  goodNumber: number;
   idRequest: number;
   idStation: number;
   idSubtypeGood: number;
@@ -92,13 +108,15 @@ export interface IGoodProgrammingSelect {
 }
 
 export interface IGoodInfo {
-  goodId: number;
-  uniqueKey: string;
-  fileNumber: string;
-  description: string;
-  descriptionGoodSae: string;
-  quantity: number;
-  unitMeasure: string;
-  physicalStatus: number | string;
-  reprogrammationNumber: number;
+  goodId?: number;
+  uniqueKey?: string;
+  fileNumber?: string;
+  goodDescription?: string;
+  aliasWarehouse?: string;
+  description?: string;
+  descriptionGoodSae?: string;
+  quantity?: number;
+  unitMeasure?: string;
+  physicalStatus?: number | string;
+  reprogrammationNumber?: number;
 }

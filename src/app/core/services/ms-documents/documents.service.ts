@@ -102,6 +102,13 @@ export class DocumentsService extends HttpService {
     return this.get<IListResponse<IClarificationDocumentsImpro>>(route, params);
   }
 
+  postCountDictationGoodFile(
+    armyOfficeKey: string
+  ): Observable<{ count: number }> {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}/dictationGoodFile`;
+    return this.post(route, { armyOfficeKey });
+  }
+
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);
