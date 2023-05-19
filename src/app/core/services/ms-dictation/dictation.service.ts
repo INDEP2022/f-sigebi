@@ -129,4 +129,8 @@ export class DictationService extends HttpService {
   }): Observable<IDictation> {
     return this.get(this.route.DocumentByDictation, body);
   }
+
+  updateByIdDictament(objParam: any) {
+    return this.put<IListResponse<IDictation>>(this.route.Dictation, objParam);
+  }
 }

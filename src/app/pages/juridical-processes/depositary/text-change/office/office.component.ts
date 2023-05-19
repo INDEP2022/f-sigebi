@@ -13,6 +13,7 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
+  IdatosLocales,
   IGoodJobManagement,
   ImanagementOffice,
 } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
@@ -55,6 +56,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
   @Output() oficnumChange = new EventEmitter<number | string>();
+  valLocal: IdatosLocales;
 
   constructor(
     private fb: FormBuilder,
@@ -373,6 +375,34 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
 
   updateOficio() {
-    alert(JSON.stringify(this.form.value));
+    this.serviceOficces.updateOficio(this.creaObjUpdate(this.form)).subscribe({
+      next: response => {
+        this.onLoadToast(
+          'success',
+          'se actualizo el registro de manera correcta',
+          JSON.stringify(response.data)
+        );
+      },
+      error: responseError => {
+        console.log('Entra =>  ', responseError.error.message);
+        this.onLoadToast('error', 'Error', responseError.error.message);
+      },
+    });
+  }
+
+  creaObjUpdate(f: FormGroup) {
+    return {
+      flyerNumber: f.value.flyerNumber,
+      proceedingsNumber: f.value.proceedingsNumber,
+      managementNumber: f.value.managementNumber,
+      cveManagement: f.value.officio,
+      sender: f.value.RemitenteSenderUser,
+      addressee: f.value.addressee,
+      charge: f.value.cveChargeRem,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      text3: f.value.paragraphOptional,
+      desSenderpa: f.value.descriptionSender,
+    };
   }
 }
