@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IGoodProgramming,
+  IPAAbrirActasPrograma,
   ITmpProgValidation,
 } from 'src/app/core/models/good-programming/good-programming';
 import { environment } from 'src/environments/environment';
@@ -29,6 +30,13 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.get<IListResponse<IUser>>(
       `${environment.API_URL}/${route}`,
       { params }
+    );
+  }
+
+  paOpenProceedingProgam(model: IPAAbrirActasPrograma) {
+    return this.httpClient.post(
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/open-minutes-program`,
+      model
     );
   }
 
