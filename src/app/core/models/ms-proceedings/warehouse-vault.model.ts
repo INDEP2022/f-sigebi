@@ -10,3 +10,8 @@ export interface IUpdateWarehouse extends IUpdateWarehouseVault {
 export interface IUpdateVault extends IUpdateWarehouseVault {
   safeNumber: number;
 }
+
+export interface IBlkPost {
+  no_bien: number | string;
+  no_acta: number | string;
+}
