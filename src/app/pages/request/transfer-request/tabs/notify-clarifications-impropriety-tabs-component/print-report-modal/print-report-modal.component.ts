@@ -18,6 +18,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
+
 @Component({
   selector: 'app-print-report-modal',
   templateUrl: './print-report-modal.component.html',
@@ -161,6 +162,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         let linkDoc: string = `${this.urlBaseReport}AclaracionTransferentesVoluntarias.jasper&ID_DOCUMENTO=${this.idReportAclara}`;
         this.src = linkDoc;
         console.log('URL reporte ', linkDoc);
+        break;
+      }
+      case 221: {
+        let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idReportAclara}`;
+        this.src = linkDoc;
         break;
       }
 
