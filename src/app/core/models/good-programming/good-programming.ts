@@ -56,10 +56,17 @@ export interface IView {
 }
 
 export interface IPAAbrirActasPrograma {
-  P_NOACTA: number;
+  P_NOACTA: number | string;
   P_AREATRA: string;
   P_PANTALLA: string;
   P_TIPOMOV: number;
+}
+
+export interface IPACambioStatus {
+  P_NOACTA: number | string;
+  P_PANTALLA: string;
+  P_FECHA_RE_FIS: Date;
+  P_TIPO_ACTA: string;
 }
 
 export interface ITmpProgValidation {

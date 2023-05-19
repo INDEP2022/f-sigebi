@@ -8,6 +8,7 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IGoodProgramming,
   IPAAbrirActasPrograma,
+  IPACambioStatus,
   ITmpProgValidation,
 } from 'src/app/core/models/good-programming/good-programming';
 import { environment } from 'src/environments/environment';
@@ -36,6 +37,20 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
   paOpenProceedingProgam(model: IPAAbrirActasPrograma) {
     return this.httpClient.post(
       `${environment.API_URL}/programminggood/api/v1/programminggood/apps/open-minutes-program`,
+      model
+    );
+  }
+
+  paRegresaEstAnterior(model: IPAAbrirActasPrograma) {
+    return this.httpClient.post(
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/return-previous-status`,
+      model
+    );
+  }
+
+  paChangeStatus(model: IPACambioStatus) {
+    return this.httpClient.post(
+      `${environment.API_URL}/programminggood/api/v1/programminggood/apps/change-status-actas`,
       model
     );
   }
