@@ -188,16 +188,6 @@
             {{ item.id }} - {{ item.name }}
           </div>
         </ng-template>
-
-        <!--ng-select
-          [items]="UserDestinatario"
-          bindLabel="id"
-          bindValue="id"
-          [readonly]="form.get('typePerson').value === 'S'"
-          formControlName="senderUser"
-          class="form-control"
-          (change)="getDescUser('control', $event)">
-        </ng-select-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
@@ -245,15 +235,6 @@
             {{ item.id }} - {{ item.name }}
           </div>
         </ng-template>
-        <!--ng-select
-          [items]="UserDestinatario"
-          bindLabel="id"
-          bindValue="id"
-          formControlName="senderUser_I"
-          [readonly]="form.get('typePerson_I').value === 'S'"
-          class="form-control"
-          (change)="getDescUser('control_I', $event)">
-        </ng-select-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
@@ -277,6 +258,14 @@
             [loading]="loading"
             (confirm)="confirm()">
           </confirm-button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-info active"
+            (click)="updateDictamen()">
+            Actualizar
+          </button>
         </div>
       </div>
     </div>

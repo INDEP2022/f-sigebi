@@ -15,7 +15,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DEPOSITARY_ROUTES_2 } from 'src/app/common/constants/juridical-processes/depositary-routes-2';
 import {
@@ -167,8 +167,16 @@ export class JuridicalRulingGComponent
         type: 'string',
       },
     },
+    rowClassFunction: (row: any) => {
+      if (row.data.status === 'STI') {
+        return 'bg-secondary text-white';
+      } else {
+        return 'bg-success text-white';
+      }
+    },
     noDataMessage: 'No se encontrarón registros',
   };
+  // TODO:
 
   settings2 = {
     pager: {
@@ -256,17 +264,6 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      // checked: {
-      //   title: '',
-      //   sort: false,
-      //   type: 'custom',
-      //   showAlways: true,
-      //   valuePrepareFunction: (isSelected: boolean, row: IDocuments) =>
-      //     this.isDocumentSelectedValid(row),
-      //   renderComponent: CheckboxElementComponent,
-      //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
-      //     this.onDocsSelectValid(instance),
-      // },
       id: {
         title: '#',
         type: 'number',
@@ -275,10 +272,6 @@ export class JuridicalRulingGComponent
         title: 'Documentos',
         type: 'string',
       },
-      // fecha: {
-      //   title: 'Fec. Recibido',
-      //   type: 'string',
-      // },
       fecha: {
         title: 'Fecha',
         sort: false,
@@ -312,7 +305,8 @@ export class JuridicalRulingGComponent
     private readonly documentService: DocumentsService,
     private readonly expedientServices: ExpedientService,
     private readonly authService: AuthService,
-    private applicationGoodsQueryService: ApplicationGoodsQueryService
+    private applicationGoodsQueryService: ApplicationGoodsQueryService,
+    private router: Router
   ) {
     super();
   }
@@ -321,6 +315,13 @@ export class JuridicalRulingGComponent
     this.prepareForm();
     this.loading = true;
     this.getParams();
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      console.log(params);
+      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.expedientesForm.get('noVolante').setValue(params?.volante);
+      this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
+    });
   }
 
   /**
@@ -335,11 +336,13 @@ export class JuridicalRulingGComponent
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       delito: [false],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
+      noVolante: [null],
     });
 
     this.dictaminacionesForm = this.fb.group({
       wheelNumber: [null],
       etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
+      fechaPPFF: [null],
       fechaInstructora: [null],
       fechaResolucion: [null],
       fechaDictaminacion: [null],
@@ -368,8 +371,8 @@ export class JuridicalRulingGComponent
 
   changeNumExpediente() {
     this.onLoadGoodList();
-    this.onLoadExpedientData();
-    this.onLoadDictationInfo();
+    // this.onLoadExpedientData();
+    // this.onLoadDictationInfo();
     this.resetALL();
   }
 
@@ -600,22 +603,31 @@ export class JuridicalRulingGComponent
 
   addAll() {
     if (this.goods.length > 0) {
+      this.goods.map(_g => (_g.status = 'STI'));
       this.goodsValid = this.goodsValid.concat(this.goods);
-      this.goods = [];
+      // this.goods = [];
     }
   }
   addSelect() {
     if (this.selectedGooods.length > 0) {
-      this.goodsValid = this.goodsValid.concat(this.selectedGooods);
       this.selectedGooods.forEach(good => {
-        this.goods = this.goods.filter(_good => _good.id != good.id);
+        if (!this.goodsValid.some(v => v === good)) {
+          if (good.status.toUpperCase() !== 'STI') {
+            let indexGood = this.goods.findIndex(_good => _good == good);
+            this.goods[indexGood].status = 'STI';
+            this.goodsValid = this.goodsValid.concat(this.selectedGooods);
+            // this.goods = this.goods.filter(_good => _good.id != good.id);
+          }
+        } else {
+          // this.alert('error', '', 'El bien ya existe.');
+        }
       });
       this.selectedGooods = [];
     }
   }
   removeSelect() {
     if (this.selectedGooodsValid.length > 0) {
-      this.goods = this.goods.concat(this.selectedGooodsValid);
+      // this.goods = this.goods.concat(this.selectedGooodsValid);
       this.selectedGooodsValid.forEach(good => {
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
       });
@@ -624,7 +636,8 @@ export class JuridicalRulingGComponent
   }
   removeAll() {
     if (this.goodsValid.length > 0) {
-      this.goods = this.goods.concat(this.goodsValid);
+      // this.goods = this.goods.concat(this.goodsValid);
+      this.goods.map(_g => (_g.status = 'ADM'));
       this.goodsValid = [];
     }
   }
@@ -941,6 +954,14 @@ export class JuridicalRulingGComponent
     return this.documents.length === 0;
   }
 
+  //   onstructor(private route: ActivatedRoute) {
+  //     console.log('Called Constructor');
+  //     this.route.queryParams.subscribe(params => {
+  //         this.expendient= params['expediente'];
+  //         this.volante= params['volante'];
+  //     });
+  // }
+
   btnApprove() {
     let token = this.authService.decodeToken();
     const pNumber = Number(token.department);
@@ -960,8 +981,45 @@ export class JuridicalRulingGComponent
                 'Clave de oficio generada correctamente.',
                 'success'
               ).then(() => {
-                window.location.replace(
-                  baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link
+                let cveOficio = this.dictaminacionesForm.get('cveOficio').value;
+                let tipo = this.expedientesForm.get('tipoDictaminacion').value;
+                let noDictaminacion =
+                  this.expedientesForm.get('noDictaminacion').value;
+                let volante = this.dictaminacionesForm.get('wheelNumber').value;
+                this.router.navigate(
+                  [
+                    baseMenu +
+                      baseMenuDepositaria +
+                      DEPOSITARY_ROUTES_2[0].link,
+                  ],
+                  {
+                    // queryParams: {
+                    //   CLAVE_OFICIO_ARMADA: cveOficio,
+                    //   TIPO: tipo,
+                    //   P_VALOR: noExpediente,
+                    //   PAQUETE: '', // ..este
+                    //   P_GEST_OK: '', // ..este
+                    //   P_NO_TRAMITE: '', // ..este
+                    //   origin: 'FACTJURDICTAMASG',
+                    // },
+
+                    //   expediente: 791477,
+                    //   volante: 1558180,
+                    //   tipoVo: 'P',
+                    //   tipoDic: 'PROCEDENCIA',
+                    //   consulta: 'N',
+                    //   pGestOk: 1,
+                    //   pNoTramite: 1044141,
+                    queryParams: {
+                      CLAVE_OFICIO_ARMADA: cveOficio,
+                      TIPO: tipo,
+                      P_VALOR: noDictaminacion,
+                      PAQUETE: '', // ..este
+                      P_GEST_OK: 1, // ..este
+                      P_NO_TRAMITE: 1044141, // ..este
+                      origin: 'FACTJURDICTAMASG',
+                    },
+                  }
                 );
               }),
             1000

@@ -461,9 +461,9 @@ export class IssueAgreementsComponent
     var form = this.searchForm.getRawValue();
     this.params.getValue().removeAllFilters();
     for (const key in form) {
-      if (form[key] !== null) {
+      if (form[key]) {
         if (key === 'physicalReceptionDate') {
-          form[key] = new DatePipe('en-EN').transform(form[key], 'dd/MM/yyyy');
+          form[key] = new DatePipe('en-EN').transform(form[key], 'yyyy-MM-dd');
           this.params.value.addFilter(key, form[key]);
         } else if (key === 'description') {
           this.params.value.addFilter(key, form[key], SearchFilter.ILIKE);
