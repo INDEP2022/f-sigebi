@@ -184,8 +184,6 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onEnterSearch(filterParams: BehaviorSubject<FilterParams>) {
-    /*  let params = new FilterParams();
-    params.addFilter('id', this.form.value.expedientNumber, SearchFilter.EQ);*/
     this.dictationService
       .findByIdsOficNum(filterParams.getValue().getParams())
       .subscribe({
@@ -409,4 +407,54 @@ carga la  información de la parte media de la página
       })
     );
   }
+
+  updateDictamen() {}
+
+  getDatosToUpdateDictamen(f: FormGroup) {
+    return {
+      id: f.value.expedientNumber,
+      expedientNumber: f.value.registerNumber,
+      wheelNumber: f.value.wheelNumber,
+      typeDict: f.value.typeDict,
+      registerNumber: f.value.key,
+
+      /*  statusDict: f.value.,
+  userDict: f.value.,
+  observations:f.value.,
+  registerNumber:f.value.registerNumber,
+  keyArmyNumber: f.value.,*/
+    };
+  }
+
+  /*
+          this.form.get('').setValue(this.intIDictation.id);
+          this.form.get('').setValue(this.intIDictation.expedientNumber);
+          this.form.get('wheelNumber').setValue(this.intIDictation.wheelNumber);
+          this.form.get('typeDict').setValue(this.intIDictation.statusDict);
+          this.form.get('key').setValue(this.intIDictation.registerNumber);*/
+
+  /* 
+ this.dictationService
+      .updateByIdDictament({})
+      .subscribe({
+        next: resp => {
+          
+          this.form.get('expedientNumber').setValue(this.intIDictation.id);
+          this.form.get('registerNumber').setValue(this.intIDictation.expedientNumber);
+          this.form.get('wheelNumber').setValue(this.intIDictation.wheelNumber);
+          this.form.get('typeDict').setValue(this.intIDictation.statusDict);
+          this.form.get('key').setValue(this.intIDictation.registerNumber);
+         // let obj = { officialNumber: this.intIDictation.id, typeDict: this.intIDictation.typeDict, };
+         // this.complementoFormulario(obj);
+        },
+        error: err => {
+          this.onLoadToast('error', 'error', err.error.message);
+        },
+      });
+
+
+
+
+  console.log("=====>=====>=====>=====>  "  + JSON.stringify( this.form.value));
+}*/
 }
