@@ -75,10 +75,13 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     //2314753
     //5457725
     this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
-        if (response.status === 'REJ' || response.status === 'ADM') {
-          console.log(response);
-          this.good = response;
+      next: (response: any) => {
+        console.log(response.data[0]);
+        if (
+          response.data[0].status === 'REJ' ||
+          response.data[0].status === 'ADM'
+        ) {
+          this.good = response.data[0];
           this.goodServices.good$.emit(this.good);
           this.setGood();
           this.onLoadToast('success', 'Éxitoso', 'Bien cargado correctamente');
