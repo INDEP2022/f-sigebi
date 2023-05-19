@@ -33,6 +33,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   type: FormControl = new FormControl(REPORT_TYPE.Reception);
   form: FormGroup = this.fb.group({});
   itemsSelect = new DefaultSelect();
+  estatusData = new DefaultSelect(['Abierta', 'Cerrada', 'Todos']);
   initialProceeding = new DefaultSelect();
   finalProceeding = new DefaultSelect();
   delegacionRecibe: string = 'delegacionRecibe';
@@ -120,6 +121,16 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       }
     });
 
+    if (this.type.value === 'RECEPTION') {
+      this.title = 'Entrega Recepción';
+      this.form.get('delegacionRecibe').setValidators([Validators.required]);
+      this.form.get('subdelegation').setValidators([Validators.required]);
+    } else {
+      this.title = 'Decomiso';
+      this.form.get('delegacionRecibe').clearValidators();
+      this.form.get('subdelegation').clearValidators();
+    }
+
     this.type.valueChanges.subscribe(res => {
       this.form.get('delegacionRecibe').reset();
       this.form.get('subdelegation').reset();
@@ -142,8 +153,10 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         this.form.get('subdelegation').setValidators([Validators.required]);
       } else {
         this.title = 'Decomiso';
-        this.form.get('delegacionRecibe').setValidators([]);
-        this.form.get('subdelegation').setValidators([]);
+        this.form.get('delegacionRecibe').clearValidators();
+        this.form.get('delegacionRecibe').updateValueAndValidity();
+        this.form.get('subdelegation').clearValidators();
+        this.form.get('subdelegation').updateValueAndValidity();
       }
     });
 
@@ -162,8 +175,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      delegacionRecibe: [null, [Validators.required]],
-      subdelegation: [null, [Validators.required]],
+      delegacionRecibe: [null, []],
+      subdelegation: [null, []],
       estatusActa: [null, [Validators.required]],
       actaInicial: [null, [Validators.required]],
       actaFinal: [null, [Validators.required]],
@@ -409,19 +422,5 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     //let newWin = window.open(pdfurl, 'test.pdf');
     this.onLoadToast('success', '', 'Reporte generado');
     this.loading = false;
-  }
-
-  onTypeChange() {
-    const controls = [this.initialRecord, this.finalRecord];
-    const type = this.type.value;
-    if (type === REPORT_TYPE.Confiscation) {
-      controls.forEach(control => control.clearValidators());
-    } else {
-      controls.forEach(control => control.setValidators(Validators.required));
-    }
-    controls.forEach(control => {
-      control.reset();
-      control.updateValueAndValidity();
-    });
   }
 }

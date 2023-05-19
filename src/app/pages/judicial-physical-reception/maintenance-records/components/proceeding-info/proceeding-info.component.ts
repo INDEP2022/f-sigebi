@@ -99,6 +99,14 @@ export class ProceedingInfoComponent implements OnInit {
     this.service.registro = value;
   }
 
+  get registro() {
+    return this.service.registro;
+  }
+
+  set registro(value) {
+    this.service.registro = value;
+  }
+
   get statusActa() {
     return this.form
       ? this.form.get('statusActa')

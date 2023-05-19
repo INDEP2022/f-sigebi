@@ -111,9 +111,9 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   }
   getWarehouses() {
     this.loading = true;
+    this.params.getValue()['search'] = this.params.getValue().text;
     this.warehouseService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        console.log(response);
         this.warehouses = response.data.map(ware => {
           return {
             idWarehouse: ware.idWarehouse,
@@ -137,7 +137,6 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
 
         this.totalItems = response.count;
         this.loading = false;
-        console.log(this.warehouses);
       },
       error: error => (this.loading = false),
     });

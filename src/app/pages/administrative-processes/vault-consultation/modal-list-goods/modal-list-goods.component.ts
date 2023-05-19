@@ -64,6 +64,8 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
     this.bsModalRef.hide();
   }
   getGoodBySafe(idSafe: string | number): void {
+    this.loading = true;
+    this.params.getValue()['search'] = this.params.getValue().text;
     this.goodServices.getBySafe(idSafe, this.params.getValue()).subscribe({
       next: response => {
         console.log(response);

@@ -38,13 +38,49 @@
     </button>
   </div>
 </div>
-<div #modal="bs-modal" bsModal class="modal fade">
+<div
+  #modal="bs-modal"
+  [config]="{ ignoreBackdropClick: true }"
+  bsModal
+  class="modal fade">
   <app-modal class="modal-dialog modal-lg modal-dialog-centered">
     <div header>
       <h5 class="modal-title">&nbsp;&nbsp;Seleccionar {{ title }}</h5>
     </div>
     <div body>
       <div class="row mt-n3">
+        <!-- <form
+          [formGroup]="formSearch"
+          (ngSubmit)="searchForFilter()"
+          class="col-12 form-material">
+          <div class="row">
+            <div class="col-md-4">
+              <form-field
+                label="No. Volante"
+                [control]="formSearch.get('wheelNumber')">
+                <input
+                  formControlName="wheelNumber"
+                  class="form-control"
+                  type="number" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                label="No. Oficio"
+                [control]="formSearch.get('officeExternalKey')">
+                <input
+                  formControlName="officeExternalKey"
+                  class="form-control"
+                  type="text" />
+              </form-field>
+            </div>
+            <div class="col">
+              <button type="submit" class="btn btn-sm btn-primary active">
+                Buscar <i class="ml-2 fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
         <div class="col-md-12 heigth-limit">
           <ng-scrollbar track="all" [autoHeightDisabled]="true">
             <div [class]="loading ? 'table-loading' : ''">

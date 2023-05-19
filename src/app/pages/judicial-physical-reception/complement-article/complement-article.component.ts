@@ -327,7 +327,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
                 .setValue(
                   resp.ministerialDate === null
                     ? this.form.get('fechaFe').reset()
-                    : resp.ministerialDate
+                    : new Date(resp.ministerialDate)
                 );
             });
         },
