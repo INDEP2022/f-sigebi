@@ -167,8 +167,16 @@ export class JuridicalRulingGComponent
         type: 'string',
       },
     },
+    rowClassFunction: (row: any) => {
+      if (row.data.status === 'STI') {
+        return 'bg-secondary text-white';
+      } else {
+        return 'bg-success text-white';
+      }
+    },
     noDataMessage: 'No se encontrarón registros',
   };
+  // TODO:
 
   settings2 = {
     pager: {
@@ -256,17 +264,6 @@ export class JuridicalRulingGComponent
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      // checked: {
-      //   title: '',
-      //   sort: false,
-      //   type: 'custom',
-      //   showAlways: true,
-      //   valuePrepareFunction: (isSelected: boolean, row: IDocuments) =>
-      //     this.isDocumentSelectedValid(row),
-      //   renderComponent: CheckboxElementComponent,
-      //   onComponentInitFunction: (instance: CheckboxElementComponent) =>
-      //     this.onDocsSelectValid(instance),
-      // },
       id: {
         title: '#',
         type: 'number',
@@ -275,10 +272,6 @@ export class JuridicalRulingGComponent
         title: 'Documentos',
         type: 'string',
       },
-      // fecha: {
-      //   title: 'Fec. Recibido',
-      //   type: 'string',
-      // },
       fecha: {
         title: 'Fecha',
         sort: false,
@@ -340,6 +333,7 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm = this.fb.group({
       wheelNumber: [null],
       etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
+      fechaPPFF: [null],
       fechaInstructora: [null],
       fechaResolucion: [null],
       fechaDictaminacion: [null],
@@ -600,22 +594,32 @@ export class JuridicalRulingGComponent
 
   addAll() {
     if (this.goods.length > 0) {
+      this.goods.map(_g => (_g.status = 'STI'));
       this.goodsValid = this.goodsValid.concat(this.goods);
-      this.goods = [];
+      // this.goods = [];
     }
   }
   addSelect() {
     if (this.selectedGooods.length > 0) {
-      this.goodsValid = this.goodsValid.concat(this.selectedGooods);
       this.selectedGooods.forEach(good => {
-        this.goods = this.goods.filter(_good => _good.id != good.id);
+        if (!this.goodsValid.some(v => v === good)) {
+          if (good.status.toUpperCase() !== 'STI') {
+            let indexGood = this.goods.findIndex(_good => _good == good);
+            this.goods[indexGood].status = 'STI';
+            this.goodsValid = this.goodsValid.concat(this.selectedGooods);
+            // this.goods = this.goods.filter(_good => _good.id != good.id);
+          }
+          debugger;
+        } else {
+          // this.alert('error', '', 'El bien ya existe.');
+        }
       });
       this.selectedGooods = [];
     }
   }
   removeSelect() {
     if (this.selectedGooodsValid.length > 0) {
-      this.goods = this.goods.concat(this.selectedGooodsValid);
+      // this.goods = this.goods.concat(this.selectedGooodsValid);
       this.selectedGooodsValid.forEach(good => {
         this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
       });
@@ -624,7 +628,8 @@ export class JuridicalRulingGComponent
   }
   removeAll() {
     if (this.goodsValid.length > 0) {
-      this.goods = this.goods.concat(this.goodsValid);
+      // this.goods = this.goods.concat(this.goodsValid);
+      this.goods.map(_g => (_g.status = 'ADM'));
       this.goodsValid = [];
     }
   }

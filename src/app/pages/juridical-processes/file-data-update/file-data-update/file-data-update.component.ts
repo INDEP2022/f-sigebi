@@ -58,7 +58,17 @@ export class FileDataUpdateComponent
       pSatTipoExp: null,
       pIndicadorSat: null,
     };
-    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
+
+    this.router.navigate(['/pages/documents-reception/flyers-registration'], {
+      queryParams: {
+        pGestOk: 0,
+        pNoTramite: null,
+        pNoVolante: null,
+        noTransferente: null,
+        pSatTipoExp: null,
+        pIndicadorSat: null,
+      },
+    });
   }
 
   checkSearchMode(searchMode: boolean) {

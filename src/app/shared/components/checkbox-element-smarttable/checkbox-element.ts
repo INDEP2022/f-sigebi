@@ -1,17 +1,29 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-checkbox-element',
   template: `
     <div class="row justify-content-center">
-      <input [checked]="checked" (change)="onToggle($event)" type="checkbox" />
+      <input
+        #box
+        [checked]="checked"
+        (change)="onToggle($event)"
+        type="checkbox" />
     </div>
   `,
   styles: [],
 })
 export class CheckboxElementComponent<T = any> implements OnInit {
   checked: boolean;
-
+  @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
   @Input() value: boolean;
   @Input() rowData: T;
 
