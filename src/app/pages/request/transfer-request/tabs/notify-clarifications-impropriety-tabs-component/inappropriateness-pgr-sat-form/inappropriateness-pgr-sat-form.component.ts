@@ -99,6 +99,7 @@ export class InappropriatenessPgrSatFormComponent
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
       rejectNoticeId: this.notification.rejectNotificationId,
+      areaUserCapture: token.delegacionreg,
     };
 
     this.loading = true;
