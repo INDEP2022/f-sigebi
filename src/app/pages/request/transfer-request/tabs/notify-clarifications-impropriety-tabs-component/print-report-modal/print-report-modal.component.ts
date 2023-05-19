@@ -105,7 +105,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    this.idSolicitud = this.requestInfo.id;
+    //this.idSolicitud = this.requestInfo.id;
     this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
     //Borrar firmantes existentes
     this.verificateFirm();
@@ -181,7 +181,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   verificateFirm() {
     this.signatoriesService
       .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
-      //.getSignatoriesName(this.idTypeDoc, this.idSolicitud)
       .subscribe({
         next: response => {
           console.log('Existe firmante, proceder a eliminarlo');
@@ -225,7 +224,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             post: token.cargonivel1,
             learnedType: this.idTypeDoc,
             learnedId: this.idReportAclara, // Para los demás reportes
-            //learnedId: this.idSolicitud, Para DictamenProdcedencia
           };
 
           //Asigna un firmante según el usuario logeado
@@ -248,7 +246,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    //const learnedId = this.idSolicitud; //Para reporte dictamenProcedencia
     const learnedId = this.idReportAclara;
     this.loading = true;
     console.log('Traer firmantes');
@@ -332,6 +329,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   rowsSelected(event: any) {
     this.valuesSign = event.data;
     const idDoc = this.idSolicitud;
+    console.log('ID solicitud row seleccionado', idDoc);
     const obj: Object = {
       id: this.requestInfo.id,
       recordId: this.requestInfo.recordId,
@@ -416,6 +414,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       recordTmpId: this.requestInfo.recordTmpId,
       coordregsae_ktl: this.requestInfo.coordregsae_ktl,
     };
+    console.log();
     //Enviar nueva información a Request
     this.requestService.update(idDoc, obj).subscribe({
       next: data => {},
@@ -460,12 +459,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       this.btnTitle = 'Adjuntar Documento';
       this.btnSubTitle = 'Imprimir Reporte';
     }
-
-    //Agregar información del firmante al reporte
-    /*this.requestService.update(idDoc, this.dictumForm.value).subscribe({
-      next: data => (this.handleSuccess(), this.signDictum()),
-      error: error => (this.loading = false),
-    });*/
   }
 
   pdfTempo: string = 'PDF';
@@ -481,25 +474,49 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   reader = new FileReader();
 
-  attachDoc() {
+  validAttachDoc() {
+    console.log('this.idSolicitud:', this.idSolicitud);
     let token = this.authService.decodeToken();
     const extension = '.pdf';
     const nombreDoc = `DOC_${this.date}${extension}`;
     const contentType: string = '.pdf';
     const file: any = '';
+    if (this.idSolicitud === undefined) {
+      console.log('soy reporte de dictaminación');
+      const formData = {
+        dDocTitle: nombreDoc, //Título del documento
+        dDocAuthor: token.name, //Autor del documento
+        dDocType: contentType, //Tipo de documento
+        dDocCreator: token.name, //Creador del documento
+        //dDocName: 'Dictamen Procendecia',	//Identificador del documento
+        dInDate: new Date(), //Fecha de creación del documento
+        xidSolicitud: this.requestInfo.id,
+        xtipoDocumento: this.idTypeDoc,
+        xdelegacionRegional: this.idRegionalDelegation,
+      };
+      this.attachDoc(formData);
+    } else {
+      console.log('soy reporte de notificaciones');
+      const formData = {
+        dDocTitle: nombreDoc, //Título del documento
+        dDocAuthor: token.name, //Autor del documento
+        dDocType: contentType, //Tipo de documento
+        dDocCreator: token.name, //Creador del documento
+        //dDocName: 'Dictamen Procendecia',	//Identificador del documento
+        dInDate: new Date(), //Fecha de creación del documento
+        xidSolicitud: this.idSolicitud,
+        xtipoDocumento: this.idTypeDoc,
+      };
+      this.attachDoc(formData);
+    }
+  }
 
-    const formData = {
-      dDocTitle: nombreDoc, //Título del documento
-      dDocAuthor: token.name, //Autor del documento
-      dDocType: contentType, //Tipo de documento
-      dDocCreator: token.name, //Creador del documento
-      //dDocName: 'Dictamen Procendecia',	//Identificador del documento
-      dInDate: new Date(), //Fecha de creación del documento
-      xidSolicitud: this.idSolicitud,
-      xtipoDocumento: this.idTypeDoc,
-      xdelegacionRegional: this.idRegionalDelegation,
-    };
-
+  attachDoc(formData: Object) {
+    let token = this.authService.decodeToken();
+    const extension = '.pdf';
+    const nombreDoc = `DOC_${this.date}${extension}`;
+    const contentType: string = '.pdf';
+    const file: any = '';
     this.pdf.getData().then(u8 => {
       let blob = new Blob([u8.buffer], {
         type: 'application/pdf',
@@ -540,7 +557,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     );
   }
 
-  //Modificar
   firm() {
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
@@ -548,7 +564,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       console.log('ID de solicitud', this.requestInfo);
       const nameTypeReport = 'DictamenProcendecia';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -697,7 +713,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
-          this.attachDoc();
+          this.validAttachDoc();
           //this. attachDoc();
           console.log('Adjuntar documento:');
         }
