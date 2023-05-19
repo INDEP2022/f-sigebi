@@ -13,7 +13,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
-import { IPAAbrirActasPrograma } from 'src/app/core/models/good-programming/good-programming';
 import {
   IPAAbrirActasPrograma,
   IPACambioStatus,
@@ -28,6 +27,7 @@ import {
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
+import { IBlkPost } from 'src/app/core/models/ms-proceedings/warehouse-vault.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -36,6 +36,7 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
@@ -50,8 +51,6 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CheckboxElementComponent } from '../../commercialization/shared-marketing-components/payment-dispersion-monitor/dispersion-payment-details/checkbox-element/checkbox-element.component';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
-import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
-import { IBlkPost } from 'src/app/core/models/ms-proceedings/warehouse-vault.model';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -466,25 +465,25 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           di_disponible = true;
           this.serviceGoodProcess.getValOtro(valModel).subscribe(
             res => {
-              const modelPosQuery: IBlkPost ={
+              const modelPosQuery: IBlkPost = {
                 no_bien: good.id,
-                no_acta: this.idProceeding
-              }
+                no_acta: this.idProceeding,
+              };
               this.serviceProceeding.getBiePosquery(modelPosQuery).subscribe(
                 res => {
-                  console.log(res)
+                  console.log(res);
                 },
-                err=>{
-                  console.log(err)
+                err => {
+                  console.log(err);
                 }
-              )
+              );
               console.log('Entró a Val Otro');
               const modelLvlPrograma: ILvlPrograma = {
                 no_bien: good.id,
                 no_expediente: this.form.get('expediente').value,
               };
               console.log(modelLvlPrograma);
-              
+
               this.serviceGoodProcess
                 .getLvlPrograma(modelLvlPrograma)
                 .subscribe(
