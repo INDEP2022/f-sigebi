@@ -68,7 +68,6 @@ export interface IPACambioStatus {
   P_FECHA_RE_FIS: Date;
   P_TIPO_ACTA: string;
 }
-
 export interface ITmpProgValidation {
   valmovement: number;
   valMessage: string;

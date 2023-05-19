@@ -40,7 +40,6 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
       model
     );
   }
-
   paRegresaEstAnterior(model: IPAAbrirActasPrograma) {
     return this.httpClient.post(
       `${environment.API_URL}/programminggood/api/v1/programminggood/apps/return-previous-status`,
@@ -54,7 +53,6 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
       model
     );
   }
-
   getTmpProgValidation(params: string) {
     return this.httpClient.get<IListResponse<ITmpProgValidation>>(
       `${environment.API_URL}/programminggood/api/v1/tmp-prog-validation${params}`
@@ -86,6 +84,11 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.delete(`${environment.API_URL}/${route}`, {
       body: formData,
     });
+  }
+
+  showReportGoodProgramming(dataObject: Object) {
+    const route = `${this.route}/programminggood/apps/programmableGoods`;
+    return this.httpClient.post(`${environment.API_URL}/${route}`, dataObject);
   }
 
   private makeParams(params: ListParams): HttpParams {

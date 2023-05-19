@@ -13,6 +13,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { IPAAbrirActasPrograma } from 'src/app/core/models/good-programming/good-programming';
 import {
   IPAAbrirActasPrograma,
   IPACambioStatus,
