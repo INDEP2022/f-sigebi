@@ -951,20 +951,24 @@ export class JuridicalRecordUpdateComponent
     );
   }
 
+  isLoadingOfficeOfRelief = false;
   async onClickOfficeOfRelief() {
     let dictumId: number;
+    this.isLoadingOfficeOfRelief = true;
     if (!this.formControls.affairKey.value) {
       this.alert(
         'warning',
         'No especificado',
         'Es necesario especificar el tipo de desahogo'
       );
+      this.isLoadingOfficeOfRelief = false;
       return;
     }
     if (this.formControls.dictumKey.value?.id) {
       dictumId = this.formControls.dictumKey.value.id;
       if ([24, 26].includes(dictumId)) {
         this.openSatChat();
+        this.isLoadingOfficeOfRelief = false;
         return;
       }
     }
@@ -977,13 +981,21 @@ export class JuridicalRecordUpdateComponent
           'No encontrado',
           'Este asunto con este dictámen no esta registrado en el catálogo de Asuntos - Dictamen'
         );
+        this.isLoadingOfficeOfRelief = false;
         return;
       }
     } catch (ex) {
+      this.alert(
+        'warning',
+        'No encontrado',
+        'Este asunto con este dictámen no esta registrado en el catálogo de Asuntos - Dictamen'
+      );
       return;
     }
     if (this.affair && (!this.dictOffice || this.dictOffice === 'D')) {
-      this.pupValidaOf(catRAsuntDict.data[0]);
+      await this.pupValidaOf(catRAsuntDict.data[0]);
+      this.isLoadingOfficeOfRelief = false;
+      return;
     }
     if (this.affair && this.dictOffice) {
       try {
@@ -993,19 +1005,22 @@ export class JuridicalRecordUpdateComponent
         if (dictumId == 1) {
           try {
             await this.fetchForForm.getGoodAll();
-            this.pupValidaOf(catRAsuntDict.data[0]);
+            await this.pupValidaOf(catRAsuntDict.data[0]);
           } catch (ex) {
             this.alert(
               'warning',
               'No encontrado',
               'Este volante no tiene bienes para Desahogar.'
             );
+            this.isLoadingOfficeOfRelief = false;
             return;
           }
+          this.isLoadingOfficeOfRelief = false;
           return;
         }
       }
-      this.pupValidaOf(catRAsuntDict.data[0]);
+      await this.pupValidaOf(catRAsuntDict.data[0]);
+      this.isLoadingOfficeOfRelief = false;
     }
     // try {
     //   const result = await this.fetchForForm.searchCatRAsuntDic();
@@ -1155,6 +1170,8 @@ export class JuridicalRecordUpdateComponent
         ],
         {
           queryParams: {
+            origin: '/pages/juridical/file-data-update',
+            form: 'FACTGENACTDATEX',
             expediente: this.formControls.expedientNumber.value,
             volante: this.formControls.wheelNumber.value,
             pDictamen: this.formControls.dictumKey.value?.id,
@@ -1221,8 +1238,25 @@ export class JuridicalRecordUpdateComponent
       doc: catalog.doc,
     };
     console.log(this.fileUpdComService.juridicalDocumentManagementParams);
-    this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management/1'
+    this.router.navigate(
+      [
+        '/pages/documents-reception/flyers-registration/related-document-management/1',
+      ],
+      {
+        queryParams: {
+          origin: '/pages/juridical/file-data-update',
+          form: 'FACTGENACTDATEX',
+          expediente: this.formControls.expedientNumber.value,
+          volante: this.formControls.wheelNumber.value,
+          pDictamen: this.formControls.dictumKey.value?.id,
+          pGestOk: this.pageParams.pGestOk,
+          pNoTramite: procedure,
+          tipoOf: officeType,
+          bien: catalog.property,
+          sale: sale,
+          doc: catalog.doc,
+        },
+      }
     );
   }
 
@@ -1237,6 +1271,7 @@ export class JuridicalRecordUpdateComponent
       );
       return;
     }
+
     if ([1, 16, 23].includes(dictumId)) dictumType = 'PROCEDENCIA';
     if (dictumId == 15) dictumType = 'DESTRUCCION';
     if (dictumId == 2) dictumType = 'DECOMISO';
@@ -1290,9 +1325,19 @@ export class JuridicalRecordUpdateComponent
     // this.router.navigateByUrl(
     //   '/pages/documents-reception/flyers-registration/juridical-dictums'
     // );
-    this.router.navigateByUrl(
-      `/pages/juridical/juridical-ruling-g?noExpediente=${this.formControls.expedientNumber.value}`
-    );
+    this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+      queryParams: {
+        origin: '/pages/juridical/file-data-update',
+        form: 'FACTGENACTDATEX',
+        expediente: this.formControls.expedientNumber.value,
+        volante: this.formControls.wheelNumber.value,
+        tipoVo: this.formControls.wheelType.value,
+        tipoDic: dictumType,
+        consulta: this.dictConsultOnly,
+        pGestOk: this.pageParams.pGestOk,
+        pNoTramite: procedure,
+      },
+    });
   }
 
   openToShiftChange() {
@@ -1305,9 +1350,18 @@ export class JuridicalRecordUpdateComponent
       affair: this.formControls.affairKey.value,
     };
     this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
-      queryParams: { origin: this.layout },
+      queryParams: {
+        origin: '/pages/juridical/file-data-update',
+        form: 'FACTGENACTDATEX',
+        iden: this.formControls.wheelNumber.value,
+        exp: this.formControls.expedientNumber.value,
+        pNoTramite: this.procedureId,
+        affair: this.formControls.affairKey.value,
+      },
     });
   }
+
+  readonly nameForm = '';
 
   sendToRelatedDocumentsManagement() {
     this.fileUpdateService.juridicalFileDataUpdateForm =
@@ -1327,8 +1381,20 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
-    this.router.navigateByUrl(
-      '/pages/documents-reception/flyers-registration/related-document-management/2'
+    this.router.navigate(
+      [
+        '/pages/documents-reception/flyers-registration/related-document-management/2',
+      ],
+      {
+        queryParams: {
+          origin: '/pages/juridical/file-data-update',
+          form: 'FACTGENACTDATEX',
+          expediente: this.formControls.expedientNumber.value,
+          volante: this.formControls.wheelNumber.value,
+          pGestOk: this.pageParams.pGestOk,
+          pNoTramite: procedure,
+        },
+      }
     );
   }
 

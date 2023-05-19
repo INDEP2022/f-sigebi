@@ -977,6 +977,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         if (q.isConfirmed) {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
+
           paramsF.addFilter('valUser', localStorage.getItem('username'));
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
