@@ -182,6 +182,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     goodId?: number,
     observations?: string
   ) {
+    console.log('actualizando... 1');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,

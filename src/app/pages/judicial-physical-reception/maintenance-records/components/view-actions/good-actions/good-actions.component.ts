@@ -100,75 +100,54 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   addGood() {
     // console.log(row);
     // debugger;
-    const goodForAdd = this.dataForAdd.findIndex(
-      x => x.numberGood === this.form.get('goodId').value
-    );
-    if (goodForAdd === -1) {
-      this.dataForAdd.push({
-        numberProceedings: +this.nroActa,
-        numberGood: this.form.get('goodId').value,
-        amount: this.selectedGood.quantity,
-        received: 'S',
-        approvedDateXAdmon: firstFormatDate(new Date()),
-        approvedXAdmon: 'S',
-        approvedUserXAdmon: localStorage.getItem('username'),
-        dateIndicatesUserApproval: firstFormatDate(new Date()),
-        numberRegister: null,
-        reviewIndft: null,
-        correctIndft: null,
-        idftUser: null,
-        idftDate: null,
-        numDelegationIndft: null,
-        yearIndft: null,
-        monthIndft: null,
-        idftDateHc: null,
-        packageNumber: null,
-        exchangeValue: null,
-        warehouse: this.selectedGood.warehouseNumber,
-        vault: this.selectedGood.vaultNumber,
-        createdLocal: true,
-      });
-    } else {
-      this.dataForAdd[goodForAdd].amount =
-        +(this.selectedGood.quantity + '') +
-        +(this.dataForAdd[goodForAdd].amount + '');
-    }
-    this.service.dataForAdd = [...this.service.dataForAdd];
-    // this.addGoodEvent.emit({
-    //   numberProceedings: +this.nroActa,
-    //   numberGood: this.form.get('goodId').value,
-    //   amount: this.selectedGood.quantity,
-    //   received: 'S',
-    //   approvedDateXAdmon: firstFormatDate(new Date()),
-    //   approvedXAdmon: 'S',
-    //   approvedUserXAdmon: localStorage.getItem('username'),
-    //   dateIndicatesUserApproval: firstFormatDate(new Date()),
-    //   numberRegister: null,
-    //   reviewIndft: null,
-    //   correctIndft: null,
-    //   idftUser: null,
-    //   idftDate: null,
-    //   numDelegationIndft: null,
-    //   yearIndft: null,
-    //   monthIndft: null,
-    //   idftDateHc: null,
-    //   packageNumber: null,
-    //   exchangeValue: null,
-    //   warehouse: this.selectedGood.warehouseNumber,
-    //   vault: this.selectedGood.vaultNumber,
-    //   createdLocal: true
-    // });
-    // this.totalItems++;
-    // this.service
-    //   .create({
+    const newGood: IDetailProceedingsDeliveryReception = {
+      numberProceedings: +this.nroActa,
+      numberGood: this.form.get('goodId').value,
+      amount: this.selectedGood.quantity,
+      received: 'S',
+      approvedDateXAdmon: firstFormatDate(new Date()),
+      approvedXAdmon: 'S',
+      approvedUserXAdmon: localStorage.getItem('username'),
+      dateIndicatesUserApproval: firstFormatDate(new Date()),
+      numberRegister: null,
+      reviewIndft: null,
+      correctIndft: null,
+      idftUser: null,
+      idftDate: null,
+      numDelegationIndft: null,
+      yearIndft: null,
+      monthIndft: null,
+      idftDateHc: null,
+      packageNumber: null,
+      exchangeValue: null,
+      warehouse: this.selectedGood.warehouseNumber,
+      vault: this.selectedGood.vaultNumber,
+      createdLocal: true,
+    };
+    this.detailService.create(newGood).subscribe({
+      next: response => {
+        this.onLoadToast('success', 'Bien', 'Agregado exitosamente');
+        this.updateTable.emit();
+      },
+      error: err => {
+        this.onLoadToast('error', 'Bien', 'No se pudo agregar el bien');
+      },
+    });
+
+    // const goodForAdd = this.dataForAdd.findIndex(
+    //   x => x.numberGood === this.form.get('goodId').value
+    // );
+
+    // if (goodForAdd === -1) {
+    //   this.dataForAdd.push({
     //     numberProceedings: +this.nroActa,
     //     numberGood: this.form.get('goodId').value,
     //     amount: this.selectedGood.quantity,
     //     received: 'S',
-    //     approvedDateXAdmon: new Date(),
+    //     approvedDateXAdmon: firstFormatDate(new Date()),
     //     approvedXAdmon: 'S',
     //     approvedUserXAdmon: localStorage.getItem('username'),
-    //     dateIndicatesUserApproval: new Date(),
+    //     dateIndicatesUserApproval: firstFormatDate(new Date()),
     //     numberRegister: null,
     //     reviewIndft: null,
     //     correctIndft: null,
@@ -180,18 +159,16 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     //     idftDateHc: null,
     //     packageNumber: null,
     //     exchangeValue: null,
-    //   })
-    //   .subscribe({
-    //     next: response => {
-    //       this.onLoadToast(
-    //         'success',
-    //         this.form.get('goodId').value,
-    //         'Agregado exitosamente'
-    //       );
-    //       this.updateTable.emit();
-    //     },
-    //     error: err => {},
+    //     warehouse: this.selectedGood.warehouseNumber,
+    //     vault: this.selectedGood.vaultNumber,
+    //     createdLocal: true,
     //   });
+    // } else {
+    //   this.dataForAdd[goodForAdd].amount =
+    //     +(this.selectedGood.quantity + '') +
+    //     +(this.dataForAdd[goodForAdd].amount + '');
+    // }
+    // this.service.dataForAdd = [...this.service.dataForAdd];
   }
 
   openModals() {
@@ -275,7 +252,6 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
       message += good + (index < goods.length - 1 ? ',' : '');
     });
     self.changeGoodsAct(message, newValue.numberProceedings);
-    // this.updateTable.emit();
   }
 
   changeGoodsAct(message: string, numberProceedings: string) {

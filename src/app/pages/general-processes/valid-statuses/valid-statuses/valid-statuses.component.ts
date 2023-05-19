@@ -126,6 +126,6 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     this.hideError();
     return this.screenHelpService
       .getById(this.global.screenStatus)
-      .pipe(tap(screenHelp => (this.helpText = screenHelp.help)));
+      .pipe(tap(screenHelp => (this.helpText = screenHelp.businessRoleDesc)));
   }
 }

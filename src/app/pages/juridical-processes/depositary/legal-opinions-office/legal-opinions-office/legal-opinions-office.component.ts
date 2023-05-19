@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -116,7 +116,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     private documentsService: DocumentsService,
     private modalService: BsModalService,
     private siabService: SiabService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router: Router
   ) {
     super();
     this.settings = {
@@ -1268,7 +1269,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       if (this.variables.identi.includes('4')) {
         if (this.paramsScreen.TIPO == 'PROCEDENCIA') {
           params['NOME_DICTPRO'] = this.objDetail['vCLAVE_ARMADA']; // NO SE LLENA ESTA VARIABLE EN EL FORMS
-          this.runReport('RGENADBDICTAMASIV_EXT', params);
+          // this.runReport('RGENADBDICTAMASIV_EXT', params);
+          this.runReport('blank', params);
         } else {
           this.runReport('RGENADBDICTAMASIV', params);
         }
@@ -1341,9 +1343,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.paramsScreen.TIPO == 'PROCEDENCIA'
     ) {
       params['NOME_DICTPRO'] = this.objDetail['vCLAVE_ARMADA']; // NO SE LLENA ESTA VARIABLE EN EL FORMS
-      this.runReport('RGENREPDICTAMASDES_EXT', params);
+      // this.runReport('RGENREPDICTAMASDES_EXT', params);
+      this.runReport('blank', params);
     } else {
-      this.runReport('RGENREPDICTAMASDES', params);
+      // this.runReport('RGENREPDICTAMASDES', params);
+      this.runReport('blank', params);
     }
   }
 
@@ -1421,6 +1425,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.svLegalOpinionsOfficeService.getCuDelRem(paramsData).subscribe({
       next: data => {
         console.log('cuDelRem', data);
+        this.objDetail['vNO_DELREM'] = data.data[0]['id_delegacion'];
+        this.objDetail['vDELEGAREM'] = data.data[0]['delegacion'];
         this.cuDelDest();
       },
       error: error => {
@@ -1442,6 +1448,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.svLegalOpinionsOfficeService.getCuDelDest(paramsData).subscribe({
       next: data => {
         console.log('cuDelDest', data);
+        this.objDetail['vNO_DELDEST'] = data.data[0]['id_delegacion'];
+        this.objDetail['vDELEGADEST'] = data.data[0]['delegacion'];
         this.cu_Tpacta();
       },
       error: error => {
@@ -1466,6 +1474,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           console.log('NOTIFICATIONS CU', data);
+          this.objDetail['vNOTR_FINAL'] = data.data[0].endTransferNumber;
           this.makeArmedKey();
         },
         error: error => {
@@ -1548,5 +1557,16 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     }
     // GENERAR REPORTES
     this.runConditionReports();
+  }
+  goBack() {
+    if (this.origin == 'FACTJURDICTAMAS') {
+      this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+        queryParams: {
+          origin: this.screenKey,
+          P_GEST_OK: this.paramsScreen.P_GEST_OK,
+          P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+        },
+      });
+    }
   }
 }
