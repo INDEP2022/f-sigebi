@@ -139,7 +139,7 @@
                       [form]="form"></app-currency-shared>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('fechaAvaluo')"
                       label="Fecha Aval&uacute;o">
@@ -152,7 +152,7 @@
                     </form-field>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('fechaVigencia')"
                       label="Fecha Vigencia">
@@ -171,7 +171,7 @@
                     </form-field>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field [control]="form.get('perito')">
                       <ngx-select
                         (fetchItems)="getProeficients($event)"
@@ -218,7 +218,7 @@
             <tab heading="Dictamen">
               <div class="row">
                 <div class="col-md-6">
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('fechaDictamen')"
                       label="Fecha Dictamen">
@@ -231,7 +231,7 @@
                     </form-field>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field [control]="form.get('dictamenPerito')">
                       <ngx-select
                         (fetchItems)="getProeficients($event)"
@@ -288,7 +288,7 @@
             <tab heading="Primera Notificaci&oacute;n de Abandono">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="row">
+                  <div class="row mb-3">
                     <div class="col-md-9">
                       <form-field
                         [control]="form.get('fechaAseg')"
@@ -303,7 +303,7 @@
                     </div>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('notificado')"
                       label="Notificado">
