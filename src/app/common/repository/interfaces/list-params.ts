@@ -9,6 +9,17 @@ export class ListParams {
   //filter?: string = '';
 }
 
+export class FilterBulkTechnical {
+  //text?: string = '';
+  [others: string]: string | number;
+  page?: number = 1;
+  inicio?: number = 1;
+  limit?: number = 10;
+  pageSize?: number = 10;
+  //take?: number = 10;
+  filter?: string = '';
+}
+
 export class FilterParams {
   page?: number = 1;
   limit?: number = 10;

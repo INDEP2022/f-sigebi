@@ -1,9 +1,10 @@
 export const GOODS_WITH_REQUIRED_INFO_COLUMNS = {
-  bien: {
+  id: {
     title: 'No. Bien',
+    valuePrepareFunction: (value: any) => (value ? value.id : ''),
     sort: false,
   },
-  motivo: {
+  motive: {
     title: 'Motivo',
     sort: false,
   },
