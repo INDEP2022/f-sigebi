@@ -32,7 +32,7 @@
         [nroActa]="infoForm ? infoForm.id : null"
         [rowsSelected]="rowsSelected"
         (updateTable)="getGoods()"></app-good-actions>
-      <div *ngIf="dataForAdd && dataForAdd.length > 0">
+      <!-- <div *ngIf="dataForAdd && dataForAdd.length > 0">
         <div class="row header mt-3">
           <h6 class="title">Bienes por agregar</h6>
         </div>
@@ -42,7 +42,7 @@
           [totalItems]="dataForAdd.length"
           (rowsSelected)="rowsSelectedLocal = $event">
         </app-table-good-maintenance>
-      </div>
+      </div> -->
       <app-table-good-maintenance
         [statusActa]="statusActa"
         [data]="data"
