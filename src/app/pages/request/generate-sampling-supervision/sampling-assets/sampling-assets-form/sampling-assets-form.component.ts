@@ -1,11 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
-import { ListParams } from '../../../../../common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from '../../../../../common/repository/interfaces/list-params';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
@@ -57,9 +65,9 @@ var data2 = [
 export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   dateForm: ModelForm<any>;
   searchForm: ModelForm<any>;
-  showSearchForm: boolean = false;
+  showSearchForm: boolean = true;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: any[] = [];
+  paragraphs: any = [];
   totalItems: number = 0;
 
   jsonToCsv = JSON_TO_CSV;
@@ -87,6 +95,13 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
 
+  delegationId: string = '';
+  domicileSelecte: any = null;
+
+  //private domicilieService = inject(DomicileService);
+  private domicilieService = inject(GoodDomiciliesService);
+  authService = inject(AuthService);
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -96,6 +111,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.delegationId = this.getRegionalDelegationId();
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -108,17 +124,17 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   initDateForm() {
     this.dateForm = this.fb.group({
-      initialDate: [null],
-      finalDate: [null],
+      initialDate: [null, [Validators.required]],
+      finalDate: [null, [Validators.required]],
     });
-    this.paragraphs = data;
-    this.paragraphs2 = data2;
+    //this.paragraphs = data;
+    //this.paragraphs2 = data2;
   }
 
   initSearchForm() {
     this.searchForm = this.fb.group({
-      noWarehouse: [null],
-      postalCode: [null],
+      id: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      code: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       nameWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
       address: [null, [Validators.pattern(STRING_PATTERN)]],
     });
@@ -126,6 +142,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   selectWarehouse(event: any): any {
     this.displaySearchAssetsBtn = event.isSelected ? true : false;
+    this.domicileSelecte = event.data;
   }
 
   selectAssts(event: any) {
@@ -158,6 +175,54 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   close(): void {}
 
+  search() {
+    console.log(this.dateForm);
+    const params = new FilterParams();
+    params.addFilter('regionalDelegationId', this.delegationId);
+    const searchform = this.searchForm.value;
+    for (const key in searchform) {
+      if (searchform[key] != null) {
+        switch (key) {
+          case 'id':
+            params.addFilter('id', searchform[key]);
+            break;
+          case 'code':
+            params.addFilter('code', searchform[key]);
+            break;
+          case 'nameWarehouse':
+            params.addFilter('warehouseAlias.id', searchform[key]);
+            break;
+          case 'address':
+            params.addFilter('description', searchform[key]);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    this.getDomicilies(params);
+  }
+
+  getRegionalDelegationId() {
+    const id = this.authService.decodeToken().department;
+    return id;
+  }
+
+  getDomicilies(params: FilterParams) {
+    const filter = params.getParams();
+    this.domicilieService.getAll(filter).subscribe({
+      next: resp => {
+        resp.data.map((item: any) => {
+          item['aliasWarehouseName'] = item.warehouseAlias.id;
+          item['keyState'] = item.regionalDelegationId.keyState;
+        });
+
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
+      },
+    });
+  }
+
   turnForm() {
     Swal.fire({
       title: 'Confirmación Turnado',
@@ -187,5 +252,9 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
+  }
+
+  clean() {
+    this.dateForm.reset();
   }
 }
