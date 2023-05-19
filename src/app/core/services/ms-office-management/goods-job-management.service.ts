@@ -45,4 +45,11 @@ export class GoodsJobManagementService extends HttpService {
       params
     );
   }
+
+  updateOficio(body: any) {
+    return this.put<IListResponse<ImanagementOffice>>(
+      GoodsJobManagementEndpoints.mJobManagement,
+      body
+    );
+  }
 }

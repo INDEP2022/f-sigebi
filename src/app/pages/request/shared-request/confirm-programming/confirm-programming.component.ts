@@ -32,7 +32,7 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(this.confirmForm.value);
     this.modalRef.hide();
   }
 

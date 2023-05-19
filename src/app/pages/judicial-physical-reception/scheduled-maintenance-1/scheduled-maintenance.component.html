@@ -26,7 +26,26 @@
           <!-- <app-proceeding-types-shared
             [form]="form"></app-proceeding-types-shared> -->
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4" style="display: flex">
+          <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
+            <input
+              bsDaterangepicker
+              class="form-control form-date"
+              formControlName="rangeDate"
+              readonly
+              [maxDate]="hoy" />
+          </form-field>
+          <div
+            *ngIf="rangeDateValue !== null"
+            class="deleteDate"
+            (click)="deleteRange()">
+            x
+          </div>
+          <!-- <button class="btn btn-primary btn-xs active" type="submit" size="small" (click)="deleteRange()">
+            x
+          </button> -->
+        </div>
+        <!-- <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
@@ -46,7 +65,7 @@
               readonly
               formControlName="fechaFin" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-2">
           <form-field
             [control]="form.get('statusEvento')"
@@ -152,7 +171,7 @@
             size="small"
             (click)="openModalActas()">
             <i class="bx bx-search float-icon"></i>
-            Buscar Bien en Acta
+            Buscar Bien en Actas
           </button>
         </div>
       </div>

@@ -225,6 +225,11 @@ export class NotificationsFileComponent
       });
   }
 
+  btnCleanData() {
+    this.form.reset();
+    this.setDataTable(); // Set data in table
+  }
+
   goBack() {
     if (this.origin == 'FACTJURBIENESXAMP') {
       this.router.navigate([

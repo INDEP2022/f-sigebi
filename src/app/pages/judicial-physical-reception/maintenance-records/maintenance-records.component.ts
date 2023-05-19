@@ -8,7 +8,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
 
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
@@ -38,8 +37,10 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
   loadingGoods = true;
   loadingNewGoods = true;
   newLimit = new FormControl(1);
-  rowsSelected: any[] = [];
-  registro = false;
+  // rowsSelected: any[] = [];
+  rowsSelectedLocal: any[] = [];
+  rowsSelectedNotLocal: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private store: Store,
@@ -67,6 +68,10 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     this.service.selectedAct = value;
   }
 
+  get rowsSelected() {
+    return this.rowsSelectedLocal.concat(this.rowsSelectedNotLocal);
+  }
+
   get data() {
     return this.service.data ? this.service.data : [];
   }
@@ -89,6 +94,14 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
         ? this.service.formValue.statusActa
         : 'CERRADA'
       : 'CERRADA';
+  }
+
+  get registro() {
+    return this.service.registro;
+  }
+
+  set registro(value) {
+    this.service.registro = value;
   }
 
   ngOnInit(): void {
@@ -137,7 +150,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       this.loading = true;
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
-          // debugger;
+          debugger;
           this.infoForm = response.data[0];
           this.service.formValue = deliveryReceptionToInfo(this.infoForm);
           if (!this.registro) {
@@ -174,12 +187,13 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
     }
   }
 
-  addGood(good: IDetailProceedingsDeliveryReception) {
-    this.service.dataForAdd.push(good);
-    this.service.dataForAdd = [...this.service.dataForAdd];
-  }
+  // addGood(good: IDetailProceedingsDeliveryReception) {
+  //   this.service.dataForAdd.push(good);
+  //   this.service.dataForAdd = [...this.service.dataForAdd];
+  // }
 
   private fillParams(form: IProceedingInfo) {
+    debugger;
     if (!form) return false;
     this.service.formValue = form;
     if (this.registro === false) {

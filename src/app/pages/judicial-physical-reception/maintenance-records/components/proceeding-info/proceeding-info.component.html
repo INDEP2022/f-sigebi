@@ -12,7 +12,7 @@
         </div>
         <div class="col-md-6">
           <button
-            [class]="disabled || form.invalid ? 'disabled' : ''"
+            [class]="disabled || form.invalid || registro ? 'disabled' : ''"
             class="btn btn-primary btn-sm active"
             (click)="filter()">
             <i class="fa fa-search"></i> Filtrar
@@ -33,7 +33,7 @@
             paramSearch="filter.id"
             prefixSearch="$eq"
             path="proceeding/api/v1/proceedings-delivery-reception"
-            (valueChange)="some($event)">
+            (valueChange)="update($event)">
           </ng-custom-select-loading>
 
           <!-- <form-field [control]="form.get('id')" label="No&#46; Acta">
@@ -65,7 +65,7 @@
               [clearable]="false">
               <ng-option value="TODOS">Todos</ng-option>
               <ng-option value="ABIERTA">Abierta</ng-option>
-              <ng-option value="ABIERTA">Cerrada</ng-option>
+              <ng-option value="CERRADA">Cerrada</ng-option>
             </ng-select>
           </form-field>
         </div>
