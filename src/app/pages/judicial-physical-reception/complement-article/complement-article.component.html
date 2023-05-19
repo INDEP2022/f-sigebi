@@ -90,12 +90,14 @@
               <div class="d-flex justify-content-center">
                 <form-field [control]="form.get('solicitud')">
                   <div class="form-check d-flex align-items-center">
-                    <label class="form-check-label mr-3" for="flexCheckChecked">
+                    <label
+                      class="form-check-label pr-5 pl-5"
+                      for="flexCheckChecked">
                       Solicitud de Inscripción de Registro
                     </label>
                     <input
                       [class]="!this.isEnableGood ? 'disabled' : ''"
-                      class="form-check-input"
+                      class="form-check-input mr-3 ml-3"
                       type="checkbox"
                       formControlName="solicitud"
                       id="flexCheckDefault" />

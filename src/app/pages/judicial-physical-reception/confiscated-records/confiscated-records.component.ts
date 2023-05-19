@@ -13,6 +13,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
+import { IPAAbrirActasPrograma } from 'src/app/core/models/good-programming/good-programming';
 import {
   IGood,
   ILvlPrograma,
@@ -975,6 +976,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       ).then(q => {
         if (q.isConfirmed) {
           const paramsF = new FilterParams();
+          let VAL_MOVIMIENTO = 0;
           paramsF.addFilter('valUser', localStorage.getItem('username'));
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
@@ -982,11 +984,23 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             .subscribe(
               res => {
                 console.log(res);
+                VAL_MOVIMIENTO = res.data[0]['valmovement'];
               },
               err => {
                 console.log(err);
+                VAL_MOVIMIENTO = 0;
               }
             );
+
+          const modelPaOpen: IPAAbrirActasPrograma = {
+            P_NOACTA: 0,
+            P_AREATRA: '',
+            P_PANTALLA: '',
+            P_TIPOMOV: 0,
+          };
+          this.serviceProgrammingGood
+            .paOpenProceedingProgam(modelPaOpen)
+            .subscribe(res => {});
 
           const tipo_acta = ['D', 'ND'].includes(this.form.get('acta').value)
             ? 'DECOMISO'
