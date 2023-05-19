@@ -127,7 +127,7 @@
                         type="number"
                         [min]="1"
                         [class]="!this.isEnableGood ? 'disabled' : ''"
-                        class="form-control"
+                        class="form-control pl-3"
                         formControlName="importe" />
                     </form-field>
                   </div>
@@ -147,7 +147,7 @@
                         bsDatepicker
                         [maxlength]="10"
                         [class]="!this.isEnableGood ? 'disabled' : ''"
-                        class="form-control"
+                        class="form-control pl-3"
                         formControlName="fechaAvaluo" />
                     </form-field>
                   </div>
@@ -159,7 +159,7 @@
                       <input
                         bsDatepicker
                         id="fecha-vigencia-input"
-                        class="form-control"
+                        class="form-control pl-3"
                         [class]="
                           form.get('fechaAvaluo').value != null
                             ? ''
@@ -225,7 +225,7 @@
                       <input
                         bsDatepicker
                         [class]="!this.isEnableGood ? 'disabled' : ''"
-                        class="form-control"
+                        class="form-control pl-3"
                         [maxlength]="10"
                         formControlName="fechaDictamen" />
                     </form-field>
