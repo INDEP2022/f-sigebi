@@ -90,12 +90,14 @@
               <div class="d-flex justify-content-center">
                 <form-field [control]="form.get('solicitud')">
                   <div class="form-check d-flex align-items-center">
-                    <label class="form-check-label mr-3" for="flexCheckChecked">
+                    <label
+                      class="form-check-label pr-5 pl-5"
+                      for="flexCheckChecked">
                       Solicitud de Inscripción de Registro
                     </label>
                     <input
                       [class]="!this.isEnableGood ? 'disabled' : ''"
-                      class="form-check-input"
+                      class="form-check-input mr-3 ml-3"
                       type="checkbox"
                       formControlName="solicitud"
                       id="flexCheckDefault" />
@@ -137,7 +139,7 @@
                       [form]="form"></app-currency-shared>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('fechaAvaluo')"
                       label="Fecha Aval&uacute;o">
@@ -150,7 +152,7 @@
                     </form-field>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('fechaVigencia')"
                       label="Fecha Vigencia">
@@ -169,7 +171,7 @@
                     </form-field>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field [control]="form.get('perito')">
                       <ngx-select
                         (fetchItems)="getProeficients($event)"
@@ -216,7 +218,7 @@
             <tab heading="Dictamen">
               <div class="row">
                 <div class="col-md-6">
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('fechaDictamen')"
                       label="Fecha Dictamen">
@@ -229,7 +231,7 @@
                     </form-field>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field [control]="form.get('dictamenPerito')">
                       <ngx-select
                         (fetchItems)="getProeficients($event)"
@@ -286,7 +288,7 @@
             <tab heading="Primera Notificaci&oacute;n de Abandono">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="row">
+                  <div class="row mb-3">
                     <div class="col-md-9">
                       <form-field
                         [control]="form.get('fechaAseg')"
@@ -301,7 +303,7 @@
                     </div>
                   </div>
 
-                  <div class="row">
+                  <div class="row mb-3">
                     <form-field
                       [control]="form.get('notificado')"
                       label="Notificado">

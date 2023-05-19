@@ -36,14 +36,19 @@
 
             <div class="row">
               <div class="col-md-9">
-                <form-field
-                  [control]="form.get('estatusActa')"
-                  label="Estatus Acta">
-                  <select class="form-control" formControlName="estatusActa">
+                <form-field [control]="form.get('estatusActa')">
+                  <ngx-select
+                    control="estatusActa"
+                    label="Estatus Acta"
+                    bindLabel="estatusData"
+                    [form]="form"
+                    [searchable]="false"
+                    [data]="estatusData"></ngx-select>
+                  <!-- <select class="form-control" formControlName="estatusActa">
                     <option value="Abierta">Abierta</option>
                     <option value="Cerrada">Cerrada</option>
                     <option value="Todos">Todos</option>
-                  </select>
+                  </select> -->
                 </form-field>
               </div>
             </div>
@@ -64,7 +69,11 @@
                         [data]="initialProceeding"></ngx-select>
                     </form-field>
                   </div>
-                  <span className="labelActa">{{ keyProceedingInitial }}</span>
+                  <div class="col-md-5">
+                    <span className="labelActa">{{
+                      keyProceedingInitial
+                    }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -85,7 +94,9 @@
                         [data]="finalProceeding"></ngx-select>
                     </form-field>
                   </div>
-                  <span className="labelActa">{{ keyProceedingFinal }}</span>
+                  <div class="col-md-5">
+                    <span className="labelActa">{{ keyProceedingFinal }}</span>
+                  </div>
                 </div>
               </div>
             </div>

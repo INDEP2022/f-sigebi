@@ -64,15 +64,31 @@ export class ProceedingInfoComponent implements OnInit {
   ) {
     this.prepareForm();
     this.form.get('statusActa').valueChanges.subscribe(x => {
-      this.service.formValue.statusActa = x;
+      console.log(x);
+      if (this.service.formValue) {
+        this.service.formValue.statusActa = x;
+      }
+
       // this.updateStatus.emit(x);
     });
   }
 
   ngOnInit(): void {}
 
-  some(event: any) {
-    console.log(event);
+  // some(event: any) {
+  //   console.log(event);
+  // }
+
+  update(acta: IProceedingDeliveryReception) {
+    console.log(acta);
+
+    const actaId = acta.id;
+    this.form.reset();
+    this.form.get('id').setValue(actaId);
+    this.service.formValue = this.form.value;
+    console.log(this.service.formValue, this.form.value);
+    this.registro = false;
+    this.filterEvent.emit(this.form.value);
   }
 
   get registro() {
