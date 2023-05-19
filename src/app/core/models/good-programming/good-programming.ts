@@ -55,6 +55,13 @@ export interface IView {
   uniqueKey: string;
 }
 
+export interface ITmpProgValidation {
+  valmovement: number;
+  valMessage: string;
+  valUser: string;
+  valMinutesNumber: number;
+}
+
 export interface IGoodProgrammingSelect {
   id: string;
   addressGood: number;

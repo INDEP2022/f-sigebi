@@ -23,7 +23,7 @@ export const NOTIFICATIONS_FILE_LOAD_COLUMNS = {
     },
     sort: false,
   },
-  officeNumber: {
+  officeExternalKey: {
     title: 'No. Oficio',
     type: 'number',
     sort: false,

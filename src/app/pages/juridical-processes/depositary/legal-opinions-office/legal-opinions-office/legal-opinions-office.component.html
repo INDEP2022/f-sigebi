@@ -1,6 +1,18 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Oficio de dictaminaciones jur&iacute;dicas</h5>
+    <h5 *ngIf="!origin" class="title">
+      OFICIO DE DICTAMINACIONES JUR&Iacute;ICAS
+    </h5>
+    <div class="row w-100" *ngIf="origin">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">OFICIO DE DICTAMINACIONES JUR&Iacute;ICAS</h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end">
+        <button class="btn btn-primary active btn-sm" (click)="goBack()">
+          Regresar
+        </button>
+      </div>
+    </div>
   </div>
   <div body>
     <div class="row">
@@ -18,32 +30,34 @@
         <form [formGroup]="form" class="container-fluid form-material p-0">
           <div class="card">
             <div class="card-header text-dark">
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('file')"
-                label="Expediente">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="file" />
-              </form-field>
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('numberOfficeDic')"
-                label="No Oficio Dic&#46;">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="numberOfficeDic" />
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-sm active"
-                  (click)="btnSearchAppointment()">
-                  Buscar
-                  <i aria-hidden="true" class="fa fa-search text-pink"></i>
-                </button>
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <form-field
+                  class="col-sm-12 col-12 col-md-4 p-2"
+                  [control]="form.get('file')"
+                  label="Expediente">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="file" />
+                </form-field>
+                <form-field
+                  class="col-sm-12 col-12 col-md-4 p-2"
+                  [control]="form.get('numberOfficeDic')"
+                  label="No&#46; Oficio Dic&#46;">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numberOfficeDic" />
+                </form-field>
+                <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="btnSearchAppointment()">
+                    Buscar
+                    <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                  </button>
+                </div>
               </div>
             </div>
             <div class="card-body">
@@ -51,7 +65,7 @@
                 <form-field
                   class="col-sm-12 col-12 col-md-12 p-2"
                   [control]="form.get('cveOfficeGenerate')"
-                  label="Cve Oficio Armada">
+                  label="Cve&#46; Oficio Armada">
                   <input
                     type="text"
                     class="form-control"
@@ -389,13 +403,17 @@
         de <strong> {{ totalData }}</strong
         >, Espere un momento...
       </div>
+      <div class="col-md-12 alert alert-warning" *ngIf="loadDetail">
+        Realizando el proceso "Detalle" para mostrar el Reporte correspondiente,
+        Espere un momento...
+      </div>
       <div class="col-sm-12 col-12 col-md-12 text-center">
         <!-- <button type="button" class="btn btn-primary btn-sm active m-3">
           Reporte
           <i class="fa fa-file" aria-hidden="true"></i>
         </button> -->
         <button
-          [disabled]="loadingSend"
+          [disabled]="loadingSend || loadDetail"
           (click)="btnDetail()"
           type="button"
           class="btn btn-info btn-sm active m-3">
@@ -404,7 +422,7 @@
           <!-- <i class="fa fa-info-circle" aria-hidden="true"></i> -->
         </button>
         <button
-          [disabled]="loadingSend || blockSender"
+          [disabled]="loadingSend || blockSender || loadDetail"
           type="button"
           class="btn btn-success btn-sm active m-3"
           (click)="sendOffice()">
@@ -424,7 +442,7 @@
               [officeDictationData]="officeDictationData"
               [dictationData]="dictationData"
               [dataUserLogged]="dataUserLogged"
-              [disabled]="loadingSend"
+              [disabled]="loadingSend || loadDetail"
               (viewPicturesEmitter)="viewPictures($event)"></app-scanning-foil>
           </div>
         </div>

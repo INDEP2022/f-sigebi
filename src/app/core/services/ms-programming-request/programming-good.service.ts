@@ -5,7 +5,10 @@ import { ProgrammingGoodEndpoints } from 'src/app/common/constants/endpoints/ms-
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
+import {
+  IGoodProgramming,
+  ITmpProgValidation,
+} from 'src/app/core/models/good-programming/good-programming';
 import { environment } from 'src/environments/environment';
 import { IUser } from '../../models/catalogs/user.model';
 
@@ -26,6 +29,12 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.get<IListResponse<IUser>>(
       `${environment.API_URL}/${route}`,
       { params }
+    );
+  }
+
+  getTmpProgValidation(params: string) {
+    return this.httpClient.get<IListResponse<ITmpProgValidation>>(
+      `${environment.API_URL}/programminggood/api/v1/tmp-prog-validation${params}`
     );
   }
 

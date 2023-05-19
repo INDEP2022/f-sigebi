@@ -8,7 +8,10 @@
   Editar fechas
 </button> -->
 
-<form class="form-material" [formGroup]="form" style="display: flex">
+<form
+  class="form-material"
+  [formGroup]="form"
+  style="display: flex; column-gap: 15px">
   <form-field [control]="form.get('inicio')" label="Inicio">
     <input
       class="form-control"
@@ -37,4 +40,10 @@
       [minDate]="fechaInicio.value"
       formControlName="fin" />
   </form-field>
+  <button
+    [class]="disabled ? 'disabled' : ''"
+    class="btn btn-primary btn-sm active"
+    (click)="update()">
+    Guardar
+  </button>
 </form>
