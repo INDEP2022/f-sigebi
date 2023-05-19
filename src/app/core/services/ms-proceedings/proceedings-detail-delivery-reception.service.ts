@@ -194,7 +194,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
                 item.dateIndicatesUserApproval + '',
                 'string'
               ),
-              amount: item.good.quantity,
+              // amount: item.good.quantity,
               status: item.good.status,
               warehouse: item.good.storeNumber,
               vault: item.good.vaultNumber,
