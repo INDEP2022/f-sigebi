@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
@@ -119,13 +119,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getProgrammingId();
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getUsersProgramming());
+      .subscribe(() => this.getUsersProgramming()); */
 
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.showGoodProgramming());
+      .subscribe(() => this.showGoodProgramming()); */
   }
 
   getProgrammingId() {
@@ -135,7 +135,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .subscribe(data => {
         console.log('programming', data);
         this.programming = data;
-        this.idTransferent = data.tranferId;
+        /*this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation();
         this.getTransferent();
@@ -143,7 +143,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
-        /*this.statusProgramming(); */
+        this.statusProgramming(); */
       });
   }
 

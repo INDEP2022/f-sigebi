@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { MaintenanceRecordsService } from '../../services/maintenance-records.service';
 import {
   deliveryReceptionToInfo,
@@ -37,6 +40,9 @@ import {
           padding-right: 0px;
         }
       }
+      .notInputDatePicker {
+        background-color: white !important;
+      }
     `,
   ],
 })
@@ -65,6 +71,18 @@ export class ProceedingInfoComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  some(event: any) {
+    console.log(event);
+  }
+
+  get registro() {
+    return this.service.registro;
+  }
+
+  set registro(value) {
+    this.service.registro = value;
+  }
+
   get statusActa() {
     return this.form
       ? this.form.get('statusActa')
@@ -75,6 +93,11 @@ export class ProceedingInfoComponent implements OnInit {
 
   deleteProceedings() {
     this.service.totalProceedings = 0;
+    this.registro = false;
+    this.service.formJustification.reset();
+    this.service.data = [];
+    this.service.totalGoods = 0;
+    this.service.dataForAdd = [];
   }
 
   filter() {
@@ -98,17 +121,17 @@ export class ProceedingInfoComponent implements OnInit {
     this.form = this.fb.group({
       id: [null],
       numFile: [null],
-      cveActa: [null],
+      cveActa: [null, [Validators.pattern(STRING_PATTERN)]],
       tipoActa: [null],
-      labelActa: [null],
-      receiptKey: [null],
+      labelActa: [null, [Validators.pattern(STRING_PATTERN)]],
+      receiptKey: [null, [Validators.pattern(STRING_PATTERN)]],
       statusActa: [null],
       address: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
-      numDelegation1: [null],
-      numDelegation2: [null],
-      numDelegation1Description: [null],
-      numDelegation2Description: [null],
+      numDelegation1: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      numDelegation2: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      numDelegation1Description: [null, [Validators.pattern(STRING_PATTERN)]],
+      numDelegation2Description: [null, [Validators.pattern(STRING_PATTERN)]],
       elaborationDate: [null],
       closeDate: [null],
       datePhysicalReception: [null],
@@ -119,9 +142,9 @@ export class ProceedingInfoComponent implements OnInit {
       dateCloseHc: [null],
       captureDate: [null],
       dateMaxHc: [null],
-      witness1: [null],
-      witness2: [null],
-      comptrollerWitness: [null],
+      witness1: [null, [Validators.pattern(STRING_PATTERN)]],
+      witness2: [null, [Validators.pattern(STRING_PATTERN)]],
+      comptrollerWitness: [null, [Validators.pattern(STRING_PATTERN)]],
       elaborate: [null],
       numRegister: [null],
       identifier: [null],

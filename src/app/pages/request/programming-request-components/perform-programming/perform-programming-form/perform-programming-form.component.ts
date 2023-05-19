@@ -133,10 +133,8 @@ export class PerformProgrammingFormComponent
   employeTypeUserLog: string = '';
   task: any = null;
   showGoods: IGoodProgramming;
-  settingUser = { ...this.settings, ...SettingUserTable };
-
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
-
+  settingUser = { ...this.settings, ...SettingUserTable };
   settingGuardGoods = {
     ...this.settings,
     ...settingGuard,
@@ -834,10 +832,8 @@ export class PerformProgrammingFormComponent
     });
 
     const goods: any = await this.changeStatusGoodGuard();
-
     if (goods) {
       console.log('goods', goods);
-      this.showGoodsGuard(goods);
     }
   }
 

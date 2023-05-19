@@ -22,6 +22,7 @@ import { ICourt } from 'src/app/core/models/catalogs/court.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IProtectionPerGood } from 'src/app/core/models/ms-protection/protection.model';
 import { IDelegation } from 'src/app/core/models/ms-survillance/survillance';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CourtService } from 'src/app/core/services/catalogs/court.service';
@@ -101,7 +102,7 @@ export class AssignationGoodsProtectionComponent
   goodRemove: IGood;
   public form: FormGroup;
   public formAmparo: FormGroup;
-
+  blockDelete: boolean = false;
   paramsDel = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsMin = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsCourt = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -291,6 +292,29 @@ export class AssignationGoodsProtectionComponent
         .subscribe({
           next: value => {
             let amparo: any = value.data[0];
+
+            if (amparo.protectionDate) {
+              const dateFormat = amparo.protectionDate
+                .split('-')
+                .reverse()
+                .join('-');
+              amparo.protectionDate = dateFormat;
+            }
+            if (amparo.reportJustifiedDate) {
+              const dateFormat = amparo.reportJustifiedDate
+                .split('-')
+                .reverse()
+                .join('-');
+              amparo.reportJustifiedDate = dateFormat;
+            }
+            if (amparo.reportPreviousDate) {
+              const dateFormat = amparo.reportPreviousDate
+                .split('-')
+                .reverse()
+                .join('-');
+              amparo.reportPreviousDate = dateFormat;
+            }
+
             this.formAmparo.patchValue(amparo);
             if (amparo.minpubNumber) {
               const paramsD = new ListParams();
@@ -497,15 +521,20 @@ export class AssignationGoodsProtectionComponent
   }
 
   async btnEliminar() {
-    const exist = await new Promise((resolve, reject) => {
+    if (this.blockDelete) {
+      this.onLoadToast('info', 'No se pueden borrar bienes amparos', '');
+      return;
+    }
+    const table = document.getElementById('table').children[0].children[1];
+    const exist: IProtectionPerGood = await new Promise((resolve, reject) => {
       this.protectionService
         .getByPerIds({ goodNumber: this.goodRemove.goodId })
         .subscribe({
-          next: () => {
-            resolve(true);
+          next: data => {
+            resolve(data);
           },
           error: () => {
-            resolve(false);
+            resolve(null);
           },
         });
     });
@@ -528,13 +557,44 @@ export class AssignationGoodsProtectionComponent
       this.onLoadToast('info', 'No se puede eliminar un bien ya asignado', '');
     } else {
       const removed = {
-        goodNumber: this.goodRemove.goodId,
-        cveProtection: this.goodRemove.protection,
-        recordDate: '',
+        goodNumber: exist.goodNumber,
+        cveProtection: exist.cveProtection,
+        recordDate: exist.recordDate,
       };
-    }
 
-    console.log(exist);
+      this.protectionService.deletePer(removed).subscribe({
+        next: () => {
+          this.onLoadToast('success', 'Ha sido eliminado correctamente', '');
+
+          const time1 = setTimeout(() => {
+            this.dataTable.splice(
+              this.dataTable2.findIndex(
+                item => item.goodId === this.goodRemove.goodId
+              ),
+              1
+            );
+
+            this.dataTable.filter(
+              m => m.goodId == this.goodRemove.goodId
+            )[0].protection = null;
+
+            const time2 = setTimeout(() => {
+              this.dataTable2 = [...this.data2];
+              this.dataTable = [...this.dataTable];
+              this.goodRemove = null;
+              this.dataTable.map((amp, i) => {
+                amp.protection
+                  ? table.children[i].classList.add('bg-danger', 'text-white')
+                  : table.children[i].classList.add('bg-success', 'text-white');
+              });
+              clearTimeout(time2);
+            }, 500);
+            clearTimeout(time1);
+          }, 1000);
+        },
+        error: () => {},
+      });
+    }
 
     // if (this.goodRemove) {
     //   this.data.push(this.goodRemove);
@@ -607,6 +667,13 @@ export class AssignationGoodsProtectionComponent
           );
         },
       });
+    }
+  }
+
+  alertMsg() {
+    this.blockDelete = !this.blockDelete;
+    if (this.blockDelete) {
+      this.onLoadToast('info', 'Bienes protegidos contra eliminación');
     }
   }
 

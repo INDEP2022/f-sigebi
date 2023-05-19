@@ -23,6 +23,7 @@ import { IFormalizeProcesses } from 'src/app/core/models/formalize-processes/for
 import { IComerLotEvent } from 'src/app/core/models/ms-event/event.model';
 import { ComerClientsService1 } from 'src/app/core/services/ms-customers/comer-clients-service';
 import { FormalizeProcessService } from 'src/app/core/services/ms-formalize-processes/formalize-processes.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { FormAsignNotaryComponent } from '../form-asign-notary/form-asign-notary.component';
 import { FormEscrituracionComponent } from '../form-escrituracion/form-escrituracion.component';
@@ -73,7 +74,8 @@ export class FormalGoodsEstateComponent
     private formalizeProcessService: FormalizeProcessService,
     private modalService: BsModalService,
     private comerClientsService1: ComerClientsService1,
-    private lotParamsService: LotParamsService
+    private lotParamsService: LotParamsService,
+    private goodprocessService: GoodprocessService
   ) {
     super();
 
@@ -119,6 +121,7 @@ export class FormalGoodsEstateComponent
           this.getFormalizeProccess();
           this.getStage2();
           this.getStage3();
+          this.getTodos();
         })
       )
       .subscribe();
@@ -135,6 +138,7 @@ export class FormalGoodsEstateComponent
 
     this.formalizeProcessService.getAll(params).subscribe(
       (response: any) => {
+        console.log('AQUIIIII', response);
         let result = response.data.map(async (item: any) => {
           const client: any = await this.getClient(
             item.lotId == null ? '' : item.lotDetails.idClient
@@ -180,20 +184,6 @@ export class FormalGoodsEstateComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    // modalRef.content.data.subscribe((resp: any) => {
-
-    //   const updatedItem = { jobNumber: resp.oficioDCBI };
-    //   const data: any = this._dataTableProcedeFormalizacion.prepareData();
-    //   console.log("HOLA", data)
-    //   const index = data.findIndex((item: any) => item.goodNumber === resp.goodNumber && item.eventId === resp.eventId);
-    //   console.log("AQUI", index)
-    //   if (index !== -1) {
-    //     console.log("SI")
-    //     this._dataTableProcedeFormalizacion.update(index, updatedItem);
-
-    //   }
-
-    // });
     modalRef.content.refresh.subscribe(next => {
       if (next) this.getFormalizeProccess();
     });
@@ -212,7 +202,7 @@ export class FormalGoodsEstateComponent
       this.formalizeProcessService.create(params).subscribe({
         next: (data: any) => {
           this.getStage2();
-
+          this.getTodos();
           let obj = {
             icon: 'success',
             title: 'PROCEDE FORMALIZACIÓN',
@@ -312,7 +302,7 @@ export class FormalGoodsEstateComponent
           this.formalizeProcessService.create(params).subscribe({
             next: (data: any) => {
               this.getStage3();
-
+              this.getTodos();
               let obj = {
                 icon: 'success',
                 title: 'ASIGNA NOTARIO',
@@ -397,6 +387,28 @@ export class FormalGoodsEstateComponent
     modalRef.content.refresh.subscribe(next => {
       if (next) this.getStage3();
     });
+  }
+
+  // -------------------- TODOS --------------------//
+  private getTodos() {
+    this.loading = true;
+    let params = {
+      ...this.params4.getValue(),
+      ...this.columnFilters4,
+    };
+
+    this.goodprocessService.getTodos(params).subscribe(
+      (response: any) => {
+        console.log('AQUI', response);
+        // let result = response.data.map(async (item: any) => {
+        // Promise.all(result).then(data => {
+        this._dataTableTodos = response.data;
+        this.totalItems4 = response.count;
+        this.loading = false;
+        // });
+      },
+      error => (console.log('ERR', error), (this.loading = false))
+    );
   }
 
   // ------------------------ EXTRAS -------------------------- //

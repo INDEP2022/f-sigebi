@@ -65,6 +65,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   formLoading: boolean = true;
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   idSolicitud: any;
+  idRegionalDelegation: any;
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
   constructor(
@@ -104,9 +105,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('report', this.idReportAclara);
-    console.log('idTypeDoc', this.idTypeDoc);
-
+    this.idSolicitud = this.requestInfo.id;
+    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
     //Borrar firmantes existentes
     this.verificateFirm();
 
@@ -497,6 +497,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       dInDate: new Date(), //Fecha de creación del documento
       xidSolicitud: this.idSolicitud,
       xtipoDocumento: this.idTypeDoc,
+      xdelegacionRegional: this.idRegionalDelegation,
     };
 
     this.pdf.getData().then(u8 => {

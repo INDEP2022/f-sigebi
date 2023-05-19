@@ -19,6 +19,11 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'number',
     sort: false,
   },
+  State: {
+    title: 'Estado',
+    type: 'string',
+    sort: false,
+  },
   creator: {
     title: 'Autor',
     type: 'string',

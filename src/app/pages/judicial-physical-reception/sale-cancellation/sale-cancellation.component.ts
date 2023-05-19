@@ -10,7 +10,11 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
-import { IVban } from 'src/app/core/models/ms-good/good';
+import {
+  IAcceptGoodStatus,
+  IAcceptGoodStatusScreen,
+  IVban,
+} from 'src/app/core/models/ms-good/good';
 import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
@@ -18,6 +22,7 @@ import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubt
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -56,7 +61,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         type: 'string',
         sort: false,
       },
@@ -153,6 +158,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   rec_adm: string = '';
   v_atrib_del = 0;
   scanStatus = false;
+  numberExpedient = '';
 
   constructor(
     private fb: FormBuilder,
@@ -165,7 +171,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private serviceSssubtypeGood: GoodSssubtypeService,
     private serviceUser: UsersService,
     private serviceGoodParameter: GoodParametersService,
-    private serviceDocuments: DocumentsService
+    private serviceDocuments: DocumentsService,
+    private serviceGoodProcess: GoodProcessService
   ) {
     super();
   }
@@ -282,6 +289,60 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     }
   }
 
+  validateGood(element: any) {
+    let di_disponible: boolean;
+    /* return new Promise((resolve, reject) => { */
+    const modelScreen: IAcceptGoodStatusScreen = {
+      pNumberGood: element.id,
+      pVcScreen: 'FACTREFACTAVENT',
+    };
+
+    const modelStatus: IAcceptGoodStatus = {
+      pNumberGood: element.id,
+      pExpedients: this.form.get('expediente').value,
+    };
+    return new Promise((resolve, reject) => {
+      this.serviceGoodProcess.getacceptGoodStatusScreen(modelScreen).subscribe(
+        res => {
+          console.log(res.data);
+          if (res.data != null || res.data != undefined) {
+            di_disponible = true;
+            console.log('Entro if');
+            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
+              res => {
+                const resDis = JSON.stringify(res);
+                if (resDis != 'S') {
+                  resolve({ disponible: false });
+                } else {
+                  resolve({ disponible: true });
+                }
+              },
+              err => {
+                resolve({ disponible: false });
+              }
+            );
+          } else {
+            di_disponible = false;
+            console.log('Entro else');
+            this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
+              res => {
+                resolve({ disponible: false });
+              },
+              err => {
+                resolve({ disponible: false });
+              }
+            );
+          }
+        },
+        err => {
+          resolve({ disponible: false });
+        }
+      );
+    });
+
+    /*     }); */
+  }
+
   //Select Rows
 
   rowSelect(e: any) {
@@ -331,8 +392,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         /* this.enableElement('acta'); */
       });
   }
-
-  validateGood(good: any) {}
 
   fillIncomeProceeding(dataRes: any) {
     const paramsF = new FilterParams();
@@ -398,9 +457,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
-    this.automaticFill();
-    this.goodsByExpediente();
-    this.clearInputs();
 
     const paramsF = new FilterParams();
     paramsF.addFilter(
@@ -427,16 +483,30 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialBool = false;
+        this.getTransfer();
       }
     );
   }
 
   goodsByExpediente() {
+    this.nextProce = true;
+    this.prevProce = false;
+    this.navigateProceedings = false;
+    this.act2Valid = false;
+    this.initialBool = true;
+    this.goodData = [];
+    this.dataGoodAct.load(this.goodData);
+    this.numberProceeding = 0;
+    this.statusProceeding = '';
+    this.numberExpedient = this.form.get('expediente').value;
+    this.form.get('folioEscaneo').reset();
+    this.automaticFill();
+    this.goodsByExpediente();
+    this.clearInputs();
+
     this.serviceGood
       .getAllFilterDetail(
-        `filter.fileNumber=$eq:${
-          this.form.get('expediente').value
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+        `filter.fileNumber=$eq:${this.form.get('expediente').value}`
       )
       .subscribe({
         next: async (res: any) => {
@@ -447,26 +517,9 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             console.log(res);
             const newData = await Promise.all(
               res.data.map(async (e: any) => {
-                let disponible: boolean = false;
-                if (e.detail != null) {
-                  if (
-                    format(
-                      new Date(e.detail.approvedXAdmonDate),
-                      'yyyy-MM-dd'
-                    ) <= format(new Date(), 'yyyy-MM-dd') &&
-                    format(
-                      new Date(e.detail.indicatesUserApprovalDate),
-                      'yyyy-MM-dd'
-                    ) >= format(new Date(), 'yyyy-MM-dd')
-                  ) {
-                    disponible = true;
-                  } else {
-                    disponible = false;
-                  }
-                } else {
-                  disponible = false;
-                }
-
+                let disponible: boolean;
+                const resp = await this.validateGood(e);
+                disponible = JSON.parse(JSON.stringify(resp)).disponible;
                 return { ...e, avalaible: disponible };
               })
             );
@@ -801,7 +854,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Estatus no disponible',
-          'El bien tiene un estatus invalido para ser asignado a alguna acta'
+          'El bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         this.alert(
@@ -928,7 +981,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Problemas con el número de acta',
-          'Debe especificar/buscar el acta para despues eliminar el bien de esta'
+          'Debe especificar/buscar el acta para después eliminar el bien de esta'
         );
       } else if (this.selectActData == null) {
         this.alert(
@@ -961,23 +1014,33 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods-1',
+      '/pages/judicial-physical-reception/partializes-general-goods/v1',
     ]);
+  }
+
+  goCargaMasiva() {
+    this.router.navigate(['/pages/general-processes/goods-tracker']);
   }
 
   //NAVIGATE
   //NAVIGATE PROCEEDING
   clearInputs() {
-    this.form.get('acta2').setValue(null);
-    this.form.get('entrega').setValue(null);
-    this.form.get('fecElabRecibo').setValue(null);
-    this.form.get('fecEntregaBienes').setValue(null);
-    this.form.get('fecElab').setValue(null);
-    this.form.get('fecRecepFisica').setValue(null);
-    this.form.get('fecCaptura').setValue(null);
-    this.form.get('observaciones').setValue(null);
-    this.form.get('recibe2').setValue(null);
-    this.form.get('direccion').setValue(null);
+    this.form.get('acta2').reset();
+    this.form.get('entrega').reset();
+    this.form.get('fecElabRecibo').reset();
+    this.form.get('fecEntregaBienes').reset();
+    this.form.get('fecElab').reset();
+    this.form.get('fecRecepFisica').reset();
+    this.form.get('fecCaptura').reset();
+    this.form.get('observaciones').reset();
+    this.form.get('recibe2').reset();
+    this.form.get('direccion').reset();
+    this.form.get('acta').reset();
+    this.form.get('transfer').reset();
+    this.form.get('ident').reset();
+    this.form.get('entrego').reset();
+    this.form.get('recibe').reset();
+    this.form.get('folio').reset();
   }
 
   nextProceeding() {
@@ -1058,22 +1121,38 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         'Eliminar'
       ).then(q => {
         if (q.isConfirmed) {
-          this.serviceProcVal
-            .deleteProceeding(this.idProceeding.toString())
-            .subscribe(
-              res => {
-                console.log(res);
-                this.alert('success', 'Eliminado', 'Acta eliminada con éxito');
-              },
-              err => {
-                console.log(err);
-                this.alert(
-                  'error',
-                  'No se pudo eliminar acta',
-                  'Secudió un problema al eliminar el acta'
-                );
-              }
-            );
+          const paramsF = new FilterParams();
+          paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+          this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+            res => {
+              const realData = JSON.parse(JSON.stringify(res.data[0]));
+              this.serviceDetailProc.PADelActaEntrega(realData.id).subscribe(
+                res => {
+                  this.form.get('expediente').setValue(this.numberExpedient);
+                  this.clearInputs();
+                  this.getGoodsByExpedient();
+                  this.alert('success', 'Acta eliminada con éxito', '');
+                },
+                err => {
+                  console.log(err);
+
+                  this.alert(
+                    'error',
+                    'No se pudo eliminar acta',
+                    'Secudió un problema al eliminar el acta'
+                  );
+                }
+              );
+            },
+            err => {
+              console.log(err);
+              this.alert(
+                'error',
+                'No se pudo eliminar acta',
+                'Secudió un problema al eliminar el acta'
+              );
+            }
+          );
         }
       });
     } else {

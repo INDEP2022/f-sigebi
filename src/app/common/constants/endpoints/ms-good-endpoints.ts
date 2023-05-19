@@ -23,13 +23,23 @@ export enum GoodEndpoints {
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
+  GetAllGoodQuery = 'good/getAllGoodQuery',
+  PAValidaCambioEstatus = 'good/testValid',
 }
 
 export enum GoodProcessPoints {
   basepath = `goodprocess`,
-  cuValNume = `cuValNume`,
-  cuValOtro = `cuValotro`,
-  vnNumerario = `getVnNumerario`,
-  lvlPrograma = `getLvlPrograma`,
+  cuValNume = `application/cuValNume`,
+  cuValOtro = `application/cuValotro`,
+  vnNumerario = `application/getVnNumerario`,
+  lvlPrograma = `application/getLvlPrograma`,
   goodAndDetail = `application/getBienAndDetailActa`,
+  acceptGoodActa = `application/acceptGoodActa`,
+  acceptGoodStatus = `application/acceptGoodStatus`,
+  acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+}
+
+export enum GoodFinderEndpoint {
+  GoodFinderBase = 'goodfinder',
+  GoodQuery = 'good-query',
 }

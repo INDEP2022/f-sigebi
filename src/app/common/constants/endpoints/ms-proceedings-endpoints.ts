@@ -1,6 +1,6 @@
 export enum ProceedingsEndpoints {
   BasePath = 'proceeding',
-  Proceedings = 'proceeding',
+  Proceedings = 'proceedings',
   ProeedingsDevolution = 'proceedings-devolution',
   //ProceedingsDeliveryReception = 'proceedings-delivery-reception',
   DetailProceedingsDevollution = 'detail-proceedings-devolution',
@@ -8,6 +8,7 @@ export enum ProceedingsEndpoints {
   ProceedingsValidations = 'proceedings-validations',
   ProceedingsDeliveryReception = 'proceedings-delivery-reception',
   ProceedingDeliveryReceptionTranfer = 'proceedings-delivery-reception/get-transferent-number-key-and-name',
+  PADelActaEntrega = 'aplication/pa-of-act-delivery',
   MaximunClosingTime = 'maximun-closing-time',
   UpdateVaultByProceedingNumber = 'updateSafe',
   UpdateVaultByKeyProceeding = 'updateSafeByAct',

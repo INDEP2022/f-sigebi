@@ -14,6 +14,7 @@
               label="No. Volante">
               <input
                 type="number"
+                min="1"
                 formControlName="wheelNumber"
                 class="form-control" />
             </form-field>
@@ -34,7 +35,7 @@
           <div class="row pt-4">
             <form-field
               [control]="fileDataUpdateForm.get('consecutiveNumber')"
-              label="Consecutivo diario">
+              label="Consecutivo Diario">
               <input
                 type="number"
                 formControlName="consecutiveNumber"
@@ -134,9 +135,14 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="affair == null || dictOffice == ''"
-            (click)="sendToDocumentsManagement()">
-            Oficio de desahogo
+            [disabled]="
+              affair == null || dictOffice == '' || isLoadingOfficeOfRelief
+            "
+            (click)="onClickOfficeOfRelief()">
+            Oficio de Desahogo
+            <ng-container *ngIf="isLoadingOfficeOfRelief"
+              ><span class="spinner-border"></span
+            ></ng-container>
           </button>
           <button
             type="button"
@@ -320,7 +326,7 @@
             (fetchItems)="getUniqueKey($event)"
             bindLabel="uniqueCve"
             control="uniqueKey"
-            label="Clave &uacute;nica 3 niveles"
+            label="Clave &Uacute;nica 3 Niveles"
             (change)="setUniqueKeyData($event, true)"
             termMaxLength="5">
           </ngx-select>
@@ -549,7 +555,7 @@
       <div class="row pt-4" *ngIf="dictum == 'CONOCIMIENTO'">
         <form-field
           [control]="fileDataUpdateForm.get('reserved')"
-          label="Justificaci&oacute;n del conocimiento">
+          label="Justificaci&oacute;n del Conocimiento">
           <textarea
             rows="4"
             formControlName="reserved"
@@ -559,7 +565,7 @@
 
       <div class="row">
         <div class="d-flex justify-content-center">
-          <div>
+          <!-- <div>
             <button
               outline
               type="button"
@@ -568,7 +574,7 @@
               (click)="openToShiftChange()">
               Reasignaci&oacute;n de Turno
             </button>
-          </div>
+          </div> -->
           <div *ngIf="layout == 'FILE-UPDATE'">
             <button
               outline
@@ -587,10 +593,10 @@
               [disabled]="
                 userRecipient == null ||
                 delDestinyNumber == null ||
-                dictum != ''
+                dictum == ''
               "
               (click)="openFlyerCopies()">
-              Captura de copias
+              Captura de Copias
             </button>
           </div>
         </div>

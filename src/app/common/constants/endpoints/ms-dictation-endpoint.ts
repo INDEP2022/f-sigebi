@@ -10,4 +10,10 @@ export enum DictationEndpoints {
   DictationXGood = 'dictation-x-good',
   CopiesOfficialOpinion = 'copies-official-opinion',
   FindByIds = 'dictation/find-by-ids',
+  CargaMasDesahogob = 'application/cargaMasDesahogob',
+  FindGoodDictGood1 = 'additional-queries/find-good-dictxgood1',
+  InitFormLegalOpinionOffice = 'application/pupInicializaForma1',
+  InitFormLegalOpinionOffice2 = 'application/pupInicializaForma2',
+  CopiesOfficeSendDictation = 'application/copiasOficioDictamenEnviar',
+  DocumentByDictation = 'r-dictation-doc',
 }

@@ -134,7 +134,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
-      `¿Deseas turnar la solicitud a ${this.nickName}?`
+      `¿Desea turnar la solicitud a ${this.nickName}?`
     ).then(async question => {
       if (question.isConfirmed) {
         const programmingResult: any = await this.createProgramming();

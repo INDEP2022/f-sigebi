@@ -374,7 +374,7 @@ export class NotificationAssetsTabComponent
           if (data.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
             data['clarificationTypeName'] = 'IMPROCEDENCIA';
           }
-          const formatDate = moment(data.rejectionDate).format('DD-MM-YYYY');
+          const formatDate = moment(data.rejectionDate).format('DD/MM/YYYY');
           data.rejectionDate = formatDate;
           return data;
         });

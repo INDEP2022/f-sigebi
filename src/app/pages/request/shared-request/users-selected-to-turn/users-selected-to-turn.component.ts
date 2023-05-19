@@ -99,7 +99,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
     this.params.value.addFilter('employeeType', this.typeUser);
     this.params.value.addFilter(
       'regionalDelegation',
-      this.deleRegionalId.substring(11),
+      this.delegationUserLog,
       SearchFilter.ILIKE
     );
 

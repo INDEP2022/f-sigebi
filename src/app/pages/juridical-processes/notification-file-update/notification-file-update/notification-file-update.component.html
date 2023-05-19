@@ -3,6 +3,14 @@
     <h5 class="title">
       ACTUALIZACI&Oacute;N DEL EXPEDIENTE EN NOTIFICACI&Oacute;N
     </h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <!-- <div>
+        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div> -->
+    </div>
   </div>
 
   <div body>
@@ -27,10 +35,14 @@
     </form>
     <div class="row w-100 overflow-auto">
       <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableFactGenSettings"
-          [source]="dataFactGen"></ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event.data)"
+            [source]="dataFactGen"></ng2-smart-table>
+        </div>
       </div>
     </div>
   </div>
