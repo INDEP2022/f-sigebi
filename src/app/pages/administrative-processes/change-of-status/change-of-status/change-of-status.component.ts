@@ -178,6 +178,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           'Actualizado',
           'Se le ha cambiado el Estatus al bien'
         );
+        this.endProcess = false;
       },
       error: error => {
         this.loading = false;
@@ -189,7 +190,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         );
       },
     });
-    this.endProcess = false;
   }
   postHistoryGood() {
     const historyGood: IHistoryGood = {
