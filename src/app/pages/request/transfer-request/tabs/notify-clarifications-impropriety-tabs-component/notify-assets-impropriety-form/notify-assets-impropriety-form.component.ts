@@ -377,7 +377,7 @@ export class NotifyAssetsImproprietyFormComponent
       applicationId: this.idRequest,
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
-      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      consistentIn: this.clarificationForm.controls['observations'].value,
       managedTo: this.infoRequest.nameOfOwner,
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,

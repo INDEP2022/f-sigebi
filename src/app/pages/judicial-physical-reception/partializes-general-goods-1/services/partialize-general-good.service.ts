@@ -5,11 +5,6 @@ import { PartializeGeneralGood } from './partialize-general-good';
 @Injectable()
 export class PartializeGeneralGoodService extends PartializeGeneralGood {
   private columns: any = {
-    id: {
-      title: 'Id.',
-      type: 'string',
-      sort: false,
-    },
     noBien: {
       title: 'No. Bien',
       type: 'string',

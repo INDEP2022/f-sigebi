@@ -105,12 +105,15 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     pproextdom: string,
     pval2: number,
     observations: string,
+    vfactor: number,
+    vfactornum: number,
     pEviction: number,
     pno_acta: number
   ) {
     // return this.partializeGoodService.pupInsertGood()
     // return true;
-    console.log('Entro a insertaBien', good);
+    // debugger;
+    console.log('Entro a insertaBien', good, pno_acta);
     const newGood: IGoodP = {
       ...good,
       observations,
@@ -302,8 +305,10 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           this.good.extDomProcess,
           vval2,
           vobservaciones,
+          this.vfactor,
           vfactornum,
-          null
+          0,
+          this.service.noActa
         );
       } catch (x) {
         this.onLoadToast('error', 'Inserción', 'No se pudo insertar bien');
@@ -347,6 +352,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
 
   private async fillRow(vobserv_padre: string, estatus_nuevo_bien: string) {
     let item: IBienesPar;
+    let vfactor = (this.vimporte - this.vsumimp) / this.vimporte;
+
     let vfactornum =
       (this.vimporte - this.vsumimp) / (this.vimporte - this.vsumimp);
     // this.vident++;
@@ -387,8 +394,10 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       this.good.extDomProcess,
       +vval2,
       vobservaciones,
+      vfactor,
       vfactornum,
-      null
+      0,
+      this.service.noActa
     );
   }
 
@@ -442,6 +451,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             this.good.extDomProcess,
             vval2,
             vobservaciones,
+            vfactor,
+            vfactornum,
             v_verif_des,
             this.service.noActa
           );
@@ -555,6 +566,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             this.good.extDomProcess,
             vval2,
             vobservaciones,
+            vfactor,
+            vfactornum,
             v_verif_des,
             this.service.noActa
           );

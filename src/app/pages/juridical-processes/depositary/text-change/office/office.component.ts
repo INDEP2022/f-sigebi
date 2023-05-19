@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -53,6 +53,8 @@ export class OfficeComponent extends BasePage implements OnInit {
   verBoton: boolean = false;
   //===================
   users$ = new DefaultSelect<ISegUsers>();
+  @Input() oficnum: number | string;
+  @Output() oficnumChange = new EventEmitter<number | string>();
 
   constructor(
     private fb: FormBuilder,
@@ -143,6 +145,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.form.get('paragraphOptional').setValue(resp.data[0].text3);
           this.form.get('descriptionSender').setValue(resp.data[0].desSenderpa);
           this.loadbyAttachedDocuments();
+          this.oficnumChange.emit(this.form.get('proceedingsNumber').value);
         },
         error: err => {
           this.onLoadToast('error', 'error', err.error.message);
@@ -367,5 +370,9 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.users$ = new DefaultSelect(response.data, response.count);
       })
     );
+  }
+
+  updateOficio() {
+    alert(JSON.stringify(this.form.value));
   }
 }

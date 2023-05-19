@@ -64,6 +64,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   formLoading: boolean = true;
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   idSolicitud: any;
+  idRegionalDelegation: any;
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
   constructor(
@@ -103,8 +104,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
-    console.log('ID Solicitud', this.idSolicitud);
     //this.idSolicitud = this.requestInfo.id;
+    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
     //Borrar firmantes existentes
     this.verificateFirm();
 
@@ -469,7 +470,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   validAttachDoc() {
     console.log('this.idSolicitud:', this.idSolicitud);
-    console.log('this.idReportAclara:', this.idReportAclara);
     let token = this.authService.decodeToken();
     const extension = '.pdf';
     const nombreDoc = `DOC_${this.date}${extension}`;
@@ -484,8 +484,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         dDocCreator: token.name, //Creador del documento
         //dDocName: 'Dictamen Procendecia',	//Identificador del documento
         dInDate: new Date(), //Fecha de creación del documento
-        xidSolicitud: this.idReportAclara,
+        xidSolicitud: this.requestInfo.id,
         xtipoDocumento: this.idTypeDoc,
+        xdelegacionRegional: this.idRegionalDelegation,
       };
       this.attachDoc(formData);
     } else {
@@ -510,7 +511,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     const nombreDoc = `DOC_${this.date}${extension}`;
     const contentType: string = '.pdf';
     const file: any = '';
-
     this.pdf.getData().then(u8 => {
       let blob = new Blob([u8.buffer], {
         type: 'application/pdf',
