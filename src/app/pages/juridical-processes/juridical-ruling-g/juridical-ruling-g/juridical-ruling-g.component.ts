@@ -339,7 +339,14 @@ export class JuridicalRulingGComponent
     this.expedientesForm = this.fb.group({
       noDictaminacion: [null, [Validators.required]],
       tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: [null, [Validators.required]],
+      noExpediente: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
       averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       delito: [false],
