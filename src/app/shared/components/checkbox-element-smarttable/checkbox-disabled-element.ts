@@ -46,7 +46,12 @@ export class CheckboxDisabledElementComponent<T = any>
       check: [this.checked],
     });
     if (this.disabled) this.form.get('check')?.disable();
-    if (this.cell && this.cell.newValue !== '' && this.cell.newValue !== 'N') {
+    if (
+      this.cell &&
+      this.cell.newValue !== '' &&
+      this.cell.newValue !== 'N' &&
+      this.cell.newValue !== null
+    ) {
       if (this.cell.getValue() !== null) {
         let check = this.cell.getValue;
         this.form.controls['check'].setValue(check);

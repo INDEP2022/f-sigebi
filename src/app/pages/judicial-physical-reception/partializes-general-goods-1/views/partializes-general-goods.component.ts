@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PartializeGeneralGoodV2Service } from '../services/partialize-general-good-v2.service';
+import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
 
 @Component({
   selector: 'app-partializes-general-goods',
@@ -9,7 +11,20 @@ import { ActivatedRoute } from '@angular/router';
 export class PartializesGeneralGoodsComponent {
   version: number;
   clasificators = 'Clasificadores (1424, 1426, 1427, 1575, 1590)';
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private service1: PartializeGeneralGoodService,
+    // private serviceTab2: PartializeGeneralGoodTab2Service,
+    private service2: PartializeGeneralGoodV2Service // private service2Tab2: PartializeGeneralGoodV2Tab2Service
+  ) {}
+
+  get service() {
+    return this.version === 1 ? this.service1 : this.service2;
+  }
+
+  get pageLoading() {
+    return this.service.pageLoading;
+  }
 
   ngOnInit() {
     this.route.url.subscribe(([url]) => {

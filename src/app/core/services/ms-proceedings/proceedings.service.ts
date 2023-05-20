@@ -59,10 +59,11 @@ export class ProceedingsService extends HttpService {
     );
   }
 
-  getBiePosquery(model: IBlkPost){
+  getBiePosquery(model: IBlkPost) {
     return this.post<IResponse>(
-      `${this.route}/${ProceedingsEndpoints.blkBienPost}`,model
-    )
+      `${this.route}/${ProceedingsEndpoints.blkBienPost}`,
+      model
+    );
   }
 
   getActByFileNumber(

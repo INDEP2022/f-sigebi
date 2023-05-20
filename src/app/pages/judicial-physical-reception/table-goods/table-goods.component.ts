@@ -21,6 +21,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     this._statusActaValue = value;
     this.updateSettingsGoods();
   }
+  @Input() override loading = false;
   @Input() haveDelete = true;
   @Input() data: any[] = [];
   @Input() totalItems: number = 0;

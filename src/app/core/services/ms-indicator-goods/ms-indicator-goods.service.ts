@@ -40,6 +40,7 @@ export class MsIndicatorGoodsService extends HttpService {
       { goodNumber }
     ).pipe(
       map(items => {
+        debugger;
         const data = items.data;
         return {
           ...items,
