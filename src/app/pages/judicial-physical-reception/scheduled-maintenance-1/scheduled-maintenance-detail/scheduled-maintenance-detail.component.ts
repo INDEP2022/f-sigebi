@@ -248,7 +248,7 @@ export class ScheduledMaintenanceDetailComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          // debugger;
+          debugger;
           let newColumns;
           this.proceedingIndicators = response.data.filter(
             indicator =>

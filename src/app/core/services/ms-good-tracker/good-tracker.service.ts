@@ -23,6 +23,13 @@ export class GoodTrackerService extends HttpService {
     );
   }
 
+  getAllTmpTracker(params?: _Params): Observable<IListResponse<ITmpTracker>> {
+    return this.get<IListResponse<ITmpTracker>>(
+      GoodTrackerEndpoints.TmpTracker,
+      params
+    );
+  }
+
   getAllModal(
     self?: GoodTrackerService,
     params?: _Params

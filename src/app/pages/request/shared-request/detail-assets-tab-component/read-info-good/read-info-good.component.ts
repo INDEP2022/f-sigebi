@@ -140,6 +140,7 @@ export class ReadInfoGoodComponent
     const filter = params.getParams();
     this.goodFinderService.goodFinder(filter).subscribe({
       next: async resp => {
+        console.log('getGood', resp.data[0]);
         const good = resp.data[0];
         this.goodType = good.descriptionRelevantType
           ? good.descriptionRelevantType

@@ -168,10 +168,12 @@ export class ChangeOfGoodClassificationComponent
 
   loadGood() {
     this.loading = true;
+    this.listAtributAct = [];
+    this.refreshTableAct(this.listAtributAct);
     this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
+      next: (response: any) => {
         console.log(response);
-        this.good = response;
+        this.good = response.data[0];
         this.loadClassifDescription(this.good.goodClassNumber);
         this.loading = false;
         this.classificationOfGoods.enable();
@@ -287,6 +289,14 @@ export class ChangeOfGoodClassificationComponent
     });
   }
   newAtribut() {
+    if (this.classificationOfGoods.value === '') {
+      this.onLoadToast(
+        'info',
+        'INformación',
+        'Debe seleccionar un No de clasificación de Bien'
+      );
+      return;
+    }
     this.getAtributos(this.classificationOfGoods.value, true);
   }
   formateObjTabla(array: any[]) {
@@ -301,6 +311,7 @@ export class ChangeOfGoodClassificationComponent
   }
 
   refreshTableAct(array: any[]) {
+    console.log('Refresh', array);
     this.dataAct.load(array);
     this.dataAct.refresh();
   }
@@ -361,23 +372,30 @@ export class ChangeOfGoodClassificationComponent
         good[`val${atrib.columnNumber}`] = atrib.newVal;
       }
     });
-    this.good = good;
-    this.good.goodClassNumber = this.classificationOfGoods.value;
-    this.good.fileNumber = this.fileNumberNew.value;
-    this.good.unitMeasure = this.unitXClassif.value;
-    this.good.destiny = this.destination.value;
-    this.goodServices.update(this.good).subscribe({
+    console.log(good);
+    const putGood: IGood = {
+      id: Number(good.id),
+      goodId: Number(good.goodId),
+      goodClassNumber: this.classificationOfGoods.value,
+      fileeNumber: this.fileNumberNew.value,
+      unitMeasure: this.unitXClassif.value,
+      destiny: this.destination.value,
+    };
+    this.copiarPropiedades(good, putGood);
+    console.log(putGood);
+    this.goodServices.update(putGood).subscribe({
       next: response => {
-        console.log(response.data);
+        console.log(response);
         this.onLoadToast(
           'success',
           'ÉXITO',
-          `Se ha actualizado el clasificacion del bien ${this.good.id}`
+          `Se ha actualizado la clasificacion del bien ${this.good.id}`
         );
+        this.listAtributNew = [];
+        this.dataAct.load([]);
+        this.dataAct.refresh();
         this.form.reset();
         this.formNew.reset();
-        this.refreshTableAct([]);
-        this.listAtributNew = [];
       },
       error: err => {
         this.onLoadToast(
@@ -387,5 +405,13 @@ export class ChangeOfGoodClassificationComponent
         );
       },
     });
+  }
+
+  copiarPropiedades(objetoFuente: any, objetoDestino: any) {
+    for (let propiedad in objetoFuente) {
+      if (propiedad.startsWith('val')) {
+        objetoDestino[propiedad] = objetoFuente[propiedad];
+      }
+    }
   }
 }
