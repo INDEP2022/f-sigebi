@@ -685,6 +685,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     this.loader.load = false;
     this.service.bienesPar = [];
     this.service.pagedBienesPar = [];
+    this.service.formGood.reset();
+    this.service.formControl.reset();
     this.onLoadToast(
       'success',
       'Parcialización',
