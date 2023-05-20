@@ -130,7 +130,11 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
         this.updateTable.emit();
       },
       error: err => {
-        this.onLoadToast('error', 'Bien', 'No se pudo agregar el bien');
+        let message = 'No se pudo agregar el bien';
+        if (err.message === 'El registro ya existe.') {
+          message = 'Bien ya registrado';
+        }
+        this.onLoadToast('error', 'Error', message);
       },
     });
 

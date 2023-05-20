@@ -48,7 +48,6 @@
         [loading]="loadingGoods"
         [data]="data"
         [totalItems]="totalGoods"
-        (updateRowEvent)="getGoods()"
         (updateData)="updateData($event)"
         (rowsSelected)="rowsSelectedNotLocal = $event"
         (showDeleteAlert)="deleteRow($event)">

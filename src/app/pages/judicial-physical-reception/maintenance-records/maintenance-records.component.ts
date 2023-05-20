@@ -210,7 +210,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       this.loading = true;
       this.proceedingService.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
-          debugger;
+          // debugger;
           this.infoForm = response.data[0];
           this.service.formValue = deliveryReceptionToInfo(this.infoForm);
           if (!this.registro) {
