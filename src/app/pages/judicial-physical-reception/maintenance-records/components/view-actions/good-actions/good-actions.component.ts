@@ -173,6 +173,39 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
 
   openModals() {
     console.log(this.rowsSelected, this.form.value);
+    // this.openModalSelect(
+    //   {
+    //     titleColumnToReplace: 'estados',
+    //     columnsType: {
+    //       numberGood: {
+    //         title: 'N° Bien',
+    //         type: 'string',
+    //         sort: false,
+    //       },
+    //       status: {
+    //         title: 'Estatus',
+    //         type: 'string',
+    //         sort: false,
+    //       },
+    //     },
+    //     settings: { ...TABLE_SETTINGS },
+    //     tableData: this.rowsSelected,
+    //     service: this.statusGoodService,
+    //     dataObservableFn: this.statusGoodService.getAllSelf,
+    //     idSelect: 'status',
+    //     labelSelect: 'status',
+    //     paramFilter: 'status',
+    //     operator: SearchFilter.ILIKE,
+    //     form: this.fb.group({
+    //       status: [null, [Validators.required]],
+    //       justification: [null, [Validators.required]],
+    //     }),
+    //     formField: 'status',
+    //     otherFormField: 'justification',
+    //     otherFormLabel: 'Motivo del cambio',
+    //   },
+    //   this.replaceStatus
+    // );
     if (this.form.get('action').value == '1') {
       this.openModalSelect(
         {
@@ -191,12 +224,13 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           },
           settings: { ...TABLE_SETTINGS },
           tableData: this.rowsSelected,
-          service: this.proceedingService,
-          dataObservableFn: this.proceedingService.getAll2,
+          // service: this.proceedingService,
+          // dataObservableFn: this.proceedingService.getAll2,
           idSelect: 'id',
           labelSelect: 'id',
-          paramFilter: 'id',
-          operator: SearchFilter.ILIKE,
+          label: 'No&#46; Acta',
+          paramSearch: 'filter.id',
+          path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
             numberProceedings: [null, [Validators.required]],
           }),
@@ -221,13 +255,11 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
             },
           },
           settings: { ...TABLE_SETTINGS },
+          label: 'Estatus del bien',
           tableData: this.rowsSelected,
-          service: this.statusGoodService,
-          dataObservableFn: this.statusGoodService.getAllSelf,
+          path: 'good/api/v1/status-good',
           idSelect: 'status',
           labelSelect: 'status',
-          paramFilter: 'status',
-          operator: SearchFilter.ILIKE,
           form: this.fb.group({
             status: [null, [Validators.required]],
             justification: [null, [Validators.required]],
@@ -267,12 +299,12 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
       )
       .subscribe({
         next: response => {
-          debugger;
+          // debugger;
           this.proceedingService
             .deleteMassiveDetails(this.rowsSelected)
             .subscribe({
               next: response => {
-                debugger;
+                // debugger;
                 this.onLoadToast('success', 'Bienes Actualizados', message);
                 this.updateTable.emit();
               },
@@ -290,9 +322,13 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     goods.forEach((good, index) => {
       message += good + (index < goods.length - 1 ? ',' : '');
     });
-    self.goodService.updateGoodStatusMassive(goods, newValue.status).subscribe({
+    self.updateGoodStatusMassive(goods, newValue.status, message);
+  }
+
+  updateGoodStatusMassive(goods: number[], status: string, message: string) {
+    this.goodService.updateGoodStatusMassive(goods, status).subscribe({
       next: response => {
-        self.onLoadToast('success', 'Estados Actualizados', message);
+        this.onLoadToast('success', 'Estados Actualizados', message);
         this.updateTable.emit();
       },
     });

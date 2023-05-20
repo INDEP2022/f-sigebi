@@ -14,37 +14,7 @@ import {
 @Component({
   selector: 'app-proceeding-info',
   templateUrl: './proceeding-info.component.html',
-  styles: [
-    `
-      .header-proceeding-info {
-        margin-top: 10px;
-        align-items: center;
-        padding-right: 0px;
-      }
-      .buttons {
-        display: flex;
-        justify-content: flex-end;
-        padding: 0px;
-        > div {
-          text-align: right;
-          padding: 0px;
-        }
-      }
-
-      app-recibe-form {
-        padding-right: 0px;
-        margin-bottom: 22px;
-      }
-      app-justification {
-        @media screen and (max-width: 576px) {
-          padding-right: 0px;
-        }
-      }
-      .notInputDatePicker {
-        background-color: white !important;
-      }
-    `,
-  ],
+  styleUrls: ['./proceeding-info.component.scss'],
 })
 export class ProceedingInfoComponent implements OnInit {
   @Input() set info(value: IProceedingDeliveryReception) {

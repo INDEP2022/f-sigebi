@@ -13,6 +13,7 @@ import { HistoryGoodService } from 'src/app/core/services/ms-history-good/histor
 import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
+import Swal from 'sweetalert2';
 import { IBienesPar } from '../../models/bienesPar.model';
 import { CheckSum } from '../../models/checksum';
 import { FunctionButtons } from '../../models/function-buttons';
@@ -36,6 +37,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       this.apply();
     }
   }
+  checkSum: CheckSum;
   vsumimp = 0;
   constructor(
     private partializeGoodService: PartializeGoodService,
@@ -45,6 +47,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     private historyGoodService: HistoryGoodService
   ) {
     super();
+    this.checkSum = new CheckSum();
   }
 
   get saldo() {
@@ -96,6 +99,36 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       vdesc_padre.length > 1250 ? 1250 : vdesc_padre.length
     );
     return { vobserv_padre, vdesc_padre, noBien: item.noBien };
+  }
+
+  async insertaBien2(
+    item: IBienesPar,
+    statusNew: string,
+    pval2: number,
+    observations: string,
+    pFactorNumber: number
+  ) {
+    // return true;
+    const newGood: IGoodP = {
+      ...this.good,
+      observations,
+      amount: item.cantidad,
+      val2: pval2 + '',
+      val11: item.val11 + '',
+      val12: item.val12 + '',
+      val13: item.val13 + '',
+      val14: this.good.val14 + '',
+      worthappraisal: item.avaluo ? +(item.avaluo + '') : null,
+      goodReferenceNumber: item.noBien,
+    };
+    let request: GoodDTO = {
+      screenKey: 'FACTGENPARCBIEN',
+      changeUser: localStorage.getItem('username'),
+      good: newGood,
+      statusNew,
+      pFactorNumber,
+    };
+    return firstValueFrom(this.partializeGoodService.insertGood(request));
   }
 
   private async insertaBien(
@@ -298,17 +331,12 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         mensaje.length > 600 ? mensaje.substring(0, 600) : mensaje;
       vobservaciones = 'Parcializado del bien: ' + this.good.id;
       try {
-        this.insertaBien(
+        this.insertaBien2(
           item,
-          this.good,
           estatus_nuevo_bien,
-          this.good.extDomProcess,
           vval2,
           vobservaciones,
-          this.vfactor,
-          vfactornum,
-          0,
-          this.service.noActa
+          vfactornum
         );
       } catch (x) {
         this.onLoadToast('error', 'Inserción', 'No se pudo insertar bien');
@@ -401,9 +429,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     );
   }
 
-  async apply() {
-    // debugger;
-    this.loading = true;
+  private async applyContent() {
+    // this.service.pageLoading = true;
+    this.loader.load = true;
     let v_importe: number,
       v_estatus: string,
       vaccion: string,
@@ -459,7 +487,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         } catch (x: any) {
           console.log(x);
           this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
-          this.loading = false;
+          // this.loading = false;
           return;
         }
       });
@@ -467,6 +495,19 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vfactor = (v_importe - vsumimp) / v_importe;
         vfactornum = (v_importe - vsumimp) / (v_importe - vsumimp);
         let item: IBienesPar;
+        item = {
+          id: null,
+          noBien: null,
+          descripcion: null,
+          proceso: null,
+          cantidad: null,
+          avaluo: null,
+          importe: 0,
+          val10: null,
+          val11: null,
+          val12: null,
+          val13: null,
+        };
         const { v_cantidad, v_unidad, v_avaluo } = await this.setMeasureData();
         const clasificador = this.good.goodClassNumber;
         const numerarioValidation = await firstValueFrom(
@@ -474,6 +515,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             'filter.numClasifGoods=' + clasificador + '&filter.numType=7'
           )
         );
+        debugger;
         const v_numerario = numerarioValidation.count;
         if (v_numerario !== 0) {
           if (this.validationClasif()) {
@@ -574,7 +616,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         } catch (x: any) {
           console.log(x);
           this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
-          this.loading = false;
+          // this.loading = false;
+          this.loader.load = false;
           return;
         }
       }
@@ -604,10 +647,10 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       }
       this.saldo.setValue(0);
     } else {
-      const checkSum = new CheckSum();
+      // const checkSum = new CheckSum();
       // checkSum.firstCase = this.firstCase;
-      checkSum.version = this.version;
-      if (!checkSum.execute('O')) {
+      this.checkSum.version = this.version;
+      if (!this.checkSum.execute('O')) {
         return;
       }
       let { estatus_nuevo_bien, estatus_final } =
@@ -638,11 +681,43 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           mensaje.length > 600 ? mensaje.substring(0, 600) : mensaje;
       }
     }
-
+    // this.service.pageLoading = false;
+    this.loader.load = false;
+    this.service.bienesPar = [];
+    this.service.pagedBienesPar = [];
     this.onLoadToast(
       'success',
       'Parcialización',
       'La parcialización de bienes se realizo con éxito'
     );
+  }
+
+  async apply() {
+    // debugger;
+    // this.loading = true;
+    this.msgSaveModal(
+      'Aceptar',
+      '¿Desea aplicar para parcialización los bienes en la tabla?',
+      'Confirmación',
+      undefined
+    );
+  }
+
+  msgSaveModal(btnTitle: string, message: string, title: string, typeMsg: any) {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: typeMsg,
+      width: 450,
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#b38e5d',
+      confirmButtonText: btnTitle,
+      cancelButtonText: 'Cancelar',
+    }).then(async result => {
+      if (result.isConfirmed) {
+        this.applyContent();
+      }
+    });
   }
 }

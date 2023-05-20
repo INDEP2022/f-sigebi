@@ -13,8 +13,6 @@ import { GoodFormComponent } from './components/good-form/good-form.component';
 import { PartializeButtonComponent } from './components/partialize-button/partialize-button.component';
 import { PartializeViewComponent } from './components/partialize-view/partialize-view.component';
 import { PartializesGeneralGoodsRoutingModule } from './partializes-general-goods-routing.module';
-import { PartializeGeneralGoodTab2Service } from './services/partialize-general-good-tab2.service';
-import { PartializeGeneralGoodV2Tab2Service } from './services/partialize-general-good-v2-tab2.service';
 import { PartializeGeneralGoodV2Service } from './services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from './services/partialize-general-good.service';
 import { PartializesGeneralGoodsComponent } from './views/partializes-general-goods.component';
@@ -39,19 +37,6 @@ import { PartializesGeneralGoodsComponent } from './views/partializes-general-go
     FormLoaderComponent,
     AccordionModule,
   ],
-  providers: [
-    { provide: 'dbPartialize', useValue: 'goodsPartializeds1' },
-    { provide: 'dbSelectedGood', useValue: 'goodSelected1' },
-    PartializeGeneralGoodService,
-    { provide: 'dbPartialize', useValue: 'goodsPartializeds2' },
-    { provide: 'dbSelectedGood', useValue: 'goodSelected2' },
-    PartializeGeneralGoodTab2Service,
-    { provide: 'dbPartialize', useValue: 'goodsPartializeds1v1' },
-    { provide: 'dbSelectedGood', useValue: 'goodSelected1v1' },
-    PartializeGeneralGoodV2Service,
-    { provide: 'dbPartialize', useValue: 'goodsPartializeds1v2' },
-    { provide: 'dbSelectedGood', useValue: 'goodSelected1v2' },
-    PartializeGeneralGoodV2Tab2Service,
-  ],
+  providers: [PartializeGeneralGoodService, PartializeGeneralGoodV2Service],
 })
 export class PartializesGeneralGoodsModule {}
