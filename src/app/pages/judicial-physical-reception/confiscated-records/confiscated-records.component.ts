@@ -1172,6 +1172,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.labelActa = 'Cerrar acta';
                 this.btnCSSAct = 'btn-primary';
                 this.statusProceeding = 'ABIERTA';
+                this.reopening = true;
                 if (VAL_MOVIMIENTO === 1) {
                   this.serviceProgrammingGood
                     .paRegresaEstAnterior(modelPaOpen)
@@ -1183,7 +1184,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                         const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled');
-                        this.reopening = true;
                       },
                       err => {
                         console.log(err);
@@ -1347,7 +1347,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.serviceDetailProc
           .getAllFiltered(paramsF.getParams())
           .subscribe(res => {
-            console.log(res);
+            console.log(res.data);
+            const resData = JSON.parse(JSON.stringify(res.data));
+            console.log(this.saveDataAct);
+            for (let item of resData) {
+              this.saveDataAct = this.saveDataAct.filter(
+                (e: any) => e.id != item.id
+              );
+            }
+            console.log(this.saveDataAct);
+            const paramsF = new FilterParams();
+            paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
+            this.serviceProcVal
+              .getByFilter(paramsF.getParams())
+              .subscribe(res => {
+                console.log(res);
+              });
           });
       } else {
         this.serviceDocuments.getByFolio(-73378).subscribe(
