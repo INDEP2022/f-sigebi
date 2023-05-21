@@ -105,6 +105,10 @@ export class LegalOpinionsOfficeService {
   getCuDelDest(params: ListParams) {
     return this.msGoodprocessService.getCuDelDest(params);
   }
+  getEtapaByDictation(params: ListParams) {
+    return this.msGoodprocessService.getEtapaByDictation(params);
+  }
+
   getTexto3FromOfficeDictation(
     officeDictationData: IOfficialDictation,
     type_of: string

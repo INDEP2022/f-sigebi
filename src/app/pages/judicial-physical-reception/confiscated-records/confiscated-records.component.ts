@@ -242,6 +242,34 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('folio').valueChanges.subscribe(res => {
       console.log(res);
     });
+
+    /* this.form.get('indEdoFisico').valueChanges.subscribe(res => {
+      if (this.isSelectGood && this.statusProceeding === 'ABIERTA' && res) {
+        const newData = this.dataGoodAct['data'].map((e: any) => {
+          if (e.id === this.selectActData.id) {
+            return { ...e, indEdoFisico: 1 };
+          } else {
+            return e;
+          }
+        });
+        console.log(newData);
+        this.dataGoodAct.load(newData);
+      } else if (
+        this.isSelectGood &&
+        this.statusProceeding === 'ABIERTA' &&
+        !res
+      ) {
+        const newData = this.dataGoodAct['data'].map((e: any) => {
+          if (e.id === this.selectActData.id) {
+            return { ...e, indEdoFisico: null };
+          } else {
+            return e;
+          }
+        });
+        console.log(newData);
+        this.dataGoodAct.load(newData);
+      }
+    }); */
   }
 
   prepareForm() {
@@ -1173,6 +1201,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.btnCSSAct = 'btn-primary';
                 this.statusProceeding = 'ABIERTA';
                 this.reopening = true;
+
                 if (VAL_MOVIMIENTO === 1) {
                   this.serviceProgrammingGood
                     .paRegresaEstAnterior(modelPaOpen)
@@ -1696,6 +1725,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       '/pages/general-processes/historical-good-situation',
     ]);
   }
+
+  /* goToHistorico() {
+    this.router.navigate([
+      '/pages/general-processes/historical-good-situation',
+    ]);
+  } */
 
   estadoFisBien(data: any) {
     const edo = this.form.get('edoFisico');
