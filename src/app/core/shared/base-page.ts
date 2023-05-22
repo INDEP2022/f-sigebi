@@ -37,6 +37,7 @@ export class SweetalertModel implements SweetAlertOptions {
   confirmButtonClass: string;
   cancelButtonClass: string;
   timer: number;
+  html?: string;
   timerProgressBar: boolean;
   position: SweetAlertPosition;
   constructor() {
@@ -158,11 +159,17 @@ export abstract class BasePage implements OnDestroy {
     return throwToast[icon](title, text);
   }
 
-  protected alert(icon: SweetAlertIcon, title: string, text: string) {
+  protected alert(
+    icon: SweetAlertIcon,
+    title: string,
+    text: string,
+    html?: string
+  ) {
     let sweetalert = new SweetalertModel();
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
+    sweetalert.html = html;
     sweetalert.showConfirmButton = true;
     this._alertsService.alerts.push(sweetalert);
     this._alertsService.alertQueue.next(true);
