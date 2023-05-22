@@ -43,7 +43,7 @@ import { IJuridicalFileDataUpdateForm } from '../../file-data-update/interfaces/
 import { JuridicalFileUpdateService } from '../../file-data-update/services/juridical-file-update.service';
 import { JURIDICAL_FILE_DATA_UPDATE_FORM } from '../constants/form-declarations';
 import { AbandonmentsDeclarationTradesService } from '../service/abandonments-declaration-trades.service';
-import { COLUMNS_BIENES } from './columns';
+import { COLUMNS_BIENES, COLUMNS_DOCUMENTS } from './columns';
 import { TEXTOS } from './textos';
 /** ROUTING MODULE */
 
@@ -95,26 +95,7 @@ export class AbandonmentsDeclarationTradesComponent
       description: 'UNA BOLSA',
     },
   ];
-  settings2 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      cveDocumento: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
+  settings2 = { ...this.settings };
   texto1: string = '';
   disabledIMPRIMIR: boolean;
   public disabledTIPO_OFICIO: boolean = true;
@@ -122,11 +103,13 @@ export class AbandonmentsDeclarationTradesComponent
   disabledENVIAR: boolean;
   totalItems: number = 0;
   items = new DefaultSelect<any>();
-  lockStatus: boolean;
+  public lockStatus: boolean = false;
   valTiposAll: boolean;
+  loadingText: string = '';
+  public formLoading: boolean = false;
 
-  formLoading: boolean = false;
-
+  // formLoading: boolean = false;
+  folioEscaneoNg: any = '';
   constructor(
     private documentsService: DocumentsService,
     private DictationXGood1Service: DictationXGood1Service,
@@ -153,6 +136,13 @@ export class AbandonmentsDeclarationTradesComponent
       actions: false,
       selectMode: 'multi',
       columns: { ...COLUMNS_BIENES },
+    };
+
+    this.settings2 = {
+      ...this.settings,
+      actions: false,
+      // selectMode: 'multi',
+      columns: { ...COLUMNS_DOCUMENTS },
     };
 
     this.settings1.rowClassFunction = (row: any) => {
@@ -185,6 +175,10 @@ export class AbandonmentsDeclarationTradesComponent
     return this.declarationForm.controls['dictDate'].value;
   }
 
+  get dateCapture() {
+    return format(new Date(), 'dd-MM-yyyy');
+  }
+
   ngOnInit(): void {
     this.prepareForm();
     // this.loading = true;
@@ -192,20 +186,17 @@ export class AbandonmentsDeclarationTradesComponent
     this.disabledTIPO_OFICIO = false;
     this.disbaledAPROBAR = false;
     this.disabledENVIAR = false;
-    this.lockStatus = false;
+    // this.lockStatus = false;
     this.valTiposAll = false;
-    console.log('AQUI', this.token.decodeToken());
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
         tap(() => this.onLoadGoodList('all'))
       )
       .subscribe();
-    // this.onLoadGoodList();
   }
 
   private prepareForm() {
-    this.loading = false;
     this.form = this.fb.group({
       noExpediente: [''],
       noVolante: ['', [Validators.required]], //*
@@ -292,12 +283,14 @@ export class AbandonmentsDeclarationTradesComponent
       nombreUsuario2: '',
     });
     this.formFolioEscaneo = this.fb.group({
-      folioEscaneo: ['', [Validators.required]], //*
+      folioEscaneo: [this.folioEscaneoNg, [Validators.required]], //*
     });
 
     this.di_status = this.fb.group({
       di_desc_estatus: [''], //*
     });
+
+    this.loading = false;
   }
 
   selectProceedings(event: IUserRowSelectEvent<IGood>) {
@@ -342,20 +335,31 @@ export class AbandonmentsDeclarationTradesComponent
     console.log('AQUI', formData);
   }
 
-  selectData(data: INotification) {
+  async selectData(data: INotification) {
+    console.log('JORGEEE');
     this.loading = true;
     this.selectedRow = data;
     this.changeDetectorRef.detectChanges();
+
     this.declarationForm.get('expedientNumber').setValue(data.expedientNumber);
     this.declarationForm
       .get('preliminaryInquiry')
       .setValue(data.preliminaryInquiry);
     this.declarationForm.get('criminalCase').setValue(data.criminalCase);
+
+    this.formOficio.get('noVolante').setValue(data.wheelNumber);
+    this.formOficio.get('noExpediente').setValue(data.expedientNumber);
+
+    this.cveoficio_Oficio = '';
+    this.statusOfOficio = '';
+
     console.log('DATA', data);
-    this.onLoadGoodList('all');
-    this.validDesahogo(data);
-    this.checkDictum(data);
-    this.getExpediente(data.expedientNumber);
+
+    await this.onLoadGoodList('all');
+    await this.validDesahogo(data);
+    await this.checkDictum(data);
+    await this.getExpediente(data.expedientNumber);
+
     return;
   }
 
@@ -413,9 +417,9 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   // OBTENER BIENES //
-  onLoadGoodList(filter: any) {
+  async onLoadGoodList(filter: any) {
     this.formLoading = true;
-    this.loading = true;
+    // this.loadingText = 'Cargando';
     let params = {
       ...this.params.getValue(),
     };
@@ -452,12 +456,13 @@ export class AbandonmentsDeclarationTradesComponent
         });
 
         Promise.all(result).then((resp: any) => {
-          this.tiposData = response.data;
+          this.data1 = response.data;
+          this.totalItems = response.count;
+          // this.getScreenStatusFinal();
+          this.formLoading = false;
           this.loading = false;
         });
 
-        this.data1 = response.data;
-        this.totalItems = response.count;
         //     IF: BIENES.EST_DISPONIBLE = 'S' THEN
         //     : BIENES.NO_OF_DICTA := NULL;
         //      FOR REG IN(SELECT NO_OF_DICTA
@@ -470,12 +475,10 @@ export class AbandonmentsDeclarationTradesComponent
         //     EXIT;
         //      END LOOP;
         //  END IF;
-
-        this.getScreenStatusFinal();
-        this.loading = false;
       },
       error: err => {
         this.loading = false;
+        this.formLoading = false;
         console.log('ERRROR BIEN X EXPEDIENTE', err);
         this.data1 = [];
       },
@@ -484,7 +487,7 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   // OBTENEMOS SCREEN STATUS FINAL //
-  getScreenStatusFinal() {
+  async getScreenStatusFinal() {
     let obj = {
       vc_pantalla: 'FACTJURABANDONOS',
     };
@@ -507,7 +510,7 @@ export class AbandonmentsDeclarationTradesComponent
 
   // OBTENER DATOS DE EXPEDIENTE //
   courtName: string = '';
-  getExpediente(expedientNumber: any) {
+  async getExpediente(expedientNumber: any) {
     if (expedientNumber) {
       this.expedientService.getById(expedientNumber).subscribe({
         next: data => {
@@ -591,7 +594,7 @@ export class AbandonmentsDeclarationTradesComponent
     }
   }
 
-  validDesahogo(data: any) {
+  async validDesahogo(data: any) {
     if (data.affairKey == 25) {
       if (data.dictumKey == 'CONOCIMIENTO') {
         this.alert(
@@ -605,7 +608,8 @@ export class AbandonmentsDeclarationTradesComponent
 
   // OBTENEMOS DICTAMEN //
   dictamen: IDictation;
-  checkDictum(data: any) {
+  cveoficio_Oficio: any = '';
+  async checkDictum(data: any) {
     const params = new FilterParams();
     params.addFilter('wheelNumber', data.wheelNumber);
     this.fileUpdateService.getDictation(params.getParams()).subscribe({
@@ -625,6 +629,7 @@ export class AbandonmentsDeclarationTradesComponent
         this.declarationForm
           .get('passOfficeArmy')
           .setValue(data.data[0].passOfficeArmy);
+        this.cveoficio_Oficio = data.data[0].passOfficeArmy;
 
         this.getOficioDictamen(this.dictamen);
         this.getDictationXGood1Service(this.dictamen);
@@ -642,8 +647,8 @@ export class AbandonmentsDeclarationTradesComponent
   }
   // OBTENEMOS OFICIO DICTAMEN //
   oficioDictamen: IOfficialDictation;
-
-  getOficioDictamen(data: any) {
+  statusOfOficio: any = '';
+  async getOficioDictamen(data: any) {
     const params = new ListParams();
     params['filter.officialNumber'] = `$eq:${data.id}`;
     params['filter.typeDict'] = `$eq:${data.typeDict}`;
@@ -652,10 +657,12 @@ export class AbandonmentsDeclarationTradesComponent
       next: data => {
         this.oficioDictamen = data.data[0];
 
+        this.statusOfOficio = this.oficioDictamen.statusOf;
+
         if (this.oficioDictamen.statusOf == 'ENVIADO') {
-          this.lockStatus = true;
-        } else {
           this.lockStatus = false;
+        } else {
+          this.lockStatus = true;
         }
 
         console.log('DATA OFFICE', data);
@@ -671,7 +678,7 @@ export class AbandonmentsDeclarationTradesComponent
   }
   // OBTENEMOS DICTAMEN X BIEN 1//
   dictamenXGood1: IDictationXGood1;
-  getDictationXGood1Service(data: any) {
+  async getDictationXGood1Service(data: any) {
     const params = new ListParams();
     params['filter.ofDictNumber'] = `$eq:${data.id}`;
     params['filter.typeDict'] = `$eq:${data.typeDict}`;
@@ -736,6 +743,11 @@ export class AbandonmentsDeclarationTradesComponent
               this.documentsService.create(obj).subscribe({
                 next: (data: any) => {
                   console.log('DOCUMENTS', data);
+                  // :DICTAMINACIONES.FOLIO_UNIVERSAL
+                  // let txt = data.id + ''
+                  this.folioEscaneoNg = data.id;
+                  this.dictamen.folioUniversal = data.id;
+                  // this.formFolioEscaneo.get('folioEscaneo').setValue(txt)
                   this.alert(
                     'success',
                     'El folio universal generado es:' + data.id,
@@ -743,15 +755,9 @@ export class AbandonmentsDeclarationTradesComponent
                   );
                 },
                 error: error => {
-                  this.alert(
-                    'warning',
-                    'DOCUMENTS',
-                    'No se encontraron resultados'
-                  );
+                  this.alert('warning', 'DOCUMENTS', error.error.message);
                 },
               });
-
-              this.onLoadToast('success', 'Success', '');
             }
           });
         }
@@ -812,24 +818,13 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   escanearFolioEscaneo() {
-    //     IF(: OFICIO_DICTAMEN.ESTATUS_OF = 'ENVIADO') AND(: DICTAMINACIONES.CLAVE_OFICIO_ARMADA IS NOT NULL) THEN
-    //     IF: DICTAMINACIONES.FOLIO_UNIVERSAL IS NOT NULL THEN
-    //       IF LIF_MENSAJE_SI_NO('Se abrirá la pantalla de escaneo para el folio de escaneo de la declaratoria. ¿Deseas continuar?') = 'N' THEN
-    //          RAISE FORM_TRIGGER_FAILURE;
-    //       END IF;
-    //     PUP_LANZA_ESCANEO(: DICTAMINACIONES.FOLIO_UNIVERSAL);
-    //     ELSE
-    //     LIP_MENSAJE('No existe folio de escaneo a escanear.', 'A');
-    //    END IF;
-    //     ELSE
-    //     LIP_MENSAJE('No se puede escanear para una declaratoria que esté abierta.', 'A');
-    // END IF;
+    console.log('FOLIO', this.folioEscaneoNg);
     if (this.oficioDictamen && this.dictamen) {
       if (
         this.oficioDictamen.statusOf == 'ENVIADO' &&
         this.dictamen.passOfficeArmy != null
       ) {
-        if (this.dictamen.folioUniversal != null) {
+        if (this.folioEscaneoNg != '') {
           this.alertQuestion(
             'info',
             'Se abrirá la pantalla de escaneo para el folio de escaneo de la declaratoria',
@@ -837,8 +832,8 @@ export class AbandonmentsDeclarationTradesComponent
             'Continuar'
           ).then(question => {
             if (question.isConfirmed) {
+              // this.onLoadToast('success', 'Enviado a la siguiente forma', '');
               this.goNextForm();
-              this.onLoadToast('success', 'Enviado a la siguiente forma', '');
             }
           });
         } else {
@@ -855,7 +850,8 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   goNextForm() {
-    alert('SI');
+    // alert('SI');
+    this.selectedRow = null;
     const route = `pages/general-processes/scan-request/scan`;
     this.router.navigate([route]);
   }
@@ -866,8 +862,11 @@ export class AbandonmentsDeclarationTradesComponent
         this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
       } else {
         let params = {
-          pn_folio: '45656',
+          pn_folio: this.dictamen.folioUniversal,
         };
+        // let params = {
+        //   pn_folio: 3429518,
+        // };
         this.siabService
           .fetchReport('RGERGENSOLICDIGIT', params)
           .subscribe(response => {
@@ -918,6 +917,9 @@ export class AbandonmentsDeclarationTradesComponent
       return;
     } else if (CITY == null || CITY == '') {
       this.alert('error', 'Debe especificar la ciudad', '');
+      return;
+    } else if (this.data1.length == 0) {
+      this.alert('warning', 'No se tienen bienes a dictaminar.', '');
       return;
     } else if (this.selectedGood.length == 0) {
       this.alert(
@@ -1014,44 +1016,18 @@ export class AbandonmentsDeclarationTradesComponent
         } else {
           this.generar_ofic_dict(this.dictamen);
           this.disabledENVIAR = true;
+          this.formDeclaratoriapageFin
+            .get('fin')
+            .setValue(
+              this.oficioDictamen.text2 +
+                this.oficioDictamen.text2To +
+                this.oficioDictamen.text3
+            );
         }
       } else {
         this.alert('error', 'La declaratoria no ha sido aprobada', '');
       }
     }
-    //   IF: DICTAMINACIONES.NO_OF_DICTA IS NOT NULL THEN
-    //     IF NVL(: DICTAMINACIONES.CLAVE_OFICIO_ARMADA, '?') LIKE '%?%' THEN
-    //   PUP_AGREGA_DICTAMEN;
-    //     END IF;
-
-    //   IF: OFICIO_DICTAMEN.TEXTOP IS NOT NULL
-    //     AND GET_BLOCK_PROPERTY('OFICIO_DICTAMEN', UPDATE_ALLOWED) = 'TRUE' THEN
-    //   : OFICIO_DICTAMEN.TEXTO2   := SUBSTR(: OFICIO_DICTAMEN.TEXTOP, 1, 4000);
-    //        : OFICIO_DICTAMEN.TEXTO2_A := SUBSTR(: OFICIO_DICTAMEN.TEXTOP, 4001, 4000);
-    //        : OFICIO_DICTAMEN.TEXTO3   := SUBSTR(: OFICIO_DICTAMEN.TEXTOP, 8001, 4000);
-    //     END IF;
-
-    //   LIP_COMMIT_SILENCIOSO;
-    //   --LIP_COMMIT_SILENCIOSO;
-
-    //   IF: OFICIO_DICTAMEN.TEXTOP IS NULL THEN
-    //   LIP_MENSAJE('Debe seleccionar el tipo de oficio', 'S');
-    //   GO_ITEM('VARIABLES.TIPO_OFICIO');
-    //        RAISE FORM_TRIGGER_FAILURE;
-    //   ELSE
-    //   PUP_OFIC_DICT;
-    //   SET_ITEM_PROPERTY('BLK_CONTROL.ENVIAR', ENABLED, PROPERTY_TRUE);
-    //   GO_BLOCK('DICTAMINACIONES');
-    //   V_NO_OF_DICTA:= : DICTAMINACIONES.NO_OF_DICTA;
-    //   V_TIPO_DICTA:= : DICTAMINACIONES.TIPO_DICTAMINACION;
-    //   SET_BLOCK_PROPERTY('DICTAMINACIONES', DEFAULT_WHERE, 'NO_OF_DICTA=' || TO_CHAR(V_NO_OF_DICTA) || ' AND TIPO_DICTAMINACION = ''' || V_TIPO_DICTA || '''');
-    //   EXECUTE_QUERY(NO_VALIDATE);
-    //   SET_BLOCK_PROPERTY('DICTAMINACIONES', DEFAULT_WHERE, '');
-    //        : OFICIO_DICTAMEN.TEXTOP := : OFICIO_DICTAMEN.TEXTO2 ||: OFICIO_DICTAMEN.TEXTO2_A ||: OFICIO_DICTAMEN.TEXTO3;
-    //     END IF;
-    //   ELSE
-    //   LIP_MENSAJE('La declaratoria no ha sido aprobada', 'A');
-    //  END IF;
   }
 
   // PUP_OFIC_DICT
@@ -1100,8 +1076,8 @@ export class AbandonmentsDeclarationTradesComponent
     };
     let clasif: number;
     this.goodprocessService.getExpedientePostQuery(body).subscribe({
-      next: data => {
-        console.log(data);
+      next: async data => {
+        console.log('DATAAAAAAAAAAAAAAAA', data);
         clasif = data.count;
 
         let result = data.data.map(async (item: any) => {
@@ -1114,7 +1090,7 @@ export class AbandonmentsDeclarationTradesComponent
           this.loading = false;
         });
         if (params.id) {
-          this.countTipos(params.id);
+          await this.countTipos(params.id);
         }
       },
       error: error => {
@@ -1126,10 +1102,10 @@ export class AbandonmentsDeclarationTradesComponent
     });
   }
 
-  countTipos(params: any) {
+  async countTipos(params: any) {
     console.log('PARAMS ID', params);
     let body = {
-      no_expediente: params.id,
+      no_expediente: params,
       vc_pantalla: 'FACTJURABANDONOS',
     };
     this.goodprocessService.getCountBienStaScreen(body).subscribe({
