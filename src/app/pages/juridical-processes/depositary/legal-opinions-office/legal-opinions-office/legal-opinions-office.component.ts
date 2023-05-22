@@ -156,6 +156,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
     }
     this.buildForm();
+    this.cleanDataForm();
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
@@ -296,6 +297,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.enabledDataCopies();
     this.enabledDataOffice();
     this.form.get('numberNotary').enable();
+    this.form.get('typeOffice').setValue('');
   }
 
   showMoreInformationField(show: boolean, option: number) {
@@ -408,6 +410,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.showSearchAppointment = false;
     if (event) {
       if (event.id) {
+        this.cleanDataForm();
         this.dictationData = event;
         this.paramsScreen = {
           PAQUETE: '',
@@ -1703,5 +1706,68 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     }
     this.formCopiesTo = this.fb.group(controlsObj);
     console.log(this.formCopiesTo);
+  }
+
+  saveDataForm() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.alert(
+        'warning',
+        'Complete los campos requeridos correctamente e intente nuevamente',
+        ''
+      );
+      return;
+    }
+    this.setDataDictationSave();
+  }
+
+  setDataDictationSave() {
+    // DICTAMINACIONES
+    this.dictationData = {
+      ...this.dictationData,
+      passOfficeArmy: this.form.get('cveOfficeGenerate').value, // CLAVE ARMADA
+      folioUniversal: this.formScan.get('scanningFoli').value, // FOLIO UNIVERSAL
+    };
+    // OFICIO DICTAMINACIÓN
+    this.officeDictationData = {
+      ...this.officeDictationData,
+      sender: this.form.get('issuingUser').value, // REMITENTE
+      recipient: this.form.get('addressee').value, // DESTINATARIO
+      city: this.form.get('city').value, // CIUDAD
+      notaryNumber: this.form.get('numberNotary').value, // NUMERO NOTARIO
+      text1: this.form.get('introductoryParagraph').value, // PARRAFO INICIAL
+      text2: this.form.get('finalParagraph').value, // PARRAFO FINAL
+      text2To: this.form.get('moreInformation1').value, // MÁS INFORMACIÓN 1
+      text3: this.form.get('moreInformation3').value, // MÁS INFORMACIÓN 2
+    };
+    // TEXTOS OFICIO DICTAMINACIÓN
+    this.officeTextDictationData = {
+      ...this.officeTextDictationData,
+      textx: this.form.get('moreInformation2').value,
+    };
+    // COPIAS OFICIO DICTAMEN
+    // ARREGLO DE COPIAS PARA
+    //   ccp_person: [{ value: '', disabled: false }],
+    //   ccp_addressee: [
+    //     { value: null, disabled: false },
+    //     [Validators.pattern(STRING_PATTERN)],
+    //   ], // SELECT
+    //   ccp_TiPerson: [
+    //     { value: '', disabled: false },
+    //     [Validators.pattern(STRING_PATTERN)],
+    //   ],
+  }
+
+  saveDictation() {
+    this.svLegalOpinionsOfficeService
+      .saveDictations(this.dictationData)
+      .subscribe({
+        next: data => {
+          console.log('SAVE DICTAMEN', data);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
   }
 }
