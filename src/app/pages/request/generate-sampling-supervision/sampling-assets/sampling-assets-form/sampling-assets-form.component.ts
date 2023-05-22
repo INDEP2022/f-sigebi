@@ -1,9 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -13,6 +16,7 @@ import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from '../../../../../common/repository/interfaces/list-params';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -66,7 +70,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   dateForm: ModelForm<any>;
   searchForm: ModelForm<any>;
   showSearchForm: boolean = true;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   paragraphs: any = [];
   totalItems: number = 0;
 
@@ -79,8 +83,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     selectMode: 'multi',
     columns: LIST_ASSETS_COLUMN,
   };
-  params2 = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs2: any[] = [];
+  params2 = new BehaviorSubject<FilterParams>(new FilterParams());
+  paragraphs2 = new LocalDataSource();
   totalItems2: number = 0;
   listAssetsSelected: any[] = [];
 
@@ -96,11 +100,11 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   listAssetsCopiedSelected: any[] = [];
 
   delegationId: string = '';
-  domicileSelecte: any = null;
 
   //private domicilieService = inject(DomicileService);
   private domicilieService = inject(GoodDomiciliesService);
-  authService = inject(AuthService);
+  private authService = inject(AuthService);
+  private goodService = inject(GoodService);
 
   constructor(
     private fb: FormBuilder,
@@ -142,7 +146,11 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   selectWarehouse(event: any): any {
     this.displaySearchAssetsBtn = event.isSelected ? true : false;
-    this.domicileSelecte = event.data;
+
+    this.params2.getValue().addFilter('requestId', event.data.requestId.id);
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getGoods();
+    });
   }
 
   selectAssts(event: any) {
@@ -176,31 +184,45 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   close(): void {}
 
   search() {
-    console.log(this.dateForm);
-    const params = new FilterParams();
-    params.addFilter('regionalDelegationId', this.delegationId);
+    this.loading = true;
+    const dates = this.dateForm.value;
+    const initDate = moment(dates.initialDate).format('YYYY-MM-DD');
+    const endDate = moment(dates.finalDate).format('YYYY-MM-DD');
+
+    this.params
+      .getValue()
+      .addFilter('creationDate', `${initDate},${endDate}`, SearchFilter.BTW);
+
+    this.params.getValue().addFilter('regionalDelegationId', this.delegationId);
     const searchform = this.searchForm.value;
     for (const key in searchform) {
       if (searchform[key] != null) {
         switch (key) {
           case 'id':
-            params.addFilter('id', searchform[key]);
+            this.params.getValue().addFilter('id', searchform[key]);
             break;
           case 'code':
-            params.addFilter('code', searchform[key]);
+            this.params.getValue().addFilter('code', searchform[key]);
             break;
           case 'nameWarehouse':
-            params.addFilter('warehouseAlias.id', searchform[key]);
+            this.params
+              .getValue()
+              .addFilter('warehouseAlias', searchform[key], SearchFilter.ILIKE);
             break;
           case 'address':
-            params.addFilter('description', searchform[key]);
+            this.params
+              .getValue()
+              .addFilter('description', searchform[key], SearchFilter.ILIKE);
             break;
           default:
             break;
         }
       }
     }
-    this.getDomicilies(params);
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getDomicilies();
+    });
   }
 
   getRegionalDelegationId() {
@@ -208,8 +230,9 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     return id;
   }
 
-  getDomicilies(params: FilterParams) {
-    const filter = params.getParams();
+  getDomicilies() {
+    const filter = this.params.getValue().getParams();
+    this.paragraphs = [];
     this.domicilieService.getAll(filter).subscribe({
       next: resp => {
         resp.data.map((item: any) => {
@@ -219,6 +242,28 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
+        this.params.getValue().removeAllFilters();
+        this.loading = false;
+      },
+      error: error => {
+        this.params.getValue().removeAllFilters();
+        console.log('tabla domicilio ', error);
+        this.onLoadToast('info', 'No se encontraron registros');
+        this.loading = false;
+      },
+    });
+  }
+
+  getGoods() {
+    const filter = this.params2.getValue().getParams();
+    this.goodService.getAll(filter).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        //this.paragraphs2.load()
+      },
+      error: error => {
+        console.log(error);
+        this.onLoadToast('info', 'No se encontraron registros');
       },
     });
   }
@@ -256,5 +301,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   clean() {
     this.dateForm.reset();
+    this.searchForm.reset();
+    this.paragraphs = [];
   }
 }

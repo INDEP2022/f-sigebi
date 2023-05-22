@@ -85,10 +85,11 @@
               [control]="searchForm.get('code')"
               label="C&oacute;digo Postal">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="code"
-                min="0" />
+                minlength="0"
+                maxlength="6" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -127,7 +128,7 @@
         </div>
         <div class="m-3">
           <button class="btn btn-danger btn-sm active" (click)="clean()">
-            Cancelar
+            Limpiar
           </button>
         </div>
       </div>
@@ -142,14 +143,16 @@
       </div>
     </div>
     <div class="row pt-3">
-      <ng2-smart-table
-        [attr.class]="'table-bordered table-responsive'"
-        [settings]="settings"
-        [source]="paragraphs"
-        (rowSelect)="selectWarehouse($event)">
-      </ng2-smart-table>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="paragraphs"
+          (rowSelect)="selectWarehouse($event)">
+        </ng2-smart-table>
+      </div>
       <app-pagination
-        [params]="params"
+        [filterParams]="params"
         [totalItems]="totalItems"></app-pagination>
     </div>
     <div class="row pt-4">
@@ -174,7 +177,7 @@
         (userRowSelect)="selectAssts($event)">
       </ng2-smart-table>
       <app-pagination
-        [params]="params2"
+        [filterParams]="params2"
         [totalItems]="totalItems2"></app-pagination>
     </div>
     <div>
