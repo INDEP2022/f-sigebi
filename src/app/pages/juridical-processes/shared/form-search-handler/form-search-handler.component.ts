@@ -9,13 +9,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import {
-  BsModalRef,
-  BsModalService,
-  ModalDirective,
-} from 'ngx-bootstrap/modal';
+import { ActivatedRoute } from '@angular/router';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
-import { SelectListFilteredModalComponent } from '../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
   DynamicFilterLike,
   FilterParams,
@@ -81,9 +77,10 @@ export class FormSearchHandlerComponent
   @Output() onSelect = new EventEmitter<any>();
 
   constructor(
-    private modalService: BsModalService,
-    private modalRef: BsModalRef<SelectListFilteredModalComponent>,
-    private changeDetectorRef: ChangeDetectorRef
+    // private modalService: BsModalService,
+    // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
+    private changeDetectorRef: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
@@ -95,12 +92,26 @@ export class FormSearchHandlerComponent
       actions: false,
       columns: { ...this.columnsType },
     };
+    this.autoLoad();
     if (!this.dataObservableFn) {
+      // console.log({ getData: this.dataObservableFn });
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         if (this.searchOnInput) {
           this.getData();
         }
       });
+    }
+  }
+
+  autoLoad(): void {
+    const wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
+    console.log('wheelNumber', wheelNumber);
+    if (wheelNumber) {
+      this.searchOnInput = true;
+      this.loading = true;
+      this.formData = {};
+      this.formData['wheelNumber'] = wheelNumber;
+      this.buildFilters();
     }
   }
 
@@ -283,6 +294,7 @@ export class FormSearchHandlerComponent
       this.filterParams.next(params);
       this.getData();
     }
+    console.log('FILTERS', this.filters);
     // this.formData = null;
   }
 
