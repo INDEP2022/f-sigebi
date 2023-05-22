@@ -16,6 +16,7 @@
                   "
                   [min]="0"
                   type="number"
+                  [class]="blockExpedient ? 'disabled' : ''"
                   class="form-control"
                   formControlName="expediente" />
               </form-field>
@@ -402,7 +403,7 @@
           class="col-md-12"
           [settings]="settings1"
           [source]="dataGoods"
-          (rowSelect)="selectRow($event)"
+          (userRowSelect)="selectRow($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
       <hr class="row" />
@@ -451,20 +452,13 @@
           class="col-md-12"
           [settings]="settings2"
           [source]="dataGoodAct"
-          (rowSelect)="selectRowGoodActa($event)"
+          (userRowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
           <form-field class="col-md-3" [control]="form.get('edoFisico')">
-            <!--             <label for="edoFisico">Estado físico</label>
-            <select name="" id="edoFisico" formControlName="edoFisico">
-              <option value="null">Sin especificar</option>
-              <option value="0">MALO</option>
-              <option value="1">REGULAR</option>
-              <option value="2">BUENO</option>
-            </select> -->
             <ngx-select
               label="Edo.Físico"
               bindLabel="description"
@@ -473,20 +467,24 @@
               [searchable]="false"
               [form]="form"
               [data]="dataEdoFisico"></ngx-select>
-            <!-- <input
-              type="text"
-              class="form-control"
-              [readOnly]="true"
-              formControlName="edoFisico" /> -->
           </form-field>
           <form-field [control]="form.get('indEdoFisico')">
-            <form-check label="Requerido" for="label">
+            <div class="form-check d-flex align-items-center">
+              <label class="form-check-label pr-5 pl-5" for="flexCheckChecked">
+                Requerido
+              </label>
+              <input
+                class="form-check-input mr-3 ml-3 disabled"
+                type="checkbox"
+                formControlName="indEdoFisico"
+                id="flexCheckDefault" />
+            </div>
+            <!-- <form-check label="Requerido" for="label">
               <input
                 id="label"
                 type="checkbox"
-                [disabled]="!isSelectGood"
                 formControlName="indEdoFisico" />
-            </form-check>
+            </form-check> -->
           </form-field>
           <form-field
             class="col-md-3"
