@@ -204,22 +204,28 @@
     </div>
     <hr />
     <div class="row">
-      <div class="form-material col-md-5">
+      <div class="form-material col-md-6">
         <search-bar
           [filterParams]="filterParams2"
           [filterField]="searchFilter2"></search-bar>
+      </div>
+
+      <div class="col-md-6">
+        <button class="btn btn-primary active btn-sm" (click)="deleteGood()">
+          Eliminar
+        </button>
       </div>
     </div>
     <div class="row pt-5">
       <div class="col-md-6">
         <div class="row">
           <div [class]="loadingGoods ? 'table-loading' : ''">
-            <div class="table-responsive">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings3"
-                [source]="goodPDS"></ng2-smart-table>
-            </div>
+            <!-- <div class="table-responsive"> -->
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings3"
+              [source]="goodPDS"></ng2-smart-table>
+            <!-- </div> -->
             <app-pagination
               [filterParams]="filterParams2"
               [totalItems]="totalItems3"></app-pagination>
@@ -228,13 +234,16 @@
       </div>
       <div class="col-md-6">
         <div class="row">
-          <div [class]="loadingGoodsByP ? 'table-loading' : ''">
-            <div class="table-responsive">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings2"
-                [source]="detailProceedingsList"></ng2-smart-table>
-            </div>
+          <div
+            [class]="
+              loadingGoodsByP || goodsTrackerLoading ? 'table-loading' : ''
+            ">
+            <!-- <div class="table-responsive"> -->
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="detailProceedingsList"></ng2-smart-table>
+            <!-- </div> -->
             <app-pagination
               [params]="params2"
               [totalItems]="totalItems2"></app-pagination>
@@ -262,3 +271,40 @@
     </div>
   </div>
 </app-card>
+
+<ng-template #modal>
+  <app-modal>
+    <div header>
+      <h5 class="modal-title">Lista de bienes rechazados</h5>
+    </div>
+    <div body>
+      <div class="row" style="margin-top: -50px !important">
+        <div class="col-md-12">
+          <ul>
+            <li *ngFor="let good of refusedGoods">
+              <p>Bien: {{ good }}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <!-- <button type="button" class="btn btn-primary active" (click)="hideObservations()">
+                  Guardar
+                </button> -->
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active btn-sm"
+            (click)="hideRefusedGoods()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</ng-template>
