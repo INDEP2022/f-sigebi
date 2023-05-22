@@ -250,6 +250,7 @@ export class JuridicalRecordUpdateComponent
       console.log('SearchMode false');
       this.deactivateSearch();
     }
+
     if (
       changes['confirmSearch']?.currentValue &&
       !changes['confirmSearch']?.isFirstChange()
