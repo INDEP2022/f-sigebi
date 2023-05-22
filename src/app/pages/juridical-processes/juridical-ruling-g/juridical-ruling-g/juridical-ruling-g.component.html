@@ -41,11 +41,12 @@
                 label="No. Expediente">
                 <input
                   min="0"
-                  type="number"
+                  type="text"
                   class="form-control"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente" />
+                  formControlName="noExpediente"
+                  maxlength="10" />
               </form-field>
             </div>
             <!-- Averiguación Previa -->

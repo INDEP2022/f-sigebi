@@ -1,5 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, debounceTime } from 'rxjs';
@@ -64,7 +69,7 @@ export class ThirdpartiesPossessionValidationComponent
   tableSettingsBienes = {
     rowClassFunction: (row: any) => {
       if (row.cells[1].value != 'ADM') {
-        return 'bg-dark';
+        return 'bg-dark text-white disabled-custom';
       } else {
         return 'bg-primary';
       }
@@ -75,9 +80,9 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
-    selectMode: 'multi',
+    selectMode: 'none',
     hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
+    // mode: 'external', // ventana externa
 
     columns: GOODS_COLUMNS,
   };
@@ -92,7 +97,7 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
-    selectMode: 'multi',
+    // selectMode: 'multi',
     hideSubHeader: true,
     mode: 'external',
 
@@ -103,7 +108,7 @@ export class ThirdpartiesPossessionValidationComponent
   expedientNumber: number = 0;
   public form: FormGroup;
   public formCcpOficio: FormGroup;
-  public noExpediente: FormGroup;
+  public noExpediente = new FormControl(null);
   public formGood: FormGroup;
 
   constructor(
@@ -122,14 +127,13 @@ export class ThirdpartiesPossessionValidationComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.loading = true;
+    // this.loading = true;
 
-    this.noExpediente
-      .get('noExpediente')
-      .valueChanges.pipe(debounceTime(500))
-      .subscribe(x => {
-        this.getNotifications(new ListParams(), x);
-      });
+    // this.noExpediente.valueChanges // .get('noExpediente')
+    //   .pipe(debounceTime(500))
+    //   .subscribe(x => {
+    //     this.getNotifications();
+    //   });
 
     this.form
       .get('wheelNumber')
@@ -147,9 +151,9 @@ export class ThirdpartiesPossessionValidationComponent
       addressee: ['', [Validators.pattern(STRING_PATTERN)]],
       texto: '',
     });
-    this.noExpediente = this.fb.group({
-      noExpediente: '',
-    });
+    // this.noExpediente = this.fb.group({
+    //   noExpediente: '',
+    // });
     this.formCcpOficio = this.fb.group({
       ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
       ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
@@ -215,7 +219,19 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
-  getNotifications(params: ListParams, numberExpedient?: number) {
+  clearForm() {
+    this.form.reset();
+    this.formCcpOficio.reset();
+    this.noExpediente.reset();
+    this.formGood.reset();
+    this.dataTableBienes = [];
+    this.dataTableBienesOficio = [];
+    this.dataTableNotifications = [];
+    this.wheelNotifications = null;
+  }
+
+  getNotifications(params = new ListParams()) {
+    const numberExpedient = this.noExpediente.value;
     this.expedientNumber = numberExpedient;
     if (!numberExpedient) {
       this.dataTableNotifications = [];
@@ -234,12 +250,13 @@ export class ThirdpartiesPossessionValidationComponent
     }
 
     this.dataTableNotifications = [];
-
+    this.loading = true;
     this.notificationService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableNotifications = data.data;
+        this.loading = false;
       },
-      error: err => {
+      error: () => {
         this.loading = false;
       },
     });
@@ -262,6 +279,7 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableBienes = data.data;
+        this.loading = false;
       },
       error: err => {
         this.loading = false;
@@ -317,8 +335,11 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService
       .updateGoodStatus(this.selectedRows.goodId, 'STI')
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          this.handleSuccess();
+          this.selectedRows = {};
+        },
+        error: () => (this.loading = false),
       });
   }
 
@@ -341,8 +362,11 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService
       .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          this.handleSuccess();
+          this.selectedRows2 = {};
+        },
+        error: () => (this.loading = false),
       });
   }
 
@@ -436,7 +460,7 @@ export class ThirdpartiesPossessionValidationComponent
       armyJobKey: this.formGood.get('numClueNavy').value,
       delegationNumOpinion: this.formGood.get('delegationCloseNumber').value,
       date: new Date().toString(),
-      expedientNumber: this.noExpediente.get('noExpediente').value,
+      expedientNumber: this.noExpediente.value,
     };
 
     console.log(request);

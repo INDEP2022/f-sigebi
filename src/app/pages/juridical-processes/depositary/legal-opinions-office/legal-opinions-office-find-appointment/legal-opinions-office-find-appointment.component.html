@@ -1,0 +1,97 @@
+<div class="card">
+  <div class="card-body">
+    <form
+      [formGroup]="formAppoinment"
+      class="container-fluid form-material p-0 row">
+      <div class="col-md-12 alert alert-info text-center">
+        Complete los campos para realizar una búsqueda de "Dictaminaciones",
+        posteriormente seleccione un registro, a continuaci&oacute;n da clic en
+        "Continuar" para cargar la informaci&oacute;n del Dictamen seleccionado
+      </div>
+      <form-field
+        class="col-sm-12 col-12 col-md-3 p-2"
+        [control]="formAppoinment.get('id')"
+        label="No&#46; Oficio Dic&#46;">
+        <input type="text" class="form-control" formControlName="id" />
+      </form-field>
+      <form-field
+        class="col-sm-12 col-12 col-md-3 p-2"
+        [control]="formAppoinment.get('expedientNumber')"
+        label="Expediente">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="expedientNumber" />
+      </form-field>
+      <form-field
+        class="col-sm-12 col-12 col-md-3 p-2"
+        [control]="formAppoinment.get('wheelNumber')"
+        label="Volante">
+        <input type="text" class="form-control" formControlName="wheelNumber" />
+      </form-field>
+      <form-field
+        class="col-sm-12 col-12 col-md-3 p-2"
+        [control]="formAppoinment.get('typeDict')"
+        label="Tipo Dictamen">
+        <input type="text" class="form-control" formControlName="typeDict" />
+      </form-field>
+      <form-field
+        class="col-sm-12 col-12 col-md-6 p-2"
+        [control]="formAppoinment.get('passOfficeArmy')"
+        label="Cve&#46; Oficio Armada">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="passOfficeArmy" />
+      </form-field>
+      <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm m-2"
+          (click)="resetFields()">
+          Limpiar Campos
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary active btn-sm m-2"
+          (click)="getAppoinmentData()">
+          Consultar
+          <i aria-hidden="true" class="fa fa-search text-pink"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="card-body">
+    <div class="row pb-3">
+      <div class="col-md-12">
+        <app-columns-select
+          [(settings)]="settingsAppoinment"></app-columns-select>
+      </div>
+    </div>
+    <div class="row" style="max-height: 400px; overflow-y: scroll">
+      <div class="col-md-12">
+        <div [class]="loadingAppoinment ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settingsAppoinment"
+            [source]="dataAppoinment"
+            (userRowSelect)="selectRow($event)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="paramsAppoinment"
+      [totalItems]="totalAppoinment"></app-pagination>
+  </div>
+  <div class="card-footer text-center">
+    <button class="btn btn-primary active btn-sm m-2" (click)="continue()">
+      Continuar
+      <i aria-hidden="true" class="fa fa-check text-pink"></i>
+    </button>
+    <button class="btn btn-danger active btn-sm m-2" (click)="goBack()">
+      Cancelar
+      <i aria-hidden="true" class="fa fa-times-circle"></i>
+    </button>
+  </div>
+</div>
