@@ -69,7 +69,7 @@ export class ThirdpartiesPossessionValidationComponent
   tableSettingsBienes = {
     rowClassFunction: (row: any) => {
       if (row.cells[1].value != 'ADM') {
-        return 'bg-dark disabled-custom';
+        return 'bg-dark text-white disabled-custom';
       } else {
         return 'bg-primary';
       }
@@ -335,8 +335,11 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService
       .updateGoodStatus(this.selectedRows.goodId, 'STI')
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          this.handleSuccess();
+          this.selectedRows = {};
+        },
+        error: () => (this.loading = false),
       });
   }
 
@@ -359,8 +362,11 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService
       .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          this.handleSuccess();
+          this.selectedRows2 = {};
+        },
+        error: () => (this.loading = false),
       });
   }
 
