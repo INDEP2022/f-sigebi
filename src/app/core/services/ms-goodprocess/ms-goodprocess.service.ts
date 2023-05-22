@@ -25,4 +25,50 @@ export class GoodprocessService extends HttpService {
       params
     );
   }
+
+  getExpedientePostQuery(params: any) {
+    return this.post(`${GoodprocessEndpoints.ExpedientePostQuery}`, params);
+  }
+
+  getCountBienStaScreen(params: any) {
+    return this.post(
+      `${GoodprocessEndpoints.CountBienEstatusXPantalla}`,
+      params
+    );
+  }
+
+  getDictaminacionesCount(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationDictaminacionesCount,
+      params
+    );
+  }
+
+  getCuEmisora(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationCuDelRem,
+      params
+    );
+  }
+
+  getCuDelRem(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationCuDelRem,
+      params
+    );
+  }
+
+  getCuDelDest(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ApplicationCuDelDest,
+      params
+    );
+  }
+
+  getEtapaByDictation(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ParametersFaStageCreda,
+      params
+    );
+  }
 }

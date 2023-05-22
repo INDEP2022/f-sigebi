@@ -1,4 +1,4 @@
-<app-good-form [version]="version" [firstCase]="firstCase"></app-good-form>
+<app-good-form [version]="version"></app-good-form>
 <!-- <hr /> -->
 <form class="form-material mt-5" [formGroup]="form">
   <div class="row">
@@ -23,9 +23,9 @@
     </div>
 
     <div class="col-md-4">
-      <div>
+      <div class="saldo">
         <label for="">Saldo: </label>
-        {{ form.get('saldo').value }}
+        <div>{{ form.get('saldo').value }}</div>
       </div>
       <!-- <form-field *ngIf="firstCase" [control]="form.get('saldo')" label="Saldo">
         <input
@@ -54,14 +54,13 @@
         <app-partialize-button
           [version]="version"
           [press]="pressPartialize"
-          [firstCase]="firstCase"></app-partialize-button>
+          (filledRow)="filledRow()"></app-partialize-button>
       </div>
       <div [class]="stateApply">
         <div (click)="pressed(2)">2</div>
         <app-apply-button
           [version]="version"
-          [press]="pressApply"
-          [firstCase]="firstCase"></app-apply-button>
+          [press]="pressApply"></app-apply-button>
       </div>
       <!-- Second Step -->
     </div>
@@ -73,9 +72,11 @@
   <ng2-smart-table
     class="col-md-12"
     [settings]="settingsGoods"
-    [source]="bienesPar"
+    [source]="pagedBienesPar"
     (delete)="deleteRow($event)"></ng2-smart-table>
 </div>
 <app-pagination
   [params]="params"
-  [totalItems]="bienesPar.length"></app-pagination>
+  [totalItems]="
+    bienesPar.length > 0 ? bienesPar.length - 1 : 0
+  "></app-pagination>

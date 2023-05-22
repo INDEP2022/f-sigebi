@@ -4,8 +4,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, map, switchMap, tap, throwError } from 'rxjs';
+import { catchError, map, of, switchMap, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
@@ -151,7 +155,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   showMessageDigitalization() {
     if (this.form.get('scanningFoli').value) {
       this.alertInfo(
-        'info',
+        'success',
         'El folio universal generado es: "' +
           this.form.get('scanningFoli').value +
           '"',
@@ -271,6 +275,122 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
           'Error',
           'Ocurrió un error al actualizar la Dictaminación'
         );
+        return throwError(() => error);
+      })
+    );
+  }
+
+  replicate() {
+    if (!this.dictationData.wheelNumber) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'El trámite no tiene un número de volante'
+      );
+      return;
+    }
+
+    this.getDocumentsCount().subscribe(count => {
+      if (count == 0) {
+        // this.getNotificationByFlyer().subscribe(notification => {
+        //   if (!notification) {
+        //     this.alert(
+        //       'error',
+        //       'Error',
+        //       'No existe un folio universal escaneado para replicar'
+        //     );
+        //     return;
+        //   }
+        //   this.getNotificationsByCveAndDate(
+        //     notification.officeExternalKey,
+        //     notification.entryProcedureDate
+        //   ).subscribe(flyers => {
+        this.getDocumentsByFlyers(
+          this.dictationData.wheelNumber.toString()
+        ).subscribe(documents => {
+          if (!documents.data[0]) {
+            this.alert(
+              'error',
+              'Error',
+              'No existe un folio universal escaneado para replicar'
+            );
+            return;
+          }
+          if (documents.count > 1) {
+            this.alert(
+              'error',
+              'Error',
+              'Existe mas de un folio universal escaneado para replicar'
+            );
+            return;
+          }
+          const folio = documents[0].id;
+          this.updateDocumentsByFolio(
+            folio,
+            this.dictationData.passOfficeArmy
+          ).subscribe();
+        });
+        //   });
+        // });
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Este registro no permite ser replicado'
+        );
+      }
+    });
+  }
+
+  updateDocumentsByFolio(folioLNU: string | number, folioLST: string) {
+    return this.documentsService.updateByFolio({ folioLNU, folioLST }).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.alert('success', 'Folio replicado correctamente', '');
+      })
+    );
+  }
+
+  getDocumentsCount() {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter('flyerNumber', this.dictationData.wheelNumber);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          return of({ count: 0 });
+        }
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrio un error al replicar el folio'
+        );
+        return throwError(() => error);
+      }),
+      map(response => response.count)
+    );
+  }
+
+  getDocumentsByFlyers(flyers: string) {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter('flyerNumber', flyers, SearchFilter.IN);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          this.alert(
+            'error',
+            'Error',
+            'No existe un folio universal escaneado para replicar'
+          );
+        } else {
+          this.alert('error', 'Error', 'Ocurrio un error al replicar el folio');
+        }
         return throwError(() => error);
       })
     );

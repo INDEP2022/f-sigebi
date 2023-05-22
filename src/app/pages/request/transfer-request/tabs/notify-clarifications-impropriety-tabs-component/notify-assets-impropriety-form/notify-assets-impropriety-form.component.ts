@@ -74,10 +74,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
     const applicationId = this.idRequest;
@@ -380,7 +377,7 @@ export class NotifyAssetsImproprietyFormComponent
       applicationId: this.idRequest,
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
-      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      consistentIn: this.clarificationForm.controls['observations'].value,
       managedTo: this.infoRequest.nameOfOwner,
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
@@ -570,6 +567,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   changeStatusAnswered() {
+    console.log('changeStatusAnswered()');
     this.loading = true;
     this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
       this.dataClarifications2.rejectNotificationId;
@@ -579,11 +577,14 @@ export class NotifyAssetsImproprietyFormComponent
         this.dataChatClarifications = data.data;
         this.updateChatClarification(this.dataChatClarifications[0]);
       },
-      error: error => {},
+      error: error => {
+        console.log('changeStatusAnswered() ERROR');
+      },
     });
   }
 
   updateChatClarification(chatClarifications: IChatClarifications) {
+    console.log('updateChatClarification()');
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
@@ -597,12 +598,14 @@ export class NotifyAssetsImproprietyFormComponent
       .subscribe({
         next: async data => {
           if (data.clarificationTypeId == 1) {
+            console.log('updateAnsweredAcla() TIPO 1');
             this.updateAnsweredAcla(
               data.clarifiNewsRejectId,
               chatClarifications.id,
               modelChatClarifications.goodId
             );
           } else if (data.clarificationTypeId == 2) {
+            console.log('updateAnsweredAcla() TIPO 2');
             this.updateAnsweredImpro(
               data.clarifiNewsRejectId,
               chatClarifications.id,
@@ -611,6 +614,7 @@ export class NotifyAssetsImproprietyFormComponent
           }
         },
         error: error => {
+          console.log('NO SE PUDO ACTUALIZAR');
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
         },
       });
@@ -622,6 +626,7 @@ export class NotifyAssetsImproprietyFormComponent
     goodId?: number,
     observations?: string
   ) {
+    console.log('actualizando... 2');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
@@ -661,7 +666,7 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENCIA',
+      answered: 'EN ACLARACION',
       observations: observations,
     };
 

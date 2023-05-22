@@ -10,6 +10,8 @@ export abstract class PartializeGeneralGood {
   // isFirstCase: boolean = false;
   formLoading = false;
   buttonsLoading = false;
+  pageLoading = false;
+  pagedBienesPar: any[] = [];
   private _bienesPar: IBienesPar[] = [];
   get bienesPar() {
     return this._bienesPar;
@@ -33,12 +35,11 @@ export abstract class PartializeGeneralGood {
   };
   sumCant = 0;
   sumVal14 = 0;
+  noActa: number = 0;
   clasificators: string = '1424, 1426, 1427, 1575, 1590';
-  constructor(
-    protected dbPartialize: string,
-    protected dbSelectedGood: string,
-    protected fb: FormBuilder
-  ) {}
+  protected dbPartialize: string;
+  protected dbSelectedGood: string;
+  constructor(protected fb: FormBuilder) {}
 
   get vsum() {
     return !this.validationClasif() ? this.sumCant : this.sumVal14;
@@ -63,11 +64,13 @@ export abstract class PartializeGeneralGood {
   }
 
   saveSelectedGood() {
-    // localStorage.setItem(this.dbSelectedGood, JSON.stringify(this.good));
+    this.bienesPar = [];
+    this.pagedBienesPar = [];
+    localStorage.setItem(this.dbSelectedGood, JSON.stringify(this.good));
   }
 
   getSavedGood(): IGood {
-    return null;
+    // return null;
     const good = localStorage.getItem(this.dbSelectedGood);
     return good ? JSON.parse(good) : null;
   }

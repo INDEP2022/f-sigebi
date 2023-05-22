@@ -45,6 +45,7 @@ export class CustomSelectWidthLoading
   implements ControlValueAccessor, OnInit, OnDestroy
 {
   @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;
+  @Input() searchable = true;
   @Input() form: FormGroup;
   @Input() formControlName: string = '';
   @Input() path: string;
@@ -58,7 +59,7 @@ export class CustomSelectWidthLoading
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
   @Input() bindLabel: string = '';
-  @Input() paramSearch: string = 'text';
+  @Input() paramSearch: string = 'search';
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
   @Input() paramPageName: string = 'page';
@@ -72,6 +73,7 @@ export class CustomSelectWidthLoading
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
   @Output() valueChange = new EventEmitter<any>();
+  // @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
   items: any[] = [];
   totalItems: number = 0;
@@ -133,17 +135,25 @@ export class CustomSelectWidthLoading
 
   onSelectChange(event: any) {
     console.log(event);
-
-    this.onChange?.(event[this.value] || null);
     if (!event) {
+      this.input$.next('');
       this.valueChange.emit(null);
       return;
+    }
+    if (this.multiple) {
+      this.onChange?.(event.map((x: any) => x[this.value]) || null);
+    } else {
+      this.onChange?.(event[this.value] || null);
     }
     const data = this.items.find(
       item => item[this.value] === event[this.value]
     );
     this.valueChange.emit(data);
     this.form.updateValueAndValidity();
+  }
+
+  clear(event: any) {
+    console.log(event);
   }
 
   getItemsObservable(text: string = '') {

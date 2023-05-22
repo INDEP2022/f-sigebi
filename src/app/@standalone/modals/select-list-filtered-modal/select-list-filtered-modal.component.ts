@@ -58,6 +58,7 @@ export class SelectListFilteredModalComponent
   initialCharge = true;
   haveSearch = true;
   showError: boolean = true;
+  widthButton = false;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
@@ -79,23 +80,32 @@ export class SelectListFilteredModalComponent
     // console.log(this.settings);
 
     this.addFilters();
-    if (this.dataObservableFn) {
-      this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        this.getAndSetInitialCharge();
-      });
-    } else if (this.dataObservableListParamsFn) {
-      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        this.getAndSetInitialCharge();
-      });
-    } else if (this.dataObservableId) {
-      this.id.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        this.getAndSetInitialCharge();
-      });
+    if (!this.widthButton) {
+      if (this.dataObservableFn) {
+        this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+          this.getAndSetInitialCharge();
+        });
+      } else if (this.dataObservableListParamsFn) {
+        this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+          this.getAndSetInitialCharge();
+        });
+      } else if (this.dataObservableId) {
+        this.id.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+          this.getAndSetInitialCharge();
+        });
+      }
     }
   }
 
+  search() {
+    this.loading = true;
+    setTimeout(() => {
+      this.getData();
+    }, 1000);
+  }
+
   private getAndSetInitialCharge() {
-    if (this.initialCharge) {
+    if (this.initialCharge || !this.widthButton) {
       this.getData();
     } else {
       this.initialCharge = true;

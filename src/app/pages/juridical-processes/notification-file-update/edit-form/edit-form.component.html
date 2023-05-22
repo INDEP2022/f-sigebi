@@ -1,0 +1,113 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="deductiveForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="deductiveForm.get('wheelNumber')"
+            label="No. Volante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="wheelNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-8">
+          <form-field [control]="deductiveForm.get('affairKey')" label="Asunto">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="affairKey" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12 pb-5">
+          <form-field
+            [control]="deductiveForm.get('observations')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('captureDate')"
+            label="Fecha captura">
+            <input
+              class="form-control"
+              formControlName="captureDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('protectionKey')"
+            label="Clave Amparo">
+            <input class="form-control" formControlName="protectionKey" />
+          </form-field>
+        </div>
+
+        <div class="col-md-8">
+          <form-field
+            [control]="deductiveForm.get('preliminaryInquiry')"
+            label="Averiguación Previa">
+            <input class="form-control" formControlName="preliminaryInquiry" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="deductiveForm.get('criminalCase')"
+            label="Causa Penal">
+            <input class="form-control" formControlName="criminalCase" />
+          </form-field>
+        </div>
+      </div>
+
+      <!-- <div class="row pt-5">
+        <div class="col-md-3 d-flex">
+          <form-radio label="Activo">
+            <input type="radio" formControlName="status" value="1" />
+          </form-radio>
+          <form-radio label="Inactivo">
+            <input type="radio" formControlName="status" value="0" />
+          </form-radio>
+        </div>
+      </div> -->
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="deductiveForm.get('expedientNumber')"
+            label="No. Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedientNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <!-- [disabled]="deductiveForm.invalid" -->
+        <confirm-button [loading]="loading" (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -488,9 +488,23 @@ ng-scrollbar.table-scrollbar {
   font-weight: 900;
 }
 
+.bg-black-unavailable-roj {
+  background-color: rgb(14, 14, 14) !important;
+  color: red;
+  padding: 0.3rem;
+  font-weight: 900;
+}
+
 .bg-green-to-confirm {
   background-color: #28a745 !important;
   color: white;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+.bg-green-to-confirm-verdadero {
+  background-color: #28a745 !important;
+  color: black;
   font-weight: 900;
   padding: 0.3rem;
 }

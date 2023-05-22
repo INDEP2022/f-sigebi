@@ -51,10 +51,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    this.dictamenSeq();
     this.prepareForm();
   }
 
@@ -185,6 +182,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
     goodId?: number,
     observations?: string
   ) {
+    console.log('actualizando... 1');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
