@@ -21,7 +21,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   pressPartialize = false;
   pressApply = false;
   page = 1;
-  pagedBienesPar: any[] = [];
+
   constructor(
     private service1: PartializeGeneralGoodService,
     // private serviceTab2: PartializeGeneralGoodTab2Service,
@@ -46,6 +46,10 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     return this.service.formGood;
   }
 
+  get pagedBienesPar() {
+    return this.service.pagedBienesPar;
+  }
+
   get bienesPar() {
     return this.service.bienesPar;
   }
@@ -54,18 +58,18 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   }
 
   filledRow() {
-    debugger;
+    // debugger;
     const final = this.page * this.params.value.limit;
     if (this.bienesPar && this.bienesPar.length > 0) {
-      debugger;
+      // debugger;
       const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
-      this.pagedBienesPar = [
+      this.service.pagedBienesPar = [
         ...bienesNotTotal
           .slice((this.page - 1) * this.params.value.limit, final)
           .concat(this.bienesPar[this.bienesPar.length - 1]),
       ];
     } else {
-      this.pagedBienesPar = [...this.service.bienesPar];
+      this.service.pagedBienesPar = [...this.service.bienesPar];
     }
     this.loading = false;
   }
