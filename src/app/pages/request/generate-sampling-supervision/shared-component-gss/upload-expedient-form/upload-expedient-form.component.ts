@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
-import { DefaultSelect } from '../../../../../shared/components/select/default-select';
 import { NewDocumentFormComponent } from '../new-document-form/new-document-form.component';
 import { LIST_EXPEDIENTS_COLUMN } from './columns/list-expedients-columns';
 
@@ -32,7 +35,7 @@ var data = [
 export class UploadExpedientFormComponent extends BasePage implements OnInit {
   showSearchForm: boolean = false;
   expedientForm: ModelForm<any>;
-  typeDocSelected = new DefaultSelect();
+  typeDocSelected: any = []; //new DefaultSelect();
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -42,6 +45,8 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
 
   data: any[] = [];
   typeComponent: string = '';
+
+  private readonly wcontentService = inject(WContentService);
 
   constructor(
     private fb: FormBuilder,
@@ -72,6 +77,7 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
     };
     this.initForm();
     this.paragraphs = data;
+    this.getTypeDocSelect();
   }
 
   initForm(): void {
@@ -83,18 +89,25 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
       comments: [null, [Validators.pattern(STRING_PATTERN)]],
       author: [null, [Validators.pattern(STRING_PATTERN)]],
       sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      noDoc: [null],
+      noDoc: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       version: [null],
       responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       noAsset: [{ value: null, disabled: true }],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      noSab: [null],
-      noOfice: [null],
+      noSab: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      noOfice: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
     });
   }
 
-  getTypeDocSelect(event: any) {}
+  getTypeDocSelect(event?: any) {
+    const params = new ListParams();
+    this.wcontentService.getDocumentTypes(params).subscribe({
+      next: resp => {
+        this.typeDocSelected = resp.data;
+      },
+    });
+  }
 
   newDocument() {
     let config: ModalOptions = {

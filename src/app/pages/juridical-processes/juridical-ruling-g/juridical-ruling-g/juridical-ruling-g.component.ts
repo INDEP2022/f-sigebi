@@ -282,9 +282,8 @@ export class JuridicalRulingGComponent
       },
       fecha: {
         title: 'Fecha',
-        sort: false,
         type: 'custom',
-        showAlways: true,
+        class: 'custom-title',
         valuePrepareFunction: (bsValue: Date, row: IDocuments) =>
           this.isDocumentSelectedValid(row),
         renderComponent: DatePickerElementComponent,
@@ -299,8 +298,7 @@ export class JuridicalRulingGComponent
   subtipoForm: FormGroup;
   gestionDestinoForm: FormGroup;
   public listadoDocumentos: boolean = false;
-  public rutaAprobado: string =
-    baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
+  // public rutaAprobado: string = baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
   constructor(
     private fb: FormBuilder,
@@ -322,14 +320,13 @@ export class JuridicalRulingGComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
-    this.getParams();
     // this.activatedRoute.queryParams.subscribe((params: any) => {
-    //   console.log(params);
     //   this.expedientesForm.get('noExpediente').setValue(params?.expediente);
     //   this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
     //   this.expedientesForm.get('noVolante').setValue(params?.volante);
     //   this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
     // });
+    this.getParams();
   }
 
   /**
@@ -339,14 +336,7 @@ export class JuridicalRulingGComponent
     this.expedientesForm = this.fb.group({
       noDictaminacion: [null, [Validators.required]],
       tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(10),
-        ],
-      ],
+      noExpediente: [null, [Validators.required]],
       averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       delito: [false],
@@ -404,6 +394,8 @@ export class JuridicalRulingGComponent
     this.selectedGooodsValid = [];
     this.goodsValid = [];
     this.data4 = [];
+    this.documents = [];
+    this.idGoodSelected = null;
   }
 
   cleanForm() {
@@ -433,15 +425,21 @@ export class JuridicalRulingGComponent
   }
 
   getParams() {
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.expedientesForm
-          .get('noExpediente')
-          .setValue(
-            params['noExpediente'] ? Number(params['noExpediente']) : undefined
-          );
-      });
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.expedientesForm.get('noVolante').setValue(params?.volante);
+      this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
+    });
+    // this.activatedRoute.queryParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(params => {
+    //     this.expedientesForm
+    //       .get('noExpediente')
+    //       .setValue(
+    //         params['noExpediente'] ? Number(params['noExpediente']) : undefined
+    //       );
+    //   });
     this.changeNumExpediente();
   }
 
@@ -543,8 +541,15 @@ export class JuridicalRulingGComponent
   btnBorrarDictamen() {
     this.btnDeleteDictation();
   }
+
   btnImprimeOficio() {
-    console.log('btnImprimeOficio');
+    if (this.expedientesForm.get('noExpediente').value === null) {
+      this.alert('warning', '', 'Debes seleccionar un expediente.');
+      return; // Si 'documents' está vacío, detiene la ejecución aquí
+    }
+    this.router.navigate([
+      baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link,
+    ]);
   }
   btnParcializar() {
     this.btnVerify();
@@ -649,8 +654,8 @@ export class JuridicalRulingGComponent
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
         _g.status = 'STI';
+        _g.name = false;
         let valid = this.goodsValid.some(goodV => goodV == _g);
-        debugger;
         if (!valid) {
           this.goodsValid = [...this.goodsValid, _g];
         }
@@ -688,6 +693,7 @@ export class JuridicalRulingGComponent
     }
   }
   removeAll() {
+    this.goods.pop();
     if (this.goodsValid.length > 0) {
       // this.goods = this.goods.concat(this.goodsValid);
       this.goods.map(_g => (_g.status = 'ADM'));
@@ -886,6 +892,10 @@ export class JuridicalRulingGComponent
   btnVerify() {
     const status = this.statusDict;
     const expedient = this.expedientesForm.get('noExpediente').value;
+    if (this.goodsValid.length === 0) {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien');
+      return;
+    }
     if (status === 'DICTAMINADO') {
       this.alert('info', 'AVISO', 'Bien ya dictaminado');
     } else {
@@ -895,8 +905,15 @@ export class JuridicalRulingGComponent
         // this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');}
         Swal.fire('PENDIENTE', 'Parcializa la dictaminazión.', 'warning').then(
           () => {
-            window.location.replace(
-              '/pages/general-processes/goods-partialization'
+            this.router.navigate(
+              ['/pages/general-processes/goods-partialization'],
+              {
+                queryParams: {
+                  good: this.goodsValid[0].id,
+                  screen: 'FACTJURDICTAMASG',
+                  origin: 'FACTJURDICTAMASG',
+                },
+              }
             );
           }
         );
@@ -1021,16 +1038,7 @@ export class JuridicalRulingGComponent
       this.alert('warning', '', 'Debes seleccionar un documento.');
       return; // Si 'documents' está vacío, detiene la ejecución aquí
     }
-    /*  if (this.dictaminacionesForm.get('estatus').invalid) {
-    // Dentro de este bloque, comprueba si this.documents.length es 0
-    if (this.documents.length === 0) {
-      this.alert('warning', '', 'Debes seleccionar un documento.');
-      return;  // Detiene la ejecución de la función aquí
-    }
-    return;
-  } */
     let token = this.authService.decodeToken();
-
     const pNumber = Number(token.department);
     const status =
       this.dictaminacionesForm.get('estatus').value || this.statusDict;

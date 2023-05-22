@@ -190,8 +190,10 @@ export class JuridicalRecordUpdateComponent
     this.initialDate = format(new Date(), 'd/MM/yyyy', {
       locale: esLocale,
     });
+    console.log(this.fileUpdComService.fileDataUpdateParams);
     if (this.fileUpdComService.fileDataUpdateParams != null)
       this.pageParams = this.fileUpdComService.fileDataUpdateParams;
+    console.log('this.pageParams', this.pageParams);
   }
 
   private get formControls() {
@@ -234,6 +236,7 @@ export class JuridicalRecordUpdateComponent
     this.blockErrors(true);
     this.checkParams();
     this.fileDataUpdateForm.disable();
+    console.log(this.authService.decodeToken());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -271,6 +274,7 @@ export class JuridicalRecordUpdateComponent
 
   checkParams() {
     this.getGlobalVars();
+    console.log('despues');
     // if (this.fileUpdateService.juridicalFileDataUpdateForm != null)
     //   this.fileDataUpdateForm.patchValue(
     //     this.fileUpdateService.juridicalFileDataUpdateForm
@@ -308,6 +312,7 @@ export class JuridicalRecordUpdateComponent
     this.globalVarsService
       .getGlobalVars$()
       .subscribe((globalVars: IGlobalVars) => {
+        console.log({ globalVars });
         this.globals = globalVars;
         // console.log(this.globals);
       });
@@ -423,7 +428,6 @@ export class JuridicalRecordUpdateComponent
     this.formLoading = true;
     this.fileUpdateService.getProcedure(this.pageParams.pNoTramite).subscribe({
       next: data => {
-        // console.log(data);
         const param = new FilterParams();
         param.addFilter('wheelNumber', data.flierNumber);
         this.fileUpdateService.getNotification(param.getParams()).subscribe({
@@ -991,6 +995,7 @@ export class JuridicalRecordUpdateComponent
         'No encontrado',
         'Este asunto con este dictámen no esta registrado en el catálogo de Asuntos - Dictamen'
       );
+      this.isLoadingOfficeOfRelief = false;
       return;
     }
     if (this.affair && (!this.dictOffice || this.dictOffice === 'D')) {
@@ -1021,8 +1026,8 @@ export class JuridicalRecordUpdateComponent
         }
       }
       await this.pupValidaOf(catRAsuntDict.data[0]);
-      this.isLoadingOfficeOfRelief = false;
     }
+    this.isLoadingOfficeOfRelief = false;
     // try {
     //   const result = await this.fetchForForm.searchCatRAsuntDic();
     //   if (result.count < 1) {
@@ -1302,7 +1307,7 @@ export class JuridicalRecordUpdateComponent
       this.dictConsultOnly = 'S';
     } else {
       //TODO: habilitar cuando el usuario tenga los permisos
-      // this.dictConsultOnly = 'N';
+      this.dictConsultOnly = 'N';
     }
     this.fileUpdComService.juridicalRulingParams = {
       expediente: this.formControls.expedientNumber.value,
@@ -1313,19 +1318,9 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
-    console.log(this.fileUpdComService.juridicalRulingParams);
-    // const params = {
-    //   expediente: 791477,
-    //   volante: 1558180,
-    //   tipoVo: 'P',
-    //   tipoDic: 'PROCEDENCIA',
-    //   consulta: 'N',
-    //   pGestOk: 1,
-    //   pNoTramite: 1044141,
-    // };
-    // this.router.navigateByUrl(
-    //   '/pages/documents-reception/flyers-registration/juridical-dictums'
-    // );
+    console.log({
+      juridicalRulingParams: this.fileUpdComService.juridicalRulingParams,
+    });
     this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
       queryParams: {
         origin: '/pages/juridical/file-data-update',
