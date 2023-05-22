@@ -7,6 +7,7 @@ export enum GoodEndpoints {
   SearchByExpedient = `good/expedient/search`,
   GoodAndDesc = `good/getGoodAndDesc`,
   StatusAndDesc = `good/getDescAndStatus`,
+  OnlyStatus = `status-good`,
   GoodsTransAva = 'goods-trans-ava',
   DeleteByExpedient = `good/deleteByExpendient`,
   DiStatusGood = 'status-good/diStatusGood',
@@ -23,6 +24,7 @@ export enum GoodEndpoints {
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
+  AttribGoodBad = 'attrib-good-bad',
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
 }

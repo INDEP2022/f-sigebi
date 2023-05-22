@@ -11,10 +11,12 @@ import { DatePickerComponent } from 'src/app/shared/render-components/date-picke
   styles: [],
 })
 export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
+  @Input() override loading = false;
   @Input() statusActa = 'CERRADA';
   @Input() totalItems: number;
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Output() updateData = new EventEmitter();
+  @Output() showDeleteAlert = new EventEmitter();
   @Output() updateRowEvent = new EventEmitter();
   @Output() rowsSelected = new EventEmitter();
   constructor(private service: ProceedingsDetailDeliveryReceptionService) {
@@ -31,6 +33,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           '<i class="fa fa-solid fa-ban text-danger mx-2"></i>',
         confirmSave: true,
       },
+
       columns: {
         numberGood: {
           title: 'N° Bien',

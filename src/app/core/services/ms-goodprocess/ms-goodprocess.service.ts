@@ -64,4 +64,11 @@ export class GoodprocessService extends HttpService {
       params
     );
   }
+
+  getEtapaByDictation(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ParametersFaStageCreda,
+      params
+    );
+  }
 }

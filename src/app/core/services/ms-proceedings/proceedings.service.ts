@@ -8,6 +8,7 @@ import {
 } from '../../interfaces/list-response.interface';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
 import {
+  IBlkPost,
   IUpdateVault,
   IUpdateWarehouse,
 } from '../../models/ms-proceedings/warehouse-vault.model';
@@ -56,6 +57,10 @@ export class ProceedingsService extends HttpService {
       `${this.route}/${ProceedingsEndpoints.UpdateWarehouseByKeyProceeding}`,
       model
     );
+  }
+
+  getBiePosquery(model: IBlkPost) {
+    return this.post<IResponse>(`${ProceedingsEndpoints.blkBienPost}`, model);
   }
 
   getActByFileNumber(
