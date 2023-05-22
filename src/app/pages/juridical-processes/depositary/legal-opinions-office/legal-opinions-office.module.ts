@@ -4,12 +4,17 @@ import { CitiesSharedComponent } from 'src/app/@standalone/shared-forms/cities-s
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 
+import { LegalOpinionsOfficeFindAppointmentComponent } from './legal-opinions-office-find-appointment/legal-opinions-office-find-appointment.component';
 import { LegalOpinionsOfficeRoutingModule } from './legal-opinions-office-routing.module';
 import { LegalOpinionsOfficeComponent } from './legal-opinions-office/legal-opinions-office.component';
 import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
 
 @NgModule({
-  declarations: [LegalOpinionsOfficeComponent, ScanningFoilComponent],
+  declarations: [
+    LegalOpinionsOfficeComponent,
+    ScanningFoilComponent,
+    LegalOpinionsOfficeFindAppointmentComponent,
+  ],
   imports: [
     CommonModule,
     LegalOpinionsOfficeRoutingModule,

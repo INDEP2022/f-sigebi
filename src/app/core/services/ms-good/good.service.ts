@@ -174,6 +174,8 @@ export class GoodService extends HttpService {
 
   //
   update(good: IGood) {
+    console.log('Se metio a update');
+
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
@@ -226,8 +228,8 @@ export class GoodService extends HttpService {
     body: Object,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
-
+    console.log(params);
+    const route = `${GoodEndpoints.Good}/getGoodByWarehouse?search=${params.text}`;
     return this.post<IListResponse<IGood>>(route, body);
   }
   getByExpedientAndStatus(

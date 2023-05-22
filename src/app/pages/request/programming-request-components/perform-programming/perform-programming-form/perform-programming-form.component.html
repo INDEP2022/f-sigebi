@@ -1,37 +1,81 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Realizar programaci&oacute;n</h5>
+    <h5 class="title" *ngIf="dataProgramming?.folio">
+      Realizar programaci&oacute;n con folio&#58; {{ dataProgramming?.folio }}
+    </h5>
+    <h5 class="title" *ngIf="!dataProgramming?.folio">
+      Realizar programaci&oacute;n con folio&#58; {{ dataProgramming?.id }}
+    </h5>
   </div>
   <div body>
-    <div class="form-inline justify-content-end btn-toolbar">
-      <button (click)="newWarehouse()" class="btn btn-info btn-sm active mr-2">
-        Reporte de bienes programables
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
+      <form-loader *ngIf="formLoading"></form-loader>
+    </div>
+
+    <div class="justify-content-end btn-toolbar" *ngIf="!formLoading">
+      <confirm-button
+        [loading]="loadingReport"
+        [btnSmall]="true"
+        [text]="'Reporte de bienes programables'"
+        [loadingText]="'Generando Reporte'"
+        [className]="'btn-info'"
+        class="mr-2"
+        (confirm)="reportGoodsProgramming()"></confirm-button>
+
+      <button
+        (click)="newWarehouse()"
+        class="btn btn-primary btn-sm active mr-2">
+        Solicitar alta almac&eacute;n
       </button>
       <confirm-button
         [disabled]="!performForm.valid"
         [loading]="loading"
         [btnSmall]="true"
+        class="mr-2"
         (confirm)="confirm()"></confirm-button>
+
       <button
-        (click)="newWarehouse()"
+        (click)="sendProgramation()"
         class="btn btn-success btn-sm active mr-2">
         Enviar
       </button>
     </div>
-    <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
-      <form-loader *ngIf="formLoading"></form-loader>
+
+    <!-- <div class="row pt-3">
+      <h5 class="title">Informaci&oacute;n</h5>
+    </div> -->
+
+    <div class="row pt-3">
+      <h5 class="title">Programaci&oacute;n</h5>
     </div>
+
     <form [formGroup]="performForm" class="form-material">
       <div *ngIf="!formLoading">
-        <div class="row pt-5">
+        <div class="row pt-2">
           <div class="col-md-4">
-            <form-field [control]="performForm.get('regionalDelegationNumber')">
+            <form-field
+              [control]="performForm.get('regionalDelegationNumber')"
+              *ngIf="!dataProgramming?.concurrentMsg">
               <ngx-select
                 [form]="performForm"
                 control="regionalDelegationNumber"
                 [data]="regionalsDelegations"
                 value="description"
                 bindLabel="description"
+                label="Selecciona una delegaci&oacute;n regional"
+                (change)="regionalDelegationSelect($event)"
+                (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+            </form-field>
+            <form-field
+              [control]="performForm.get('regionalDelegationNumber')"
+              *ngIf="dataProgramming?.concurrentMsg">
+              <ngx-select
+                [form]="performForm"
+                control="regionalDelegationNumber"
+                [data]="regionalsDelegations"
+                value="description"
+                bindLabel="description"
+                [readonly]="true"
                 label="Selecciona una delegaci&oacute;n regional"
                 (change)="regionalDelegationSelect($event)"
                 (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
@@ -51,13 +95,30 @@
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="performForm.get('stateKey')">
+            <form-field
+              [control]="performForm.get('stateKey')"
+              *ngIf="!dataProgramming?.concurrentMsg">
               <ngx-select
                 [form]="performForm"
                 control="stateKey"
                 [data]="states"
                 [loading]="loading"
                 value="id"
+                bindLabel="descCondition"
+                label="Selecciona un estado"
+                (change)="stateSelect($event)"
+                (fetchItems)="getStateSelect($event)"></ngx-select>
+            </form-field>
+            <form-field
+              [control]="performForm.get('stateKey')"
+              *ngIf="dataProgramming?.concurrentMsg">
+              <ngx-select
+                [form]="performForm"
+                control="stateKey"
+                [data]="states"
+                [loading]="loading"
+                value="id"
+                [readonly]="true"
                 bindLabel="descCondition"
                 label="Selecciona un estado"
                 (change)="stateSelect($event)"
@@ -182,19 +243,37 @@
                 [data]="authorities"
                 value="idAuthority"
                 bindLabel="authorityName"
-                label="Selecciona una autoridad"></ngx-select>
+                label="Selecciona una autoridad"
+                (change)="authoritySelect($event)"
+                (fetchItems)="getAuthoritySelect($event)"></ngx-select>
             </form-field>
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="performForm.get('typeRelevantId')">
+            <form-field
+              [control]="performForm.get('typeRelevantId')"
+              *ngIf="!dataProgramming?.concurrentMsg">
               <ngx-select
                 [form]="performForm"
                 control="typeRelevantId"
                 [data]="typeRelevant"
                 value="id"
+                bindLabel="description"
+                label="Selecciona un tipo relevante"
+                (change)="typeSchedule($event)"
+                (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
+            </form-field>
+            <form-field
+              [control]="performForm.get('typeRelevantId')"
+              *ngIf="dataProgramming?.concurrentMsg">
+              <ngx-select
+                [form]="performForm"
+                control="typeRelevantId"
+                [data]="typeRelevant"
+                value="id"
+                [readonly]="true"
                 bindLabel="description"
                 label="Selecciona un tipo relevante"
                 (change)="typeSchedule($event)"
@@ -227,13 +306,6 @@
 
         <div class="row pt-5">
           <h5 class="title">Almac&eacute;n</h5>
-          <div class="form-inline justify-content-end btn-toolbar">
-            <button
-              (click)="newWarehouse()"
-              class="btn btn-primary btn-sm active mr-2">
-              Solicitar alta almac&eacute;n
-            </button>
-          </div>
           <div class="col-sm-12 pt-4">
             <form-field
               [control]="performForm.get('storeId')"

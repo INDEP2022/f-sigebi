@@ -11,10 +11,12 @@ import { DatePickerComponent } from 'src/app/shared/render-components/date-picke
   styles: [],
 })
 export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
+  @Input() override loading = false;
   @Input() statusActa = 'CERRADA';
   @Input() totalItems: number;
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Output() updateData = new EventEmitter();
+  @Output() showDeleteAlert = new EventEmitter();
   @Output() updateRowEvent = new EventEmitter();
   @Output() rowsSelected = new EventEmitter();
   constructor(private service: ProceedingsDetailDeliveryReceptionService) {
@@ -31,6 +33,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           '<i class="fa fa-solid fa-ban text-danger mx-2"></i>',
         confirmSave: true,
       },
+
       columns: {
         numberGood: {
           title: 'N° Bien',
@@ -55,11 +58,6 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
             component: DatePickerComponent,
           },
         },
-        approvedUserXAdmon: {
-          title: 'Usuario Aprobo por Admon',
-          sort: false,
-          editable: false,
-        },
         dateIndicatesUserApproval: {
           title: 'Fec. Indica Usuario Aprobación',
           sort: false,
@@ -68,13 +66,20 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
             component: DatePickerComponent,
           },
         },
+        approvedUserXAdmon: {
+          title: 'Usuario Aprobo por Admon',
+          sort: false,
+          editable: false,
+        },
         warehouse: {
           title: 'Almacén',
           sort: false,
+          editable: false,
         },
         vault: {
           title: 'Boveda',
           sort: false,
+          editable: false,
         },
         approvedXAdmon: {
           title: 'Apr.',
@@ -123,11 +128,13 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  updateRow(row: any) {
+  updateRow(row: IDetailProceedingsDeliveryReception) {
     // console.log(row);
     delete row.good;
     delete row.description;
     delete row.status;
+    delete row.warehouse;
+    delete row.vault;
     row = {
       ...row,
       approvedXAdmon:
@@ -143,13 +150,14 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
             : 'N'
           : row.received,
     };
-
-    this.service.update(row).subscribe({
-      next: response => {
-        this.updateRowEvent.emit();
-        this.onLoadToast('success', 'Bien actualizado', '');
-      },
-      error: err => {},
-    });
+    if (!row.createdLocal) {
+      this.service.update(row).subscribe({
+        next: response => {
+          this.updateRowEvent.emit();
+          this.onLoadToast('success', 'Bien actualizado', '');
+        },
+        error: err => {},
+      });
+    }
   }
 }

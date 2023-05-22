@@ -260,7 +260,7 @@
               </div>
               <div class="p-2">
                 <button
-                  id="btn1"
+                  id="btn"
                   class="btn btn-primary btn-sm active"
                   (click)="verifyClarification()">
                   <i class="bx bx-check"></i>Verificar Cumplimiento
@@ -322,7 +322,10 @@
                   class="p-2"
                   *ngIf="
                     requestData?.typeOfTransfer == 'PGR_SAE' ||
-                    requestData?.typeOfTransfer == 'MANUAL'
+                    requestData?.typeOfTransfer == 'MANUAL' ||
+                    (requestData?.typeOfTransfer == 'SAT_SAE' &&
+                      dataNotificationSelected?.clarificationType ==
+                        'SOLICITAR_IMPROCEDENCIA')
                   ">
                   <button
                     id="btn8"
@@ -332,7 +335,13 @@
                   </button>
                 </div>
               </div>
-              <div class="p-2" *ngIf="requestData?.typeOfTransfer == 'SAT_SAE'">
+              <div
+                class="p-2"
+                *ngIf="
+                  requestData?.typeOfTransfer == 'SAT_SAE' &&
+                  dataNotificationSelected?.clarificationType !=
+                    'SOLICITAR_IMPROCEDENCIA'
+                ">
                 <button
                   class="btn btn-info btn-sm active"
                   (click)="satAnswer()">
