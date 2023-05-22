@@ -14,6 +14,7 @@
               label="No. Volante">
               <input
                 type="number"
+                min="1"
                 formControlName="wheelNumber"
                 class="form-control" />
             </form-field>
@@ -34,7 +35,7 @@
           <div class="row pt-4">
             <form-field
               [control]="fileDataUpdateForm.get('consecutiveNumber')"
-              label="Consecutivo diario">
+              label="Consecutivo Diario">
               <input
                 type="number"
                 formControlName="consecutiveNumber"
@@ -134,9 +135,14 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="affair == null || dictOffice == ''"
-            (click)="sendToDocumentsManagement()">
-            Oficio de desahogo
+            [disabled]="
+              affair == null || dictOffice == '' || isLoadingOfficeOfRelief
+            "
+            (click)="onClickOfficeOfRelief()">
+            Oficio de Desahogo
+            <ng-container *ngIf="isLoadingOfficeOfRelief"
+              ><span class="spinner-border"></span
+            ></ng-container>
           </button>
           <button
             type="button"
@@ -587,7 +593,7 @@
               [disabled]="
                 userRecipient == null ||
                 delDestinyNumber == null ||
-                dictum != ''
+                dictum == ''
               "
               (click)="openFlyerCopies()">
               Captura de Copias

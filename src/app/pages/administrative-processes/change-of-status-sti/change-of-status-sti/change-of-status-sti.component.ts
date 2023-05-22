@@ -70,16 +70,13 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      numberFile: [null, [Validators.required]],
-      goodStatus: [
-        'ROP',
+      numberFile: [
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      descriptionStatus: [
-        'Solicitud de transferencia improcedente.',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      currentDate: [new Date(), [Validators.required]],
+      goodStatus: ['ROP'],
+      descriptionStatus: ['Notificado en Oficialia de Partes'],
+      currentDate: [new Date()],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -93,21 +90,33 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
 
   accept() {
     if (goodCheck.length == 0) {
-      this.onLoadToast('error', 'Error', 'Debe chechear al menos un Bien');
+      this.onLoadToast(
+        'info',
+        'Información',
+        'Debe seleccionar al menos un Bien'
+      );
       return;
     }
     if (this.description.value == null) {
-      this.onLoadToast('error', 'Error', 'La descripcion es obligatoria');
+      this.onLoadToast(
+        'info',
+        'Campos requerido',
+        'La descripcion es obligatoria'
+      );
       return;
     }
     try {
       goodCheck.forEach(item => {
         const good: IGood = item.row;
-        console.log(good);
-        good.status = this.goodStatus.value;
-        good.observations = `${good.observations}. ${this.description.value}`;
-        good.userModification = this.token.decodeToken().preferred_username;
-        this.goodServices.update(good).subscribe({
+        const updateGood: IGood = {
+          id: Number(good.id),
+          goodId: Number(good.id),
+          status: this.goodStatus.value,
+          observations: `${good.observations}. ${this.description.value}`,
+          userModification: this.token.decodeToken().preferred_username,
+        };
+
+        this.goodServices.update(updateGood).subscribe({
           next: response => {
             console.log(response);
             this.postHistoryGood(good);
@@ -142,7 +151,11 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         next: (response: any) => {
           console.log(response);
           if (response.length == 0) {
-            this.onLoadToast('error', 'ERROR', 'No hay bienes con status STI');
+            this.onLoadToast(
+              'info',
+              'Información',
+              'No hay bienes con status STI'
+            );
             this.goods = [];
             this.loading = false;
             return;
@@ -153,6 +166,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
           this.currentDate.disable();
         },
         error: error => {
+          this.onLoadToast('info', 'Información', 'No existe este expediente');
           console.log(error);
           this.goods = [];
           this.loading = false;

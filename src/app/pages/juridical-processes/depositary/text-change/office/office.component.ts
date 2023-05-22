@@ -13,6 +13,7 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
+  IdatosLocales,
   IGoodJobManagement,
   ImanagementOffice,
 } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
@@ -24,7 +25,7 @@ import { GoodsJobManagementService } from 'src/app/core/services/ms-office-manag
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -55,6 +56,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
   @Output() oficnumChange = new EventEmitter<number | string>();
+  valLocal: IdatosLocales;
 
   constructor(
     private fb: FormBuilder,
@@ -99,17 +101,44 @@ export class OfficeComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      proceedingsNumber: [null, [Validators.required]],
-      managementNumber: [null, [Validators.required]],
-      flyerNumber: [null, [Validators.required]],
-      officio: [null, [Validators.required]],
+      proceedingsNumber: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      ],
+      managementNumber: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      ],
+      flyerNumber: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      ],
+      officio: [null, null],
       charge: [null, [Validators.pattern(STRING_PATTERN)]],
-      addressee: [null, [Validators.pattern(STRING_PATTERN)]],
-      RemitenteSenderUser: [null, [Validators.pattern(STRING_PATTERN)]],
-      paragraphInitial: [null, [Validators.pattern(STRING_PATTERN)]],
-      paragraphFinish: [null, [Validators.pattern(STRING_PATTERN)]],
-      paragraphOptional: [null, [Validators.pattern(STRING_PATTERN)]],
-      descriptionSender: [null, [Validators.pattern(STRING_PATTERN)]],
+      addressee: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(2000)],
+      ],
+      RemitenteSenderUser: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      paragraphInitial: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      paragraphFinish: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      paragraphOptional: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
+      descriptionSender: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+      ],
       typePerson: [null, [Validators.required]],
       senderUser: [null, null],
       personaExt: [null, [Validators.required]],
@@ -124,7 +153,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getAllOfficialDocument(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.warn('1: >===>>', JSON.stringify(resp));
+          console.warn('1: >===>> ', JSON.stringify(resp));
           this.form
             .get('proceedingsNumber')
             .setValue(resp.data[0].proceedingsNumber);
@@ -132,14 +161,11 @@ export class OfficeComponent extends BasePage implements OnInit {
             .get('managementNumber')
             .setValue(resp.data[0].managementNumber);
           this.form.get('flyerNumber').setValue(resp.data[0].flyerNumber);
-          this.form.get('officio').setValue(resp.data[0].cveManagement);
+          this.form.get('officio').setValue(resp.data[0].jobBy);
           //====================================================================================//
-
           this.form.get('RemitenteSenderUser').setValue(resp.data[0].sender);
           this.form.get('addressee').setValue(resp.data[0].addressee);
-
           this.getPuestoUser(resp.data[0].cveChargeRem);
-
           this.form.get('paragraphInitial').setValue(resp.data[0].text1);
           this.form.get('paragraphFinish').setValue(resp.data[0].text2);
           this.form.get('paragraphOptional').setValue(resp.data[0].text3);
@@ -373,6 +399,49 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
 
   updateOficio() {
-    alert(JSON.stringify(this.form.value));
+    this.serviceOficces.updateOficio(this.creaObjUpdate(this.form)).subscribe({
+      next: response => {
+        this.onLoadToast(
+          'success',
+          'se actualizo el registro de manera correcta',
+          JSON.stringify(response.data)
+        );
+      },
+      error: responseError => {
+        console.log('Entra =>  ', responseError.error.message);
+        this.onLoadToast('error', 'Error', responseError.error.message);
+      },
+    });
+  }
+
+  creaObjUpdate(f: FormGroup) {
+    return {
+      flyerNumber: f.value.flyerNumber,
+      proceedingsNumber: f.value.proceedingsNumber,
+      managementNumber: f.value.managementNumber,
+      cveManagement: f.value.officio,
+      sender: f.value.RemitenteSenderUser,
+      addressee: f.value.addressee,
+      charge: f.value.cveChargeRem,
+      text1: f.value.paragraphInitial,
+      text2: f.value.paragraphFinish,
+      text3: f.value.paragraphOptional,
+      desSenderpa: f.value.descriptionSender,
+    };
+  }
+  getDescUserPuesto(event: Event) {
+    let userDatos = JSON.parse(JSON.stringify(event));
+    this.form.get('RemitenteSenderUser').setValue(userDatos.name);
+    this.dynamicCatalogsService
+      .getPuestovalue(userDatos.positionKey)
+      .subscribe({
+        next: resp => {
+          this.form.get('charge').setValue(resp.data.value);
+        },
+        error: err => {
+          this.form.get('charge').setValue('');
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
   }
 }

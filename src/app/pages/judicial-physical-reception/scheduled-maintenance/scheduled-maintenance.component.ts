@@ -35,17 +35,17 @@ export class ScheduledMaintenanceComponent
     private router: Router
   ) {
     super(fb, service, detailService, 'filtersIndica');
-    // this.settings1 = {
-    //   ...this.settings1,
-    //   actions: null,
-    // };
     this.settings1 = {
       ...this.settings1,
-      actions: { ...this.settings1.actions, position: 'left' },
-      edit: {
-        editButtonContent: '<i class="fa fa-eye mx-2"></i>',
-      },
+      actions: null,
     };
+    // this.settings1 = {
+    //   ...this.settings1,
+    //   actions: { ...this.settings1.actions, position: 'left' },
+    //   edit: {
+    //     editButtonContent: '<i class="fa fa-eye mx-2"></i>',
+    //   },
+    // };
     this.tiposEvento = [
       {
         id: 'EVENTREC',

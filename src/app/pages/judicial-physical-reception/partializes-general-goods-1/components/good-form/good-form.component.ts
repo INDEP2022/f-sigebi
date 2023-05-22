@@ -67,6 +67,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // }
     // this.moreParams = [];
     this.service.initFormGood();
+    this.selectGood(this.service.getSavedGood());
     // if (this.firstCase === true) {
     // this.service.initFormGood();
     // this.selectGood(this.serviceTab1.getSavedGood());
@@ -377,7 +378,13 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       }
     } else {
       this.service.good = good;
+      if ([62, 1426, 1424].includes(+good.goodClassNumber)) {
+        this.saldo.setValue(good.val2);
+      } else {
+        this.saldo.setValue(good.quantity);
+      }
     }
+    this.service.saveSelectedGood();
     const statusGood = good.status
       ? await firstValueFrom(this.statusService.getById(good.status))
       : null;
@@ -411,6 +418,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         : '',
       importe: +good.val14,
     });
+    // this.service.saveSelectedGood();
     console.log(good);
   }
 

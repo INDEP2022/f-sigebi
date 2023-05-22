@@ -59,11 +59,31 @@
   <hr />
   <div class="row">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('senderUser')" label="Remitente">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="RemitenteSenderUser" />
+      <form-field [control]="form.get('RemitenteSenderUser')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUserPuesto($event)"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="RemitenteSenderUser"
+          label="Remitente"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+
+        <!--input type="text" class="form-control" formControlName="RemitenteSenderUser" /-->
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -167,18 +187,6 @@
           </div>
         </ng-template>
       </form-field>
-
-      <!--form-field [control]="form.get('senderUser')" label="Detinatario Copia">
-        <ng-select
-          [items]="UserDestinatario"
-          bindLabel="id"
-          bindValue="id"
-          [readonly]="form.get('typePerson').value === 'E'"
-          formControlName="senderUser"
-          class="form-control"
-          (change)="getDescUser('control', $event)">
-        </ng-select>
-      </form-field-->
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <form-field [control]="form.get('personaExt')" label="Nombre Persona">
@@ -265,12 +273,14 @@
             [loading]="loading"
             (confirm)="confirm()">
           </confirm-button>
-
-          <!--button type="button" 
-                  class="btn btn-outline-success"
-                  (click)="updateOficio()">
-              Actualizar
-          </button-->
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-info active"
+            (click)="updateOficio()">
+            Actualizar
+          </button>
         </div>
       </div>
     </div>
