@@ -263,16 +263,19 @@ export class DestructionAuthorizationComponent
       actions: false,
       columns: { ...DICTATION_COLUMNS },
     };
-    console.log('constructor');
   }
 
   onSelectGood(instance: CheckboxElementComponent) {
+    if (this.controls.statusProceedings.value == 'CERRADA') {
+      instance.disabled = true;
+    }
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => this.selectGood(data.row, data.toggle),
     });
   }
 
   deleteGood() {
+    const { id } = this.controls;
     if (!this.controls.keysProceedings.value) {
       this.alert(
         'error',
@@ -299,6 +302,57 @@ export class DestructionAuthorizationComponent
       );
       return;
     }
+
+    const offlineGoods = this.selectedGoods.filter(
+      detail => !detail.numberProceedings
+    );
+    const onlineGoods = this.selectedGoods.filter(
+      detail => detail.numberProceedings != null
+    );
+    offlineGoods.forEach(detail => {
+      this.detailProceedingsList = this.detailProceedingsList.filter(
+        _d => _d.numberGood != detail.numberGood
+      );
+      this.selectedGoods = this.selectedGoods.filter(
+        _d => _d.numberGood != detail.numberGood
+      );
+      this.goodTrackerGoods = this.goodTrackerGoods.filter(
+        _d => _d.numberGood != detail.numberGood
+      );
+    });
+    if (onlineGoods.length == 0 && offlineGoods.length > 0) {
+      this.onLoadToast('success', 'Bienes eliminados del acta');
+    }
+    if (onlineGoods.length == 0) {
+      return;
+    }
+    this.loadingGoodsByP = true;
+    const $obs = onlineGoods.map(detail => this.deleteDetail(detail));
+    forkJoin($obs).subscribe({
+      next: () => {
+        this.loadingGoodsByP = false;
+
+        this.onLoadToast('success', 'Bienes eliminados del acta');
+
+        this.getProceedingGoods(id.value).subscribe();
+      },
+      error: () => {
+        this.loadingGoodsByP = false;
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un error al eliminar los bienes del acta'
+        );
+        this.getProceedingGoods(id.value).subscribe();
+      },
+    });
+  }
+
+  deleteDetail(detail: IDetailProceedingsDeliveryReception) {
+    return this.detailProceeDelRecService.remove(
+      detail.numberGood,
+      detail.numberProceedings
+    );
   }
 
   selectGood(good: IDetailProceedingsDeliveryReception, selected: boolean) {
@@ -394,6 +448,14 @@ export class DestructionAuthorizationComponent
       });
   }
 
+  setExpedientNum(goodId: number | string) {
+    const params = new FilterParams();
+    params.addFilter('id', goodId);
+    this.goodService.getAllFilter(params.getParams()).subscribe(good => {
+      this.controls.numFile.setValue(good.data[0].fileNumber);
+    });
+  }
+
   insertDetailFromGoodsTracker() {
     const body = {
       keyAct: this.controls.keysProceedings.value,
@@ -414,7 +476,12 @@ export class DestructionAuthorizationComponent
             numberProceedings: null,
           };
         });
-
+        if (
+          response.bienes_aceptados.length > 0 &&
+          !this.controls.numFile.value
+        ) {
+          this.setExpedientNum(response.bienes_aceptados[0].goodNumber);
+        }
         this.goodTrackerGoods = [
           ...new Set([...this.goodTrackerGoods, ...goods]),
         ];
@@ -479,7 +546,7 @@ export class DestructionAuthorizationComponent
     }
 
     if (!this.controls.numFile.value) {
-      this.onLoadToast('error', 'Error', 'Debe ingresar al menos un Bien');
+      this.onLoadToast('error', 'Error', 'Debe ingresar al menos un bien');
       return;
     }
 
@@ -512,6 +579,12 @@ export class DestructionAuthorizationComponent
       )
       .subscribe({
         next: proceeding => {
+          const destructionAuth: IDestructionAuth = {
+            ...this.state,
+            form: this.proceedingForm.value,
+            trackerGoods: [],
+          };
+          this.store.dispatch(SetDestructionAuth({ destructionAuth }));
           this.goodTrackerGoods = [];
           this.loading = false;
           this.proceedingForm.patchValue(proceeding);
@@ -554,6 +627,12 @@ export class DestructionAuthorizationComponent
       this.saveDetail(id.value),
     ]).subscribe({
       next: () => {
+        const destructionAuth: IDestructionAuth = {
+          ...this.state,
+          form: this.proceedingForm.value,
+          trackerGoods: [],
+        };
+        this.store.dispatch(SetDestructionAuth({ destructionAuth }));
         this.loading = false;
         this.goodTrackerGoods = [];
         this.onLoadToast('success', 'Acta actualizada correctamente');
