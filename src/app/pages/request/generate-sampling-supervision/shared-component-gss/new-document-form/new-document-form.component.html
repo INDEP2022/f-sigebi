@@ -10,7 +10,7 @@
       <form [formGroup]="documentForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-6">
-            <form-field [control]="documentForm.get('typeDoc')">
+            <!-- <form-field [control]="documentForm.get('typeDoc')">
               <ngx-select
                 [form]="documentForm"
                 control="typeDoc"
@@ -20,7 +20,28 @@
                 label="Tipo de Documento"
                 (fetchItems)="getTypeDocSelect($event)">
               </ngx-select>
-            </form-field>
+            </form-field> -->
+            <div
+              [formGroup]="documentForm"
+              class="form-group form-secondary form-static-label">
+              <ng-select
+                class="form-control"
+                formControlName="typeDoc"
+                [clearable]="false"
+                [items]="typeDocSelected"
+                [virtualScroll]="true"
+                [loading]="loading"
+                bindLabel="ddescription"
+                bindValue="ddocType">
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <div [title]="item.ddescription">
+                    {{ item.ddescription }}
+                  </div>
+                </ng-template>
+              </ng-select>
+              <span class="form-bar"></span>
+              <label class="float-label">Tipo de documento </label>
+            </div>
           </div>
         </div>
         <div class="row pt-4">

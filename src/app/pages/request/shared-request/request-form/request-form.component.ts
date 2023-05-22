@@ -576,10 +576,25 @@ export class RequestFormComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.taskService.createTask(task).subscribe({
         next: resp => {
-          resolve(resp);
+          if (resp.length == 0) {
+            this.onLoadToast(
+              'error',
+              'Error al crear tarea',
+              'El servicio de crear tareas no esta funcionando por el momento'
+            );
+            reject(false);
+          } else {
+            resolve(resp);
+          }
         },
         error: error => {
           console.log(error.error.message);
+          this.onLoadToast(
+            'error',
+            'Error al crear tarea',
+            'El servicio de crear tareas no esta funcionando por el momento'
+          );
+          reject(false);
         },
       });
     });
