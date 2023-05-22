@@ -654,6 +654,7 @@ export class JuridicalRulingGComponent
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
         _g.status = 'STI';
+        _g.name = false;
         let valid = this.goodsValid.some(goodV => goodV == _g);
         if (!valid) {
           this.goodsValid = [...this.goodsValid, _g];
@@ -692,6 +693,7 @@ export class JuridicalRulingGComponent
     }
   }
   removeAll() {
+    this.goods.pop();
     if (this.goodsValid.length > 0) {
       // this.goods = this.goods.concat(this.goodsValid);
       this.goods.map(_g => (_g.status = 'ADM'));
@@ -890,6 +892,10 @@ export class JuridicalRulingGComponent
   btnVerify() {
     const status = this.statusDict;
     const expedient = this.expedientesForm.get('noExpediente').value;
+    if (this.goodsValid.length === 0) {
+      this.alert('info', 'AVISO', 'Debes seleccionar un bien');
+      return;
+    }
     if (status === 'DICTAMINADO') {
       this.alert('info', 'AVISO', 'Bien ya dictaminado');
     } else {
@@ -899,8 +905,15 @@ export class JuridicalRulingGComponent
         // this.alert('warning', 'PENDIENTE', 'Parcializa la dictaminazión.');}
         Swal.fire('PENDIENTE', 'Parcializa la dictaminazión.', 'warning').then(
           () => {
-            window.location.replace(
-              '/pages/general-processes/goods-partialization'
+            this.router.navigate(
+              ['/pages/general-processes/goods-partialization'],
+              {
+                queryParams: {
+                  good: this.goodsValid[0].id,
+                  screen: 'FACTJURDICTAMASG',
+                  origin: 'FACTJURDICTAMASG',
+                },
+              }
             );
           }
         );
@@ -1048,7 +1061,6 @@ export class JuridicalRulingGComponent
                 let noDictaminacion =
                   this.expedientesForm.get('noDictaminacion').value;
                 let volante = this.dictaminacionesForm.get('wheelNumber').value;
-                debugger;
                 this.router.navigate(
                   [
                     baseMenu +
