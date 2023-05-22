@@ -1,10 +1,11 @@
 <app-table-goods
   [settingsTable]="settings"
-  [haveDelete]="false"
+  [loading]="loading"
   [statusActaValue]="statusActa"
   [data]="data"
   [totalItems]="totalItems"
   (updateGoodsRow)="updateRow($event)"
   (updateData)="updateData.emit($event)"
+  (showDeleteAlert)="showDeleteAlert.emit($event)"
   (rowsSelected)="rowsSelected.emit($event)">
 </app-table-goods>

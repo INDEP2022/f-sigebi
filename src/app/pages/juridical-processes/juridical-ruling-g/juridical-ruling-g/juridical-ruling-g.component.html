@@ -27,6 +27,7 @@
                   [searchOnInit]="true"
                   [data]="typesDict"
                   [form]="expedientesForm"
+                  [searchable]="false"
                   label="Tipo Dictaminación"
                   bindLabel="typeDict"
                   control="tipoDictaminacion"
@@ -39,11 +40,13 @@
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
-                  type="number"
+                  min="0"
+                  type="text"
                   class="form-control"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente" />
+                  formControlName="noExpediente"
+                  maxlength="10" />
               </form-field>
             </div>
             <!-- Averiguación Previa -->
@@ -349,6 +352,7 @@
           (click)="btnDocumentos()">
           Documentos
         </button>
+        <!-- [disabled]="isDocsEmpty()" -->
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
           [disabled]="isDocsEmpty()"

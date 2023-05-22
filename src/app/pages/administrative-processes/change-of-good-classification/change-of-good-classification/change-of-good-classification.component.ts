@@ -317,6 +317,7 @@ export class ChangeOfGoodClassificationComponent
   }
 
   refreshTableAct(array: any[]) {
+    console.log('Refresh', array);
     this.dataAct.load(array);
     this.dataAct.refresh();
   }
