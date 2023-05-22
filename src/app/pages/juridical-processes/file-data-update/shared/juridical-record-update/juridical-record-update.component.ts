@@ -1318,10 +1318,9 @@ export class JuridicalRecordUpdateComponent
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
     };
-    console.log({
-      juridicalRulingParams: this.fileUpdComService.juridicalRulingParams,
-    });
-    this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+    let path = '/pages/juridical/juridical-ruling-g';
+
+    this.router.navigate([path], {
       queryParams: {
         origin: '/pages/juridical/file-data-update',
         form: 'FACTGENACTDATEX',
