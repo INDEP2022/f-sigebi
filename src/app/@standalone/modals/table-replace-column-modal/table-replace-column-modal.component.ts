@@ -3,11 +3,10 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -26,19 +25,23 @@ export class TableReplaceColumnModalComponent
 {
   form: FormGroup; // Input requerido al llamar el modal
   formField: string;
+  label: string;
+  path: string;
+  paramSearch: string;
   otherFormField: string;
   otherFormLabel: string;
+  prefixSearch: string = '$eq';
   titleColumnToReplace: string = ''; // nombre de la columna a reemplazar en plura
   tableData: any[] = []; // Input requerido al llamar el modal
   columnsType: any = {}; // Input requerido al llamar el modal
-  service: any; //
-  dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal
+  // service: any; //
+  // dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal
   idSelect: string; // Input requerido al llamar el modal
   labelSelect: string; // Input requerido al llamar el modal
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsControl: FilterParams = new FilterParams(); // Input requerido al llamar el modal
-  paramFilter = 'search';
-  operator = SearchFilter.EQ;
+  // paramFilter = 'search';
+  // operator = SearchFilter.EQ;
   private _data: any[];
   @Output() newValue = new EventEmitter();
   get data() {
@@ -49,15 +52,17 @@ export class TableReplaceColumnModalComponent
     return this.tableData.length;
   }
 
-  get getListObservableSelect() {
-    return this.dataObservableFn(this.service, this.paramsControl.getParams());
-  }
+  // get getListObservableSelect() {
+  //   return this.dataObservableFn(this.service, this.paramsControl.getParams());
+  // }
 
   constructor(private modalRef: BsModalRef) {
     super();
   }
 
   ngOnInit(): void {
+    // console.log(this.service, this.dataObservableFn);
+
     // console.log(this.tableData, [...this.tableData].slice(0, 1));
     this.settings = {
       ...this.settings,

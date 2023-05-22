@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -68,8 +69,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     P_GEST_OK: '',
     CLAVE_OFICIO_ARMADA: '',
     P_NO_TRAMITE: '',
-    TIPO: '', //'PROCEDENCIA', // DEVOLUCION   ---  DESTRUCCION  --- EXP
-    P_VALOR: '', //'486063', // --- EXP 791474  --  155--- EXP 5060   ---   5240--- EXP 339805
+    TIPO: '',
+    P_VALOR: '',
   };
   officeTypeOption: any[] = officeTypeOption;
   origin: string = '';
@@ -107,6 +108,12 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   blockSender: boolean = true;
   objDetail: any = {};
   loadDetail: boolean = false;
+  showSearchAppointment: boolean = false;
+  // Cargar n cantidad de Copias para
+  totalCopiesTo: number = 2;
+  formCopiesTo: FormGroup;
+  copiesToList: { ccp_person: ''; ccp_addressee: ''; ccp_TiPerson: '' }[] = [];
+  // Cargar n cantidad de Copias para
 
   constructor(
     private fb: FormBuilder,
@@ -173,15 +180,19 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.initForm();
       } else {
         console.log('SIN PARAMETROS');
-        this.alertInfo(
-          'info',
-          'Error en los paramétros',
-          'Los paramétros No. Oficio: ' +
-            this.paramsScreen.P_VALOR +
-            ' y el Tipo Oficio: ' +
-            this.paramsScreen.TIPO +
-            ' al iniciar la pantalla son requeridos'
-        );
+        if (!this.origin) {
+          this.showSearchAppointment = true;
+        } else {
+          this.alertInfo(
+            'info',
+            'Error en los paramétros',
+            'Los paramétros No. Oficio: ' +
+              this.paramsScreen.P_VALOR +
+              ' y el Tipo Oficio: ' +
+              this.paramsScreen.TIPO +
+              ' al iniciar la pantalla son requeridos'
+          );
+        }
       }
     }
   }
@@ -232,7 +243,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           this.alertInfo(
             'info',
             'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
-            ''
+            'No se encontró el identificador'
           );
           subscription.unsubscribe();
         },
@@ -255,11 +266,36 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           this.alertInfo(
             'info',
             'Error al cargar la información inicial de la pantalla de acuerdo a los paramétros recibidos',
-            ''
+            'No se encontrarón la Clave del Acta y la Fecha'
           );
           subscription.unsubscribe();
         },
       });
+  }
+
+  cleanDataForm() {
+    this.form.reset();
+    this.formScan.reset();
+    // this.formCopiesTo.reset();
+    this.cityData = new DefaultSelect();
+    this.issuingUser = new DefaultSelect();
+    this.addressee = new DefaultSelect();
+    this.userCopies1 = new DefaultSelect();
+    this.userCopies2 = new DefaultSelect();
+    this.expedientData = null;
+    this.dictationData = null;
+    this.officeDictationData = null;
+    this.officeCopiesDictationData = null;
+    this.officeTextDictationData = null;
+    this.addresseeDataSelect = null;
+    this.goodData = [];
+    this.totalData = 0;
+    this.dataTable.load([]);
+    this.dataTable.refresh();
+    this.totalCopiesTo = 2;
+    this.enabledDataCopies();
+    this.enabledDataOffice();
+    this.form.get('numberNotary').enable();
   }
 
   showMoreInformationField(show: boolean, option: number) {
@@ -275,10 +311,17 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      file: [{ value: '', disabled: false }, [Validators.maxLength(11)]],
+      file: [
+        { value: '', disabled: true },
+        [Validators.maxLength(11), Validators.pattern(NUM_POSITIVE)],
+      ],
       numberOfficeDic: [
-        { value: '', disabled: false },
-        [Validators.required, Validators.maxLength(40)],
+        { value: '', disabled: true },
+        [
+          Validators.required,
+          Validators.maxLength(40),
+          Validators.pattern(NUM_POSITIVE),
+        ],
       ],
       typeOffice: [{ value: '', disabled: true }],
       cveOfficeGenerate: [
@@ -360,6 +403,35 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       ],
     });
   }
+
+  continueSearchAppoinment(event: any) {
+    this.showSearchAppointment = false;
+    if (event) {
+      if (event.id) {
+        this.dictationData = event;
+        this.paramsScreen = {
+          PAQUETE: '',
+          P_GEST_OK: '',
+          CLAVE_OFICIO_ARMADA: this.dictationData.passOfficeArmy,
+          P_NO_TRAMITE: '',
+          TIPO: this.dictationData.typeDict,
+          P_VALOR: this.dictationData.id.toString(),
+        };
+        console.log(this.dictationData);
+        this.callNextbtnSearchAppointment();
+      }
+    }
+  }
+
+  cancelEventSearch(event: any) {
+    console.log(event);
+    this.showSearchAppointment = false;
+  }
+
+  anotherSearchAppointment() {
+    this.showSearchAppointment = true;
+  }
+
   btnSearchAppointment() {
     this.loading = true;
     const params = new FilterParams();
@@ -373,19 +445,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: data => {
           console.log('DICTAMEN', data);
           this.dictationData = data.data[0];
-          this.setDataAppointment();
           subscription.unsubscribe();
-          this.getOfficeDictationData();
-          // Call dictaminaciones por bien
-          if (
-            this.dictationTypeValidOption.includes(
-              this.dictationData.typeDict
-            ) &&
-            !this.variables.identi.includes('4')
-          ) {
-            this.form.get('typeOffice').enable();
-            this.showEnableTypeOffice = true;
-          }
+          this.callNextbtnSearchAppointment();
         },
         error: error => {
           this.loading = false;
@@ -393,6 +454,19 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           subscription.unsubscribe();
         },
       });
+  }
+
+  callNextbtnSearchAppointment() {
+    this.setDataAppointment();
+    this.getOfficeDictationData();
+    // Call dictaminaciones por bien
+    if (
+      this.dictationTypeValidOption.includes(this.dictationData.typeDict) &&
+      !this.variables.identi.includes('4')
+    ) {
+      this.form.get('typeOffice').enable();
+      this.showEnableTypeOffice = true;
+    }
   }
 
   setDataAppointment() {
@@ -631,12 +705,16 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     params.removeAllFilters();
     params.addFilter('numberOfDicta', this.officeDictationData.officialNumber);
     params.addFilter('typeDictamination', this.officeDictationData.typeDict);
+    params.limit = 100;
     let subscription = this.svLegalOpinionsOfficeService
       .getOfficeCopiesDictation(params.getParams())
       .subscribe({
         next: data => {
           console.log('OFICIO COPIAS DICTAMEN', data);
           this.officeCopiesDictationData = data.data;
+          // Set copies data
+          this.totalCopiesTo = data.count;
+          this.buildCopiesToControls();
           this.setDataOfficeCopiesDictation();
           subscription.unsubscribe();
         },
@@ -1193,13 +1271,44 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       // CLAVE OFICIO ARMADA NULL
       this.objDetail['vCLAVE_ARMADA'] = '';
       this.objDetail['ETAPA'] = '';
-      if (this.paramsScreen.TIPO == 'PROCEDENCIA') {
-        // Realiza peticiones a cursores
-        this.cuEmisora();
+      if (this.dictationData.dictDate) {
+        this.getEtapaByDictation();
       } else {
-        this.continuationOfMakeArmyKey();
+        this.alert(
+          'warning',
+          'El Dictamen no tiene una fecha: ' + this.dictationData.dictDate,
+          ''
+        );
       }
     }
+  }
+
+  getEtapaByDictation() {
+    const paramsData = new ListParams();
+    paramsData['date'] = format(this.dictationData.dictDate, 'dd/MM/yyyy');
+    this.svLegalOpinionsOfficeService
+      .getEtapaByDictation(paramsData)
+      .subscribe({
+        next: (data: any) => {
+          console.log('FIRMA ELECTRONICA', data);
+          this.objDetail['ETAPA'] = data.data.stagecreated;
+          if (this.paramsScreen.TIPO == 'PROCEDENCIA') {
+            // Realiza peticiones a cursores
+            this.cuEmisora();
+          } else {
+            this.continuationOfMakeArmyKey();
+          }
+        },
+        error: error => {
+          this.loadDetail = false;
+          console.log(error);
+          this.alert(
+            'warning',
+            'Error al obtener la Etapa a partir de la Fecha de Dictaminación',
+            error.error.message
+          );
+        },
+      });
   }
 
   getElectronicFirmCount() {
@@ -1560,13 +1669,39 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
   goBack() {
     if (this.origin == 'FACTJURDICTAMAS') {
-      this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
-        queryParams: {
-          origin: this.screenKey,
-          P_GEST_OK: this.paramsScreen.P_GEST_OK,
-          P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
-        },
-      });
+      this.router.navigate(['/pages/juridical/juridical-ruling']);
+      // this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+      //   queryParams: {
+      //     origin: this.screenKey,
+      //     P_GEST_OK: this.paramsScreen.P_GEST_OK,
+      //     P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+      //   },
+      // });
+    } else if (this.origin == 'FACTJURDICTAMASG') {
+      this.router.navigate(['/pages/juridical/juridical-ruling-g']);
+    } else {
+      this.alert(
+        'warning',
+        'La página de origen no tiene opción para regresar a la pantalla anterior',
+        ''
+      );
     }
+  }
+
+  buildCopiesToControls() {
+    let controlsObj: any = {};
+    for (let index = 0; index < this.totalCopiesTo; index++) {
+      controlsObj['ccp_person' + index] = [{ value: '', disabled: false }];
+      controlsObj['ccp_addressee' + index] = [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ];
+      controlsObj['ccp_TiPerson' + index] = [
+        { value: '', disabled: false },
+        [Validators.pattern(STRING_PATTERN)],
+      ];
+    }
+    this.formCopiesTo = this.fb.group(controlsObj);
+    console.log(this.formCopiesTo);
   }
 }
