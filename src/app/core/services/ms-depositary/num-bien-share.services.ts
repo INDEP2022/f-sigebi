@@ -27,13 +27,6 @@ export class NumBienShare extends HttpService {
   }
 
   set SharingNumbienData(data: valorBien) {
-    alert(data);
     this.sharingNumbien.next(data);
   }
-
-  /*
-http://localhost:4200/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/3801
-FCONDEPODISPAGOS-Validación de Pagos
-
-*/
 }

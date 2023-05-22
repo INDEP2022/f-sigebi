@@ -28,6 +28,22 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
         title: 'Edo.Fisico',
         type: 'string',
         sort: false,
+        valuePrepareFunction: (value: any) => {
+          switch (value) {
+            case 0:
+              return 'MALO';
+              break;
+            case 1:
+              return 'REGULAR';
+              break;
+            case 2:
+              return 'BUENO';
+              break;
+            default:
+              return 'SIN ESPECIFICAR';
+              break;
+          }
+        },
       },
     },
     noDataMessage: 'No se encontrarón registros',
@@ -40,5 +56,9 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.dataGoods = new LocalDataSource(this.goodData);
+  }
+
+  close() {
+    this.bsModel.hide();
   }
 }

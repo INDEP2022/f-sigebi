@@ -482,24 +482,44 @@ ng-scrollbar.table-scrollbar {
 }
 
 .bg-black-unavailable {
-  // background-color: black !important;
-  color: black;
+  background-color: rgb(14, 14, 14) !important;
+  color: white;
+  padding: 0.3rem;
+  font-weight: 900;
+}
+
+.bg-black-unavailable-roj {
+  background-color: rgb(14, 14, 14) !important;
+  color: red;
   padding: 0.3rem;
   font-weight: 900;
 }
 
 .bg-green-to-confirm {
-  // background-color: green !important;
-  color: green;
+  background-color: #28a745 !important;
+  color: white;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+.bg-green-to-confirm-verdadero {
+  background-color: #28a745 !important;
+  color: black;
   font-weight: 900;
   padding: 0.3rem;
 }
 
 #monitorABN table:not(.normal-hover) tbody tr.selected {
-  color: default;
+  color: black;
+  // #28a745
   background: rgb(240, 228, 209) !important;
 }
 
 #monitorABN table:not(.normal-hover) tbody tr:hover {
-  color: default;
+  color: black;
+}
+
+.disabled-custom {
+  pointer-events: none !important;
+  // opacity: 0.7 !important;
 }

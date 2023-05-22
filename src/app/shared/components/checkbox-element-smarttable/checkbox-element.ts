@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-checkbox-element',
@@ -6,6 +14,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
     <div class="row justify-content-center">
       <input
         [disabled]="disabled"
+        #box
         [checked]="checked"
         (change)="onToggle($event)"
         type="checkbox" />
@@ -16,7 +25,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class CheckboxElementComponent<T = any> implements OnInit {
   checked: boolean;
   disabled: boolean;
-
+  @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
   @Input() value: boolean;
   @Input() rowData: T;
 

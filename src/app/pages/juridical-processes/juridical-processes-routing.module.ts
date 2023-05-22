@@ -13,7 +13,7 @@ import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-pro
 const routes: Routes = [
   {
     // DICTAMINACIONES JURIDICAS
-    path: routesJuridicalProcesses[0].link + '/:id',
+    path: routesJuridicalProcesses[0].link,
     loadChildren: async () =>
       (await import('./juridical-ruling/juridical-ruling.module'))
         .JuridicalRulingModule,

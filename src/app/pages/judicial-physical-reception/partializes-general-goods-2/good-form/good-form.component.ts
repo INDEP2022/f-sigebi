@@ -114,10 +114,10 @@ export class GoodFormComponent extends AlertButton implements OnInit {
           this.service.good = null;
           return;
         }
-        this.service.setSettingsFirstCase();
+        // this.service.setSettingsFirstCase();
         this.saldo.setValue(+good.val2);
       } else {
-        this.service.setSettingsSecondCase();
+        // this.service.setSettingsSecondCase();
       }
       const statusGood = good.status
         ? await firstValueFrom(this.statusService.getById(good.status))

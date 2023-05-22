@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -168,10 +169,10 @@ export class VerifyComplianceTabComponent
     };
 
     /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
-    if (this.process === 'approval-process') {
+    if (this.process == 'process-approval') {
       this.checkboxReadOnly = true;
       this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
-    } else if ((this.process = 'verify-compliance')) {
+    } else if (this.process == 'verify-compliance') {
       this.checkboxReadOnly = false;
       this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
     }
@@ -821,6 +822,9 @@ export class VerifyComplianceTabComponent
         const clarification = resp.data.map(async (item: any) => {
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
+
+          const formatDate = moment(item.rejectionDate).format('DD/MM/YYYY');
+          item.rejectionDate = formatDate;
         });
 
         Promise.all(clarification).then(data => {
@@ -981,6 +985,9 @@ export class VerifyComplianceTabComponent
               'Los datos se guardaron correctamente'
             );
             this.confirmation = true;
+            this.goodData.refresh();
+            this.isGoodSelected = false;
+            this.clarificationData = [];
           }
         }
       });

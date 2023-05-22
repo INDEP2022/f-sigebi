@@ -5,7 +5,6 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
@@ -25,6 +24,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   loadUsersData: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
+  paramsShowUsers = new BehaviorSubject<ListParams>(new ListParams());
   idProgramming: number = 0;
   totalItems: number = 0;
   typeUser: string = '';
@@ -83,8 +83,22 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
+    this.paramsShowUsers.getValue()['filter.role'] =
+      'SolicitudProgramacion.creaProgramacion';
+    this.paramsShowUsers.getValue()['filter.delegationreg'] =
+      this.delegationUserLog;
+    this.userProcessService
+      .getAllUsersWithRol(this.paramsShowUsers.getValue())
+      .subscribe({
+        next: response => {
+          console.log('response', response);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
 
-    this.params.value.addFilter('employeeType', this.typeUser);
+    /*this.params.value.addFilter('employeeType', this.typeUser);
     this.params.value.addFilter(
       'regionalDelegation',
       this.delegationUserLog,
@@ -110,7 +124,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
         console.log(error);
         this.loading = false;
       },
-    });
+    }); */
 
     /*this.params.getValue()['search'] = this.params.getValue().text;
     this.params.getValue()['filter.employeeType'] = this.typeUser;
@@ -170,6 +184,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   confirm() {
     console.log('Usuario a guardar', this.userInfo);
     if (this.userInfo.length > 0) {
+      let count: number = 0;
       this.userInfo.map(info => {
         let user: Object = {
           programmingId: this.idProgramming,
@@ -179,8 +194,11 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
         };
 
         this.programmingService.createUsersProgramming(user).subscribe(data => {
-          this.modalRef.content.callback(true);
-          this.modalRef.hide();
+          count = count + 1;
+          if (count == 1) {
+            this.modalRef.content.callback(true);
+            this.modalRef.hide();
+          }
         });
       });
     } else {

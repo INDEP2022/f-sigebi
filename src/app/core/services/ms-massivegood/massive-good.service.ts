@@ -73,6 +73,9 @@ export class MassiveGoodService extends HttpService {
     return this.get(route);
   }
 
+  getDatosCSV() {
+    return this.post(this.route.GetFileCSV, '');
+  }
   updateMassiveGoods(body: {}) {
     const route = `${this.route.MassiveChargeGoods}/update-massive-goods`;
     return this.put(route, body);

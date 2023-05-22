@@ -58,10 +58,8 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    this.dictamenSeq();
+
     this.prepareForm();
   }
 
@@ -101,6 +99,7 @@ export class InappropriatenessPgrSatFormComponent
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
       rejectNoticeId: this.notification.rejectNotificationId,
+      areaUserCapture: token.delegacionreg,
     };
 
     this.loading = true;

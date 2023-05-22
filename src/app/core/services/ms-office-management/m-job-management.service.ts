@@ -21,4 +21,8 @@ export class MJobManagementService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IMJobManagement>> {
     return this.get<IListResponse<IMJobManagement>>('m-job-management', params);
   }
+
+  postFindById(params: Object): Observable<IListResponse<IMJobManagement>> {
+    return this.post('m-job-management/find-by-ids', params);
+  }
 }

@@ -15,9 +15,11 @@ import { IAppraisersGood } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IRequestAppraisal } from 'src/app/core/models/ms-request-appraisal/request-appraisal.model';
 import { AppraisersService } from 'src/app/core/services/catalogs/appraisers.service';
+import { AppraisersHttpService } from 'src/app/core/services/catalogs/ms-appraisers.service';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { AppraisalGoodService } from 'src/app/core/services/ms-appraisal-good/appraisal-good.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RequestAppraisalService } from 'src/app/core/services/ms-request-appraisal/request-appraisal.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
@@ -63,7 +65,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   goodDataSave: any;
   dataApprasialGood: any[];
   idGood: number | string;
-  goodSelected: string = 'No se seleccionó bien';
+  goodSelected: string = 'Seleccione un Bien';
   getgoodCategory: string;
   getoriginSignals: string;
   getnotifyDate: string | Date;
@@ -73,9 +75,11 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   getdictamenPerenidad: string;
   getdictamenPerito: string;
   getdictamenInstitucion: string;
+  getregisterInscrSol: boolean;
   monedaField = 'moneda';
   dateVigencia: Date;
   isEnableGood = false;
+  goodStatus = '';
 
   constructor(
     private fb: FormBuilder,
@@ -87,7 +91,9 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     private serviceAppraiser: AppraisalGoodService,
     private modalService: BsModalService,
     private serviceReqAppr: RequestAppraisalService,
-    private serviceScreenStatus: ScreenStatusService
+    private serviceScreenStatus: ScreenStatusService,
+    private serviceCatalogAppraise: AppraisersHttpService,
+    private serviceExpediente: ExpedientService
   ) {
     super();
   }
@@ -95,42 +101,33 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getStatusView();
+    this.form.get('solicitud').valueChanges.subscribe(res => {
+      console.log(res);
+    });
   }
 
   prepareForm() {
     this.form = this.fb.group({
       expediente: [null, [Validators.required]],
-      fechaFe: [null, [Validators.required]],
-      noBien: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
-      clasificacion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      remarks: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      solicitud: [null, [Validators.required]],
-      importe: [null, [Validators.required]],
-      moneda: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      fechaVigencia: [null, [Validators.required]],
-      fechaAvaluo: [null, [Validators.required, maxDate(new Date())]],
-      perito: [null, [Validators.required]],
-      institucion: [null, [Validators.required]],
-      fechaDictamen: [null, [Validators.required]],
-      dictamenPerito: [null, [Validators.required]],
-      dictamenInstitucion: [null, [Validators.required]],
-      dictamenPerenidad: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      fechaAseg: [null, [Validators.required]],
-      notificado: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      lugar: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      fechaFe: [null, []],
+      noBien: [null, []],
+      descripcion: [null, []],
+      clasificacion: [null, [Validators.pattern(STRING_PATTERN)]],
+      remarks: [null, [Validators.pattern(STRING_PATTERN)]],
+      solicitud: [null, []],
+      importe: [null, []],
+      moneda: [null, [Validators.pattern(STRING_PATTERN)]],
+      fechaVigencia: [null, []],
+      fechaAvaluo: [null, [maxDate(new Date())]],
+      perito: [null, []],
+      institucion: [null, []],
+      fechaDictamen: [null, []],
+      dictamenPerito: [null, []],
+      dictamenInstitucion: [null, []],
+      dictamenPerenidad: [null, [Validators.pattern(STRING_PATTERN)]],
+      fechaAseg: [null, []],
+      notificado: [null, [Validators.pattern(STRING_PATTERN)]],
+      lugar: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -138,13 +135,12 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     this.openModal();
   }
 
-  fillContent() {}
-
   openModal(context?: Partial<AppraisalHistoryComponent>) {
     const modalRef = this.modalService.show(AppraisalHistoryComponent, {
       initialState: {
         parentModal: 'Hola desde padre',
         appraisalData: this.dataApprasialGood,
+        idGood: this.idGood,
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -152,7 +148,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   }
 
   validarFechaAvaluo() {
-    this.btnAppraisTab();
+    /* this.btnAppraisTab(); */
     this.dateVigencia = addDays(this.form.get('fechaAvaluo').value, 1);
     this.enableButton('fecha-vigencia-input');
   }
@@ -160,7 +156,6 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   //Activar y desactivar Botones
 
   toggleButton(idBtn: string, data: string) {
-    const tab = document.getElementById('tabset-id');
     const btn = document.getElementById(idBtn);
     if (this.form.get(data).value != null) {
       this.render.removeClass(btn, 'disabled');
@@ -185,7 +180,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     this.render.addClass(btn, 'disabled');
   }
 
-  btnGeneralTab() {
+  /* btnGeneralTab() {
     if (
       (this.form.get('clasificacion').value != this.getgoodCategory ||
         this.form.get('remarks').value != this.getoriginSignals) &&
@@ -196,32 +191,13 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     } else {
       this.disabledButton('update-general-good');
     }
-  }
+  } */
 
-  btnAppraisTab() {
-    if (
-      this.form.get('fechaAvaluo').value == null ||
-      this.form.get('fechaVigencia').value == null ||
-      this.form.get('importe').value == null ||
-      this.form.get('moneda').value == null ||
-      this.form.get('perito').value == null ||
-      this.form.get('institucion').value == null ||
-      this.form.get('fechaAvaluo').value == '' ||
-      this.form.get('fechaVigencia').value == '' ||
-      this.form.get('importe').value == '' ||
-      this.form.get('moneda').value == '' ||
-      this.form.get('perito').value == '' ||
-      this.form.get('institucion').value == '' ||
-      this.idGood == undefined ||
-      this.idGood == null
-    ) {
-      this.disabledButton('apprais-good');
-    } else {
-      this.enableButton('apprais-good');
-    }
-  }
+  /* btnAppraisTab() {
+    this.enableButton('apprais-good');
+  } */
 
-  btnAbandonment() {
+  /*  btnAbandonment() {
     if (
       (this.form.get('fechaAseg').value != this.getnotifyDate ||
         this.form.get('notificado').value != this.getnotifyA ||
@@ -233,9 +209,9 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     } else {
       this.disabledButton('first-notice-abandonment');
     }
-  }
+  } */
 
-  btnOpinion() {
+  /* btnOpinion() {
     const dateString = this.form.get('fechaDictamen').value;
     const formatString = 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ [(]z[)]';
     const isValidDateFormat = moment(dateString, formatString, true).isValid();
@@ -255,7 +231,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     } else {
       this.disabledButton('opinion');
     }
-  }
+  } */
 
   //Catalogos
 
@@ -297,28 +273,33 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   //Obtener bienes de un expediente
 
   clearInputs() {
-    this.form.get('clasificacion').setValue(null);
-    this.form.get('remarks').setValue(null);
-    this.form.get('importe').setValue(null);
-    this.form.get('fechaAvaluo').setValue(null);
-    this.form.get('fechaVigencia').setValue(null);
-    this.form.get('perito').setValue(null);
-    this.form.get('institucion').setValue(null);
-    this.form.get('fechaDictamen').setValue(null);
-    this.form.get('dictamenPerito').setValue(null);
-    this.form.get('dictamenInstitucion').setValue(null);
-    this.form.get('dictamenPerenidad').setValue(null);
-    this.form.get('fechaAseg').setValue(null);
-    this.form.get('notificado').setValue(null);
-    this.form.get('lugar').setValue(null);
-    this.disabledButton('first-notice-abandonment');
+    this.form.get('clasificacion').reset();
+    this.form.get('remarks').reset();
+    this.form.get('importe').reset();
+    this.form.get('moneda').reset();
+    this.form.get('fechaAvaluo').reset();
+    this.form.get('fechaVigencia').reset();
+    this.form.get('perito').reset();
+    this.form.get('institucion').reset();
+    this.form.get('fechaDictamen').reset();
+    this.form.get('dictamenPerito').reset();
+    this.form.get('dictamenInstitucion').reset();
+    this.form.get('dictamenPerenidad').reset();
+    this.form.get('fechaAseg').reset();
+    this.form.get('notificado').reset();
+    this.form.get('lugar').reset();
+    /* this.disabledButton('first-notice-abandonment');
     this.disabledButton('opinion');
     this.disabledButton('apprais-good');
     this.disabledButton('apprasial-history');
-    this.disabledButton('update-general-good');
+    this.disabledButton('update-general-good'); */
+    this.goodSelected = 'Seleccione un Bien';
+    this.goodStatus = '';
+    this.form.get('fechaFe').reset();
   }
 
   getGoodsByExpedient() {
+    this.disabledButton('search-goods-expedient');
     this.clearInputs();
     this.serviceGood
       .getByExpedient(this.form.get('expediente').value, {
@@ -336,9 +317,29 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
             })
           );
           this.dataGoods.load(newData);
+          this.enableButton('search-goods-expedient');
+          this.serviceExpediente
+            .getById(this.form.get('expediente').value)
+            .subscribe(resp => {
+              console.log(resp.ministerialDate);
+              this.form
+                .get('fechaFe')
+                .setValue(
+                  resp.ministerialDate === null
+                    ? this.form.get('fechaFe').reset()
+                    : new Date(resp.ministerialDate)
+                );
+            });
         },
         error: (err: any) => {
           console.error(err);
+          this.dataGoods.load([]);
+          this.alert(
+            'warning',
+            'El expediente presento error',
+            'El número de expediente no existe o presentó un error inesperado'
+          );
+          this.enableButton('search-goods-expedient');
         },
       });
   }
@@ -368,15 +369,32 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     );
   }
 
+  deselectRow() {
+    /* this.disabledButton('update-general-good');
+    this.disabledButton('apprasial-history');
+    this.disabledButton('apprais-good');
+    this.disabledButton('opinion');
+    this.disabledButton('first-notice-abandonment'); */
+    this.isEnableGood = false;
+    this.clearInputs();
+  }
+
   getGoodData(object: any) {
+    this.form.get('importe').reset();
+    this.form.get('moneda').reset();
+    this.form.get('fechaAvaluo').reset();
+    this.form.get('fechaVigencia').reset();
+    this.form.get('perito').reset();
+    this.form.get('institucion').reset();
+
     if (object.data.available) {
       this.isEnableGood = true;
     } else {
-      this.disabledButton('update-general-good');
+      /* this.disabledButton('update-general-good');
       this.disabledButton('apprasial-history');
       this.disabledButton('apprais-good');
       this.disabledButton('opinion');
-      this.disabledButton('first-notice-abandonment');
+      this.disabledButton('first-notice-abandonment'); */
       this.isEnableGood = false;
     }
 
@@ -385,9 +403,11 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       res => {
         console.log(JSON.parse(JSON.stringify(res)).data);
         const data = JSON.parse(JSON.stringify(res)).data[0];
+        console.log(data.goodStatus);
         this.goodDataSave = data;
-        this.goodSelected = data.description;
+        this.goodSelected = `Seleccionó el Bien con id: ${data.id}`;
         this.idGood = data.id;
+        this.goodStatus = data.goodStatus;
         this.getgoodCategory = data.goodCategory;
         this.getoriginSignals = data.originSignals;
         this.getnotifyDate = moment(data.notifyDate).format('DD-MM-YYYY');
@@ -397,8 +417,11 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         this.getdictamenPerenidad = data.opinion;
         this.getdictamenPerito = data.proficientOpinion;
         this.getdictamenInstitucion = data.valuerOpinion;
+        this.getregisterInscrSol = data.registerInscrSol === 'S' ? true : false;
         this.getAppraisalGood();
+        this.getAppraisalGoodTab();
         this.fillFormData(data.goodCategory, 'clasificacion');
+        this.fillFormData(this.getregisterInscrSol, 'solicitud');
         this.fillFormData(data.originSignals, 'remarks');
         data.dateOpinion != null
           ? this.form
@@ -422,9 +445,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     );
   }
 
-  enabledGroup() {}
-
-  updateGoodData() {
+  /* updateGoodData() {
     if (!this.isEnableGood) {
       this.alert(
         'error',
@@ -432,31 +453,42 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         'Esta intentando registrar en un bien con un tipo no valido'
       );
     } else {
-      const updateData: IGood = {
-        id: parseInt(this.idGood.toString()),
-        goodId: parseInt(this.idGood.toString()),
-        goodCategory: this.form.get('clasificacion').value,
-        originSignals: this.form.get('remarks').value,
-      };
-      this.serviceGood.updateWithoutId(updateData).subscribe(
-        res => {
-          this.alert(
-            'success',
-            'Actualización exitosa',
-            'Los datos fueron modificados con éxito'
-          );
-          this.disabledButton('update-general-good');
-          this.getgoodCategory = updateData.goodCategory;
-          this.getoriginSignals = updateData.originSignals;
-        },
-        err => {
-          console.log(err);
-        }
-      );
+      if (
+        !this.form.get('clasificacion').valid ||
+        !this.form.get('remarks').valid
+      ) {
+        this.alert(
+          'error',
+          'Error en los campos',
+          'Esta intentando actualizar el bien con campos inválidos'
+        );
+      } else {
+        const updateData: IGood = {
+          id: parseInt(this.idGood.toString()),
+          goodId: parseInt(this.idGood.toString()),
+          goodCategory: this.form.get('clasificacion').value,
+          originSignals: this.form.get('remarks').value,
+        };
+        this.serviceGood.updateWithoutId(updateData).subscribe(
+          res => {
+            this.alert(
+              'success',
+              'Actualización exitosa',
+              'Los datos fueron modificados con éxito'
+            );
+            this.disabledButton('update-general-good');
+            this.getgoodCategory = updateData.goodCategory;
+            this.getoriginSignals = updateData.originSignals;
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
     }
-  }
+  } */
 
-  updateOpinion() {
+  /* updateOpinion() {
     if (!this.isEnableGood) {
       this.alert(
         'error',
@@ -464,71 +496,132 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         'Esta intentando registrar en un bien con un tipo no valido'
       );
     } else {
-      const opinionData: IGood = {
+      if (
+        !this.form.get('fechaDictamen').valid ||
+        !this.form.get('dictamenPerito').valid ||
+        !this.form.get('dictamenInstitucion').valid ||
+        !this.form.get('dictamenPerenidad').valid
+      ) {
+        this.alert(
+          'error',
+          'Error en los campos',
+          'Esta intentando actualizar el bien con campos inválidos'
+        );
+      } else {
+        const opinionData: IGood = {
+          id: parseInt(this.idGood.toString()),
+          goodId: parseInt(this.idGood.toString()),
+          dateOpinion: new Date(this.form.get('fechaDictamen').value),
+          proficientOpinion: this.form.get('dictamenPerito').value.name,
+          valuerOpinion: this.form.get('dictamenInstitucion').value.description,
+          opinion: this.form.get('dictamenPerenidad').value,
+        };
+        console.log(opinionData);
+        this.serviceGood.updateWithoutId(opinionData).subscribe(
+          res => {
+            this.alert(
+              'success',
+              'Actualización exitosa',
+              'Los datos fueron modificados con éxito'
+            );
+
+            this.disabledButton('opinion');
+            this.getfechaDictamen = opinionData.dateOpinion;
+            this.getdictamenPerenidad = opinionData.opinion;
+            this.getdictamenPerito = opinionData.proficientOpinion;
+            this.getdictamenInstitucion = opinionData.valuerOpinion;
+          },
+          err => {
+            console.log(err);
+            this.alert(
+              'error',
+              'No se pudo registrar el dictamen',
+              'Ocurrió un error inesperado que no permitió guardar el dictamen'
+            );
+          }
+        );
+      }
+    }
+  } */
+
+  /* updateNotify() {
+    if (!this.isEnableGood) {
+      this.alert(
+        'error',
+        'Error en el tipo de bien',
+        'Esta intentando registrar en un bien con un tipo no valido'
+      );
+    } else {
+      if (
+        !this.form.get('fechaAseg').valid ||
+        !this.form.get('notificado').valid ||
+        !this.form.get('notificado').valid
+      ) {
+        this.alert(
+          'error',
+          'Error en los campos',
+          'Esta intentando actualizar el bien con campos inválidos'
+        );
+      } else {
+        const notifyData = {
+          id: parseInt(this.idGood.toString()),
+          goodId: parseInt(this.idGood.toString()),
+          notifyDate: new Date(this.form.get('fechaAseg').value),
+          notifyA: this.form.get('notificado').value.trim(),
+          placeNotify: this.form.get('lugar').value.trim(),
+        };
+        this.serviceGood.updateWithoutId(notifyData).subscribe(
+          res => {
+            this.alert(
+              'success',
+              'Actualización exitosa',
+              'Los datos fueron modificados con éxito'
+            );
+
+            this.disabledButton('first-notice-abandonment');
+            this.getnotifyDate = notifyData.notifyDate;
+            this.getnotifyA = notifyData.notifyA;
+            this.getplaceNotify = notifyData.placeNotify;
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
+    }
+  } */
+
+  updateGeneral() {
+    if (!this.isEnableGood) {
+      this.alert(
+        'error',
+        'Error en el tipo de bien',
+        'Esta intentando registrar en un bien con un tipo no válido'
+      );
+    } else {
+      /* this.postAppraisGood(); */
+      const generalModel: IGood = {
         id: parseInt(this.idGood.toString()),
         goodId: parseInt(this.idGood.toString()),
-        dateOpinion: this.form.get('fechaDictamen').value,
+        goodCategory: this.form.get('clasificacion').value.trim(),
+        originSignals: this.form.get('remarks').value.trim(),
+        dateOpinion: new Date(this.form.get('fechaDictamen').value),
         proficientOpinion: this.form.get('dictamenPerito').value.name,
         valuerOpinion: this.form.get('dictamenInstitucion').value.description,
-        opinion: this.form.get('dictamenPerenidad').value,
-      };
-      console.log(opinionData);
-      this.serviceGood.updateWithoutId(opinionData).subscribe(
-        res => {
-          this.alert(
-            'success',
-            'Actualización exitosa',
-            'Los datos fueron modificados con éxito'
-          );
-
-          this.disabledButton('opinion');
-          this.getfechaDictamen = opinionData.dateOpinion;
-          this.getdictamenPerenidad = opinionData.opinion;
-          this.getdictamenPerito = opinionData.proficientOpinion;
-          this.getdictamenInstitucion = opinionData.valuerOpinion;
-        },
-        err => {
-          console.log(err);
-          this.alert(
-            'error',
-            'No se pudo registrar el dictamen',
-            'Ocurrió un error inesperado que no permitió guardar el dictamen'
-          );
-        }
-      );
-    }
-  }
-
-  updateNotify() {
-    if (!this.isEnableGood) {
-      this.alert(
-        'error',
-        'Error en el tipo de bien',
-        'Esta intentando registrar en un bien con un tipo no valido'
-      );
-    } else {
-      const notifyData = {
-        id: parseInt(this.idGood.toString()),
-        goodId: parseInt(this.idGood.toString()),
+        opinion: this.form.get('dictamenPerenidad').value.trim(),
         notifyDate: new Date(this.form.get('fechaAseg').value),
         notifyA: this.form.get('notificado').value.trim(),
         placeNotify: this.form.get('lugar').value.trim(),
+        registerInscrSol: this.form.get('solicitud').value ? 'S' : null,
       };
-      this.serviceGood.updateWithoutId(notifyData).subscribe(
-        res => {
-          this.alert(
-            'success',
-            'Actualización exitosa',
-            'Los datos fueron modificados con éxito'
-          );
 
-          this.disabledButton('first-notice-abandonment');
-          this.getnotifyDate = notifyData.notifyDate;
-          this.getnotifyA = notifyData.notifyA;
-          this.getplaceNotify = notifyData.placeNotify;
+      this.serviceGood.updateWithoutId(generalModel).subscribe(
+        res => {
+          this.alert('success', 'Los datos fueron guardados con éxito', '');
         },
         err => {
           console.log(err);
+          this.alert('error', 'Ocurrió un error inesperado', '');
         }
       );
     }
@@ -540,22 +633,77 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     if (this.idGood != '' && this.idGood != null && this.idGood != undefined) {
       const paramsF = new FilterParams();
       paramsF.addFilter('noGood', this.idGood);
+      paramsF['sortBy'] = 'noRequest:DESC';
       this.serviceAppraiser
         .getAppraisalGood(paramsF.getParams())
         .subscribe(res => {
+          console.log(res);
           this.dataApprasialGood = res.data;
-          this.enableButton('apprasial-history');
+        });
+    }
+  }
+
+  getAppraisalGoodTab() {
+    if (this.idGood != '' && this.idGood != null && this.idGood != undefined) {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('noGood', this.idGood);
+      paramsF['sortBy'] = 'noRequest:DESC';
+      this.serviceAppraiser
+        .getAppraisalGood(paramsF.getParams())
+        .subscribe(res => {
+          const resApprais = JSON.parse(JSON.stringify(res.data[0]));
+          this.form.get('importe').setValue(resApprais.valueAppraisal);
+          this.form
+            .get('moneda')
+            .setValue(resApprais.requestXAppraisal.cveCurrencyAppraisal);
+          this.form
+            .get('fechaAvaluo')
+            .setValue(new Date(resApprais.appraisalDate));
+          this.form
+            .get('fechaVigencia')
+            .setValue(new Date(resApprais.effectiveDate));
+          if (resApprais.requestXAppraisal.noExpert != null) {
+            this.serviceProeficient
+              .getById(resApprais.requestXAppraisal.noExpert)
+              .subscribe(
+                res => {
+                  this.form.get('perito').setValue(res);
+                },
+                err => {
+                  this.form.get('perito').setValue(null);
+                }
+              );
+          }
+          console.log(resApprais.requestXAppraisal.noAppraiser);
+          if (resApprais.requestXAppraisal.noAppraiser != null) {
+            this.serviceCatalogAppraise
+              .getById(resApprais.requestXAppraisal.noAppraiser)
+              .subscribe(
+                res => {
+                  console.log(res);
+                  console.log(res.data[0]['description']);
+                  this.form
+                    .get('institucion')
+                    .setValue(res.data[0]['description']);
+                },
+                err => {
+                  this.form.get('institucion').setValue(null);
+                }
+              );
+          }
+          /* this.form
+            .get('institucion')
+            .setValue(resApprais.requestXAppraisal.noAppraiser); */
+          //!Se necesita agregar filtro dinámico a este endpoint http://sigebimsdev.indep.gob.mx/catalog/api/v1/appraisers?filter.id=$eq:85
         });
     }
   }
 
   postAppraisGood() {
+    console.log(this.form.get('institucion').value);
+    console.log(this.form.get('perito').value);
+    console.log(this.form.get('importe').value);
     if (!this.isEnableGood) {
-      this.alert(
-        'error',
-        'Error en el tipo de bien',
-        'Esta intentando registrar en un bien con un tipo no valido'
-      );
     } else {
       let dataAG: IAppraisersGood = {
         noGood: this.idGood,
@@ -570,8 +718,14 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         requestType: 'E',
         cveCurrencyAppraisal: this.form.get('moneda').value,
         cveCurrencyCost: this.form.get('moneda').value,
-        noExpert: this.form.get('perito').value.id,
-        noAppraiser: this.form.get('institucion').value.id,
+        noExpert:
+          this.form.get('perito').value.id != undefined
+            ? this.form.get('perito').value.id
+            : null,
+        noAppraiser:
+          this.form.get('institucion').value.id != undefined
+            ? this.form.get('institucion').value.id
+            : null,
       };
       if (
         this.form.get('fechaAvaluo').value >
@@ -584,21 +738,11 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
             dataAG.noRequest = id;
             this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
               res => {
-                this.alert(
-                  'success',
-                  'El bien se avaluó con éxito',
-                  'El bien fue valuado exitosamente'
-                );
+                this.alert('success', 'El Bien se avaluó con éxito', '');
                 this.getAppraisalGood();
-                this.form.get('fechaAvaluo').setValue(null);
-                this.form.get('fechaVigencia').setValue(null);
-                this.form.get('importe').setValue(null);
-                this.form.get('moneda').setValue(null);
-                this.form.get('perito').setValue(null);
-                this.form.get('institucion').setValue(null);
               },
               err => {
-                console.log(err);
+                console.log('Ocurrió un error');
               }
             );
           },

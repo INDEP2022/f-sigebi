@@ -1,12 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
+import { IAttribGoodBad } from '../../models/ms-good/good';
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +17,15 @@ import { IGood } from '../../models/good/good.model';
 /**
  * @deprecated Cambiar a la nueva forma
  */
-export class GoodService implements ICrudMethods<IGood> {
+export class GoodService extends HttpService implements ICrudMethods<IGood> {
   private readonly route: string = 'pendiente/parametros';
   constructor(
     private goodRepository: Repository<IGood>,
     private http: HttpClient
-  ) {}
+  ) {
+    super();
+    this.microservice = GoodEndpoints.Good;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IGood>> {
     return this.goodRepository.getAllPaginated('good/good', params);
@@ -27,6 +33,11 @@ export class GoodService implements ICrudMethods<IGood> {
 
   getById(id: string | number): Observable<any> {
     return this.goodRepository.getById('good/good', id);
+  }
+
+  getGoodByIds(id: string | number): Observable<any> {
+    const route = `good/good/getGoodById/${id}/${id}`;
+    return this.goodRepository.getGoodByIds(route);
   }
 
   getDataByGoodFather(goodFather: number) {
@@ -102,5 +113,14 @@ export class GoodService implements ICrudMethods<IGood> {
   getByIdNew(id: string | number, goodId: number | string): Observable<any> {
     const route = `good/api/v1/good/getGoodbyId`;
     return this.http.get(`${environment.API_URL}${route}/${id}/${goodId}`);
+  }
+
+  getAttribGoodBadAll(
+    params?: _Params
+  ): Observable<IListResponse<IAttribGoodBad>> {
+    return this.get<IListResponse<IAttribGoodBad>>(
+      GoodEndpoints.AttribGoodBad,
+      params
+    );
   }
 }

@@ -14,4 +14,8 @@ export class DynamicCatalogsService extends HttpService {
   getOtkeyOtvalue(body: Object) {
     return this.post(DinamicCatalogEndPoints.getOtkeyOtvalue, body);
   }
+
+  getPuestovalue(valPuesto: string) {
+    return this.get(DinamicCatalogEndPoints.getPuestovalue + valPuesto);
+  }
 }

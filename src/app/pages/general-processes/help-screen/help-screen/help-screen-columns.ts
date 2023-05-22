@@ -1,9 +1,9 @@
 export const HELP_SCREEN_COLUMNS = {
-  numero: {
+  businessRoleNumber: {
     title: 'Número',
     sort: false,
   },
-  descripcion: {
+  businessRoleDesc: {
     title: 'Descripción',
     sort: false,
   },

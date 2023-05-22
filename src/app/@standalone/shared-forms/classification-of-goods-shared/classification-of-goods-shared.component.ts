@@ -48,6 +48,7 @@ export class ClassificationOfGoodsSharedComponent
   ngOnInit(): void {}
 
   getClasification(params: ListParams) {
+    params['filter.description'] = `$ilike:${params.text}`;
     this.goodSssubtypeService.getAll(params).subscribe({
       next: data => {
         console.log(data);

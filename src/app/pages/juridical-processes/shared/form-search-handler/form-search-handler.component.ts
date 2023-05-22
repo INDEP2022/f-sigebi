@@ -9,13 +9,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import {
-  BsModalRef,
-  BsModalService,
-  ModalDirective,
-} from 'ngx-bootstrap/modal';
+import { ActivatedRoute } from '@angular/router';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
-import { SelectListFilteredModalComponent } from '../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
   DynamicFilterLike,
   FilterParams,
@@ -81,9 +77,10 @@ export class FormSearchHandlerComponent
   @Output() onSelect = new EventEmitter<any>();
 
   constructor(
-    private modalService: BsModalService,
-    private modalRef: BsModalRef<SelectListFilteredModalComponent>,
-    private changeDetectorRef: ChangeDetectorRef
+    // private modalService: BsModalService,
+    // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
+    private changeDetectorRef: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
@@ -95,7 +92,9 @@ export class FormSearchHandlerComponent
       actions: false,
       columns: { ...this.columnsType },
     };
-    if (this.dataObservableFn) {
+    this.autoLoad();
+    if (!this.dataObservableFn) {
+      // console.log({ getData: this.dataObservableFn });
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         if (this.searchOnInput) {
           this.getData();
@@ -104,13 +103,25 @@ export class FormSearchHandlerComponent
     }
   }
 
+  autoLoad(): void {
+    const wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
+    console.log('wheelNumber', wheelNumber);
+    if (wheelNumber) {
+      this.searchOnInput = true;
+      this.loading = true;
+      this.formData = {};
+      this.formData['wheelNumber'] = wheelNumber;
+      this.buildFilters();
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    // console.log('CAMBIO', changes);
     if (
       changes['formData']?.currentValue &&
       !changes['formData']?.isFirstChange()
     ) {
-      console.log('formData');
+      console.log('formData', this.formData);
       this.searchOnInput = true;
       this.loading = true;
       this.buildFilters();
@@ -134,8 +145,22 @@ export class FormSearchHandlerComponent
     this.onSearchStart.emit(false);
   }
 
+  // searchForFilter() {
+  //   const values: any = this.formSearch.value;
+  //   console.log(values);
+  //   const params = this.filterParams.getValue();
+  //   Object.keys(values).forEach((key: any) => {
+  //     if (values[key]) {
+  //       console.log(values[key]);
+  //       params.addFilter(key, values[key]);
+  //     }
+  //   });
+  //   this.filterParams.next(params);
+  // }
+
   getData(): void {
-    console.log(this.filterParams.getValue().getParams());
+    // console.log('FILTER', this.filterParams.getValue().getParams());
+
     this.loading = true;
     if (this.dataObservableFn) {
       this.dataObservableFn(
@@ -149,6 +174,7 @@ export class FormSearchHandlerComponent
             this.loading = false;
             this.modalLoaded = true;
             this.changeDetectorRef.detectChanges();
+
             if (!this.modal.isShown && data.count > 1) {
               this.modal.show();
             } else if (data.count == 1) {
@@ -182,17 +208,16 @@ export class FormSearchHandlerComponent
   }
 
   buildFilters() {
-    console.log('building...');
     const params = new FilterParams();
     if (this.fieldsToSearch.length > 0 && this.formData != null) {
-      console.log('fieldsToSearch');
+      // console.log('fieldsToSearch', this.fieldsToSearch);
       this.fieldsToSearch.forEach(f => {
         if (f.nestedObjField) {
           if (
             this.formData[f.field] !== null &&
             this.formData[f.field] !== undefined
           ) {
-            console.log(this.formData[f.field]);
+            // console.log('FIELD', this.formData[f.field]);
             let obj;
             const { field, operator } = f;
             const nestedObj = this.formData[field] as any;
@@ -238,7 +263,8 @@ export class FormSearchHandlerComponent
           }
         }
       });
-      console.log(this.filters);
+
+      // console.log('FILTERS', this.filters);
       this.filters.forEach(f => {
         const { field, value, operator } = f;
         if (operator) {
@@ -250,7 +276,7 @@ export class FormSearchHandlerComponent
       this.filterParams.next(params);
       this.getData();
     } else if (this.formData != null) {
-      console.log('No fieldsToSearch');
+      // console.log('No fieldsToSearch');
       const keys = Object.keys(this.formData);
       keys.forEach(k => {
         if (this.formData[k] !== null && this.formData[k] !== undefined) {
@@ -268,6 +294,8 @@ export class FormSearchHandlerComponent
       this.filterParams.next(params);
       this.getData();
     }
+    console.log('FILTERS', this.filters);
+    // this.formData = null;
   }
 
   openModalSearch() {
@@ -277,11 +305,12 @@ export class FormSearchHandlerComponent
   close() {
     this.onSearchStart.emit(false);
     this.onConfirmSearch.emit(false);
+    this.filters = [];
     this.modal.hide();
   }
 
   selectRow(row: IUserRowSelectEvent<any>) {
-    console.log(row);
+    // console.log('ROW', row);
     this.selectedRow = row.data;
     this.rowSelected = true;
     if (this.selectOnClick) {
@@ -297,6 +326,7 @@ export class FormSearchHandlerComponent
     this.onSearchStart.emit(false);
     this.onConfirmSearch.emit(false);
     this.onSelect.emit(this.selectedRow);
+    this.filters = [];
     this.modal.hide();
   }
 }
