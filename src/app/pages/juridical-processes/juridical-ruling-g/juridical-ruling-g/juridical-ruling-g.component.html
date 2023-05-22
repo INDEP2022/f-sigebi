@@ -26,8 +26,8 @@
                 <ngx-select
                   [searchOnInit]="true"
                   [data]="typesDict"
-                  [form]="expedientesForm"
                   [searchable]="false"
+                  [form]="expedientesForm"
                   label="Tipo Dictaminación"
                   bindLabel="typeDict"
                   control="tipoDictaminacion"
@@ -40,13 +40,13 @@
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
-                  min="0"
                   type="text"
                   class="form-control"
+                  min="0"
+                  maxlength="11"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente"
-                  maxlength="10" />
+                  formControlName="noExpediente" />
               </form-field>
             </div>
             <!-- Averiguación Previa -->
@@ -338,7 +338,7 @@
                 [source]="documents"></ng2-smart-table>
             </div>
             <div class="col-md-2">
-              <p class="text-info h5">No&#46; bien</p>
+              <p class="text-info h5">No. Bien</p>
               <p class="text-info h5">{{ idGoodSelected }}</p>
             </div>
           </div>
@@ -355,7 +355,6 @@
         <!-- [disabled]="isDocsEmpty()" -->
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
-          [disabled]="isDocsEmpty()"
           (click)="btnApprove()">
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar
@@ -367,8 +366,8 @@
         </button>
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnImprimeOficio()"
-          [routerLink]="rutaAprobado">
+          (click)="btnImprimeOficio()">
+          <!-- [routerLink]="returnRoute" -->
           Imprime Oficio
         </button>
         <button

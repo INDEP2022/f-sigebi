@@ -148,6 +148,7 @@ export class ChangeOfGoodClassificationComponent
       numberFile: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+
   private buildFormNew() {
     this.formNew = this.fb.group({
       classificationOfGoods: [
@@ -172,7 +173,6 @@ export class ChangeOfGoodClassificationComponent
     this.refreshTableAct(this.listAtributAct);
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.good = response.data[0];
         this.loadClassifDescription(this.good.goodClassNumber);
         this.loading = false;
@@ -185,7 +185,6 @@ export class ChangeOfGoodClassificationComponent
   loadClassifDescription(numberClassif: string | number) {
     this.goodSssubtypeService.getClasification(numberClassif).subscribe({
       next: response => {
-        console.log(response);
         this.setGood(this.good, response.data[0]);
       },
       error: err => {
@@ -210,15 +209,18 @@ export class ChangeOfGoodClassificationComponent
       `Se ha cargado correctamente la información del bien No ${good.id}`
     );
   }
+
   accept() {
     //5457740
   }
+
   onChange(event: any) {
     this.getUnitiXClasif();
     this.getEtiqXClasif();
     this.formNew.enable();
     this.btnNewAtribut = false;
   }
+
   getUnitiXClasif() {
     let params = new FilterParams();
     params.addFilter(
@@ -235,6 +237,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   getEtiqXClasif() {
     let params = new FilterParams();
     params.addFilter(
@@ -258,6 +261,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   getDestination() {
     let params = new FilterParams();
     params.addFilter('id', `${this.noEtiqs}`, SearchFilter.IN);
@@ -270,6 +274,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   getAtributos(numberClass: string | number, newAtribut: boolean = false) {
     let params = new FilterParams();
     params.addFilter('classifGoodNumber', numberClass, SearchFilter.EQ);
@@ -288,6 +293,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   newAtribut() {
     if (this.classificationOfGoods.value === '') {
       this.onLoadToast(
@@ -320,8 +326,6 @@ export class ChangeOfGoodClassificationComponent
     this.dataNew.refresh();
   }
   onSaveConfirm(event: any) {
-    console.log(event['newData']);
-
     event.confirm.resolve();
   }
   getOtkeyOtvalue() {
@@ -332,10 +336,7 @@ export class ChangeOfGoodClassificationComponent
           classificationGoodNumber: this.classificationOfGoods.value,
         };
         this.dynamicCatalogsService.getOtkeyOtvalue(filter).subscribe({
-          next: response => {
-            console.log(response.data);
-            console.log(index);
-          },
+          next: response => {},
           error: err => {
             this.onLoadToast('error', 'ERROR', 'Error al cargar los atributos');
           },
@@ -343,11 +344,11 @@ export class ChangeOfGoodClassificationComponent
       }
     });
   }
+
   onChangeValid(event: IAttribClassifGoods) {
     if (event.tableCd !== null) {
-      console.log('Abriendo popup');
-    } else {
       console.log(event);
+    } else {
       this.atributNewSettings.mode = 'inline';
     }
   }
@@ -372,7 +373,6 @@ export class ChangeOfGoodClassificationComponent
         good[`val${atrib.columnNumber}`] = atrib.newVal;
       }
     });
-    console.log(good);
     const putGood: IGood = {
       id: Number(good.id),
       goodId: Number(good.goodId),
@@ -382,10 +382,8 @@ export class ChangeOfGoodClassificationComponent
       destiny: this.destination.value,
     };
     this.copiarPropiedades(good, putGood);
-    console.log(putGood);
     this.goodServices.update(putGood).subscribe({
       next: response => {
-        console.log(response);
         this.onLoadToast(
           'success',
           'ÉXITO',
