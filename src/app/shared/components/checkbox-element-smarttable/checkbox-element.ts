@@ -13,6 +13,7 @@ import {
   template: `
     <div class="row justify-content-center">
       <input
+        [disabled]="disabled"
         #box
         [checked]="checked"
         (change)="onToggle($event)"
@@ -23,6 +24,7 @@ import {
 })
 export class CheckboxElementComponent<T = any> implements OnInit {
   checked: boolean;
+  disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
   @Input() value: boolean;
   @Input() rowData: T;
