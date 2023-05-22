@@ -95,7 +95,7 @@ export class FormSearchHandlerComponent
       actions: false,
       columns: { ...this.columnsType },
     };
-    if (this.dataObservableFn) {
+    if (!this.dataObservableFn) {
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         if (this.searchOnInput) {
           this.getData();
@@ -110,7 +110,7 @@ export class FormSearchHandlerComponent
       changes['formData']?.currentValue &&
       !changes['formData']?.isFirstChange()
     ) {
-      // console.log('formData', this.formData);
+      console.log('formData', this.formData);
       this.searchOnInput = true;
       this.loading = true;
       this.buildFilters();
@@ -283,7 +283,7 @@ export class FormSearchHandlerComponent
       this.filterParams.next(params);
       this.getData();
     }
-    this.formData = null;
+    // this.formData = null;
   }
 
   openModalSearch() {
