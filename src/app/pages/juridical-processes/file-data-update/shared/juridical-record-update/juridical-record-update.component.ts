@@ -995,6 +995,7 @@ export class JuridicalRecordUpdateComponent
         'No encontrado',
         'Este asunto con este dictámen no esta registrado en el catálogo de Asuntos - Dictamen'
       );
+      this.isLoadingOfficeOfRelief = false;
       return;
     }
     if (this.affair && (!this.dictOffice || this.dictOffice === 'D')) {
@@ -1025,8 +1026,8 @@ export class JuridicalRecordUpdateComponent
         }
       }
       await this.pupValidaOf(catRAsuntDict.data[0]);
-      this.isLoadingOfficeOfRelief = false;
     }
+    this.isLoadingOfficeOfRelief = false;
     // try {
     //   const result = await this.fetchForForm.searchCatRAsuntDic();
     //   if (result.count < 1) {
