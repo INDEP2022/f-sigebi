@@ -833,3 +833,12 @@ export interface NoExpediente {
   authorityNumber: string;
   insertionDatehc?: any;
 }
+
+export interface IAttribGoodBad {
+  id?: number;
+  motive: string;
+  pair1: number;
+  pair2: number;
+  pair3: number;
+  pair4: number;
+}

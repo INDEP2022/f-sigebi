@@ -1,6 +1,7 @@
 export interface IScreenHelp {
   screenKey: string;
-  help: string;
-  recordNumber: string;
-  appScreen: any; // TODO: checar a que tabla hace referencia
+  businessRoleNumber: number;
+  //help: string;// Verificar con que esta esta relacionado.
+  businessRoleDesc: string;
+  recordNumber: number; // TODO: checar a que tabla hace referencia
 }

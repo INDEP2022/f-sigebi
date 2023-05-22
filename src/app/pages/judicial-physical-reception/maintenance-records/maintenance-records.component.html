@@ -32,9 +32,9 @@
         [nroActa]="infoForm ? infoForm.id : null"
         [rowsSelected]="rowsSelected"
         (updateTable)="getGoods()"></app-good-actions>
-      <div *ngIf="dataForAdd && dataForAdd.length > 0">
+      <!-- <div *ngIf="dataForAdd && dataForAdd.length > 0">
         <div class="row header mt-3">
-          <h6 class="title">Bienes por agregar</h6>
+          <h6 class="title">Bienes por rastreador</h6>
         </div>
         <app-table-good-maintenance
           [statusActa]="statusActa"
@@ -42,14 +42,15 @@
           [totalItems]="dataForAdd.length"
           (rowsSelected)="rowsSelectedLocal = $event">
         </app-table-good-maintenance>
-      </div>
+      </div> -->
       <app-table-good-maintenance
         [statusActa]="statusActa"
+        [loading]="loadingGoods"
         [data]="data"
         [totalItems]="totalGoods"
-        (updateRowEvent)="getGoods()"
-        (updateData)="goodParams = $event; getGoods()"
-        (rowsSelected)="rowsSelectedNotLocal = $event">
+        (updateData)="updateData($event)"
+        (rowsSelected)="rowsSelectedNotLocal = $event"
+        (showDeleteAlert)="deleteRow($event)">
       </app-table-good-maintenance>
       <app-warehouse-proceedings> </app-warehouse-proceedings>
     </div>

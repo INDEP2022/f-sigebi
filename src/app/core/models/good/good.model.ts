@@ -636,3 +636,8 @@ export interface IGoodSearchGoodByClasification {
   screenKey: string;
   clasifGoodNumber: number;
 }
+
+export interface IGoodAttribGoodBad {
+  id: string | number;
+  motive: string;
+}

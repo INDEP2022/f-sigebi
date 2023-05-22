@@ -226,36 +226,7 @@ export class ScheduledMaintenanceDetailComponent
 
   ngOnInit(): void {
     this.getData();
-    this.$trackedGoods.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        // response.forEach(good => {
-        //   this.getGoodByID(good.goodNumber);
-        // });
-        console.log(response);
-        if (response && response.length > 0) {
-          this.service
-            .getByGoodRastrer(
-              response.map(item => +item.goodNumber),
-              this.data[0]
-            )
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe({
-              next: goods => {
-                this.dataForAdd = goods.data;
-              },
-              complete: () => {
-                this.loading = false;
-              },
-            });
-        } else {
-          this.loading = false;
-        }
-      },
-      error: err => {
-        console.log(err);
-        this.loading = false;
-      },
-    });
+
     // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
     //   // console.log(x);
     //   this.getData();
@@ -263,6 +234,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   private fillColumnsGoods() {
+    // debugger;
     let columnGoodId = {
       title: 'Localidad Ent. Transferente.',
       type: 'string',
@@ -276,10 +248,11 @@ export class ScheduledMaintenanceDetailComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          // debugger;
+          debugger;
           let newColumns;
           this.proceedingIndicators = response.data.filter(
-            indicator => indicator.description === 'ENTREGA FISICA'
+            indicator =>
+              indicator.description === 'ENTREGA FISICA' || 'RECEPCION FISICA'
           );
           const indicator = this.proceedingIndicators.find(
             indicator => indicator.typeActa === this.typeProceeding
@@ -314,6 +287,7 @@ export class ScheduledMaintenanceDetailComponent
             ...this.settingsGoodsForAdd,
             columns: newColumns,
           };
+          console.log(this.settingsGoods);
         },
       });
   }
@@ -332,6 +306,42 @@ export class ScheduledMaintenanceDetailComponent
           next: response => {
             this.data = response.data;
             this.totalItems = response.count;
+            const tracker = this.$trackedGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe({
+                next: response => {
+                  // response.forEach(good => {
+                  //   this.getGoodByID(good.goodNumber);
+                  // });
+                  // console.log(response, this.data);
+                  if (response && response.length > 0) {
+                    this.service
+                      .getByGoodRastrer(
+                        response.map(item => +item.goodNumber),
+                        this.data[0]
+                      )
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe({
+                        next: goods => {
+                          console.log(goods);
+
+                          this.dataForAdd = goods.data;
+                        },
+                        complete: () => {
+                          this.loading = false;
+                        },
+                      });
+                  } else {
+                    this.loading = false;
+                  }
+                  // tracker.unsubscribe();
+                },
+                error: err => {
+                  console.log(err);
+                  this.loading = false;
+                  // tracker.unsubscribe();
+                },
+              });
           },
           error: err => {
             this.data = [];
@@ -352,28 +362,28 @@ export class ScheduledMaintenanceDetailComponent
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.detailService
-          .deleteByIdBP(this.actaId, this.typeProceeding, item)
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe({
-            next: response => {
-              console.log(response);
-              this.getData();
-              this.onLoadToast(
-                'success',
-                'Exito',
-                `Se elimino el bien N° ${item.no_bien}`
-              );
-            },
-            error: err => {
-              console.log(err);
-              this.onLoadToast(
-                'error',
-                'ERROR',
-                `No se pudo eliminar el bien N° ${item.no_bien}`
-              );
-            },
-          });
+        // this.detailService
+        //   .deleteByIdBP(this.actaId, this.typeProceeding, item)
+        //   .pipe(takeUntil(this.$unSubscribe))
+        //   .subscribe({
+        //     next: response => {
+        //       console.log(response);
+        //       this.getData();
+        //       this.onLoadToast(
+        //         'success',
+        //         'Exito',
+        //         `Se elimino el bien N° ${item.no_bien}`
+        //       );
+        //     },
+        //     error: err => {
+        //       console.log(err);
+        //       this.onLoadToast(
+        //         'error',
+        //         'ERROR',
+        //         `No se pudo eliminar el bien N° ${item.no_bien}`
+        //       );
+        //     },
+        //   });
       }
     });
   }
