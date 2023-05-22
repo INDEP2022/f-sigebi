@@ -48,6 +48,8 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getStates(new ListParams());
+    this.getCities(new ListParams());
     this.prepareForm();
   }
 
@@ -218,8 +220,14 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       this.states = new DefaultSelect(data.data, data.count);
     });
   }
-
-  getCities(params: ListParams) {
+  getCitie(data: any) {
+    console.log(data);
+    this.getCities(new ListParams(), data.id);
+  }
+  getCities(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.state.id'] = `$eq:${id}`;
+    }
     this.cityService.getAll(params).subscribe(data => {
       this.cities = new DefaultSelect(data.data, data.count);
     });

@@ -41,8 +41,8 @@ export class DepartamentService
     return this.departamentRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IDepartment): Observable<Object> {
-    return this.departamentRepository.update(this.route, id, model);
+  update4(model: IDepartment): Observable<Object> {
+    return this.departamentRepository.update4(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {
@@ -55,10 +55,15 @@ export class DepartamentService
       params
     );
   }
-
+  getDelegationsCatalog(params: ListParams) {
+    return this.delegationRepository.getAllPaginated(
+      this.delegationsRoute + '/get-all',
+      params
+    );
+  }
   getSubdelegations(params: ListParams) {
     return this.subdelegationRepository.getAllPaginated(
-      this.subdelegationsRoute,
+      this.subdelegationsRoute + '/get-all',
       params
     );
   }

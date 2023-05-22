@@ -28,5 +28,22 @@ export interface IPerson {
   precedent0ther?: string;
   registryNumber?: number;
   email?: string;
+  state?: IState | number;
   blackList?: string;
+}
+export interface IState {
+  id: number;
+  descCondition: string;
+  codeCondition: string;
+  registrationNumber: number;
+  nmtable: number;
+  abbreviation: string;
+  risk: string;
+  version: string;
+  zoneHourlyStd: string;
+  zoneHourlyVer: string;
+  userCreation: string;
+  creationDate: string;
+  userModification: string;
+  modificationDate: string;
 }

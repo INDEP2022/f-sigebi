@@ -24,6 +24,8 @@ export class PersonFormComponent extends BasePage implements OnInit {
   person: IPerson;
   title: string = 'Mantto. a administrador, depositario e interventor';
   edit: boolean = false;
+  optionsTipoP: any[];
+  optionsTipoR: any[];
 
   constructor(
     private modalRef: BsModalRef,
@@ -34,6 +36,20 @@ export class PersonFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.optionsTipoP = [
+      { value: null, label: 'Seleccione un Tipo persona' },
+      { value: 'F', label: 'FÍSICA' },
+      { value: 'M', label: 'MORAL' },
+    ];
+    this.optionsTipoR = [
+      { value: null, label: 'Seleccione un Tipo responsable' },
+      { value: 'A', label: 'Administrador' },
+      { value: 'D', label: 'Depositario' },
+      { value: 'I', label: 'Interventor' },
+      { value: 'C', label: 'COMODATARIO' },
+      { value: 'U', label: 'CUSTODIO' },
+      { value: 'O', label: 'OTRO' },
+    ];
     this.prepareForm();
   }
 
