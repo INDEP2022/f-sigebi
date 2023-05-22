@@ -319,7 +319,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   addressId: {
-    title: 'idDireccion',
+    title: 'Dirección',
     type: 'string',
     sort: false,
   },
