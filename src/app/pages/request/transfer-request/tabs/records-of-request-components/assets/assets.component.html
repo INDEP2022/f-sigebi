@@ -4,11 +4,11 @@
       <div class="mr-auto p-2">
         <h5 class="title"><strong>Bienes</strong></h5>
       </div>
-      <div class="p-2">
+      <!-- <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="save()">
           Guardar
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="row pt-4">
@@ -26,7 +26,12 @@
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event, 'inmueble')" />
       </div>
-      <div class="p-2">
+      <div class="p-2" style="margin-left: 1%">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          Guardar
+        </button>
+      </div>
+      <div class="p-2" style="margin-left: 1%">
         <div class="btn-group" dropdown placement="bottom right">
           <button
             id="button-alignment"

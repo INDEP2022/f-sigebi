@@ -49,27 +49,39 @@ export class JustificationComponent extends AlertButton implements OnInit {
   }
 
   get formValue() {
-    return this.service.formValue;
+    return this.service.form;
   }
 
   get statusActa() {
-    return this.formValue ? this.formValue.statusActa : '';
+    return this.formValue
+      ? this.formValue.get('statusActa')
+        ? this.formValue.get('statusActa').value
+        : null
+      : null;
   }
 
   get id() {
-    return this.formValue ? this.formValue.id : '';
+    return this.formValue
+      ? this.formValue.get('id')
+        ? this.formValue.get('id').value
+        : null
+      : null;
   }
 
   get noExpediente() {
-    return this.formValue ? this.formValue.numFile : '';
+    return this.formValue
+      ? this.formValue.get('numFile')
+        ? this.formValue.get('numFile').value
+        : null
+      : null;
   }
 
   saveData() {
-    console.log(this.service.selectedAct);
+    console.log(this.service.selectedAct, this.service.formValue);
     this.proceedingService
       .update2(
         this.parseToIProceedingDeliveryReception(
-          this.formValue,
+          this.formValue.value,
           this.form.value
         )
       )
@@ -91,6 +103,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
                   this.id + '',
                   'Registro actualizado correctamente y correo enviado.'
                 );
+                this.form.reset();
               },
               error: () => {
                 this.onLoadToast(
@@ -104,8 +117,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
               },
             });
           console.log(response);
-          this.service.selectedAct.statusProceedings =
-            this.formValue.statusActa;
+          this.service.selectedAct.statusProceedings = this.statusActa;
         },
         error: err => {
           this.onLoadToast('error', this.id + '', 'No se pudo actualizar');

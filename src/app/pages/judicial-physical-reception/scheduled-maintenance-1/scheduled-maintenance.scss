@@ -2,6 +2,13 @@
   width: 20px;
 }
 
+.deleteDate {
+  position: relative;
+  margin: 10px auto auto;
+  left: -20px;
+  cursor: pointer;
+}
+
 .righButtons {
   display: flex;
   justify-content: flex-end;

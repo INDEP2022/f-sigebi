@@ -50,13 +50,14 @@ export class ExpedientSharedComponent extends BasePage implements OnInit {
               this.expedient = new DefaultSelect(resp.data, resp.count);
             },
             error: err => {
+              this.expedient = new DefaultSelect();
+
               let error = '';
               if (err.status === 0) {
                 error = 'Revise su conexión de Internet.';
               } else {
                 error = err.error.message;
               }
-              this.onLoadToast('error', error, '');
             },
           });
       }
@@ -86,7 +87,6 @@ export class ExpedientSharedComponent extends BasePage implements OnInit {
           } else {
             error = err.error.message;
           }
-          this.onLoadToast('error', error, '');
         },
       });
   }
