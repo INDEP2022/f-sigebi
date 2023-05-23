@@ -323,7 +323,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.render.addClass(btn, 'disabled');
     if (this.labelActa == 'Abrir acta') {
       this.openProceeding();
-    } else if (this.labelActa === 'Cerrar acta') {
+    } else if (this.labelActa == 'Cerrar acta') {
+      console.log('Funciono');
       this.closeProceeding();
     }
   }
@@ -1349,13 +1350,20 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
     } else {
+      console.log(this.reopening);
       if (this.reopening) {
         const paramsF = new FilterParams();
         paramsF.addFilter('numberProceedings', this.idProceeding);
-        this.serviceDetailProc
-          .getAllFiltered(paramsF.getParams())
-          .subscribe(res => {
+        this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
+          res => {
             console.log(res.data);
+            const idProcee = res.data[0]['numberProceedings'];
+            console.log(idProcee);
+            if (this.saveDataAct.length > 0) {
+              this.saveDetailProceeding([
+                { id: res.data[0]['numberProceedings'] },
+              ]);
+            }
             const resData = JSON.parse(JSON.stringify(res.data));
             console.log(this.saveDataAct);
             for (let item of resData) {
@@ -1370,8 +1378,25 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               .getByFilter(paramsF.getParams())
               .subscribe(res => {
                 console.log(res);
+                this.statusProceeding = 'CERRADO';
+                this.idProceeding = idProcee;
+                this.labelActa = 'Abrir acta';
+                this.btnCSSAct = 'btn-success';
+                this.alert(
+                  'success',
+                  'Acta cerrada',
+                  'El acta fue cerrada con éxito'
+                );
               });
-          });
+          },
+          err => {
+            this.alert(
+              'error',
+              'Ocurrió un error',
+              'Ocurrió un error inesperdo que no permitió abrir el acta'
+            );
+          }
+        );
       } else {
         this.serviceDocuments.getByFolio(-73378).subscribe(
           res => {
