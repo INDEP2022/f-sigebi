@@ -29,6 +29,7 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -40,34 +41,71 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   form: FormGroup = this.fb.group({
-    expedientNumber: [null, [Validators.required]],
-    registerNumber: [null, [Validators.required]],
+    expedientNumber: [
+      null,
+      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+    ],
+    registerNumber: [
+      null,
+      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+    ],
     wheelNumber: [
       null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
+      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
     ],
-    typeDict: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    senderUserRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
-    addressee: [null, [Validators.pattern(STRING_PATTERN)]],
-    addressee_I: [null, [Validators.pattern(STRING_PATTERN)]],
-    paragraphInitial: [null, [Validators.pattern(STRING_PATTERN)]],
-    paragraphFinish: [null, [Validators.pattern(STRING_PATTERN)]],
-    paragraphOptional: [null, [Validators.pattern(STRING_PATTERN)]],
-    descriptionSender: [null, [Validators.pattern(STRING_PATTERN)]],
+    typeDict: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    charge: [
+      null,
+      [
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+        Validators.maxLength(4000),
+      ],
+    ],
+    senderUserRemitente: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    addressee: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    addressee_I: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    paragraphInitial: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    paragraphFinish: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    paragraphOptional: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    descriptionSender: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
     typePerson: [null, [Validators.required]],
     senderUser: [null, null],
     personaExt: [null, null],
-    typePerson_I: [null, null],
+    typePerson_I: [null, [Validators.required]],
     senderUser_I: [null, null],
     personaExt_I: [null, null],
-
     key: [
       null,
       [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
     ],
     numberDictamination: [null, [Validators.required]],
   });
+
   intIDictation: IDictation;
   localInterfazOfficialDictation: IOfficialDictation;
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -133,7 +171,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
 
   buscardictamen() {
     this.filterParamsLocal.getValue().removeAllFilters();
-    if (!this.form.get('expedientNumber').invalid) {
+
+    if ((this.form.get('expedientNumber').value || '').trim().length > 0) {
       if (!(this.form.get('expedientNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -144,7 +183,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
           );
       }
     }
-    if (!this.form.get('registerNumber').invalid) {
+
+    if ((this.form.get('registerNumber').value || '').trim().length > 0) {
       if (!(this.form.get('registerNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -156,7 +196,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       }
     }
 
-    if (!this.form.get('wheelNumber').invalid) {
+    if ((this.form.get('wheelNumber').value || '').trim().length > 0) {
       if (!(this.form.get('wheelNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -168,7 +208,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       }
     }
 
-    if (!this.form.get('typeDict').invalid) {
+    if ((this.form.get('typeDict').value || '').trim().length > 0) {
       if (!(this.form.get('typeDict').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -179,6 +219,11 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
           );
       }
     }
+
+    this.filterParamsLocal
+      .getValue()
+      .addFilter('fecha_inserto', new Date().getFullYear(), SearchFilter.EQ);
+
     this.onEnterSearch(this.filterParamsLocal);
     this.verBoton = true;
   }
@@ -279,9 +324,7 @@ carga la  información de la parte media de la página
       .subscribe({
         next: resp => {
           console.log(' =>>> ' + JSON.stringify(resp.data));
-          console.log(
-            '<======[[ _________________________________________ ]]=======>'
-          );
+          console.log('<====== [[ ____________ ]] =======>');
 
           this.nrSelecttypePerson = resp.data[0].personExtInt;
           this.nrSelecttypePerson_I = resp.data[1].personExtInt;
@@ -417,44 +460,6 @@ carga la  información de la parte media de la página
       wheelNumber: f.value.wheelNumber,
       typeDict: f.value.typeDict,
       registerNumber: f.value.key,
-
-      /*  statusDict: f.value.,
-  userDict: f.value.,
-  observations:f.value.,
-  registerNumber:f.value.registerNumber,
-  keyArmyNumber: f.value.,*/
     };
   }
-
-  /*
-          this.form.get('').setValue(this.intIDictation.id);
-          this.form.get('').setValue(this.intIDictation.expedientNumber);
-          this.form.get('wheelNumber').setValue(this.intIDictation.wheelNumber);
-          this.form.get('typeDict').setValue(this.intIDictation.statusDict);
-          this.form.get('key').setValue(this.intIDictation.registerNumber);*/
-
-  /* 
- this.dictationService
-      .updateByIdDictament({})
-      .subscribe({
-        next: resp => {
-          
-          this.form.get('expedientNumber').setValue(this.intIDictation.id);
-          this.form.get('registerNumber').setValue(this.intIDictation.expedientNumber);
-          this.form.get('wheelNumber').setValue(this.intIDictation.wheelNumber);
-          this.form.get('typeDict').setValue(this.intIDictation.statusDict);
-          this.form.get('key').setValue(this.intIDictation.registerNumber);
-         // let obj = { officialNumber: this.intIDictation.id, typeDict: this.intIDictation.typeDict, };
-         // this.complementoFormulario(obj);
-        },
-        error: err => {
-          this.onLoadToast('error', 'error', err.error.message);
-        },
-      });
-
-
-
-
-  console.log("=====>=====>=====>=====>  "  + JSON.stringify( this.form.value));
-}*/
 }
