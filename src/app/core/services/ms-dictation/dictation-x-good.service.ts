@@ -41,4 +41,12 @@ export class DictationXGoodService extends HttpService {
   getAllFilter(params?: string): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(this.route.DictationXGood, params);
   }
+
+  create(data: any) {
+    return this.post(this.route.DictationXGood, data);
+  }
+
+  update(data: any, id: number) {
+    return this.put(`${this.route.DictationXGood}`, data);
+  }
 }
