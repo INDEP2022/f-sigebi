@@ -87,6 +87,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
       );
     }
     this.alert('success', 'Se modificó el estatus de los Bienes', '');
+    this.bsModel.content.callback(this.dataGoods['data']);
   }
 
   selectRow(e: any) {
