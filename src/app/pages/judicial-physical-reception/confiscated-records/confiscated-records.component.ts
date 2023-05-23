@@ -30,6 +30,7 @@ import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validatio
 import { IBlkPost } from 'src/app/core/models/ms-proceedings/warehouse-vault.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -218,7 +219,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceExpediente: ExpedientService,
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceProceeding: ProceedingsService,
-    private serviceClassifyGood: ClassifyGoodService
+    private serviceClassifyGood: ClassifyGoodService,
+    private serviceGoodQuery: GoodsQueryService
   ) {
     super();
   }
@@ -243,33 +245,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       console.log(res);
     });
 
-    /* this.form.get('indEdoFisico').valueChanges.subscribe(res => {
-      if (this.isSelectGood && this.statusProceeding === 'ABIERTA' && res) {
-        const newData = this.dataGoodAct['data'].map((e: any) => {
-          if (e.id === this.selectActData.id) {
-            return { ...e, indEdoFisico: 1 };
-          } else {
-            return e;
-          }
-        });
-        console.log(newData);
-        this.dataGoodAct.load(newData);
-      } else if (
-        this.isSelectGood &&
-        this.statusProceeding === 'ABIERTA' &&
-        !res
-      ) {
-        const newData = this.dataGoodAct['data'].map((e: any) => {
-          if (e.id === this.selectActData.id) {
-            return { ...e, indEdoFisico: null };
-          } else {
-            return e;
-          }
-        });
-        console.log(newData);
-        this.dataGoodAct.load(newData);
-      }
-    }); */
+    /* this.applyEdoFis(); */
   }
 
   prepareForm() {
@@ -897,13 +873,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     paramsF.addFilter('numberProceedings', dataRes.id);
     paramsF.addFilter('keysProceedings', dataRes.keysProceedings);
     this.serviceDetailProc.getAllFiltered(paramsF.getParams()).subscribe(
-      res => {
+      async res => {
         console.log(res);
         const data = this.dataGoods;
         const incomeData = res.data;
         for (let i = 0; i < incomeData.length; i++) {
           const element = JSON.parse(JSON.stringify(incomeData[i]));
-          this.goodData.push({ ...element.good, received: 'S' });
+          const edoFis: any = await this.getIndEdoFisAndVColumna(element.good);
+          this.goodData.push({
+            ...element.good,
+            received: 'S',
+            indEdoFisico: edoFis.V_IND_EDO_FISICO === 1 ? true : false,
+          });
           this.dataGoods
             .load(
               this.dataGoods['data'].map((e: any) => {
@@ -915,8 +896,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               })
             )
             .then(res => {
-              console.log(this.goodData);
-
               for (let item of this.goodData) {
                 const goodClass = item.goodClassNumber;
 
@@ -1694,7 +1673,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
   //Select data
   statusGood(formName: string, data: any) {
-    console.log('Se ejecutó');
     const paramsF = new FilterParams();
     paramsF.addFilter('status', data.goodStatus);
     this.serviceGood.getStatusGood(paramsF.getParams()).subscribe(
@@ -1707,12 +1685,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
+  async selectEdoFisRow(data: any, formName: string) {
+    const edoFis: any = await this.getIndEdoFisAndVColumna(data);
+    console.log(edoFis);
+    if (edoFis.V_NO_COLUMNA === 0) {
+      this.form.get(formName).setValue('OTRO');
+    } else {
+      this.form.get(formName).setValue(data[`val${edoFis.V_NO_COLUMNA}`]);
+    }
+  }
+
   selectRow(e: any) {
     const { data } = e;
     console.log(data);
     this.selectData = data;
     this.statusGood('estatusPrueba', data);
-    this.form.get('indEdoFisico').setValue(data.indEdoFisico);
   }
 
   deselectRow() {
@@ -1746,13 +1733,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         edo.setValue('BUENO');
         break;
       default:
-        edo.setValue('SIN ESPECIFICAR');
+        edo.setValue('OTRO');
         break;
     }
   }
 
   selectRowGoodActa(e: any) {
-    console.log(e);
     const { data } = e;
     if (data != null) {
       const isSelect = e.isSelected;
@@ -1760,8 +1746,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       console.log(isSelect);
       console.log(this.saveDataAct);
       console.log(data);
-      if (!['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
+      if (
+        !['CERRADO', 'CERRADA'].includes(this.statusProceeding) &&
+        data.indEdoFisico
+      ) {
         this.isSelectGood = true;
+      } else {
+        this.isSelectGood = false;
       }
       if (e.isSelect) {
         this.saveDataAct.push(data);
@@ -1771,8 +1762,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         );
       }
       this.selectActData = data;
-      this.estadoFisBien(data);
+      /* this.estadoFisBien(data); */
+      this.selectEdoFisRow(data, 'edoFisico');
       this.statusGood('estatusBienActa', data);
+      this.form.get('indEdoFisico').setValue(data.indEdoFisico);
     }
   }
 
@@ -1782,6 +1775,32 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.isSelectGood = false;
     this.form.get('edoFisico').setValue(null);
     this.form.get('estatusBienActa').setValue(null);
+  }
+
+  async applyEdoFisOne(e: any) {
+    console.log(this.selectActData);
+    console.log(e);
+    const edoFis: any = await this.getIndEdoFisAndVColumna(this.selectActData);
+    console.log(edoFis);
+    const generalModel: Map<string, any> = new Map();
+    generalModel.set('id', parseInt(this.selectActData.id.toString()));
+    generalModel.set('goodId', parseInt(this.selectActData.id.toString()));
+    generalModel.set(`val${edoFis.V_NO_COLUMNA}`, e);
+    const jsonModel = JSON.parse(
+      JSON.stringify(Object.fromEntries(generalModel))
+    );
+    this.serviceGood.updateWithoutId(jsonModel).subscribe(
+      res => {
+        this.alert('success', 'El estado físico del Bien fue cambiado', '');
+      },
+      err => {
+        this.alert(
+          'error',
+          'Ocurrió un error',
+          'No se pudo concretar el cambio del estado físico del Bien'
+        );
+      }
+    );
   }
 
   //Add good to Act
@@ -2120,6 +2139,71 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     }
   }
 
+  //!
+  //!
+  //TODO: ESTOY AQUÍ
+  //!
+  //!
+  getIndEdoFisAndVColumna(data: any) {
+    let V_IND_EDO_FISICO: number;
+    let V_NO_COLUMNA: number;
+    console.log(data.goodClassNumber);
+
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('type', 'EDO_FIS');
+      paramsF.addFilter('classifyGoodNumber', data.goodClassNumber);
+      this.serviceClassifyGood.getChangeClass(paramsF.getParams()).subscribe(
+        res => {
+          V_IND_EDO_FISICO = 1;
+          const paramsF2 = new FilterParams();
+          paramsF2.addFilter('classifGoodNumber', data.goodClassNumber);
+          paramsF2.addFilter('attribute', 'ESTADO FISICO', SearchFilter.ILIKE);
+          this.serviceGoodQuery
+            .getAtributeClassificationGoodFilter(paramsF2.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+                if (res.data[0]) {
+                  V_NO_COLUMNA = res.data[0].columnNumber;
+                  resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
+                }
+              },
+              err => {
+                console.log(err);
+                V_NO_COLUMNA = 0;
+                resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
+              }
+            );
+        },
+        err => {
+          console.log(err);
+          V_IND_EDO_FISICO = 0;
+          V_NO_COLUMNA = 0;
+          const paramsF2 = new FilterParams();
+          paramsF2.addFilter('classifGoodNumber', data.goodClassNumber);
+          paramsF2.addFilter('attribute', 'ESTADO FISICO', SearchFilter.ILIKE);
+          this.serviceGoodQuery
+            .getAtributeClassificationGoodFilter(paramsF2.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+                if (res.data[0]) {
+                  V_NO_COLUMNA = res.data[0].columnNumber;
+                  resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
+                }
+              },
+              err => {
+                V_NO_COLUMNA = 0;
+                resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
+              }
+            );
+          resolve({ V_NO_COLUMNA, V_IND_EDO_FISICO });
+        }
+      );
+    });
+  }
+
   openEdoFisico() {
     console.log(this.dataGoodAct['data']);
     if (this.goodData.length === 0) {
@@ -2133,8 +2217,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       modalConfig = {
         initialState: {
           goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
-          callback: (next: boolean) => {
-            if (next) console.log('Hola');
+          callback: (next: any) => {
+            console.log(next);
+            for (let item of next) {
+              console.log(item);
+              this.dataGoodAct.load(
+                this.dataGoodAct['data'].map((e: any) => {
+                  if (e.id === item.id) {
+                    console;
+                    console.log('cambio');
+                    return { ...e, [`val${item.columna}`]: item.estadoFisico };
+                  } else {
+                    return e;
+                  }
+                })
+              );
+            }
           },
         },
         class: 'modal-lg modal-dialog-centered',
