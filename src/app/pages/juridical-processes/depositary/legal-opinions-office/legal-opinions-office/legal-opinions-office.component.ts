@@ -182,7 +182,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       } else {
         console.log('SIN PARAMETROS');
         if (!this.origin) {
-          this.showSearchAppointment = true;
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
         } else {
           this.alertInfo(
             'info',
@@ -1708,6 +1708,30 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     console.log(this.formCopiesTo);
   }
 
+  addCopiesOffice() {
+    this.formCopiesTo.addControl('ccp_person' + this.totalCopiesTo, [
+      { value: '', disabled: false },
+    ]);
+    this.formCopiesTo.addControl('ccp_addressee' + this.totalCopiesTo, [
+      { value: '', disabled: false },
+      [Validators.pattern(STRING_PATTERN)],
+    ]);
+    this.formCopiesTo.addControl('ccp_TiPerson' + this.totalCopiesTo, [
+      { value: '', disabled: false },
+      [Validators.pattern(STRING_PATTERN)],
+    ]);
+    this.totalCopiesTo++;
+    console.log(this.formCopiesTo.controls, this.totalCopiesTo);
+  }
+
+  deleteCopiesOffice(position: number) {
+    this.formCopiesTo.removeControl('ccp_person' + position);
+    this.formCopiesTo.removeControl('ccp_addressee' + position);
+    this.formCopiesTo.removeControl('ccp_TiPerson' + position);
+    this.totalCopiesTo--;
+    console.log(this.formCopiesTo.controls, this.totalCopiesTo);
+  }
+
   saveDataForm() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -1747,6 +1771,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     };
     // COPIAS OFICIO DICTAMEN
     // ARREGLO DE COPIAS PARA
+    console.log(this.officeCopiesDictationData);
     //   ccp_person: [{ value: '', disabled: false }],
     //   ccp_addressee: [
     //     { value: null, disabled: false },
