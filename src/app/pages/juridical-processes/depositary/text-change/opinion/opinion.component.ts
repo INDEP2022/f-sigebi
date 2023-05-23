@@ -43,35 +43,19 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   form: FormGroup = this.fb.group({
     expedientNumber: [
       null,
-      [
-        Validators.required,
-        Validators.pattern(NUMBERS_PATTERN),
-        Validators.maxLength(11),
-      ],
+      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
     ],
     registerNumber: [
       null,
-      [
-        Validators.required,
-        Validators.pattern(NUMBERS_PATTERN),
-        Validators.maxLength(11),
-      ],
+      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
     ],
     wheelNumber: [
       null,
-      [
-        Validators.required,
-        Validators.pattern(NUMBERS_PATTERN),
-        Validators.maxLength(11),
-      ],
+      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
     ],
     typeDict: [
       null,
-      [
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-        Validators.maxLength(4000),
-      ],
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
     charge: [
       null,
@@ -187,7 +171,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
 
   buscardictamen() {
     this.filterParamsLocal.getValue().removeAllFilters();
-    if (!this.form.get('expedientNumber').invalid) {
+
+    if ((this.form.get('expedientNumber').value || '').trim().length > 0) {
       if (!(this.form.get('expedientNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -198,7 +183,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
           );
       }
     }
-    if (!this.form.get('registerNumber').invalid) {
+
+    if ((this.form.get('registerNumber').value || '').trim().length > 0) {
       if (!(this.form.get('registerNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -210,7 +196,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       }
     }
 
-    if (!this.form.get('wheelNumber').invalid) {
+    if ((this.form.get('wheelNumber').value || '').trim().length > 0) {
       if (!(this.form.get('wheelNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -222,7 +208,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       }
     }
 
-    if (!this.form.get('typeDict').invalid) {
+    if ((this.form.get('typeDict').value || '').trim().length > 0) {
       if (!(this.form.get('typeDict').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -233,6 +219,11 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
           );
       }
     }
+
+    this.filterParamsLocal
+      .getValue()
+      .addFilter('fecha_inserto', new Date().getFullYear(), SearchFilter.EQ);
+
     this.onEnterSearch(this.filterParamsLocal);
     this.verBoton = true;
   }

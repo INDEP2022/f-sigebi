@@ -2217,8 +2217,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       modalConfig = {
         initialState: {
           goodData: this.dataGoodAct['data'].filter(item => item.indEdoFisico),
-          callback: (next: boolean) => {
-            if (next) console.log('Hola');
+          callback: (next: any) => {
+            console.log(next);
+            for (let item of next) {
+              console.log(item);
+              this.dataGoodAct.load(
+                this.dataGoodAct['data'].map((e: any) => {
+                  if (e.id === item.id) {
+                    console;
+                    console.log('cambio');
+                    return { ...e, [`val${item.columna}`]: item.estadoFisico };
+                  } else {
+                    return e;
+                  }
+                })
+              );
+            }
           },
         },
         class: 'modal-lg modal-dialog-centered',

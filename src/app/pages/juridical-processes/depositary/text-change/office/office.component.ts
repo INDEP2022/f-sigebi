@@ -163,7 +163,7 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.form.get('flyerNumber').setValue(resp.data[0].flyerNumber);
           this.form.get('officio').setValue(resp.data[0].jobBy);
           //====================================================================================//
-          this.form.get('RemitenteSenderUser').setValue(resp.data[0].sender);
+
           this.form.get('addressee').setValue(resp.data[0].addressee);
           this.getPuestoUser(resp.data[0].cveChargeRem);
           this.form.get('paragraphInitial').setValue(resp.data[0].text1);
@@ -268,7 +268,8 @@ export class OfficeComponent extends BasePage implements OnInit {
 ================================================================================================*/
   buscarOficio() {
     this.filterParamsLocal.getValue().removeAllFilters();
-    if (!this.form.get('proceedingsNumber').invalid) {
+
+    if ((this.form.get('proceedingsNumber').value || '').trim().length > 0) {
       if (!(this.form.get('proceedingsNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -280,7 +281,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    if (!this.form.get('managementNumber').invalid) {
+    if ((this.form.get('managementNumber').value || '').trim().length > 0) {
       if (!(this.form.get('managementNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -292,7 +293,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    if (!this.form.get('flyerNumber').invalid) {
+    if ((this.form.get('flyerNumber').value || '').trim().length > 0) {
       if (!(this.form.get('flyerNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -304,7 +305,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    if (!this.form.get('officio').invalid) {
+    if ((this.form.get('officio').value || '').trim().length > 0) {
       if (!(this.form.get('officio').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -315,6 +316,10 @@ export class OfficeComponent extends BasePage implements OnInit {
           );
       }
     }
+    this.filterParamsLocal
+      .getValue()
+      .addFilter('fecha_inserto', new Date().getFullYear(), SearchFilter.EQ);
+
     this.onmanagementNumberEnter(this.filterParamsLocal);
     this.verBoton = true;
   }
