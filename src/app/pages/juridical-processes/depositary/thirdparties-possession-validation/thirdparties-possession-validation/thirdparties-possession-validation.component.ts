@@ -67,6 +67,7 @@ export class ThirdpartiesPossessionValidationComponent
 
   // Table settings
   tableSettingsBienes = {
+    selectedRowIndex: -1,
     rowClassFunction: (row: any) => {
       if (row.cells[1].value != 'ADM') {
         return 'bg-dark text-white disabled-custom';
@@ -97,7 +98,9 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
-    // selectMode: 'multi',
+    selectedRowIndex: -1,
+
+    selectMode: 'single',
     hideSubHeader: true,
     mode: 'external',
 
