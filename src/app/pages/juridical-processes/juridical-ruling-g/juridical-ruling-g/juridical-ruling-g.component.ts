@@ -693,6 +693,7 @@ export class JuridicalRulingGComponent
     }
   }
   removeAll() {
+    this.goods.pop();
     if (this.goodsValid.length > 0) {
       // this.goods = this.goods.concat(this.goodsValid);
       this.goods.map(_g => (_g.status = 'ADM'));

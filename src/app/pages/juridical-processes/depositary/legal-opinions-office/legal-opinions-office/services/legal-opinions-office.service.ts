@@ -51,14 +51,24 @@ export class LegalOpinionsOfficeService {
   getCityByDetail(params: string) {
     return this.msCityService.getAllFiltered(params);
   }
+  // Get Dictaminaciones
   getDictations(params: string) {
     return this.msDictationService.getAllWithFilters(params);
+  }
+  // Save Dictaminaciones
+  saveDictations(body: IDictation) {
+    return this.msDictationService.create(body);
   }
   getExpedient(params: ListParams) {
     return this.msExpedientService.getAll(params);
   }
+  // Get Oficio Dictaminaciones
   getOfficeDictation(params: _Params) {
     return this.msOficialDictationService.getAll(params);
+  }
+  // Save Oficio Dictaminaciones
+  saveOfficeDictation(body: IOfficialDictation) {
+    return this.msOficialDictationService.create(body);
   }
   getElectronicFirmData(params: _Params) {
     return this.msSsf3SignatureElecDocsService.getAllFiltered(params);
