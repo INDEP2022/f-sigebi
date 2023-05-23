@@ -75,42 +75,6 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     }
   }
 
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
-
-  create() {
-    this.loading = true;
-    //Objeto para actualizar el reporte con datos del formulario
-    const obj: IRequest = {
-      ccpRuling: this.dictumForm.controls['ccpRuling'].value,
-      //id: this.dictumForm.controls['id'].value,
-      nameRecipientRuling:
-        this.dictumForm.controls['nameRecipientRuling'].value,
-      nameSignatoryRuling:
-        this.dictumForm.controls['nameSignatoryRuling'].value,
-      paragraphOneRuling: this.dictumForm.controls['paragraphOneRuling'].value,
-      paragraphTwoRuling: this.dictumForm.controls['paragraphTwoRuling'].value,
-      postRecipientRuling:
-        this.dictumForm.controls['postRecipientRuling'].value,
-      postSignatoryRuling:
-        this.dictumForm.controls['postSignatoryRuling'].value,
-      reportSheet: this.folioReporte,
-    };
-    console.log('Crear reporte', this.folioReporte);
-
-    //const idDoc = this.idSolicitud;
-    this.requestService.create(obj).subscribe({
-      next: data => {
-        this.handleSuccess(), this.signDictum();
-      },
-      error: error => (
-        this.onLoadToast('warning', 'No se pudo actualizar', error.error),
-        (this.loading = false)
-      ),
-    });
-  }
-
   update() {
     this.loading = true;
     let token = this.authService.decodeToken();
@@ -179,20 +143,20 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     this.bsModelRef.hide();
   }
 
-  openModal(component: any, data?: any, typeAnnex?: String): void {
-    let config: ModalOptions = {
-      initialState: {
-        data: data,
-        typeAnnex: typeAnnex,
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(component, config);
-  }
+  // openModal(component: any, data?: any, typeAnnex?: String): void {
+  //   let config: ModalOptions = {
+  //     initialState: {
+  //       data: data,
+  //       typeAnnex: typeAnnex,
+  //       callback: (next: boolean) => {
+  //         //if (next){ this.getData();}
+  //       },
+  //     },
+  //     class: 'modal-lg modal-dialog-centered',
+  //     ignoreBackdropClick: true,
+  //   };
+  //   this.modalService.show(component, config);
+  // }
 
   //Método para crear número secuencial según la no delegación del user logeado
   dictamenSeq() {

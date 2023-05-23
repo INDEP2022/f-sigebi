@@ -9,10 +9,10 @@ export const COLUMNS = {
     title: 'Fecha Registro SIAB',
     sort: false,
   },
-  /*  sent_oi: {
+  movement: {
     title: 'Movimiento',
     sort: false,
-  },*/
+  },
   referenceori: {
     title: 'Referencia',
     sort: false,
@@ -29,6 +29,9 @@ export const COLUMNS = {
     title: 'sucursal',
     sort: false,
   },
+};
+
+export const COLUMNS_EXTRAS = {
   amount: {
     title: 'Monto',
     sort: false,
@@ -58,6 +61,7 @@ export const COLUMNS = {
     sort: false,
   },
 };
+
 /*
 export const COLUMNS = {
   movementNumber: {

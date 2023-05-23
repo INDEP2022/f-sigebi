@@ -34,7 +34,23 @@
           <!-- <app-select-form [form]="form" formField="tipoEvento" label="Tipo de Evento" [list]="tiposEvento"
             [(params)]="paramsTypes" [haveTodos]="false"></app-select-form> -->
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4" style="display: flex">
+          <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
+            <input
+              bsDaterangepicker
+              class="form-control form-date"
+              formControlName="rangeDate"
+              readonly
+              [maxDate]="hoy" />
+          </form-field>
+          <div
+            *ngIf="rangeDateValue !== null"
+            class="deleteDate"
+            (click)="deleteRange()">
+            x
+          </div>
+        </div>
+        <!-- <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
@@ -54,7 +70,7 @@
               readonly
               formControlName="fechaFin" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-2">
           <form-field
             [control]="form.get('statusEvento')"
@@ -171,7 +187,6 @@
           class="col-md-4"
           [class]="loading || data.length === 0 ? 'disabled' : ''">
           <button
-            *ngIf="!showTable1"
             class="btn btn-primary btn-sm active"
             type="submit"
             size="small"
@@ -204,7 +219,7 @@
               class="table-responsive"
               [settings]="settings1"
               [source]="data"
-              (edit)="rowsSelected($event)"></ng2-smart-table>
+              (edit)="rowsSelected($event.data)"></ng2-smart-table>
           </div>
         </div>
         <div class="col-md-12" [class]="showTable1 ? 'hide' : ''">
@@ -217,8 +232,13 @@
         </div>
       </div>
       <app-pagination
+        *ngIf="!showTable1"
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
+      <app-pagination
+        *ngIf="showTable1"
+        [params]="paramsIndicators"
+        [totalItems]="totalItemsIndicators"></app-pagination>
     </form>
   </div>
 </app-card>

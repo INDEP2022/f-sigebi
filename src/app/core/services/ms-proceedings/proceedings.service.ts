@@ -7,7 +7,11 @@ import {
   IResponse,
 } from '../../interfaces/list-response.interface';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
-import { UpdateWarehouseVault } from '../../models/ms-proceedings/warehouse-vault.model';
+import {
+  IBlkPost,
+  IUpdateVault,
+  IUpdateWarehouse,
+} from '../../models/ms-proceedings/warehouse-vault.model';
 import { ProceedingsEndpoints } from './../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IUpdateProceedings } from './../../models/ms-proceedings/update-proceedings.model';
 
@@ -27,32 +31,36 @@ export class ProceedingsService extends HttpService {
   // getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {
   //   return this.get<IListResponse<IProceedings>>(this.endpoint);
   // }
-  updateVaultByProceedingNumber(model: UpdateWarehouseVault) {
+  updateVaultByProceedingNumber(model: IUpdateVault) {
     return this.post<IResponse>(
       `${this.route}/${ProceedingsEndpoints.UpdateVaultByProceedingNumber}`,
       model
     );
   }
 
-  updateVaultByKeyProceeding(model: UpdateWarehouseVault) {
+  updateVaultByKeyProceeding(model: IUpdateVault) {
     return this.post<IResponse>(
       `${this.route}/${ProceedingsEndpoints.UpdateVaultByKeyProceeding}`,
       model
     );
   }
 
-  updateWarehouseByProceedingNumber(model: UpdateWarehouseVault) {
+  updateWarehouseByProceedingNumber(model: IUpdateWarehouse) {
     return this.post<IResponse>(
       `${this.route}/${ProceedingsEndpoints.UpdateWarehouseByProceedingNumber}`,
       model
     );
   }
 
-  updateWarehouseByKeyProceeding(model: UpdateWarehouseVault) {
+  updateWarehouseByKeyProceeding(model: IUpdateWarehouse) {
     return this.post<IResponse>(
       `${this.route}/${ProceedingsEndpoints.UpdateWarehouseByKeyProceeding}`,
       model
     );
+  }
+
+  getBiePosquery(model: IBlkPost) {
+    return this.post<IResponse>(`${ProceedingsEndpoints.blkBienPost}`, model);
   }
 
   getActByFileNumber(

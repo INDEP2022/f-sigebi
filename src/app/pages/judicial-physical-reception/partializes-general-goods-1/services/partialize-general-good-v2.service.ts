@@ -1,15 +1,10 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { PartializeGeneralGood } from './partialize-general-good';
 
 @Injectable()
 export class PartializeGeneralGoodV2Service extends PartializeGeneralGood {
   private columns: any = {
-    id: {
-      title: 'Id.',
-      type: 'string',
-      sort: false,
-    },
     noBien: {
       title: 'No. Bien',
       type: 'string',
@@ -31,12 +26,10 @@ export class PartializeGeneralGoodV2Service extends PartializeGeneralGood {
       sort: false,
     },
   };
-  constructor(
-    @Inject('dbPartialize') override dbPartialize: string,
-    @Inject('dbSelectedGood') override dbSelectedGood: string,
-    override fb: FormBuilder
-  ) {
-    super(dbPartialize, dbSelectedGood, fb);
+  constructor(override fb: FormBuilder) {
+    super(fb);
+    this.dbPartialize = 'goodsPartializeds1v1';
+    this.dbSelectedGood = 'goodSelected1v1';
     this.clasificators = '62, 1424, 1426';
     this.settingsGoods = { ...this.settingsGoods, columns: this.columns };
   }

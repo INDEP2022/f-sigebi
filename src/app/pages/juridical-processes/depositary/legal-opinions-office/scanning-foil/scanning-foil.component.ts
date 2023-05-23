@@ -155,7 +155,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   showMessageDigitalization() {
     if (this.form.get('scanningFoli').value) {
       this.alertInfo(
-        'info',
+        'success',
         'El folio universal generado es: "' +
           this.form.get('scanningFoli').value +
           '"',

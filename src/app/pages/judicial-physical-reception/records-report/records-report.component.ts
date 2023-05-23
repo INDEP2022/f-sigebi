@@ -1,9 +1,9 @@
-import { Component,OnInit,Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import {
-FormBuilder,
-FormControl,
-FormGroup,
-Validators
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { format } from 'date-fns';
@@ -33,6 +33,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   type: FormControl = new FormControl(REPORT_TYPE.Reception);
   form: FormGroup = this.fb.group({});
   itemsSelect = new DefaultSelect();
+  estatusData = new DefaultSelect(['Abierta', 'Cerrada', 'Todos']);
   initialProceeding = new DefaultSelect();
   finalProceeding = new DefaultSelect();
   delegacionRecibe: string = 'delegacionRecibe';
@@ -46,6 +47,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
   loadingText = 'Cargando ...';
   keyProceedingInitial = '';
   keyProceedingFinal = '';
+  title = 'Entrega Recepción';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -119,6 +121,16 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       }
     });
 
+    if (this.type.value === 'RECEPTION') {
+      this.title = 'Entrega Recepción';
+      this.form.get('delegacionRecibe').setValidators([Validators.required]);
+      this.form.get('subdelegation').setValidators([Validators.required]);
+    } else {
+      this.title = 'Decomiso';
+      this.form.get('delegacionRecibe').clearValidators();
+      this.form.get('subdelegation').clearValidators();
+    }
+
     this.type.valueChanges.subscribe(res => {
       this.form.get('delegacionRecibe').reset();
       this.form.get('subdelegation').reset();
@@ -135,6 +147,17 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.finalProceedingBool = false;
       this.finalProceeding = new DefaultSelect();
       this.initialProceeding = new DefaultSelect();
+      if (res === 'RECEPTION') {
+        this.title = 'Entrega Recepción';
+        this.form.get('delegacionRecibe').setValidators([Validators.required]);
+        this.form.get('subdelegation').setValidators([Validators.required]);
+      } else {
+        this.title = 'Decomiso';
+        this.form.get('delegacionRecibe').clearValidators();
+        this.form.get('delegacionRecibe').updateValueAndValidity();
+        this.form.get('subdelegation').clearValidators();
+        this.form.get('subdelegation').updateValueAndValidity();
+      }
     });
 
     this.form.get('actaInicial').valueChanges.subscribe(res => {
@@ -152,8 +175,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      delegacionRecibe: [null, [Validators.required]],
-      subdelegation: [null, [Validators.required]],
+      delegacionRecibe: [null, []],
+      subdelegation: [null, []],
       estatusActa: [null, [Validators.required]],
       actaInicial: [null, [Validators.required]],
       actaFinal: [null, [Validators.required]],
@@ -204,8 +227,6 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   validateDecomiso() {
     if (
-      this.form.get('delegacionRecibe').value != null &&
-      this.form.get('subdelegation').value != null &&
       this.form.get('estatusActa').value != null &&
       this.form.get('desde').value != null &&
       this.form.get('hasta').value != null &&
@@ -274,15 +295,19 @@ export class RecordsReportComponent extends BasePage implements OnInit {
 
   generateDecomiso() {
     const params = {
-      PN_DELEG: this.form.get('delegacionRecibe').value,
-      PN_SUBDEL: this.form.get('subdelegation').value.id,
+      PN_DELEG:
+        this.form.get('delegacionRecibe').value != null
+          ? this.form.get('delegacionRecibe').value
+          : '',
+      PN_SUBDEL:
+        this.form.get('subdelegation').value != null
+          ? this.form.get('subdelegation').value.id
+          : '',
       PN_EXPEDI_INICIAL: this.form.get('desde').value,
       PN_EXPEDI_FINAL: this.form.get('hasta').value,
       PC_ESTATUS_ACTA1: this.form.get('estatusActa').value,
       PF_F_RECEP_INI: format(this.form.get('fechaDesde').value, 'dd-MM-yyyy'),
       PF_F_RECEP_FIN: format(this.form.get('fechaHasta').value, 'dd-MM-yyyy'),
-      PN_ACTA_INICIAL: this.form.get('actaInicial').value,
-      PN_ACTA_FINAL: this.form.get('actaFinal').value,
     };
     console.log(params);
     this.downloadReport('blank', params);
@@ -397,19 +422,5 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     //let newWin = window.open(pdfurl, 'test.pdf');
     this.onLoadToast('success', '', 'Reporte generado');
     this.loading = false;
-  }
-
-  onTypeChange() {
-    const controls = [this.initialRecord, this.finalRecord];
-    const type = this.type.value;
-    if (type === REPORT_TYPE.Confiscation) {
-      controls.forEach(control => control.clearValidators());
-    } else {
-      controls.forEach(control => control.setValidators(Validators.required));
-    }
-    controls.forEach(control => {
-      control.reset();
-      control.updateValueAndValidity();
-    });
   }
 }

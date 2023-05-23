@@ -1,7 +1,9 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('expedientNumber')" label="Expediente">
+      <form-field
+        [control]="form.get('expedientNumber')"
+        label="No. Expediente">
         <input
           type="text"
           class="form-control"
@@ -12,17 +14,16 @@
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('registerNumber')"
-        label="No de Gesti&oacute;n">
+        label="No. de Gesti&oacute;n">
         <input
           type="text"
           class="form-control"
-          senderUser
           formControlName="registerNumber"
           [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('wheelNumber')" label="Volante">
+      <form-field [control]="form.get('wheelNumber')" label="No. Volante">
         <input
           type="text"
           class="form-control"
@@ -31,7 +32,9 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('typeDict')" label="Dictaminaci&oacute;n">
+      <form-field
+        [control]="form.get('typeDict')"
+        label="No. Dictaminaci&oacute;n">
         <input
           type="text"
           class="form-control"
@@ -51,7 +54,7 @@
       <button
         class="btn btn-primary btn-sm active"
         (click)="nuevaBusquedaOficio()">
-        Nueva Busqueda <i class="fa fa-search ml-2"></i>
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
       </button>
     </div>
   </div>
@@ -65,14 +68,13 @@
   </div>
   <hr />
   <div class="row">
-    <div class="col-md-4 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('senderUser')" label="Remitente">
-        <input type="text" class="form-control" formControlName="senderUser" />
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('senderUserRemitente')" label="Remitente">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="senderUserRemitente" />
       </form-field>
-      <!--app-user-shared
-        [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Remitente'"></app-user-shared-->
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
@@ -89,7 +91,7 @@
     <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
       <form-field
         [control]="form.get('numberDictamination')"
-        label="No de Dictaminaci&oacute;n">
+        label="N&uacute; de Dictaminaci&oacute;n">
         <input
           type="text"
           class="form-control"
@@ -162,20 +164,34 @@
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('senderUser')" label="Detinatario Copia">
-        <ng-select
-          [items]="UserDestinatario"
-          bindLabel="id"
-          bindValue="id"
+      <form-field [control]="form.get('senderUser')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control', $event)"
           [readonly]="form.get('typePerson').value === 'S'"
-          formControlName="senderUser"
-          class="form-control"
-          (change)="getDescUser('control', $event)">
-        </ng-select>
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="senderUser"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('personaExt')" label="Nom. Persona Ext">
+      <form-field [control]="form.get('personaExt')" label="Nombre Persona">
         <input
           type="text"
           class="form-control"
@@ -195,22 +211,34 @@
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field
-        [control]="form.get('senderUser_I')"
-        label="Detinatario Copia">
-        <ng-select
-          [items]="UserDestinatario"
-          bindLabel="id"
-          bindValue="id"
-          formControlName="senderUser_I"
+      <form-field [control]="form.get('senderUser_I')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control_I', $event)"
           [readonly]="form.get('typePerson_I').value === 'S'"
-          class="form-control"
-          (change)="getDescUser('control_I', $event)">
-        </ng-select>
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="senderUser_I"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
-      <form-field [control]="form.get('personaExt_I')" label="Nom. Persona Ext">
+      <form-field [control]="form.get('personaExt_I')" label="Nombre Persona">
         <input
           type="text"
           class="form-control"
@@ -230,6 +258,14 @@
             [loading]="loading"
             (confirm)="confirm()">
           </confirm-button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-info active"
+            (click)="updateDictamen()">
+            Actualizar
+          </button>
         </div>
       </div>
     </div>
