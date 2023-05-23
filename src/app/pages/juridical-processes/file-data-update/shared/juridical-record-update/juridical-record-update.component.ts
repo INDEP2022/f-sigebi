@@ -42,7 +42,6 @@ import { IIdentifier } from '../../../../../core/models/catalogs/identifier.mode
 import { IIndiciados } from '../../../../../core/models/catalogs/indiciados.model';
 import { IIssuingInstitution } from '../../../../../core/models/catalogs/issuing-institution.model';
 import { IMinpub } from '../../../../../core/models/catalogs/minpub.model';
-import { IOpinion } from '../../../../../core/models/catalogs/opinion.model';
 import { IRAsuntDic } from '../../../../../core/models/catalogs/r-asunt-dic.model';
 import { IStation } from '../../../../../core/models/catalogs/station.model';
 import {
@@ -126,7 +125,7 @@ export class JuridicalRecordUpdateComponent
   transferorLoading: boolean = false;
   stationLoading: boolean = false;
   dictum: string = '';
-  prevDictumKey: IOpinion;
+  prevDictumKey: { dictamen: string; description: string };
   dictOffice: string = '';
   dictConsultOnly: string = 'N';
   procedureId: number;
@@ -600,7 +599,10 @@ export class JuridicalRecordUpdateComponent
           if (data.count > 0) {
             const dictum = data.data[0];
             this.formControls.dictumKey.enable();
-            this.formControls.dictumKey.setValue(dictum);
+            this.formControls.dictumKey.setValue({
+              dictamen: dictum.id?.toString(),
+              description: dictum.description,
+            });
             this.formControls.dictumKey.disable();
             this.prevDictumKey = this.formControls.dictumKey.value;
             this.dictum = dictum.description;
@@ -930,7 +932,8 @@ export class JuridicalRecordUpdateComponent
     this.fileDataUpdateForm.disable();
     if (this.formControls.dictumKey.value?.description) {
       this.dictum = this.formControls.dictumKey.value?.description;
-      this.dictOffice = this.formControls.dictumKey.value?.dict_ofi;
+      // this.dictOffice = this.formControls.dictumKey.value?.dict_ofi;
+      this.cveDictumWhenValidateItem(this.dictum);
     }
     this.checkToEnableDictum();
   }
@@ -942,7 +945,8 @@ export class JuridicalRecordUpdateComponent
       this.prevDictumKey = this.formControls.dictumKey.value;
       if (
         [16, 24, 26, '16', '24', '26'].includes(
-          this.formControls.dictumKey.value?.id
+          // this.formControls.dictumKey.value?.id
+          this.formControls.dictumKey.value?.dictamen
         ) &&
         this.formControls.wheelNumber.value != null
       ) {
@@ -1027,7 +1031,7 @@ export class JuridicalRecordUpdateComponent
 
   isLoadingOfficeOfRelief = false;
   async onClickOfficeOfRelief() {
-    let dictumId: number;
+    let dictumId: number | string;
     this.isLoadingOfficeOfRelief = true;
     if (!this.formControls.affairKey.value) {
       this.alert(
@@ -1038,9 +1042,11 @@ export class JuridicalRecordUpdateComponent
       this.isLoadingOfficeOfRelief = false;
       return;
     }
-    if (this.formControls.dictumKey.value?.id) {
-      dictumId = this.formControls.dictumKey.value.id;
-      if ([24, 26].includes(dictumId)) {
+    // if (this.formControls.dictumKey.value?.id) {
+    if (this.formControls.dictumKey.value?.dictamen) {
+      // dictumId = this.formControls.dictumKey.value.id;
+      dictumId = this.formControls.dictumKey.value.dictamen;
+      if (['24', '26'].includes(dictumId)) {
         this.openSatChat();
         this.isLoadingOfficeOfRelief = false;
         return;
@@ -1230,7 +1236,8 @@ export class JuridicalRecordUpdateComponent
       this.fileUpdComService.juridicalDocumentManagementParams = {
         expediente: this.formControls.expedientNumber.value,
         volante: this.formControls.wheelNumber.value,
-        pDictamen: this.formControls.dictumKey.value?.id,
+        // pDictamen: this.formControls.dictumKey.value?.id,
+        pDictamen: this.formControls.dictumKey.value?.dictamen,
         pGestOk: this.pageParams.pGestOk,
         pNoTramite: procedure,
         tipoOf: officeType,
@@ -1249,7 +1256,8 @@ export class JuridicalRecordUpdateComponent
             form: 'FACTGENACTDATEX',
             expediente: this.formControls.expedientNumber.value,
             volante: this.formControls.wheelNumber.value,
-            pDictamen: this.formControls.dictumKey.value?.id,
+            // pDictamen: this.formControls.dictumKey.value?.id,
+            pDictamen: this.formControls.dictumKey.value?.dictamen,
             pGestOk: this.pageParams.pGestOk,
             pNoTramite: procedure,
             tipoOf: officeType,
@@ -1304,7 +1312,8 @@ export class JuridicalRecordUpdateComponent
     this.fileUpdComService.juridicalDocumentManagementParams = {
       expediente: this.formControls.expedientNumber.value,
       volante: this.formControls.wheelNumber.value,
-      pDictamen: this.formControls.dictumKey.value?.id,
+      // pDictamen: this.formControls.dictumKey.value?.id,
+      pDictamen: this.formControls.dictumKey.value?.dictamen,
       pGestOk: this.pageParams.pGestOk,
       pNoTramite: procedure,
       tipoOf: officeType,
@@ -1323,7 +1332,8 @@ export class JuridicalRecordUpdateComponent
           form: 'FACTGENACTDATEX',
           expediente: this.formControls.expedientNumber.value,
           volante: this.formControls.wheelNumber.value,
-          pDictamen: this.formControls.dictumKey.value?.id,
+          // pDictamen: this.formControls.dictumKey.value?.id,
+          pDictamen: this.formControls.dictumKey.value?.dictamen,
           pGestOk: this.pageParams.pGestOk,
           pNoTramite: procedure,
           tipoOf: officeType,
@@ -1338,7 +1348,8 @@ export class JuridicalRecordUpdateComponent
   sendToJuridicalRuling() {
     console.log('test');
     let dictumType: string;
-    const dictumId = Number(this.formControls.dictumKey.value?.id);
+    // const dictumId = Number(this.formControls.dictumKey.value?.id);
+    const dictumId = Number(this.formControls.dictumKey.value?.dictamen);
     if (dictumId == 18 && !this.dictumPermission) {
       this.onLoadToast(
         'warning',
@@ -1571,7 +1582,9 @@ export class JuridicalRecordUpdateComponent
     //when mouse double click on DICTAMEN
     if (
       this.prevDictumKey != null &&
-      [16, 24, 26, '16', '24', '26'].includes(this.prevDictumKey?.id)
+      // [16, 24, 26, '16', '24', '26']
+      //   .includes(this.prevDictumKey?.id)
+      ['16', '24', '26'].includes(this.prevDictumKey?.dictamen)
     ) {
       const param = new FilterParams();
       param.addFilter('wheelNumber', this.formControls.wheelNumber.value);
