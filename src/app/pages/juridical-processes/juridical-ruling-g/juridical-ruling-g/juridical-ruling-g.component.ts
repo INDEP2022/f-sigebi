@@ -375,11 +375,22 @@ export class JuridicalRulingGComponent
     });
   }
 
+  getParams() {
+    this.dictaminacionesForm.get('wheelNumber').setValue(null);
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.expedientesForm.get('noVolante').setValue(params?.volante);
+      this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
+    });
+    this.changeNumExpediente();
+  }
+
   changeNumExpediente() {
+    this.resetALL();
     this.onLoadGoodList();
     this.onLoadExpedientData();
     this.onLoadDictationInfo();
-    this.resetALL();
   }
 
   onKeyPress($event: any) {
@@ -389,7 +400,7 @@ export class JuridicalRulingGComponent
 
   resetALL() {
     this.selectedDocuments = [];
-    this.cleanForm();
+    // this.cleanForm();
     this.selectedGooods = [];
     this.selectedGooodsValid = [];
     this.goodsValid = [];
@@ -424,42 +435,30 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm.get('estatus').setValue(null);
   }
 
-  getParams() {
-    this.activatedRoute.queryParams.subscribe((params: any) => {
-      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
-      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
-      this.expedientesForm.get('noVolante').setValue(params?.volante);
-      this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
-    });
-    // this.activatedRoute.queryParams
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(params => {
-    //     this.expedientesForm
-    //       .get('noExpediente')
-    //       .setValue(
-    //         params['noExpediente'] ? Number(params['noExpediente']) : undefined
-    //       );
-    //   });
-    this.changeNumExpediente();
-  }
-
   onLoadExpedientData() {
     let noExpediente = this.expedientesForm.get('noExpediente').value || '';
-    this.expedientServices.getById(noExpediente).subscribe({
-      next: response => {
-        // this.dictaminacionesForm
-        //   .get('autoriza_remitente')
-        //   .setValue(response.identifier);
-        this.dictaminacionesForm
-          .get('autoriza_nombre')
-          .setValue(response.indicatedName);
-        // ..Datos del expediente
-        this.expedientesForm.get('causaPenal').setValue(response.criminalCase);
-        this.expedientesForm
-          .get('averiguacionPrevia')
-          .setValue(response.preliminaryInquiry);
-      },
-    });
+    if (noExpediente !== '') {
+      this.expedientServices.getById(noExpediente).subscribe({
+        next: response => {
+          // this.dictaminacionesForm
+          //   .get('autoriza_remitente')
+          //   .setValue(response.identifier);
+          this.dictaminacionesForm
+            .get('autoriza_nombre')
+            .setValue(response.indicatedName);
+          // ..Datos del expediente
+          this.expedientesForm
+            .get('causaPenal')
+            .setValue(response.criminalCase);
+          this.expedientesForm
+            .get('averiguacionPrevia')
+            .setValue(response.preliminaryInquiry);
+        },
+        error: () => {
+          // this.cleanForm();
+        },
+      });
+    }
   }
 
   /**
@@ -517,6 +516,7 @@ export class JuridicalRulingGComponent
             .setValue(res.data[0].statusDict || undefined);
         })
         .catch(err => {
+          this.alert('warning', '', 'No tiene fecha de dictaminación');
           this.expedientesForm.get('tipoDictaminacion').setValue(null);
           this.dictaminacionesForm.get('cveOficio').setValue(null);
           this.expedientesForm.get('observaciones').setValue(null);
@@ -676,7 +676,7 @@ export class JuridicalRulingGComponent
           // this.alert('error', '', 'El bien ya existe.');
         }
       });
-      this.selectedGooods = [];
+      // this.selectedGooods = [];
     }
   }
   removeSelect() {
@@ -687,7 +687,7 @@ export class JuridicalRulingGComponent
         let index = this.goods.findIndex(g => g === good);
         this.goods[index].status = 'ADM';
         this.goods[index].name = false;
-        this.selectedGooods = [];
+        // this.selectedGooods = [];
       });
       this.selectedGooodsValid = [];
     }

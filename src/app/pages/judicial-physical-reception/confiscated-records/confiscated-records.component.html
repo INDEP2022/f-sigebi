@@ -465,6 +465,7 @@
               [class]="!isSelectGood ? 'disabled' : ''"
               control="edoFisico"
               [searchable]="false"
+              (change)="applyEdoFisOne($event)"
               [form]="form"
               [data]="dataEdoFisico"></ngx-select>
           </form-field>
