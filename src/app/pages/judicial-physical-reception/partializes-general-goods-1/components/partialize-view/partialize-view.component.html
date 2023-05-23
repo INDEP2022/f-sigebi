@@ -23,9 +23,9 @@
     </div>
 
     <div class="col-md-4">
-      <div>
+      <div class="saldo">
         <label for="">Saldo: </label>
-        {{ form.get('saldo').value }}
+        <div>{{ form.get('saldo').value }}</div>
       </div>
       <!-- <form-field *ngIf="firstCase" [control]="form.get('saldo')" label="Saldo">
         <input
@@ -77,4 +77,6 @@
 </div>
 <app-pagination
   [params]="params"
-  [totalItems]="bienesPar.length"></app-pagination>
+  [totalItems]="
+    bienesPar.length > 0 ? bienesPar.length - 1 : 0
+  "></app-pagination>

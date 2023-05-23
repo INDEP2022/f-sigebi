@@ -45,4 +45,11 @@ export class DetailProceeDelRecService extends HttpService {
       params
     );
   }
+
+  remove(numberGood: string | number, numberProceedings: string | number) {
+    return this.delete('detail-proceedings-delivery-reception', {
+      numberGood,
+      numberProceedings,
+    });
+  }
 }
