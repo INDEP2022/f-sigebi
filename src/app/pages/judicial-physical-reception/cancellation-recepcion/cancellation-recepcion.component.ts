@@ -186,6 +186,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       expediente: [null, [Validators.required]],
+      averPrev: [null],
+      noExpedienteTransf: [null],
       acta: [null, []],
       autoridad: [null, []],
       ident: [null, []],
@@ -299,6 +301,21 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   //Catalogs and data
+  getDataExpedient() {
+    this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
+      resp => {
+        console.log(resp);
+        console.log(resp.criminalCase);
+        this.form.get('causaPenal').setValue(resp.criminalCase);
+        /* console.log(resp.preliminaryInquiry);
+        this.form.get('averPrev').setValue(resp.preliminaryInquiry); */
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
   fetchTransfer(params: ListParams) {
     this.transferSelect = new DefaultSelect(
       this.dataTransferSave,
@@ -375,6 +392,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   goodsByExpediente() {
     //Validar si hay un acta abierta
+    this.getDataExpedient();
     this.initialBool = true;
     this.nextProce = true;
     this.prevProce = false;
