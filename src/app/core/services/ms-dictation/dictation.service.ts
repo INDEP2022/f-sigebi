@@ -11,6 +11,7 @@ import {
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
 } from '../../models/ms-dictation/dictation-model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -132,5 +133,12 @@ export class DictationService extends HttpService {
 
   updateByIdDictament(objParam: any) {
     return this.put<IListResponse<IDictation>>(this.route.Dictation, objParam);
+  }
+
+  postFindDescriptionOpinion(body: _Params) {
+    return this.post<IListResponse<{ dictamen: number; descripcion: string }>>(
+      this.route.FindDescriptionOpinion,
+      body
+    );
   }
 }
