@@ -107,15 +107,16 @@
                     [control]="declarationForm.get('officeType')"
                     label="Tipo Oficio">
                     <ng-select
+                      [readonly]="tipoBien == null"
                       (change)="addText($event)"
                       formControlName="officeType"
                       [searchable]="false"
                       class="form-control"
                       [clearable]="false">
-                      <ng-option value="DAN"
+                      <ng-option *ngIf="tipoBien == 7" value="DAN"
                         >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
                       >
-                      <ng-option value="DAB"
+                      <ng-option *ngIf="tipoBien != 7" value="DAB"
                         >DAB - DECLARATORIA ABANDONO BIENES</ng-option
                       >
                       <ng-option value="FGR"
@@ -183,7 +184,7 @@
                       bindLabel="nameAndId"
                       control="city"
                       label="Ciudad"
-                      [searchOnInit]="true"
+                      [searchOnInit]="false"
                       [showTooltip]="true"
                       termMaxLength="30">
                     </ngx-select>
@@ -420,10 +421,27 @@
                         <form-field
                           [control]="formOficio.get('tipoOficio')"
                           label="Tipo Oficio">
-                          <input
-                            type="number"
+                          <ng-select
+                            [readonly]="valReadonly"
+                            formControlName="tipoOficio"
+                            [searchable]="false"
                             class="form-control"
-                            formControlName="tipoOficio" />
+                            [clearable]="false">
+                            <ng-option value="DAN"
+                              >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
+                            >
+                            <ng-option value="DAB"
+                              >DAB - DECLARATORIA ABANDONO BIENES</ng-option
+                            >
+                            <ng-option value="FGR"
+                              >FGR - DECLARATORIA ABANDONO FGR</ng-option
+                            >
+                            <ng-option value="PJF"
+                              >PJF - DECLARATORIA ABANDONO PJF</ng-option
+                            >
+                          </ng-select>
+
+                          <!-- <input type="number" class="form-control" formControlName="tipoOficio" /> -->
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
@@ -457,7 +475,7 @@
                   </div>
                   <div class="col-6">
                     <div class="row">
-                      <div class="col-sm-12 col-12 mt-5">
+                      <div class="col-sm-6 col-6 mt-5">
                         <form-field
                           [control]="formOficio.get('noVolante')"
                           label="No&#46; Volante">
@@ -468,7 +486,7 @@
                             formControlName="noVolante" />
                         </form-field>
                       </div>
-                      <div class="col-sm-12 col-12 mt-5">
+                      <div class="col-sm-6 col-6 mt-5">
                         <form-field
                           [control]="formOficio.get('noExpediente')"
                           label="No&#46; Expediente">
@@ -527,6 +545,9 @@
                   [control]="formOficiopageFin.get('page')"
                   label="Inicio">
                   <textarea
+                    [readonly]="!valEditTextIni"
+                    (change)="disabledText()"
+                    (dblclick)="editTextInicio()"
                     class="form-control"
                     formControlName="page"></textarea>
                 </form-field>
@@ -536,6 +557,9 @@
                   [control]="formOficiopageFin.get('fin')"
                   label="Fin">
                   <textarea
+                    [readonly]="!valEditTextFin"
+                    (change)="disabledText()"
+                    (dblclick)="editTextfin()"
                     class="form-control"
                     formControlName="fin"></textarea>
                 </form-field>
@@ -551,13 +575,13 @@
             </div>
           </div>
           <div class="row pt-2 mb-2">
-            <div class="col-sm-10 col-10 col-md-10">
+            <div class="col-sm-11 col-11 col-md-11">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings2"
                 [source]="data2"></ng2-smart-table>
             </div>
-            <div class="col-2">
+            <div class="col-1">
               <button class="btn btn-secondary btn-sm active">Doc.</button>
             </div>
           </div>
@@ -581,19 +605,33 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp')"
                       label="C&#46;P&#46;P">
-                      <select class="form-control" formControlName="ccp">
-                        <option [value]="null">Seleccione un valor</option>
+                      <select
+                        (change)="ccpChange($event)"
+                        class="form-control"
+                        formControlName="ccp">
+                        <!-- <option [value]="null">Seleccione un valor</option> -->
                         <option [value]="'INTERNO'">INTERNO</option>
                         <option [value]="'EXTERNO'">EXTERNO</option>
                       </select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
+                    <form-field
+                      *ngIf="!valInterno"
+                      [control]="formCcpOficio.get('nombreUsuario')"
+                      label="Nombre Usuario">
+                      <input
+                        class="form-control"
+                        formControlName="nombreUsuario"
+                        type="text" />
+                    </form-field>
+
                     <ngx-select
+                      *ngIf="valInterno"
                       [data]="items"
-                      bindLabel="nombreUsuarioName"
+                      bindLabel="userAndName"
                       label="Nombre Usuario"
-                      value="id"
+                      value="user"
                       (fetchItems)="getFromSelect($event)"
                       [form]="formCcpOficio"
                       control="nombreUsuario"></ngx-select>
@@ -606,15 +644,20 @@
                     <form-field
                       [control]="formCcpOficio.get('ccp')"
                       label="C&#46;P&#46;P">
-                      <select class="form-control" formControlName="ccp">
-                        <option [value]="null">Seleccione un valor</option>
+                      <select
+                        (change)="ccpChange2($event)"
+                        class="form-control"
+                        formControlName="ccp">
+                        <!-- <option [value]="null">Seleccione un valor</option> -->
                         <option [value]="'INTERNO'">INTERNO</option>
                         <option [value]="'EXTERNO'">EXTERNO</option>
                       </select>
                     </form-field>
                   </div>
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
-                    <form-field [control]="formCcpOficio.get('ccp2')">
+                    <form-field
+                      *ngIf="!valInterno2"
+                      [control]="formCcpOficio.get('ccp2')">
                       <input
                         class="form-control"
                         formControlName="ccp2"
@@ -622,6 +665,14 @@
                         name="cpp2"
                         id="cpp2" />
                     </form-field>
+                    <ngx-select
+                      *ngIf="valInterno2"
+                      [data]="items"
+                      bindLabel="userAndName"
+                      value="user"
+                      (fetchItems)="getFromSelect($event)"
+                      [form]="formCcpOficio"
+                      control="nombreUsuario2"></ngx-select>
                   </div>
                 </div>
               </div>
