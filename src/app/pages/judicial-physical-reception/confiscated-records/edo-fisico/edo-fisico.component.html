@@ -7,12 +7,16 @@
       <ng2-smart-table
         class="col-md-12"
         [settings]="settings1"
+        (userRowSelect)="selectRow($event)"
         [source]="dataGoods"></ng2-smart-table>
     </div>
     <div class="row pt-4 mt-4">
       <div class="col">
         <div class="col-md-12">
-          <button class="btn btn-primary btn-sm disabled active mr-4">
+          <button
+            class="btn btn-primary btn-sm active mr-4"
+            [class]="goodData.length != 0 ? '' : 'disabled'"
+            (click)="changeAll()">
             Cambiar estado
           </button>
           <button class="btn btn-secondary btn-sm active" (click)="close()">
