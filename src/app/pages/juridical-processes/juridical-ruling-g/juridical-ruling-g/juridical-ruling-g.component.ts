@@ -516,10 +516,32 @@ export class JuridicalRulingGComponent
             .setValue(res.data[0].statusDict || undefined);
         })
         .catch(err => {
-          if (this.expedientesForm.get('noExpediente').value) {
-            this.alert('warning', '', 'No tiene fecha de dictaminación');
-          }
-          this.expedientesForm.get('tipoDictaminacion').setValue(null);
+          setTimeout(() => {
+            if (
+              this.expedientesForm.get('noExpediente').value &&
+              this.dictaminacionesForm.get('fechaDictaminacion').value == ''
+            ) {
+              this.alert('warning', '', 'No tiene fecha de dictaminación');
+            }
+          }, 1000);
+
+          this.activatedRoute.queryParams.subscribe((params: any) => {
+            this.expedientesForm
+              .get('noExpediente')
+              .setValue(params?.expediente || null);
+            this.expedientesForm
+              .get('tipoDictaminacion')
+              .setValue(params?.tipoDic);
+            this.expedientesForm
+              .get('noVolante')
+              .setValue(params?.volante || null);
+            this.dictaminacionesForm
+              .get('wheelNumber')
+              .setValue(params?.volante || null);
+          });
+
+          // this.expedientesForm.get('tipoDictaminacion').setValue(null);
+          // this.dictaminacionesForm.get('wheelNumber').setValue(null);
           this.dictaminacionesForm.get('cveOficio').setValue(null);
           this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
           this.expedientesForm.get('observaciones').setValue(null);
@@ -678,7 +700,7 @@ export class JuridicalRulingGComponent
             // this.goods = this.goods.filter(_good => _good.id != good.id);
           }
         } else {
-          // this.alert('error', '', 'El bien ya existe.');
+          // this.alert('error', '', 'El bien ya está seleccionado.');
         }
       });
       // this.selectedGooods = [];
