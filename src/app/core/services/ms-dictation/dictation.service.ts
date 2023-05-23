@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DictationEndpoints } from 'src/app/common/constants/endpoints/ms-dictation-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -15,6 +15,9 @@ import {
   providedIn: 'root',
 })
 export class DictationService extends HttpService {
+  public clasifGoodNumber: number | string;
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
   constructor() {
     super();
@@ -124,10 +127,11 @@ export class DictationService extends HttpService {
     return this.post(route, body);
   }
 
-  getDocumentsForDictation(body: {
-    id: string | number;
-  }): Observable<IDictation> {
-    return this.get(this.route.DocumentByDictation, body);
+  getDocumentsForDictation(
+    id: string | number
+  ): Observable<IListResponse<any>> {
+    const route = `r-dictation-doc?filter.numberClassifyGood=$eq:${id}`;
+    return this.get(route);
   }
 
   updateByIdDictament(objParam: any) {
