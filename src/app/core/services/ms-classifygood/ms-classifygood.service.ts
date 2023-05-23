@@ -34,6 +34,6 @@ export class ClassifyGoodService extends HttpService {
   }
 
   getChangeClass(params?: string) {
-    return this.get<IListResponse>(`change-classification-goods${params}`);
+    return this.get<IListResponse>(`change-classification-goods?${params}`);
   }
 }
