@@ -516,9 +516,34 @@ export class JuridicalRulingGComponent
             .setValue(res.data[0].statusDict || undefined);
         })
         .catch(err => {
-          this.alert('warning', '', 'No tiene fecha de dictaminación');
-          this.expedientesForm.get('tipoDictaminacion').setValue(null);
+          setTimeout(() => {
+            if (
+              this.expedientesForm.get('noExpediente').value &&
+              this.dictaminacionesForm.get('fechaDictaminacion').value == ''
+            ) {
+              this.alert('warning', '', 'No tiene fecha de dictaminación');
+            }
+          }, 1000);
+
+          this.activatedRoute.queryParams.subscribe((params: any) => {
+            this.expedientesForm
+              .get('noExpediente')
+              .setValue(params?.expediente || null);
+            this.expedientesForm
+              .get('tipoDictaminacion')
+              .setValue(params?.tipoDic);
+            this.expedientesForm
+              .get('noVolante')
+              .setValue(params?.volante || null);
+            this.dictaminacionesForm
+              .get('wheelNumber')
+              .setValue(params?.volante || null);
+          });
+
+          // this.expedientesForm.get('tipoDictaminacion').setValue(null);
+          // this.dictaminacionesForm.get('wheelNumber').setValue(null);
           this.dictaminacionesForm.get('cveOficio').setValue(null);
+          this.dictaminacionesForm.get('fechaDictaminacion').setValue(null);
           this.expedientesForm.get('observaciones').setValue(null);
           this.dictaminacionesForm.get('fechaNotificacion').setValue(null);
           this.dictaminacionesForm.get('etiqueta').setValue(null);
@@ -653,11 +678,13 @@ export class JuridicalRulingGComponent
   addAll() {
     if (this.goods.length > 0) {
       this.goods.forEach(_g => {
-        _g.status = 'STI';
-        _g.name = false;
-        let valid = this.goodsValid.some(goodV => goodV == _g);
-        if (!valid) {
-          this.goodsValid = [...this.goodsValid, _g];
+        if (_g.status !== 'STI') {
+          _g.status = 'STI';
+          _g.name = false;
+          let valid = this.goodsValid.some(goodV => goodV == _g);
+          if (!valid) {
+            this.goodsValid = [...this.goodsValid, _g];
+          }
         }
       });
     }
@@ -673,7 +700,7 @@ export class JuridicalRulingGComponent
             // this.goods = this.goods.filter(_good => _good.id != good.id);
           }
         } else {
-          // this.alert('error', '', 'El bien ya existe.');
+          // this.alert('error', '', 'El bien ya está seleccionado.');
         }
       });
       // this.selectedGooods = [];
@@ -693,11 +720,13 @@ export class JuridicalRulingGComponent
     }
   }
   removeAll() {
-    this.goods.pop();
     if (this.goodsValid.length > 0) {
-      // this.goods = this.goods.concat(this.goodsValid);
-      this.goods.map(_g => (_g.status = 'ADM'));
-      this.goods.map(_g => (_g.name = false));
+      this.goodsValid.forEach(good => {
+        this.goodsValid = this.goodsValid.filter(_good => _good.id != good.id);
+        let index = this.goods.findIndex(g => g === good);
+        this.goods[index].status = 'ADM';
+        this.goods[index].name = false;
+      });
       this.goodsValid = [];
     }
   }
