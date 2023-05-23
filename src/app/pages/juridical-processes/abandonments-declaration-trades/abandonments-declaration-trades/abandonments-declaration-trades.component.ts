@@ -93,12 +93,7 @@ export class AbandonmentsDeclarationTradesComponent
   data1: any = [];
   settings1 = { ...this.settings };
   params: any = new BehaviorSubject<ListParams>(new ListParams());
-  data2 = [
-    {
-      cveDocumento: 25,
-      description: 'UNA BOLSA',
-    },
-  ];
+  data2: any = [];
   settings2 = { ...this.settings };
   texto1: string = '';
   disabledIMPRIMIR: boolean;
@@ -273,7 +268,7 @@ export class AbandonmentsDeclarationTradesComponent
       remitente: [''],
       destinatario: [''],
       ciudad: [''],
-
+      oficioPor: [''],
       noVolante: ['', [Validators.required]], //*
       noExpediente: ['', [Validators.required]], //*
       cveOficio: ['', [Validators.required]], //*
@@ -350,22 +345,19 @@ export class AbandonmentsDeclarationTradesComponent
     this.selectedRow = data;
     this.changeDetectorRef.detectChanges();
 
-    this.formOficio.get('noVolante').setValue(data.wheelNumber);
-    this.formOficio.get('noExpediente').setValue(data.expedientNumber);
-
     this.cveoficio_Oficio = '';
     this.statusOfOficio = '';
-
+    this.statusOfMOficioGestion = '';
+    this.cveManagement = '';
     console.log('DATA', data);
 
     this.idExpediente = data.expedientNumber;
+
     await this.onLoadGoodList('all');
     await this.validDesahogo(data);
     await this.checkDictum(data);
     await this.getExpediente(data.expedientNumber);
     await this.getMOficioGestion(data.wheelNumber);
-
-    return;
   }
   getSenders(params: ListParams) {
     this.securityService.getAllUsersTracker(params).subscribe(
@@ -1319,7 +1311,11 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   m_oficio_gestion: IMJobManagement;
-  getMOficioGestion(wheelNumber: any) {
+  updateOficioGestion: boolean = false;
+  statusOfMOficioGestion: string = '';
+  cveManagement: string = '';
+  disabledBTNs: boolean = false;
+  async getMOficioGestion(wheelNumber: any) {
     let params = {
       ...this.params,
     };
@@ -1327,13 +1323,115 @@ export class AbandonmentsDeclarationTradesComponent
     this.mJobManagementService.getAll(params).subscribe({
       next: (resp: any) => {
         console.log('DATA JOG', resp);
+
+        this.m_oficio_gestion = resp.data[1];
+        this.formOficio
+          .get('oficio')
+          .setValue(this.m_oficio_gestion.managementNumber);
+        this.statusOfMOficioGestion = this.m_oficio_gestion.statusOf;
+        this.cveManagement = this.m_oficio_gestion.cveManagement;
+
+        this.formOficio
+          .get('noVolante')
+          .setValue(this.m_oficio_gestion.flyerNumber);
+        this.formOficio
+          .get('noExpediente')
+          .setValue(this.m_oficio_gestion.proceedingsNumber);
+
+        if (this.m_oficio_gestion.managementNumber == null) {
+          this.alert('error', 'Error al numero de oficio', 'M_OFICIO_GESTIÓN');
+          this.m_oficio_gestion.jobType = 'EXTERNO';
+          this.m_oficio_gestion.jobBy = 'ABANDONO';
+          this.m_oficio_gestion.city = '266';
+          this.m_oficio_gestion.refersTo =
+            'No se refiere a ningun bien asegurado, decomisado o abandonado';
+
+          this.formOficio.get('tipoOficio').setValue('EXTERNO');
+          this.formOficio.get('oficioPor').setValue('ABANDONO');
+          this.formOficio.get('ciudad').setValue(266);
+        } else {
+          this.getDocOficioGestion(this.m_oficio_gestion.managementNumber);
+          this.getCopyOficioGestion(this.m_oficio_gestion.managementNumber);
+          if (this.updateOficioGestion == false) {
+            this.updateOficioGestion = true;
+            this.formOficiopageFin
+              .get('fin')
+              .setValue(
+                this.m_oficio_gestion.text2 + this.m_oficio_gestion.text3
+              );
+            this.updateOficioGestion = false;
+          } else {
+            this.formOficiopageFin
+              .get('fin')
+              .setValue(
+                this.m_oficio_gestion.text2 + this.m_oficio_gestion.text3
+              );
+          }
+        }
+
+        let textP = this.formOficiopageFin.get('fin').value;
+        if (textP != '') {
+          this.m_oficio_gestion.text2 = textP.substring(1, 4000);
+          this.m_oficio_gestion.text3 = textP.substring(4001, 4000);
+        }
+
+        this.m_oficio_gestion.addressee = null;
+        this.formOficio.get('destinatario').setValue(null);
+
+        if (this.m_oficio_gestion.statusOf == 'ENVIADO') {
+          this.disabledBTNs = false;
+        } else {
+          this.disabledBTNs = true;
+        }
       },
       error: error => {
-        if (error.error.message == 'No se encontrarón registros.') {
-        }
+        // if (error.error.message == 'No se encontrarón registros.') {
+        this.alert('error', error.error.message, 'tabla: M_OFICIO_GESTION');
+        // }
         this.m_oficio_gestion;
-        console.log('ERROR JOG', error);
       },
     });
+  }
+
+  docOficioGesti: any;
+  getDocOficioGestion(managementNumber: any) {
+    const params = new ListParams();
+    params['filter.managementNumber'] = `$eq:${managementNumber}`;
+    this.mJobManagementService.getDocOficioGestion(params).subscribe({
+      next: (resp: any) => {
+        console.log('CORRRECTO', resp);
+
+        this.docOficioGesti = resp.data[0];
+        this.getDocsParaDictum(this.docOficioGesti.cveDocument);
+      },
+      error: error => {
+        console.log('MAL', error);
+      },
+    });
+  }
+
+  getDocsParaDictum(data: any) {
+    const params = new ListParams();
+    params['filter.key'] = `$eq:${data}`;
+    this.documentsService.getDocParaDictum(params).subscribe({
+      next: (resp: any) => {
+        this.data2 = resp.data;
+      },
+      error: error => {
+        console.log('MAL DOC PARA DICTUM', error);
+      },
+    });
+  }
+
+  getCopyOficioGestion(data: any) {}
+
+  docAct() {
+    if (this.m_oficio_gestion.statusOf == 'ENVIADO') {
+      this.alert(
+        'warning',
+        'El oficio ya esta enviado no pude ser actualizado',
+        ''
+      );
+    }
   }
 }

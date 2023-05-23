@@ -408,47 +408,48 @@
                   <div class="col-6">
                     <div class="row">
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('oficio')"
-                          label="Oficio">
-                          <input
-                            class="form-control"
-                            formControlName="oficio" />
-                        </form-field>
-                      </div>
-
-                      <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('tipoOficio')"
-                          label="Tipo Oficio">
-                          <ng-select
-                            [readonly]="valReadonly"
-                            formControlName="tipoOficio"
-                            [searchable]="false"
-                            class="form-control"
-                            [clearable]="false">
-                            <ng-option value="DAN"
-                              >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
-                            >
-                            <ng-option value="DAB"
-                              >DAB - DECLARATORIA ABANDONO BIENES</ng-option
-                            >
-                            <ng-option value="FGR"
-                              >FGR - DECLARATORIA ABANDONO FGR</ng-option
-                            >
-                            <ng-option value="PJF"
-                              >PJF - DECLARATORIA ABANDONO PJF</ng-option
-                            >
-                          </ng-select>
-
-                          <!-- <input type="number" class="form-control" formControlName="tipoOficio" /> -->
-                        </form-field>
+                        <div class="row">
+                          <div class="col-md-4">
+                            <form-field
+                              [control]="formOficio.get('tipoOficio')"
+                              label="Tipo Oficio">
+                              <input
+                                [readonly]="!disabledBTNs"
+                                type="text"
+                                class="form-control"
+                                formControlName="tipoOficio" />
+                            </form-field>
+                          </div>
+                          <div class="col-md-4">
+                            <form-field
+                              [control]="formOficio.get('oficioPor')"
+                              label="Oficio Por">
+                              <input
+                                [readonly]="!disabledBTNs"
+                                type="text"
+                                class="form-control"
+                                formControlName="oficioPor" />
+                            </form-field>
+                          </div>
+                          <div class="col-md-4">
+                            <form-field
+                              [control]="formOficio.get('oficio')"
+                              label="No. Gestión">
+                              <input
+                                [readonly]="!disabledBTNs"
+                                type="number"
+                                class="form-control"
+                                formControlName="oficio" />
+                            </form-field>
+                          </div>
+                        </div>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field
                           [control]="formOficio.get('remitente')"
                           label="Remitente">
                           <input
+                            [readonly]="!disabledBTNs"
                             class="form-control"
                             formControlName="remitente" />
                         </form-field>
@@ -458,6 +459,7 @@
                           [control]="formOficio.get('destinatario')"
                           label="Destinatario">
                           <input
+                            [readonly]="!disabledBTNs"
                             class="form-control"
                             formControlName="destinatario" />
                         </form-field>
@@ -467,6 +469,7 @@
                           [control]="formOficio.get('ciudad')"
                           label="Ciudad">
                           <input
+                            [readonly]="!disabledBTNs"
                             class="form-control"
                             formControlName="ciudad" />
                         </form-field>
@@ -503,7 +506,7 @@
                             >DATA DE OFICIO</label
                           >
                           <label class="form-control-label w-100">{{
-                            cveoficio_Oficio
+                            cveManagement
                           }}</label>
                         </div>
                       </div>
@@ -523,7 +526,7 @@
                             >ESTATUS</label
                           >
                           <label class="form-control-label w-100">{{
-                            statusOfOficio
+                            statusOfMOficioGestion
                           }}</label>
                         </div>
                       </div>
@@ -540,11 +543,13 @@
             [formGroup]="formOficiopageFin"
             class="container-fluid form-material">
             <div class="row w-100">
-              <div class="col-sm-12 col-12 col-md-6 pr-3">
+              <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <form-field
                   [control]="formOficiopageFin.get('page')"
                   label="Inicio">
                   <textarea
+                    rows="7"
+                    [disabled]="!disabledBTNs"
                     [readonly]="!valEditTextIni"
                     (change)="disabledText()"
                     (dblclick)="editTextInicio()"
@@ -552,11 +557,13 @@
                     formControlName="page"></textarea>
                 </form-field>
               </div>
-              <div class="col-sm-12 col-12 col-md-6 pr-3">
+              <div class="col-sm-12 col-12 col-md-12 pr-3">
                 <form-field
                   [control]="formOficiopageFin.get('fin')"
                   label="Fin">
                   <textarea
+                    rows="7"
+                    [disabled]="!disabledBTNs"
                     [readonly]="!valEditTextFin"
                     (change)="disabledText()"
                     (dblclick)="editTextfin()"
@@ -582,7 +589,11 @@
                 [source]="data2"></ng2-smart-table>
             </div>
             <div class="col-1">
-              <button class="btn btn-secondary btn-sm active">Doc.</button>
+              <button
+                (click)="docAct()"
+                class="btn btn-secondary btn-sm active">
+                Doc.
+              </button>
             </div>
           </div>
 
@@ -700,16 +711,18 @@
                     Imp.
                   </button>
                   <button
-                    *ngIf="!lockStatus"
-                    class="btn btn-secondary btn-sm active ml-2 mr-2">
-                    <i class="bx bx-lock"></i>
-                  </button>
-                  <button
-                    *ngIf="lockStatus"
+                    [disabled]="!disabledBTNs"
                     class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i class="bx bx-lock-open"></i>
                   </button>
+                  <!-- <button *ngIf="!lockStatus" class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bx-lock"></i>
+                  </button>
+                  <button *ngIf="lockStatus" class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bx-lock-open"></i>
+                  </button> -->
                   <button
+                    [disabled]="!disabledBTNs"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Borra
