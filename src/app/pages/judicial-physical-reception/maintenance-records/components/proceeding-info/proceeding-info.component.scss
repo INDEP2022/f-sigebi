@@ -4,9 +4,21 @@
   padding-right: 0px;
 }
 
+.secondColumn {
+  margin-top: 3rem;
+
+  @media screen and (max-width: 576px) {
+    margin-top: 0rem;
+  }
+}
+
 .notInputs {
   .form-material .form-bar {
     display: none;
+  }
+
+  @media screen and (max-width: 576px) {
+    margin-top: 1rem;
   }
 }
 
@@ -14,10 +26,15 @@
   display: flex;
   justify-content: flex-end;
   padding: 0px;
+  column-gap: 10px;
 
   > div {
     text-align: right;
     padding: 0px;
+
+    button {
+      width: 100%;
+    }
   }
 }
 
@@ -27,9 +44,12 @@ app-recibe-form {
 }
 
 app-justification {
-  @media screen and (max-width: 576px) {
-    padding-right: 0px;
-  }
+  margin: 0;
+  padding: 0;
+
+  // @media screen and (max-width: 576px) {
+  //   padding-right: 0px;
+  // }
 }
 
 .notInputDatePicker {
