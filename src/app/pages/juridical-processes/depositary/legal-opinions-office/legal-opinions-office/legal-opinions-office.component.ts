@@ -485,8 +485,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form
       .get('cveOfficeGenerate')
       .setValue(this.dictationData.passOfficeArmy);
+    this.form.get('cveOfficeGenerate').updateValueAndValidity();
     this.form.get('file').setValue(this.dictationData.expedientNumber);
+    this.form.get('file').updateValueAndValidity();
     this.form.get('numberOfficeDic').setValue(this.dictationData.id);
+    this.form.get('numberOfficeDic').updateValueAndValidity();
     this.showScanForm = false;
     setTimeout(() => {
       this.formScan
@@ -557,18 +560,25 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
   setDataOfficeDictation() {
     this.form.get('issuingUser').setValue(this.officeDictationData.sender); // Remitente
+    this.form.get('issuingUser').updateValueAndValidity();
     this.form.get('addressee').setValue(this.officeDictationData.recipient); // Destinatario
+    this.form.get('addressee').updateValueAndValidity();
     this.form.get('city').setValue(this.officeDictationData.city); // Ciudad
+    this.form.get('city').updateValueAndValidity();
     this.form
       .get('numberNotary')
       .setValue(this.officeDictationData.notaryNumber);
+    this.form.get('numberNotary').updateValueAndValidity();
     this.form
       .get('introductoryParagraph')
       .setValue(this.officeDictationData.text1);
+    this.form.get('introductoryParagraph').updateValueAndValidity();
     this.form.get('finalParagraph').setValue(this.officeDictationData.text2);
+    this.form.get('finalParagraph').updateValueAndValidity();
     this.form
       .get('moreInformation1')
       .setValue(this.officeDictationData.text2To);
+    this.form.get('moreInformation1').updateValueAndValidity();
     // Validar el texto3 de acuerdo al tipo de dictaminación
     this.officeDictationData =
       this.svLegalOpinionsOfficeService.getTexto3FromOfficeDictation(
@@ -576,6 +586,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.form.get('typeOffice').value
       );
     this.form.get('moreInformation3').setValue(this.officeDictationData.text3);
+    this.form.get('moreInformation3').updateValueAndValidity();
     if (this.officeDictationData.statusOf == 'ENVIADO') {
       this.blockSender = true;
       this.disabledDataOffice();
@@ -745,6 +756,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.form
         .get('ccp_person' + (index == 0 ? '' : '_1'))
         .setValue(copiesData.personExtInt);
+      this.form
+        .get('ccp_person' + (index == 0 ? '' : '_1'))
+        .updateValueAndValidity();
       if (copiesData.personExtInt == 'I') {
         this.form
           .get('ccp_addressee' + (index == 0 ? '' : '_1'))
@@ -759,6 +773,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.form
           .get('ccp_TiPerson' + (index == 0 ? '' : '_1'))
           .setValue(copiesData.namePersonExt);
+        this.form
+          .get('ccp_TiPerson' + (index == 0 ? '' : '_1'))
+          .updateValueAndValidity();
       }
     });
   }
@@ -789,6 +806,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.form
       .get('moreInformation2')
       .setValue(this.officeTextDictationData.textx);
+    this.form.get('moreInformation2').updateValueAndValidity();
   }
 
   getCityByDetail(paramsData: ListParams, getByValue: boolean = false) {
@@ -2144,6 +2162,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   saveDataForm() {
+    console.log(this.form);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.alert(
