@@ -260,7 +260,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
-    this.loader.load = true;
+    this.loader.load = true; //Loading cambiar por uno de porcentaje
     const file = event.target.files[0];
     const user = this.authService.decodeToken().preferred_username;
 
