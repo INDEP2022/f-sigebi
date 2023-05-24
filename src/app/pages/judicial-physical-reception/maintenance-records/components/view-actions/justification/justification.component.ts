@@ -44,6 +44,10 @@ export class JustificationComponent extends AlertButton implements OnInit {
 
   ngOnInit(): void {}
 
+  changeUser(item: any) {
+    console.log(item);
+  }
+
   get form() {
     return this.service.formJustification;
   }
