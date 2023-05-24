@@ -16,4 +16,5 @@ export enum DictationEndpoints {
   InitFormLegalOpinionOffice2 = 'application/pupInicializaForma2',
   CopiesOfficeSendDictation = 'application/copiasOficioDictamenEnviar',
   DocumentByDictation = 'r-dictation-doc',
+  TmpDictation = 'tmp-dictation',
 }

@@ -70,3 +70,9 @@ export interface ICopiesOfficeSendDictation {
   proceso_ext_dom: string;
   paquete: number;
 }
+export interface ITmpDictationCreate {
+  id: number;
+  typeDict: string;
+  keyOfficeArmA: string;
+  statusOf: string;
+}

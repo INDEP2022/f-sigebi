@@ -10,6 +10,7 @@ import {
   IDictationCopies,
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
+  ITmpDictationCreate,
 } from '../../models/ms-dictation/dictation-model';
 @Injectable({
   providedIn: 'root',
@@ -132,5 +133,13 @@ export class DictationService extends HttpService {
 
   updateByIdDictament(objParam: any) {
     return this.put<IListResponse<IDictation>>(this.route.Dictation, objParam);
+  }
+
+  createTmpDictation(body: ITmpDictationCreate) {
+    return this.post(DictationEndpoints.TmpDictation, body);
+  }
+
+  deleteTmpDictation(id: number) {
+    return this.delete(`${DictationEndpoints.TmpDictation}/${id}`);
   }
 }
