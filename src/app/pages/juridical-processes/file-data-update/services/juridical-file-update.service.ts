@@ -149,8 +149,8 @@ export class JuridicalFileUpdateService extends HttpService {
           ...data,
           data: data.data.map(d => {
             return {
-              ...d,
-              description: d?.descripcion,
+              id: d.dictamen,
+              description: d.descripcion,
               nameAndId: `${d.dictamen} - ${d.descripcion}`,
             };
           }),
@@ -166,7 +166,6 @@ export class JuridicalFileUpdateService extends HttpService {
           ...data,
           data: data.data.map(d => {
             return { ...d, nameAndId: `${d.id} - ${d.description}` };
-            // return { dictamen: d.id?.toString(), description: d.description, nameAndId: `${d.id} - ${d.description}` };
           }),
         };
       })

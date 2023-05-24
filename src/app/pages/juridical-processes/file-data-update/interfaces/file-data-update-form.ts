@@ -127,10 +127,10 @@ export const JURIDICAL_FILE_DATA_UPDATE_FORM = {
   entryProcedureDate: new FormControl<Date | string>(new Date()),
   registerNumber: new FormControl<number>(null),
   originNumber: new FormControl<number>(null),
-  dictumKey: new FormControl</* IOpinion |  */ {
-    dictamen: string;
-    description: string;
-  }>(null, Validators.required),
+  dictumKey: new FormControl<{ id: string; description: string }>(
+    null,
+    Validators.required
+  ),
   reserved: new FormControl<string>(null, Validators.required),
   autoscan: new FormControl<string>(null),
   userRecipient: new FormControl<string>(null),
@@ -191,7 +191,7 @@ export interface IJuridicalFileDataUpdateForm {
   entryProcedureDate: Date | string;
   registerNumber: number;
   originNumber: number;
-  dictumKey: /* IOpinion |  */ { dictamen: string; description: string };
+  dictumKey: { id: string; description: string };
   reserved: string;
   autoscan: string;
   userRecipient: string;
