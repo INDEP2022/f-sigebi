@@ -600,7 +600,8 @@
               label="Sub Marca"
               value="flexValueDependent"
               bindLabel="flexValueMeaningDependent"
-              [readonly]="isGoodTypeReadOnly"></ngx-select>
+              [readonly]="isGoodTypeReadOnly"
+              (change)="onSubBranchChange($event)"></ngx-select>
             <!-- <ngx-select *ngIf="process == 'classify-assets'" [form]="detailAssets" control="subBrand"
               (fetchItems)="getSubBrand($event)" [data]="selectSubBrand" label="Sub Marca" value="flexValueDependent"
               [readonly]="isDisabled" bindLabel="flexValueMeaningDependent"></ngx-select> -->

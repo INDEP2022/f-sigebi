@@ -1,37 +1,78 @@
-.header-proceeding-info {
-  margin-top: 10px;
-  align-items: center;
-  padding-right: 0px;
-}
-
-.notInputs {
-  .form-material .form-bar {
-    display: none;
-  }
-}
-
-.buttons {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0px;
-
-  > div {
-    text-align: right;
-    padding: 0px;
-  }
-}
-
-app-recibe-form {
-  padding-right: 0px;
-  margin-bottom: 22px;
-}
-
-app-justification {
-  @media screen and (max-width: 576px) {
+#proceeding-info {
+  .header-proceeding-info {
+    margin-top: 10px;
+    align-items: center;
     padding-right: 0px;
-  }
-}
 
-.notInputDatePicker {
-  background-color: white !important;
+    @media screen and (max-width: 576px) {
+      margin: 10px auto;
+      padding: 0;
+    }
+  }
+
+  .secondColumn {
+    margin-top: 3rem;
+
+    @media screen and (max-width: 576px) {
+      margin-top: 0rem;
+    }
+  }
+
+  .notInputs {
+    .form-material .form-bar {
+      display: none;
+    }
+
+    @media screen and (max-width: 576px) {
+      margin-top: 1rem;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0px;
+    column-gap: 10px;
+
+    > div {
+      text-align: right;
+      padding: 0px;
+
+      @media screen and (max-width: 576px) {
+        margin-top: 10px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+
+    app-clean-filters-shared ::ng-deep button {
+      width: 100%;
+    }
+
+    @media screen and (max-width: 576px) {
+      flex-direction: column;
+      padding: 0 10px;
+      margin: auto;
+    }
+  }
+
+  app-recibe-form {
+    padding-right: 0px;
+    margin-bottom: 22px;
+  }
+
+  app-justification {
+    margin: 0;
+    padding: 0;
+
+    // @media screen and (max-width: 576px) {
+    //   padding-right: 0px;
+    // }
+  }
+
+  .notInputDatePicker {
+    background-color: white !important;
+  }
 }

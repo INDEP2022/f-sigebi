@@ -5,6 +5,7 @@ import {
   ICopiesOfficeSendDictation,
   IDictation,
   IInitFormLegalOpinionOfficeBody,
+  ITmpDictationCreate,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
@@ -59,6 +60,14 @@ export class LegalOpinionsOfficeService {
   saveDictations(body: IDictation) {
     return this.msDictationService.create(body);
   }
+  // Save TMP Dictaminaciones
+  createTmpDictation(body: ITmpDictationCreate) {
+    return this.msDictationService.createTmpDictation(body);
+  }
+  // Delete TMP Dictaminaciones
+  deleteTmpDictation(id: number) {
+    return this.msDictationService.deleteTmpDictation(id);
+  }
   getExpedient(params: ListParams) {
     return this.msExpedientService.getAll(params);
   }
@@ -72,6 +81,10 @@ export class LegalOpinionsOfficeService {
   }
   getElectronicFirmData(params: _Params) {
     return this.msSsf3SignatureElecDocsService.getAllFiltered(params);
+  }
+  // Pendiente
+  deleteElectronicFirmData(body: any) {
+    return this.msSsf3SignatureElecDocsService.deleteElectronicFirm(body);
   }
   getOfficeCopiesDictation(params: _Params) {
     return this.msCopiesOfficialOpinionService.getAll(params);
@@ -117,6 +130,9 @@ export class LegalOpinionsOfficeService {
   }
   getEtapaByDictation(params: ListParams) {
     return this.msGoodprocessService.getEtapaByDictation(params);
+  }
+  pupGenMasiv(params: any) {
+    return this.msGoodprocessService.postPupGenMasiv(params);
   }
 
   getTexto3FromOfficeDictation(

@@ -6,7 +6,10 @@ import { EIndicatorGoodsEndpoints } from 'src/app/common/constants/endpoints/ms-
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IFormScheduledDetail } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/scheduled-maintenance-detail/interfaces';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import {
   IDetailIndicatorGood,
   IGoodsByProceeding,
@@ -40,16 +43,16 @@ export class MsIndicatorGoodsService extends HttpService {
       { goodNumber }
     ).pipe(
       map(items => {
-        debugger;
+        // debugger;
         const data = items.data;
         return {
           ...items,
-          data: data.map(item => {
-            const row = item[0];
+          data: data.pop().map(item => {
             return {
-              ...row,
+              ...item,
               fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
               fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+              agregado: 'RA',
             };
           }),
         };
@@ -92,11 +95,12 @@ export class MsIndicatorGoodsService extends HttpService {
   }
 
   getGoodsByProceeding(params?: ListParams) {
-    return this.get<IListResponse<IGoodsByProceeding>>(
+    return this.get<IListResponseMessage<IGoodsByProceeding>>(
       this.endpoint + '/' + EIndicatorGoodsEndpoints.GoodsByEvent,
       params
     ).pipe(
       map(items => {
+        console.log(items);
         const data = items.data;
         return {
           ...items,
@@ -111,6 +115,7 @@ export class MsIndicatorGoodsService extends HttpService {
                 new Date(item.fec_indica_usuario_aprobacion),
                 'dd/MM/yyyy'
               ),
+              agregado: 'AE',
             };
           }),
         };
