@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { MsIndicatorGoodsService } from 'src/app/core/services/ms-indicator-goods/ms-indicator-goods.service';
@@ -26,7 +26,8 @@ export class ScheduledMaintenanceComponent
   flagDownload = false;
   totalItemsIndicators: number = 0;
   paramsIndicators = new BehaviorSubject<ListParams>(new ListParams());
-  data2: any[] = [];
+  path: string;
+  // data2: any[] = [];
   constructor(
     protected override fb: FormBuilder,
     protected override service: ProceedingsDeliveryReceptionService,
@@ -35,17 +36,24 @@ export class ScheduledMaintenanceComponent
     private router: Router
   ) {
     super(fb, service, detailService, 'filtersIndica');
-    this.settings1 = {
-      ...this.settings1,
-      actions: null,
-    };
     // this.settings1 = {
     //   ...this.settings1,
-    //   actions: { ...this.settings1.actions, position: 'left' },
-    //   edit: {
-    //     editButtonContent: '<i class="fa fa-eye mx-2"></i>',
-    //   },
+    //   actions: null,
     // };
+    this.settings1 = {
+      ...this.settings1,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'left',
+        add: false,
+        edit: true,
+        delete: true,
+      },
+      add: {
+        ...this.settings1.add,
+        addButtonContent: 'Capturar',
+      },
+    };
     this.tiposEvento = [
       {
         id: 'EVENTREC',
@@ -75,28 +83,70 @@ export class ScheduledMaintenanceComponent
     // }
   }
 
+  override extraOperations() {
+    console.log(window.location);
+    if (window.location.href.includes('judicial-physical-reception')) {
+      this.path =
+        'proceeding/api/v1/proceedings-delivery-reception/get-types?filter.id=EVENTREC';
+    } else {
+      this.path =
+        'proceeding/api/v1/proceedings-delivery-reception/get-types?filter.description=ENTREGA';
+    }
+    // this.path = 'proceeding/api/v1/proceedings-delivery-reception/get-types?filter.id=$not:$eq:EVENTREC'
+  }
+
+  deleteRow(item: IProceedingDeliveryReception) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.service.deleteById(item).subscribe({
+          next: response => {
+            console.log(response);
+            this.getData();
+            this.onLoadToast(
+              'success',
+              'Exito',
+              `Se elimino la acta N° ${item.id}`
+            );
+          },
+          error: err => {
+            console.log(err);
+            let message = `No se pudo eliminar el Acta N° ${item.id}`;
+            if (err.error.message.includes('detalle_acta_ent_recep')) {
+              message = message + ` porque tiene detalles de acta`;
+            }
+            this.onLoadToast('error', 'ERROR', message);
+          },
+        });
+      }
+    });
+  }
+
   rowsSelected(event: IProceedingDeliveryReception) {
     console.log(event);
     if (event.id) {
-      this.showTable1 = false;
-      this.loading = true;
-      let params = this.paramsIndicators.value;
-      params['id'] = event.id;
-      this.serviceIndicator
-        .getGoodsByProceeding(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: response => {
-            this.data2 = response.data;
-            this.totalItemsIndicators = response.count;
-            this.loading = false;
-          },
-          error: err => {
-            this.data2 = [];
-            this.totalItemsIndicators = 0;
-            this.loading = false;
-          },
-        });
+      // this.showTable1 = false;
+      // this.loading = true;
+      // let params = this.paramsIndicators.value;
+      // params['id'] = event.id;
+      // this.serviceIndicator
+      //   .getGoodsByProceeding(params)
+      //   .pipe(takeUntil(this.$unSubscribe))
+      //   .subscribe({
+      //     next: response => {
+      //       this.data2 = response.data;
+      //       this.totalItemsIndicators = response.count;
+      //       this.loading = false;
+      //     },
+      //     error: err => {
+      //       this.data2 = [];
+      //       this.totalItemsIndicators = 0;
+      //       this.loading = false;
+      //     },
+      //   });
     }
   }
 

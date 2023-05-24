@@ -12,7 +12,7 @@ import { DatePickerComponent } from 'src/app/shared/render-components/date-picke
 })
 export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
   @Input() override loading = false;
-  @Input() statusActa = 'CERRADA';
+  statusActa = 'ABIERTA';
   @Input() totalItems: number;
   @Input() data: IDetailProceedingsDeliveryReception[];
   @Output() updateData = new EventEmitter();
@@ -25,6 +25,7 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
       ...this.settings,
       selectMode: 'multi',
       mode: 'inline',
+      actions: { ...this.settings.actions, position: 'left' },
       edit: {
         editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
         saveButtonContent:

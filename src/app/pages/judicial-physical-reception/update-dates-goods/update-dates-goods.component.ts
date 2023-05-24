@@ -11,7 +11,7 @@ import { firstFormatDate } from 'src/app/shared/utils/date';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './update-dates-goods.component.html',
-  styles: [],
+  styleUrls: ['./update-dates-goods.component.scss'],
 })
 export class UpdateDatesGoodsComponent implements OnInit {
   @Input() disabled: boolean;
