@@ -1,10 +1,8 @@
 /** BASE IMPORT */
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { INotification } from '../../../../core/models/ms-notification/notification.model';
 import {
@@ -34,9 +32,9 @@ export class FileDataUpdateComponent
   columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
   fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
-    private fb: FormBuilder,
-    private activateRoute: ActivatedRoute,
-    private modalService: BsModalService,
+    // private fb: FormBuilder,
+    // private activateRoute: ActivatedRoute,
+    // private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -79,17 +77,16 @@ export class FileDataUpdateComponent
   confirm(confirm: boolean) {
     this.confirmSearch = confirm;
     this.changeDetectorRef.detectChanges();
+    // console.log('confirm', confirm);
   }
 
   search(formData: Partial<IJuridicalFileDataUpdateForm>) {
     this.formData = formData;
     this.changeDetectorRef.detectChanges();
-    console.log(formData);
   }
 
   selectData(data: INotification) {
     this.selectedRow = data;
     this.changeDetectorRef.detectChanges();
-    console.log(data);
   }
 }
