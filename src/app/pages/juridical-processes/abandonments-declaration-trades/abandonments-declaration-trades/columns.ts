@@ -5,7 +5,7 @@ export const COLUMNS_BIENES = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -26,6 +26,19 @@ export const COLUMNS_BIENES = {
   },
   extDomProcess: {
     title: 'Proceso',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const COLUMNS_DOCUMENTS = {
+  key: {
+    title: 'CVE. Documento',
+    type: 'string',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

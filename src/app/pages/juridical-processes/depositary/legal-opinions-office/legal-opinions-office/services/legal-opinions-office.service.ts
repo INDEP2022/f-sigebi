@@ -5,6 +5,7 @@ import {
   ICopiesOfficeSendDictation,
   IDictation,
   IInitFormLegalOpinionOfficeBody,
+  ITmpDictationCreate,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
@@ -51,17 +52,39 @@ export class LegalOpinionsOfficeService {
   getCityByDetail(params: string) {
     return this.msCityService.getAllFiltered(params);
   }
+  // Get Dictaminaciones
   getDictations(params: string) {
     return this.msDictationService.getAllWithFilters(params);
+  }
+  // Save Dictaminaciones
+  saveDictations(body: IDictation) {
+    return this.msDictationService.create(body);
+  }
+  // Save TMP Dictaminaciones
+  createTmpDictation(body: ITmpDictationCreate) {
+    return this.msDictationService.createTmpDictation(body);
+  }
+  // Delete TMP Dictaminaciones
+  deleteTmpDictation(id: number) {
+    return this.msDictationService.deleteTmpDictation(id);
   }
   getExpedient(params: ListParams) {
     return this.msExpedientService.getAll(params);
   }
+  // Get Oficio Dictaminaciones
   getOfficeDictation(params: _Params) {
     return this.msOficialDictationService.getAll(params);
   }
+  // Save Oficio Dictaminaciones
+  saveOfficeDictation(body: IOfficialDictation) {
+    return this.msOficialDictationService.create(body);
+  }
   getElectronicFirmData(params: _Params) {
     return this.msSsf3SignatureElecDocsService.getAllFiltered(params);
+  }
+  // Pendiente
+  deleteElectronicFirmData(body: any) {
+    return this.msSsf3SignatureElecDocsService.deleteElectronicFirm(body);
   }
   getOfficeCopiesDictation(params: _Params) {
     return this.msCopiesOfficialOpinionService.getAll(params);
@@ -105,6 +128,13 @@ export class LegalOpinionsOfficeService {
   getCuDelDest(params: ListParams) {
     return this.msGoodprocessService.getCuDelDest(params);
   }
+  getEtapaByDictation(params: ListParams) {
+    return this.msGoodprocessService.getEtapaByDictation(params);
+  }
+  pupGenMasiv(params: any) {
+    return this.msGoodprocessService.postPupGenMasiv(params);
+  }
+
   getTexto3FromOfficeDictation(
     officeDictationData: IOfficialDictation,
     type_of: string

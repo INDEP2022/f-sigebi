@@ -250,6 +250,10 @@ export class GoodService extends HttpService {
     return this.get<any>(route);
   }
 
+  getStatusGood(params?: string) {
+    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}${params}`);
+  }
+
   getBySafe(
     id: number | string,
     params?: ListParams
