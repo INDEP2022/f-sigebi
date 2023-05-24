@@ -494,6 +494,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       if (vsumimp < v_importe) {
         vfactor = (v_importe - vsumimp) / v_importe;
         vfactornum = (v_importe - vsumimp) / (v_importe - vsumimp);
+        console.log(vfactor, vfactornum);
         let item: IBienesPar;
         item = {
           id: null,

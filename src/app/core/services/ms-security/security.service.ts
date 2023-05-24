@@ -41,8 +41,10 @@ export class SecurityService extends HttpService {
     );
   }
 
-  userTracker(): any {
-    // Lógica para obtener el objeto, puede ser una llamada HTTP, una operación asíncrona, etc.
-    return { id: 1, nombre: 'Ejemplo' };
+  getAllFilterAssigned(params: any) {
+    return this.get<IListResponse<IAccesTrackingXArea>>(
+      `access-tracking-x-area`,
+      params
+    );
   }
 }
