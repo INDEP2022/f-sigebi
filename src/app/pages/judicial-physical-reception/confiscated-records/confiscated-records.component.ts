@@ -871,6 +871,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log('Fue en este checkChange');
             this.checkChange();
             this.minDateFecElab = new Date();
+            this.render.removeClass(btn, 'disabled');
+            this.render.addClass(btn, 'enabled');
             this.alert(
               'warning',
               'No hay bienes para este expediente',
@@ -885,12 +887,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log('Fue en este checkChange');
             this.checkChange();
             this.minDateFecElab = new Date();
+            this.render.removeClass(btn, 'disabled');
+            this.render.addClass(btn, 'enabled');
             this.alert(
               'warning',
               'No hay bienes para este expediente',
               'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
             );
           }
+          this.render.removeClass(btn, 'disabled');
+          this.render.addClass(btn, 'enabled');
         },
       });
   }
