@@ -20,6 +20,7 @@ import {
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IUserRowSelectEvent } from '../../../../core/interfaces/ng2-smart-table.interface';
 import { BasePage } from '../../../../core/shared/base-page';
+import { COLUMNS, TABLE_SETTINGS_T } from './columns';
 
 export interface FieldToSearch {
   field: string;
@@ -75,7 +76,7 @@ export class FormSearchHandlerComponent
   @Output() onSearchStart = new EventEmitter<boolean>();
   @Output() onConfirmSearch = new EventEmitter<boolean>();
   @Output() onSelect = new EventEmitter<any>();
-
+  _settings: any;
   constructor(
     // private modalService: BsModalService,
     // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
@@ -83,24 +84,44 @@ export class FormSearchHandlerComponent
     private activatedRoute: ActivatedRoute
   ) {
     super();
+
+    this._settings = { ...TABLE_SETTINGS_T };
+    this._settings.columns = COLUMNS;
+    this._settings.actions.delete = false;
+    this._settings.actions.add = false;
+    this._settings = {
+      ...this._settings,
+      hideSubHeader: false,
+    };
+
+    // this._settings = {
+    //   ...this._settings,
+    //   hideSubHeader: false,
+    //   // ...this.settings,
+    //   // selectedRowIndex: -1,
+    //   // // columns: { ...this.columnsType },
+    // };
   }
 
   ngOnInit(): void {
-    this.settings = {
-      ...this.settings,
-      selectedRowIndex: -1,
-      actions: false,
-      columns: { ...this.columnsType },
-    };
     this.autoLoad();
-    if (!this.dataObservableFn) {
+    if (this.dataObservableFn) {
       // console.log({ getData: this.dataObservableFn });
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         if (this.searchOnInput) {
+          this._settings = {
+            ...this._settings,
+            hideSubHeader: false,
+          };
           this.getData();
         }
       });
     }
+    this.settingColumns();
+  }
+
+  settingColumns() {
+    this._settings.columns = COLUMNS;
   }
 
   autoLoad(): void {
@@ -168,6 +189,7 @@ export class FormSearchHandlerComponent
         this.filterParams.getValue().getParams()
       ).subscribe({
         next: data => {
+          console.log('AQASDUASD 22', data);
           if (data.count > 0) {
             this.columns = data.data;
             this.totalItems = data.count;
