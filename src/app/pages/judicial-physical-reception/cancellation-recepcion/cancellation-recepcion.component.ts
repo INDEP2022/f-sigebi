@@ -1196,15 +1196,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      /* if (this.form.get('folioEscaneo').value.length > 15) {
-      this.alert(
-        'error',
-        'Número de folio incorrecto',
-        'El número de folio no puede ser mayor de 15 dígitos'
-      );
-    } else { */
-
-      /* } */
       if (this.goodData.length <= 0) {
         this.alert(
           'warning',
