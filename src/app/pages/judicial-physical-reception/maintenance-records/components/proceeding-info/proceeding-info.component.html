@@ -1,9 +1,9 @@
-<form class="form-material" [formGroup]="form">
+<form class="form-material" [formGroup]="form" id="proceeding-info">
   <div class="row border border-dark">
     <div class="row header-proceeding-info">
       <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
       <div class="col-md-6 buttons">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <button
             [class]="disabled || form.invalid || registro ? 'disabled' : ''"
             class="btn btn-primary btn-sm active"
@@ -11,21 +11,21 @@
             <i class="fa fa-search"></i> Filtrar
           </button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <app-clean-filters-shared
             [form]="form"
             (cleanFiltersEvent)="
               deleteProceedings()
             "></app-clean-filters-shared>
         </div>
-        <div class="col-md-4">
+        <!-- <div class="col-md-6">
           <button
             [class]="disabled || form.invalid || !registro ? 'disabled' : ''"
             class="btn btn-primary btn-sm active"
             (click)="filter()">
             <i class="fa fa-trash"></i> Eliminar
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="col-md-6 mt-5">
