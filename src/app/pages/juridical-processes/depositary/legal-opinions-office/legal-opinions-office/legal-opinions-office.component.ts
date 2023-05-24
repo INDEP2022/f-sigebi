@@ -481,6 +481,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   setDataAppointment() {
+    this.blockSender = false;
     this.form
       .get('cveOfficeGenerate')
       .setValue(this.dictationData.passOfficeArmy);
@@ -998,6 +999,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.pup_genera_xml = false;
     this.V_URL_OPEN_FIRM = '';
     console.log(this.form.get('issuingUser').value, this.dataUserLogged);
+    if (count == 0) {
+      this.setDataDictationSave();
+    }
     if (this.blockSender) {
       return;
     }
@@ -1005,7 +1009,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.alertInfo(
         'warning',
         'Se requiere cargar la información del Oficio para continuar',
-        'Revisa los parámetros y vuelve a intentar'
+        'Complete los campos requeridos y vuelva a intentar'
       );
       return;
     }
@@ -1013,7 +1017,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       this.alertInfo(
         'warning',
         'Se requiere cargar la información de la Dictaminación para continuar',
-        'Revisa los parámetros y vuelve a intentar'
+        'Complete los campos requeridos y vuelva a intentar'
       );
       return;
     }
@@ -1035,9 +1039,6 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         'Sólo el usuario del campo "Autoriza Dictaminación" puede realizar está acción'
       );
       return;
-    }
-    if (count == 0) {
-      this.setDataDictationSave();
     }
     this.loadingSend = true;
     console.log('SEND OFFICE');
