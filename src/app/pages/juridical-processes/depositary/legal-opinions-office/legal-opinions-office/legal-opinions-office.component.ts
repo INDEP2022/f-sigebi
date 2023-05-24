@@ -187,6 +187,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         console.log('SIN PARAMETROS');
         if (!this.origin) {
           // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
         } else {
           this.alertInfo(
             'info',
