@@ -240,6 +240,7 @@
                   bsDatepicker
                   (ngModelChange)="fecElab()"
                   class="form-control"
+                  [class]="!isEnableFecElab ? 'disabled' : ''"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
               </form-field>
@@ -276,6 +277,7 @@
             <textarea
               rows="3"
               class="form-control"
+              [class]="!isEnableDireccion ? 'disabled' : ''"
               formControlName="direccion"></textarea>
           </form-field>
         </div>
@@ -287,6 +289,7 @@
             <textarea
               rows="3"
               class="form-control"
+              [class]="!isEnableObservaciones ? 'disabled' : ''"
               formControlName="observaciones"></textarea>
           </form-field>
         </div>
@@ -301,6 +304,7 @@
               <input
                 type="text"
                 class="form-control"
+                [class]="!isEnableAutoridadCancela ? 'disabled' : ''"
                 formControlName="autoridadCancela" />
             </form-field>
           </div>
@@ -309,6 +313,7 @@
               <input
                 type="text"
                 class="form-control"
+                [class]="!isEnableElabora ? 'disabled' : ''"
                 formControlName="elabora" />
             </form-field>
           </div>
@@ -319,6 +324,7 @@
               <input
                 type="text"
                 class="form-control"
+                [class]="!isEnableTestigo ? 'disabled' : ''"
                 formControlName="testigo" />
             </form-field>
           </div>
