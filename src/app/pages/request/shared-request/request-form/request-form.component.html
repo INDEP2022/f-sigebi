@@ -163,9 +163,10 @@
                     [data]="issues"
                     [form]="requestForm"
                     value="id"
-                    bindLabel="issue"
+                    bindLabel="description"
                     label="Asunto"
-                    [control]="'affair'">
+                    [control]="'affair'"
+                    (change)="getIssue($event)">
                   </ngx-select>
                 </form-field>
               </div>
