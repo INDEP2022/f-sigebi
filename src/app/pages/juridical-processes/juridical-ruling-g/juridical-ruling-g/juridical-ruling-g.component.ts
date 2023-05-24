@@ -554,9 +554,6 @@ export class JuridicalRulingGComponent
                   this.expedientesForm.get('noExpediente').value
               );
             this.expedientesForm
-              .get('tipoDictaminacion')
-              .setValue(params?.tipoDic);
-            this.expedientesForm
               .get('noVolante')
               .setValue(params?.volante || null);
             this.dictaminacionesForm

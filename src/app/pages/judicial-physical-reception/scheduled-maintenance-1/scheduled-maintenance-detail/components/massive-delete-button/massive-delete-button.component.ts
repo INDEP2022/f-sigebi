@@ -6,7 +6,15 @@ import { AlertButton } from '../../../models/alert-button';
 @Component({
   selector: 'app-massive-delete-button',
   templateUrl: './massive-delete-button.component.html',
-  styles: [],
+  styles: [
+    `
+      @media screen and (max-width: 576px) {
+        button {
+          width: 100%;
+        }
+      }
+    `,
+  ],
 })
 export class MassiveDeleteButtonComponent
   extends AlertButton
