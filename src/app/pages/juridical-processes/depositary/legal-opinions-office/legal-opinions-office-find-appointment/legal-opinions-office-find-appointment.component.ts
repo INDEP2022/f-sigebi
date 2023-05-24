@@ -176,6 +176,11 @@ export class LegalOpinionsOfficeFindAppointmentComponent
           this.loadingAppoinment = false;
           this.dataAppoinment.load([]);
           this.dataAppoinment.refresh();
+          if (error.status == 400) {
+            this.onLoadToast('warning', error.error.message, '');
+          } else {
+            this.onLoadToast('error', error.error.message, '');
+          }
           subscription.unsubscribe();
         },
       });
