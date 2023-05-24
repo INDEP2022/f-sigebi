@@ -41,7 +41,13 @@ export class ScheduledMaintenanceComponent
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
-      actions: { ...this.settings1.actions, delete: true },
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'left',
+        add: false,
+        edit: true,
+        delete: true,
+      },
     };
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {

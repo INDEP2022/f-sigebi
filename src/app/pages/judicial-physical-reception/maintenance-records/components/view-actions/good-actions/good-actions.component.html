@@ -4,11 +4,12 @@
       <div class="selectGood">
         <ng-custom-select-loading
           [form]="form"
-          [readonly]="statusActaValue !== 'ABIERTA'"
           formControlName="goodId"
           label="Agregar nuevo bien"
           value="goodNumber"
           bindLabel="goodNumber"
+          paramSearch="filter.goodNumber"
+          prefixSearch="$eq"
           loadingText="Cargando bienes..."
           path="trackergood/api/v1/trackergood/apps/goodtrackertmp"
           (valueChange)="selectGood($event)">
@@ -26,7 +27,6 @@
           (selectEvent)="selectedGood = $event"
           [(paramsFilter)]="paramsGoods"></app-select-form> -->
         <button
-          [disabled]="statusActaValue !== 'ABIERTA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="addGood()">
@@ -43,7 +43,7 @@
     </div>
     <div class="col-md-5 mb-3" style="text-align: center; padding-right: 0px">
       <app-update-dates-goods
-        [disabled]="statusActaValue !== 'ABIERTA' || !data || data.length === 0"
+        [disabled]="!data || data.length === 0"
         [data]="data"
         (updateGoodEvent)="
           selectedsForUpdate = $event; updateGoods()
@@ -53,11 +53,7 @@
       <form-field
         class="col-xs-10"
         [control]="form.get('action')"
-        [class]="
-          statusActaValue !== 'ABIERTA' || rowsSelectedNotLocal.length === 0
-            ? 'disabled'
-            : ''
-        "
+        [class]="rowsSelectedNotLocal.length === 0 ? 'disabled' : ''"
         label="Cambio">
         <ng-select
           formControlName="action"
@@ -75,7 +71,6 @@
           class="btn btn-primary btn-sm active"
           [disabled]="
             form.get('action').value === null ||
-            statusActaValue !== 'ABIERTA' ||
             rowsSelectedNotLocal.length === 0
           "
           (click)="openModals()">

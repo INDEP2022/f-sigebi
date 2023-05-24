@@ -14,6 +14,7 @@ import { DocumentsReceptionRegisterComponent } from './documents-reception-regis
 import { FlyersRoutingModule } from './flyers-routing.module';
 import { PublicMinistriesComponent } from './public-ministries/public-ministries.component';
 import { RecordUpdateComponent } from './record-update/record-update.component';
+import { DocumentsFormComponent } from './related-documents/documents-form/documents-form.component';
 import { RelatedDocumentsComponent } from './related-documents/related-documents.component';
 import { ShiftChangeHistoryComponent } from './shift-change/shift-change-history/shift-change-history.component';
 import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
@@ -30,6 +31,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     DocumentsReceptionSelectDocumentsComponent,
     DocReceptionTrackRecordsModalComponent,
     IDocReceptionndicatedFormComponent,
+    DocumentsFormComponent,
   ],
   imports: [
     CommonModule,
