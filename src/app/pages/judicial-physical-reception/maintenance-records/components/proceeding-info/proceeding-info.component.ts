@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   POSITVE_NUMBERS_PATTERN,
@@ -14,48 +14,17 @@ import {
 @Component({
   selector: 'app-proceeding-info',
   templateUrl: './proceeding-info.component.html',
-  styles: [
-    `
-      .header-proceeding-info {
-        margin-top: 10px;
-        align-items: center;
-        padding-right: 0px;
-      }
-      .buttons {
-        display: flex;
-        justify-content: flex-end;
-        padding: 0px;
-        > div {
-          text-align: right;
-          padding: 0px;
-        }
-      }
-
-      app-recibe-form {
-        padding-right: 0px;
-        margin-bottom: 22px;
-      }
-      app-justification {
-        @media screen and (max-width: 576px) {
-          padding-right: 0px;
-        }
-      }
-      .notInputDatePicker {
-        background-color: white !important;
-      }
-    `,
-  ],
+  styleUrls: ['./proceeding-info.component.scss'],
 })
 export class ProceedingInfoComponent implements OnInit {
   @Input() set info(value: IProceedingDeliveryReception) {
     if (value) {
       const info = deliveryReceptionToInfo(value);
-      this.form.setValue(info);
+      this.service.form.setValue(info);
       // this.service.formValue = info;
     }
   }
   @Input() loading = false;
-  form: FormGroup;
   hoy = new Date();
   @Output() filterEvent = new EventEmitter<IProceedingInfo>();
   constructor(
@@ -63,7 +32,7 @@ export class ProceedingInfoComponent implements OnInit {
     private service: MaintenanceRecordsService
   ) {
     this.prepareForm();
-    this.form.get('statusActa').valueChanges.subscribe(x => {
+    this.service.form.get('statusActa').valueChanges.subscribe(x => {
       console.log(x);
       if (this.service.formValue) {
         this.service.formValue.statusActa = x;
@@ -74,6 +43,14 @@ export class ProceedingInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  get form() {
+    return this.service.form;
+  }
+
+  set form(value) {
+    this.service.form = value;
+  }
 
   // some(event: any) {
   //   console.log(event);

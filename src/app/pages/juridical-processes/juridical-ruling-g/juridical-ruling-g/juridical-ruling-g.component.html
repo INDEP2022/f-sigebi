@@ -26,6 +26,7 @@
                 <ngx-select
                   [searchOnInit]="true"
                   [data]="typesDict"
+                  [searchable]="false"
                   [form]="expedientesForm"
                   label="Tipo Dictaminación"
                   bindLabel="typeDict"
@@ -39,8 +40,10 @@
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
+                  min="0"
+                  maxlength="11"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
@@ -210,14 +213,19 @@
       class="container-fluid form-material col-12 px-2 pt-4">
       <div class="row">
         <div class="col-md-4">
-          <form-field
-            [control]="subtipoForm.get('tipoDictaminacion')"
-            label="Ident&#46;">
-            <select class="form-control" formControlName="tipoDictaminacion">
+          <form-field [control]="subtipoForm.get('tipoDictaminacion')">
+            <!-- <select class="form-control" formControlName="tipoDictaminacion">
               <option [value]="null"></option>
               <option [value]="'Alta'">Alta</option>
               <option [value]="'Normal'">Normal</option>
-            </select>
+            </select> -->
+            <ngx-select
+              [searchOnInit]="true"
+              [data]="ident"
+              [form]="subtipoForm"
+              label="Ident."
+              bindLabel="value"
+              control="tipoDictaminacion"></ngx-select>
           </form-field>
         </div>
 
@@ -330,7 +338,7 @@
                 [source]="documents"></ng2-smart-table>
             </div>
             <div class="col-md-2">
-              <p class="text-info h5">No&#46; bien</p>
+              <p class="text-info h5">No. Bien</p>
               <p class="text-info h5">{{ idGoodSelected }}</p>
             </div>
           </div>
@@ -344,6 +352,7 @@
           (click)="btnDocumentos()">
           Documentos
         </button>
+        <!-- [disabled]="isDocsEmpty()" -->
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
           (click)="btnApprove()">
@@ -357,8 +366,8 @@
         </button>
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnImprimeOficio()"
-          [routerLink]="rutaAprobado">
+          (click)="btnImprimeOficio()">
+          <!-- [routerLink]="returnRoute" -->
           Imprime Oficio
         </button>
         <button

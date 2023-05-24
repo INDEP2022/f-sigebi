@@ -1,6 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
+import { LoadingService } from 'src/app/common/services/loading.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { SweetalertModel } from 'src/app/core/shared/base-page';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
@@ -21,6 +22,7 @@ export class FunctionButtons {
   // private service2Tab2 = inject(PartializeGeneralGoodV2Tab2Service);
   protected goodService = inject(GoodService);
   private _toastrService = inject(ToastrService);
+  protected loader = inject(LoadingService);
   v_numerario: number;
   vfactor: number;
 

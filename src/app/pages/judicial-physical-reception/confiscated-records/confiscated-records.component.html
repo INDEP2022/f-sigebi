@@ -16,6 +16,7 @@
                   "
                   [min]="0"
                   type="number"
+                  [class]="blockExpedient ? 'disabled' : ''"
                   class="form-control"
                   formControlName="expediente" />
               </form-field>
@@ -350,7 +351,7 @@
             <div class="col-md-9">
               <form-field
                 [control]="form.get('testigo')"
-                label="Testigo de la Contr&#46;">
+                label="Testigo de la Contraloria">
                 <input
                   type="text"
                   [maxlength]="100"
@@ -402,7 +403,7 @@
           class="col-md-12"
           [settings]="settings1"
           [source]="dataGoods"
-          (rowSelect)="selectRow($event)"
+          (userRowSelect)="selectRow($event)"
           (rowDeselect)="deselectRow()"></ng2-smart-table>
       </div>
       <hr class="row" />
@@ -427,22 +428,30 @@
         </div>
       </div>
 
-      <div class="row pt-2">
-        <div class="col-md-12 text-center">
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            [disabled]="!dataGoodAct"
-            (click)="deleteGood()">
-            <i class="fa fa-angle-up"></i>
-          </button>
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            [disabled]="!act2Valid"
-            (click)="addGood()">
-            <i class="fa fa-angle-down"></i>
-          </button>
+      <div class="row pt-2 pb-4">
+        <div class="col-md-12 d-flex justify-content-center">
+          <div class="d-flex justify-content-center align-items-sm-center">
+            <div class="col-md-3">
+              <label for="">Eliminar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!dataGoodAct"
+                (click)="deleteGood()">
+                <i class="fa fa-angle-up"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <label for="">Agregar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!act2Valid"
+                (click)="addGood()">
+                <i class="fa fa-angle-down"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <hr class="row" />
@@ -451,39 +460,49 @@
           class="col-md-12"
           [settings]="settings2"
           [source]="dataGoodAct"
-          (rowSelect)="selectRowGoodActa($event)"
+          (userRowSelect)="selectRowGoodActa($event)"
           (rowDeselect)="deselectRowGoodActa()"></ng2-smart-table>
       </div>
       <hr class="row" />
       <div class="row">
         <div class="d-flex justify-content-center">
-          <form-field
-            class="col-md-3"
-            [control]="form.get('edoFisico')"
-            label="Estado físico">
-            <!--             <label for="edoFisico">Estado físico</label>
-            <select name="" id="edoFisico" formControlName="edoFisico">
-              <option value="null">Sin especificar</option>
-              <option value="0">MALO</option>
-              <option value="1">REGULAR</option>
-              <option value="2">BUENO</option>
-            </select> -->
-            <input
-              type="text"
-              class="form-control"
-              [readOnly]="true"
-              formControlName="edoFisico" />
+          <form-field class="col-md-3" [control]="form.get('edoFisico')">
+            <ngx-select
+              label="Edo.Físico"
+              bindLabel="description"
+              [class]="!isSelectGood ? 'disabled' : ''"
+              control="edoFisico"
+              [searchable]="false"
+              (change)="applyEdoFisOne($event)"
+              [form]="form"
+              [data]="dataEdoFisico"></ngx-select>
           </form-field>
-          <!--  <form-check label="Requerido" for="label">
-            <input id="label" type="checkbox" formControlName="requerido" />
-          </form-check> -->
+          <form-field [control]="form.get('indEdoFisico')">
+            <div class="form-check d-flex align-items-center">
+              <label class="form-check-label pr-5 pl-5" for="flexCheckChecked">
+                Requerido
+              </label>
+              <input
+                class="form-check-input mr-3 ml-3 disabled"
+                type="checkbox"
+                formControlName="indEdoFisico"
+                id="flexCheckDefault" />
+            </div>
+            <!-- <form-check label="Requerido" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="indEdoFisico" />
+            </form-check> -->
+          </form-field>
           <form-field
             class="col-md-3"
             [control]="form.get('estatusBienActa')"
-            label="Etiqueta">
+            label="Estatus bien">
             <input
               type="text"
               class="form-control"
+              (dblclick)="goToHistorico()"
               [readOnly]="true"
               formControlName="estatusBienActa" />
           </form-field>

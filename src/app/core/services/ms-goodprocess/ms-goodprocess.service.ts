@@ -64,4 +64,18 @@ export class GoodprocessService extends HttpService {
       params
     );
   }
+
+  getEtapaByDictation(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.ParametersFaStageCreda,
+      params
+    );
+  }
+
+  getQueryVtypeGood(params: any) {
+    return this.post(`${GoodprocessEndpoints.QueryVtypeGood}`, params);
+  }
+  postPupGenMasiv(params: any) {
+    return this.post(`${GoodprocessEndpoints.ApplicationPupGenMasiv}`, params);
+  }
 }

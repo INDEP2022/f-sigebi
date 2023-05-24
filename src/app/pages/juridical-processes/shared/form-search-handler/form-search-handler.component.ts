@@ -9,13 +9,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import {
-  BsModalRef,
-  BsModalService,
-  ModalDirective,
-} from 'ngx-bootstrap/modal';
+import { ActivatedRoute } from '@angular/router';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
-import { SelectListFilteredModalComponent } from '../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
   DynamicFilterLike,
   FilterParams,
@@ -24,6 +20,7 @@ import {
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IUserRowSelectEvent } from '../../../../core/interfaces/ng2-smart-table.interface';
 import { BasePage } from '../../../../core/shared/base-page';
+import { COLUMNS, TABLE_SETTINGS_T } from './columns';
 
 export interface FieldToSearch {
   field: string;
@@ -79,28 +76,63 @@ export class FormSearchHandlerComponent
   @Output() onSearchStart = new EventEmitter<boolean>();
   @Output() onConfirmSearch = new EventEmitter<boolean>();
   @Output() onSelect = new EventEmitter<any>();
-
+  _settings: any;
   constructor(
-    private modalService: BsModalService,
-    private modalRef: BsModalRef<SelectListFilteredModalComponent>,
-    private changeDetectorRef: ChangeDetectorRef
+    // private modalService: BsModalService,
+    // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
+    private changeDetectorRef: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
+
+    this._settings = { ...TABLE_SETTINGS_T };
+    this._settings.columns = COLUMNS;
+    this._settings.actions.delete = false;
+    this._settings.actions.add = false;
+    this._settings = {
+      ...this._settings,
+      hideSubHeader: false,
+    };
+
+    // this._settings = {
+    //   ...this._settings,
+    //   hideSubHeader: false,
+    //   // ...this.settings,
+    //   // selectedRowIndex: -1,
+    //   // // columns: { ...this.columnsType },
+    // };
   }
 
   ngOnInit(): void {
-    this.settings = {
-      ...this.settings,
-      selectedRowIndex: -1,
-      actions: false,
-      columns: { ...this.columnsType },
-    };
+    this.autoLoad();
     if (this.dataObservableFn) {
+      // console.log({ getData: this.dataObservableFn });
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         if (this.searchOnInput) {
+          this._settings = {
+            ...this._settings,
+            hideSubHeader: false,
+          };
           this.getData();
         }
       });
+    }
+    this.settingColumns();
+  }
+
+  settingColumns() {
+    this._settings.columns = COLUMNS;
+  }
+
+  autoLoad(): void {
+    const wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
+    console.log('wheelNumber', wheelNumber);
+    if (wheelNumber) {
+      this.searchOnInput = true;
+      this.loading = true;
+      this.formData = {};
+      this.formData['wheelNumber'] = wheelNumber;
+      this.buildFilters();
     }
   }
 
@@ -110,7 +142,7 @@ export class FormSearchHandlerComponent
       changes['formData']?.currentValue &&
       !changes['formData']?.isFirstChange()
     ) {
-      console.log('onChange formSearchHandler', this.formData);
+      console.log('formData', this.formData);
       this.searchOnInput = true;
       this.loading = true;
       this.buildFilters();
@@ -157,6 +189,7 @@ export class FormSearchHandlerComponent
         this.filterParams.getValue().getParams()
       ).subscribe({
         next: data => {
+          console.log('AQASDUASD 22', data);
           if (data.count > 0) {
             this.columns = data.data;
             this.totalItems = data.count;
@@ -283,7 +316,8 @@ export class FormSearchHandlerComponent
       this.filterParams.next(params);
       this.getData();
     }
-    this.formData = null;
+    console.log('FILTERS', this.filters);
+    // this.formData = null;
   }
 
   openModalSearch() {

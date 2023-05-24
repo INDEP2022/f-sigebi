@@ -12,12 +12,12 @@
           <ng-custom-select-loading
             [form]="form"
             [formControlName]="formField"
-            label="No&#46; Acta"
-            value="id"
-            bindLabel="id"
-            paramSearch="filter.id"
-            prefixSearch="$eq"
-            path="proceeding/api/v1/proceedings-delivery-reception">
+            [label]="label"
+            [value]="idSelect"
+            [bindLabel]="labelSelect"
+            [paramSearch]="paramSearch"
+            [prefixSearch]="prefixSearch"
+            [path]="path">
           </ng-custom-select-loading>
           <!-- <app-select-form
             [form]="form"

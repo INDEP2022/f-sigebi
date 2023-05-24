@@ -106,15 +106,12 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      numberFile: [null, [Validators.required]],
-      causePenal: [
+      numberFile: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      preliminaryInquiry: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      causePenal: [null],
+      preliminaryInquiry: [null],
       goodSelect: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -129,7 +126,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     const numberFile = Number(this.numberFile.value);
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
-        console.log(response);
         this.expedient = response;
         this.causePenal.setValue(this.expedient.criminalCase);
         this.preliminaryInquiry.setValue(this.expedient.preliminaryInquiry);
@@ -156,14 +152,15 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       .getByExpedient(idExpedient, this.params.getValue())
       .subscribe({
         next: response => {
-          this.goods = new DefaultSelect(response.data, response.count);
           this.goodSelect.enable();
+          this.goods = new DefaultSelect(response.data, response.count);
         },
         error: err => {
           console.log(err);
         },
       });
   }
+
   searchGoodMenage(idGood: number) {
     this.menajes = [];
     this.loading = true;
@@ -179,7 +176,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       error: err => {
         this.loading = false;
         console.log(err);
-        this.onLoadToast('error', 'ERROR', err.error.message);
+        this.onLoadToast('info', 'Información', err.error.message);
       },
     });
   }

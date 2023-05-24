@@ -25,4 +25,8 @@ export class MJobManagementService extends HttpService {
   postFindById(params: Object): Observable<IListResponse<IMJobManagement>> {
     return this.post('m-job-management/find-by-ids', params);
   }
+
+  getDocOficioGestion(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>('document-job-management', params);
+  }
 }

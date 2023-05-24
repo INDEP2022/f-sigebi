@@ -8,4 +8,7 @@ export enum GoodprocessEndpoints {
   ApplicationCuEmisora = 'application/cuEmisora',
   ApplicationCuDelRem = 'application/cuDelRem',
   ApplicationCuDelDest = 'application/cuDelDest',
+  ParametersFaStageCreda = 'parameters/fa-stage-creda',
+  QueryVtypeGood = 'application/queryVtypeGood',
+  ApplicationPupGenMasiv = 'application/pup-gen-masiv',
 }
