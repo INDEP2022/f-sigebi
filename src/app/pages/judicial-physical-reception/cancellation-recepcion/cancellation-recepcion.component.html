@@ -97,8 +97,8 @@
         <div class="col-md-12">
           <div class="row">
             <div class="col">
-              <form-field [control]="form.get('acta')" label="Acta 1">
-                <select
+              <form-field [control]="form.get('acta')">
+                <!-- <select
                   id="acta"
                   class="form-control"
                   formControlName="acta"
@@ -107,11 +107,16 @@
                   <option *ngFor="let record of records" [value]="record">
                     {{ record }}
                   </option>
-                </select>
-                <!--   <ngx-select
+                </select> -->
+                <ngx-select
+                  id="acta"
+                  (change)="changeAct()"
+                  [class]="initialBool ? 'disabled' : ''"
                   control="acta"
-                  [form]="form"
-                  [data]="itemsSelect"></ngx-select> -->
+                  label="Acta"
+                  bindLabel=""
+                  [data]="records"
+                  [form]="form"></ngx-select>
               </form-field>
             </div>
             <div class="col-md-2">
@@ -410,6 +415,7 @@
             label="Estatus ">
             <input
               type="text"
+              (dblclick)="goToHistorico()"
               class="form-control"
               [readOnly]="true"
               formControlName="estatusPrueba" />
@@ -427,20 +433,29 @@
       </div>
 
       <div class="row pt-2">
-        <div class="col-md-12 text-center">
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            [disabled]="dataGoodAct['data'].length == 0"
-            (click)="deleteGoods()">
-            <i class="fa fa-angle-up"></i>
-          </button>
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            (click)="addGood()">
-            <i class="fa fa-angle-down"></i>
-          </button>
+        <div class="col-md-12 d-flex justify-content-center">
+          <div class="d-flex justify-content-center align-items-sm-center">
+            <div class="col-md-3">
+              <label for="">Eliminar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!dataGoodAct"
+                (click)="deleteGoods()">
+                <i class="fa fa-angle-up"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <label for="">Agregar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!act2Valid"
+                (click)="addGood()">
+                <i class="fa fa-angle-down"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -461,6 +476,7 @@
           <input
             type="text"
             class="form-control"
+            (dblclick)="goToHistorico()"
             [readOnly]="true"
             formControlName="estatusBienActa" />
         </form-field>

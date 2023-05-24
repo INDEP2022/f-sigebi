@@ -262,39 +262,92 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   onFileChange(event: any, type?: string) {
     this.loader.load = true; //Loading cambiar por uno de porcentaje
     const file = event.target.files[0];
+    const name = file.name;
+    const lastModified = file.lastModified;
     const user = this.authService.decodeToken().preferred_username;
-
     /*const fileReader = new FileReader();
     fileReader.readAsBinaryString(file);
     fileReader.onload = () => {
-      const result = this.readExcel(fileReader.result);
-      if(result === true){
-        this.uploadFile(file, this.requestObject.id, user);
+      console.log('fileReader ',fileReader)
+      const result:any = this.readExcel(fileReader.result,name,lastModified);
+      if(result != null){
+        this.uploadFile(result, this.requestObject.id, user);
       }
     }*/
     this.uploadFile(file, this.requestObject.id, user);
-    // this.fileUploaded.nativeElement.value = "";
+    this.fileUploaded.nativeElement.value = '';
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
+  readExcel(binaryExcel: string | ArrayBuffer, name: string) {
     try {
-      let correcto = true;
       this.data = this.excelService.getData<any>(binaryExcel);
+
       for (let i = 0; i < this.data.length; i++) {
         const element: any = this.data[i];
-        //|| element['FRACCIÓN ARANCELARIA'] === undefined
-        if (element['CLAVE ARANCELARIA'] === undefined) {
-          this.onLoadToast(
-            'error',
-            'Carga de archivo',
-            'Todos los bienes deben tener una clave arancelaria!'
-          );
-          correcto = false;
-          this.loader.load = false;
-          break;
+        if (element['ENTFED'] != undefined) {
+          element['ENTFED'] = element['ENTFED'].toLowerCase();
+          element['ENTFED'] =
+            element['ENTFED'][0].toUpperCase() + element['ENTFED'].substring(1);
+        } else {
+          element['ENTFED'] = 'xx';
+        }
+
+        if (element['EDOFISICO'] != undefined) {
+          element['EDOFISICO'] = element['EDOFISICO'].toLowerCase();
+          element['EDOFISICO'] =
+            element['EDOFISICO'][0].toUpperCase() +
+            element['EDOFISICO'].substring(1);
+        }
+        if (element['MARCA'] != undefined) {
+          element['MARCA'] = element['MARCA'].toLowerCase();
+          element['MARCA'] =
+            element['MARCA'][0].toUpperCase() + element['MARCA'].substring(1);
+        } else {
+          element['MARCA'] = 'xx';
+        }
+
+        if (element['SUBMARCA'] != undefined) {
+          element['SUBMARCA'] = element['SUBMARCA'].toLowerCase();
+          element['SUBMARCA'] =
+            element['SUBMARCA'][0].toUpperCase() +
+            element['SUBMARCA'].substring(1);
+        }
+
+        if (element['UNIDAD'] != undefined) {
+          element['UNIDAD'] = element['UNIDAD'].toLowerCase();
+          element['UNIDAD'] =
+            element['UNIDAD'][0].toUpperCase() + element['UNIDAD'].substring(1);
+        }
+
+        if (element['ESTADO FÍSICO'] != undefined) {
+          element['ESTADO FÍSICO'] = element['ESTADO FÍSICO'].toLowerCase();
+          element['ESTADO FÍSICO'] =
+            element['ESTADO FÍSICO'][0].toUpperCase() +
+            element['ESTADO FÍSICO'].substring(1);
+        }
+
+        if (element['ESTADO DE CONSERVACIÓN'] != undefined) {
+          element['ESTADO DE CONSERVACIÓN'] =
+            element['ESTADO DE CONSERVACIÓN'].toLowerCase();
+          element['ESTADO DE CONSERVACIÓN'] =
+            element['ESTADO DE CONSERVACIÓN'][0].toUpperCase() +
+            element['ESTADO DE CONSERVACIÓN'].substring(1);
+        }
+
+        if (element['TIPO'] == undefined) {
+          element['TIPO'] = 'xx';
         }
       }
-      return correcto;
+      console.table(this.data);
+      const filename: string = name;
+      const FileType: string =
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      const file = this.excelService.exportJsonToExcelNewFile(
+        this.data,
+        { filename },
+        FileType
+      );
+      return file;
     } catch (error) {
       this.loader.load = false;
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
@@ -540,6 +593,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Error',
             `Error al actualizar los bienes ${error.error.message}`
           );
+          console.log(error);
           console.log(error.error.message);
           reject(false);
         },

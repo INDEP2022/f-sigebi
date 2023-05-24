@@ -16,19 +16,24 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import { DEPOSITARY_ROUTES_2 } from 'src/app/common/constants/juridical-processes/depositary-routes-2';
 import {
   baseMenu,
   baseMenuDepositaria,
 } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
@@ -38,6 +43,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -104,8 +110,8 @@ export class JuridicalRulingGComponent
 
   ident = new DefaultSelect(
     [
-      { id: 'ALTA', value: 'ALTA' },
-      { id: 'NORMAL', value: 'NORMAL' },
+      { id: 'ASEGURADO', value: 'ASEGURADO' },
+      { id: 'TRANSFERENTE', value: 'TRANSFERENTE' },
     ],
     2
   );
@@ -312,7 +318,8 @@ export class JuridicalRulingGComponent
     private readonly expedientServices: ExpedientService,
     private readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
-    private router: Router
+    private router: Router,
+    private usersService: UsersService
   ) {
     super();
   }
@@ -336,7 +343,14 @@ export class JuridicalRulingGComponent
     this.expedientesForm = this.fb.group({
       noDictaminacion: [null, [Validators.required]],
       tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: [null, [Validators.required]],
+      noExpediente: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
       averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       delito: [false],
@@ -347,13 +361,13 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm = this.fb.group({
       wheelNumber: [null],
       etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
-      fechaPPFF: [null],
+      fechaPPFF: [null, [Validators.required, this.dateValidator]],
       fechaInstructora: [null],
       fechaResolucion: [null],
-      fechaDictaminacion: [null],
+      fechaDictaminacion: [null, [Validators.required, this.dateValidator]],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
-      autoriza_remitente: [null, [Validators.pattern(STRING_PATTERN)]],
+      autoriza_remitente: [null],
       autoriza_nombre: [null, [Validators.pattern(STRING_PATTERN)]],
       cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       estatus: [null],
@@ -384,6 +398,15 @@ export class JuridicalRulingGComponent
       this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
     });
     this.changeNumExpediente();
+  }
+
+  dateValidator(control: AbstractControl): { [key: string]: any } | null {
+    const selectedDate = new Date(control.value);
+    const currentDate = new Date();
+    if (selectedDate > currentDate) {
+      return { invalidDate: true };
+    }
+    return null;
   }
 
   changeNumExpediente() {
@@ -516,22 +539,20 @@ export class JuridicalRulingGComponent
             .setValue(res.data[0].statusDict || undefined);
         })
         .catch(err => {
-          setTimeout(() => {
-            if (
-              this.expedientesForm.get('noExpediente').value &&
-              this.dictaminacionesForm.get('fechaDictaminacion').value == ''
-            ) {
-              this.alert('warning', '', 'No tiene fecha de dictaminación');
-            }
-          }, 1000);
+          if (
+            this.expedientesForm.get('noExpediente').value &&
+            this.dictaminacionesForm.get('fechaDictaminacion').value == ''
+          ) {
+            this.alert('warning', '', 'No tiene fecha de dictaminación');
+          }
 
           this.activatedRoute.queryParams.subscribe((params: any) => {
             this.expedientesForm
               .get('noExpediente')
-              .setValue(params?.expediente || null);
-            this.expedientesForm
-              .get('tipoDictaminacion')
-              .setValue(params?.tipoDic);
+              .setValue(
+                params?.expediente ||
+                  this.expedientesForm.get('noExpediente').value
+              );
             this.expedientesForm
               .get('noVolante')
               .setValue(params?.volante || null);
@@ -783,22 +804,6 @@ export class JuridicalRulingGComponent
         this.onLoadToast('error', 'Error', error);
       }
     );
-    /* this.service.search(params).subscribe(
-      data => {
-        this.types = new DefaultSelect(data.data, data.count);
-      },
-      err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          //error = err.message;
-        }
-
-        //this.onLoadToast('error', 'Error', error);
-      },
-      () => {}
-    ); */
   }
 
   getSubtypes(params: ListParams) {
@@ -919,6 +924,9 @@ export class JuridicalRulingGComponent
   }
 
   btnVerify() {
+    let cveOficio = this.dictaminacionesForm.get('cveOficio').value;
+    let tipo = this.expedientesForm.get('tipoDictaminacion').value;
+    let noDictaminacion = this.expedientesForm.get('noDictaminacion').value;
     const status = this.statusDict;
     const expedient = this.expedientesForm.get('noExpediente').value;
     if (this.goodsValid.length === 0) {
@@ -938,8 +946,17 @@ export class JuridicalRulingGComponent
               ['/pages/general-processes/goods-partialization'],
               {
                 queryParams: {
-                  good: this.goodsValid[0].id,
-                  screen: 'FACTJURDICTAMASG',
+                  // anterior..
+                  // good: this.goodsValid[0].id,
+                  // screen: 'FACTJURDICTAMASG',
+                  // origin: 'FACTJURDICTAMASG',
+                  // ..
+                  CLAVE_OFICIO_ARMADA: cveOficio,
+                  TIPO: tipo,
+                  P_VALOR: noDictaminacion,
+                  PAQUETE: '',
+                  P_GEST_OK: 1, // ..hardcoded - no llega de la pantalla anterior
+                  P_NO_TRAMITE: 1044141, // ..hardcoded - no llega de la pantalla anterior
                   origin: 'FACTJURDICTAMASG',
                 },
               }
@@ -1054,14 +1071,6 @@ export class JuridicalRulingGComponent
     return this.documents.length === 0;
   }
 
-  //   onstructor(private route: ActivatedRoute) {
-  //     console.log('Called Constructor');
-  //     this.route.queryParams.subscribe(params => {
-  //         this.expendient= params['expediente'];
-  //         this.volante= params['volante'];
-  //     });
-  // }
-
   btnApprove() {
     if (this.documents.length === 0) {
       this.alert('warning', '', 'Debes seleccionar un documento.');
@@ -1097,30 +1106,13 @@ export class JuridicalRulingGComponent
                       DEPOSITARY_ROUTES_2[0].link,
                   ],
                   {
-                    // queryParams: {
-                    //   CLAVE_OFICIO_ARMADA: cveOficio,
-                    //   TIPO: tipo,
-                    //   P_VALOR: noExpediente,
-                    //   PAQUETE: '', // ..este
-                    //   P_GEST_OK: '', // ..este
-                    //   P_NO_TRAMITE: '', // ..este
-                    //   origin: 'FACTJURDICTAMASG',
-                    // },
-
-                    //   expediente: 791477,
-                    //   volante: 1558180,
-                    //   tipoVo: 'P',
-                    //   tipoDic: 'PROCEDENCIA',
-                    //   consulta: 'N',
-                    //   pGestOk: 1,
-                    //   pNoTramite: 1044141,
                     queryParams: {
                       CLAVE_OFICIO_ARMADA: cveOficio,
                       TIPO: tipo,
                       P_VALOR: noDictaminacion,
-                      PAQUETE: '', // ..este
-                      P_GEST_OK: 1, // ..este
-                      P_NO_TRAMITE: 1044141, // ..este
+                      PAQUETE: '',
+                      P_GEST_OK: 1, // ..hardcoded - no llega de la pantalla anterior
+                      P_NO_TRAMITE: 1044141, // ..hardcoded - no llega de la pantalla anterior
                       origin: 'FACTJURDICTAMASG',
                     },
                   }
@@ -1148,5 +1140,40 @@ export class JuridicalRulingGComponent
 
   btnCloseDocs() {
     this.listadoDocumentos = false;
+  }
+
+  // USUARIOS
+  // --
+  users$ = new DefaultSelect<ISegUsers>();
+  areas$ = new DefaultSelect<IManagementArea>();
+  columnFilters: any = [];
+
+  get managementAreaF() {
+    return this.dictaminacionesForm.controls['autoriza_remitente'];
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+  userChange(user: any) {
+    // ..captura usuario
+    console.log(user);
+  }
+
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    const area = this.managementAreaF.value;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
   }
 }

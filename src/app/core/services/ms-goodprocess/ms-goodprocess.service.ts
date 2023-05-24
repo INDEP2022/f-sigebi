@@ -75,4 +75,7 @@ export class GoodprocessService extends HttpService {
   getQueryVtypeGood(params: any) {
     return this.post(`${GoodprocessEndpoints.QueryVtypeGood}`, params);
   }
+  postPupGenMasiv(params: any) {
+    return this.post(`${GoodprocessEndpoints.ApplicationPupGenMasiv}`, params);
+  }
 }
