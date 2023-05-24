@@ -305,10 +305,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
       resp => {
         console.log(resp);
-        console.log(resp.criminalCase);
-        this.form.get('causaPenal').setValue(resp.criminalCase);
-        /* console.log(resp.preliminaryInquiry);
-        this.form.get('averPrev').setValue(resp.preliminaryInquiry); */
+        console.log(resp.preliminaryInquiry);
+        this.form.get('averPrev').setValue(resp.preliminaryInquiry);
+        console.log(resp.expTransferNumber);
+        this.form.get('noExpedienteTransf').setValue(resp.expTransferNumber);
       },
       err => {
         console.log(err);
@@ -404,6 +404,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.numberProceeding = 0;
     this.numberExpedient = this.form.get('expediente').value;
     this.form.get('folioEscaneo').reset();
+    this.labelActa = 'Abrir acta';
+    this.btnCSSAct = 'btn-success';
 
     this.clearInputs();
 

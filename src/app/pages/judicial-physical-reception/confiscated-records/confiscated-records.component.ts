@@ -521,6 +521,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                         lv_programa = JSON.parse(
                           JSON.stringify(res)
                         ).lv_programa;
+                        console.log(lv_programa);
                         if (lv_programa != 0) {
                           getAmparo();
                           resolve({
@@ -780,6 +781,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 const resp = await this.validateGood(e);
                 const ind = await this.validateRequired(e);
                 console.log(ind);
+                console.log(resp);
                 disponible = JSON.parse(JSON.stringify(resp)).avalaible;
                 return {
                   ...e,
@@ -801,6 +803,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.blockExpedient = false;
           } else {
             this.initialdisabled = false;
+            this.inputsNewProceeding();
             this.getTransfer();
             console.log('Fue en este checkChange');
             this.checkChange();
@@ -820,6 +823,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           this.dataGoods.load([]);
           if (err.status === 404) {
             this.initialdisabled = false;
+            this.inputsNewProceeding();
             this.getTransfer();
             console.log('Fue en este checkChange');
             this.checkChange();
@@ -832,6 +836,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           }
           if (err.status === 400) {
             this.initialdisabled = false;
+            this.inputsNewProceeding();
             this.getTransfer();
             console.log('Fue en este checkChange');
             this.checkChange();
@@ -866,7 +871,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.isEnableTestigo = true;
   }
 
+  inputsReopenProceeging() {
+    this.isEnableDireccion = true;
+    this.isEnableEntrega = true;
+    this.isEnablefecElab = false;
+    this.isEnablefecElabRec = false;
+    this.isEnableObservaciones = true;
+    this.isEnableRecibe2 = true;
+    this.isEnableTestigo = true;
+  }
+
   fillIncomeProceeding(dataRes: any) {
+    console.log(dataRes.id);
+    console.log(dataRes.keysProceedings);
     this.initialdisabled = true;
     this.idProceeding = dataRes.id;
     const paramsF = new FilterParams();
@@ -961,7 +978,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.act2Valid = true;
         this.navigateProceedings = true;
       },
-      err => console.log(err)
+      err => {
+        console.log(err);
+        this.initialdisabled = false;
+        this.inputsNewProceeding();
+        this.minDateFecElab = new Date();
+        this.getTransfer();
+        console.log('Fue en este checkChange');
+        this.checkChange();
+      }
     );
   }
 
@@ -1061,13 +1086,17 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        if (res.data != null) {
+        console.log(res.data);
+        if (res.data.length > 0) {
           this.proceedingData = res.data;
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+          console.log(dataRes);
           this.fillIncomeProceeding(dataRes);
           console.log(typeof dataRes);
         } else {
+          console.log('Entro en else de res');
           this.initialdisabled = false;
+          this.inputsNewProceeding();
           this.minDateFecElab = new Date();
           console.log('Fue en este checkChange');
           this.checkChange();
@@ -1077,6 +1106,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.initialdisabled = false;
+        this.inputsNewProceeding();
         this.minDateFecElab = new Date();
         this.getTransfer();
         console.log('Fue en este checkChange');
@@ -1118,7 +1148,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       newDetailProceeding.amount = element.quantity;
       newDetailProceeding.received = 'S';
       newDetailProceeding.approvedXAdmon = 'S';
-      newDetailProceeding.approvedUserXAdmon = localStorage.getItem('username');
+      /* newDetailProceeding.approvedUserXAdmon = localStorage.getItem('username'); */
+      newDetailProceeding.approvedUserXAdmon = 'SERA';
       newDetailProceeding.numberRegister = element.registryNumber;
       console.log(newDetailProceeding);
       this.serviceDetailProc
@@ -1181,7 +1212,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.btnCSSAct = 'btn-primary';
                 this.statusProceeding = 'ABIERTA';
                 this.reopening = true;
-
+                this.inputsReopenProceeging();
                 if (VAL_MOVIMIENTO === 1) {
                   this.serviceProgrammingGood
                     .paRegresaEstAnterior(modelPaOpen)
@@ -1249,7 +1280,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           ),
           address: this.form.get('direccion').value,
           statusProceedings: 'ABIERTA',
-          elaborate: localStorage.getItem('username'),
+          elaborate: 'SERA',
+          /* elaborate: localStorage.getItem('username'), */
           numFile: this.form.get('expediente').value,
           witness1: this.form.get('entrega').value,
           witness2: this.form.get('recibe2').value,
@@ -1377,23 +1409,48 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.serviceProcVal
               .getByFilter(paramsF.getParams())
               .subscribe(res => {
-                console.log(res);
-                this.statusProceeding = 'CERRADO';
-                this.idProceeding = idProcee;
-                this.labelActa = 'Abrir acta';
-                this.btnCSSAct = 'btn-success';
-                this.alert(
-                  'success',
-                  'Acta cerrada',
-                  'El acta fue cerrada con éxito'
-                );
+                const modelEdit: IProccedingsDeliveryReception = {
+                  statusProceedings: 'CERRADA',
+                  comptrollerWitness: this.form.get('testigo').value,
+                  observations: this.form.get('observaciones').value,
+                  witness1: this.form.get('entrega').value,
+                  witness2: this.form.get('recibe2').value,
+                  address: this.form.get('direccion').value,
+                };
+                const resData = JSON.parse(JSON.stringify(res.data[0]));
+                console.log(modelEdit);
+                console.log(resData.id);
+                this.serviceProcVal
+                  .editProceeding(resData.id, modelEdit)
+                  .subscribe(
+                    res => {
+                      this.statusProceeding = 'CERRADO';
+                      this.idProceeding = idProcee;
+                      this.labelActa = 'Abrir acta';
+                      this.btnCSSAct = 'btn-success';
+                      this.alert(
+                        'success',
+                        'Acta cerrada',
+                        'El acta fue cerrada con éxito'
+                      );
+                      this.inputsInProceedingClose();
+                    },
+                    err => {
+                      console.log(err);
+                      this.alert(
+                        'error',
+                        'Ocurrió un error',
+                        'Ocurrió un error inesperado que no permitió cerrar el acta'
+                      );
+                    }
+                  );
               });
           },
           err => {
             this.alert(
               'error',
               'Ocurrió un error',
-              'Ocurrió un error inesperdo que no permitió abrir el acta'
+              'Ocurrió un error inesperdo que no permitió cerrar el acta'
             );
           }
         );
