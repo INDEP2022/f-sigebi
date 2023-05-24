@@ -1040,12 +1040,20 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
       return;
     }
+    if (this.goodData.length == 0) {
+      this.alertInfo(
+        'warning',
+        'Se requiere por lo menos un Bien Asociado',
+        ''
+      );
+      return;
+    }
     this.loadingSend = true;
     console.log('SEND OFFICE');
 
     let body: ICopiesOfficeSendDictation = {
       vc_pantalla: this.screenKey,
-      clave_oficio_armada: this.dictationData.keyArmyNumber.toString(),
+      clave_oficio_armada: this.dictationData.passOfficeArmy, //this.dictationData.keyArmyNumber.toString(),
       estatus_of: this.officeDictationData.statusOf,
       fec_dictaminacion: this.dictationData.dictDate,
       tipo_dictaminacion: this.dictationData.typeDict,
@@ -2145,10 +2153,10 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.setDataDictationSave();
+    this.setDataDictationSave(true);
   }
 
-  setDataDictationSave() {
+  setDataDictationSave(saveData: boolean = false) {
     // DICTAMINACIONES
     this.dictationData = {
       ...this.dictationData,
@@ -2184,6 +2192,64 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     //     { value: '', disabled: false },
     //     [Validators.pattern(STRING_PATTERN)],
     //   ],
+    this.officeCopiesDictationData = [];
+    if (this.form.get('ccp_person').value) {
+      if (
+        this.form.get('ccp_addressee').value ||
+        this.form.get('ccp_TiPerson').value
+      ) {
+      } else {
+        this.alert(
+          'warning',
+          'Complete los campos requeridos correctamente para C.C.P. e intente nuevamente',
+          ''
+        );
+        return;
+      }
+      this.officeCopiesDictationData.push({
+        numberOfDicta: this.dictationData.id,
+        typeDictamination: this.dictationData.typeDict,
+        recipientCopy: this.form.get('ccp_addressee').value,
+        copyDestinationNumber: null,
+        personExtInt: this.form.get('ccp_person').value,
+        namePersonExt:
+          this.form.get('ccp_person').value == 'I'
+            ? ''
+            : this.form.get('ccp_TiPerson').value,
+      });
+    }
+    if (this.form.get('ccp_person_1').value) {
+      if (
+        this.form.get('ccp_addressee_1').value ||
+        this.form.get('ccp_TiPerson_1').value
+      ) {
+      } else {
+        this.alert(
+          'warning',
+          'Complete los campos requeridos correctamente para C.C.P. e intente nuevamente',
+          ''
+        );
+        return;
+      }
+      this.officeCopiesDictationData.push({
+        numberOfDicta: this.dictationData.id,
+        typeDictamination: this.dictationData.typeDict,
+        recipientCopy: this.form.get('ccp_addressee_1').value,
+        copyDestinationNumber: null,
+        personExtInt: this.form.get('ccp_person_1').value,
+        namePersonExt:
+          this.form.get('ccp_person_1').value == 'I'
+            ? ''
+            : this.form.get('ccp_TiPerson_1').value,
+      });
+    }
+    console.log(
+      'CONSOLE LOG DATA',
+      this.dictationData,
+      this.officeDictationData,
+      this.officeTextDictationData,
+      this.officeCopiesDictationData
+    );
   }
 
   saveDictation() {
