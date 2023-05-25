@@ -4,9 +4,11 @@
     min-width: 105px;
     text-align: center;
   }
+
   .descripcion {
     min-width: 250px;
   }
+
   // .ng2-smart-actions {
   //   position: absolute;
   //   width: 5em;
@@ -19,13 +21,25 @@
   // }
 }
 
-.row {
-  > div {
-    @media screen and (max-width: 567px) {
-      padding-right: 0px;
-    }
-  }
+.goodTracker {
+  text-align: left;
 }
+
+.massiveDelete {
+  text-align: right;
+}
+
+app-cants {
+  margin-top: 10px;
+}
+
+// .row {
+//   >div {
+//     @media screen and (max-width: 567px) {
+//       padding-right: 0px;
+//     }
+//   }
+// }
 
 .action-buttons {
   @media screen and (max-width: 567px) {
@@ -42,9 +56,11 @@
   display: flex;
   align-items: center;
   top: -20px;
+
   > i {
     font-size: 35px;
   }
+
   &:hover {
     color: #9d2449;
   }

@@ -146,58 +146,7 @@
         </div>
       </div>
 
-      <!-- <div class="row pt-3">
-        <div class="col-md-12">
-          <form-field
-            [control]="clarificationForm.get('foundation')"
-            label="Fundamentaci&oacute;n">
-            <textarea
-              class="form-control"
-              maxlength="4000"
-              formControlName="foundation"></textarea>
-          </form-field>
-        </div>
-      </div> -->
-
-      <!--<div class="row pt-3">
-        <div class="col-md-6">
-          <form-field
-            [control]="clarificationForm.get('transmitterId')"
-            label="ID Emisor">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="15"
-              formControlName="transmitterId" />
-          </form-field>
-        </div>
-
-        <div class="col md-6">
-          <form-field
-            [control]="clarificationForm.get('invoiceLearned')"
-            label="Folio Documento">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="invoiceLearned" />
-          </form-field>
-        </div>
-      </div> -->
-
       <div class="row pt-3">
-        <!--<div class="col-md-4">
-          <form-field
-            [control]="clarificationForm.get('worthAppraisal')"
-            label="Valor Aval&uacute;o">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="60"
-              formControlName="worthAppraisal" />
-          </form-field>
-        </div> -->
-
         <div class="col-md-4">
           <form-field
             [control]="clarificationForm.get('userAreaCaptures')"
@@ -228,6 +177,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [disabled]="clarificationForm.invalid"
           [text]="'Continuar'"
           [loading]="loading"
           (confirm)="confirm()">

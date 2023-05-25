@@ -174,6 +174,8 @@ export class GoodService extends HttpService {
 
   //
   update(good: IGood) {
+    console.log('Se metio a update');
+
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
@@ -194,6 +196,11 @@ export class GoodService extends HttpService {
   updateGoodStatus(goodNumber: number | string, status: string) {
     const route = `${GoodEndpoints.Good}/updateGoodStatus/${goodNumber}/${status}`;
     return this.put(route);
+  }
+
+  updateGoodStatusAndDate(goodNumber: number | string, status: string) {
+    const route = `${GoodEndpoints.Good}/update-status-and-date-reception`;
+    return this.put(route, { goodNumber, status });
   }
 
   remove(id: string | number) {
@@ -226,8 +233,8 @@ export class GoodService extends HttpService {
     body: Object,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
-
+    console.log(params);
+    const route = `${GoodEndpoints.Good}/getGoodByWarehouse?search=${params.text}`;
     return this.post<IListResponse<IGood>>(route, body);
   }
   getByExpedientAndStatus(
@@ -241,6 +248,10 @@ export class GoodService extends HttpService {
   getStatusByGood(idGood: string | number): Observable<any> {
     const route = `${GoodEndpoints.StatusAndDesc}/${idGood}`;
     return this.get<any>(route);
+  }
+
+  getStatusGood(params?: string) {
+    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}${params}`);
   }
 
   getBySafe(
@@ -325,5 +336,13 @@ export class GoodService extends HttpService {
   getGoodById(id: string | number) {
     const route = `${GoodEndpoints.GetGoodById}/${id}/${id}`;
     return this.get<any>(route);
+  }
+
+  getByExpedientAndParams(
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    console.log('GET GOODS EXPEDIENTE', params);
+    const route = GoodEndpoints.GetAllGoodQuery;
+    return this.get<IListResponse<IGood>>(route, params);
   }
 }

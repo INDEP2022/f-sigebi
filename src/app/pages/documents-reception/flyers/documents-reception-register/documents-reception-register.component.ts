@@ -1936,7 +1936,9 @@ export class DocumentsReceptionRegisterComponent
       };
     }
     console.log(this.procedureId);
-    this.router.navigateByUrl('/pages/juridical/file-data-update');
+    this.router.navigate(['/pages/juridical/file-data-update'], {
+      queryParams: { wheelNumber: this.wheelNumber.value },
+    });
   }
 
   showTrackRecords(trackRecords: INotification[]) {

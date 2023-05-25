@@ -2,10 +2,25 @@
   width: 20px;
 }
 
+.deleteDate {
+  position: relative;
+  margin: 10px auto auto;
+  left: -20px;
+  cursor: pointer;
+}
+
 .righButtons {
   display: flex;
   justify-content: flex-end;
   column-gap: 10px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+
+    > *:last-child {
+      margin-top: 1rem;
+    }
+  }
 }
 
 .form-date {
@@ -33,6 +48,15 @@
 
 :host ::ng-deep ng2-smart-table tr.not-available td {
   color: #dc3545 !important;
+}
+
+:host {
+  ::ng-deep ng2-smart-table-filter {
+    .ng2-smart-filter input,
+    .ng2-smart-filter select {
+      padding: 0 !important;
+    }
+  }
 }
 
 ng2-smart-table {

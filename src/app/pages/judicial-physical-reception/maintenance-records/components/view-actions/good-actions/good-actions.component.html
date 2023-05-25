@@ -1,8 +1,21 @@
 <form class="form-material" [formGroup]="form">
   <div class="row mr-0">
-    <div class="col-md-4 p-0">
+    <div class="col-md-3 p-0">
       <div class="selectGood">
-        <app-select-form
+        <ng-custom-select-loading
+          [form]="form"
+          formControlName="goodId"
+          label="Agregar nuevo bien"
+          value="goodNumber"
+          bindLabel="goodNumber"
+          paramSearch="filter.goodNumber"
+          prefixSearch="$eq"
+          loadingText="Cargando bienes..."
+          path="trackergood/api/v1/trackergood/apps/goodtrackertmp"
+          (valueChange)="selectGood($event)">
+        </ng-custom-select-loading>
+
+        <!-- <app-select-form
           [form]="form"
           [readonly]="statusActaValue !== 'ABIERTA'"
           formField="goodId"
@@ -12,9 +25,8 @@
           [haveTodos]="false"
           [getListObservable]="goodsList"
           (selectEvent)="selectedGood = $event"
-          [(paramsFilter)]="paramsGoods"></app-select-form>
+          [(paramsFilter)]="paramsGoods"></app-select-form> -->
         <button
-          [disabled]="statusActaValue !== 'ABIERTA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="addGood()">
@@ -29,9 +41,9 @@
         (selectRow)="addGood($event)">
       </app-goods-table-shared> -->
     </div>
-    <div class="col-md-4 mb-3" style="text-align: center">
+    <div class="col-md-5 mb-3" style="text-align: center; padding-right: 0px">
       <app-update-dates-goods
-        [disabled]="statusActaValue !== 'ABIERTA' && data && data.length > 0"
+        [disabled]="!data || data.length === 0"
         [data]="data"
         (updateGoodEvent)="
           selectedsForUpdate = $event; updateGoods()
@@ -41,11 +53,7 @@
       <form-field
         class="col-xs-10"
         [control]="form.get('action')"
-        [class]="
-          statusActaValue !== 'ABIERTA' || rowsSelected.length === 0
-            ? 'disabled'
-            : ''
-        "
+        [class]="rowsSelectedNotLocal.length === 0 ? 'disabled' : ''"
         label="Cambio">
         <ng-select
           formControlName="action"
@@ -63,8 +71,7 @@
           class="btn btn-primary btn-sm active"
           [disabled]="
             form.get('action').value === null ||
-            statusActaValue !== 'ABIERTA' ||
-            rowsSelected.length === 0
+            rowsSelectedNotLocal.length === 0
           "
           (click)="openModals()">
           <i class="bx bx-list-plus bx-sm float-icon"></i>
@@ -72,4 +79,14 @@
       </div>
     </div>
   </div>
+  <!-- <div class="row mr-0 mt-5" style="justify-content: center">
+    <div class="col-md-6 mb-3" style="text-align: center">
+      <app-update-dates-goods
+        [disabled]="statusActaValue !== 'ABIERTA' || !data || data.length === 0"
+        [data]="data"
+        (updateGoodEvent)="
+          selectedsForUpdate = $event; updateGoods()
+        "></app-update-dates-goods>
+    </div>
+  </div> -->
 </form>

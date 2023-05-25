@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { takeUntil } from 'rxjs';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   IDeleted,
@@ -40,8 +41,21 @@ export class ScheduledMaintenanceComponent
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
-      actions: { ...this.settings1.actions, delete: true },
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'left',
+        add: false,
+        edit: true,
+        delete: true,
+      },
     };
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+
+        this.getData();
+      },
+    });
     // console.log(this.settings1);
   }
 
@@ -183,6 +197,9 @@ export class ScheduledMaintenanceComponent
         dataObservableId: this.service.getByGoodId,
         searchFilter: null,
         showError: false,
+        initialCharge: false,
+        widthButton: true,
+        placeholder: '',
       },
       this.selectActa
     );

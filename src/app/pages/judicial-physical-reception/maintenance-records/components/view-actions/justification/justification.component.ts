@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { MaintenanceRecordsService } from '../../../services/maintenance-records.service';
 import { IProceedingInfo } from '../../proceeding-info/models/proceeding-info';
 import { AlertButton } from './../../../../scheduled-maintenance-1/models/alert-button';
@@ -11,24 +12,16 @@ import { AlertButton } from './../../../../scheduled-maintenance-1/models/alert-
   templateUrl: './justification.component.html',
   styles: [
     `
-      .justificationText {
-        margin-left: 15px;
-      }
       .justificationButton {
         align-items: center;
         justify-content: center;
         display: flex;
       }
-      @media (max-width: 576px) {
-        .justificationText {
-          margin-left: 0px;
-        }
-      }
     `,
   ],
 })
 export class JustificationComponent extends AlertButton implements OnInit {
-  form: FormGroup;
+  // form: FormGroup;
   loading = false;
   constructor(
     private fb: FormBuilder,
@@ -36,37 +29,63 @@ export class JustificationComponent extends AlertButton implements OnInit {
     private proceedingService: ProceedingsDeliveryReceptionService
   ) {
     super();
-    this.form = this.fb.group({
+    this.service.formJustification = this.fb.group({
       usuario: [null, [Validators.required]],
-      userName: [null, [Validators.required]],
-      justification: [null, [Validators.required]],
+      userName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      justification: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
   ngOnInit(): void {}
 
+  changeUser(item: any) {
+    console.log(item);
+  }
+
+  get form() {
+    return this.service.formJustification;
+  }
+
   get formValue() {
-    return this.service.formValue;
+    return this.service.form;
   }
 
   get statusActa() {
-    return this.formValue ? this.formValue.statusActa : '';
+    return this.formValue
+      ? this.formValue.get('statusActa')
+        ? this.formValue.get('statusActa').value
+        : null
+      : null;
   }
 
   get id() {
-    return this.formValue ? this.formValue.id : '';
+    return this.formValue
+      ? this.formValue.get('id')
+        ? this.formValue.get('id').value
+        : null
+      : null;
   }
 
   get noExpediente() {
-    return this.formValue ? this.formValue.numFile : '';
+    return this.formValue
+      ? this.formValue.get('numFile')
+        ? this.formValue.get('numFile').value
+        : null
+      : null;
   }
 
   saveData() {
-    console.log(this.service.selectedAct);
+    console.log(this.service.selectedAct, this.service.formValue);
     this.proceedingService
       .update2(
         this.parseToIProceedingDeliveryReception(
-          this.formValue,
+          this.formValue.value,
           this.form.value
         )
       )
@@ -88,6 +107,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
                   this.id + '',
                   'Registro actualizado correctamente y correo enviado.'
                 );
+                this.form.reset();
               },
               error: () => {
                 this.onLoadToast(
@@ -97,9 +117,11 @@ export class JustificationComponent extends AlertButton implements OnInit {
                 );
               },
               complete: () => {
-                this.service.updateAct.emit('');
+                // this.service.updateAct.emit('');
               },
             });
+          console.log(response);
+          this.service.selectedAct.statusProceedings = this.statusActa;
         },
         error: err => {
           this.onLoadToast('error', this.id + '', 'No se pudo actualizar');
@@ -135,11 +157,11 @@ export class JustificationComponent extends AlertButton implements OnInit {
       captureDate: value.captureDate,
       numDelegation1: value.numDelegation1,
       numDelegation2: value.numDelegation2,
-      identifier: value.identifier,
+      identifier: value.identifier ? value.identifier.code : null,
       label: value.labelActa,
       universalFolio: value.universalFolio,
       numeraryFolio: value.numeraryFolio,
-      numTransfer: value.numTransfer,
+      numTransfer: value.numTransfer ? value.numTransfer.id : null,
       idTypeProceedings: value.idTypeProceedings,
       receiptKey: value.receiptKey,
       comptrollerWitness: value.comptrollerWitness,

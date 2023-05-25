@@ -92,7 +92,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       addresseeName: [
-        '',
+        this.infoRequest?.nameOfOwner || null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
@@ -101,7 +101,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       positionAddressee: [
-        '',
+        this.infoRequest?.holderCharge || null,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -110,30 +110,18 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       senderName: [
-        this.infoRequest.nameOfOwner,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(50),
-        ],
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderCharge: [
-        this.infoRequest.holderCharge,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(50),
-        ],
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       consistentIn: [
-        '',
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(1000),
-        ],
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
 
       paragraphInitial: [
@@ -147,59 +135,22 @@ export class NotifyAssetsImproprietyFormComponent
 
       clarification: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(1000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
 
       observations: [
-        this.dataClarifications2?.observations,
+        this.dataClarifications2?.observations || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
-      /*foundation: [
-        ' ',
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
-        ],
-      ], */
-
-      /*transmitterId: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
-      ], */
-
-      /*invoiceLearned: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ], */
-
-      /*worthAppraisal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ], */
-
-      /*jobClarificationKey: [
-        this.dataClarifications2.chatClarification.keyClarificationPaper,
-        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
-      ], */
-
       userAreaCaptures: [
-        this.dataClarifications2?.chatClarification?.areaUserCapture,
+        this.dataClarifications2?.chatClarification?.areaUserCapture || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
 
       webMail: [
-        ' ',
-        [
-          //Validators.required,
-          Validators.pattern(EMAIL_PATTERN),
-          Validators.maxLength(30),
-        ],
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
     });
   }
@@ -229,11 +180,7 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
-            if (this.typeClarifications == 2) {
-              this.oficioImprocedencia(); //Aclaración PGR tipo 2
-            } else {
-              this.aclaracionAsegurados(); //Aclaración PGR tipo 1
-            }
+            this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }
@@ -377,7 +324,7 @@ export class NotifyAssetsImproprietyFormComponent
       applicationId: this.idRequest,
       positionSender: this.clarificationForm.controls['senderCharge'].value,
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
-      consistentIn: this.clarificationForm.controls['consistentIn'].value,
+      consistentIn: this.clarificationForm.controls['observations'].value,
       managedTo: this.infoRequest.nameOfOwner,
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
@@ -567,6 +514,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   changeStatusAnswered() {
+    console.log('changeStatusAnswered()');
     this.loading = true;
     this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
       this.dataClarifications2.rejectNotificationId;
@@ -576,11 +524,14 @@ export class NotifyAssetsImproprietyFormComponent
         this.dataChatClarifications = data.data;
         this.updateChatClarification(this.dataChatClarifications[0]);
       },
-      error: error => {},
+      error: error => {
+        console.log('changeStatusAnswered() ERROR');
+      },
     });
   }
 
   updateChatClarification(chatClarifications: IChatClarifications) {
+    console.log('updateChatClarification()');
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
@@ -594,12 +545,14 @@ export class NotifyAssetsImproprietyFormComponent
       .subscribe({
         next: async data => {
           if (data.clarificationTypeId == 1) {
+            console.log('updateAnsweredAcla() TIPO 1');
             this.updateAnsweredAcla(
               data.clarifiNewsRejectId,
               chatClarifications.id,
               modelChatClarifications.goodId
             );
           } else if (data.clarificationTypeId == 2) {
+            console.log('updateAnsweredAcla() TIPO 2');
             this.updateAnsweredImpro(
               data.clarifiNewsRejectId,
               chatClarifications.id,
@@ -608,6 +561,7 @@ export class NotifyAssetsImproprietyFormComponent
           }
         },
         error: error => {
+          console.log('NO SE PUDO ACTUALIZAR');
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
         },
       });
@@ -619,6 +573,7 @@ export class NotifyAssetsImproprietyFormComponent
     goodId?: number,
     observations?: string
   ) {
+    console.log('actualizando... 2');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
@@ -658,7 +613,7 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENCIA',
+      answered: 'EN ACLARACION',
       observations: observations,
     };
 

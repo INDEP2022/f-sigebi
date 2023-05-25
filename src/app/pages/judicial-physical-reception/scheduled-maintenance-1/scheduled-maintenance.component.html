@@ -26,7 +26,26 @@
           <!-- <app-proceeding-types-shared
             [form]="form"></app-proceeding-types-shared> -->
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4" style="display: flex">
+          <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
+            <input
+              bsDaterangepicker
+              class="form-control form-date"
+              formControlName="rangeDate"
+              readonly
+              [maxDate]="hoy" />
+          </form-field>
+          <div
+            *ngIf="rangeDateValue !== null"
+            class="deleteDate"
+            (click)="deleteRange()">
+            x
+          </div>
+          <!-- <button class="btn btn-primary btn-xs active" type="submit" size="small" (click)="deleteRange()">
+            x
+          </button> -->
+        </div>
+        <!-- <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
             <input
               bsDatepicker
@@ -46,7 +65,7 @@
               readonly
               formControlName="fechaFin" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-2">
           <form-field
             [control]="form.get('statusEvento')"
@@ -130,6 +149,14 @@
           <!-- <app-elaborate-users-shared
             [form]="form"></app-elaborate-users-shared> -->
         </div>
+        <div class="col-md-12 mt-4">
+          <form-field [control]="form.get('claveActa')" label="Programación">
+            <input
+              class="form-control"
+              formControlName="claveActa"
+              maxlength="75" />
+          </form-field>
+        </div>
       </div>
 
       <div class="action-buttons">
@@ -152,7 +179,7 @@
             size="small"
             (click)="openModalActas()">
             <i class="bx bx-search float-icon"></i>
-            Buscar Bien en Acta
+            Buscar Bien en Actas
           </button>
         </div>
       </div>
@@ -163,24 +190,26 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Programaciones</h5>
-    <div class="mt-2 righButtons">
-      <app-columns-select
-        [(settings)]="settings1"
-        [defaultColumns]="5"></app-columns-select>
-      <button
-        class="btn btn-primary btn-sm active"
-        type="submit"
-        size="small"
-        [disabled]="selecteds.length === 0"
-        (click)="deleteProgramations()">
-        <i class="bx bx-trash float-icon"></i>
-        Borrar Programaciones
-      </button>
-    </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="mt-2 righButtons">
+        <app-columns-select
+          [(settings)]="settings1"
+          [defaultColumns]="5"></app-columns-select>
+        <button
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          size="small"
+          [disabled]="selecteds.length === 0"
+          (click)="deleteProgramations()">
+          <i class="bx bx-trash float-icon"></i>
+          Borrar Programaciones
+        </button>
+      </div>
+    </div>
     <div class="row pt-4">
-      <div class="col-md-12 scheduledTable">
+      <div class="form-material col-md-12 scheduledTable">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             class="col-md-12 table-responsive"

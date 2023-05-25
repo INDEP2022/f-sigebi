@@ -25,9 +25,67 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     this.microservice = ProceedingsEndpoints.BasePath;
   }
 
-  getExpedients(id: string) {
+  private getColumnByAreaTramite(area: string, item: IGoodsByProceeding) {
+    switch (area) {
+      case 'RF':
+        return item.clave_dictamen;
+      case 'DV':
+        return item.clave_acta_devolucion;
+      // case 'DS':
+      //   return item.clave_acta_destruccion;
+      // case 'CM':
+      //   return item.cve_evento;
+      // case 'DN':
+      //   return item.cve_dic_donacion;
+      default:
+        return item.clave_acta_destruccion;
+    }
+  }
+
+  getGoodByRastrer(
+    goods: number[],
+    action: string,
+    typeProceeding: string,
+    good: IGoodsByProceeding
+  ) {
+    return this.post<IListResponse<IGoodsByProceeding>>(
+      'aplication/get-goods-indicators',
+      { goods, action, typeProceeding }
+    ).pipe(
+      map(items => {
+        // debugger;
+        let dictamenes = [
+          ...new Set(
+            items.data.map(item => this.getColumnByAreaTramite(action, item))
+          ),
+        ];
+        let expedientes = [
+          ...new Set(items.data.map(item => item.no_expediente)),
+        ];
+        let bienes = 0;
+        const data = items.data.map(item => {
+          bienes += +(item.cantidad + '');
+          return {
+            ...item,
+            fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
+            fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+            agregado: 'RA',
+          };
+        });
+        return {
+          ...items,
+          data,
+          expedientes: expedientes.length,
+          dictamenes: dictamenes.length,
+          bienes,
+        };
+      })
+    );
+  }
+
+  getExpedients(id: string, typeEvent: string) {
     return this.get<{ count: { count: string }[] }>(
-      this.endpoint + '/getCountExpedient/' + id + '/ENTREGA'
+      `${this.endpoint}/getCountExpedient/${id}/${typeEvent}`
     ).pipe(
       map(x => {
         return x.count[0].count ?? 0;
@@ -42,26 +100,62 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     }>(this.endpoint, model);
   }
 
-  deleteMasive(
-    selecteds: IGoodsByProceeding[],
-    processingArea: string,
-    numberProceedings: number
-  ) {
+  createMassive(selecteds: IDetailProceedingsDeliveryReception[]) {
     return forkJoin(
       selecteds.map(selected => {
-        return this.deleteByIdBP(
-          numberProceedings,
-          processingArea,
-          selected
-        ).pipe(
+        // selected.numberGood
+        delete selected.good;
+        delete selected.description;
+        delete selected.status;
+        delete selected.warehouse;
+        delete selected.vault;
+        return this.create(selected).pipe(
           map(item => {
-            return { deleted: selected.no_bien } as IDeleted;
+            return { deleted: selected.good.id } as IDeleted;
           }),
-          catchError(err => of({ error: selected.no_bien } as INotDeleted))
+          catchError(err => of({ error: selected.good.id } as INotDeleted))
         );
       })
     );
   }
+
+  deleteMassiveByIds(selecteds?: IDetailProceedingsDeliveryReception[]) {
+    return forkJoin(
+      selecteds.map(selected =>
+        this.deleteById(selected.good.goodId, selected.numberProceedings).pipe(
+          map(item => {
+            return { deleted: selected.good.goodId } as IDeleted;
+          }),
+          catchError(err => of({ error: selected.good.goodId } as INotDeleted))
+        )
+      )
+    );
+  }
+
+  // deleteById(numberGood: number, numberProceedings: number) {
+  //   return this.delete(this.endpoint, { numberGood, numberProceedings });
+  // }
+
+  // deleteMasive(
+  //   selecteds: IGoodsByProceeding[],
+  //   processingArea: string,
+  //   numberProceedings: number
+  // ) {
+  //   return forkJoin(
+  //     selecteds.map(selected => {
+  //       return this.deleteByIdBP(
+  //         numberProceedings,
+  //         processingArea,
+  //         selected
+  //       ).pipe(
+  //         map(item => {
+  //           return { deleted: selected.no_bien } as IDeleted;
+  //         }),
+  //         catchError(err => of({ error: selected.no_bien } as INotDeleted))
+  //       );
+  //     })
+  //   );
+  // }
 
   update(detail: IDetailProceedingsDeliveryReception) {
     return this.put(this.endpoint, {
@@ -100,19 +194,26 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
   deleteByIdBP(
     actaNumber: number,
     processingArea: string,
-    detail: IGoodsByProceeding
+    detail: IGoodsByProceeding,
+    contEli: number
   ) {
     const body: PBDelete = {
-      actaNumber,
-      goodNumber: +detail.no_bien,
-      states: detail.estatus,
+      contEli,
+      aggregate: 'AE',
+      selEli: 1,
       processingArea,
+      states: detail.estatus,
       user: localStorage.getItem('username'),
+      actaNumber,
     };
-    return this.post(
-      this.endpoint + '/' + ProceedingsEndpoints.DeleteProceedinGood,
-      { body }
-    );
+    //   actaNumber,
+    //   goodNumber: +detail.no_bien,
+    //   states: detail.estatus,
+    //   processingArea,
+    //   user: localStorage.getItem('username'),
+    //   contEli
+    // };
+    return this.post(ProceedingsEndpoints.DeleteProceedinGood, body);
   }
 
   deleteById(numberGood: number, numberProceedings: number) {
@@ -151,19 +252,21 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
           data: items.data.map(item => {
             return {
               ...item,
-              description: item.good.description,
-              approvedDateXAdmon: formatForIsoDate(
-                item.approvedDateXAdmon + '',
-                'string'
-              ),
-              approvedUserXAdmon: item.approvedUserXAdmon,
-              dateIndicatesUserApproval: formatForIsoDate(
-                item.dateIndicatesUserApproval + '',
-                'string'
-              ),
-              status: item.good.status,
-              warehouse: item.good.storeNumber,
-              vault: item.good.vaultNumber,
+              description: item.good?.description ?? '',
+              approvedDateXAdmon: item.approvedDateXAdmon
+                ? formatForIsoDate(item.approvedDateXAdmon + '', 'string')
+                : null,
+              approvedUserXAdmon: item.approvedUserXAdmon ?? null,
+              dateIndicatesUserApproval: item.dateIndicatesUserApproval
+                ? formatForIsoDate(
+                    item.dateIndicatesUserApproval + '',
+                    'string'
+                  )
+                : null,
+              // amount: item.good.quantity,
+              status: item.good?.status ?? null,
+              warehouse: item.good?.storeNumber ?? null,
+              vault: item.good?.vaultNumber ?? null,
             };
           }),
         };

@@ -21,6 +21,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     this._statusActaValue = value;
     this.updateSettingsGoods();
   }
+  @Input() override loading = false;
   @Input() haveDelete = true;
   @Input() data: any[] = [];
   @Input() totalItems: number = 0;
@@ -29,6 +30,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   @Output() rowsSelected = new EventEmitter();
   @Output() updateGoodsRow = new EventEmitter();
   @Output() showDeleteAlert = new EventEmitter();
+  count = 0;
   private _statusActaValue: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor() {
@@ -38,7 +40,10 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       // console.log(x);
-      this.updateData.emit(params);
+      if (this.count > 0) {
+        this.updateData.emit(params);
+      }
+      this.count++;
     });
   }
 

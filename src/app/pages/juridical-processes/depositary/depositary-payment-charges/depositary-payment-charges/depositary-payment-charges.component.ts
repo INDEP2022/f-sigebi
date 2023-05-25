@@ -1,19 +1,24 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IBank } from 'src/app/core/models/catalogs/bank.model';
 import { IRefPayDepositary } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { NgSelectElementComponent } from 'src/app/shared/components/select-element-smarttable/ng-select-element';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import * as XLSX from 'xlsx';
-import { COLUMNS } from './columns';
+import { COLUMNS, COLUMNS_EXTRAS } from './columns';
 
 @Component({
   selector: 'app-depositary-payment-charges',
@@ -43,20 +48,24 @@ export class DepositaryPaymentChargesComponent
 
   totalItems: number = 0;
   options: any[];
-
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-
   loadItemsJson: IRefPayDepositary[] = [];
   ItemsJson: IRefPayDepositary[] = [];
   itemsJsonInterfaz: IRefPayDepositary[] = [];
   ExcelData: any;
   @Input() toggle: EventEmitter<any> = new EventEmitter();
 
+  users$ = new DefaultSelect<ISegUsers>();
+  formgetCveBank: string;
+  formgetCodeBank: number;
+
   constructor(
     private fb: FormBuilder,
     private Service: MsDepositaryPaymentService,
     private router: Router,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private usersService: UsersService,
+    private bankService: BankService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -77,20 +86,18 @@ export class DepositaryPaymentChargesComponent
       ...this.settings,
       actions: false,
       columns: {
+        ...COLUMNS,
         sent_oi: {
           title: 'Valido',
           sort: false,
           type: 'custom',
           showAlways: true,
-          /*
-            valuePrepareFunction: (isSelected:string, row:any) =>
-              this.isSelectedValid(row),*/
           renderComponent: NgSelectElementComponent,
           onComponentInitFunction: (instance: NgSelectElementComponent) => (
             (instance.data = this.options), this.onSelectValid(instance)
           ),
         },
-        ...COLUMNS,
+        ...COLUMNS_EXTRAS,
       },
     };
   }
@@ -117,13 +124,10 @@ export class DepositaryPaymentChargesComponent
    */
   private buildForm() {
     this.form = this.fb.group({
-      numberGood: [null, [Validators.required]],
-      event: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      cve_bank: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      loand: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      numberGood: [null, null],
+      event: [null, null],
+      cve_bank: [null, null],
+      loand: [null, null],
     });
   }
 
@@ -181,20 +185,42 @@ export class DepositaryPaymentChargesComponent
   }
 
   ReadExcel(event: any) {
-    let file = event.target.files[0];
+    if (
+      this.formgetCveBank !== null &&
+      this.formgetCveBank !== '' &&
+      this.formgetCveBank !== undefined
+    ) {
+      let file = event.target.files[0];
+      let fileReader = new FileReader();
+      fileReader.readAsBinaryString(file);
 
-    let fileReader = new FileReader();
-    fileReader.readAsBinaryString(file);
+      fileReader.onload = e => {
+        var workbook = XLSX.read(fileReader.result, { type: 'binary' });
+        var buffer = new Buffer(fileReader.result.toString());
+        var string = buffer.toString('base64');
+        var sheetNames = workbook.SheetNames;
 
-    fileReader.onload = e => {
-      var workbook = XLSX.read(fileReader.result, { type: 'binary' });
-      var buffer = new Buffer(fileReader.result.toString());
-      var string = buffer.toString('base64');
-      console.log('workbook => ' + string);
-      var sheetNames = workbook.SheetNames;
-      this.ExcelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      console.log(this.ExcelData);
-    };
+        this.ExcelData = XLSX.utils.sheet_to_json(
+          workbook.Sheets[sheetNames[0]]
+        );
+        this.data = [];
+
+        this.data = this.ExcelData.map((data: any) =>
+          this.setDataTableFromExcel(data)
+        );
+
+        console.log(
+          '1 =>> ' + JSON.stringify(this.setDataTableFromExcel(this.ExcelData))
+        );
+        console.log('2 =>> ' + JSON.stringify(this.data[0]));
+      };
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Información',
+        'Necesita Indicar de que Banco va a cargar datos'
+      );
+    }
   }
 
   btnPaymentDispersion() {
@@ -223,9 +249,6 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
 
   onSearch() {
     this.cleanFild();
-    // alert(this.form.get('numberGood').value);
-    // console.warn(JSON.stringify(this.loadItemsJson));
-
     this.ItemsJson = this.loadItemsJson.filter(
       X => X.noGood === this.form.get('numberGood').value
     );
@@ -244,9 +267,52 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
   }
 
   cleanFild() {
-    alert('Limpia');
     this.form.get('event').setValue('');
     this.form.get('cve_bank').setValue('');
     this.form.get('loand').setValue('');
+  }
+
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers($params).subscribe();
+  }
+
+  getAllUsers(params: ListParams) {
+    return this.bankService.getAll(params).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+
+  /*   Evento que se ejecuta para llenar los campos con el nombre de los destinatarios
+========================================================================================*/
+  getDescUser(event: IBank) {
+    this.formgetCveBank = event.bankCode;
+    this.formgetCodeBank = event.code;
+  }
+
+  setDataTableFromExcel(excelData: any) {
+    return {
+      movementNumber: excelData.MOV,
+      movement: excelData.ABONO,
+      sucursal: excelData.sucursal,
+      referenceori: excelData.REFERENCIA,
+      date: this.milisegundoToDate(excelData.FECHA),
+    };
+  }
+
+  milisegundoToDate(milis: any) {
+    let fecha = new Date(milis);
+    return (
+      fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate()
+    );
   }
 }

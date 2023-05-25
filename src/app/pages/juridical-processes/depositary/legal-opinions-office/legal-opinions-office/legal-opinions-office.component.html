@@ -1,8 +1,38 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Oficio de dictaminaciones jur&iacute;dicas</h5>
+    <h5 *ngIf="!origin && !showSearchAppointment" class="title">
+      OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS
+    </h5>
+    <div class="row w-100" *ngIf="origin || showSearchAppointment">
+      <div class="col-12 col-sm-12 col-md-6">
+        <h5 class="title">OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS</h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-6 text-end">
+        <!-- <button
+          *ngIf="dictationData && !showSearchAppointment"
+          class="btn btn-danger active btn-sm m-2"
+          (click)="cleanDataForm()">
+          Limpiar Campos
+          <i class="fas fa-trash-alt"></i>
+        </button> -->
+        <button
+          *ngIf="!showSearchAppointment"
+          class="btn btn-primary active btn-sm m-2"
+          (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
   </div>
-  <div body>
+  <div body *ngIf="showSearchAppointment">
+    <app-legal-opinions-office-find-appointment
+      (continueEmitter)="continueSearchAppoinment($event)"
+      (cancelEmitter)="
+        cancelEventSearch($event)
+      "></app-legal-opinions-office-find-appointment>
+  </div>
+  <div body *ngIf="!showSearchAppointment">
     <div class="row">
       <div
         class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
@@ -17,49 +47,102 @@
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p2">
         <form [formGroup]="form" class="container-fluid form-material p-0">
           <div class="card">
-            <div class="card-header text-dark">
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('file')"
-                label="Expediente">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="file" />
-              </form-field>
-              <form-field
-                class="col-sm-12 col-12 col-md-4 p-2"
-                [control]="form.get('numberOfficeDic')"
-                label="No Oficio Dic&#46;">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="numberOfficeDic" />
-              </form-field>
-              <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+            <div class="card-header text-dark row">
+              <div class="col-sm-4 col-12 col-md-6 p-2 text-wrap">
                 <button
                   type="button"
                   class="btn btn-primary btn-sm active"
-                  (click)="btnSearchAppointment()">
-                  Buscar
+                  (click)="anotherSearchAppointment()">
+                  Buscar Dictaminaciones
                   <i aria-hidden="true" class="fa fa-search text-pink"></i>
                 </button>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6 p-2 text-end text-wrap">
+                <button
+                  class="btn btn-danger active btn-sm m-2"
+                  (click)="cleanDataForm()">
+                  Limpiar Campos
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+                <!-- <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="saveDataForm()">
+                  Guardar
+                  <i aria-hidden="true" class="fa fa-save"></i>
+                </button> -->
               </div>
             </div>
             <div class="card-body">
               <div class="col-sm-12 col-12 col-md-6 p-2">
-                <form-field
+                <div class="col-sm-12 col-12 col-md-12 p-2 text-wrap">
+                  <label> Cve&#46; Oficio Armada&#58;&nbsp; </label>
+                  <br />
+                  <span *ngIf="dictationData" class="fs-4"
+                    >&nbsp;{{ dictationData.passOfficeArmy }}</span
+                  >
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2 text-wrap">
+                  <label> Expediente&#58;&nbsp; </label>
+                  <span *ngIf="dictationData" class="fs-4"
+                    >&nbsp;{{ dictationData.expedientNumber }}</span
+                  >
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2 text-wrap">
+                  <label> No&#46; Oficio Dic&#46;&#58;&nbsp; </label>
+                  <span *ngIf="dictationData" class="fs-4"
+                    >&nbsp;{{ dictationData.id }}</span
+                  >
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-2">
+                  <strong>Estatus Oficio&#58;</strong>
+                  <ng-container *ngIf="officeDictationData; else noStatus">
+                    <div
+                      class="badge badge-pill text-wrap ml-2 mr-2"
+                      [ngClass]="
+                        officeDictationData.statusOf == 'ENVIADO'
+                          ? 'bg-success'
+                          : 'bg-info'
+                      ">
+                      &#91;&nbsp;{{ officeDictationData.statusOf }}&nbsp;&#93;
+                    </div>
+                  </ng-container>
+                  <ng-template #noStatus>
+                    <!-- <div class="badge badge-pill bg-default text-wrap ml-2 mr-2">
+                    &#91;Aquí va el Estatus&#93;
+                  </div> -->
+                  </ng-template>
+                </div>
+                <!-- <form-field
                   class="col-sm-12 col-12 col-md-12 p-2"
                   [control]="form.get('cveOfficeGenerate')"
-                  label="Cve Oficio Armada">
+                  label="Cve&#46; Oficio Armada">
                   <input
                     type="text"
                     class="form-control"
                     formControlName="cveOfficeGenerate" />
-                </form-field>
+                </form-field> -->
+                <!-- <form-field
+                  class="col-sm-12 col-12 col-md-6 p-2"
+                  [control]="form.get('file')"
+                  label="Expediente">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="file" />
+                </form-field> -->
+                <!-- <form-field
+                  class="col-sm-12 col-12 col-md-6 p-2"
+                  [control]="form.get('numberOfficeDic')"
+                  label="No&#46; Oficio Dic&#46;">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="numberOfficeDic" />
+                </form-field> -->
                 <form-field
                   *ngIf="showEnableTypeOffice"
-                  class="col-sm-12 col-12 col-md-12 p-2"
+                  class="col-sm-12 col-12 col-md-12 p-2 mt-4"
                   [control]="form.get('typeOffice')"
                   label="Tipo Oficio">
                   <select
@@ -74,26 +157,6 @@
                     </option>
                   </select>
                 </form-field>
-                <div class="col-sm-12 col-12 col-md-12 p-2">
-                  <strong>Estatus oficio:</strong>
-                  <ng-container *ngIf="officeDictationData; else noStatus">
-                    <div
-                      class="badge badge-pill text-wrap ml-2 mr-2"
-                      [ngClass]="
-                        officeDictationData.statusOf == 'ENVIADO'
-                          ? 'bg-success'
-                          : 'bg-info'
-                      ">
-                      &#91;&nbsp;{{ officeDictationData.statusOf }}&nbsp;&#93;
-                    </div>
-                  </ng-container>
-                  <ng-template #noStatus>
-                    <div
-                      class="badge badge-pill bg-default text-wrap ml-2 mr-2">
-                      &#91;Aquí va el estatus&#93;
-                    </div>
-                  </ng-template>
-                </div>
               </div>
               <div class="col-sm-12 col-12 col-md-6 p-2">
                 <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -279,6 +342,11 @@
               <div class="col-12 col-sm-12 col-md-12">
                 <h6>C.C.P.</h6>
               </div>
+              <!-- <ng-container formArrayName="formCopiesTo">
+                <ng-container *ngFor="let copiesTo of formCopiesTo.controls; let n=index">
+  
+                </ng-container>
+              </ng-container> -->
               <form-field
                 class="col-sm-12 col-12 col-md-4 p-2"
                 [control]="form.get('ccp_person')"
@@ -389,13 +457,18 @@
         de <strong> {{ totalData }}</strong
         >, Espere un momento...
       </div>
+      <div class="col-md-12 alert alert-warning" *ngIf="loadDetail">
+        Realizando el proceso "Detalle" para mostrar el Reporte correspondiente,
+        Espere un momento...
+      </div>
       <div class="col-sm-12 col-12 col-md-12 text-center">
         <!-- <button type="button" class="btn btn-primary btn-sm active m-3">
           Reporte
           <i class="fa fa-file" aria-hidden="true"></i>
         </button> -->
         <button
-          [disabled]="loadingSend"
+          [disabled]="loadingSend || loadDetail"
+          (click)="btnDetail()"
           type="button"
           class="btn btn-info btn-sm active m-3">
           Detalle
@@ -403,7 +476,7 @@
           <!-- <i class="fa fa-info-circle" aria-hidden="true"></i> -->
         </button>
         <button
-          [disabled]="loadingSend"
+          [disabled]="loadingSend || blockSender || loadDetail"
           type="button"
           class="btn btn-success btn-sm active m-3"
           (click)="sendOffice()">
@@ -423,7 +496,7 @@
               [officeDictationData]="officeDictationData"
               [dictationData]="dictationData"
               [dataUserLogged]="dataUserLogged"
-              [disabled]="loadingSend"
+              [disabled]="loadingSend || loadDetail"
               (viewPicturesEmitter)="viewPictures($event)"></app-scanning-foil>
           </div>
         </div>

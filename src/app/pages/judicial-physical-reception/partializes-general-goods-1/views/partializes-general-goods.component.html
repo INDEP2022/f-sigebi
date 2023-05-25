@@ -5,7 +5,8 @@
     </h5>
   </div>
   <div body>
-    <div class="md-tabs">
+    <div id="partializes-general-goods">
+      <form-loader *ngIf="pageLoading" [greater]="true"></form-loader>
       <app-partialize-view [version]="version"></app-partialize-view>
 
       <!-- <tabset>
