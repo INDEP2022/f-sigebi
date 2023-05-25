@@ -9,11 +9,11 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { PersonFormComponent } from '../person-form/person-form.component';
 import { PERSON_COLUMNS } from './person-columns';
-import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 @Component({
   selector: 'app-person-list',
@@ -96,17 +96,17 @@ export class PersonListComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         if (response.data != null) {
-          this.getEntFed(response).then(() => {
-            this.getTurn();
-          }).catch((error) => {
-            console.error('Ocurrió un error al ejecutar el bucle:', error);
-            this.data.load([]);
-            this.data.refresh();
-            this.loading = false;
-            this.totalItems = response.count;
-          });
-
-
+          this.getEntFed(response)
+            .then(() => {
+              this.getTurn();
+            })
+            .catch(error => {
+              console.error('Ocurrió un error al ejecutar el bucle:', error);
+              this.data.load([]);
+              this.data.refresh();
+              this.loading = false;
+              this.totalItems = response.count;
+            });
         } else {
           this.data.load([]);
           this.data.refresh();
@@ -116,7 +116,6 @@ export class PersonListComponent extends BasePage implements OnInit {
       },
       error: error => (this.loading = false),
     });
-
   }
   async getEntFed(response: any): Promise<void> {
     for (let i = 0; i < response.data.length; i++) {
@@ -130,17 +129,17 @@ export class PersonListComponent extends BasePage implements OnInit {
             response.data[i].DetEntFed = resp.data[0].otvalor;
             if (i == response.data.length - 1) {
               this.person = response.data;
-              this.totalItems = response.count;;
+              this.totalItems = response.count;
             }
           },
-          error: erro => (console.log(erro))
-        })
+          error: erro => console.log(erro),
+        });
       }
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
   }
   async getTurn(): Promise<void> {
-    console.log(this.person.length)
+    console.log(this.person.length);
     for (let i = 0; i < this.person.length; i++) {
       const params = new ListParams();
       params['filter.nmtable'] = `$eq:8`;
@@ -157,15 +156,15 @@ export class PersonListComponent extends BasePage implements OnInit {
               this.loading = false;
             }
           },
-          error: erro => (console.log(erro))
-        })
+          error: erro => console.log(erro),
+        });
       } else if (i == this.person.length - 1) {
         console.log(this.person);
         this.data.load(this.person);
         this.data.refresh();
         this.loading = false;
       }
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
   }
   openForm(person?: IPerson) {

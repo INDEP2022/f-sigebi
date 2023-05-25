@@ -49,4 +49,11 @@ export class EmailService extends HttpService {
   deleteEmailBook(id: any) {
     return this.delete(`${EmailEndPoint.VigMailBook}/${id}`);
   }
+
+  createEmailProgramming(data: any) {
+    const formData = new FormData();
+    formData.append('data', data);
+    //formData.append('files', documentProgramming);
+    return this.post(`${EmailEndPoint.EmailProgramming}`, formData);
+  }
 }

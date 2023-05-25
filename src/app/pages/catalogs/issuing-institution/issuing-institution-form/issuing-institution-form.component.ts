@@ -6,11 +6,12 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IInstitutionClassification } from 'src/app/core/models/catalogs/institution-classification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ICitys, IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
+import {
+  ICitys,
+  IIssuingInstitution,
+} from '../../../../core/models/catalogs/issuing-institution.model';
 import { STRING_PATTERN } from '../../../../core/shared/patterns';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
-import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
-import { ICity } from 'src/app/core/models/catalogs/city.model';
 
 @Component({
   selector: 'app-issuing-institution-form',
@@ -19,7 +20,8 @@ import { ICity } from 'src/app/core/models/catalogs/city.model';
 })
 export class IssuingInstitutionFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   issuingInstitutionForm: ModelForm<IIssuingInstitution>;
   issuingInstitution: IIssuingInstitution;
   title: string = 'Institución Emisora';
@@ -66,29 +68,32 @@ export class IssuingInstitutionFormComponent
     });
     if (this.issuingInstitution != null) {
       this.edit = true;
-      this.issuingInstitutionForm.patchValue(
-        this.issuingInstitution
-      );
+      this.issuingInstitutionForm.patchValue(this.issuingInstitution);
       if (this.issuingInstitution.numCity) {
         let city = this.issuingInstitution.numCity as ICitys;
         console.log(city);
         this.issuingInstitution.numCity = city.numberCity;
         this.issuingInstitutionForm.controls['numCity'].setValue(
-          this.issuingInstitution.numCity = city.numberCity
+          (this.issuingInstitution.numCity = city.numberCity)
         );
       }
       console.log(this.issuingInstitutionForm.value);
       console.log(this.issuingInstitution);
 
-
       this.issuingInstitutionForm.controls['numClasif'].setValue(
         this.idInstitute.id
       );
       this.issuingInstitution.numCity
-        ? this.getFromSelectCity(new ListParams(), this.issuingInstitution.numCity.toString())
+        ? this.getFromSelectCity(
+            new ListParams(),
+            this.issuingInstitution.numCity.toString()
+          )
         : this.getFromSelectCity(new ListParams());
       this.issuingInstitution.numTransference
-        ? this.getFromSelectTransfer(new ListParams(), this.issuingInstitution.numTransference.toString())
+        ? this.getFromSelectTransfer(
+            new ListParams(),
+            this.issuingInstitution.numTransference.toString()
+          )
         : this.getFromSelectTransfer(new ListParams());
     } else {
       this.issuingInstitutionForm.controls['numClasif'].setValue(

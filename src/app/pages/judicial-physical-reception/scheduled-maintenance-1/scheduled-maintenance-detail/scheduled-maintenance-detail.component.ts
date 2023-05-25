@@ -290,7 +290,7 @@ export class ScheduledMaintenanceDetailComponent
     this.initialValue = { ...this.form.value };
   }
 
-  return() {
+  back() {
     this.location.back();
   }
 
@@ -648,7 +648,7 @@ export class ScheduledMaintenanceDetailComponent
         if (item.agregado === 'AE') {
           this.loading = true;
           this.detailService
-            .deleteByIdBP(this.actaId, this.typeProceeding, item, 0)
+            .deleteByBP(this.actaId, this.typeProceeding, [item])
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe({
               next: response => {

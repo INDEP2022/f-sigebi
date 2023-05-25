@@ -11,6 +11,7 @@ import {
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
   ITmpDictationCreate,
+  ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
 
 @Injectable({
@@ -167,5 +168,9 @@ export class DictationService extends HttpService {
 
   deleteTmpDictation(id: number) {
     return this.delete(`${DictationEndpoints.TmpDictation}/${id}`);
+  }
+
+  createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
+    return this.post(DictationEndpoints.TmpExpDesahogoB, body);
   }
 }
