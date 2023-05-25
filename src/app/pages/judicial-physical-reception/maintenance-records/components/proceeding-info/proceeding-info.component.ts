@@ -20,6 +20,8 @@ export class ProceedingInfoComponent implements OnInit {
   @Input() set info(value: IProceedingDeliveryReception) {
     if (value) {
       const info = deliveryReceptionToInfo(value);
+      console.log(info, value);
+
       this.service.form.setValue(info);
       // this.service.formValue = info;
     }
