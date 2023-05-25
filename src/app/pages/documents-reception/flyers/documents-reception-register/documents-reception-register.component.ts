@@ -1935,7 +1935,6 @@ export class DocumentsReceptionRegisterComponent
         dictamen: false,
       };
     }
-    console.log(this.procedureId);
     this.router.navigate(['/pages/juridical/file-data-update'], {
       queryParams: { wheelNumber: this.wheelNumber.value },
     });

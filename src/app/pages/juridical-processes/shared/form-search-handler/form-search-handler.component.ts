@@ -130,6 +130,7 @@ export class FormSearchHandlerComponent
       this.loading = true;
       this.formData = {};
       this.formData['wheelNumber'] = wheelNumber;
+
       this.buildFilters();
     }
   }

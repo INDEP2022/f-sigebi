@@ -1,6 +1,6 @@
 /** BASE IMPORT */
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
@@ -33,7 +33,7 @@ export class FileDataUpdateComponent
   fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
     // private fb: FormBuilder,
-    // private activateRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     // private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
@@ -42,16 +42,20 @@ export class FileDataUpdateComponent
   ) {
     super();
   }
-
+  labelBtnRegisterWheel = 'Registro de volante';
+  wheelNumber: string | null = null;
   ngOnInit(): void {
-    //
+    this.wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
+    if (this.wheelNumber) {
+      this.labelBtnRegisterWheel = 'Regresar';
+    }
   }
 
   returnToFlyers() {
     this.docDataService.flyersRegistrationParams = {
       pGestOk: 0,
       pNoTramite: null,
-      pNoVolante: null,
+      pNoVolante: this.wheelNumber as any,
       noTransferente: null,
       pSatTipoExp: null,
       pIndicadorSat: null,
@@ -61,7 +65,7 @@ export class FileDataUpdateComponent
       queryParams: {
         pGestOk: 0,
         pNoTramite: null,
-        pNoVolante: null,
+        pNoVolante: this.wheelNumber,
         noTransferente: null,
         pSatTipoExp: null,
         pIndicadorSat: null,
