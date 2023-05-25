@@ -149,6 +149,14 @@
           <!-- <app-elaborate-users-shared
             [form]="form"></app-elaborate-users-shared> -->
         </div>
+        <div class="col-md-12 mt-4">
+          <form-field [control]="form.get('claveActa')" label="Programación">
+            <input
+              class="form-control"
+              formControlName="claveActa"
+              maxlength="75" />
+          </form-field>
+        </div>
       </div>
 
       <div class="action-buttons">
@@ -182,24 +190,26 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Programaciones</h5>
-    <div class="mt-2 righButtons">
-      <app-columns-select
-        [(settings)]="settings1"
-        [defaultColumns]="5"></app-columns-select>
-      <button
-        class="btn btn-primary btn-sm active"
-        type="submit"
-        size="small"
-        [disabled]="selecteds.length === 0"
-        (click)="deleteProgramations()">
-        <i class="bx bx-trash float-icon"></i>
-        Borrar Programaciones
-      </button>
-    </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="mt-2 righButtons">
+        <app-columns-select
+          [(settings)]="settings1"
+          [defaultColumns]="5"></app-columns-select>
+        <button
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          size="small"
+          [disabled]="selecteds.length === 0"
+          (click)="deleteProgramations()">
+          <i class="bx bx-trash float-icon"></i>
+          Borrar Programaciones
+        </button>
+      </div>
+    </div>
     <div class="row pt-4">
-      <div class="col-md-12 scheduledTable">
+      <div class="form-material col-md-12 scheduledTable">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             class="col-md-12 table-responsive"

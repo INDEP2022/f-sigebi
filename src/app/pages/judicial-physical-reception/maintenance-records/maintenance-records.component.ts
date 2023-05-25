@@ -148,7 +148,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
         //   this.getGoodByID(good.goodNumber);
         // });
         if (response) {
-          console.log(response);
+          console.log(response, this.infoForm);
           this.detailService
             .createMassive(
               response.map(item =>

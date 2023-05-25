@@ -17,4 +17,5 @@ export enum DictationEndpoints {
   CopiesOfficeSendDictation = 'application/copiasOficioDictamenEnviar',
   DocumentByDictation = 'r-dictation-doc',
   FindDescriptionOpinion = 'additional-queries/find-description-opinion',
+  TmpDictation = 'tmp-dictation',
 }

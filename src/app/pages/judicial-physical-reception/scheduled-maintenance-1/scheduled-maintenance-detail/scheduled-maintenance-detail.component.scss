@@ -21,17 +21,25 @@
   // }
 }
 
+.goodTracker {
+  text-align: left;
+}
+
+.massiveDelete {
+  text-align: right;
+}
+
 app-cants {
   margin-top: 10px;
 }
 
-.row {
-  > div {
-    @media screen and (max-width: 567px) {
-      padding-right: 0px;
-    }
-  }
-}
+// .row {
+//   >div {
+//     @media screen and (max-width: 567px) {
+//       padding-right: 0px;
+//     }
+//   }
+// }
 
 .action-buttons {
   @media screen and (max-width: 567px) {
