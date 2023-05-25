@@ -157,6 +157,12 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
+  getAtributeClassificationGoodFilter(params: string) {
+    return this.httpClient.get<IListResponse>(
+      `${environment.API_URL}goodsquery/api/v1/attributes-classification-good?${params}`
+    );
+  }
+
   getCatStoresView(_params: ListParams): Observable<IListResponse<any>> {
     const route = `goodsquery/api/v1/views/cat-store-view`;
     const params = this.makeParams(_params);

@@ -1,5 +1,5 @@
 export const COLUMNS_BIENES = {
-  goodId: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -32,13 +32,13 @@ export const COLUMNS_BIENES = {
 };
 
 export const COLUMNS_DOCUMENTS = {
-  cveDocumento: {
-    title: 'CVE',
+  key: {
+    title: 'CVE. Documento',
     type: 'string',
     sort: false,
   },
   description: {
-    title: 'Documentos',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

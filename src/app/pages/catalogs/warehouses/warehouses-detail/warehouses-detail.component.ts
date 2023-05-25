@@ -8,6 +8,7 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -28,7 +29,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   public cities = new DefaultSelect();
   public municipalities = new DefaultSelect();
   public localities = new DefaultSelect();
-
+  public type = new DefaultSelect();
   public get idWarehouse() {
     return this.warehouseForm.get('idWarehouse');
   }
@@ -42,12 +43,15 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     private stateService: StateOfRepublicService,
     private cityService: CityService,
     private municipalityService: MunicipalityService,
-    private localityService: LocalityService
+    private localityService: LocalityService,
+    private tvalTable1Service: TvalTable1Service
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.getStates(new ListParams());
+    this.getCities(new ListParams());
     this.prepareForm();
   }
 
@@ -68,17 +72,8 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
           Validators.required,
         ]),
       ],
-      manager: [
-        null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
-      ],
-      registerNumber: [
-        null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
-      ],
+      manager: [null, Validators.compose([Validators.pattern(STRING_PATTERN)])],
+      registerNumber: [null, Validators.compose([Validators.pattern('')])],
       stateCodeID: [
         null,
         Validators.compose([Validators.pattern(''), Validators.required]),
@@ -106,10 +101,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       ],
       responsibleDelegation: [
         null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-          Validators.required,
-        ]),
+        Validators.compose([Validators.pattern(STRING_PATTERN)]),
       ],
     });
     if (this.warehouse != null) {
@@ -124,29 +116,41 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       this.warehouseForm.controls['stateCodeID'].setValue(state.id);
       this.warehouseForm.controls['cityCode'].setValue(city.nameCity);
       this.warehouseForm.controls['cityCodeID'].setValue(city.idCity);
-      this.warehouseForm.controls['municipalityCode'].setValue(
-        municipality.nameMunicipality
-      );
-      this.warehouseForm.controls['municipalityCodeID'].setValue(
-        municipality.idMunicipality
-      );
-      this.warehouseForm.controls['localityCode'].setValue(
-        locality.nameLocation
-      );
-      this.warehouseForm.controls['localityCodeID'].setValue(locality.id);
       const { stateCode, cityCode, municipalityCode, localityCode } =
         this.warehouse;
-      console.log([stateCode.descCondition]);
+      if (municipality) {
+        this.warehouseForm.controls['municipalityCode'].setValue(
+          municipality.nameMunicipality
+        );
+        this.warehouseForm.controls['municipalityCodeID'].setValue(
+          municipality.idMunicipality
+        );
+        this.warehouseForm.controls['localityCode'].setValue(
+          locality.nameLocation
+        );
+        this.warehouseForm.controls['localityCodeID'].setValue(locality.id);
+        this.municipalities = new DefaultSelect(
+          [municipalityCode.nameMunicipality],
+          1
+        );
+        this.localities = new DefaultSelect([localityCode.nameLocation], 1);
+      } else {
+        this.getMunicipalitie(city);
+      }
       this.states = new DefaultSelect([stateCode.descCondition], 1);
       this.cities = new DefaultSelect([cityCode.nameCity], 1);
-      this.municipalities = new DefaultSelect(
-        [municipalityCode.nameMunicipality],
-        1
-      );
-      this.localities = new DefaultSelect([localityCode.nameLocation], 1);
+
+      if (this.warehouseForm.controls['type'].value) {
+        this.getType(
+          new ListParams(),
+          this.warehouseForm.controls['type'].value
+        );
+      }
     } else {
       this.warehouseForm.controls['indActive'].setValue(1);
+      this.getType(new ListParams());
     }
+    this.getType(new ListParams());
   }
 
   confirm() {
@@ -214,26 +218,65 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   }
 
   getStates(params: ListParams) {
-    this.stateService.getAll(params).subscribe(data => {
-      this.states = new DefaultSelect(data.data, data.count);
-    });
+    this.stateService.getAll(params).subscribe(
+      data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      error => (this.states = new DefaultSelect())
+    );
   }
-
-  getCities(params: ListParams) {
-    this.cityService.getAll(params).subscribe(data => {
+  getCitie(data: any) {
+    console.log(data);
+    this.localities = new DefaultSelect([], 0, true);
+    this.municipalities = new DefaultSelect([], 0, true);
+    this.cities = new DefaultSelect([], 0, true);
+    this.warehouseForm.controls['cityCode'].setValue(null);
+    this.warehouseForm.controls['municipalityCode'].setValue(null);
+    this.warehouseForm.controls['localityCode'].setValue(null);
+    this.getCities(new ListParams(), data.id);
+  }
+  getCities(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.state'] = `$eq:${id}`;
+    }
+    this.cityService.getAllCitys(params).subscribe(data => {
       this.cities = new DefaultSelect(data.data, data.count);
     });
   }
-
-  getMunicipalities(params: ListParams) {
+  getMunicipalitie(data: any) {
+    this.localities = new DefaultSelect([], 0, true);
+    this.warehouseForm.controls['municipalityCode'].setValue(null);
+    this.warehouseForm.controls['localityCode'].setValue(null);
+    this.getMunicipalities(new ListParams(), data.state);
+  }
+  getMunicipalities(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.stateKey'] = `$eq:${id}`;
+    }
     this.municipalityService.getAll(params).subscribe(data => {
       this.municipalities = new DefaultSelect(data.data, data.count);
     });
   }
-
-  getLocalities(params: ListParams) {
+  getLocalitie(data: any) {
+    console.log(data.stateKey);
+    this.warehouseForm.controls['localityCode'].setValue(null);
+    this.getLocalities(new ListParams(), data.stateKey);
+  }
+  getLocalities(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.municipalityId'] = `$eq:${id}`;
+    }
     this.localityService.getAll(params).subscribe(data => {
       this.localities = new DefaultSelect(data.data, data.count);
+    });
+  }
+  getType(params: ListParams, id?: string) {
+    params['filter.nmtable'] = `$eq:432`;
+    if (id) {
+      params['filter.otkey'] = `$eq:${id}`;
+    }
+    this.tvalTable1Service.getAlls(params).subscribe(data => {
+      this.type = new DefaultSelect(data.data, data.count);
     });
   }
 }

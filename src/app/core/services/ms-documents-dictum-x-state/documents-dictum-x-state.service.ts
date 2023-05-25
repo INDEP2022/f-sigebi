@@ -22,4 +22,8 @@ export class DocumentsDictumXStateService extends HttpService {
       params
     );
   }
+
+  create(data: any) {
+    return this.post(DocumentsEndpoints.DocumentsDictuXState, data);
+  }
 }

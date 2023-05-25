@@ -1,4 +1,5 @@
 /** BASE IMPORT */
+import { DatePipe } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -20,6 +21,7 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
 import { IDocumentsDictumXState } from 'src/app/core/models/ms-documents/documents-dictum-x-state.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
+import { IGoodParameter } from 'src/app/core/models/ms-good-parameter/good-parameter.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -27,6 +29,7 @@ import { DictationXGoodService } from 'src/app/core/services/ms-dictation/dictat
 import { DocumentsDictumXStateService } from 'src/app/core/services/ms-documents-dictum-x-state/documents-dictum-x-state.service';
 import { DocumentsRequestPerGoodService } from 'src/app/core/services/ms-documents-request-per-good/ms-documents-request-per-good.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -148,8 +151,17 @@ export class DocumentVerificationRevisionResourcesComponent
               if (!this.buffer(data.row)) {
                 instance.box.nativeElement.checked = false;
                 data.toggle = false;
+              } else {
+                this.createDoc(data.row);
               }
             } else {
+              for (let index = 0; index < this.dataTable.data.length; index++) {
+                const doc = this.dataTable.data[index];
+                if (data.row.id == doc.key) {
+                  this.removeDoc();
+                  break;
+                }
+              }
             }
           });
         },
@@ -191,11 +203,30 @@ export class DocumentVerificationRevisionResourcesComponent
     private readonly sanitizer: DomSanitizer,
     private readonly modalService: BsModalService,
     private readonly dictumForService: DocumentsForDictumService,
-    private readonly expedienteSer: ExpedientService
+    private readonly expedienteSer: ExpedientService,
+    private readonly parameter: GoodParametersService,
+    private readonly datePipe: DatePipe
   ) {
     super();
     this.dataTable.count = 0;
   }
+
+  createDoc(data: any) {
+    const dataSend = {
+      recordNumber: 0,
+      goodNumber: 0,
+      key: '',
+      typeDictum: '',
+      dateReceipt: '',
+      userReceipt: '',
+      insertionDate: '',
+      userInsertion: '',
+      numRegister: 0,
+      officialNumber: 0,
+    };
+  }
+
+  removeDoc() {}
 
   sumarDias(fecha: Date, dias: number) {
     fecha.setDate(fecha.getDate() + dias);
@@ -313,6 +344,8 @@ export class DocumentVerificationRevisionResourcesComponent
         [Validators.pattern(STRING_PATTERN)],
       ],
       cb_solicitar_doctos: [null],
+      proceedingsNumber: [null],
+      estatus_recurso_revision: [null],
     });
     this.formExp = this.fb.group({
       id: [null, Validators.required],
@@ -320,6 +353,8 @@ export class DocumentVerificationRevisionResourcesComponent
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       dateAgreementAssurance: [null],
       protectionKey: [null, Validators.required],
+      date_parameter: [null],
+      articulo_validado: [null],
     });
     this.formInforme = this.fb.group({
       id: [null],
@@ -379,6 +414,8 @@ export class DocumentVerificationRevisionResourcesComponent
               .join('-') as any;
           }
 
+          this.form.get('proceedingsNumber').patchValue(expedient.id);
+
           this.form.patchValue(good);
           this.form
             .get('descriptionStatus')
@@ -409,6 +446,8 @@ export class DocumentVerificationRevisionResourcesComponent
 
     this.dictaminationServ.getAllFilter(filter.getParams()).subscribe({
       next: resp => {
+        console.log('encontradoo', resp);
+
         this.form.get('di_situacion_bien').patchValue(resp.data[0].statusDict);
         this.form.get('di_fec_dictaminacion').patchValue(resp.data[0].dateDict);
       },
@@ -506,20 +545,18 @@ export class DocumentVerificationRevisionResourcesComponent
 
     for (let index = 0; index < this.dataTable.data.length; index++) {
       const element = this.dataTable.data[index];
-      if (element.key)
-        if (element.key) {
-          con_documentos = true;
-          break;
-        }
+      if (element.key) {
+        con_documentos = true;
+        break;
+      }
     }
 
     for (let index = 0; index < this.dataTable.data.length; index++) {
       const element = this.dataTable.data[index];
-      if (element.key)
-        if (!element.dateReceipt) {
-          no_recibidos = true;
-          break;
-        }
+      if (!element.dateReceipt) {
+        no_recibidos = true;
+        break;
+      }
     }
 
     if (con_documentos) {
@@ -537,10 +574,6 @@ export class DocumentVerificationRevisionResourcesComponent
             }
           }
         });
-        this.onLoadToast(
-          'info',
-          'Falta recibir documentación. ¿Desea proseguir con la aprobación del dictámen?'
-        );
       } else {
         this.onLoadToast('success', 'Operación realizada dictámen autorizado');
         this.form.get('di_fec_dictaminacion').patchValue(new Date());
@@ -564,6 +597,7 @@ export class DocumentVerificationRevisionResourcesComponent
       this.informes = true;
     }
   }
+
   btnSeleccionarDocumentos() {
     const now = new Date().valueOf();
     const { notifyRevRecDate, di_disponible, di_situacion_bien, goodId } =
@@ -607,6 +641,8 @@ export class DocumentVerificationRevisionResourcesComponent
                 }
               }
 
+              vquery = ['CVD', 'DFD'];
+
               if (
                 id &&
                 dateAgreementAssurance &&
@@ -614,10 +650,10 @@ export class DocumentVerificationRevisionResourcesComponent
                 di_situacion_bien != 'DICTAMINADO'
               ) {
                 this.activeBlocDoc = true;
-                this.getData();
+                this.getDataWihtVquery(vquery.join(', '));
               } else {
                 this.activeBlocDoc = true;
-                this.getData();
+                this.getDataNotVquery();
               }
             }
           }
@@ -626,9 +662,46 @@ export class DocumentVerificationRevisionResourcesComponent
     }
   }
 
-  getData() {
+  getDataNotVquery() {
     this.loadingDoc = true;
-    this.dictumForService.getAll(new ListParams()).subscribe({
+    const { proceedingsNumber, goodId } = this.form.value;
+    const data = {
+      proceedingsNumber,
+      goodNumber: goodId,
+    };
+
+    this.dictumForService.getAplication2(data).subscribe({
+      next: resp => {
+        this.loadingDoc = false;
+        this.dataTableDoc = resp;
+        this.doc.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      },
+      error: err => {
+        this.loadingDoc = false;
+        this.dataTableDoc.data = [];
+        this.dataTable.count = 0;
+        if (err.status == 404) {
+          this.onLoadToast('error', 'No se encontraron registros');
+        }
+      },
+    });
+  }
+
+  getDataWihtVquery(vc_query: string) {
+    this.loadingDoc = true;
+    const { proceedingsNumber, goodId } = this.form.value;
+    const data = {
+      proceedingsNumber,
+      goodNumber: goodId,
+      vc_query,
+    };
+
+    console.log(data);
+
+    this.dictumForService.getAplication1(data).subscribe({
       next: resp => {
         this.loadingDoc = false;
         this.dataTableDoc = resp;
@@ -659,9 +732,11 @@ export class DocumentVerificationRevisionResourcesComponent
       );
     }
   }
+
   btnSalirAutoridad() {
     this.autoridad = false;
   }
+
   btnEjecutarInformes() {
     const { id, goodId } = this.formInforme.value;
     this.onLoadToast('success', 'Generando reporte...', '');
@@ -705,5 +780,129 @@ export class DocumentVerificationRevisionResourcesComponent
   btnSalir() {
     this.formInforme.reset();
     this.informes = false;
+  }
+
+  async validateItem(date: Date) {
+    if (date) {
+      const dataResp = await this.readParameters();
+      if (dataResp) {
+        if (date) {
+          this.formExp
+            .get('articulo_validado')
+            .patchValue(
+              this.convertDate(date) <= this.convertDate(dataResp.initialValue)
+                ? 4
+                : 6
+            );
+        }
+      }
+    }
+  }
+
+  convertDate(date: Date | string) {
+    let newDate;
+    const type = typeof date;
+    if (type == 'string') {
+      newDate = date.toString().split('-').reverse().join('/');
+    } else {
+      newDate = this.datePipe.transform(date, 'yyyy/MM/dd');
+    }
+    return new Date(newDate).valueOf();
+  }
+
+  readParameters() {
+    return new Promise<IGoodParameter>((resolve, reject) => {
+      this.parameter.getById('FARTICULO4').subscribe({
+        next: resp => {
+          this.formExp.get('date_parameter').patchValue(resp.initialValue);
+          resolve(resp);
+        },
+        error: () => {
+          this.formExp.get('date_parameter').patchValue(null);
+          this.onLoadToast(
+            'info',
+            'No hay parámetros para obtener la fecha de aseguramiento de ley'
+          );
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async preUpdateGood() {
+    const {
+      di_fec_dictaminacion,
+      goodId,
+      proceedingsNumber,
+      di_situacion_bien,
+      ti_autoridad_ordena_dictamen,
+      observations,
+    } = this.form.value;
+    let existData: any = {};
+    if (di_fec_dictaminacion) {
+      this.form
+        .get('estatus_recurso_revision')
+        .patchValue('DICTAMINADO RECURSO DE REVISION');
+    }
+
+    const exist = await new Promise<number>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('proceedingsNumber', proceedingsNumber, SearchFilter.EQ);
+      filter.addFilter('goodNumber', goodId, SearchFilter.EQ);
+      filter.addFilter('typeDict', 'RECREVISION', SearchFilter.EQ);
+      this.dictaminationServ.getAllFilter(filter.getParams()).subscribe({
+        next: resp => {
+          existData = resp.data[0];
+          resolve(resp.count);
+        },
+        error: error => {
+          if (error.status == 400) {
+            resolve(0);
+          } else {
+            resolve(-1);
+          }
+        },
+      });
+    });
+
+    const user = this.user.decodeToken();
+
+    if (exist == 0) {
+      const data = {
+        proceedingsNumber: proceedingsNumber,
+        goodNumber: goodId,
+        typeDict: 'RECREVISION',
+        statusDict: di_situacion_bien,
+        dateDict: di_fec_dictaminacion,
+        userDict: user.name.toUpperCase(),
+        authorityOrdersDict: ti_autoridad_ordena_dictamen,
+        observations,
+        delegationDictamNumber: '',
+        areaDict: '',
+      };
+
+      this.dictaminationServ.create(data).subscribe({
+        next: () => {
+          this.onLoadToast('success', 'Ha sido creado con éxito el dictamen');
+        },
+        error: error => {
+          this.onLoadToast('error', error.error.message);
+        },
+      });
+    } else if (exist > 0) {
+      delete existData.files;
+      delete existData.goods;
+      this.dictaminationServ.update(existData, existData.goodNumber).subscribe({
+        next: () => {
+          this.onLoadToast(
+            'success',
+            'Dictamen ha sido actualizado correctamente'
+          );
+        },
+        error: error => {
+          this.onLoadToast('error', error.error.message);
+        },
+      });
+    }
   }
 }

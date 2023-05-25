@@ -93,6 +93,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   handleError(error: HttpErrorResponse) {
     const status = error.status;
     let message = '';
+    console.log(error);
     if (Array.isArray(error?.error?.message) === true) {
       message = error?.error?.message[0];
     } else if (Array.isArray(error?.error?.message) === false) {
@@ -148,8 +149,11 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
         });
         throw error;
       }
-      const { data, count, message } = response.body;
+      const { data, count, message, total } = response.body;
       if (Array.isArray(data)) {
+        if (data && count >= 0 && total && total >= 0) {
+          return response.clone({ body: { count, data, message, total } });
+        }
         if (data && count >= 0) {
           return response.clone({ body: { count, data, message } });
         }

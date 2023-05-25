@@ -45,6 +45,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   //typeTurn: string;
   request: any;
+  op: any;
   user: any;
 
   typeUser: string = '';
@@ -86,7 +87,9 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
       this.typeUser = this.request.targetUserType;
       this.storeData = this.authService.decodeToken();
       this.deleRegionalId = this.storeData.delegacionreg;
+      this.role = this.storeData.puesto;
 
+      console.log('stored data', this.storeData);
       this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
         this.getAllUsers();
       });
@@ -95,13 +98,15 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
   getAllUsers() {
     this.loading = true;
-
     this.params.value.addFilter('employeeType', this.typeUser);
     this.params.value.addFilter(
       'regionalDelegation',
-      this.delegationUserLog,
+      this.deleRegionalId,
       SearchFilter.ILIKE
     );
+    if (this.op == 2) {
+      this.params.value.addFilter('position', this.role);
+    }
 
     const filter = this.params.getValue().getParams();
 
@@ -128,10 +133,10 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   }
 
   getAllUsersSchedule(typeUser: string, delegation: string, role: string) {
-    console.log('tipo', typeUser);
+    /* console.log('tipo', typeUser);
     console.log('delegación', delegation);
     console.log('rol', role);
-
+ */
     this.loading = true;
 
     this.params.value.addFilter('position', role);

@@ -4,7 +4,10 @@ import { map } from 'rxjs/operators';
 import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proceedings-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
-import { formatForIsoDate } from 'src/app/shared/utils/date';
+import {
+  firstFormatDateToSecondFormatDate,
+  formatForIsoDate,
+} from 'src/app/shared/utils/date';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodsByProceeding } from '../../models/ms-indicator-goods/ms-indicator-goods-interface';
 import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceeding-delivery-reception';
@@ -25,6 +28,64 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     this.microservice = ProceedingsEndpoints.BasePath;
   }
 
+  private getColumnByAreaTramite(area: string, item: IGoodsByProceeding) {
+    switch (area) {
+      case 'RF':
+        return item.clave_dictamen;
+      case 'DV':
+        return item.clave_acta_devolucion;
+      // case 'DS':
+      //   return item.clave_acta_destruccion;
+      // case 'CM':
+      //   return item.cve_evento;
+      // case 'DN':
+      //   return item.cve_dic_donacion;
+      default:
+        return item.clave_acta_destruccion;
+    }
+  }
+
+  getGoodByRastrer(
+    goods: number[],
+    action: string,
+    typeProceeding: string,
+    good: IGoodsByProceeding
+  ) {
+    return this.post<IListResponse<IGoodsByProceeding>>(
+      'aplication/get-goods-indicators',
+      { goods, action, typeProceeding }
+    ).pipe(
+      map(items => {
+        // debugger;
+        let dictamenes = [
+          ...new Set(
+            items.data.map(item => this.getColumnByAreaTramite(action, item))
+          ),
+        ];
+        let expedientes = [
+          ...new Set(items.data.map(item => item.no_expediente)),
+        ];
+        let bienes = 0;
+        const data = items.data.map(item => {
+          bienes += +(item.cantidad + '');
+          return {
+            ...item,
+            fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
+            fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+            agregado: 'RA',
+          };
+        });
+        return {
+          ...items,
+          data,
+          expedientes: expedientes.length,
+          dictamenes: dictamenes.length,
+          bienes,
+        };
+      })
+    );
+  }
+
   getExpedients(id: string, typeEvent: string) {
     return this.get<{ count: { count: string }[] }>(
       `${this.endpoint}/getCountExpedient/${id}/${typeEvent}`
@@ -42,7 +103,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     }>(this.endpoint, model);
   }
 
-  createMassive(selecteds?: IDetailProceedingsDeliveryReception[]) {
+  createMassive(selecteds: IDetailProceedingsDeliveryReception[]) {
     return forkJoin(
       selecteds.map(selected => {
         // selected.numberGood
@@ -119,8 +180,12 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
           mergeMap(detail => {
             return this.put(this.endpoint, {
               ...detail,
-              approvedDateXAdmon: selected.fec_aprobacion_x_admon,
-              dateIndicatesUserApproval: selected.fec_indica_usuario_aprobacion,
+              approvedDateXAdmon: firstFormatDateToSecondFormatDate(
+                selected.fec_aprobacion_x_admon + ''
+              ),
+              dateIndicatesUserApproval: firstFormatDateToSecondFormatDate(
+                selected.fec_indica_usuario_aprobacion
+              ),
               numberGood: selected.no_bien,
             });
           })
@@ -146,6 +211,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
       processingArea,
       states: detail.estatus,
       user: localStorage.getItem('username'),
+      actaNumber,
     };
     //   actaNumber,
     //   goodNumber: +detail.no_bien,
@@ -154,7 +220,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     //   user: localStorage.getItem('username'),
     //   contEli
     // };
-    // return this.post(ProceedingsEndpoints.DeleteProceedinGood, body);
+    return this.post(ProceedingsEndpoints.DeleteProceedinGood, body);
   }
 
   deleteById(numberGood: number, numberProceedings: number) {

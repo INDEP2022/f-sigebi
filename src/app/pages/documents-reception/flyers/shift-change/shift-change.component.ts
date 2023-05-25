@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
@@ -60,7 +65,7 @@ import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change
   ],
 })
 export class RdFShiftChangeComponent extends BasePage implements OnInit {
-  turnForm = this.fb.group({
+  turnForm = new FormGroup({
     wheelNumber: new FormControl<number>(null, Validators.required),
     affair: new FormControl<string>(null, [Validators.pattern(STRING_PATTERN)]),
     receiptDate: new FormControl<string | Date>(null, Validators.required),
@@ -123,6 +128,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
+    console.log('PARAMS', this.pageParams);
     this.route.queryParamMap.subscribe(params => {
       this.origin = params.get('origin');
     });
@@ -135,7 +141,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     //TODO: Deshablitar controles de fecha
     this.checkParams();
-    console.log('AQUI', this.pageParams.affair);
+    console.log('AQUÍ', this.pageParams.affair);
   }
 
   checkParams() {

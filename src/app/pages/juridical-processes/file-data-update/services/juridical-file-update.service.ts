@@ -6,7 +6,7 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { ENDPOINT_LINKS } from '../../../../common/constants/endpoints';
 import { NotificationEndpoints } from '../../../../common/constants/endpoints/ms-notification-endpoints';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
-import { HttpService } from '../../../../common/services/http.service';
+import { HttpService, _Params } from '../../../../common/services/http.service';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IRAsuntDic } from '../../../../core/models/catalogs/r-asunt-dic.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
@@ -136,6 +136,23 @@ export class JuridicalFileUpdateService extends HttpService {
           ...data,
           data: data.data.map(d => {
             return { ...d, nameAndId: `${d.id} - ${d.description}` };
+          }),
+        };
+      })
+    );
+  }
+
+  postFindDescriptionOpinion(body: _Params) {
+    return this.dictationService.postFindDescriptionOpinion(body).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(d => {
+            return {
+              id: d.dictamen,
+              description: d.descripcion,
+              nameAndId: `${d.dictamen} - ${d.descripcion}`,
+            };
           }),
         };
       })
