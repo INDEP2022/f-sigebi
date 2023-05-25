@@ -41,11 +41,16 @@
       </button>
     </div>
 
-    <!-- <div class="row pt-3">
+    <div
+      class="row pt-3"
+      *ngIf="!formLoading && dataProgramming?.concurrentMsg">
       <h5 class="title">Informaci&oacute;n</h5>
-    </div> -->
+      <p class="text-danger">
+        Observaci&oacute;n de rechazo: {{ dataProgramming?.concurrentMsg }}
+      </p>
+    </div>
 
-    <div class="row pt-3">
+    <div class="row pt-3" *ngIf="!formLoading">
       <h5 class="title">Programaci&oacute;n</h5>
     </div>
 
@@ -185,7 +190,7 @@
                 control="tranferId"
                 [data]="transferences"
                 value="id"
-                bindLabel="nametransferent"
+                bindLabel="nameTransferent"
                 label="Selecciona transferente"></ngx-select>
             </form-field>
           </div>
@@ -369,7 +374,76 @@
     </div>
 
     <div class="row pt-5" *ngIf="showForm">
-      <h5 class="title">Bienes seleccionados</h5>
+      <div class="row pt-2">
+        <h5 class="title">Selección de bienes</h5>
+        <h5 class="title fs-2">B&uacute;squeda</h5>
+        <form [formGroup]="searchGoodsForm" class="form-material">
+          <div class="row pt-5">
+            <form-field [control]="searchGoodsForm.get('warehouse')">
+              <ngx-select
+                [form]="searchGoodsForm"
+                control="warehouse"
+                [data]="akaWarehouse"
+                value="id"
+                bindLabel="aliasStock"
+                label="Alias Almacén"
+                (fetchItems)="getAkaWarehouse($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <div class="col-md-6">
+              <form-field [control]="searchGoodsForm.get('state')">
+                <ngx-select
+                  [form]="searchGoodsForm"
+                  control="state"
+                  [data]="statesSearch"
+                  value="id"
+                  bindLabel="descCondition"
+                  label="Estado"
+                  (fetchItems)="getStates($event)"></ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="searchGoodsForm.get('municipality')">
+                <ngx-select
+                  [form]="searchGoodsForm"
+                  control="municipality"
+                  [data]="municipailitites"
+                  value="id"
+                  bindLabel="nameMunicipality"
+                  label="Municipio"
+                  (fetchItems)="getMunicipalities($event)"></ngx-select>
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-6">
+              <form-field [control]="searchGoodsForm.get('colony')">
+                <ngx-select
+                  [form]="searchGoodsForm"
+                  control="colony"
+                  [data]="localities"
+                  value="id"
+                  bindLabel="nameLocation"
+                  label="Colonia"
+                  (fetchItems)="getLocalities($event)"></ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="searchGoodsForm.get('postalCode')"
+                label="Codigo postal">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="200"
+                  formControlName="postalCode" />
+              </form-field>
+            </div>
+          </div>
+        </form>
+      </div>
       <div class="form-inline justify-content-end">
         <button
           (click)="showGoodsProgramming()"
@@ -398,13 +472,15 @@
           id="tableGoods"
           [attr.class]="'table-bordered table-responsive'"
           [settings]="settings"
-          [source]="estatesList">
+          [source]="estatesList"
+          (userRowSelect)="goodsSelect($event.selected)">
         </ng2-smart-table>
       </div>
       <app-pagination
         [params]="params"
         [totalItems]="totalItems"></app-pagination>
 
+      <h5 class="title">Selecci&oacute;n de bienes</h5>
       <div>
         <div class="md-tabs">
           <tabset>
