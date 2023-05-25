@@ -6,9 +6,11 @@ import {
   IDictation,
   IInitFormLegalOpinionOfficeBody,
   ITmpDictationCreate,
+  ITmpExpDesahogoB,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
+import { IValidaCambioEstatus } from 'src/app/core/models/ms-good/good';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -16,6 +18,7 @@ import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
@@ -42,7 +45,8 @@ export class LegalOpinionsOfficeService {
     private msParametersService: ParametersService,
     private msGoodprocessService: GoodprocessService,
     private msNotificationService: NotificationService,
-    private msSecurityService: SecurityService
+    private msSecurityService: SecurityService,
+    private msGoodService: GoodService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -138,6 +142,12 @@ export class LegalOpinionsOfficeService {
   }
   lovCitiesRegCity(body: any, params: _Params) {
     return this.msSecurityService.lovCitiesRegCity(body, params);
+  }
+  getPAValidaCambio(body: IValidaCambioEstatus) {
+    return this.msGoodService.PAValidaCambio(body);
+  }
+  createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
+    return this.msDictationService.createTmpExpDesahogoB(body);
   }
 
   getTexto3FromOfficeDictation(
