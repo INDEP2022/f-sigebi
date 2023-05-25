@@ -49,7 +49,8 @@ export class TableGoodsComponent extends BasePage implements OnInit {
 
   updateRow(event: any) {
     let { newData, confirm } = event;
-    this.updateGoodsRow.emit(newData);
+    console.log(event);
+    this.updateGoodsRow.emit(event);
     confirm.resolve(newData);
   }
 
