@@ -3,7 +3,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IInstitutionClassification } from 'src/app/core/models/catalogs/institution-classification.model';
 import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
 import Swal from 'sweetalert2';
@@ -15,6 +15,7 @@ import {
   INSTITUTION_COLUMNS,
   ISSUING_INSTITUTION_COLUMNS,
 } from './issuing-institution-columns';
+import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-issuing-institution-list',
@@ -23,8 +24,7 @@ import {
 })
 export class IssuingInstitutionListComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   institutionClassificationList: IInstitutionClassification[] = [];
   issuingInstitutionList: IIssuingInstitution[] = [];
   issuingInstitution: IIssuingInstitution;
@@ -45,6 +45,10 @@ export class IssuingInstitutionListComponent
 
   settings2;
 
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  data1: LocalDataSource = new LocalDataSource();
+  columnFilters1: any = [];
   constructor(
     private issuingInstitutionService: IssuingInstitutionService,
     private modalService: BsModalService,
@@ -53,22 +57,24 @@ export class IssuingInstitutionListComponent
     super();
     this.settings = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...INSTITUTION_COLUMNS },
     };
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...ISSUING_INSTITUTION_COLUMNS },
@@ -76,6 +82,39 @@ export class IssuingInstitutionListComponent
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getInstitutionClassification();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getInstitutionClassification());
@@ -83,11 +122,17 @@ export class IssuingInstitutionListComponent
 
   getInstitutionClassification() {
     this.loading1 = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.institutionClasificationService
-      .getAll2(this.params.getValue())
+      .getAll2(params)
       .subscribe({
         next: response => {
           this.institutionClassificationList = response.data;
+          this.data.load(this.institutionClassificationList);
+          this.data.refresh();
           this.totalItems = response.count;
           this.loading1 = false;
         },
@@ -137,6 +182,39 @@ export class IssuingInstitutionListComponent
     this.totalItems2 = 0;
     this.issuingInstitutionList = [];
     this.institutes = event.data;
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              console.log(
+                (this.columnFilters1[field] = `${searchFilter}:${filter.search}`)
+              );
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.getIssuingInstitution();
+        }
+      });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getIssuingInstitution(idInstitute.id));
@@ -144,12 +222,19 @@ export class IssuingInstitutionListComponent
 
   getIssuingInstitution(id?: number) {
     this.loading2 = true;
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
+    };
     const idInstitute = { ...this.institutes };
     this.issuingInstitutionService
-      .getInstitutionByClasif(idInstitute.id, this.params2.getValue())
+      .getInstitutionByClasif(idInstitute.id, params)
       .subscribe({
         next: response => {
+          console.log(response);
           this.issuingInstitutionList = response.data;
+          this.data1.load(this.issuingInstitutionList);
+          this.data1.refresh();
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
@@ -178,7 +263,12 @@ export class IssuingInstitutionListComponent
         issuingInstitution,
         idInstitute,
         callback: (next: boolean) => {
-          if (next) this.getIssuingInstitution(idInstitute.id);
+          console.log(next);
+          if (next) {
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getIssuingInstitution(idInstitute.id));
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',

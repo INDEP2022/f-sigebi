@@ -2,8 +2,8 @@ export interface IDetailProceedingsDeliveryReception {
   numberProceedings: number;
   numberGood: number;
   amount: number;
-  received: string;
-  approvedXAdmon: string;
+  received: any;
+  approvedXAdmon: any;
   approvedDateXAdmon: Date | string;
   approvedUserXAdmon: string;
   dateIndicatesUserApproval: Date | string;

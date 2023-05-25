@@ -318,14 +318,44 @@ export class ScheduledMaintenanceDetailComponent
     this.getData();
   }
 
-  updateDatesTable() {
+  updateDatesTable(newData: any[]) {
     console.log(this.data);
+    this.detailService
+      .updateMasive(
+        newData
+          .filter(x => x.agregado === 'AE')
+          .map(x => {
+            return {
+              fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
+              fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
+              no_bien: x.no_bien,
+            };
+          }),
+        this.actaId
+      )
+      .subscribe({
+        next: response => {
+          let goods = '';
+          newData.forEach((selected, index) => {
+            goods += selected.no_bien + (index < newData.length - 1 ? ',' : '');
+          });
+          // const message = `Se actualizo el bien N° ${newData.no_bien} `;
+          const message = `Se actualizaron los bienes N° ${goods} `;
+          this.onLoadToast('success', 'Exito', message);
+          this.data = newData;
+          // this.updateTable.emit();
+        },
+        error: err => {
+          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+        },
+      });
     this.onLoadToast('info', 'Bienes', 'Fechas actualizadas');
   }
 
   updateGoodsRow(event: any) {
     console.log(event);
     let { newData, confirm, data } = event;
+    // confirm.resolve(data);
     if (
       !newData.fec_aprobacion_x_admon ||
       !newData.fec_indica_usuario_aprobacion
@@ -342,8 +372,37 @@ export class ScheduledMaintenanceDetailComponent
       this.alertTableRangeError();
       return;
     }
-    this.fillSelectedsForUpdate(newData, data);
-    confirm.resolve(newData);
+    this.detailService
+      .updateMasive(
+        [
+          {
+            fec_aprobacion_x_admon: newData.fec_aprobacion_x_admon,
+            fec_indica_usuario_aprobacion:
+              newData.fec_indica_usuario_aprobacion,
+            no_bien: newData.no_bien,
+          },
+        ],
+        this.actaId
+      )
+      .subscribe({
+        next: response => {
+          // let goods = '';
+          // this.selectedsForUpdate.forEach((selected, index) => {
+          //   goods +=
+          //     selected.numberGood +
+          //     (index < this.selectedsForUpdate.length - 1 ? ',' : '');
+          // });
+          const message = `Se actualizo el bien N° ${newData.no_bien} `;
+          // const message = `Se actualizaron los bienes N° ${goods} `;
+          this.onLoadToast('success', 'Exito', message);
+          // this.updateTable.emit();
+        },
+        error: err => {
+          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+        },
+      });
+    // this.fillSelectedsForUpdate(newData, data);
+    // confirm.resolve(newData);
   }
 
   alertTableRangeError() {
