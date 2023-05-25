@@ -482,7 +482,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get(formName).setValue(data.goodStatus);
       },
       err => {
-        this.form.get(formName).setValue(null);
+        this.form.get(formName).setValue(data.goodStatus);
       }
     );
   }
