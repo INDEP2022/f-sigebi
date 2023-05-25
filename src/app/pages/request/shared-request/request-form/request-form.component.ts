@@ -18,6 +18,7 @@ import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   FilterParams,
@@ -81,6 +82,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   activateRouter = inject(ActivatedRoute);
   route = inject(ActivatedRoute);
   affairService = inject(AffairService);
+  userProcessService = inject(UserProcessService);
 
   selectedRegDel: any = null;
 
@@ -348,7 +350,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         console.log(data);
         this.issues = new DefaultSelect(data.data, data.count);
         if (id) {
-          this.requestForm.controls['affair'].setValue(Number(id));
+          this.requestForm.controls['affair'].setValue(id);
         }
       },
       error: error => {
@@ -418,6 +420,15 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   turnRequest(): void {
+    if (this.op == 2) {
+      this.onLoadToast(
+        'info',
+        'No guarda',
+        'falta implementarse el registro de tareas'
+      );
+      return;
+    }
+
     if (this.requestForm.controls['targetUser'].value === null) {
       this.onLoadToast(
         'info',
@@ -637,7 +648,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getRequest(requestId: number | string) {
     this.requestService.getById(requestId).subscribe({
       next: resp => {
-        console.log(resp);
         this.requestForm.controls['paperNumber'].setValue(resp.paperNumber);
         this.requestForm.controls['keyStateOfRepublic'].setValue(
           resp.keyStateOfRepublic
@@ -650,7 +660,28 @@ export class RequestFormComponent extends BasePage implements OnInit {
         if (this.op == 2 && resp.affair) {
           this.getIssue('', resp.affair);
         }
-        console.log(this.requestForm.value);
+        this.requestForm.controls['targetUserType'].setValue(
+          resp.targetUserType
+        );
+        if (resp.targetUser) {
+          this.getAllUsers(resp.targetUser);
+        }
+      },
+    });
+  }
+
+  getAllUsers(id: string) {
+    const params = new FilterParams();
+    this.params.value.addFilter('id', id);
+    const filter = this.params.getValue().getParams();
+    this.userProcessService.getAll(filter).subscribe({
+      next: resp => {
+        this.userName = resp.data[0].firstName;
+        this.nickName = resp.data[0].username;
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
       },
     });
   }
