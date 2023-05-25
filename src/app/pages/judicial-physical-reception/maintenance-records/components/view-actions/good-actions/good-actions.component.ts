@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TableReplaceColumnModalComponent } from 'src/app/@standalone/modals/table-replace-column-modal/table-replace-column-modal.component';
@@ -15,6 +23,7 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
 import { secondFormatDate } from 'src/app/shared/utils/date';
 import { MaintenanceRecordsService } from './../../../services/maintenance-records.service';
@@ -48,7 +57,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
   // dataForAdd: IDetailProceedingsDeliveryReception[] = [];
   selectedGood: any;
-
+  @ViewChild('actaLabel') actaLabel: TemplateRef<any>;
+  @ViewChild('actaOption') actaOption: TemplateRef<any>;
   paramsGoods = new FilterParams();
   operatorGoods = SearchFilter.IN;
   paramsControl = new FilterParams();
@@ -230,13 +240,22 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           tableData: this.rowsSelected,
           // service: this.proceedingService,
           // dataObservableFn: this.proceedingService.getAll2,
+          labelTemplate: this.actaLabel,
+          optionTemplate: this.actaOption,
           idSelect: 'id',
-          labelSelect: 'id',
-          label: 'No&#46; Acta',
-          paramSearch: 'filter.id',
+          labelSelect: 'keysProceedings',
+          label: 'Acta',
+          paramSearch: 'filter.keysProceedings',
+          prefixSearch: '$ilike',
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
-            numberProceedings: [null, [Validators.required]],
+            numberProceedings: [
+              null,
+              [
+                Validators.required,
+                Validators.pattern(POSITVE_NUMBERS_PATTERN),
+              ],
+            ],
           }),
           formField: 'numberProceedings',
         },
@@ -264,6 +283,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           path: 'good/api/v1/status-good',
           idSelect: 'status',
           labelSelect: 'status',
+          paramSearch: 'filter.status',
+          prefixSearch: '$ilike',
           form: this.fb.group({
             status: [null, [Validators.required]],
             justification: [null, [Validators.required]],

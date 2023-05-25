@@ -70,8 +70,10 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
           bienes += +(item.cantidad + '');
           return {
             ...item,
-            fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
-            fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+            fec_aprobacion_x_admon: good ? good.fec_aprobacion_x_admon : null,
+            fec_indica_usuario_aprobacion: good
+              ? good.fec_indica_usuario_aprobacion
+              : null,
             agregado: 'RA',
           };
         });

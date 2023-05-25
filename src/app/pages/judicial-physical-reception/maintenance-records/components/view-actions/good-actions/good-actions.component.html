@@ -90,3 +90,12 @@
     </div>
   </div> -->
 </form>
+
+<ng-template #actaLabel let-item="item">
+  {{ item.id }} - {{ item.keysProceedings }}
+</ng-template>
+<ng-template #actaOption let-item="item">
+  <div [title]="item.id + '-' + item.keysProceedings">
+    {{ item.id }} - {{ item.keysProceedings }}
+  </div>
+</ng-template>
