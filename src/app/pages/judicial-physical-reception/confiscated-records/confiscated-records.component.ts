@@ -1205,7 +1205,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       newDetailProceeding.amount = element.quantity;
       newDetailProceeding.received = 'S';
       newDetailProceeding.approvedXAdmon = 'S';
-      newDetailProceeding.approvedUserXAdmon = localStorage.getItem('username');
+      newDetailProceeding.approvedUserXAdmon = localStorage
+        .getItem('username')
+        .toLocaleUpperCase();
       /* newDetailProceeding.approvedUserXAdmon = 'SERA'; */
       newDetailProceeding.numberRegister = resData.id;
       console.log(newDetailProceeding);
@@ -1234,7 +1236,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter('valUser', localStorage.getItem('username'));
+          paramsF.addFilter(
+            'valUser',
+            localStorage.getItem('username').toLocaleLowerCase()
+          );
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -1338,7 +1343,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           address: this.form.get('direccion').value,
           statusProceedings: 'ABIERTA',
           /* elaborate: 'SERA', */
-          elaborate: localStorage.getItem('username'),
+          elaborate: localStorage.getItem('username').toLocaleUpperCase(),
           numFile: this.form.get('expediente').value,
           witness1: this.form.get('entrega').value,
           witness2: this.form.get('recibe2').value,
@@ -1646,7 +1651,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   deleteProceeding() {
-    const user = localStorage.getItem('username');
+    const user = localStorage.getItem('username').toLocaleUpperCase();
     if (this.statusProceeding != '') {
       if (
         !['MARRIETA', 'SERA', 'DESARROLLO', 'ALEDESMA', 'JRAMIREZ'].includes(
