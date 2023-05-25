@@ -89,12 +89,12 @@ export const PERSON_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  keyEntFed: {
+  DetEntFed: {
     title: 'Ent.Federativa',
     type: 'string',
     sort: false,
   },
-  keyOperation: {
+  DetOperation: {
     title: 'Giro',
     type: 'string',
     sort: false,

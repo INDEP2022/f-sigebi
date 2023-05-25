@@ -13,6 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { PersonFormComponent } from '../person-form/person-form.component';
 import { PERSON_COLUMNS } from './person-columns';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 @Component({
   selector: 'app-person-list',
@@ -28,7 +29,8 @@ export class PersonListComponent extends BasePage implements OnInit {
 
   constructor(
     private personService: PersonService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tvalTable1Service: TvalTable1Service
   ) {
     super();
     this.settings.columns = PERSON_COLUMNS;
@@ -94,11 +96,17 @@ export class PersonListComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         if (response.data != null) {
-          this.person = response.data;
-          this.data.load(this.person);
-          this.data.refresh();
-          this.totalItems = response.count;
-          this.loading = false;
+          this.getEntFed(response).then(() => {
+            this.getTurn();
+          }).catch((error) => {
+            console.error('Ocurrió un error al ejecutar el bucle:', error);
+            this.data.load([]);
+            this.data.refresh();
+            this.loading = false;
+            this.totalItems = response.count;
+          });
+
+
         } else {
           this.data.load([]);
           this.data.refresh();
@@ -108,8 +116,58 @@ export class PersonListComponent extends BasePage implements OnInit {
       },
       error: error => (this.loading = false),
     });
-  }
 
+  }
+  async getEntFed(response: any): Promise<void> {
+    for (let i = 0; i < response.data.length; i++) {
+      const params = new ListParams();
+      params['filter.nmtable'] = `$eq:1`;
+      params['filter.otkey'] = `$eq:${response.data[i].keyEntFed}`;
+      if (response.data[i].keyEntFed) {
+        this.tvalTable1Service.getAlls(params).subscribe({
+          next: resp => {
+            console.log(resp.data[0].otvalor);
+            response.data[i].DetEntFed = resp.data[0].otvalor;
+            if (i == response.data.length - 1) {
+              this.person = response.data;
+              this.totalItems = response.count;;
+            }
+          },
+          error: erro => (console.log(erro))
+        })
+      }
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+  }
+  async getTurn(): Promise<void> {
+    console.log(this.person.length)
+    for (let i = 0; i < this.person.length; i++) {
+      const params = new ListParams();
+      params['filter.nmtable'] = `$eq:8`;
+      params['filter.otkey'] = `$eq:${this.person[i].keyOperation}`;
+      console.log(this.person[i].keyOperation);
+      if (this.person[i].keyOperation) {
+        this.tvalTable1Service.getAlls(params).subscribe({
+          next: resp => {
+            console.log(resp.data[0].otvalor);
+            this.person[i].DetOperation = resp.data[0].otvalor;
+            if (i == this.person.length - 1) {
+              this.data.load(this.person);
+              this.data.refresh();
+              this.loading = false;
+            }
+          },
+          error: erro => (console.log(erro))
+        })
+      } else if (i == this.person.length - 1) {
+        console.log(this.person);
+        this.data.load(this.person);
+        this.data.refresh();
+        this.loading = false;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+  }
   openForm(person?: IPerson) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {

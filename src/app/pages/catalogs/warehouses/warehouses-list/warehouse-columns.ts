@@ -24,7 +24,7 @@ export const WAREHOUSE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  type: {
+  detType: {
     title: 'Tipo',
     type: 'string',
     sort: false,

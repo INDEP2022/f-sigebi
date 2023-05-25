@@ -18,7 +18,9 @@ export interface IPerson {
   profesion?: string;
   curriculum?: string;
   keyEntFed?: string;
+  DetEntFed?: string;
   keyOperation?: string;
+  DetOperation?: string;
   observations?: string;
   profile?: string;
   precedentSecodam?: string;

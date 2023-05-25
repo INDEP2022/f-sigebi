@@ -6,30 +6,21 @@
     <form class="form-material" [formGroup]="personForm">
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="personForm.get('personName')"
-            label="Cve.Depositaría">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="personName" />
+          <form-field [control]="personForm.get('personName')" label="Cve.Depositaría">
+            <input type="text" class="form-control" formControlName="personName" />
           </form-field>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
-          <form-field
-            [control]="personForm.get('name')"
-            label="Descripci&oacute;n">
+          <form-field [control]="personForm.get('name')" label="Descripci&oacute;n">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
-          <form-field
-            [control]="personForm.get('street')"
-            label="Direcci&oacute;n">
+          <form-field [control]="personForm.get('street')" label="Direcci&oacute;n">
             <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
@@ -39,41 +30,24 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="personForm.get('streetNumber')"
-            label="No.Exterior">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="streetNumber" />
+          <form-field [control]="personForm.get('streetNumber')" label="No.Exterior">
+            <input type="text" class="form-control" formControlName="streetNumber" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="personForm.get('apartmentNumber')"
-            label="No.Interior">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="apartmentNumber" />
+          <form-field [control]="personForm.get('apartmentNumber')" label="No.Interior">
+            <input type="text" class="form-control" formControlName="apartmentNumber" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field
-            [control]="personForm.get('delegation')"
-            label="Delegci&oacute;n Municipal">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegation" />
+          <form-field [control]="personForm.get('delegation')" label="Delegci&oacute;n Municipal">
+            <input type="text" class="form-control" formControlName="delegation" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="personForm.get('zipCode')"
-            label="C&oacute;digo Postal">
+          <form-field [control]="personForm.get('zipCode')" label="C&oacute;digo Postal">
             <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
@@ -90,9 +64,7 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="personForm.get('phone')"
-            label="Tel&eacute;fono">
+          <form-field [control]="personForm.get('phone')" label="Tel&eacute;fono">
             <input type="tel" class="form-control" formControlName="phone" />
           </form-field>
         </div>
@@ -157,22 +129,16 @@
               formControlName="curriculum" />
           </form-field>
         </div> -->
-        <div class="col-md-6">
-          <form-field
-            [control]="personForm.get('keyEntFed')"
-            label="Entidad Federativa">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="keyEntFed" />
+        <div class="col-md-4">
+          <form-field [control]="personForm.get('keyEntFed')">
+            <ngx-select [form]="personForm" [data]="entFed" bindLabel="otvalor" label="Entidad Federativa" value="otkey"
+              (fetchItems)="getEntFed($event)" control="keyEntFed"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="personForm.get('keyOperation')" label="Giro">
-            <input
-              type="tel"
-              class="form-control"
-              formControlName="keyOperation" />
+        <div class="col-md-8">
+          <form-field [control]="personForm.get('keyOperation')">
+            <ngx-select [form]="personForm" [data]="operation" bindLabel="otvalor" label="Giro" value="otkey"
+              (fetchItems)="getTurn($event)" control="keyOperation"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -183,26 +149,18 @@
           </form-field>
         </div> -->
         <div class="col-md-6">
-          <form-field
-            [control]="personForm.get('typePerson')"
-            label="Tipo Persona">
+          <form-field [control]="personForm.get('typePerson')" label="Tipo Persona">
             <select class="form-control" formControlName="typePerson">
-              <option
-                *ngFor="let option of optionsTipoP"
-                [value]="option.value">
+              <option *ngFor="let option of optionsTipoP" [value]="option.value">
                 {{ option.label }}
               </option>
             </select>
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="personForm.get('typeResponsible')"
-            label="Tipo Responsable">
+          <form-field [control]="personForm.get('typeResponsible')" label="Tipo Responsable">
             <select class="form-control" formControlName="typeResponsible">
-              <option
-                *ngFor="let option of optionsTipoR"
-                [value]="option.value">
+              <option *ngFor="let option of optionsTipoR" [value]="option.value">
                 {{ option.label }}
               </option>
             </select>
@@ -211,9 +169,7 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
-          <form-field
-            [control]="personForm.get('manager')"
-            label="Representante">
+          <form-field [control]="personForm.get('manager')" label="Representante">
             <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
@@ -253,10 +209,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!personForm.valid"
-          [type]="'button'"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="!personForm.valid" [type]="'button'" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

@@ -79,7 +79,7 @@ export class DepartamentService
   }
 
   removeByBody(obj: Object): Observable<Object> {
-    return this.departamentRepository.removeByBody(this.route, obj);
+    return this.departamentRepository.remove3(this.route, obj);
   }
 
   update2(model: IDepartment): Observable<Object> {
