@@ -11,5 +11,4 @@ export interface ICity {
   legendOffice: string;
   noRegister?: number;
   nameAndId?: string;
-
 }

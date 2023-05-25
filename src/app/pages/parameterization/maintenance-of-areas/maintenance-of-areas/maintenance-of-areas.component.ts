@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -22,7 +23,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DepartmentFormComponent } from '../department-form/department-form.component';
 import { COLUMNS } from './columns';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-maintenance-of-areas',
@@ -127,7 +127,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 
@@ -229,7 +229,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   }
 
   delete(departament: IDepartment) {
-    let numSubDelegation = departament.numSubDelegation as ISubdelegation
+    let numSubDelegation = departament.numSubDelegation as ISubdelegation;
     let obj = {
       id: departament.id,
       numDelegation: departament.numDelegation,
