@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   zoneGeographicForm: ModelForm<IZoneGeographic>;
-  title: string = 'Zona Gográficas';
+  title: string = 'Zona Geográficas';
   edit: boolean = false;
   zoneGeographic: IZoneGeographic;
   constructor(

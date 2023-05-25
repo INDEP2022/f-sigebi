@@ -321,7 +321,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.filterParams
         .getValue()
         .addFilter(
-          'request.regionalDelegationId',
+          'idDelegationRegional',
+          // request.regionalDelegationNumber
           this.consultTasksForm.value.txtNoDelegacionRegional,
           SearchFilter.EQ
         );
@@ -393,6 +394,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           } */
           response.data.map((item: any) => {
             item.taskNumber = item.id;
+            item.requestId = item.requestId != null ? item.requestId : item.programmingId;
           });
 
           this.tasks = response.data;

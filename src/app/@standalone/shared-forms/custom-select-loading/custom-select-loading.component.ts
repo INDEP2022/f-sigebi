@@ -72,6 +72,7 @@ export class CustomSelectWidthLoading
   @Input() optionTemplate: TemplateRef<any>;
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
+  @Input() updateValues: boolean = false;
   @Output() valueChange = new EventEmitter<any>();
   // @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
@@ -99,6 +100,14 @@ export class CustomSelectWidthLoading
     }
     if (this.isLoadInOnInit) {
       this.input$.next('');
+    }
+    if (this.form) {
+      this.form.get(this.formControlName).valueChanges.subscribe(x => {
+        console.log(x);
+        if (x && this.updateValues) {
+          this.input$.next(x);
+        }
+      });
     }
   }
 
