@@ -1,14 +1,14 @@
-.scheduledTable {
-  ng2-smart-table {
-    ::ng-deep {
-      table {
-        tr {
-          td:not(:first-child),
-          th:not(:first-child) {
-            min-width: 110px;
-          }
-        }
-      }
-    }
-  }
-}
+// .scheduledTable {
+//   ng2-smart-table {
+//     ::ng-deep {
+//       table {
+//         tr {
+//           td:not(:first-child),
+//           th:not(:first-child) {
+//             min-width: 110px;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }

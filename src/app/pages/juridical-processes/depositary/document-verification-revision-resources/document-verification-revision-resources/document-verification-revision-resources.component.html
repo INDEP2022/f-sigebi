@@ -64,7 +64,8 @@
               bsDatepicker
               [bsConfig]="{
                 dateInputFormat: 'DD-MM-YYYY'
-              }" />
+              }"
+              (ngModelChange)="validateItem($event)" />
           </form-field>
         </div>
       </div>
@@ -224,6 +225,12 @@
               (click)="btnAprobar()"
               [disabled]="form.get('di_disponible').value == 'N'">
               Aprobar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm ml-2"
+              (click)="preUpdateGood()">
+              Dictamen Bien
             </button>
           </div>
         </div>

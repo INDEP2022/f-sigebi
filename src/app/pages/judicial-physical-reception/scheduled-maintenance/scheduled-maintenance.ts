@@ -33,20 +33,26 @@ export abstract class ScheduledMaintenance extends BasePage {
     pager: {
       display: false,
     },
-    hideSubHeader: true,
+    hideSubHeader: false,
     selectedRowIndex: -1,
     mode: 'external',
+    actions: {
+      ...TABLE_SETTINGS.actions,
+      columnTitle: '',
+      position: 'left',
+      add: false,
+    },
     columns: {
       id: {
         title: 'ID',
         type: 'string',
         sort: false,
       },
-      typeProceedings: {
-        title: 'Tipo de Evento',
-        type: 'string',
-        sort: false,
-      },
+      // typeProceedings: {
+      //   title: 'Tipo de Evento',
+      //   type: 'string',
+      //   sort: false,
+      // },
       keysProceedings: {
         title: 'Programa Recepción Entrega',
         type: 'string',
@@ -59,7 +65,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         // width: '150px'
       },
       elaborate: {
-        title: 'Ingreso',
+        title: 'Ingresó',
         type: 'string',
         sort: false,
       },
@@ -152,7 +158,10 @@ export abstract class ScheduledMaintenance extends BasePage {
     this.totalItems = 0;
   }
 
+  extraOperations() {}
+
   ngOnInit(): void {
+    this.extraOperations();
     this.prepareForm();
     this.service.getTypes().subscribe({
       next: response => {

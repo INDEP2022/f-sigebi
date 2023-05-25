@@ -129,6 +129,8 @@ export enum ENDPOINT_LINKS {
   WarehouseClassifyCosts = 'parametergood/warehouse-classif-costs',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
   Document = 'documents',
+  DocumentAplication1 = 'application/queryDocDictation',
+  DocumentAplication2 = 'application/queryDocDictation2',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
