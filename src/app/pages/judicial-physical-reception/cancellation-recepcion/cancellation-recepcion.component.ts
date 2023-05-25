@@ -1327,11 +1327,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             console.log(res.data);
             const idProcee = res.data[0]['numberProceedings'];
             console.log(idProcee);
-            console.log(this.saveDataAct);
             if (this.saveDataAct.length > 0) {
-              this.saveDetailProceeding([
-                { id: res.data[0]['numberProceedings'] },
-              ]);
+              this.saveDetailProceeding({
+                id: res.data[0]['numberProceedings'],
+              });
             }
             const resData = JSON.parse(JSON.stringify(res.data));
             console.log(this.saveDataAct);
@@ -1487,7 +1486,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               );
                             } else {
                               if (this.saveDataAct.length > 0) {
-                                this.saveDetailProceeding([{ id: idProceed }]);
+                                this.saveDetailProceeding({ id: idProceed });
                               }
 
                               const model: IPACambioStatus = {
