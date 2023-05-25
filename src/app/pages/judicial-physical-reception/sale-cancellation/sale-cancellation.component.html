@@ -66,6 +66,33 @@
           </div>
         </div>
       </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field
+              [control]="form.get('averPrev')"
+              label="Averiguaci&oacute;n Previa">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="averPrev" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field
+              [control]="form.get('noExpedienteTransf')"
+              label="No. expediente Transferente">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="noExpedienteTransf" />
+            </form-field>
+          </div>
+        </div>
+      </div>
       <hr class="row" />
       <div class="row">
         <div class="col-md-12">
