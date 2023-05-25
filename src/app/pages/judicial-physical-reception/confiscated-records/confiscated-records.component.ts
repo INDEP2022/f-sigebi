@@ -994,7 +994,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             });
         }
         this.dataGoodAct.load(this.goodData);
-        this.saveDataAct = this.goodData;
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -1063,7 +1062,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
-    this.saveDataAct = this.goodData;
+    this.saveDataAct = [];
     this.act2Valid = false;
   }
 
@@ -1096,7 +1095,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.requireAct1();
         this.prevProce = true;
         this.goodData = [];
-        this.saveDataAct = this.goodData;
+        this.saveDataAct = [];
         this.dataGoodAct.load(this.goodData);
       }
     } else {
@@ -1192,6 +1191,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   saveDetailProceeding(resData: any) {
+    console.log(resData);
+    console.log(this.saveDataAct);
+    console.log(resData.id);
     this.idProceeding = resData.id;
     let newDetailProceeding: IDetailProceedingsDeliveryReception = {
       numberProceedings: resData.id,
@@ -1205,7 +1207,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       newDetailProceeding.approvedXAdmon = 'S';
       newDetailProceeding.approvedUserXAdmon = localStorage.getItem('username');
       /* newDetailProceeding.approvedUserXAdmon = 'SERA'; */
-      newDetailProceeding.numberRegister = element.registryNumber;
+      newDetailProceeding.numberRegister = resData.id;
       console.log(newDetailProceeding);
       this.serviceDetailProc
         .addGoodToProceedings(newDetailProceeding)
@@ -1446,11 +1448,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(res.data);
             const idProcee = res.data[0]['numberProceedings'];
             console.log(idProcee);
-            if (this.saveDataAct.length > 0) {
-              this.saveDetailProceeding([
-                { id: res.data[0]['numberProceedings'] },
-              ]);
-            }
+
             const resData = JSON.parse(JSON.stringify(res.data));
             console.log(this.saveDataAct);
             for (let item of resData) {
@@ -1459,6 +1457,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               );
             }
             console.log(this.saveDataAct);
+            console.log(this.saveDataAct.length);
+            if (this.saveDataAct.length > 0) {
+              this.saveDetailProceeding({ id: idProcee });
+            }
             const paramsF = new FilterParams();
             paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
             this.serviceProcVal
@@ -1890,7 +1892,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   selectRowGoodActa(e: any) {
+    console.log('Se activo');
     const { data } = e;
+    console.log(this.saveDataAct);
+
     if (data != null) {
       const isSelect = e.isSelected;
       console.log(e);
@@ -2123,9 +2128,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     );
                     /* console.log(dataTry.data); */
                     this.goodData.push({ ...this.selectData, received: 'S' });
-                    this.saveDataAct = this.goodData;
+
                     this.dataGoodAct.load(this.goodData);
-                    console.log(this.dataGoodAct);
+
+                    this.saveDataAct.push({
+                      ...this.selectData,
+                      received: 'S',
+                    });
                     this.selectData = null;
                   }
                 }
@@ -2184,7 +2193,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         );
         this.dataGoodAct.load(this.goodData);
         console.log(this.goodData);
-        this.saveDataAct = this.goodData;
+        this.saveDataAct = this.saveDataAct.filter(
+          (e: any) => e.id != this.selectActData.id
+        );
 
         this.dataGoods.load(
           this.dataGoods['data'].map((e: any) => {
