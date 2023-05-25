@@ -9,9 +9,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import {
   DynamicFilterLike,
   FilterParams,
@@ -81,7 +81,8 @@ export class FormSearchHandlerComponent
     // private modalService: BsModalService,
     // private modalRef: BsModalRef<SelectListFilteredModalComponent>,
     private changeDetectorRef: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute
+    // private activatedRoute: ActivatedRoute,
+    private docDataService: DocumentsReceptionDataService
   ) {
     super();
 
@@ -124,14 +125,26 @@ export class FormSearchHandlerComponent
   }
 
   autoLoad(): void {
-    const wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
-    if (wheelNumber) {
-      this.searchOnInput = true;
-      this.loading = true;
-      this.formData = {};
-      this.formData['wheelNumber'] = wheelNumber;
+    // const wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
+    // if (wheelNumber) {
+    //   this.searchOnInput = true;
+    //   this.loading = true;
+    //   this.formData = {};
+    //   this.formData['wheelNumber'] = wheelNumber;
 
-      this.buildFilters();
+    //   this.buildFilters();
+    // }
+    if (this.docDataService.previousRoute) {
+      const wheelNumber =
+        this.docDataService.previousRoute?.params?.wheelNumber || null;
+      if (wheelNumber) {
+        this.searchOnInput = true;
+        this.loading = true;
+        this.formData = {};
+        this.formData['wheelNumber'] = wheelNumber;
+        this.buildFilters();
+      }
+      this.docDataService.previousRoute = null;
     }
   }
 

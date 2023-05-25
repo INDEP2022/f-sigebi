@@ -1,6 +1,6 @@
 /** BASE IMPORT */
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
@@ -32,9 +32,9 @@ export class FileDataUpdateComponent
   columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
   fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
-    private fb: FormBuilder,
-    private activateRoute: ActivatedRoute,
-    private modalService: BsModalService,
+    // private fb: FormBuilder,
+    // private activateRoute: ActivatedRoute,
+    // private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -42,12 +42,11 @@ export class FileDataUpdateComponent
   ) {
     super();
   }
-  labelBtnRegisterWheel = 'Registro de volante';
   wheelNumber: string | null = null;
   ngOnInit(): void {
-    this.wheelNumber = this.activatedRoute.snapshot.queryParams['wheelNumber'];
-    if (this.wheelNumber) {
-      this.labelBtnRegisterWheel = 'Regresar';
+    if (this.docDataService.previousRoute) {
+      this.wheelNumber =
+        this.docDataService.previousRoute?.params?.wheelNumber || null;
     }
   }
 

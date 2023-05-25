@@ -1935,9 +1935,15 @@ export class DocumentsReceptionRegisterComponent
         dictamen: false,
       };
     }
-    this.router.navigate(['/pages/juridical/file-data-update'], {
-      queryParams: { wheelNumber: this.wheelNumber.value },
-    });
+
+    this.docDataService.previousRoute = {
+      route: this.router.url,
+      params: {
+        wheelNumber: this.wheelNumber.value,
+      },
+    };
+
+    this.router.navigate(['/pages/juridical/file-data-update']);
   }
 
   showTrackRecords(trackRecords: INotification[]) {
