@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  TemplateRef,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { NgScrollbarModule } from 'ngx-scrollbar';
@@ -40,6 +46,8 @@ export class TableReplaceColumnModalComponent
   labelSelect: string; // Input requerido al llamar el modal
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsControl: FilterParams = new FilterParams(); // Input requerido al llamar el modal
+  labelTemplate: TemplateRef<any> = null;
+  optionTemplate: TemplateRef<any> = null;
   // paramFilter = 'search';
   // operator = SearchFilter.EQ;
   private _data: any[];
