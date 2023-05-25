@@ -554,6 +554,9 @@ export class JuridicalRulingGComponent
                   this.expedientesForm.get('noExpediente').value
               );
             this.expedientesForm
+              .get('tipoDictaminacion')
+              .setValue(params?.tipoDic);
+            this.expedientesForm
               .get('noVolante')
               .setValue(params?.volante || null);
             this.dictaminacionesForm
@@ -1166,6 +1169,7 @@ export class JuridicalRulingGComponent
   userChange(user: any) {
     // ..captura usuario
     console.log(user);
+    this.dictaminacionesForm.get('autoriza_nombre').setValue(user.name);
   }
 
   getUsers($params: ListParams) {
