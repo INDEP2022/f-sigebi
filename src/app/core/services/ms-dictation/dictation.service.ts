@@ -145,4 +145,18 @@ export class DictationService extends HttpService {
       body
     );
   }
+
+  getRTdictaAarusr(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.RTdictaAarusr,
+      params
+    );
+  }
+
+  deleteCopiesOfficialOpinion(params: IDictationCopies) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      params
+    );
+  }
 }

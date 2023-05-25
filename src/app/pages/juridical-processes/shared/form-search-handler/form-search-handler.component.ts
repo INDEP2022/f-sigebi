@@ -94,25 +94,21 @@ export class FormSearchHandlerComponent
       hideSubHeader: false,
     };
 
-    // this._settings = {
-    //   ...this._settings,
-    //   hideSubHeader: false,
-    //   // ...this.settings,
-    //   // selectedRowIndex: -1,
-    //   // // columns: { ...this.columnsType },
-    // };
+    this._settings = {
+      ...this._settings,
+      hideSubHeader: false,
+      // ...this.settings,
+      // selectedRowIndex: -1,
+      // // columns: { ...this.columnsType },
+    };
   }
 
   ngOnInit(): void {
     this.autoLoad();
-    if (this.dataObservableFn) {
+    if (!this.dataObservableFn) {
       // console.log({ getData: this.dataObservableFn });
       this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
         if (this.searchOnInput) {
-          this._settings = {
-            ...this._settings,
-            hideSubHeader: false,
-          };
           this.getData();
         }
       });

@@ -50,6 +50,7 @@
         <!-- VOLANTE/EXPEDIENTE PANTALLA -->
 
         <!-- DECLARATORIA PANTALLA -->
+
         <tab heading="DECLARATORIA" *ngIf="showTabs">
           <!-- Forms DECLARATORIA -->
           <!-- <ngx-form-declaratoria
@@ -113,18 +114,15 @@
                       [searchable]="false"
                       class="form-control"
                       [clearable]="false">
+                      <ng-option value="null">Seleccione una opción</ng-option>
                       <ng-option *ngIf="tipoBien == 7" value="DAN"
                         >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
                       >
                       <ng-option *ngIf="tipoBien != 7" value="DAB"
                         >DAB - DECLARATORIA ABANDONO BIENES</ng-option
                       >
-                      <ng-option value="FGR"
-                        >FGR - DECLARATORIA ABANDONO FGR</ng-option
-                      >
-                      <ng-option value="PJF"
-                        >PJF - DECLARATORIA ABANDONO PJF</ng-option
-                      >
+                      <!-- <ng-option value="FGR">FGR - DECLARATORIA ABANDONO FGR</ng-option>
+                      <ng-option value="PJF">PJF - DECLARATORIA ABANDONO PJF</ng-option> -->
                     </ng-select>
                   </form-field>
                 </div>
@@ -365,6 +363,7 @@
                     Aprobar
                   </button>
                   <button
+                    (click)="eliminar()"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Eliminar
@@ -434,7 +433,7 @@
                           <div class="col-md-4">
                             <form-field
                               [control]="formOficio.get('oficio')"
-                              label="No. Gestión">
+                              label="No. Gesti&oacute;n">
                               <input
                                 [readonly]="!disabledBTNs"
                                 type="number"
@@ -465,13 +464,20 @@
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('ciudad')"
-                          label="Ciudad">
-                          <input
-                            [readonly]="!disabledBTNs"
-                            class="form-control"
-                            formControlName="ciudad" />
+                        <form-field [control]="formOficio.get('ciudad')">
+                          <ngx-select
+                            [form]="formOficio"
+                            [data]="cities2"
+                            (fetchItems)="getCities($event)"
+                            bindLabel="nameAndId"
+                            control="ciudad"
+                            label="Ciudad"
+                            [searchOnInit]="false"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="ciudad" /> -->
                         </form-field>
                       </div>
                     </div>
