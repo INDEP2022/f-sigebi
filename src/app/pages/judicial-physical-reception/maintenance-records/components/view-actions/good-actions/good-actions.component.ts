@@ -187,39 +187,6 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
 
   openModals() {
     console.log(this.rowsSelected, this.form.value);
-    // this.openModalSelect(
-    //   {
-    //     titleColumnToReplace: 'estados',
-    //     columnsType: {
-    //       numberGood: {
-    //         title: 'N° Bien',
-    //         type: 'string',
-    //         sort: false,
-    //       },
-    //       status: {
-    //         title: 'Estatus',
-    //         type: 'string',
-    //         sort: false,
-    //       },
-    //     },
-    //     settings: { ...TABLE_SETTINGS },
-    //     tableData: this.rowsSelected,
-    //     service: this.statusGoodService,
-    //     dataObservableFn: this.statusGoodService.getAllSelf,
-    //     idSelect: 'status',
-    //     labelSelect: 'status',
-    //     paramFilter: 'status',
-    //     operator: SearchFilter.ILIKE,
-    //     form: this.fb.group({
-    //       status: [null, [Validators.required]],
-    //       justification: [null, [Validators.required]],
-    //     }),
-    //     formField: 'status',
-    //     otherFormField: 'justification',
-    //     otherFormLabel: 'Motivo del cambio',
-    //   },
-    //   this.replaceStatus
-    // );
     if (this.form.get('action').value == '1') {
       this.openModalSelect(
         {
