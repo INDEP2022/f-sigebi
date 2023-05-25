@@ -8,35 +8,21 @@
   Editar fechas
 </button> -->
 
-<form
-  class="form-material"
-  [formGroup]="form"
-  style="display: flex; column-gap: 15px">
+<form class="form-material updateDatesGoods" [formGroup]="form">
   <form-field [control]="form.get('inicio')" label="Inicio">
     <input
       class="form-control"
       [class]="disabled ? 'disabled' : ''"
       ngModel
       bsDatepicker
-      [bsConfig]="{
-        dateInputFormat: 'YYYY-MM-DD',
-        displayOneMonthRange: true
-      }"
       formControlName="inicio" />
   </form-field>
-  <form-field
-    [control]="form.get('fin')"
-    label="Fin"
-    style="padding-left: 10px">
+  <form-field [control]="form.get('fin')" label="Fin">
     <input
       class="form-control"
       [class]="disabled ? 'disabled' : ''"
       ngModel
       bsDatepicker
-      [bsConfig]="{
-        dateInputFormat: 'YYYY-MM-DD',
-        displayOneMonthRange: true
-      }"
       [minDate]="fechaInicio.value"
       formControlName="fin" />
   </form-field>

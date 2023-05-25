@@ -136,9 +136,7 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="
-              affair == null || dictOffice == '' || isLoadingOfficeOfRelief
-            "
+            [disabled]="!affair || !dictOffice || isLoadingOfficeOfRelief"
             (click)="onClickOfficeOfRelief()">
             Oficio de Desahogo
             <ng-container *ngIf="isLoadingOfficeOfRelief"
@@ -148,7 +146,7 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="dictum == '' || affair == null || dictOffice != 'D'"
+            [disabled]="!dictum || !affair || dictOffice != 'D'"
             (click)="sendToJuridicalRuling()">
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
