@@ -16,7 +16,7 @@ import {
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
-import { firstFormatDate } from 'src/app/shared/utils/date';
+import { secondFormatDate } from 'src/app/shared/utils/date';
 import { MaintenanceRecordsService } from './../../../services/maintenance-records.service';
 
 @Component({
@@ -105,10 +105,10 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
       numberGood: this.form.get('goodId').value,
       amount: this.selectedGood.quantity,
       received: 'S',
-      approvedDateXAdmon: firstFormatDate(new Date()),
+      approvedDateXAdmon: secondFormatDate(new Date()),
       approvedXAdmon: 'S',
       approvedUserXAdmon: localStorage.getItem('username'),
-      dateIndicatesUserApproval: firstFormatDate(new Date()),
+      dateIndicatesUserApproval: secondFormatDate(new Date()),
       numberRegister: null,
       reviewIndft: null,
       correctIndft: null,
