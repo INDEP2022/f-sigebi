@@ -97,8 +97,8 @@
           </form-field> -->
           <small class="font-weight-semibold">Atención</small>
           <p
-            [ngClass]="{ 'text-danger': usErrorUserPrev }"
-            class="font-weight-bold text-muted">
+            [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
+            class="font-weight-bold">
             {{ turnForm.get('prevUser').value?.userAndName }}
             <ng-container *ngIf="usErrorUserPrev"
               >El volante no tiene turnados</ng-container
