@@ -20,6 +20,7 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 
@@ -40,7 +41,8 @@ export class LegalOpinionsOfficeService {
     private msProcedureManagement: ProcedureManagementService,
     private msParametersService: ParametersService,
     private msGoodprocessService: GoodprocessService,
-    private msNotificationService: NotificationService
+    private msNotificationService: NotificationService,
+    private msSecurityService: SecurityService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -133,6 +135,9 @@ export class LegalOpinionsOfficeService {
   }
   pupGenMasiv(params: any) {
     return this.msGoodprocessService.postPupGenMasiv(params);
+  }
+  lovCitiesRegCity(body: any, params: _Params) {
+    return this.msSecurityService.lovCitiesRegCity(body, params);
   }
 
   getTexto3FromOfficeDictation(

@@ -47,4 +47,12 @@ export class SecurityService extends HttpService {
       params
     );
   }
+
+  lovCitiesRegCity(body: any, params: _Params) {
+    return this.post(
+      `${SecurityEndpoints.AplicationLovCitiesRegCity}`,
+      body,
+      params
+    );
+  }
 }
