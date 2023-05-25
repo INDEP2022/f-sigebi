@@ -4,6 +4,7 @@ import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
 import { DatePickerComponent } from 'src/app/shared/render-components/date-picker/date-picker.component';
+import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 
 @Component({
   selector: 'app-table-good-maintenance',
@@ -93,7 +94,10 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           ) => {
             // DATA FROM HERE GOES TO renderComponent
             return {
-              checked: row.approvedXAdmon === 'S' ? true : false,
+              checked:
+                row.approvedXAdmon === 'S' || row.approvedXAdmon === true
+                  ? true
+                  : false,
               disabled: true,
             };
           },
@@ -113,7 +117,8 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
           ) => {
             // DATA FROM HERE GOES TO renderComponent
             return {
-              checked: row.received === 'S' ? true : false,
+              checked:
+                row.received === 'S' || row.received === true ? true : false,
               disabled: true,
             };
           },
@@ -129,30 +134,41 @@ export class TableGoodMaintenanceComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  updateRow(row: IDetailProceedingsDeliveryReception) {
+  updateRow(event: {
+    newData: IDetailProceedingsDeliveryReception;
+    confirm: any;
+  }) {
     // console.log(row);
-    delete row.good;
-    delete row.description;
-    delete row.status;
-    delete row.warehouse;
-    delete row.vault;
-    row = {
-      ...row,
+    let { newData, confirm } = event;
+
+    delete newData.good;
+    delete newData.description;
+    delete newData.status;
+    delete newData.warehouse;
+    delete newData.vault;
+    newData = {
+      ...newData,
       approvedXAdmon:
-        typeof row.approvedXAdmon == 'boolean'
-          ? row.approvedXAdmon === true
+        typeof newData.approvedXAdmon == 'boolean'
+          ? newData.approvedXAdmon === true
             ? 'S'
             : 'N'
-          : row.approvedXAdmon,
+          : newData.approvedXAdmon,
       received:
-        typeof row.received == 'boolean'
-          ? row.received === true
+        typeof newData.received == 'boolean'
+          ? newData.received === true
             ? 'S'
             : 'N'
-          : row.received,
+          : newData.received,
+      approvedDateXAdmon: firstFormatDateToSecondFormatDate(
+        newData.approvedDateXAdmon + ''
+      ),
+      dateIndicatesUserApproval: firstFormatDateToSecondFormatDate(
+        newData.dateIndicatesUserApproval + ''
+      ),
     };
-    if (!row.createdLocal) {
-      this.service.update(row).subscribe({
+    if (!newData.createdLocal) {
+      this.service.update(newData).subscribe({
         next: response => {
           this.updateRowEvent.emit();
           this.onLoadToast('success', 'Bien actualizado', '');
