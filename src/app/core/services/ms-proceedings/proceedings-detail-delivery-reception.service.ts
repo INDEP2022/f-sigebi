@@ -198,20 +198,18 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     return this.post(this.endpoint + '/id', { numberGood, numberProceedings });
   }
 
-  deleteByIdBP(
+  deleteByBP(
     actaNumber: number,
     processingArea: string,
-    detail: IGoodsByProceeding,
-    contEli: number
+    details: IGoodsByProceeding[]
   ) {
     const body: PBDelete = {
-      contEli,
-      aggregate: 'AE',
-      selEli: 1,
       processingArea,
-      states: detail.estatus,
       user: localStorage.getItem('username'),
       actaNumber,
+      goods: details.map(detail => {
+        return { noBien: +(detail.no_bien + ''), status: detail.estatus };
+      }),
     };
     //   actaNumber,
     //   goodNumber: +detail.no_bien,

@@ -67,7 +67,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // }
     // this.moreParams = [];
     this.service.initFormGood();
-    this.selectGood(this.service.getSavedGood());
+    // this.selectGood(this.service.getSavedGood());
     // if (this.firstCase === true) {
     // this.service.initFormGood();
     // this.selectGood(this.serviceTab1.getSavedGood());
