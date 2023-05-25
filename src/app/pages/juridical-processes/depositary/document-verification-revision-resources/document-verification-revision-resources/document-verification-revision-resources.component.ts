@@ -212,18 +212,7 @@ export class DocumentVerificationRevisionResourcesComponent
   }
 
   createDoc(data: any) {
-    const dataSend = {
-      recordNumber: 0,
-      goodNumber: 0,
-      key: '',
-      typeDictum: '',
-      dateReceipt: '',
-      userReceipt: '',
-      insertionDate: '',
-      userInsertion: '',
-      numRegister: 0,
-      officialNumber: 0,
-    };
+    this.dataTable.data.push();
   }
 
   removeDoc() {}
@@ -641,19 +630,19 @@ export class DocumentVerificationRevisionResourcesComponent
                 }
               }
 
-              vquery = ['CVD', 'DFD'];
-
               if (
                 id &&
                 dateAgreementAssurance &&
                 goodId &&
                 di_situacion_bien != 'DICTAMINADO'
               ) {
-                this.activeBlocDoc = true;
-                this.getDataWihtVquery(vquery.join(', '));
-              } else {
-                this.activeBlocDoc = true;
-                this.getDataNotVquery();
+                if (vquery.length > 0) {
+                  this.activeBlocDoc = true;
+                  this.getDataWihtVquery(vquery.join(', '));
+                } else {
+                  this.activeBlocDoc = true;
+                  this.getDataNotVquery();
+                }
               }
             }
           }
@@ -670,7 +659,7 @@ export class DocumentVerificationRevisionResourcesComponent
       goodNumber: goodId,
     };
 
-    this.dictumForService.getAplication2(data).subscribe({
+    this.dictumForService.getAplication1(data).subscribe({
       next: resp => {
         this.loadingDoc = false;
         this.dataTableDoc = resp;
@@ -690,18 +679,18 @@ export class DocumentVerificationRevisionResourcesComponent
     });
   }
 
-  getDataWihtVquery(vc_query: string) {
+  getDataWihtVquery(vcQuery: string) {
     this.loadingDoc = true;
     const { proceedingsNumber, goodId } = this.form.value;
     const data = {
       proceedingsNumber,
       goodNumber: goodId,
-      vc_query,
+      vcQuery,
     };
 
     console.log(data);
 
-    this.dictumForService.getAplication1(data).subscribe({
+    this.dictumForService.getAplication2(data).subscribe({
       next: resp => {
         this.loadingDoc = false;
         this.dataTableDoc = resp;
