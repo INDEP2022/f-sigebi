@@ -32,9 +32,9 @@ export class FileDataUpdateComponent
   columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
   fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
-    // private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute,
-    // private modalService: BsModalService,
+    private fb: FormBuilder,
+    private activateRoute: ActivatedRoute,
+    private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
     private changeDetectorRef: ChangeDetectorRef,

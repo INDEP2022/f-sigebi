@@ -14,9 +14,11 @@ import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
+import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   FilterParams,
@@ -29,7 +31,6 @@ import { StateOfRepublicService } from '../../../../core/services/catalogs/state
 import { StationService } from '../../../../core/services/catalogs/station.service';
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
-import { issuesData } from './data';
 
 @Component({
   selector: 'app-create-request',
@@ -80,6 +81,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   orderService = inject(OrderServiceService);
   activateRouter = inject(ActivatedRoute);
   route = inject(ActivatedRoute);
+  affairService = inject(AffairService);
+  userProcessService = inject(UserProcessService);
 
   selectedRegDel: any = null;
 
@@ -93,25 +96,24 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('op', this.op);
-    this.prepareForm();
-    this.getIssue();
-    this.getRegionalDeleg(new ListParams());
-    this.getTransferent(new ListParams());
     const task: any = JSON.parse(window.localStorage.getItem('Task'));
     const id = Number(this.activateRouter.snapshot.paramMap.get('id'));
+    this.prepareForm();
+    this.getRegionalDeleg(new ListParams());
+    this.getTransferent(new ListParams());
     console.log('taskId', task);
-
+    if (id && this.op == 2) {
+      this.getIssue();
+    }
     //comparo el id de la solicitud que esta en task con el id de la ruta
     if (task) {
       if (Number(task.taskId) != id) {
         this.generateFirstTask();
       } else {
-        //copio la tarea
+        //si la solicitud tiene id
         this.taskId = task.id;
-        //copio el id de la solicitud
         this.requestId = id;
-        //this.getRequest(this.requestId);
+        this.getRequest(this.requestId);
       }
     } else {
       this.generateFirstTask();
@@ -337,11 +339,24 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getState(event: any): void {}
 
-  getIssue(event?: any): void {
-    //Provisional data
-    let data = issuesData;
-    let count = data.length;
-    this.issues = new DefaultSelect(data, count);
+  getIssue(event?: any, id?: string): void {
+    let params = new ListParams();
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    params['filter.nbOrigen'] = `$eq:SAMI`;
+    this.affairService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.issues = new DefaultSelect(data.data, data.count);
+        if (id) {
+          this.requestForm.controls['affair'].setValue(id);
+        }
+      },
+      error: error => {
+        console.log('no se encontraron datos en asuntos ', error);
+      },
+    });
   }
 
   openModalSelectUser() {
@@ -385,12 +400,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         let date = this.requestForm.controls['applicationDate'].value;
         form.applicationDate = date.toISOString();
 
-        let action = null;
-        let haveId = false;
-
         const updateRequest = await this.updateSavedRequest(form);
-
         if (updateRequest) {
+          this.loadingTurn = false;
           Swal.fire({
             title: 'Guardado',
             text: ` Solicitud guardada con el folio: ${this.requestId}`,
@@ -408,6 +420,15 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   turnRequest(): void {
+    if (this.op == 2) {
+      this.onLoadToast(
+        'info',
+        'No guarda',
+        'falta implementarse el registro de tareas'
+      );
+      return;
+    }
+
     if (this.requestForm.controls['targetUser'].value === null) {
       this.onLoadToast(
         'info',
@@ -537,7 +558,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       //form.originInfo = 'SOL_TRANSFERENCIA'
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
-      debugger;
       this.requestService.update(form.id, form).subscribe({
         next: resp => {
           resolve(resp);
@@ -637,10 +657,31 @@ export class RequestFormComponent extends BasePage implements OnInit {
         );
         this.requestForm.controls['stationId'].setValue(resp.stationId);
         this.requestForm.controls['authorityId'].setValue(resp.authorityId);
-        if (this.op == 2) {
-          this.requestForm.controls['affair'].setValue(resp.affair);
+        if (this.op == 2 && resp.affair) {
+          this.getIssue('', resp.affair);
         }
-        console.log(this.requestForm.value);
+        this.requestForm.controls['targetUserType'].setValue(
+          resp.targetUserType
+        );
+        if (resp.targetUser) {
+          this.getAllUsers(resp.targetUser);
+        }
+      },
+    });
+  }
+
+  getAllUsers(id: string) {
+    const params = new FilterParams();
+    this.params.value.addFilter('id', id);
+    const filter = this.params.getValue().getParams();
+    this.userProcessService.getAll(filter).subscribe({
+      next: resp => {
+        this.userName = resp.data[0].firstName;
+        this.nickName = resp.data[0].username;
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
       },
     });
   }
