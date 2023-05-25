@@ -1,4 +1,3 @@
-import { ICity } from './city.model';
 import { IDelegation } from './delegation.model';
 import { IInstitutionClassification } from './institution-classification.model';
 import { ITransferente } from './transferente.model';
