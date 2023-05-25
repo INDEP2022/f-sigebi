@@ -62,7 +62,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     const requestId = Number(this.route.snapshot.paramMap.get('request'));
     const process = this.route.snapshot.paramMap.get('process');
-
     //this.route.paramMap.subscribe(params => {
     //console.log(params);
     if (requestId) {

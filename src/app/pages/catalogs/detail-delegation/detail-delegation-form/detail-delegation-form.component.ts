@@ -36,7 +36,7 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.detailDelegationForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       location: [
         null,
@@ -52,10 +52,10 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
       ],
       area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       mail: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
-      numP1: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      numP2: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      numP3: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      numDelegation: [
+      tel1: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      tel2: [null, [Validators.pattern(PHONE_PATTERN)]],
+      tel3: [null, [Validators.pattern(PHONE_PATTERN)]],
+      numberDelegation: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],

@@ -53,7 +53,7 @@ export class OfficeFormComponent extends BasePage implements OnInit {
         ],
       ],
       noExt: [null, [Validators.required, Validators.maxLength(10)]],
-      noInt: [null, [Validators.required, Validators.maxLength(10)]],
+      noInt: [null, [Validators.maxLength(10)]],
       colony: [null, [Validators.required, Validators.maxLength(100)]],
       municipalDelegate: [
         null,
@@ -78,15 +78,11 @@ export class OfficeFormComponent extends BasePage implements OnInit {
       ],
       phoneTwo: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(20),
-          Validators.pattern(PHONE_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(PHONE_PATTERN)],
       ],
       fax: [null, [Validators.required, Validators.maxLength(20)]],
-      typeOffice: [null, [Validators.required]],
-      noRegistration: [null, [Validators.required]],
+      typeOffice: [null],
+      noRegistration: [null],
     });
     if (this.office != null) {
       this.edit = true;

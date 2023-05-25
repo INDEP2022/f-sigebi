@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -47,6 +48,8 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   form: FormGroup = new FormGroup({});
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
 
   constructor(
     private modalService: BsModalService,
@@ -57,20 +60,50 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
     private printFlyersService: PrintFlyersService
   ) {
     super();
+    // this.settings = {
+    //   ...this.settings,
+    //   actions: {
+    //     hideSubHeader: false,
+    //     columnTitle: 'Acciones',
+    //     /* edit: true, */
+    //     delete: true,
+    //     position: 'right',
+    //   },
+    //   columns: { ...COLUMNS },
+    // };
+    this.settings.columns = COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        /* edit: true, */
-        delete: true,
-        position: 'right',
-      },
-      columns: { ...COLUMNS },
+      hideSubHeader: false,
     };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getDepartmentByIds();
+        }
+      });
   }
 
   private prepareForm() {
@@ -153,16 +186,22 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   getDepartmentByIds() {
     this.departments = [];
     this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.departmentService
       .getByDelegationsSubdelegation2(
         this.delegation.value,
         this.subdelegation.value,
-        this.params.getValue()
+        params
       )
       .subscribe({
         next: response => {
           console.log(response);
           this.departments = response.data;
+          this.data.load(this.departments);
+          this.data.refresh();
           this.totalItems = response.count;
           this.loading = false;
         },
@@ -190,10 +229,11 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   }
 
   delete(departament: IDepartment) {
+    let numSubDelegation = departament.numSubDelegation as ISubdelegation;
     let obj = {
       id: departament.id,
       numDelegation: departament.numDelegation,
-      numSubDelegation: departament.numSubDelegation,
+      numSubDelegation: numSubDelegation.id,
       phaseEdo: departament.phaseEdo,
     };
     this.departmentService.removeByBody(obj).subscribe({

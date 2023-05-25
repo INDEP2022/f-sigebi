@@ -76,3 +76,7 @@ export interface ITmpDictationCreate {
   keyOfficeArmA: string;
   statusOf: string;
 }
+export interface ITmpExpDesahogoB {
+  goodNumber: number;
+  numberProceedings: number;
+}

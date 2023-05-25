@@ -43,7 +43,7 @@
                   type="text"
                   class="form-control"
                   min="0"
-                  maxlength="11"
+                  maxlength="10"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
@@ -167,15 +167,38 @@
               </form-field>
             </div> -->
             <!--  -->
-            <div class="col-md-4 p-2">
+            <div class="col-4 p-2">
               <form-field
-                [control]="dictaminacionesForm.get('autoriza_remitente')"
-                label="Autoriza Dict.">
-                <input
+                [control]="dictaminacionesForm.get('autoriza_remitente')">
+                <!-- <input
                   class="form-control"
-                  formControlName="autoriza_remitente" />
+                  formControlName="autoriza_remitente" /> -->
+                <ngx-select
+                  label="Autoriza Dict."
+                  [form]="dictaminacionesForm"
+                  [data]="users$"
+                  (change)="userChange($event)"
+                  (fetchItems)="getUsers($event)"
+                  bindLabel="userAndName"
+                  control="autoriza_remitente"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30"
+                  [labelTemplate]="userLabel"
+                  [optionTemplate]="userOption">
+                </ngx-select>
+                <ng-template #userLabel let-item="item">
+                  <!-- {{ item.name }} -->
+                  {{ item.id }}
+                </ng-template>
+                <ng-template #userOption let-item="item">
+                  <div [title]="item.id + '-' + item.name">
+                    {{ item.id }}
+                  </div>
+                </ng-template>
               </form-field>
             </div>
+
             <div class="col-md-8 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_nombre')"

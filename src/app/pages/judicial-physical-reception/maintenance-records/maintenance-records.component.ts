@@ -213,10 +213,11 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
           // debugger;
           this.infoForm = response.data[0];
           this.service.formValue = deliveryReceptionToInfo(this.infoForm);
+          // console.log(this.infoForm, this.service.formValue);
           if (!this.registro) {
             this.service.totalProceedings = response.count;
           }
-          console.log(this.params.getValue());
+          // console.log(this.params.getValue());
           this.loading = false;
           this.registro = true;
           this.getGoods();
@@ -238,7 +239,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
       filterParams.addFilter('numberProceedings', this.infoForm.id);
       this.detailService.getAll3(filterParams.getParams()).subscribe({
         next: response => {
-          console.log(response);
+          // console.log(response);
 
           // console.log(this.service.data, response.data);
 
@@ -247,7 +248,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
           this.loadingGoods = false;
         },
         error: error => {
-          console.log(error);
+          // console.log(error);
           this.loadingGoods = false;
         },
       });

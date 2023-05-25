@@ -160,12 +160,13 @@
           [form]="form"
           [readonly]="loading"
           formControlName="numDelegation1"
-          label="Recibe"
+          label="Delegación Recibe"
           value="id"
           bindLabel="id"
           paramSearch="filter.id"
           prefixSearch="$eq"
           path="catalog/api/v1/delegation"
+          [updateValues]="true"
           [labelTemplate]="delegationLabel"
           [optionTemplate]="delegationOption">
         </ng-custom-select-loading>
@@ -205,12 +206,13 @@
           [form]="form"
           [readonly]="loading"
           formControlName="numDelegation2"
-          label="Administra"
+          label="Delegación Administra "
           value="id"
-          bindLabel="description"
-          paramSearch="filter.description"
-          prefixSearch="$ilike"
+          bindLabel="id"
+          paramSearch="filter.id"
+          prefixSearch="$eq"
           path="catalog/api/v1/delegation"
+          [updateValues]="true"
           [labelTemplate]="delegationLabel"
           [optionTemplate]="delegationOption">
         </ng-custom-select-loading>

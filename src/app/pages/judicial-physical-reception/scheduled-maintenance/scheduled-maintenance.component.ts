@@ -115,7 +115,7 @@ export class ScheduledMaintenanceComponent
           error: err => {
             console.log(err);
             let message = `No se pudo eliminar el Acta N° ${item.id}`;
-            if (err.error.message.includes('detalle_acta_ent_recep')) {
+            if (err.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }
             this.onLoadToast('error', 'ERROR', message);

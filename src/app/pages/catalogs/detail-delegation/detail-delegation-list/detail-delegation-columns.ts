@@ -11,7 +11,7 @@ export const DETAIL_DELEGATION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numDelegation: {
+  numberDelegation: {
     title: 'Delegacion',
     type: 'string',
     sort: false,
@@ -36,7 +36,9 @@ export const DETAIL_DELEGATION_COLUMNS = {
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string, row: IDetailDelegation) => {
-      return `${row.numP1}<br>${row.numP2}<br>${row.numP3}`;
+      return `${row.tel1 != null ? row.tel1 : ''}<br>${
+        row.tel2 != null ? row.tel2 : ''
+      }<br>${row.tel3 != null ? row.tel3 : ''}`;
     },
   },
 };
