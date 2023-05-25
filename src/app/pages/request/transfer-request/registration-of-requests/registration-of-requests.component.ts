@@ -1366,6 +1366,7 @@ export class RegistrationOfRequestsComponent
         body.id = good.id;
         body.goodId = good.goodId;
         body.processStatus = newProcessStatus;
+        body.goodStatus = newProcessStatus;
         await this.updateGood(body);
       }
     });
