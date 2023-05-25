@@ -5,12 +5,12 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   personName: {
-    title: 'Nombre corto',
+    title: 'Cve. Depositaría',
     type: 'string',
     sort: false,
   },
   name: {
-    title: 'Nombre',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -89,13 +89,13 @@ export const PERSON_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  keyEntFed: {
-    title: 'Llave EntFed',
+  DetEntFed: {
+    title: 'Ent.Federativa',
     type: 'string',
     sort: false,
   },
-  keyOperation: {
-    title: 'Llave Operación',
+  DetOperation: {
+    title: 'Giro',
     type: 'string',
     sort: false,
   },

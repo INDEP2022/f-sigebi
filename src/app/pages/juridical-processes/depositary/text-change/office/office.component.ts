@@ -170,6 +170,9 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.form.get('RemitenteSenderUser').setValue(resp.data[0].sender);
           const param = new ListParams();
           param.text = resp.data[0].sender;
+          console.log(
+            'resp.data[0].sender => ' + JSON.stringify(resp.data[0].sender)
+          );
           this.getUsers$(param);
           this.getPuestoUser(resp.data[0].cveChargeRem);
           this.form.get('paragraphInitial').setValue(resp.data[0].text1);

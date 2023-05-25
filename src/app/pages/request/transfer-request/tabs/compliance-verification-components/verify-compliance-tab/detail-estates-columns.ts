@@ -3,7 +3,7 @@ import { SelectInputComponent } from './select-input/select-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
   id: {
-    title: 'No. Gestión',
+    title: 'No. GestiónA',
     type: 'string',
     sort: false,
   },
