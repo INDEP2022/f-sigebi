@@ -56,18 +56,20 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      //console.log(params);
-      if (params.get('request')) {
-        this.requestId = parseInt(params.get('request'));
-        this.getRequestInfo(this.requestId);
-        /**
-         *MAP TASKS
-         * */
-        let process = params.get('process');
-        this.mapTasks(process);
-      }
-    });
+    const requestId = Number(this.route.snapshot.paramMap.get('request'));
+    const process = this.route.snapshot.paramMap.get('process');
+    console.log(requestId);
+    //this.route.paramMap.subscribe(params => {
+    //console.log(params);
+    if (requestId) {
+      //this.requestId = parseInt(params.get('request'));
+      this.getRequestInfo(requestId);
+      /**
+       *MAP TASKS
+       * */
+      this.mapTasks(process);
+    }
+    //});
     this.requestSelected(1);
   }
 
@@ -80,6 +82,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   getRequestInfo(rquestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
     this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria`;
+
     this.requestInfo = {
       date: '17-abr-2018',
       requestNo: 1896,

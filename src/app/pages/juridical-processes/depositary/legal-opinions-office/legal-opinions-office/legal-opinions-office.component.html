@@ -8,13 +8,13 @@
         <h5 class="title">OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS</h5>
       </div>
       <div class="col-12 col-sm-12 col-md-6 text-end">
-        <button
+        <!-- <button
           *ngIf="dictationData && !showSearchAppointment"
           class="btn btn-danger active btn-sm m-2"
           (click)="cleanDataForm()">
           Limpiar Campos
           <i class="fas fa-trash-alt"></i>
-        </button>
+        </button> -->
         <button
           *ngIf="!showSearchAppointment"
           class="btn btn-primary active btn-sm m-2"
@@ -48,8 +48,7 @@
         <form [formGroup]="form" class="container-fluid form-material p-0">
           <div class="card">
             <div class="card-header text-dark row">
-              <div class="col-sm-4 col-12 col-md-6 p-2">
-                <!-- <div class="col-sm-12 col-12 col-md-4 p-2 text-center"> -->
+              <div class="col-sm-4 col-12 col-md-6 p-2 text-wrap">
                 <button
                   type="button"
                   class="btn btn-primary btn-sm active"
@@ -57,7 +56,21 @@
                   Buscar Dictaminaciones
                   <i aria-hidden="true" class="fa fa-search text-pink"></i>
                 </button>
-                <!-- </div> -->
+              </div>
+              <div class="col-sm-12 col-12 col-md-6 p-2 text-end text-wrap">
+                <button
+                  class="btn btn-danger active btn-sm m-2"
+                  (click)="cleanDataForm()">
+                  Limpiar Campos
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+                <!-- <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="saveDataForm()">
+                  Guardar
+                  <i aria-hidden="true" class="fa fa-save"></i>
+                </button> -->
               </div>
             </div>
             <div class="card-body">
