@@ -3,7 +3,11 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IInstitutionClassification } from 'src/app/core/models/catalogs/institution-classification.model';
 import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
 import Swal from 'sweetalert2';
@@ -15,7 +19,6 @@ import {
   INSTITUTION_COLUMNS,
   ISSUING_INSTITUTION_COLUMNS,
 } from './issuing-institution-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-issuing-institution-list',
@@ -24,7 +27,8 @@ import { LocalDataSource } from 'ng2-smart-table';
 })
 export class IssuingInstitutionListComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   institutionClassificationList: IInstitutionClassification[] = [];
   issuingInstitutionList: IIssuingInstitution[] = [];
   issuingInstitution: IIssuingInstitution;
@@ -126,18 +130,16 @@ export class IssuingInstitutionListComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.institutionClasificationService
-      .getAll2(params)
-      .subscribe({
-        next: response => {
-          this.institutionClassificationList = response.data;
-          this.data.load(this.institutionClassificationList);
-          this.data.refresh();
-          this.totalItems = response.count;
-          this.loading1 = false;
-        },
-        error: error => (this.loading1 = false),
-      });
+    this.institutionClasificationService.getAll2(params).subscribe({
+      next: response => {
+        this.institutionClassificationList = response.data;
+        this.data.load(this.institutionClassificationList);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading1 = false;
+      },
+      error: error => (this.loading1 = false),
+    });
   }
 
   //Modal para actualizar las instituciones
@@ -205,7 +207,9 @@ export class IssuingInstitutionListComponent
 
             if (filter.search !== '') {
               console.log(
-                (this.columnFilters1[field] = `${searchFilter}:${filter.search}`)
+                (this.columnFilters1[
+                  field
+                ] = `${searchFilter}:${filter.search}`)
               );
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {

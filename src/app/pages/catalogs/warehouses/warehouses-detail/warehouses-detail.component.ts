@@ -8,11 +8,11 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
-import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 @Component({
   selector: 'app-warehouses-detail',
@@ -72,17 +72,8 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
           Validators.required,
         ]),
       ],
-      manager: [
-        null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-
-        ]),
-      ],
-      registerNumber: [
-        null,
-        Validators.compose([Validators.pattern('')]),
-      ],
+      manager: [null, Validators.compose([Validators.pattern(STRING_PATTERN)])],
+      registerNumber: [null, Validators.compose([Validators.pattern('')])],
       stateCodeID: [
         null,
         Validators.compose([Validators.pattern(''), Validators.required]),
@@ -110,10 +101,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       ],
       responsibleDelegation: [
         null,
-        Validators.compose([
-          Validators.pattern(STRING_PATTERN),
-
-        ]),
+        Validators.compose([Validators.pattern(STRING_PATTERN)]),
       ],
     });
     if (this.warehouse != null) {
@@ -153,7 +141,10 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       this.cities = new DefaultSelect([cityCode.nameCity], 1);
 
       if (this.warehouseForm.controls['type'].value) {
-        this.getType(new ListParams(), this.warehouseForm.controls['type'].value);
+        this.getType(
+          new ListParams(),
+          this.warehouseForm.controls['type'].value
+        );
       }
     } else {
       this.warehouseForm.controls['indActive'].setValue(1);
@@ -189,22 +180,22 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       registerNumber: this.warehouseForm.controls['registerNumber'].value,
       stateCode:
         this.warehouse.stateCode.descCondition !=
-          this.warehouseForm.get('stateCode').value
+        this.warehouseForm.get('stateCode').value
           ? this.warehouseForm.get('stateCode').value
           : this.warehouseForm.controls['stateCodeID'].value,
       cityCode:
         this.warehouse.cityCode.nameCity !=
-          this.warehouseForm.get('cityCode').value
+        this.warehouseForm.get('cityCode').value
           ? this.warehouseForm.controls['cityCode'].value
           : this.warehouseForm.controls['cityCodeID'].value,
       municipalityCode:
         this.warehouse.municipalityCode.nameMunicipality !=
-          this.warehouseForm.get('municipalityCode').value
+        this.warehouseForm.get('municipalityCode').value
           ? this.warehouseForm.controls['municipalityCode'].value
           : this.warehouseForm.controls['municipalityCodeID'].value,
       localityCode:
         this.warehouse.localityCode.nameLocation !=
-          this.warehouseForm.get('localityCode').value
+        this.warehouseForm.get('localityCode').value
           ? this.warehouseForm.controls['localityCode'].value
           : this.warehouseForm.controls['localityCodeID'].value,
       indActive: this.warehouseForm.controls['indActive'].value,
@@ -227,10 +218,11 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   }
 
   getStates(params: ListParams) {
-    this.stateService.getAll(params).subscribe(data => {
-      this.states = new DefaultSelect(data.data, data.count);
-
-    }, error => (this.states = new DefaultSelect())
+    this.stateService.getAll(params).subscribe(
+      data => {
+        this.states = new DefaultSelect(data.data, data.count);
+      },
+      error => (this.states = new DefaultSelect())
     );
   }
   getCitie(data: any) {
@@ -255,7 +247,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     this.localities = new DefaultSelect([], 0, true);
     this.warehouseForm.controls['municipalityCode'].setValue(null);
     this.warehouseForm.controls['localityCode'].setValue(null);
-    this.getMunicipalities(new ListParams(), (data.state));
+    this.getMunicipalities(new ListParams(), data.state);
   }
   getMunicipalities(params: ListParams, id?: string) {
     if (id) {

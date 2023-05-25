@@ -473,6 +473,7 @@ export class ClassifyAssetsTabComponent
     for (let i = 0; i <= listReverse.length; i++) {
       const id = listReverse[i];
       this.classiGoodsForm.controls[fractions[i]].setValue(id);
+
       if (i === 0) {
         this.getChapter1(new ListParams(), id);
       } else if (i === 1) {
@@ -989,7 +990,19 @@ export class ClassifyAssetsTabComponent
 
             if (fraction) {
               this.fractionCode = fraction.fractionCode;
+              if (this.fractionCode.length === 8) {
+                this.setNoClasifyGood(fraction);
+                this.setUnidLigieMeasure(fraction);
+                this.setFractionId(data, fraction.fractionCode, 'Seccion');
+
+                const relativeTypeId = this.getRelevantTypeId(
+                  this.selectSection,
+                  data
+                );
+                this.setRelevantTypeId(relativeTypeId);
+              }
             }
+
             const section: any = this.good ? this.good.ligieSection : null;
             if (section != data) {
               this.selectChapter = [];
@@ -1179,7 +1192,7 @@ export class ClassifyAssetsTabComponent
   }
 
   getRelevantTypeId(arrayData: any, id: number): any {
-    if (arrayData) {
+    if (arrayData && id) {
       return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
     }
   }

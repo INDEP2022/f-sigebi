@@ -8,13 +8,13 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
 import { WarehousesDetailComponent } from '../warehouses-detail/warehouses-detail.component';
 import { WAREHOUSE_COLUMNS } from './warehouse-columns';
-import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 @Component({
   selector: 'app-warehouses-list',
@@ -88,7 +88,6 @@ export class WarehousesListComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
-
   }
   async getDetType(response: any): Promise<void> {
     for (let i = 0; i < response.data.length; i++) {
@@ -101,7 +100,7 @@ export class WarehousesListComponent extends BasePage implements OnInit {
             console.log(resp.data[0].otvalor);
             response.data[i].detType = resp.data[0].otvalor;
           },
-          error: erro => (console.log(erro)),
+          error: erro => console.log(erro),
           complete: () => {
             if (i == response.data.length - 1) {
               this.warehouses = response.data;
@@ -111,8 +110,8 @@ export class WarehousesListComponent extends BasePage implements OnInit {
               this.totalItems = response.count;
               this.loading = false;
             }
-          }
-        })
+          },
+        });
       } else if (i == response.data.length - 1) {
         this.warehouses = response.data;
         console.log(response.data);
@@ -121,9 +120,8 @@ export class WarehousesListComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       }
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
-
   }
 
   openForm(warehouse?: IWarehouse) {
