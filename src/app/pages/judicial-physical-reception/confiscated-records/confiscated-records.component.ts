@@ -181,6 +181,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   adminSelect = new DefaultSelect();
   recibeSelect = new DefaultSelect();
   dataEdoFisico = new DefaultSelect(['MALO', 'REGULAR', 'BUENO']);
+  dataExpedients = new DefaultSelect();
+  searchByOtherData = false;
   showFecReception = false;
   minDateFecElab = new Date();
   statusProceeding = '';
@@ -1189,9 +1191,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.serviceExpedient.getAllFilter(paramsF.getParams()).subscribe(
         res => {
           console.log(res);
+          this.searchByOtherData = true;
+          this.dataExpedients = new DefaultSelect();
         },
         err => {
           console.log(err);
+          this.alert(
+            'error',
+            'La averiguación previa colocada no tiene datos',
+            ''
+          );
         }
       );
     } else if (this.form.get('causaPenal').value != null) {
@@ -1199,12 +1208,19 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.serviceExpedient.getAllFilter(paramsF.getParams()).subscribe(
         res => {
           console.log(res);
+          this.searchByOtherData = true;
+          this.dataExpedients = new DefaultSelect();
         },
         err => {
           console.log(err);
+          this.alert('error', 'La causa penal colocada no tiene datos', '');
         }
       );
     }
+  }
+
+  selectExpedient(e: any) {
+    console.log(e);
   }
 
   getGoodsByExpedient() {
