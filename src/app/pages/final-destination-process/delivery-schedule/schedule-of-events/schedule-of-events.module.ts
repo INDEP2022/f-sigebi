@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ParametersComponent } from './event-capture/components/parameters/parameters.component';
 import { EventCaptureComponent } from './event-capture/event-capture.component';
 import { EventTrackingComponent } from './event-tracking/event-tracking.component';
 import { GenerateEstrategyComponent } from './generate-estrategy/generate-estrategy.component';
@@ -16,6 +17,7 @@ import { ScheduleOfEventsComponent } from './schedule-of-events/schedule-of-even
     EventTrackingComponent,
     EventCaptureComponent,
     GenerateEstrategyComponent,
+    ParametersComponent,
   ],
   imports: [
     CommonModule,
