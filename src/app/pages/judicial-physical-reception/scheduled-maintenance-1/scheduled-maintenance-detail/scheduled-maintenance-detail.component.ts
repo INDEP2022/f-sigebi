@@ -591,7 +591,6 @@ export class ScheduledMaintenanceDetailComponent
           next: response => {
             this.data = response.data;
             this.goodsCant = response.total;
-            // console.log(this.goodsCant);
             this.totalItems = response.count;
             // this.loading = false;
             this.fillGoodsByRastrer(deleteds);
