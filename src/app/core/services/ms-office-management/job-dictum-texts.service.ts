@@ -26,4 +26,8 @@ export class JobDictumTextsService extends HttpService {
   create(jobDictumTexts: IJobDictumTexts) {
     return this.post(JobDictumTextsEndpoints.JobDictumTexts, jobDictumTexts);
   }
+
+  remove(body: any) {
+    return this.delete(JobDictumTextsEndpoints.JobDictumTexts, body);
+  }
 }

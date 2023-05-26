@@ -30,6 +30,7 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { IUserAccessAreaRelational } from 'src/app/core/models/ms-users/seg-access-area-relational.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
@@ -39,7 +40,9 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { HistoricalProcedureManagementService } from 'src/app/core/services/ms-procedure-management/historical-procedure-management.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
@@ -117,7 +120,8 @@ export class AbandonmentsDeclarationTradesComponent
   // formLoading: boolean = false;
   folioEscaneoNg: any = '';
   valReadonly: boolean = true;
-
+  V_VAL_ELIM: number = 0;
+  delegacionreg: any;
   constructor(
     private documentsService: DocumentsService,
     private DictationXGood1Service: DictationXGood1Service,
@@ -141,7 +145,10 @@ export class AbandonmentsDeclarationTradesComponent
     private mJobManagementService: MJobManagementService,
     private historicalProcedureManagementService: HistoricalProcedureManagementService,
     private goodsJobManagementService: GoodsJobManagementService,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private jobDictumTextsService: JobDictumTextsService,
+    private notificationService: NotificationService,
+    private delegationService: DelegationService
   ) {
     super();
     this.settings1 = {
@@ -191,7 +198,6 @@ export class AbandonmentsDeclarationTradesComponent
   get dateCapture() {
     return format(new Date(), 'dd-MM-yyyy');
   }
-
   ngOnInit(): void {
     this.prepareForm();
     // this.loading = true;
@@ -207,8 +213,26 @@ export class AbandonmentsDeclarationTradesComponent
         tap(() => this.onLoadGoodList('all'))
       )
       .subscribe();
+
+    let delegacionreg = this.token.decodeToken().delegacionreg;
+    this.getIdDelegation(delegacionreg);
   }
 
+  getIdDelegation(delegation: any) {
+    console.log('asdas', delegation);
+    const params = new ListParams();
+    params['filter.description'] = `$ilike:${delegation}`;
+    this.delegationService.getAll2(params).subscribe(
+      (data: any) => {
+        console.log('asdas2', data);
+        this.delegacionreg = data.data[0].id;
+      },
+      error => {
+        console.log('asdas123', error);
+        this.delegacionreg = null;
+      }
+    );
+  }
   private prepareForm() {
     this.form = this.fb.group({
       noExpediente: [''],
@@ -351,19 +375,28 @@ export class AbandonmentsDeclarationTradesComponent
   idExpediente: any = null;
   noVolante_: any = null;
   async selectData(data: INotification) {
-    console.log('JORGEEE');
+    this.idExpediente = null;
+    this.noVolante_ = null;
+    this.courtName = '';
     this.loading = true;
     this.selectedRow = data;
+
     this.changeDetectorRef.detectChanges();
 
     this.cveoficio_Oficio = '';
     this.statusOfOficio = '';
     this.statusOfMOficioGestion = '';
     this.cveManagement = '';
+    this.oficioDictamen = null;
+    this.statusOfOficio = '';
+    this.oficioDictamenUpdate = false;
+    this.disabledBTNs = false;
     console.log('DATA', data);
 
     this.idExpediente = data.expedientNumber;
     this.noVolante_ = data.wheelNumber;
+
+    this.formOficiopageFin.get('fin').setValue('');
     await this.onLoadGoodList('all');
     await this.validDesahogo(data);
     await this.checkDictum(data);
@@ -715,7 +748,7 @@ export class AbandonmentsDeclarationTradesComponent
     }
   }
 
-  // OBTENEMOS DICTAMEN //
+  // OBTENEMOS DICTAMEN - DICTAMINACIONES//
   dictamen: IDictation;
   cveoficio_Oficio: any = '';
   async checkDictum(data: any) {
@@ -763,6 +796,7 @@ export class AbandonmentsDeclarationTradesComponent
   // OBTENEMOS OFICIO DICTAMEN //
   oficioDictamen: IOfficialDictation;
   statusOfOficio: any = '';
+  oficioDictamenUpdate: boolean = false;
   async getOficioDictamen(data: any) {
     const params = new ListParams();
     params['filter.officialNumber'] = `$eq:${data.id}`;
@@ -797,6 +831,30 @@ export class AbandonmentsDeclarationTradesComponent
           this.lockStatus = false;
         } else {
           this.lockStatus = true;
+        }
+
+        if (this.dictamen.statusDict == null) {
+        } else {
+          if (this.oficioDictamenUpdate == false) {
+            this.oficioDictamenUpdate = true;
+            this.formDeclaratoriapageFin
+              .get('fin')
+              .setValue(
+                this.oficioDictamen.text2 +
+                  this.oficioDictamen.text2To +
+                  this.oficioDictamen.text3
+              );
+            // : OFICIO_DICTAMEN.TEXTOP := : OFICIO_DICTAMEN.TEXTO2 ||: OFICIO_DICTAMEN.TEXTO2_A ||: OFICIO_DICTAMEN.TEXTO3;
+            this.oficioDictamenUpdate = false;
+          } else {
+            this.formDeclaratoriapageFin
+              .get('fin')
+              .setValue(
+                this.oficioDictamen.text2 +
+                  this.oficioDictamen.text2To +
+                  this.oficioDictamen.text3
+              );
+          }
         }
 
         console.log('DATA OFFICE', data);
@@ -892,52 +950,6 @@ export class AbandonmentsDeclarationTradesComponent
           ).then(question => {
             if (question.isConfirmed) {
               this.generarFolioEscaneo();
-              // const sysdate = new Date();
-              // var mes: any = sysdate.getMonth(); // Obtener el mes (0-11)
-              // var anio = sysdate.getFullYear(); // Obtener el año (yyyy)
-              // if (mes < 9) {
-              //   mes = '0' + (mes + 1);
-              // } else {
-              //   mes = mes + 1;
-              // }
-
-              // let obj: any = {
-              //   natureDocument: 'ORIGINAL',
-              //   associateUniversalFolio: null,
-              //   numberProceedings: this.selectedRow.expedientNumber,
-              //   keyTypeDocument: 'ENTRE',
-              //   keySeparator: 60,
-              //   descriptionDocument: 'DICTAMEN',
-              //   significantDate: `${mes}/${anio}`,
-              //   scanStatus: 'SOLICITADO',
-              //   userRequestsScan: this.token.decodeToken().preferred_username,
-              //   scanRequestDate: sysdate,
-              //   numberDelegationRequested: 1,
-              //   numberSubdelegationRequests: 1,
-              //   numberDepartmentRequest: this.token.decodeToken().department,
-              //   flyerNumber: this.selectedRow.wheelNumber,
-              // };
-
-              // this.documentsService.create(obj).subscribe({
-              //   next: (data: any) => {
-              //     console.log('DOCUMENTS', data);
-              //     // :DICTAMINACIONES.FOLIO_UNIVERSAL
-              //     // let txt = data.id + ''
-              //     this.folioEscaneoNg = data.id;
-              //     this.dictamen.folioUniversal = data.id;
-              //     // this.formFolioEscaneo.get('folioEscaneo').setValue(txt)
-              //     this.alert(
-              //       'success',
-              //       'El folio universal generado es:' + data.id,
-              //       ''
-              //     );
-              //     this.loading = false;
-              //   },
-              //   error: error => {
-              //     this.alert('warning', 'DOCUMENTS', error.error.message);
-              //     this.loading = false;
-              //   },
-              // });
             }
           });
         }
@@ -948,6 +960,12 @@ export class AbandonmentsDeclarationTradesComponent
           ''
         );
       }
+    } else {
+      this.alert(
+        'info',
+        'Debe seleccionar un dictamen y/o un oficio de dictamen',
+        ''
+      );
     }
   }
 
@@ -1025,6 +1043,12 @@ export class AbandonmentsDeclarationTradesComponent
           ''
         );
       }
+    } else {
+      this.alert(
+        'info',
+        'Debe seleccionar un dictamen y/o un oficio de dictamen',
+        ''
+      );
     }
   }
 
@@ -1069,6 +1093,12 @@ export class AbandonmentsDeclarationTradesComponent
             }
           });
       }
+    } else {
+      this.alert(
+        'info',
+        'Debe seleccionar un dictamen y/o un oficio de dictamen',
+        ''
+      );
     }
   }
 
@@ -1078,6 +1108,12 @@ export class AbandonmentsDeclarationTradesComponent
         this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
         return;
       }
+    } else {
+      this.alert(
+        'info',
+        'Debe seleccionar un dictamen y/o un oficio de dictamen',
+        ''
+      );
     }
   }
 
@@ -1225,8 +1261,9 @@ export class AbandonmentsDeclarationTradesComponent
 
         if (textP_ == null || textP_ == '') {
           this.alert('error', 'Debe seleccionar el tipo de oficio', '');
+          return;
         } else {
-          this.generar_ofic_dict(this.dictamen);
+          this.generar_ofic_dict(this.dictamen); //PUP_OFIC_DICT
           this.disabledENVIAR = true;
           this.formDeclaratoriapageFin
             .get('fin')
@@ -1298,11 +1335,11 @@ export class AbandonmentsDeclarationTradesComponent
       vc_pantalla: 'FACTJURABANDONOS',
     };
     let clasif: number;
-    this.goodprocessService.getExpedientePostQuery(body).subscribe({
-      next: async data => {
-        console.log('DATAAAAAAAAAAAAAAAA', data);
-        clasif = data.count;
 
+    this.goodprocessService.getExpedientePostQuery(body).subscribe({
+      next: async (data: any) => {
+        clasif = data.count;
+        console.log('DATAAAAAAAAAAAAAAAA', body);
         let result = data.data.map(async (item: any) => {
           // data['tipoSupbtipoDescription'] = item.NO_CLASIF_BIEN + ' - ' + item.DESC_SUBTIPO + ' - ' + item.DESC_SSUBTIPO + ' - ' + item.DESC_SSSUBTIPO, item.NO_CLASIF_BIEN
           item['tipoSupbtipoDescription'] = 'Test';
@@ -1320,7 +1357,7 @@ export class AbandonmentsDeclarationTradesComponent
         if (params.id) {
           this.countTipos(params.id);
         }
-        console.log(error.error);
+        console.log('NIAS', error.error);
       },
     });
   }
@@ -1631,16 +1668,18 @@ export class AbandonmentsDeclarationTradesComponent
     let city = this.formOficio.get('ciudad').value;
 
     if (this.m_oficio_gestion) {
-      if (this.m_oficio_gestion.sender == null) {
+      let sender = this.formOficio.get('remitente').value;
+      if (sender == null || sender == '') {
         this.alert('warning', 'Debe especificar el Remitente', '');
         return;
       }
-
-      if (this.m_oficio_gestion.addressee == null) {
+      let dest = this.formOficio.get('destinatario').value;
+      if (dest == null || dest == '') {
         this.alert('warning', 'Debe especificar el Destinatario', '');
         return;
       }
-      if (this.m_oficio_gestion.city == null) {
+      let city = this.formOficio.get('ciudad').value;
+      if (city == null || city == '') {
         this.alert('warning', 'Debe especificar la Ciudad', '');
         return;
       }
@@ -1734,20 +1773,21 @@ export class AbandonmentsDeclarationTradesComponent
 
       if (this.m_oficio_gestion.statusOf == 'ENVIADO') {
         this.actGestion(); //PUP_ACT_GESTION
-        this.lanzaReporte(this.m_oficio_gestion.managementNumber); // PUP_LANZA_REPORTE
+        this.lanzaReporte(V_NO_OF_GESTION); // PUP_LANZA_REPORTE
       }
 
       let encontrado = this.m_oficio_gestion.cveManagement.includes('?');
 
       if (this.m_oficio_gestion.statusOf == 'EN REVISION' && encontrado) {
-        this.searchNumber(); //PUP_BUSCA_NUMERO
+        this.searchNumber(V_NO_OF_GESTION); //PUP_BUSCA_NUMERO
         this.m_oficio_gestion.statusOf = 'ENVIADO';
+        this.statusOfMOficioGestion = 'ENVIADO';
         this.actGestion(); //PUP_ACT_GESTION
         this.iconLock = true;
         this.btnOficion = false;
         // SET_ITEM_PROPERTY('BLK_CONTROL.ENVOFI', ICON_NAME, '../iconos/rt_lock');
         // SET_ITEM_PROPERTY('BLK_CONTROL.OFICIO', ENABLED, PROPERTY_FALSE);
-        this.lanzaReporte(this.m_oficio_gestion.managementNumber); // PUP_LANZA_REPORTE
+        this.lanzaReporte(V_NO_OF_GESTION); // PUP_LANZA_REPORTE
       }
 
       V_NO_OF_GESTION = this.m_oficio_gestion.managementNumber;
@@ -1769,12 +1809,20 @@ export class AbandonmentsDeclarationTradesComponent
     const VAR1 = 'FNI';
     const VAR2 = 'AB';
 
-    // http://sigebimsqa.indep.gob.mx/proceduremanagement/api/v1/proceduremanagement/pup-act-gestion
-    this.historicalProcedureManagementService.getAllFilter().subscribe({
+    // AVERIGUAR P_NO_TRAMITE
+    let body = {
+      pNoTramite: 1048151,
+      noVolante: this.noVolante_,
+      estatusTramite: VAR1,
+      estatusTramite2: VAR2,
+    };
+    this.historicalProcedureManagementService.updateWithBody(body).subscribe({
       next: resp => {
         this.loading = false;
+        this.onLoadToast('success', 'tabla: GESTION_TRAMITE');
       },
       error: err => {
+        this.onLoadToast('error', 'tabla: GESTION_TRAMITE');
         this.loading = false;
       },
     });
@@ -1784,94 +1832,118 @@ export class AbandonmentsDeclarationTradesComponent
   }
 
   // PUP_BUSCA_NUMERO
-  searchNumber() {}
+  async searchNumber(numberManagement: any) {
+    const sysdate = new Date();
+    var anio = sysdate.getFullYear();
+    let estapa2: any;
+    let LN_OFICIO: any;
 
-  borrar() {
-    if (this.m_oficio_gestion) {
-      let V_NO_OF_GESTION = this.m_oficio_gestion.managementNumber;
-      let V_NO_VOLANTE = this.m_oficio_gestion.flyerNumber;
+    // this.delegacionreg
+    let obj = {
+      noOfNanagement: 2,
+      year: anio,
+    };
 
-      if (this.m_oficio_gestion.managementNumber == null) {
-        this.alert('warning', 'No se tiene oficio', '');
+    estapa2 = await this.getMOficioGestionStage2_(numberManagement);
+
+    //  FA_ETAPACREDA(TRUNC(SYSDATE))
+    if (estapa2 == estapa2) {
+      LN_OFICIO = await this.getMOficioGestionlnJob_(obj);
+    } else {
+      LN_OFICIO = await this.getMOficioGestionmaxLnJob_(obj);
+      if (LN_OFICIO == null) {
+        this.alert('error', 'Al buscar el número del Oficio...', 'maxLnJob');
         return;
       }
-
-      if (this.m_oficio_gestion.statusOf == 'ENVIADO') {
-        this.alert('warning', 'El oficio ya esta enviado no puede borrar', '');
-        return;
-      }
-
-      const TOOLBAR_USUARIO = this.token.decodeToken().preferred_username;
-      if (this.m_oficio_gestion.insertUser != TOOLBAR_USUARIO) {
-        this.alert('warning', 'Usuario inválido para borrar oficio', '');
-        return;
-      }
-
-      var posicion = this.m_oficio_gestion.cveManagement.indexOf('?');
-
-      if (posicion == 0) {
-        this.alert('warning', 'Usuario inválido para borrar oficio', '');
-        return;
-      }
-
-      V_NO_OF_GESTION = this.m_oficio_gestion.managementNumber;
-      V_NO_VOLANTE = this.m_oficio_gestion.flyerNumber;
-
-      this.alertQuestion(
-        'info',
-        `Se borra oficio (Exp.: ${this.idExpediente} No.oficio: ${parseInt(
-          V_NO_VOLANTE
-        )})?`,
-        '¿Deseas continuar?'
-      ).then(question => {
-        if (question.isConfirmed) {
-          this.getCopiasOfiGest(V_NO_VOLANTE);
-        }
-      });
     }
+    var myPromise = new Promise(function (resolve, reject) {
+      // Simulación de una tarea asincrónica
+      setTimeout(function () {
+        resolve('¡Valor resuelto!');
+      }, 100);
+    });
+
+    myPromise.then(function (value) {
+      console.log(value); // Imprime '¡Valor resuelto!' cuando la promesa se resuelve
+    });
+
+    var result: any;
+    // Ejemplo de uso
+    var charNumber: any = LN_OFICIO.toString().padStart(format.length, '0');
+    result = charNumber.replace(/^\s+/, '');
+
+    this.m_oficio_gestion.armedKeyNumber = LN_OFICIO;
+    this.cveManagement = `DCB/DEBM/CJBM/${charNumber}/${anio}`;
+    this.m_oficio_gestion.cveManagement = `DCB/DEBM/CJBM/${charNumber}/${anio}`;
+    this.m_oficio_gestion.insertDate = sysdate + '';
+    // this.dateCapture = sysdate + '';
+    //   : M_OFICIO_GESTION.NUM_CLAVE_ARMADA := LN_OFICIO;
+    //  : M_OFICIO_GESTION.CVE_OF_GESTION := 'DCB/DEBM/CJBM/' || LTRIM(TO_CHAR(LN_OFICIO, '00000')) || '/' || ANIO; --SE MODIFICO POR EL CAMBIO POR NUEVO ESTATUTO		JPH 21 / 10 / 2011
+    //  : M_OFICIO_GESTION.FECHA_INSERTO := SYSDATE;
   }
 
-  // PRIMERO BUSCAMOS EL ID FILTRÁNDOLO CON EL NÚMERO DE LA GESTIÓN, LUEGO PROCEDEREMOS A ELIMINAR //
-  getCopiasOfiGest(managementNumber: any) {
-    this.loading = true;
-    const params = new ListParams();
-    params['filter.managementNumber'] = `$eq:${managementNumber}`;
+  async ltrim(str: string) {
+    str = str + '';
+    return str.replace(/^\s+/, '');
+  }
 
-    this.goodsJobManagementService.getCopiesJobManagement(params).subscribe({
-      next: (data: any) => {
-        let result = data.data.map(async (item: any) => {
-          await this.deleteCopiasOfiGest(item.id);
-        });
+  async toChar(number: any, format: any) {
+    return number.toString().padStart(format.length, '0');
+  }
 
-        Promise.all(result).then((resp: any) => {
-          this.onLoadToast(
-            'success',
-            'COPIAS_OFICIO_GESTION',
-            'Datos eliminados correctamente'
-          );
+  async ltrimToChar(number: any, format: any) {
+    var charNumber: any = this.toChar(number, format);
+    return this.ltrim(charNumber);
+  }
+
+  async getMOficioGestionStage2_(numberManagement: any) {
+    let obj = {
+      numberManagement: numberManagement,
+    };
+    return new Promise((resolve, reject) => {
+      this.mJobManagementService.getMOficioGestionStage2(obj).subscribe({
+        next: (resp: any) => {
           this.loading = false;
-        });
-
-        this.loading = false;
-      },
-      error: error => {
-        this.alert('error', 'COPIAS_OFICIO_GESTION', error.error.message);
-        this.loading = false;
-      },
+          this.onLoadToast('success', 'tabla: M_OFICIO_GESTION', 'stage2');
+          resolve(resp.data[0].etapa2);
+        },
+        error: err => {
+          this.onLoadToast('error', 'tabla: M_OFICIO_GESTION', 'stage2');
+          this.loading = false;
+          resolve(null);
+        },
+      });
     });
   }
 
-  // BORRA COPIAS_OFICIO_GESTION
-  deleteCopiasOfiGest(id: any) {
+  async getMOficioGestionlnJob_(obj: any) {
     return new Promise((resolve, reject) => {
-      this.goodsJobManagementService.deleteCopiesJobManagement(id).subscribe({
+      this.mJobManagementService.getMOficioGestionlnJob(obj).subscribe({
         next: (resp: any) => {
           this.loading = false;
-          resolve(true);
+          this.onLoadToast('success', 'tabla: M_OFICIO_GESTION', 'lnJob');
+          resolve(resp.data[0].ln_oficio);
         },
-        error: (error: any) => {
+        error: err => {
+          this.onLoadToast('error', 'tabla: M_OFICIO_GESTION', 'lnJob');
           this.loading = false;
-          resolve(false);
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getMOficioGestionmaxLnJob_(obj: any) {
+    return new Promise((resolve, reject) => {
+      this.mJobManagementService.getMOficioGestionmaxLnJob(obj).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          this.onLoadToast('success', 'tabla: M_OFICIO_GESTION', 'maxLnJob');
+          resolve(resp.data[0].ln_oficio);
+        },
+        error: err => {
+          this.loading = false;
+          resolve(null);
         },
       });
     });
@@ -1952,13 +2024,28 @@ export class AbandonmentsDeclarationTradesComponent
               return;
             } else {
               // UPDATE BIENES //
-              // await this.updateGoodFunct(V_NO_OF_DICTA, V_TIPO_DICTA)
+              await this.updateGoodFunct(V_NO_OF_DICTA, V_TIPO_DICTA);
               // DELETE DOCUMENTOS_DICTAMEN_X_BIEN_M
-              // await this.deleteDocsDictXGoodM(V_TIPO_DICTA, V_NO_OF_DICTA)
+              await this.deleteDocsDictXGoodM(V_TIPO_DICTA, V_NO_OF_DICTA);
               // DELETE DICTAMINACION_X_BIEN1
-              // await this.deleteDictaXGood1(V_NO_OF_DICTA, V_TIPO_DICTA)
+              await this.deleteDictaXGood1(V_NO_OF_DICTA, V_TIPO_DICTA);
               // DELETE COPIAS_OFICIO_DICTAMEN
-              // await this.deleteCopyOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA)
+              await this.deleteCopyOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
+              // DELETE OFICIO_DICTAMEN_TEXTOS
+              await this.deleteOficioDictamenTextos(
+                V_NO_OF_DICTA,
+                V_TIPO_DICTA
+              );
+              // DELETE OFICIO_DICTAMEN
+              await this.deleteOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
+              // DELETE DICTAMINACIONES
+              await this.deleteOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
+              // DELETE OFICIO_DICTAMEN
+              await this.deleteOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
+              // DELETE DICTAMINACIONES
+              await this.deleteDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
+              // UPDATE NOTIFICACIONES
+              await this.updateNotifications(V_NO_VOLANTE);
             }
           }
         }
@@ -1984,16 +2071,17 @@ export class AbandonmentsDeclarationTradesComponent
           };
           this.goodServices.updateWithParams(obj).subscribe({
             next: (resp: any) => {
-              this.onLoadToast(
-                'success',
-                'Datos actualizados correctamente',
-                'tabla: BIENES'
-              );
+              // this.alert(
+              //   'success',
+              //   'Datos actualizados correctamente',
+              //   'tabla: BIENES'
+              // );
               1558070;
               this.loading = false;
             },
             error: error => {
-              this.onLoadToast('error', error.error.message, 'tabla: BIENES');
+              this.V_VAL_ELIM = 1;
+              this.alert('error', error.error.message, 'tabla: BIENES');
               this.loading = false;
             },
           });
@@ -2033,16 +2121,17 @@ export class AbandonmentsDeclarationTradesComponent
     };
     this.documentsService.deleteDocumentsDictuXStateM(obj).subscribe({
       next: (resp: any) => {
-        this.onLoadToast(
-          'error',
-          'Datos Eliminados Correctamente',
-          'tabla: DOCUMENTOS_DICTAMEN_X_BIEN_M'
-        );
+        // this.alert(
+        //   'error',
+        //   'Datos Eliminados Correctamente',
+        //   'tabla: DOCUMENTOS_DICTAMEN_X_BIEN_M'
+        // );
         this.loading = false;
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast(
+        this.V_VAL_ELIM = 1;
+        this.alert(
           'error',
           'Error al eliminar los documentos de los bienes',
           'tabla: DOCUMENTOS_DICTAMEN_X_BIEN_M'
@@ -2067,15 +2156,16 @@ export class AbandonmentsDeclarationTradesComponent
 
           this.DictationXGood1Service.remove(body).subscribe({
             next: (resp: any) => {
-              this.onLoadToast(
-                'success',
-                'Datos eliminados correctamente',
-                'tabla: DICTAMINACION_X_BIEN1'
-              );
+              // this.alert(
+              //   'success',
+              //   'Datos eliminados correctamente',
+              //   'tabla: DICTAMINACION_X_BIEN1'
+              // );
               this.loading = false;
             },
             error: error => {
-              this.onLoadToast(
+              this.V_VAL_ELIM = 1;
+              this.alert(
                 'error',
                 'Error al eliminar los bienes.',
                 'tabla: DICTAMINACION_X_BIEN1'
@@ -2109,15 +2199,16 @@ export class AbandonmentsDeclarationTradesComponent
 
           this.dictationService.deleteCopiesOfficialOpinion(body).subscribe({
             next: (resp: any) => {
-              this.onLoadToast(
-                'success',
-                'Datos eliminados correctamente',
-                'tabla: COPIAS_OFICIO_DICTAMEN'
-              );
+              // this.alert(
+              //   'success',
+              //   'Datos eliminados correctamente',
+              //   'tabla: COPIAS_OFICIO_DICTAMEN'
+              // );
               this.loading = false;
             },
             error: error => {
-              this.onLoadToast(
+              this.V_VAL_ELIM = 1;
+              this.alert(
                 'error',
                 'Error al eliminar las copias del Oficio.',
                 'tabla: COPIAS_OFICIO_DICTAMEN'
@@ -2151,6 +2242,265 @@ export class AbandonmentsDeclarationTradesComponent
           resolve(null);
         },
       });
+    });
+  }
+
+  // DELETE OFICIO_DICTAMEN_TEXTOS
+  async deleteOficioDictamenTextos(ofDictNumber: any, type: string) {
+    const body = {
+      dictatesNumber: ofDictNumber,
+      rulingType: type,
+    };
+
+    console.log('DELETE OFICIO_DICTAMEN_TEXTOS', body);
+
+    this.jobDictumTextsService.remove(body).subscribe({
+      next: (resp: any) => {
+        // this.alert(
+        //   'success',
+        //   'Datos eliminados correctamente',
+        //   'tabla: OFICIO_DICTAMEN_TEXTOS'
+        // );
+        this.loading = false;
+      },
+      error: error => {
+        this.V_VAL_ELIM = 1;
+        this.alert(
+          'error',
+          'Error al eliminar los textos del Oficio.',
+          'tabla: OFICIO_DICTAMEN_TEXTOS'
+        );
+        this.loading = false;
+      },
+    });
+  }
+
+  // DELETE OFICIO_DICTAMEN
+  async deleteOficioDictamen(ofDictNumber: any, type: string) {
+    const body = {
+      officialNumber: ofDictNumber,
+      typeDict: type,
+    };
+    console.log('DELETE OFICIO_DICTAMEN', body);
+
+    this.OficialDictationService.remove(body).subscribe({
+      next: (resp: any) => {
+        // this.alert(
+        //   'success',
+        //   'Datos eliminados correctamente',
+        //   'tabla: OFICIO_DICTAMEN'
+        // );
+        this.loading = false;
+      },
+      error: error => {
+        this.V_VAL_ELIM = 1;
+        this.alert(
+          'error',
+          'Error al eliminar el Oficio del Dictamen.',
+          'tabla: OFICIO_DICTAMEN'
+        );
+        this.loading = false;
+      },
+    });
+  }
+
+  // DELETE DICTAMINACIONES
+  async deleteDictamen(ofDictNumber: any, type: string) {
+    const body = {
+      id: ofDictNumber,
+      typeDict: type,
+    };
+    console.log('DELETE DICTAMINACIONES', body);
+
+    this.dictationService.remove(body).subscribe({
+      next: (resp: any) => {
+        // this.alert(
+        //   'success',
+        //   'Datos eliminados correctamente',
+        //   'tabla: DICTAMINACIONES'
+        // );
+        this.loading = false;
+      },
+      error: error => {
+        this.V_VAL_ELIM = 1;
+        this.alert(
+          'error',
+          'Error al eliminar el Dictamen.',
+          'tabla: DICTAMINACIONES'
+        );
+        this.loading = false;
+      },
+    });
+  }
+
+  // UPDATE NOTIFICACIONES
+  async updateNotifications(noVolante: any) {
+    const body: any = {
+      dictumKey: null,
+    };
+    console.log('UPDATE NOTIFICACIONES', body);
+
+    this.notificationService.updateWithBody(noVolante, body).subscribe({
+      next: (resp: any) => {
+        // this.alert(
+        //   'success',
+        //   'Datos actualizados correctamente',
+        //   'tabla: NOTIFICACIONES'
+        // );
+        this.loading = false;
+      },
+      error: error => {
+        this.V_VAL_ELIM = 1;
+        this.alert(
+          'error',
+          'Error al actualizar el volante.',
+          'tabla: NOTIFICACIONES'
+        );
+        this.loading = false;
+      },
+    });
+  }
+
+  // -------------------------- BOTON BORRAR--------------------------- //
+
+  borrar() {
+    if (this.m_oficio_gestion) {
+      let V_NO_OF_GESTION = this.m_oficio_gestion.managementNumber;
+      let V_NO_VOLANTE = this.m_oficio_gestion.flyerNumber;
+
+      if (this.m_oficio_gestion.managementNumber == null) {
+        this.alert('warning', 'No se tiene oficio', '');
+        return;
+      }
+
+      if (this.m_oficio_gestion.statusOf == 'ENVIADO') {
+        this.alert('warning', 'El oficio ya esta enviado no puede borrar', '');
+        return;
+      }
+
+      const TOOLBAR_USUARIO = this.token.decodeToken().preferred_username;
+      console.log(this.m_oficio_gestion.insertUser, 'USER', TOOLBAR_USUARIO);
+      if (this.m_oficio_gestion.insertUser != TOOLBAR_USUARIO) {
+        this.alert('warning', 'Usuario inválido para borrar oficio', '');
+        return;
+      }
+
+      var posicion = this.m_oficio_gestion.cveManagement.indexOf('?');
+
+      if (posicion == 0) {
+        this.alert(
+          'warning',
+          'La clave está armada, no puede borrar oficio',
+          ''
+        );
+        return;
+      }
+
+      V_NO_OF_GESTION = this.m_oficio_gestion.managementNumber;
+      V_NO_VOLANTE = this.m_oficio_gestion.flyerNumber;
+
+      this.alertQuestion(
+        'info',
+        `Se borra oficio (Exp.: ${this.idExpediente} No.oficio: ${V_NO_VOLANTE})?`,
+        '¿Deseas continuar?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          // BORRA COPIAS_OFICIO_GESTION
+          this.getCopiasOfiGest(V_NO_OF_GESTION);
+          // BORRA DOCUM_OFICIO_GESTION //
+          this.deleteDocOficioGestion(V_NO_OF_GESTION);
+          // BORRA M_OFICIO_GESTION //
+          this.deleteMOficioGestion(V_NO_OF_GESTION);
+          // UPDATE NOTIFICACIONES
+          this.updateNotifications(V_NO_VOLANTE);
+
+          // FALTARIA ESTO
+          // GO_ITEM('BLK_NOT.NO_VOLANTE');
+          // SET_BLOCK_PROPERTY('BLK_NOT', DEFAULT_WHERE,: BLK_CONTROL.DEF_WHERE_NOT);
+        }
+      });
+    } else {
+      this.alert('warning', 'Debe seleccionar una Gestión de Oficio', '');
+    }
+  }
+
+  // PRIMERO BUSCAMOS EL ID FILTRÁNDOLO CON EL NÚMERO DE LA GESTIÓN, LUEGO PROCEDEREMOS A ELIMINAR //
+  getCopiasOfiGest(managementNumber: any) {
+    this.loading = true;
+    const params = new ListParams();
+    params['filter.managementNumber'] = `$eq:${managementNumber}`;
+
+    this.goodsJobManagementService.getCopiesJobManagement(params).subscribe({
+      next: (data: any) => {
+        let result = data.data.map(async (item: any) => {
+          await this.deleteCopiasOfiGest(item.id);
+        });
+
+        Promise.all(result).then((resp: any) => {
+          // this.alert(
+          //   'success',
+          //   'COPIAS_OFICIO_GESTION',
+          //   'Datos eliminados correctamente'
+          // );
+          this.loading = false;
+        });
+
+        this.loading = false;
+      },
+      error: error => {
+        this.alert('error', 'COPIAS_OFICIO_GESTION', error.error.message);
+        this.loading = false;
+      },
+    });
+  }
+
+  // BORRA COPIAS_OFICIO_GESTION //
+  deleteCopiasOfiGest(id: any) {
+    return new Promise((resolve, reject) => {
+      this.goodsJobManagementService.deleteCopiesJobManagement(id).subscribe({
+        next: (resp: any) => {
+          this.loading = false;
+          resolve(true);
+        },
+        error: (error: any) => {
+          this.loading = false;
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  // BORRA DOCUM_OFICIO_GESTION //
+  async deleteDocOficioGestion(managementNumber: any) {
+    let obj = {
+      managementNumber: managementNumber,
+    };
+    this.mJobManagementService.deleteDocOficioGestion(obj).subscribe({
+      next: (resp: any) => {
+        // this.alert('success', "Datos eliminados correctamente", "tabla: DOCUM_OFICIO_GESTION")
+        this.loading = false;
+      },
+      error: error => {
+        this.alert('error', error.error.message, 'tabla: DOCUM_OFICIO_GESTION');
+        this.loading = false;
+      },
+    });
+  }
+
+  // BORRA M_OFICIO_GESTION //
+  async deleteMOficioGestion(managementNumber: any) {
+    let obj = {
+      managementNumber: managementNumber,
+    };
+    this.mJobManagementService.deleteMJobGestion(obj).subscribe({
+      next: (resp: any) => {
+        // this.alert('success', "Datos eliminados correctamente", "tabla: M_OFICIO_GESTION")
+        this.loading = false;
+      },
+      error: error => {
+        this.alert('error', error.error.message, 'tabla: M_OFICIO_GESTION');
+        this.loading = false;
+      },
     });
   }
 }
