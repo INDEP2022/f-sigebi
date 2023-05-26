@@ -396,7 +396,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = true;
         const form = this.requestForm.getRawValue();
         form.id = this.requestId;
-        form.requestStatus = 'POR_TURNAR';
+        form.requestStatus = this.op != 2 ? 'POR_TURNAR' : 'Recepcion';
         let date = this.requestForm.controls['applicationDate'].value;
         form.applicationDate = date.toISOString();
 
@@ -509,7 +509,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   createRequest(form: any) {
     return new Promise((resolve, reject) => {
-      form.requestStatus = 'POR_TURNAR';
+      form.requestStatus = this.op != 2 ? 'POR_TURNAR' : 'Recepcion';
       form.receiptRoute = 'FISICA';
       form.affair = null;
       form.applicationDate = null;
@@ -528,7 +528,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   updateTurnedRequest(form: any) {
     return new Promise((resolve, reject) => {
-      form.requestStatus = 'A_TURNAR';
+      form.requestStatus = this.op != 2 ? 'A_TURNAR' : 'Recepcion';
       form.receiptRoute = 'FISICA';
       form.affair = 37;
       form.typeOfTransfer = 'MANUAL';

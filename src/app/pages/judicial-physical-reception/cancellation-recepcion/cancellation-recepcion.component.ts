@@ -15,7 +15,10 @@ import {
   IPACambioStatus,
 } from 'src/app/core/models/good-programming/good-programming';
 import { IAcceptGoodActa, IVban } from 'src/app/core/models/ms-good/good';
-import { IDeleteDetailProceeding, IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
+import {
+  IDeleteDetailProceeding,
+  IDetailProceedingsDeliveryReception,
+} from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { TransferProceeding } from 'src/app/core/models/ms-proceedings/validations.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
@@ -131,7 +134,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
-  searchByOtherData=false;
+  searchByOtherData = false;
   newAct = true;
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
@@ -171,7 +174,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   isEnableObservaciones = true;
   isEnableDireccion = true;
   isEnableFecElab = true;
-  blockExpedient=false;
+  blockExpedient = false;
 
   constructor(
     private fb: FormBuilder,
@@ -241,9 +244,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     });
   }
 
-  selectExpedient(e:any){
-
-  }
+  selectExpedient(e: any) {}
 
   inputsInProceedingClose() {
     this.isEnableTestigo = false;
@@ -520,86 +521,86 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.render.addClass(btn, 'disabled');
 
     this.clearInputs();
-    if(this.form.get('expediente').value != null){
+    if (this.form.get('expediente').value != null) {
       this.serviceGood
-      .getAllFilterDetail(
-        `filter.fileNumber=$eq:${
-          this.form.get('expediente').value
-        }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
-      )
-      .subscribe({
-        next: async (res: any) => {
-          console.log(res.data);
-          if (res.data.length > 0) {
-            this.dataGoods.load(res.data);
-            console.log(res);
-            const newData = await Promise.all(
-              res.data.map(async (e: any) => {
-                let disponible: boolean;
-                const resp = await this.validateGood(e);
-                disponible = JSON.parse(JSON.stringify(resp)).avalaible;
-                return { ...e, avalaible: disponible };
-              })
-            );
-            this.dataGoods.load(newData);
-            this.getGoodsByExpedient();
-            this.alert(
-              'success',
-              'Se encontraron Bienes',
-              'El número de expediente registrado tiene Bienes'
-            );
+        .getAllFilterDetail(
+          `filter.fileNumber=$eq:${
+            this.form.get('expediente').value
+          }&filter.status=$not:ADM&filter.labelNumber=$not:6&filter.detail.actNumber=$not:$null`
+        )
+        .subscribe({
+          next: async (res: any) => {
+            console.log(res.data);
+            if (res.data.length > 0) {
+              this.dataGoods.load(res.data);
+              console.log(res);
+              const newData = await Promise.all(
+                res.data.map(async (e: any) => {
+                  let disponible: boolean;
+                  const resp = await this.validateGood(e);
+                  disponible = JSON.parse(JSON.stringify(resp)).avalaible;
+                  return { ...e, avalaible: disponible };
+                })
+              );
+              this.dataGoods.load(newData);
+              this.getGoodsByExpedient();
+              this.alert(
+                'success',
+                'Se encontraron Bienes',
+                'El número de expediente registrado tiene Bienes'
+              );
+              this.render.removeClass(btn, 'disabled');
+              this.render.addClass(btn, 'enabled');
+            } else {
+              this.initialBool = false;
+              this.requireAct1();
+              this.maxDate = new Date();
+              this.getTransfer();
+              this.checkChange();
+              this.alert(
+                'warning',
+                'Sin bienes válidos',
+                'El número de expediente registrado no tiene bienes válidos'
+              );
+              this.render.removeClass(btn, 'disabled');
+              this.render.addClass(btn, 'enabled');
+            }
+          },
+          error: (err: any) => {
+            console.error(err);
+            if (err.status === 404) {
+              this.initialBool = false;
+              this.requireAct1();
+              this.maxDate = new Date();
+              this.getTransfer();
+              this.checkChange();
+              this.render.removeClass(btn, 'disabled');
+              this.render.addClass(btn, 'enabled');
+              this.alert(
+                'warning',
+                'No hay bienes para este expediente',
+                'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+              );
+            }
+            if (err.status === 400) {
+              this.initialBool = false;
+              this.requireAct1();
+              this.maxDate = new Date();
+              this.getTransfer();
+              this.checkChange();
+              this.render.removeClass(btn, 'disabled');
+              this.render.addClass(btn, 'enabled');
+              this.alert(
+                'warning',
+                'No hay bienes para este expediente',
+                'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+              );
+            }
             this.render.removeClass(btn, 'disabled');
             this.render.addClass(btn, 'enabled');
-          } else {
-            this.initialBool = false;
-            this.requireAct1();
-            this.maxDate = new Date();
-            this.getTransfer();
-            this.checkChange();
-            this.alert(
-              'warning',
-              'Sin bienes válidos',
-              'El número de expediente registrado no tiene bienes válidos'
-            );
-            this.render.removeClass(btn, 'disabled');
-            this.render.addClass(btn, 'enabled');
-          }
-        },
-        error: (err: any) => {
-          console.error(err);
-          if (err.status === 404) {
-            this.initialBool = false;
-            this.requireAct1();
-            this.maxDate = new Date();
-            this.getTransfer();
-            this.checkChange();
-            this.render.removeClass(btn, 'disabled');
-            this.render.addClass(btn, 'enabled');
-            this.alert(
-              'warning',
-              'No hay bienes para este expediente',
-              'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
-            );
-          }
-          if (err.status === 400) {
-            this.initialBool = false;
-            this.requireAct1();
-            this.maxDate = new Date();
-            this.getTransfer();
-            this.checkChange();
-            this.render.removeClass(btn, 'disabled');
-            this.render.addClass(btn, 'enabled');
-            this.alert(
-              'warning',
-              'No hay bienes para este expediente',
-              'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
-            );
-          }
-          this.render.removeClass(btn, 'disabled');
-          this.render.addClass(btn, 'enabled');
-        },
-      });
-    }else{
+          },
+        });
+    } else {
       this.searchByOthersData();
     }
   }
@@ -1007,7 +1008,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         .getByFilter(paramsF.getParams())
                         .subscribe(
                           res => {
-                            const data = JSON.parse(JSON.stringify(res.data[0]));
+                            const data = JSON.parse(
+                              JSON.stringify(res.data[0])
+                            );
                             let newDetailProceeding: IDetailProceedingsDeliveryReception =
                               {
                                 numberProceedings: data.id,
@@ -1029,11 +1032,14 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                         return e;
                                       }
                                     })
-                                  );     
-                                  this.goodData.push({ ...this.selectData, exchangeValue: 1 });
-                                  this.dataGoodAct.load(this.goodData);       
+                                  );
+                                  this.goodData.push({
+                                    ...this.selectData,
+                                    exchangeValue: 1,
+                                  });
+                                  this.dataGoodAct.load(this.goodData);
                                   this.saveDataAct.push({
-                                    ...this.selectData, 
+                                    ...this.selectData,
                                   });
                                   this.selectData = null;
                                 },
@@ -1137,7 +1143,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               numberGood: this.selectActData.id,
               numberProceedings: this.idProceeding,
             };
-            console.log(deleteModel)
+            console.log(deleteModel);
             this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
               res => {
                 console.log(this.dataGoodAct);
@@ -1191,7 +1197,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               })
             );
           }
-        );    
+        );
       }
     }
   }
@@ -1460,7 +1466,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  saveButton(){
+  saveButton() {
     if (!this.act2Valid) {
       this.alert('warning', 'Debe registrar un acta válida', '');
     } else if (!this.form.get('direccion').valid) {
@@ -1602,9 +1608,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  fnOpenProceeding(){
-
-  }
+  fnOpenProceeding() {}
 
   closeProceeding() {
     if (this.dataGoodAct['data'].length === 0) {
