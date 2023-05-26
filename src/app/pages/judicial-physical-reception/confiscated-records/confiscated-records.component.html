@@ -20,13 +20,14 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="row">
+          <div *ngIf="searchByOtherData" class="row">
             <div class="row mt-3">
               <ngx-select
                 control="acta"
                 label="Expedientes"
                 bindLabel="records"
-                [data]="records"
+                (change)="selectExpedient($event)"
+                [data]="dataExpedients"
                 [searchable]="false"
                 [form]="form"></ngx-select>
             </div>
