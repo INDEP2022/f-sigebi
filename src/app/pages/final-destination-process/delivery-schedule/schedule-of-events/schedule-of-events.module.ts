@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { CoordinationModalComponent } from 'src/app/@standalone/shared-forms/coordination/coordination-modal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ParametersComponent } from './event-capture/components/parameters/parameters.component';
 import { EventCaptureComponent } from './event-capture/event-capture.component';
@@ -26,6 +28,8 @@ import { ScheduleOfEventsComponent } from './schedule-of-events/schedule-of-even
     FormsModule,
     TabsModule,
     TimepickerModule.forRoot(),
+    ModalModule.forChild(),
+    CoordinationModalComponent,
   ],
 })
 export class ScheduleOfEventsModule {}

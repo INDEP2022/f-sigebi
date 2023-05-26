@@ -595,54 +595,54 @@ export class ScheduledMaintenanceDetailComponent
             // console.log(this.goodsCant);
             this.totalItems = response.count;
             // this.loading = false;
-            // this.fillGoodsByRastrer(deleteds);
-            this.fillGoodsByRastrerContent(
-              [
-                { goodNumber: '537814' },
-                { goodNumber: '537813' },
-                { goodNumber: '537812' },
-                { goodNumber: '537811' },
-                { goodNumber: '537810' },
-                { goodNumber: '537545' },
-                { goodNumber: '537544' },
-                { goodNumber: '537543' },
-                { goodNumber: '537542' },
-                { goodNumber: '537539' },
-                { goodNumber: '537538' },
-                { goodNumber: '537536' },
-                { goodNumber: '537535' },
-                { goodNumber: '537411' },
-                { goodNumber: '537534' },
-                { goodNumber: '537410' },
-                { goodNumber: '536720' },
-              ],
-              deleteds
-            );
+            this.fillGoodsByRastrer(deleteds);
+            // this.fillGoodsByRastrerContent(
+            //   [
+            //     { goodNumber: '537814' },
+            //     { goodNumber: '537813' },
+            //     { goodNumber: '537812' },
+            //     { goodNumber: '537811' },
+            //     { goodNumber: '537810' },
+            //     { goodNumber: '537545' },
+            //     { goodNumber: '537544' },
+            //     { goodNumber: '537543' },
+            //     { goodNumber: '537542' },
+            //     { goodNumber: '537539' },
+            //     { goodNumber: '537538' },
+            //     { goodNumber: '537536' },
+            //     { goodNumber: '537535' },
+            //     { goodNumber: '537411' },
+            //     { goodNumber: '537534' },
+            //     { goodNumber: '537410' },
+            //     { goodNumber: '536720' },
+            //   ],
+            //   deleteds
+            // );
           },
           error: err => {
             this.data = [];
             // this.loading = false;
             this.totalItems = 0;
-            this.fillGoodsByRastrerContent([
-              { goodNumber: '537814' },
-              { goodNumber: '537813' },
-              { goodNumber: '537812' },
-              { goodNumber: '537811' },
-              { goodNumber: '537810' },
-              { goodNumber: '537545' },
-              { goodNumber: '537544' },
-              { goodNumber: '537543' },
-              { goodNumber: '537542' },
-              { goodNumber: '537539' },
-              { goodNumber: '537538' },
-              { goodNumber: '537536' },
-              { goodNumber: '537535' },
-              { goodNumber: '537411' },
-              { goodNumber: '537534' },
-              { goodNumber: '537410' },
-              { goodNumber: '536720' },
-            ]);
-            // this.fillGoodsByRastrer();
+            // this.fillGoodsByRastrerContent([
+            //   { goodNumber: '537814' },
+            //   { goodNumber: '537813' },
+            //   { goodNumber: '537812' },
+            //   { goodNumber: '537811' },
+            //   { goodNumber: '537810' },
+            //   { goodNumber: '537545' },
+            //   { goodNumber: '537544' },
+            //   { goodNumber: '537543' },
+            //   { goodNumber: '537542' },
+            //   { goodNumber: '537539' },
+            //   { goodNumber: '537538' },
+            //   { goodNumber: '537536' },
+            //   { goodNumber: '537535' },
+            //   { goodNumber: '537411' },
+            //   { goodNumber: '537534' },
+            //   { goodNumber: '537410' },
+            //   { goodNumber: '536720' },
+            // ]);
+            this.fillGoodsByRastrer();
           },
         });
     }
