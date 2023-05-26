@@ -131,6 +131,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+  searchByOtherData=false;
+  newAct = true;
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
   btnCSSAct = 'btn-success';
@@ -152,6 +154,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   prevProce = false;
   proceedingData: any[] = [];
   recibeSelect = new DefaultSelect();
+  dataExpedients = new DefaultSelect();
   records = new DefaultSelect(['C', 'A', 'S']);
   selectActData: any = null;
   selectData: any = null;
@@ -200,6 +203,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
+      listExpedients: [null],
       expediente: [null, [Validators.required]],
       averPrev: [null],
       noExpedienteTransf: [null],
@@ -234,6 +238,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
       estatusBienActa: [null],
     });
+  }
+
+  selectExpedient(e:any){
+
   }
 
   inputsInProceedingClose() {
