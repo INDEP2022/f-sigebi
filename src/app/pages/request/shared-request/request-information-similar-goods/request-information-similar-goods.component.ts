@@ -40,7 +40,9 @@ export class RequestInformationSimilarGoodsComponent
         this.state = this.request.state.descCondition;
         this.transferent = this.request.transferent.name;
         this.station = this.request.emisora.stationName;
-        this.authority = this.request.authority.authorityName;
+        this.authority = this.request.authority
+          ? this.request.authority.authorityName
+          : '';
         this.requestInfo = this.request;
       }, 300);
     }

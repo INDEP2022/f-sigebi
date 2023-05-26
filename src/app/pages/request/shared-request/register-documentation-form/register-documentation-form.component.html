@@ -8,8 +8,8 @@
         <div class="mx-1">
           <button
             class="btn btn-primary btn-sm active"
-            (click)="register()"
-            [disabled]="!registerForm.touched || registerForm.invalid">
+            [disabled]="registerForm.invalid"
+            (click)="register()">
             <i class="bx bx-save mr-1 float-icon"></i>Guardar
           </button>
         </div>
@@ -79,21 +79,8 @@
         [searchable]="false"
         label="Tipo Expediente"
         bindLabel="description"
-        value="description">
+        value="keyId">
       </ngx-select>
-      <!-- <form-field
-        [control]="registerForm.get('typeRecord')"
-        label="Tipo Expediente">
-        <ng-select
-          formControlName="typeRecord"
-          [searchable]="false"
-          class="form-control"
-          [clearable]="false">
-          <ng-option *ngFor="let t of fileTypes" value="t.id">{{
-            t.description
-          }}</ng-option>
-        </ng-select>
-      </form-field> -->
     </div>
   </div>
   <div class="row mt-5">
@@ -109,40 +96,26 @@
         value="keyId">
       </ngx-select>
     </div>
-    <!-- <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('infoOrigin')"
-        label="Procedencia Informaci&oacute;n">
-        <ng-select
-          formControlName="infoOrigin"
-          [searchable]="false"
-          class="form-control"
-          [clearable]="false">
-          <ng-option *ngFor="let o of infoOrigins" value="o.id">{{
-            o.description
-          }}</ng-option>
-        </ng-select>
-      </form-field>
-    </div> -->
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('receptionDate')"
-        label="&#42;Fecha Recepci&oacute;n">
+        label="Fecha Recepci&oacute;n">
         <input
           type="text"
           class="form-control"
           #dp="bsDatepicker"
           [maxDate]="maxDate"
           [bsValue]="bsReceptionValue"
-          bsDatepicker />
+          bsDatepicker
+          [disabled]="true" />
       </form-field>
     </div>
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('paperNumber')"
-        label="&#42;No&#46; Oficio">
+        label="No&#46; Oficio">
         <input
-          type="number"
+          type="text"
           maxlength="60"
           formControlName="paperNumber"
           class="form-control" />
@@ -164,14 +137,14 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('paperDate')"
-        label="&#42;Fecha de Oficio">
+        label="Fecha de Oficio">
         <input
           type="text"
-          formControlName="paperDate"
           class="form-control"
           [maxDate]="maxDate"
           #dp="bsDatepicker"
           bsDatepicker
+          [bsValue]="bsPaperValue"
           (bsValueChange)="changeDateEvent($event)" />
       </form-field>
     </div>
@@ -229,8 +202,7 @@
     </div>
     <div class="col-md-4">
       <p class="font-size-13">
-        <strong class="font-size-13">Asunto&#58; </strong
-        >{{ registerForm.controls['affair'].value }}
+        <strong class="font-size-13">Asunto&#58; </strong>{{ affair }}
       </p>
     </div>
     <div class="col-md-4">
@@ -252,12 +224,20 @@
       <form-field
         [control]="registerForm.get('trialType')"
         label="&#42;Tipo Juicio">
-        <input type="text" formControlName="trialType" class="form-control" />
+        <input
+          type="text"
+          formControlName="trialType"
+          maxlength="99"
+          class="form-control" />
       </form-field>
     </div>
     <div class="col-md-4">
       <form-field [control]="registerForm.get('trial')" label="Juicio">
-        <input type="text" formControlName="trial" class="form-control" />
+        <input
+          type="text"
+          formControlName="trial"
+          maxlength="150"
+          class="form-control" />
       </form-field>
     </div>
   </div>
@@ -269,6 +249,7 @@
         <textarea
           rows="3"
           formControlName="observations"
+          maxlength="1000"
           class="form-control"></textarea>
       </form-field>
     </div>
