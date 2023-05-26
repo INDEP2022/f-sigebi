@@ -251,7 +251,7 @@ export class GoodService extends HttpService {
   }
 
   getStatusGood(params?: string) {
-    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}${params}`);
+    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}?${params}`);
   }
 
   getBySafe(

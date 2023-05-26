@@ -788,9 +788,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         ) {
           this.alert(
             'error',
-            'Numero de expediente invalido',
-            'El número de expediente ingresado tiene un tipo de expediente no valido'
+            'Número de expediente inválido para crear una nueva acta',
+            'El número de expediente ingresado tiene un tipo de expediente inválido para crear una nueva acta'
           );
+          this.initialdisabled=true
+          this.inputsInProceedingClose()
         } else {
           let model: TransferProceeding = {
             numFile: res.transferNumber as number,
@@ -2777,7 +2779,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   goodNumber: this.selectData.id,
                   identificador: this.selectData.identifier,
                   typeAct:
-                    'ADM',
+                    v_tipo_acta
                 },
               ],
             };
@@ -2785,6 +2787,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.serviceGood.getVBan(model).subscribe(
               res => {
                 v_ban = res.data[0]['ban'];
+                console.log(v_ban)
                 v_ban = false; //!Forzando el false
                 if (v_ban) {
                   this.alert(
@@ -2975,6 +2978,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   //Aplicar Bodega y Bodega
   applyWarehouseSafe() {
+    console.log('Prueba')
     if (this.statusProceeding === 'ABIERTA') {
       if (this.form.get('almacen').value != null) {
         for (let i = 0; i < this.dataGoodAct['data'].length; i++) {

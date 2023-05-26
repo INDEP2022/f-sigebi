@@ -120,7 +120,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('acta')">
                 <ngx-select
                   id="acta"
@@ -147,7 +147,7 @@
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
@@ -156,8 +156,7 @@
                   formControlName="ident" />
               </form-field>
             </div>
-            <div class="col-md-2">
-              <div class="col">
+            <div class="col-md-2">   
                 <form-field [control]="form.get('recibe')">
                   <ngx-select
                     (fetchItems)="getRecibe($event)"
@@ -169,7 +168,6 @@
                     [data]="recibeSelect"
                     [form]="form"></ngx-select>
                 </form-field>
-              </div>
             </div>
             <div class="col-md-2">
               <form-field [control]="form.get('admin')">
@@ -404,7 +402,7 @@
                 [control]="form.get('folioEscaneo')"
                 label="Folio de Escaneo">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="folioEscaneo" />
               </form-field>
