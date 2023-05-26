@@ -1,3 +1,13 @@
+#detailActMaintenance {
+  accordion-group {
+    ::ng-deep {
+      .panel-body {
+        padding: 0px !important;
+      }
+    }
+  }
+}
+
 :host ::ng-deep ng2-smart-table {
   .fec_indica_usuario_aprobacion,
   .fec_aprobacion_x_admon {
