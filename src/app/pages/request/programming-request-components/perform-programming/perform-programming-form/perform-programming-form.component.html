@@ -43,10 +43,20 @@
 
     <div
       class="row pt-3"
-      *ngIf="!formLoading && dataProgramming?.concurrentMsg">
+      *ngIf="
+        (!formLoading && dataProgramming?.concurrentMsg) ||
+        (!formLoading && observationNewWarehouse && idNewWarehouse)
+      ">
       <h5 class="title">Informaci&oacute;n</h5>
-      <p class="text-danger">
+      <p class="text-danger" *ngIf="dataProgramming?.concurrentMsg">
         Observaci&oacute;n de rechazo: {{ dataProgramming?.concurrentMsg }}
+      </p>
+      <p class="text-primary" *ngIf="idNewWarehouse">
+        Se creo Almac&eacute;n con identificador: {{ idNewWarehouse }}
+      </p>
+      <p class="text-primary" *ngIf="observationNewWarehouse">
+        Observaci&oacute;n de administrador de almac&eacute;n:
+        {{ observationNewWarehouse }}
       </p>
     </div>
 
