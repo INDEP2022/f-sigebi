@@ -13,6 +13,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 
 @Component({
   selector: 'app-warehouses-detail',
@@ -30,6 +31,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   public municipalities = new DefaultSelect();
   public localities = new DefaultSelect();
   public type = new DefaultSelect();
+  public user = new DefaultSelect();
   public get idWarehouse() {
     return this.warehouseForm.get('idWarehouse');
   }
@@ -44,7 +46,8 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     private cityService: CityService,
     private municipalityService: MunicipalityService,
     private localityService: LocalityService,
-    private tvalTable1Service: TvalTable1Service
+    private tvalTable1Service: TvalTable1Service,
+    private securityService: SecurityService
   ) {
     super();
   }
@@ -68,7 +71,6 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       ubication: [
         null,
         Validators.compose([
-          Validators.pattern(STRING_PATTERN),
           Validators.required,
         ]),
       ],
@@ -155,11 +157,13 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       if (this.warehouseForm.controls['type'].value) {
         this.getType(new ListParams(), this.warehouseForm.controls['type'].value);
       }
+      this.getUser(new ListParams(), this.warehouseForm.controls['manager'].value);
     } else {
       this.warehouseForm.controls['indActive'].setValue(1);
       this.getType(new ListParams());
     }
     this.getType(new ListParams());
+    this.getUser(new ListParams());
   }
 
   confirm() {
@@ -285,6 +289,14 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     }
     this.tvalTable1Service.getAlls(params).subscribe(data => {
       this.type = new DefaultSelect(data.data, data.count);
+    });
+  }
+  getUser(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$eq:${user}`;
+    }
+    this.securityService.getAllUsersTracker(params).subscribe(data => {
+      this.user = new DefaultSelect(data.data, data.count);
     });
   }
 }
