@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -15,7 +16,8 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private router: Router
+    private router: Router,
+    private warehouseService: WarehouseService
   ) {
     super();
   }
@@ -41,7 +43,6 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
       '¿Estás seguro que desea confirmar el alta de almacén?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
         this.onLoadToast(
           'success',
           'Alta de almacén confirmada correctamente',

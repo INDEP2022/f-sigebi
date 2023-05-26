@@ -224,38 +224,17 @@ export class PerformProgrammingFormComponent
     this.showUsersProgramming();
     this.getProgrammingData();
     this.performSearchForm();
-    this.getTransferentSelect(new ListParams());
+    //this.getTransferentSelect(new ListParams());
     //this.getStateSelect();
     //this.getGoodsProgTrans();
 
     this.task = JSON.parse(localStorage.getItem('Task'));
   }
 
-  initialTransferences(params: ListParams) {
-    params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
-    params['sortBy'] = 'nameTransferent:ASC';
-    const state = Number(11);
-    this.transferentesSaeService
-      .getStateByTransferentKey(state, params)
-      .subscribe({
-        next: response => {
-          console.log('inicializando', response);
-          const transferent = response.data.map(transferent => {
-            return transferent.transferent;
-          });
-          this.transferences = new DefaultSelect(transferent, response.count);
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
-  }
-
   //Información de el usuario logeado//
   getInfoUserLog() {
     this.programmingService.getUserInfo().subscribe(data => {
       this.userInfo = data;
-      console.log('info user', this.userInfo);
       this.delRegUserLog = this.userInfo.delegacionreg;
       this.employeTypeUserLog = this.userInfo.employeetype;
     });
@@ -266,7 +245,6 @@ export class PerformProgrammingFormComponent
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
-        console.log('programming', data);
         this.dataProgramming = data;
         this.setDataProgramming();
       });
@@ -296,7 +274,6 @@ export class PerformProgrammingFormComponent
   sendGood(good: any, selected: boolean) {
     if (selected) {
       this.goodSelect.push(good);
-      console.log('good', good);
     } else {
       this.goodSelect = this.goodSelect.filter(
         _good => _good.idGood != _good.idGood
@@ -419,8 +396,6 @@ export class PerformProgrammingFormComponent
     const typeUser = this.dataProgramming.typeUser;
     const idProgramming = this.idProgramming;
     const delegationUserLog = this.delRegUserLog;
-
-    console.log('delegation', this.delegationId);
     config.initialState = {
       typeUser,
       idProgramming,
@@ -479,9 +454,309 @@ export class PerformProgrammingFormComponent
   }
 
   showGoodsProgramming() {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getProgGoods());
+    const municipality = this.searchGoodsForm.get('municipality').value;
+    const colony = this.searchGoodsForm.get('colony').value;
+    const akaWarehouse = this.searchGoodsForm.get('warehouse').value;
+    const postalCode = this.searchGoodsForm.get('postalCode').value;
+    const state = this.searchGoodsForm.get('state').value;
+
+    if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        municipality: municipality,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (municipality && colony && !akaWarehouse && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        suburb: colony,
+        municipality: municipality,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (municipality && colony && akaWarehouse && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        suburb: colony,
+        municipality: municipality,
+        aliasStore: akaWarehouse,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (municipality && colony && akaWarehouse && postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        suburb: colony,
+        municipality: municipality,
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (colony && !municipality && !akaWarehouse && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        suburb: colony,
+      };
+
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (colony && municipality && !akaWarehouse && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        suburb: colony,
+      };
+
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (colony && municipality && akaWarehouse && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        suburb: colony,
+        aliasStore: akaWarehouse,
+      };
+
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (colony && municipality && akaWarehouse && postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        suburb: colony,
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+      };
+
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (akaWarehouse && !colony && !municipality && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+      };
+
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (akaWarehouse && colony && !municipality && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        suburb: colony,
+        aliasStore: akaWarehouse,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (akaWarehouse && colony && municipality && !postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        suburb: colony,
+        aliasStore: akaWarehouse,
+        municipality: municipality,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (akaWarehouse && colony && municipality && postalCode && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        suburb: colony,
+        aliasStore: akaWarehouse,
+        municipality: municipality,
+        postalCode: postalCode,
+      };
+
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (postalCode && !akaWarehouse && !colony && !municipality && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        postalCode: postalCode,
+      };
+
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (postalCode && akaWarehouse && !colony && !municipality && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (postalCode && akaWarehouse && colony && !municipality && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+        suburb: colony,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (postalCode && akaWarehouse && colony && municipality && !state) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+        suburb: colony,
+        municipality: municipality,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (state && !postalCode && !akaWarehouse && !colony && !municipality) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        stateKey: state,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+    if (state && postalCode && !akaWarehouse && !colony && !municipality) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        postalCode: postalCode,
+        stateKey: state,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (state && postalCode && akaWarehouse && !colony && !municipality) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+        stateKey: state,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (state && postalCode && akaWarehouse && colony && !municipality) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+        stateKey: state,
+        suburb: colony,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+
+    if (state && postalCode && akaWarehouse && colony && municipality) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(this.regionalDelegationUser.id),
+        transferent: Number(this.idTrans),
+        relevantType: Number(this.idTypeRelevant),
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+        postalCode: postalCode,
+        stateKey: state,
+        suburb: colony,
+        municipality: municipality,
+      };
+      this.searchProgGoods(filterColumns);
+    }
+  }
+
+  searchProgGoods(filter: Object) {
+    this.loadingGoods = true;
+    this.goodsQueryService
+      .postGoodsProgramming(this.params.getValue(), filter)
+      .subscribe({
+        next: response => {
+          const goodsFilter = response.data.map(items => {
+            if (items.physicalState) {
+              if (items.physicalState == 1) {
+                items.physicalState = 'BUENO';
+                return items;
+              } else if (items.physicalState == 2) {
+                items.physicalState = 'MALO';
+                return items;
+              }
+            } else {
+              return items;
+            }
+          });
+
+          this.filterGoodsProgramming(goodsFilter);
+          this.loadingGoods = false;
+        },
+        error: error => (this.loadingGoods = false),
+      });
   }
 
   getRegionalDelegationSelect(params?: ListParams) {
@@ -490,7 +765,6 @@ export class PerformProgrammingFormComponent
       this.regionalDelegationService
         .getById(data.department)
         .subscribe((delegation: IRegionalDelegation) => {
-          console.log('Delegación regional', delegation);
           this.delegationId = delegation.id;
           this.delegation = delegation.description;
           this.performForm
@@ -600,22 +874,12 @@ export class PerformProgrammingFormComponent
   getAkaWarehouse(params?: ListParams) {
     this.storeAkaService.getAll(params).subscribe({
       next: response => {
-        console.log('Alias almacén', response);
         this.akaWarehouse = new DefaultSelect(response.data, response.count);
       },
       error: error => {
         console.log(error);
       },
     });
-    /*this.domicilieService.getAll(params).subscribe({
-      next: response => {
-        console.log('response', response);
-        this.akaWarehouse = new DefaultSelect(response.data, response.count);
-      },
-      error: error => {
-        console.log(error);
-      },
-    }); */
   }
 
   getStates(params?: ListParams) {
@@ -650,7 +914,6 @@ export class PerformProgrammingFormComponent
   getLocalities(params?: ListParams) {
     this.localityService.getAll(params).subscribe({
       next: response => {
-        console.log('localidades', response);
         this.localities = new DefaultSelect(response.data, response.count);
       },
       error: error => {
@@ -696,14 +959,11 @@ export class PerformProgrammingFormComponent
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
-    console.log('filter', filterColumns);
     this.goodsQueryService
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          console.log('é', response);
           const goodsFilter = response.data.map(items => {
-            console.log('items', items);
             if (items.physicalState) {
               if (items.physicalState == 1) {
                 items.physicalState = 'BUENO';
@@ -718,8 +978,6 @@ export class PerformProgrammingFormComponent
           });
 
           this.filterGoodsProgramming(goodsFilter);
-          //this.estatesList.load(goodsFilter);
-          //this.totalItems = response.count;
           this.loadingGoods = false;
         },
         error: error => (this.loadingGoods = false),
@@ -727,8 +985,6 @@ export class PerformProgrammingFormComponent
   }
 
   filterGoodsProgramming(goods: any[]) {
-    console.log(goods);
-
     this.programmingService
       .getGoodsProgramming(this.paramsGoodsProg.getValue())
       .pipe(
@@ -754,8 +1010,8 @@ export class PerformProgrammingFormComponent
         } else {
           this.onLoadToast(
             'warning',
-            'No hay bienes disponibles para programar',
-            ''
+            'Advertencía',
+            'No hay bienes disponibles para programar'
           );
         }
       });
@@ -785,7 +1041,6 @@ export class PerformProgrammingFormComponent
 
   /*------Inserta bienes con status transportable -----*/
   async insertGoodsProgTrans() {
-    console.log('good', this.goodSelect);
     this.goodSelect.map((item: any) => {
       const formData: Object = {
         programmingId: this.idProgramming,
@@ -798,7 +1053,7 @@ export class PerformProgrammingFormComponent
       this.programmingGoodService.createGoodsService(formData).subscribe({
         next: () => {},
         error: error => {
-          console.log(error);
+          console.log('error insertar', error);
         },
       });
     });
@@ -824,6 +1079,9 @@ export class PerformProgrammingFormComponent
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {},
+          error: error => {
+            console.log('Error actualizar bien', error);
+          },
         });
       });
 
@@ -854,8 +1112,6 @@ export class PerformProgrammingFormComponent
                 if (item.statePhysicalSae == 2)
                   item['statePhysicalSae'] = 'MALO';
                 showTransportable.push(item);
-                console.log('bienes a mostrar', showTransportable);
-
                 this.goodsTranportables.load(showTransportable);
                 this.totalItemsTransportableGoods =
                   this.goodsTranportables.count();
@@ -1001,8 +1257,6 @@ export class PerformProgrammingFormComponent
                 item['statePhysicalSae'] = 'BUENO';
               if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
               showGuards.push(item);
-              console.log('bienes a mostrar', showGuards);
-
               this.goodsGuards.load(showGuards);
               this.totalItemsTransportableGuard = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
@@ -1073,7 +1327,6 @@ export class PerformProgrammingFormComponent
   async changeStatusGoodWarehouse() {
     return new Promise(async (resolve, reject) => {
       this.goodSelect.map((item: any) => {
-        console.log('tem', item);
         const formData: Object = {
           id: Number(item.goodNumber),
           goodId: item.googId,
@@ -1110,7 +1363,6 @@ export class PerformProgrammingFormComponent
                 item['statePhysicalSae'] = 'BUENO';
               if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
               showWarehouse.push(item);
-              console.log('bienes a mostrar', showWarehouse);
 
               this.goodsWarehouse.load(showWarehouse);
               this.totalItemsTransportableWarehouse =
@@ -1274,15 +1526,6 @@ export class PerformProgrammingFormComponent
         id: this.task.id,
         title: 'Aceptar Programación con folio: ' + folio,
       };
-
-      /*this.taskService.update(this.task.id, body).subscribe({
-        next: response => {
-          resolve(true);
-        },
-        error: error => {
-          console.log(error);
-        },
-      }); */
     });
   }
 
@@ -1375,7 +1618,6 @@ export class PerformProgrammingFormComponent
     }
 
     if (error > 0) {
-      console.log('mensaje', message);
       this.onLoadToast('info', 'Error', `${message}`);
     } else if (error == 0) {
       this.alertQuestion(
@@ -1473,7 +1715,6 @@ export class PerformProgrammingFormComponent
           resolve(resp);
         },
         error: error => {
-          console.log(error.error.message);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
@@ -1488,12 +1729,10 @@ export class PerformProgrammingFormComponent
       '¿Desea eliminar el usuario de la programación?'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('user', user);
         let userObject: Object = {
           programmingId: Number(user.programmingId),
           email: user.email,
         };
-        console.log(userObject);
         this.programmingService.deleteUserProgramming(userObject).subscribe({
           next: () => {
             this.onLoadToast('success', 'Usuario eliminado correctamente', '');
@@ -1511,12 +1750,10 @@ export class PerformProgrammingFormComponent
       regionalDelegation: this.delegationId,
       userId: this.employeTypeUserLog,
     };
-    console.log('dataObject', dataObject);
     this.programmingGoodService
       .showReportGoodProgramming(dataObject)
       .subscribe({
         next: response => {
-          console.log('response', response);
           this.downloadExcel(response);
           this.loadingReport = false;
         },
@@ -1534,7 +1771,6 @@ export class PerformProgrammingFormComponent
   downloadExcel(pdf: any) {
     const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${pdf}`;
     const downloadLink = document.createElement('a');
-    //console.log(linkSource);
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
     downloadLink.click();
@@ -1546,7 +1782,6 @@ export class PerformProgrammingFormComponent
   }
 
   setDataProgramming() {
-    console.log('pe', this.dataProgramming);
     if (this.dataProgramming.folio) {
       this.showForm = true;
       this.performForm.get('address').setValue(this.dataProgramming.address);
@@ -1659,7 +1894,6 @@ export class PerformProgrammingFormComponent
 
   goodsSelect(data: any) {
     this.goodSelect.push(data[0]);
-    console.log('data', this.goodSelect);
   }
 
   showWarehouseGoods(goodsProg: IGoodProgramming[]) {
