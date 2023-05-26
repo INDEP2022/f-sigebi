@@ -401,9 +401,9 @@ export class JuridicalRulingGComponent
   }
 
   dateValidator(control: AbstractControl): { [key: string]: any } | null {
-    const selectedDate = new Date(control.value);
-    const currentDate = new Date();
-    if (selectedDate > currentDate) {
+    const selectedDate = new Date(control.value).getTime();
+    const currentDate = new Date().getTime() - 99999;
+    if (selectedDate < currentDate) {
       return { invalidDate: true };
     }
     return null;
