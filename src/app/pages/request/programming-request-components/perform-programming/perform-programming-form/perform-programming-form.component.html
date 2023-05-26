@@ -288,7 +288,7 @@
           <div class="col-md-4">
             <form-field
               [control]="performForm.get('emailTransfer')"
-              label="Correo electronico transferente">
+              label="Correo electr&oacute;nico transferente">
               <input
                 type="text"
                 class="form-control"
@@ -384,7 +384,7 @@
                 [form]="searchGoodsForm"
                 control="warehouse"
                 [data]="akaWarehouse"
-                value="id"
+                value="aliasStock"
                 bindLabel="aliasStock"
                 label="Alias Almacén"
                 (fetchItems)="getAkaWarehouse($event)"></ngx-select>
@@ -410,7 +410,7 @@
                   [form]="searchGoodsForm"
                   control="municipality"
                   [data]="municipailitites"
-                  value="id"
+                  value="idMunicipality"
                   bindLabel="nameMunicipality"
                   label="Municipio"
                   (fetchItems)="getMunicipalities($event)"></ngx-select>
