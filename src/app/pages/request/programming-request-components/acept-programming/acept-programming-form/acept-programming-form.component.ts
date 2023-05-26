@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
@@ -19,16 +19,15 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-programming/confirm-programming.component';
 import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
-import {
-  settingGuard,
-  settingWarehouse,
-} from '../../perform-programming/perform-programming-form/settings-tables';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { RejectProgrammingFormComponent } from '../../shared-components-programming/reject-programming-form/reject-programming-form.component';
 import { ESTATE_COLUMNS, ESTATE_COLUMNS_VIEW } from '../columns/estate-columns';
@@ -62,12 +61,30 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   settingGuardGoods = {
     ...this.settings,
-    ...settingGuard,
+    actions: {
+      delete: false,
+      edit: true,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    edit: {
+      editButtonContent: '<i class="fa fa-eye"></i>',
+    },
+    columns: ESTATE_COLUMNS_VIEW,
   };
 
   settingWarehouseGoods = {
     ...this.settings,
-    ...settingWarehouse,
+    actions: {
+      delete: false,
+      edit: true,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    edit: {
+      editButtonContent: '<i class="fa fa-eye"></i>',
+    },
+    columns: ESTATE_COLUMNS_VIEW,
   };
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -93,6 +110,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén INDEP(0)`;
+
+  transGoods: any[] = [];
+  guardGoods: any[] = [];
+  warehouseGoods: any[] = [];
+  emails: any[] = [];
+
+  infoUsers: IUser[] = [];
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -104,7 +128,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private typeRelevantService: TypeRelevantService,
     private warehouseService: WarehouseService,
     private goodService: GoodService,
-    private authService: AuthService
+    private authService: AuthService,
+    private emailService: EmailService,
+    private taskService: TaskService,
+    private router: Router
   ) {
     super();
     this.settings = {
@@ -119,13 +146,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getProgrammingId();
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getUsersProgramming()); */
+      .subscribe(() => this.getUsersProgramming());
 
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.showGoodProgramming()); */
+      .subscribe(() => this.showGoodProgramming());
   }
 
   getProgrammingId() {
@@ -135,7 +162,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .subscribe(data => {
         console.log('programming', data);
         this.programming = data;
-        /*this.idTransferent = data.tranferId;
+        this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation();
         this.getTransferent();
@@ -143,7 +170,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
-        this.statusProgramming(); */
+        this.statusProgramming();
       });
   }
 
@@ -215,7 +242,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             items.userCharge = items.charge?.description;
             return items;
           });
-
+          this.infoUsers = usersData;
           this.usersData.load(usersData);
           this.totalItems = this.usersData.count();
           this.loading = false;
@@ -324,6 +351,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getGoodsProgramming(this.params.getValue())
       .subscribe(data => {
+        console.log('goods', data);
         this.filterStatusTrans(data.data);
         this.filterStatusGuard(data.data);
         this.filterStatusWarehouse(data.data);
@@ -347,7 +375,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           // queda pendiente mostrar el alías del almacén //
 
           this.goodsInfoTrans.push(response);
-
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.totalItemsTransportable = this.goodsTranportables.count();
           this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
@@ -373,7 +400,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           // queda pendiente mostrar el alías del almacén //
 
           this.goodsInfoGuard.push(response);
-
           this.goodsGuards.load(this.goodsInfoGuard);
           this.totalItemsGuard = this.goodsGuards.count();
           this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
@@ -384,7 +410,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   filterStatusWarehouse(data: IGoodProgramming[]) {
     const goodswarehouse = data.filter(items => {
-      return items.status == 'EN_ALMACÉN';
+      return items.status == 'EN_ALMACEN';
     });
 
     goodswarehouse.map(items => {
@@ -407,54 +433,224 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   aprobateProgramming() {
-    this.alertQuestion(
-      'question',
-      'Aprobar Programación',
-      `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.sendEmailUsers();
-      }
+    if (!this.programming.contentId) {
+      this.alertQuestion(
+        'question',
+        'Aprobar Programación',
+        `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.sendEmailUsers();
+        }
+      });
+    } else {
+      this.alertInfo(
+        'info',
+        'Acción no permitida',
+        'Se neceaita firmar el oficio para poder aprobar la solicitud'
+      );
+    }
+  }
+
+  async sendEmailUsers() {
+    this.infoUsers.map(user => {
+      const emailsUsers = user.email;
+      this.emails.push(emailsUsers);
+    });
+
+    this.goodsInfoTrans.map(async good => {
+      const warehouse = await this.warehouseName(good.storeId);
+      const guardObject = {
+        goodId: good.goodId,
+        uniqueKey: good.uniqueKey,
+        goodDescription: good.goodDescription,
+        quantity: good.quantity,
+        unitMeasure: good.unitMeasure,
+        nameWarehouse: warehouse,
+      };
+      this.transGoods.push(guardObject);
+    });
+
+    this.goodsInfoGuard.map(async good => {
+      const warehouse = await this.warehouseName(good.storeId);
+      const guardObject = {
+        goodId: good.goodId,
+        uniqueKey: good.uniqueKey,
+        goodDescription: good.goodDescription,
+        quantity: good.quantity,
+        unitMeasure: good.unitMeasure,
+        nameWarehouse: warehouse,
+      };
+      this.guardGoods.push(guardObject);
+    });
+
+    this.goodsInfoWarehouse.map(async good => {
+      const warehouse = await this.warehouseName(good.storeId);
+      const warehouseObject = {
+        goodId: good.goodId,
+        uniqueKey: good.uniqueKey,
+        goodDescription: good.goodDescription,
+        quantity: good.quantity,
+        unitMeasure: good.unitMeasure,
+        nameWarehouse: warehouse,
+      };
+      this.warehouseGoods.push(warehouseObject);
+    });
+
+    const dataEmail = {
+      folio: this.programming.folio,
+      startDate: this.programming.startDate,
+      endDate: this.programming.endDate,
+      city: this.programming.city,
+      address: this.programming.address,
+      usersProg: this.infoUsers,
+      goodsTrans: this.transGoods,
+      goodsResg: this.guardGoods,
+      goodsWarehouse: this.warehouseGoods,
+      emailSend: this.emails,
+    };
+
+    console.log('dataEm', dataEmail);
+    this.emailService
+      .createEmailProgramming(JSON.stringify(dataEmail))
+      .subscribe({
+        next: () => {
+          this.onLoadToast(
+            'success',
+            'Notificación',
+            'Se envio el correo electronico a los usuarios correctamente'
+          );
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+  }
+
+  //Creamos la tarea de notificación al delegado regional//
+  async createTaskNotification() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
+    body['type'] = 'SOLICITUD_PROGRAMACION';
+    body['subtype'] = 'Aceptar_Programacion';
+    body['ssubtype'] = 'APPROVE';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = _task.assignees;
+    task['assigneesDisplayname'] = _task.assigneesDisplayname;
+    task['creator'] = user.username;
+    task['taskNumber'] = Number(this.programmingId);
+    task[
+      'title'
+    ] = `Notificación de Programación con folio: ${this.programming.folio}`;
+    task['programmingId'] = this.programmingId;
+    //task['requestId'] = this.programmingId;
+    task['expedientId'] = 0;
+    task['urlNb'] = 'pages/request/programming-request/schedule-notify';
+    task['processName'] = 'SolicitudProgramacion';
+    body['task'] = task;
+
+    await this.createTaskOrderService(body);
+    this.loading = false;
+  }
+
+  //Creamos la tarea de ejecutar la recepción//
+  async createTaskExecuteProgramming() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+    body['type'] = 'SOLICITUD_PROGRAMACION';
+    body['subtype'] = 'Aceptar_Programacion';
+    body['ssubtype'] = 'APPROVE_ER';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = _task.assignees;
+    task['assigneesDisplayname'] = _task.assigneesDisplayname;
+    task['creator'] = user.username;
+    task['taskNumber'] = Number(this.programmingId);
+    task['title'] = `Ejecutar Recepción con folio: ${this.programming.folio}`;
+    task['programmingId'] = this.programmingId;
+    //task['requestId'] = this.programmingId;
+    task['expedientId'] = 0;
+    task['urlNb'] = 'pages/request/programming-request/execute-reception';
+    task['processName'] = 'SolicitudProgramacion';
+    body['task'] = task;
+
+    await this.createTaskOrderService(body);
+    this.loading = false;
+  }
+
+  //Creamos la tarea de Formalizar la recepción//
+  async createTaskFormalize() {
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    const user: any = this.authService.decodeToken();
+    let body: any = {};
+
+    body['type'] = 'SOLICITUD_PROGRAMACION';
+    body['subtype'] = 'Aceptar_Programacion';
+    body['ssubtype'] = 'APPROVE_FE';
+
+    let task: any = {};
+    task['id'] = 0;
+    task['assignees'] = _task.assignees;
+    task['assigneesDisplayname'] = _task.assigneesDisplayname;
+    task['creator'] = user.username;
+    task['taskNumber'] = Number(this.programmingId);
+    task['title'] = `Formalizar entrega con folio: ${this.programming.folio}`;
+    task['programmingId'] = this.programmingId;
+    //task['requestId'] = this.programmingId;
+    task['expedientId'] = 0;
+    task['urlNb'] = 'pages/request/programming-request/formalize-programming';
+    task['processName'] = 'SolicitudProgramacion';
+    body['task'] = task;
+
+    const taskResult = await this.createTaskOrderService(body);
+    this.loading = false;
+    if (taskResult) {
+      this.msgGuardado(
+        'success',
+        'Creación de tarea exitosa',
+        `Se creó la tarea ejecutar Recepción con el folio: ${this.programming.folio}`
+      );
+    }
+  }
+
+  createTaskOrderService(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+          console.log('task', resp);
+        },
+        error: error => {
+          console.log(error);
+          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          reject(false);
+        },
+      });
     });
   }
 
-  sendEmailUsers() {
-    //Creando la primera parte del correo electronico
-    /*const template = `<div class='row'><h1>Notificamos que tiene una programación.</h1></div>
-        <table>
-        <thead align='left'>
-          <tr style='margin-left='0px'><th style='margin-left='0px';'>Folio de la programación:</th> <th><strong><b> ${
-            this.programming.folio
-          }<strong><b></th></tr>
-          <tr style='margin-left='0px'><th style='margin-left='0px';'>Fecha y hora de inicio de Operativo:</th> <th><strong><b> ${
-            this.programming.startDate
-          }<strong><b></th></tr>
-          <tr style='margin-left='0px'><th style='margin-left='0px';'>Período del Operativo:</th> <th><strong><b> ${
-            this.programming.startDate
-          } - ${this.programming.endDate}  <strong><b></th></tr>
-          <tr style='margin-left='0px'><th style='margin-left='0px';'>Lugar del Operativo:</th> <th><strong><b> ${
-            this.programming.city
-          } ' ' ${this.programming.address}  <strong><b></th></tr>
-          </thead>
-        </table>
-        <br> 
-        <br> 
-        <div class='row' style='margin-left:10%'>Personal que participará</div>
-        <table>
-          <thead>
-            <tr>
-              <th><strong><b>Nombre del participante</strong></b></th>
-              <th><strong><b>Correo electrónico del participante</strong></b></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>${user.nb_name + ' ' + user.nb_surname}</td>
-              <td>${user.nb_email} </td>
-            </tr>
-          </tbody>
-        </table>
-        `; */
+  warehouseName(idWarehouse: number) {
+    return new Promise((resolve, reject) => {
+      this.warehouseService.getById(idWarehouse).subscribe({
+        next: response => {
+          return resolve(response.description);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    });
   }
 
   showGood(item: IGoodProgrammingSelect) {
@@ -464,5 +660,21 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       callback: () => {},
     };
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
+
+  msgGuardado(icon: any, title: string, message: string) {
+    Swal.fire({
+      title: title,
+      html: message,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+      }
+    });
   }
 }
