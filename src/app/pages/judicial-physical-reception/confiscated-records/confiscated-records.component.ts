@@ -2773,13 +2773,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             const model: IVban = {
               array: [
                 {
-                  screenKey: 'FACTREFCANCELAR',
+                  screenKey: 'FACTREFACTAENTREC',
                   goodNumber: this.selectData.id,
                   identificador: this.selectData.identifier,
                   typeAct:
-                    this.form.get('acta').value === 'C'
-                      ? 'RECEPCAN'
-                      : 'SUSPENSION',
+                    'ADM',
                 },
               ],
             };
