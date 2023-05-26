@@ -6,8 +6,13 @@
     <form class="form-material" [formGroup]="instituteForm">
       <div class="row">
         <div class="col-md-12">
-          <form-field label="Descripción" [control]="instituteForm.get('description')">
-            <input type="text" class="form-control" formControlName="description" />
+          <form-field
+            label="Descripción"
+            [control]="instituteForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
       </div>
@@ -16,7 +21,11 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" [loading]="loading" [disabled]="instituteForm.invalid" (confirm)="confirm()">
+        <confirm-button
+          [type]="'button'"
+          [loading]="loading"
+          [disabled]="instituteForm.invalid"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

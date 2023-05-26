@@ -1,7 +1,8 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Notificar con folio: R&#45;NORESTE&#45;SAT&#45;650&#45;OS
+      Notifici&oacute;n de Programaci&oacute;n con folio:
+      {{ programming?.folio }}
     </h5>
   </div>
   <div body>
@@ -12,22 +13,22 @@
             <label class="col-lg-5 text-right"
               >Delegaci&oacute;n Regional:</label
             >
-            <span> NOROESTE </span>
+            <span> {{ programming?.regionalDelegationNumber }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Transferente&#58;</label>
-            <span> SAT - comercio exterior </span>
+            <span> {{ programming?.tranferId }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Emisora&#58;</label>
-            <span> AGA </span>
+            <span> {{ programming?.stationId }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Autoridad&#58;</label>
-            <span> Administración de la aduana de Nuevo Laredo </span>
+            <span> {{ programming?.autorityId }} </span>
           </div>
         </form>
       </div>
@@ -36,22 +37,24 @@
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-5 text-right">Correo transferente&#58;</label>
-            <span> OST12363@SAE.GOB.MX </span>
+            <span> {{ programming?.emailTransfer }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-5 text-right">Fecha page operativo&#58;</label>
-            <span> 11-oct-2022 00:00 </span>
+            <label class="col-lg-5 text-right"
+              >Fecha inicio operativo&#58;</label
+            >
+            <span> {{ programming?.startDate }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Fecha fin operativo&#58;</label>
-            <span> 12-oct-2022 00:00 </span>
+            <span> {{ programming?.endDate }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Direcci&oacute;n&#58;</label>
-            <span> Domicilio desconocido </span>
+            <span> {{ programming?.city }} {{ programming?.address }} </span>
           </div>
         </form>
       </div>
@@ -60,17 +63,17 @@
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-5 text-right">Tipo relevante&#58;</label>
-            <span> Diverso </span>
+            <span> {{ programming?.typeRelevantId }} </span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Ciudad&#58;</label>
-            <span> Nuevo Laredo </span>
+            <span> {{ programming?.city }}</span>
           </div>
 
           <div class="form-group">
             <label class="col-lg-5 text-right">Observaci&oacute;n&#58;</label>
-            <span> Ninguna </span>
+            <span> {{ programming?.observation }} </span>
           </div>
         </form>
       </div>
@@ -81,15 +84,14 @@
       <div class="col-lg-6">
         <div class="form-group">
           <label class="text-right">Almac&eacute;n&#58;</label>
-          <span> Nombre de Almacén test </span>
+          <span> {{ programming?.storeId }} </span>
         </div>
       </div>
       <div class="col-lg-6">
         <div class="form-group">
           <label class="text-right">Direcci&oacute;n almac&eacute;n&#58;</label>
           <span>
-            Boulevard José López Portillo No 200, Apodaca, Nuevo León, C.P.
-            66613
+            {{ programming?.storeId }}
           </span>
         </div>
       </div>

@@ -35,7 +35,7 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       description: [null, [Validators.required]],
       keyview: [null, [Validators.required, Validators.maxLength(1)]],
-      noRegistration: [null,],
+      noRegistration: [null],
     });
 
     if (this.identifier != null) {

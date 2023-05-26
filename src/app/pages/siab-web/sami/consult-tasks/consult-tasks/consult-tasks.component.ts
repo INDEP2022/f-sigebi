@@ -318,14 +318,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       typeof this.consultTasksForm.value.txtNoDelegacionRegional == 'number'
     ) {
       isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'idDelegationRegional',
-          // request.regionalDelegationNumber
-          this.consultTasksForm.value.txtNoDelegacionRegional,
-          SearchFilter.EQ
-        );
+      this.filterParams.getValue().addFilter(
+        'idDelegationRegional',
+        // request.regionalDelegationNumber
+        this.consultTasksForm.value.txtNoDelegacionRegional,
+        SearchFilter.EQ
+      );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
       isfilterUsed = true;
@@ -394,7 +392,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           } */
           response.data.map((item: any) => {
             item.taskNumber = item.id;
-            item.requestId = item.requestId != null ? item.requestId : item.programmingId;
+            item.requestId =
+              item.requestId != null ? item.requestId : item.programmingId;
           });
 
           this.tasks = response.data;
