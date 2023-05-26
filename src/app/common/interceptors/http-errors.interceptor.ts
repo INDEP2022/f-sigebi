@@ -93,6 +93,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   handleError(error: HttpErrorResponse) {
     const status = error.status;
     let message = '';
+    console.log(error);
     if (Array.isArray(error?.error?.message) === true) {
       message = error?.error?.message[0];
     } else if (Array.isArray(error?.error?.message) === false) {

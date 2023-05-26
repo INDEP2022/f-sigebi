@@ -20,62 +20,79 @@
                   value="id"
                   bindLabel="descriptionAndId">
                 </ngx-select>
-
-                <!-- <input (change)="getGood($event)" class="form-control" formControlName="noBien" />
-                        <select name="idGood" id="idGood" (change)="getGood($event)"> -->
-
-                <!-- </select> -->
               </form-field>
             </div>
-            <div class="col-12 mb-2 mt-2">
-              <form-field [control]="form.get('cantidad')" label="Cantidad">
+
+            <div class="col-12 mb-3 mt-2">
+              <form-field
+                [control]="form.get('descripcion')"
+                label="Descripci&oacute;n">
+                <label class="form-control-label w-100">{{
+                  descripcion
+                }}</label>
                 <input
                   readonly
+                  hidden
+                  class="form-control"
+                  formControlName="descripcion" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mb-3 mt-2">
+              <form-field [control]="form.get('cantidad')" label="Cantidad">
+                <label class="form-control-label w-100">{{ cantidad }}</label>
+
+                <input
+                  readonly
+                  hidden
                   class="form-control"
                   formControlName="cantidad" />
               </form-field>
             </div>
-            <div class="col-12 mb-2 mt-2">
+            <div class="col-12 mb-3 mt-2">
               <form-field [control]="form.get('unidad')" label="Unidad">
-                <input readonly class="form-control" formControlName="unidad" />
-              </form-field>
-            </div>
-            <div class="col-12 mb-2 mt-2">
-              <form-field
-                [control]="form.get('descripcion')"
-                label="Descripci&oacute;n">
+                <label class="form-control-label w-100">{{ unidad }}</label>
                 <input
                   readonly
+                  hidden
                   class="form-control"
-                  formControlName="descripcion" />
+                  formControlName="unidad" />
               </form-field>
             </div>
           </div>
         </div>
         <div class="col-lg-5 col-sm-12">
           <div class="row">
-            <div class="col-12 mb-2 mt-2">
+            <div class="col-12 mb-3 mt-2">
               <form-field [control]="form.get('estatus')" label="Estatus">
+                <label class="form-control-label w-100">{{ estatus }}</label>
                 <input
                   readonly
+                  hidden
                   class="form-control"
                   formControlName="estatus" />
               </form-field>
             </div>
-            <div class="col-12 mb-2 mt-2">
+            <div class="col-12 mb-3 mt-2">
               <form-field
                 [control]="form.get('clasificacion')"
                 label="Clasificaci&oacute;n">
+                <label class="form-control-label w-100">{{
+                  clasificacion
+                }}</label>
                 <input
                   readonly
+                  hidden
                   class="form-control"
                   formControlName="clasificacion" />
               </form-field>
             </div>
-            <div class="col-12 mb-2 mt-2">
+            <div class="col-12 mb-3 mt-2">
               <form-field [control]="form.get('destino')" label="Destino">
+                <label class="form-control-label w-100">{{ destino }}</label>
                 <input
                   readonly
+                  hidden
                   class="form-control"
                   formControlName="destino" />
               </form-field>

@@ -565,13 +565,25 @@
       <div class="row">
         <div class="d-flex justify-content-center">
           <div>
+            <!-- <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="
+                wheelNumber == null ||
+                expedientNumber == null ||
+                userRecipient == null
+              "
+              (click)="openToShiftChange()">
+              Reasignaci&oacute;n de Turno
+            </button> -->
             <button
               outline
               type="button"
               class="mr-3 mt-3 btn btn-sm active btn-primary"
-              [disabled]="wheelNumber == null || expedientNumber == null"
+              [disabled]="!wheelNumber || !userRecipient || !expedientNumber"
               (click)="openToShiftChange()">
-              Reasignaci&oacute;n de Turno
+              Reasignaci&oacute;n de Turnos
             </button>
           </div>
           <div *ngIf="layout == 'FILE-UPDATE'">

@@ -88,7 +88,7 @@ export class ScheduledMaintenanceDetailComponent
     private historyGoodService: HistoryGoodService
   ) {
     super();
-    this.fillColumnsGoods();
+
     this.prepareForm();
     // this.getStatusPantalla();
     this.statusActa.valueChanges.subscribe(x => {
@@ -290,7 +290,7 @@ export class ScheduledMaintenanceDetailComponent
     this.initialValue = { ...this.form.value };
   }
 
-  return() {
+  back() {
     this.location.back();
   }
 
@@ -318,14 +318,44 @@ export class ScheduledMaintenanceDetailComponent
     this.getData();
   }
 
-  updateDatesTable() {
+  updateDatesTable(newData: any[]) {
     console.log(this.data);
+    this.detailService
+      .updateMasive(
+        newData
+          .filter(x => x.agregado === 'AE')
+          .map(x => {
+            return {
+              fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
+              fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
+              no_bien: x.no_bien,
+            };
+          }),
+        this.actaId
+      )
+      .subscribe({
+        next: response => {
+          let goods = '';
+          newData.forEach((selected, index) => {
+            goods += selected.no_bien + (index < newData.length - 1 ? ',' : '');
+          });
+          // const message = `Se actualizo el bien N° ${newData.no_bien} `;
+          const message = `Se actualizaron los bienes N° ${goods} `;
+          this.onLoadToast('success', 'Exito', message);
+          this.data = newData;
+          // this.updateTable.emit();
+        },
+        error: err => {
+          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+        },
+      });
     this.onLoadToast('info', 'Bienes', 'Fechas actualizadas');
   }
 
   updateGoodsRow(event: any) {
     console.log(event);
     let { newData, confirm, data } = event;
+    // confirm.resolve(data);
     if (
       !newData.fec_aprobacion_x_admon ||
       !newData.fec_indica_usuario_aprobacion
@@ -342,8 +372,37 @@ export class ScheduledMaintenanceDetailComponent
       this.alertTableRangeError();
       return;
     }
-    this.fillSelectedsForUpdate(newData, data);
-    confirm.resolve(newData);
+    this.detailService
+      .updateMasive(
+        [
+          {
+            fec_aprobacion_x_admon: newData.fec_aprobacion_x_admon,
+            fec_indica_usuario_aprobacion:
+              newData.fec_indica_usuario_aprobacion,
+            no_bien: newData.no_bien,
+          },
+        ],
+        this.actaId
+      )
+      .subscribe({
+        next: response => {
+          // let goods = '';
+          // this.selectedsForUpdate.forEach((selected, index) => {
+          //   goods +=
+          //     selected.numberGood +
+          //     (index < this.selectedsForUpdate.length - 1 ? ',' : '');
+          // });
+          const message = `Se actualizo el bien N° ${newData.no_bien} `;
+          // const message = `Se actualizaron los bienes N° ${goods} `;
+          this.onLoadToast('success', 'Exito', message);
+          // this.updateTable.emit();
+        },
+        error: err => {
+          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+        },
+      });
+    // this.fillSelectedsForUpdate(newData, data);
+    // confirm.resolve(newData);
   }
 
   alertTableRangeError() {
@@ -367,6 +426,7 @@ export class ScheduledMaintenanceDetailComponent
     //   // console.log(x);
     //   this.getData();
     // });
+    this.fillColumnsGoods();
   }
 
   private fillColumnsGoods() {
@@ -431,6 +491,109 @@ export class ScheduledMaintenanceDetailComponent
       });
   }
 
+  fillGoodsByRastrer() {
+    this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        // debugger;
+        // response.forEach(good => {
+        //   this.detailService.getGoodByID(good.goodNumber);
+        // });
+        if (response && response.length > 0) {
+          console.log(this.areaProcess);
+          this.detailService
+            .getGoodByRastrer(
+              response.map(item => +item.goodNumber),
+              this.areaProcess,
+              this.typeProceeding,
+              this.data[0]
+            )
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe({
+              next: goods => {
+                console.log(goods);
+                this.totalItems += goods.data.length;
+                this.bienesRas = goods.bienes;
+                this.expedientesRas = goods.expedientes;
+                this.dictamenesRas = goods.dictamenes;
+                this.data = [...this.data.concat(goods.data)];
+                console.log(this.totalItems);
+                this.loading = false;
+              },
+              error: err => {
+                this.onLoadToast(
+                  'error',
+                  'Bienes',
+                  'Bienes no válidos para agregar'
+                );
+                this.loading = false;
+              },
+            });
+        } else {
+          this.loading = false;
+        }
+
+        // if (response) {
+        //   // console.log(response, this.infoForm);
+        //   this.detailService
+        //     .createMassive(
+        //       response.map(item =>
+        //         trackerGoodToDetailProceeding(item, this.actaId)
+        //       )
+        //     )
+        //     .subscribe({
+        //       next: response2 => {
+        //         const goods = response.map(good => good.goodNumber);
+        //         let message = '';
+        //         goods.forEach((good, index) => {
+        //           message += good + (index < goods.length - 1 ? ',' : '');
+        //         });
+        //         this.onLoadToast('success', 'Bienes Agregados', message);
+        //         this.getData();
+        //       },
+        //       error: err => {
+        //         this.onLoadToast('error', 'Bienes', 'No ');
+        //       },
+        //     });
+        //   // this.service.dataForAdd = [
+        //   //   ...this.service.dataForAdd.concat(
+        //   //     response.map(item =>
+        //   //       trackerGoodToDetailProceeding(item, this.infoForm.id)
+        //   //     )
+        //   //   ),
+        //   // ];
+        // }
+        // this.detailService.createMassive(details)
+        // if (response && response.length > 0) {
+        //   this.service
+        //     .getByGoodRastrer(
+        //       response.map(item => +item.goodNumber),
+        //       this.data[0]
+        //     )
+        //     .pipe(takeUntil(this.$unSubscribe))
+        //     .subscribe({
+        //       next: goods => {
+        //         console.log(goods);
+
+        //         // this.dataForAdd = goods.data;
+        //         this.detailService.createMassive()
+        //       },
+        //       complete: () => {
+        //         this.loading = false;
+        //       },
+        //     });
+        // } else {
+        //   this.loading = false;
+        // }
+        // tracker.unsubscribe();
+      },
+      error: err => {
+        console.log(err);
+        this.loading = false;
+        // tracker.unsubscribe();
+      },
+    });
+  }
+
   getData() {
     const idActa = this.actaId;
     console.log(idActa);
@@ -438,6 +601,10 @@ export class ScheduledMaintenanceDetailComponent
     console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
+    const detail = JSON.parse(
+      window.localStorage.getItem('detailActa')
+    ) as IProceedingDeliveryReception;
+
     if (idActa) {
       this.service
         .getGoodsByProceeding(this.params)
@@ -449,127 +616,13 @@ export class ScheduledMaintenanceDetailComponent
             this.goodsCant = response.total;
             // console.log(this.goodsCant);
             this.totalItems = response.count;
-            const tracker = this.$trackedGoods
-              .pipe(first(), takeUntil(this.$unSubscribe))
-              .subscribe({
-                next: response => {
-                  // debugger;
-                  // response.forEach(good => {
-                  //   this.detailService.getGoodByID(good.goodNumber);
-                  // });
-                  if (response && response.length > 0) {
-                    console.log(this.areaProcess);
-                    this.detailService
-                      .getGoodByRastrer(
-                        response.map(item => +item.goodNumber),
-                        this.areaProcess,
-                        this.typeProceeding,
-                        this.data[0]
-                      )
-                      .pipe(takeUntil(this.$unSubscribe))
-                      .subscribe({
-                        next: goods => {
-                          console.log(goods);
-                          this.totalItems += goods.data.length;
-                          this.bienesRas = goods.bienes;
-                          this.expedientesRas = goods.expedientes;
-                          this.dictamenesRas = goods.dictamenes;
-                          this.data = [...this.data.concat(goods.data)];
-                          console.log(this.totalItems);
-                          this.loading = false;
-                        },
-                        error: err => {
-                          this.loading = false;
-                        },
-                      });
-                    // this.service
-                    //   .getByGoodRastrer(
-                    //     response.map(item => +item.goodNumber),
-                    //     this.data[0]
-                    //   )
-                    //   .pipe(takeUntil(this.$unSubscribe))
-                    //   .subscribe({
-                    //     next: goods => {
-                    //       console.log(goods);
-                    //       // this.dataForAdd = goods.data;
-                    //       this.data = [...this.data.concat(goods.data)];
-                    //       this.totalItems += goods.data.length;
-
-                    //       // this.detailService.createMassive()
-                    //     },
-                    //     complete: () => {
-                    //       this.loading = false;
-                    //     },
-                    //   });
-                  } else {
-                    this.loading = false;
-                  }
-
-                  // if (response) {
-                  //   // console.log(response, this.infoForm);
-                  //   this.detailService
-                  //     .createMassive(
-                  //       response.map(item =>
-                  //         trackerGoodToDetailProceeding(item, this.actaId)
-                  //       )
-                  //     )
-                  //     .subscribe({
-                  //       next: response2 => {
-                  //         const goods = response.map(good => good.goodNumber);
-                  //         let message = '';
-                  //         goods.forEach((good, index) => {
-                  //           message += good + (index < goods.length - 1 ? ',' : '');
-                  //         });
-                  //         this.onLoadToast('success', 'Bienes Agregados', message);
-                  //         this.getData();
-                  //       },
-                  //       error: err => {
-                  //         this.onLoadToast('error', 'Bienes', 'No ');
-                  //       },
-                  //     });
-                  //   // this.service.dataForAdd = [
-                  //   //   ...this.service.dataForAdd.concat(
-                  //   //     response.map(item =>
-                  //   //       trackerGoodToDetailProceeding(item, this.infoForm.id)
-                  //   //     )
-                  //   //   ),
-                  //   // ];
-                  // }
-                  // this.detailService.createMassive(details)
-                  // if (response && response.length > 0) {
-                  //   this.service
-                  //     .getByGoodRastrer(
-                  //       response.map(item => +item.goodNumber),
-                  //       this.data[0]
-                  //     )
-                  //     .pipe(takeUntil(this.$unSubscribe))
-                  //     .subscribe({
-                  //       next: goods => {
-                  //         console.log(goods);
-
-                  //         // this.dataForAdd = goods.data;
-                  //         this.detailService.createMassive()
-                  //       },
-                  //       complete: () => {
-                  //         this.loading = false;
-                  //       },
-                  //     });
-                  // } else {
-                  //   this.loading = false;
-                  // }
-                  // tracker.unsubscribe();
-                },
-                error: err => {
-                  console.log(err);
-                  this.loading = false;
-                  // tracker.unsubscribe();
-                },
-              });
+            this.fillGoodsByRastrer();
           },
           error: err => {
             this.data = [];
             this.loading = false;
             this.totalItems = 0;
+            this.fillGoodsByRastrer();
           },
         });
     }
@@ -589,7 +642,7 @@ export class ScheduledMaintenanceDetailComponent
         if (item.agregado === 'AE') {
           this.loading = true;
           this.detailService
-            .deleteByIdBP(this.actaId, this.typeProceeding, item, 0)
+            .deleteByBP(this.actaId, this.typeProceeding, [item])
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe({
               next: response => {

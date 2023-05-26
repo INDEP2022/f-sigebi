@@ -401,9 +401,9 @@ export class JuridicalRulingGComponent
   }
 
   dateValidator(control: AbstractControl): { [key: string]: any } | null {
-    const selectedDate = new Date(control.value);
-    const currentDate = new Date();
-    if (selectedDate > currentDate) {
+    const selectedDate = new Date(control.value).getTime();
+    const currentDate = new Date().getTime() - 99999;
+    if (selectedDate < currentDate) {
       return { invalidDate: true };
     }
     return null;
@@ -553,6 +553,9 @@ export class JuridicalRulingGComponent
                 params?.expediente ||
                   this.expedientesForm.get('noExpediente').value
               );
+            this.expedientesForm
+              .get('tipoDictaminacion')
+              .setValue(params?.tipoDic);
             this.expedientesForm
               .get('noVolante')
               .setValue(params?.volante || null);
@@ -1166,6 +1169,7 @@ export class JuridicalRulingGComponent
   userChange(user: any) {
     // ..captura usuario
     console.log(user);
+    this.dictaminacionesForm.get('autoriza_nombre').setValue(user.name);
   }
 
   getUsers($params: ListParams) {

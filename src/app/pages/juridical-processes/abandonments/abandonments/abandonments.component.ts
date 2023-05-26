@@ -10,7 +10,10 @@ import { ListParams } from '../../../../common/repository/interfaces/list-params
 
 /** SERVICE IMPORTS */
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 
 /** ROUTING MODULE */
@@ -28,11 +31,20 @@ export class AbandonmentsComponent
 {
   public form: FormGroup;
   selectRegDele = new DefaultSelect<any>();
+  estatus: any = '';
+  cantidad: any = '';
+  destino: any = '';
+  descripcion: any = '';
+  unidad: any = '';
+  clasificacion: any = '';
   constructor(
     private token: AuthService,
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
-    private readonly historyGoodService: HistoryGoodService
+    private readonly historyGoodService: HistoryGoodService,
+    private statusGoodService: StatusGoodService,
+    private goodSssubtypeService: GoodSssubtypeService,
+    private labelGoodService: LabelGoodService
   ) {
     super();
   }
@@ -61,6 +73,7 @@ export class AbandonmentsComponent
         this.selectRegDele = new DefaultSelect(data.data, data.count);
       },
       error: error => {
+        this.onLoadToast('warning', error.error.message, '');
         this.selectRegDele = new DefaultSelect();
       },
     });
@@ -102,12 +115,18 @@ export class AbandonmentsComponent
         },
         error: error => {
           this.loading = false;
-          this.form.get('estatus').setValue(item.status);
-          this.form.get('cantidad').setValue(item.quantity);
-          this.form.get('destino').setValue(item.destiny);
-          this.form.get('descripcion').setValue(item.description);
-          this.form.get('unidad').setValue(item.unit);
-          this.form.get('clasificacion').setValue(item.clarification);
+          this.statusGood(item);
+          this.getGoodSssubtypeService(item);
+          this.getEtiqueta(item);
+          this.cantidad = item.quantity;
+          this.unidad = item.unit;
+          this.descripcion = item.description;
+          // this.form.get('estatus').setValue(item.status);
+          // this.form.get('cantidad').setValue(item.quantity);
+          // this.form.get('destino').setValue(item.destiny);
+          // this.form.get('descripcion').setValue(item.description);
+          // this.form.get('unidad').setValue(item.unit);
+          // this.form.get('clasificacion').setValue(item.clarification);
         },
       });
     } else {
@@ -117,12 +136,19 @@ export class AbandonmentsComponent
 
   cleanForm() {
     this.form.get('noBien').setValue('');
-    this.form.get('estatus').setValue('');
-    this.form.get('cantidad').setValue('');
-    this.form.get('destino').setValue('');
-    this.form.get('descripcion').setValue('');
-    this.form.get('unidad').setValue('');
-    this.form.get('clasificacion').setValue('');
+    this.cantidad = '';
+    this.unidad = '';
+    this.descripcion = '';
+    this.estatus = '';
+    this.destino = '';
+    this.clasificacion = '';
+
+    // this.form.get('estatus').setValue('');
+    // this.form.get('cantidad').setValue('');
+    // this.form.get('destino').setValue('');
+    // this.form.get('descripcion').setValue('');
+    // this.form.get('unidad').setValue('');
+    // this.form.get('clasificacion').setValue('');
   }
 
   btnAplicaAbandono() {
@@ -150,6 +176,58 @@ export class AbandonmentsComponent
         this.selectRegDele = new DefaultSelect();
       },
       error: error => {
+        this.alert('error', error.error.message, 'Aplicación de Abandono');
+        this.loading = false;
+      },
+    });
+  }
+  // ESTATUS_BIEN
+  statusGood(good: any) {
+    let params = new ListParams();
+    params['filter.status'] = `$eq:${good.status}`;
+    this.statusGoodService.getAll(params).subscribe({
+      next: (response: any) => {
+        const data = response.data[0];
+        console.log('a', response);
+        this.estatus = good.status + ' - ' + data.description;
+        this.loading = false;
+      },
+      error: err => {
+        this.estatus = '';
+        this.loading = false;
+      },
+    });
+  }
+  // CAT_SSSUBTIPO_BIEN
+  getGoodSssubtypeService(good: any) {
+    let params = new ListParams();
+    params['filter.numClasifGoods'] = `$eq:${good.goodClassNumber}`;
+    this.goodSssubtypeService.getAll(params).subscribe({
+      next: (response: any) => {
+        const data = response.data[0];
+        console.log('b', response);
+        this.clasificacion = good.goodClassNumber + ' - ' + data.description;
+        this.loading = false;
+      },
+      error: err => {
+        this.clasificacion = '';
+        this.loading = false;
+      },
+    });
+  }
+  // CAT_ETIQUETA_BIEN
+  getEtiqueta(good: any) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${good.labelNumber}`;
+    this.labelGoodService.getEtiqXClasif(params).subscribe({
+      next: (response: any) => {
+        const data = response.data[0];
+        console.log('c', response);
+        this.destino = good.labelNumber + ' - ' + data.description;
+        this.loading = false;
+      },
+      error: err => {
+        this.destino = '';
         this.loading = false;
       },
     });

@@ -1,11 +1,12 @@
 import { Location } from '@angular/common';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { IRequestInformation } from 'src/app/core/models/requests/requestInformation.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 
@@ -38,10 +39,13 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   requestId: number = NaN;
   contributor: string = '';
   title: string;
-  requestInfo: IRequestInformation;
+  requestInfo: any;
   screenWidth: number;
   public typeDoc: string = '';
 
+  /* injections */
+  private requestService = inject(RequestService);
+  /*  */
   constructor(
     private location: Location,
     private route: ActivatedRoute,
@@ -58,7 +62,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     const requestId = Number(this.route.snapshot.paramMap.get('request'));
     const process = this.route.snapshot.paramMap.get('process');
-    console.log(requestId);
     //this.route.paramMap.subscribe(params => {
     //console.log(params);
     if (requestId) {
@@ -79,22 +82,18 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     this.screenWidth = screenWidth;
   }
 
-  getRequestInfo(rquestId: number) {
+  getRequestInfo(requestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
     this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria`;
-
-    this.requestInfo = {
-      date: '17-abr-2018',
-      requestNo: 1896,
-      fileNo: 15499,
-      memorandumNo: 54543,
-      regionalDelegation: 'BAJA CALIFORNIA',
-      state: 'BAJA CALIFORNIA',
-      transferee: 'SAT - COMERCIO EXTERIOR',
-      emitter: 'ALAF',
-      authority: 'ADMINISTRACIÓN LOCAL DE AUDITORÍA FISCAL DE MEXICALI',
-      similarGoodsRequest: 1851,
-    };
+    const param = new FilterParams();
+    param.addFilter('id', requestId);
+    const filter = param.getParams();
+    this.requestService.getAll(filter).subscribe({
+      next: resp => {
+        this.requestInfo = resp.data[0];
+        this.requestId = resp.data[0].id;
+      },
+    });
     this.contributor = 'CARLOS G. PALMA';
   }
 

@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -34,6 +35,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
+    //maximo a 4 caracteres
     this.departmentForm = this.fb.group({
       id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       numDelegation: [null, [Validators.required]],
@@ -58,10 +60,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      numRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      numRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       level: [
         null,
         [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
@@ -83,23 +82,56 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     if (this.department != null) {
       this.edit = true;
       this.departmentForm.patchValue(this.department);
+      let numSubDelegation = this.department.numSubDelegation as ISubdelegation;
+      console.log(this.departmentForm.value);
+      this.departmentForm.controls['numSubDelegation'].setValue(
+        numSubDelegation.id
+      );
+      this.getDelegationsId(
+        new ListParams(),
+        this.departmentForm.controls['numDelegation'].value
+      );
+      this.getSubdelegations(
+        new ListParams(),
+        this.departmentForm.controls['numDelegation'].value
+      );
     }
+    this.getDelegations(new ListParams());
+    // this.getSubdelegations(new ListParams);
   }
 
   getDelegations(params: ListParams) {
-    this.departmentService.getDelegations(params).subscribe({
-      next: data =>
-        (this.delegations = new DefaultSelect(data.data, data.count)),
+    this.departmentService.getDelegationsCatalog(params).subscribe({
+      next: data => {
+        this.delegations = new DefaultSelect(data.data, data.count);
+        console.log(data.data);
+      },
     });
   }
-
-  getSubdelegations(params: ListParams) {
+  getDelegationsId(params: ListParams, id: any) {
+    params['filter.id'] = `$eq:${id}`;
+    this.departmentService.getDelegationsCatalog(params).subscribe({
+      next: data => {
+        this.delegations = new DefaultSelect(data.data, data.count);
+        console.log(data.data);
+      },
+    });
+  }
+  getSubdelegations(params: ListParams, id?: any) {
+    if (id) {
+      params['filter.delegationDetail.id'] = `$eq:${id}`;
+    }
     this.departmentService.getSubdelegations(params).subscribe({
-      next: data =>
-        (this.subdelegations = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.subdelegations = new DefaultSelect(data.data, data.count);
+        console.log(data.data);
+      },
     });
   }
-
+  onSubDelegation(data: any) {
+    console.log(data);
+    this.getSubdelegations(new ListParams(), data.id);
+  }
   close() {
     this.modalRef.hide();
   }
@@ -118,12 +150,10 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.departmentService
-      .update(this.department.id, this.departmentForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.departmentService.update4(this.departmentForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

@@ -217,4 +217,11 @@ export class NotificationService extends HttpService {
       params
     );
   }
+
+  updateWithBody(
+    wheelNumber: number,
+    body: any
+  ): Observable<{ statusCode: number; message: string[] }> {
+    return this.put(`${this.route.Notification}/${wheelNumber}`, body);
+  }
 }

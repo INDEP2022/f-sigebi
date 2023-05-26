@@ -1,5 +1,5 @@
 export const COLUMNS_BIENES = {
-  goodId: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
