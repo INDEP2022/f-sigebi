@@ -60,7 +60,16 @@ export class DocumentsReceptionDataService {
 
   private _currentProcessId: number = null;
 
+  private _previousRoute: {
+    route: string;
+    params: any;
+  } | null = null;
+
   constructor() {}
+
+  get previousRoute() {
+    return this._previousRoute;
+  }
 
   get flyersRegistrationParams() {
     return { ...this._flyersRegistrationParams };
@@ -107,6 +116,15 @@ export class DocumentsReceptionDataService {
 
   get currentProcessId() {
     return this._currentProcessId;
+  }
+
+  set previousRoute(
+    previousRoute: {
+      route: string;
+      params: any;
+    } | null
+  ) {
+    this._previousRoute = previousRoute;
   }
 
   set flyersRegistrationParams(params: IDocReceptionFlyersRegistrationParams) {

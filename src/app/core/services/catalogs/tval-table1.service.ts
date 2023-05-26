@@ -4,18 +4,24 @@ import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
+import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ITables,
   TvalTable1Data,
 } from '../../models/catalogs/dinamic-tables.model';
-import { ITvaltable1, ITvaltables1 } from '../../models/catalogs/tvaltable-model';
-import { HttpService } from 'src/app/common/services/http.service';
+import {
+  ITvaltable1,
+  ITvaltables1,
+} from '../../models/catalogs/tvaltable-model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TvalTable1Service extends HttpService implements ICrudMethods<ITvaltable1> {
+export class TvalTable1Service
+  extends HttpService
+  implements ICrudMethods<ITvaltable1>
+{
   private readonly route: string = ENDPOINT_LINKS.DinamicTablesName;
   private readonly route1: string = ENDPOINT_LINKS.DinamicTables;
   private readonly route2: string = ENDPOINT_LINKS.DinamicTable1;
@@ -26,7 +32,9 @@ export class TvalTable1Service extends HttpService implements ICrudMethods<ITval
     private Tvaltabla1Repository: Repository<ITvaltables1>,
     private tavaltable1: Repository<TvalTable1Data>,
     private TvaltablasRepository: Repository<ITables>
-  ) { super() }
+  ) {
+    super();
+  }
 
   getAlls(params?: ListParams): Observable<IListResponse<ITvaltables1>> {
     return this.Tvaltabla1Repository.getAllPaginated(this.route4, params);

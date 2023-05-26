@@ -1,6 +1,5 @@
-import { ICity } from 'src/app/core/models/catalogs/city.model';
-import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { ICitys } from 'src/app/core/models/catalogs/issuing-institution.model';
+import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 export const ISSUING_INSTITUTION_COLUMNS = {
   id: {
     title: 'No.',

@@ -249,6 +249,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
         },
         error: error => {
           // console.log(error);
+          this.service.data = [];
           this.loadingGoods = false;
         },
       });

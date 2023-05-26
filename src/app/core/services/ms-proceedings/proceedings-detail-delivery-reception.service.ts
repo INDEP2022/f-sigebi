@@ -70,8 +70,10 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
           bienes += +(item.cantidad + '');
           return {
             ...item,
-            fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
-            fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+            fec_aprobacion_x_admon: good ? good.fec_aprobacion_x_admon : null,
+            fec_indica_usuario_aprobacion: good
+              ? good.fec_indica_usuario_aprobacion
+              : null,
             agregado: 'RA',
           };
         });
@@ -198,20 +200,18 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     return this.post(this.endpoint + '/id', { numberGood, numberProceedings });
   }
 
-  deleteByIdBP(
+  deleteByBP(
     actaNumber: number,
     processingArea: string,
-    detail: IGoodsByProceeding,
-    contEli: number
+    details: IGoodsByProceeding[]
   ) {
     const body: PBDelete = {
-      contEli,
-      aggregate: 'AE',
-      selEli: 1,
       processingArea,
-      states: detail.estatus,
       user: localStorage.getItem('username'),
       actaNumber,
+      goods: details.map(detail => {
+        return { noBien: +(detail.no_bien + ''), status: detail.estatus };
+      }),
     };
     //   actaNumber,
     //   goodNumber: +detail.no_bien,
