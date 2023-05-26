@@ -42,16 +42,19 @@ export class FileDataUpdateComponent
   ) {
     super();
   }
-
+  wheelNumber: string | null = null;
   ngOnInit(): void {
-    //
+    if (this.docDataService.previousRoute) {
+      this.wheelNumber =
+        this.docDataService.previousRoute?.params?.wheelNumber || null;
+    }
   }
 
   returnToFlyers() {
     this.docDataService.flyersRegistrationParams = {
       pGestOk: 0,
       pNoTramite: null,
-      pNoVolante: null,
+      pNoVolante: this.wheelNumber as any,
       noTransferente: null,
       pSatTipoExp: null,
       pIndicadorSat: null,
@@ -61,7 +64,7 @@ export class FileDataUpdateComponent
       queryParams: {
         pGestOk: 0,
         pNoTramite: null,
-        pNoVolante: null,
+        pNoVolante: this.wheelNumber,
         noTransferente: null,
         pSatTipoExp: null,
         pIndicadorSat: null,

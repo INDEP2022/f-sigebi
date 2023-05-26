@@ -224,11 +224,28 @@ export class PerformProgrammingFormComponent
     this.showUsersProgramming();
     this.getProgrammingData();
     this.performSearchForm();
-    //this.getTransferentSelect(new ListParams());
-    //this.getStateSelect();
-    //this.getGoodsProgTrans();
 
     this.task = JSON.parse(localStorage.getItem('Task'));
+  }
+
+  initialTransferences(params: ListParams) {
+    params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'nameTransferent:ASC';
+    const state = Number(11);
+    this.transferentesSaeService
+      .getStateByTransferentKey(state, params)
+      .subscribe({
+        next: response => {
+          console.log('inicializando', response);
+          const transferent = response.data.map(transferent => {
+            return transferent.transferent;
+          });
+          this.transferences = new DefaultSelect(transferent, response.count);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
   }
 
   //Información de el usuario logeado//
@@ -963,6 +980,7 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
+          console.log('é', response);
           const goodsFilter = response.data.map(items => {
             if (items.physicalState) {
               if (items.physicalState == 1) {
@@ -1041,6 +1059,7 @@ export class PerformProgrammingFormComponent
 
   /*------Inserta bienes con status transportable -----*/
   async insertGoodsProgTrans() {
+    console.log('good', this.goodSelect);
     this.goodSelect.map((item: any) => {
       const formData: Object = {
         programmingId: this.idProgramming,
@@ -1257,6 +1276,7 @@ export class PerformProgrammingFormComponent
                 item['statePhysicalSae'] = 'BUENO';
               if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
               showGuards.push(item);
+
               this.goodsGuards.load(showGuards);
               this.totalItemsTransportableGuard = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
@@ -1363,7 +1383,6 @@ export class PerformProgrammingFormComponent
                 item['statePhysicalSae'] = 'BUENO';
               if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
               showWarehouse.push(item);
-
               this.goodsWarehouse.load(showWarehouse);
               this.totalItemsTransportableWarehouse =
                 this.goodsWarehouse.count();

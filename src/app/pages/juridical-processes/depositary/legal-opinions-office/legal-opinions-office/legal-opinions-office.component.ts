@@ -445,14 +445,14 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         this.cleanDataForm();
         this.dictationData = event;
         this.paramsScreen = {
-          PAQUETE: '',
+          PAQUETE: '0',
           P_GEST_OK: '',
           CLAVE_OFICIO_ARMADA: this.dictationData.passOfficeArmy,
           P_NO_TRAMITE: '',
           TIPO: this.dictationData.typeDict,
           P_VALOR: this.dictationData.id.toString(),
         };
-        console.log(this.dictationData);
+        console.log(this.dictationData, this.paramsScreen);
         this.initForm();
         this.callNextbtnSearchAppointment();
       }
@@ -1593,6 +1593,25 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       });
   }
 
+  execute_PA_CARGA_MAS_DESAHOGOB_PUP_GEN_MASIV() {
+    // PA_CARGA_MAS_DESAHOGOB
+    // let obj = {
+    //   pcNoPaquete: this.paramsScreen.PAQUETE,
+    //   pcNoExpediente: this.dictationData.expedientNumber,
+    // };
+    // this.svLegalOpinionsOfficeService.pupGenMasiv(obj).subscribe({
+    //   next: data => {
+    //     console.log('PUP GEN MASIV', data);
+    //     // INSERT INTO TMP_EXP_DESAHOGOB
+    //     // LLAMAR LA FUNCION PA_CARGA_MAS_DESAHOGOB
+    //     this.listResponseDataPayments(data.data);
+    //   },
+    //   error: error => {
+    //     console.log(error);
+    //   },
+    // });
+  }
+
   /**
    * END PUP_GEN_MASIV
    */
@@ -2090,6 +2109,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     if (this.pup_genera_xml) {
       console.log(this.V_URL_OPEN_FIRM);
       window.open(this.V_URL_OPEN_FIRM, '_blank');
+      // PUP_GENERA_PDF
+      this.execute_PUP_GENERA_PDF();
     }
     this.siabService.fetchReport(nameReport, params).subscribe(response => {
       this.loadDetail = false;
