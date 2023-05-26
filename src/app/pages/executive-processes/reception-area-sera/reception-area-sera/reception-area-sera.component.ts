@@ -20,6 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 //Services
+import { endOfDay, format, startOfDay } from 'date-fns';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
@@ -185,33 +186,49 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    this.siabService.fetchReportBlank('blank').subscribe({
-      next: response => {
-        console.log('información del blob', response);
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (response: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
-      },
-    });
+    const { delegation, subdelegation, departamentDes, rangeDate } =
+      this.form.value;
+
+    const from = startOfDay(rangeDate[0]);
+    const to = endOfDay(rangeDate[1]);
+    this.loading = true;
+    this.siabService
+      .fetchReport('RCONDIRRECEPDOCTO', {
+        PDELEGACION: delegation,
+        PSUBDELEGACION: subdelegation,
+        PDPTO: departamentDes,
+        PFECHARECINI: format(from, 'yyyy-MM-dd'),
+        PFECHARECFIN: format(to, 'yyyy-MM-dd'),
+      })
+      .subscribe({
+        next: response => {
+          this.loading = false;
+          console.log('información del blob', response);
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (response: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        },
+        error: err => {
+          this.loading = false;
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          this.onLoadToast('error', 'Error', error);
+        },
+      });
   }
 }

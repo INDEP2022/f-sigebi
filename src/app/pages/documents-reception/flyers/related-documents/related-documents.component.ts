@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -12,11 +15,15 @@ import {
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
 import { FlyersService } from '../services/flyers.service';
+import { DocumentsFormComponent } from './documents-form/documents-form.component';
 import {
   IDataGoodsTable,
   RELATED_DOCUMENTS_COLUMNS_GOODS,
@@ -48,6 +55,7 @@ import { RelatedDocumentsService } from './services/related-documents.service';
 })
 export class RelatedDocumentsComponent extends BasePage implements OnInit {
   managementForm: FormGroup;
+  typeClasify: any;
   select = new DefaultSelect();
   justificacion = new DefaultSelect();
   goodTypes = new DefaultSelect();
@@ -56,6 +64,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   ClasifSubTypeGoods = new DefaultSelect();
   dataGoodFilter: IGood[] = [];
   dataGood: IDataGoodsTable[] = [];
+  origin: string = '';
   dataGoodTable: LocalDataSource = new LocalDataSource();
   pantalla = (option: boolean) =>
     `${
@@ -115,6 +124,10 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private flyerService: FlyersService,
     private route: ActivatedRoute,
     private router: Router,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService
   ) {
     super();
@@ -141,9 +154,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   onClickImprocedente(event: any) {
-    console.log(event);
+    // console.log(event);
     event.toggle.subscribe((data: any) => {
-      console.log(data);
+      // console.log(data);
       data.row.improcedente = data.toggle;
     });
   }
@@ -151,6 +164,18 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.setInitVariables();
     this.prepareForm();
+    this.route.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        this.origin = params['origin'] ?? null;
+        this.paramsGestionDictamen.volante = params['volante'] ?? null;
+        this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
+        this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+        this.paramsGestionDictamen.doc = params['doc'] ?? null;
+        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
+        this.paramsGestionDictamen.sale = params['sale'] ?? null;
+        this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
+      });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!this.pantallaActual) {
       this.router.navigateByUrl('/pages/');
@@ -162,7 +187,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
           this.pantallaActual
         );
         let params = this.flyerService.getParams(true);
-        console.log(params, this.pantallaOption, this.pantallaActual);
+        // console.log(params, this.pantallaOption, this.pantallaActual);
         this.paramsGestionDictamen.sale = 'C';
         // if (params['parametros']) {
         if (this.pantallaOption) {
@@ -194,17 +219,17 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   setInitVariables() {
-    this.paramsGestionDictamen = {
-      expediente: 32440,
-      volante: 1558043,
-      pDictamen: '10',
-      pNoTramite: 1044254,
-      tipoOf: 'EXTERNO',
-      bien: 'N',
-      sale: 'D',
-      doc: 'N',
-      pGestOk: null,
-    };
+    // this.paramsGestionDictamen = {
+    //   expediente: 32440,
+    //   volante: 1558043,
+    //   pDictamen: '10',
+    //   pNoTramite: 1044254,
+    //   tipoOf: 'EXTERNO',
+    //   bien: 'N',
+    //   sale: 'D',
+    //   doc: 'N',
+    //   pGestOk: null,
+    // };
     // {
     //   volante: 1557802,
     //   expediente: 619252,
@@ -239,10 +264,10 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       if (this.pantallaActual == '1') {
         // this.paramsGestionDictamen = paramsData;
       } else {
-        console.log(paramsData);
+        // console.log(paramsData);
       }
     }
-    console.log(paramsData, this.paramsGestionDictamen);
+    // console.log(paramsData, this.paramsGestionDictamen);
     this.managementForm
       .get('noVolante')
       .setValue(this.paramsGestionDictamen.volante);
@@ -329,7 +354,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     params.addFilter('jobBy', 'POR DICTAMEN');
     await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
       next: res => {
-        console.log(res);
+        // console.log(res);
         if (res.count == 0) {
           // this.getDictationByWheel();
         } else {
@@ -853,6 +878,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       });
   }
 
+  getIdClasify(event: any) {
+    this.dictationService.clasifGoodNumber = event.clasifGoodNumber;
+  }
   /**
    * Obtener el listado de Ciudad de acuerdo a los criterios de búsqueda
    * @param paramsData Parametos de busqueda de tipo @ListParams
@@ -912,31 +940,70 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     });
   }
 
-  public send(): void {
-    this.loading = true;
-    // const pdfurl =
-    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGENADBNUMEFISICO.pdf?PARAMFORM=NO&DESTYPE=` +
-    //   this.managementForm.controls['screenKey'].value +
-    //   `&NO_OF_GES=` +
-    //   this.managementForm.controls['numero'].value +
-    //   `&TIPO_OF=` +
-    //   this.managementForm.controls['tipoOficio'].value +
-    //   `&VOLANTE=` +
-    //   this.managementForm.controls['noVolante'].value +
-    //   `&EXP=` +
-    //   this.managementForm.controls['noExpediente'].value +
-    //   `&ESTAT_DIC=` +
-    //   this.oficioGestion.statusOf;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`;
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
-    let params = { ...this.managementForm.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
+  send(): any {
+    let params = {
+      PARAMFORM: 'NO',
+      DESTYPE: this.screenKey,
+      NO_OF_GES: this.managementForm.controls['numero'].value,
+      TIPO_OF: this.managementForm.controls['tipoOficio'].value,
+      VOLANTE: this.managementForm.controls['noVolante'].value,
+      EXP: this.managementForm.controls['noExpediente'].value,
+      ESTAT_DIC: 'NO',
+    };
+    if (this.managementForm.get('tipoOficio').value == 'INTERNO') {
+      this.siabService
+        .fetchReport('RGERJURDECLARABAND', params)
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert('warning', ERROR_REPORT, '');
+          }
+        });
+    } else if (this.managementForm.get('tipoOficio').value == 'EXTERNO') {
+      this.siabService
+        .fetchReport('RGEROFGESTION_EXT', params)
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert('warning', ERROR_REPORT, '');
+          }
+        });
     }
-    this.onLoadToast('success', '', 'Reporte generado');
-    this.loading = false;
+  }
+
+  openModal(context?: Partial<DocumentsFormComponent>) {
+    const modalRef = this.modalService.show(DocumentsFormComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 }

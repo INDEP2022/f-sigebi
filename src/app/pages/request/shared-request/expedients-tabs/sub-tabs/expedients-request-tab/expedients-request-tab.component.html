@@ -13,7 +13,9 @@
       <app-columns-select
         class="float-right"
         [(settings)]="settings"></app-columns-select>
-      <button class="btn btn-primary btn-sm active mr-2 float-right">
+      <button
+        [disabled]="statusTask == 'FINALIZADA'"
+        class="btn btn-primary btn-sm active mr-2 float-right">
         Actualizar
       </button>
     </div>
@@ -31,7 +33,7 @@
   <div class="row pt-3">
     <tabset class="md-tabs">
       <tab
-        heading="Búsqueda de Documentos Solicitud"
+        heading="Documentos Solicitud"
         id="tab1"
         (selectTab)="requestSelected(3)">
         <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>

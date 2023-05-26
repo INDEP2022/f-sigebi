@@ -12,7 +12,7 @@
     <ng-template tabHeading>
       <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
     </ng-template>
-    <div *ngIf="process != 'classify-assets'">
+    <div *ngIf="process == 'registration-request'">
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row pt-4">
@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('goodTypeId')"
                 label="Tipo Bien">
@@ -41,7 +41,7 @@
                   [readOnly]="true" />
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field [control]="detailAssets.get('color')" label="Color">
                 <input
                   type="text"
@@ -53,7 +53,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('goodDescription')"
                 label="Descripci&oacute;n de Bien Transferente">
@@ -64,7 +64,7 @@
                   maxlength="4000"></textarea>
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('quantity')"
                 label="Cantidad de la Transferente">
@@ -80,7 +80,7 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-check label="Duplicidad" for="duplicity">
                 <input
                   id="duplicity"
@@ -91,7 +91,7 @@
                   [disabled]="disableDuplicity" />
               </form-check>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('capacity')"
                 label="Capacidad &#40;lts&#46;&#41;">
@@ -106,7 +106,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('fileeNumber')"
                 label="No&#46; Exp&#46; de la Transferente">
@@ -118,10 +118,10 @@
                   [readOnly]="isGoodInfReadOnly" />
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('volume')"
-                label="Volumen m3">
+                label="Volumen (m3)">
                 <input
                   type="text"
                   class="form-control"
@@ -132,7 +132,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <ngx-select
                 [form]="detailAssets"
                 control="physicalStatus"
@@ -144,7 +144,7 @@
                 value="keyId"
                 [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('useType')"
                 label="Tipo de Uso">
@@ -158,7 +158,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <ngx-select
                 [form]="detailAssets"
                 control="stateConservation"
@@ -170,7 +170,7 @@
                 value="keyId"
                 [readonly]="isGoodInfReadOnly"></ngx-select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('origin')"
                 label="Procedencia">
@@ -184,7 +184,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('ligieUnit')"
                 label="Unidad de Medida Ligie">
@@ -197,7 +197,59 @@
                   maxlength="30" />
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
+              <ngx-select
+                [form]="detailAssets"
+                control="unitMeasure"
+                (fetchItems)="getTransferentUnit($event)"
+                [data]="selectTansferUnitMeasure"
+                label="Unid&#46; Medida Transferente"
+                [searchable]="true"
+                bindLabel="measureTlUnit"
+                value="uomCode"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-5">
+              <form-field
+                [control]="detailAssets.get('destiny')"
+                label="Destino Ligie">
+                <input
+                  type="text"
+                  class="form-control"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="destinyLigie"
+                  [readOnly]="true" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <ngx-select
+                [form]="detailAssets"
+                control="transferentDestiny"
+                (fetchItems)="getDestinyTransfer($event)"
+                [data]="selectDestinyTransfer"
+                label="Destino Transferente"
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"
+                [readonly]="isGoodInfReadOnly"></ngx-select>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-5">
+              <form-field
+                [control]="detailAssets.get('notesTransferringEntity')"
+                label="Notas">
+                <textarea
+                  class="form-control"
+                  formControlName="notesTransferringEntity"
+                  maxlength="1500"
+                  [readOnly]="isGoodInfReadOnly"
+                  rows="4"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-5">
               <form-check label="Aval&uacute;o" for="appraisal">
                 <input
                   id="appraisal"
@@ -210,18 +262,6 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
-              <ngx-select
-                [form]="detailAssets"
-                control="unitMeasure"
-                (fetchItems)="getTransferentUnit($event)"
-                [data]="selectTansferUnitMeasure"
-                label="Unid&#46; Medida Transferente"
-                [searchable]="true"
-                bindLabel="measureTlUnit"
-                value="uomCode"
-                [readonly]="isGoodInfReadOnly"></ngx-select>
-            </div>
             <div
               class="col-md-3"
               *ngIf="otherAssets === true || manejeAssets === true">
@@ -237,47 +277,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-4">
-              <form-field
-                [control]="detailAssets.get('destiny')"
-                label="Destino Ligie">
-                <input
-                  type="text"
-                  class="form-control"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="destinyLigie"
-                  [readOnly]="true" />
-              </form-field>
-            </div>
-            <div class="col-md-4">
-              <ngx-select
-                [form]="detailAssets"
-                control="transferentDestiny"
-                (fetchItems)="getDestinyTransfer($event)"
-                [data]="selectDestinyTransfer"
-                label="Destino Transferente"
-                [searchable]="false"
-                bindLabel="description"
-                value="keyId"
-                [readonly]="isGoodInfReadOnly"></ngx-select>
-            </div>
-          </div>
-          <div class="row pt-4">
-            <div class="col-md-4">
-              <form-field
-                [control]="detailAssets.get('notesTransferringEntity')"
-                label="Notas">
-                <textarea
-                  class="form-control"
-                  formControlName="notesTransferringEntity"
-                  maxlength="1500"
-                  [readOnly]="isGoodInfReadOnly"
-                  rows="4"></textarea>
-              </form-field>
-            </div>
-          </div>
-          <div class="row pt-4">
-            <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
+            <div class="col-md-5" *ngIf="typeDoc === 'classify-assets'">
               <ngx-select
                 [form]="detailAssets"
                 control="saeDestiny"
@@ -293,239 +293,12 @@
       </form>
     </div>
 
-    <div *ngIf="process == 'classify-assets'">
-      <form [formGroup]="detailAssets" class="form-material">
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Id bien&#58;</label>
-              <span class="fs-4">{{ goodData?.id }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Id tipo relevante&#58;</label>
-              <span class="fs-4">{{ relevantTypeName }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Unidad de medida ligie&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.ligieUnit }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Cumple norma&#58;</label>
-              <span class="fs-4"> {{ goodData?.compliesNorm }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >U. medida transferente&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.unitMeasure }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Unidad de medida INDEP&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.saeMeasureUnit }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Norma&#58;</label>
-              <span class="fs-4"></span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Duplicidad&#58;</label>
-              <span class="fs-4">{{ goodData?.duplicity }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Cantidad&#58;</label>
-              <span class="fs-4">{{ goodData?.quantity }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Descripci&oacute;n&#58;</label>
-              <span class="fs-4">{{ goodData?.description }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Destino transferente&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.destinyName }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Tipo&#58;</label>
-              <span class="fs-4">{{ goodData?.type }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Destino INDEP&#58;</label>
-              <span class="fs-4">{{ goodData?.saeDestiny }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Color&#58;</label>
-              <span class="fs-4">{{ goodData?.color }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Folio de solicitud&#58;</label>
-              <span class="fs-4">{{ goodData?.requestFolio }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Capacidad&#58;</label>
-              <span class="fs-4">{{ goodData?.capacity }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Volumen (m3)&#58;</label>
-              <span class="fs-4">{{ goodData?.volume }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Tipo de bien&#58;</label>
-              <span class="fs-4">{{ goodData?.goodTypeName }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Tipo de uso&#58;</label>
-              <span class="fs-4">{{ goodData?.useType }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Procedencia&#58;</label>
-              <span class="fs-4">{{ goodData?.origin }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Clave &Uacute;nica&#58;</label>
-              <span class="fs-4">{{ goodData?.uniqueKey }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Aval&uacute;o&#58;</label>
-              <span class="fs-4">{{ goodData?.appraisal }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">No. Norma&#58;</label>
-              <span class="fs-4">{{ goodData?.compliesNorm }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Desc. bien transferente&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.goodDescription }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Descripción bien INDEP&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.descriptionGoodSae }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">Bien duplicado&#58;</label>
-              <span class="fs-4">{{ goodData?.duplicatedGood }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right">No. expediente&#58;</label>
-              <span class="fs-4">{{ goodData?.fileeNumber }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Estado f&iacute;sico&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.physicstateName }}</span>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Unidad de medida ligie&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.ligieUnit }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="row pt-3">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="col-lg-5 text-right"
-                >Estado de conservaci&oacute;n&#58;</label
-              >
-              <span class="fs-4">{{ goodData?.stateConservationName }}</span>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
+    <app-read-info-good
+      *ngIf="process != 'registration-request'"
+      [detailAssets]="detailAssets"
+      [process]="process"
+      [typeOfRequest]="typeOfRequest"
+      (saveDetailInfo)="getDetailInfo($event)"></app-read-info-good>
   </tab>
 
   <tab>
@@ -533,18 +306,16 @@
       <i class="bx bx-home"></i> Domicilio del Bien
     </ng-template>
     <form [formGroup]="domicileForm" class="form-material">
-      <div class="addressGood">
+      <div *ngIf="process == 'registration-request'" class="addressGood">
         <div class="row pt-4" *ngIf="typeDoc === 'assets'">
           <div style="text-align: center">
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
               <i class="bx bx-home"></i> Seleccionar Domicilio
             </button>
             <button
-              *ngIf="process != 'classify-assets'"
               class="btn btn-secondary btn-sm active"
               style="margin-left: 2px"
               (click)="openSelectMenage()">
@@ -768,6 +539,10 @@
         </div>
       </div>
     </form>
+
+    <app-read-info-domicile
+      *ngIf="process != 'registration-request'"
+      [domicilieObject]="domicilieObject"></app-read-info-domicile>
   </tab>
 
   <!-- Información del  vehiculo tab -->
@@ -776,17 +551,14 @@
       <i class="bx bxs-car"></i> Informaci&oacute;n de Veh&iacute;culo
     </ng-template>
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
-      <i class="bx bxs-car"></i> Ficha t&eacute;cnica vehiculos
+      <i class="bx bxs-car"></i> Ficha T&eacute;cnica Vehículos
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
-      <div class="vehicleDateSheet">
-        <p class="msg-required" *ngIf="process != 'classify-assets'">
-          Los campos con <span>*</span> son requeridos
-        </p>
+      <div *ngIf="process == 'registration-request'" class="vehicleDateSheet">
+        <p class="msg-required">Los campos con <span>*</span> son requeridos</p>
         <div class="row pt-5">
           <div class="col-md-4">
             <ngx-select
-              *ngIf="process != 'classify-assets'"
               [form]="detailAssets"
               control="brand"
               (fetchItems)="getBrand($event)"
@@ -796,21 +568,12 @@
               bindLabel="flexValueMeaning"
               [readonly]="isGoodTypeReadOnly"
               (change)="onValuesChange($event)"></ngx-select>
-            <ngx-select
-              *ngIf="process == 'classify-assets'"
-              [form]="detailAssets"
-              control="brand"
-              (fetchItems)="getBrand($event)"
-              [data]="selectBrand"
-              label="Marca"
-              value="flexValue"
-              [readonly]="isDisabled"
-              bindLabel="flexValueMeaning"
-              (change)="onValuesChange($event)"></ngx-select>
+            <!-- <ngx-select *ngIf="process == 'classify-assets'" [form]="detailAssets" control="brand"
+              (fetchItems)="getBrand($event)" [data]="selectBrand" label="Marca" value="flexValue"
+              [readonly]="isDisabled" bindLabel="flexValueMeaning" (change)="onValuesChange($event)"></ngx-select> -->
           </div>
           <div class="col-md-3">
             <form-field
-              *ngIf="process != 'classify-assets'"
               [control]="detailAssets.get('tuition')"
               label="Matr&iacute;cula">
               <input
@@ -820,24 +583,16 @@
                 formControlName="tuition"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              *ngIf="process == 'classify-assets'"
-              [control]="detailAssets.get('tuition')"
+            <!-- <form-field *ngIf="process == 'classify-assets'" [control]="detailAssets.get('tuition')"
               label="Matr&iacute;cula">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="40"
-                [readOnly]="true"
-                formControlName="tuition" />
-            </form-field>
+              <input type="text" class="form-control" maxlength="40" [readOnly]="true" formControlName="tuition" />
+            </form-field> -->
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
             <ngx-select
-              *ngIf="process != 'classify-assets'"
               [form]="detailAssets"
               control="subBrand"
               (fetchItems)="getSubBrand($event)"
@@ -845,47 +600,28 @@
               label="Sub Marca"
               value="flexValueDependent"
               bindLabel="flexValueMeaningDependent"
-              [readonly]="isGoodTypeReadOnly"></ngx-select>
-            <ngx-select
-              *ngIf="process == 'classify-assets'"
-              [form]="detailAssets"
-              control="subBrand"
-              (fetchItems)="getSubBrand($event)"
-              [data]="selectSubBrand"
-              label="Sub Marca"
-              value="flexValueDependent"
-              [readonly]="isDisabled"
-              bindLabel="flexValueMeaningDependent"></ngx-select>
+              [readonly]="isGoodTypeReadOnly"
+              (change)="onSubBranchChange($event)"></ngx-select>
+            <!-- <ngx-select *ngIf="process == 'classify-assets'" [form]="detailAssets" control="subBrand"
+              (fetchItems)="getSubBrand($event)" [data]="selectSubBrand" label="Sub Marca" value="flexValueDependent"
+              [readonly]="isDisabled" bindLabel="flexValueMeaningDependent"></ngx-select> -->
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('serie')"
-              label="Serie"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('serie')" label="Serie">
               <input
                 type="text"
                 class="form-control"
                 formControlName="serie"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('serie')"
-              label="Serie"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="serie"
-                [readOnly]="true" />
-            </form-field>
+            <!-- <form-field [control]="detailAssets.get('serie')" label="Serie" *ngIf="process == 'classify-assets'">
+              <input type="text" class="form-control" formControlName="serie" [readOnly]="true" />
+            </form-field> -->
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-check
-              label="Blindaje"
-              for="armor"
-              *ngIf="process != 'classify-assets'">
+            <form-check label="Blindaje" for="armor">
               <input
                 id="armor"
                 type="checkbox"
@@ -894,24 +630,13 @@
                 [disabled]="isGoodTypeReadOnly"
                 (change)="handleArmor($event)" />
             </form-check>
-            <form-check
-              label="Blindaje"
-              for="armor"
-              *ngIf="process == 'classify-assets'">
-              <input
-                id="armor"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="armor"
-                [readOnly]="true"
-                (change)="handleArmor($event)" />
-            </form-check>
+            <!-- <form-check label="Blindaje" for="armor" *ngIf="process == 'classify-assets'">
+              <input id="armor" type="checkbox" [ngModelOptions]="{ standalone: true }" [(ngModel)]="armor"
+                [readOnly]="true" (change)="handleArmor($event)" />
+            </form-check> -->
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('chassis')"
-              label="Chasis"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('chassis')" label="Chasis">
               <input
                 type="text"
                 class="form-control"
@@ -919,26 +644,15 @@
                 [readOnly]="isGoodTypeReadOnly"
                 maxlength="40" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('chassis')"
-              label="Chasis"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="chassis"
-                maxlength="40" />
-            </form-field>
+            <!-- <form-field [control]="detailAssets.get('chassis')" label="Chasis" *ngIf="process == 'classify-assets'">
+              <input type="text" class="form-control" [readOnly]="true" formControlName="chassis" maxlength="40" />
+            </form-field> -->
           </div>
         </div>
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('model')"
-              label="Modelo"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('model')" label="Modelo">
               <input
                 type="number"
                 class="form-control"
@@ -947,23 +661,13 @@
                 min="0"
                 oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('model')"
-              label="Modelo"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="model"
+            <!-- <form-field [control]="detailAssets.get('model')" label="Modelo" *ngIf="process == 'classify-assets'">
+              <input type="number" class="form-control" [readOnly]="true" formControlName="model"
                 oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="detailAssets.get('cabin')"
-              label="Cabina"
-              *ngIf="process != 'classify-assets'">
+            <form-field [control]="detailAssets.get('cabin')" label="Cabina">
               <input
                 type="number"
                 class="form-control"
@@ -972,17 +676,10 @@
                 min="0"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('cabin')"
-              label="Cabina"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="cabin"
+            <!-- <form-field [control]="detailAssets.get('cabin')" label="Cabina" *ngIf="process == 'classify-assets'">
+              <input type="number" class="form-control" [readOnly]="true" formControlName="cabin"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
-            </form-field>
+            </form-field> -->
           </div>
         </div>
 
@@ -990,8 +687,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('doorsNumber')"
-              label="Num&#46; Puertas"
-              *ngIf="process != 'classify-assets'">
+              label="Num&#46; Puertas">
               <input
                 type="number"
                 class="form-control"
@@ -1000,23 +696,16 @@
                 min="0"
                 oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('doorsNumber')"
-              label="Num&#46; Puertas"
+            <!-- <form-field [control]="detailAssets.get('doorsNumber')" label="Num&#46; Puertas"
               *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="doorsNumber"
+              <input type="number" class="form-control" [readOnly]="true" formControlName="doorsNumber"
                 oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('origin')"
-              label="Procedencia"
-              *ngIf="process != 'classify-assets'">
+              label="Procedencia">
               <input
                 type="text"
                 class="form-control"
@@ -1024,25 +713,16 @@
                 maxlength="40"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('origin')"
-              label="Procedencia"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                [readOnly]="true"
-                maxlength="40"
-                formControlName="origin" />
-            </form-field>
+            <!-- <form-field [control]="detailAssets.get('origin')" label="Procedencia" *ngIf="process == 'classify-assets'">
+              <input type="text" class="form-control" [readOnly]="true" maxlength="40" formControlName="origin" />
+            </form-field> -->
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('axesNumber')"
-              label="Num&#46; Ejes"
-              *ngIf="process != 'classify-assets'">
+              label="Num&#46; Ejes">
               <input
                 type="number"
                 class="form-control"
@@ -1051,23 +731,14 @@
                 min="0"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('axesNumber')"
-              label="Num&#46; Ejes"
+            <!-- <form-field [control]="detailAssets.get('axesNumber')" label="Num&#46; Ejes"
               *ngIf="process == 'classify-assets'">
-              <input
-                type="number"
-                [readOnly]="true"
-                class="form-control"
-                formControlName="axesNumber"
+              <input type="number" [readOnly]="true" class="form-control" formControlName="axesNumber"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-4">
-            <form-check
-              label="Apto para Circular"
-              for="fitCircular"
-              *ngIf="process != 'classify-assets'">
+            <form-check label="Apto para Circular" for="fitCircular">
               <input
                 id="fitCircular"
                 type="checkbox"
@@ -1076,18 +747,10 @@
                 (change)="handleCirculateEvent($event)"
                 [disabled]="isGoodTypeReadOnly" />
             </form-check>
-            <form-check
-              label="Apto para Circular"
-              for="fitCircular"
-              *ngIf="process == 'classify-assets'">
-              <input
-                id="fitCircular"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="circulate"
-                [disabled]="true"
-                (change)="handleCirculateEvent($event)" />
-            </form-check>
+            <!-- <form-check label="Apto para Circular" for="fitCircular" *ngIf="process == 'classify-assets'">
+              <input id="fitCircular" type="checkbox" [ngModelOptions]="{ standalone: true }" [(ngModel)]="circulate"
+                [disabled]="true" (change)="handleCirculateEvent($event)" />
+            </form-check> -->
           </div>
         </div>
 
@@ -1095,8 +758,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
-              *ngIf="process != 'classify-assets'">
+              label="Num&#46; Motor">
               <input
                 type="text"
                 class="form-control"
@@ -1104,23 +766,13 @@
                 maxlength="40"
                 [readonly]="isGoodTypeReadOnly" />
             </form-field>
-            <form-field
-              [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+            <!-- <form-field [control]="detailAssets.get('engineNumber')" label="Num&#46; Motor"
               *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                maxlength="40"
-                [readOnly]="true"
-                formControlName="engineNumber" />
-            </form-field>
+              <input type="text" class="form-control" maxlength="40" [readOnly]="true" formControlName="engineNumber" />
+            </form-field> -->
           </div>
           <div class="col-md-4">
-            <form-check
-              label="Cuenta con reporte de robos"
-              for="theftReport"
-              *ngIf="process != 'classify-assets'">
+            <form-check label="Cuenta con reporte de robos" for="theftReport">
               <input
                 id="theftReport"
                 type="checkbox"
@@ -1129,22 +781,17 @@
                 (change)="handleTheftReportEvent($event)"
                 [disabled]="isGoodTypeReadOnly" />
             </form-check>
-            <form-check
-              label="Cuenta con reporte de robos"
-              for="theftReport"
-              *ngIf="process == 'classify-assets'">
-              <input
-                id="theftReport"
-                type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                [(ngModel)]="theftReport"
-                [disabled]="true"
-                (change)="handleTheftReportEvent($event)" />
-            </form-check>
+            <!-- <form-check label="Cuenta con reporte de robos" for="theftReport" *ngIf="process == 'classify-assets'">
+              <input id="theftReport" type="checkbox" [ngModelOptions]="{ standalone: true }" [(ngModel)]="theftReport"
+                [disabled]="true" (change)="handleTheftReportEvent($event)" />
+            </form-check> -->
           </div>
         </div>
       </div>
     </form>
+    <app-read-info-vehicle
+      *ngIf="process != 'registration-request'"
+      [vehicleObject]="detailAssetsInfo"></app-read-info-vehicle>
   </tab>
 
   <!-- Información de Embarcación  -->
@@ -1710,7 +1357,7 @@
       <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
     </ng-template>
     <ng-template tabHeading *ngIf="process == 'classify-assets'">
-      <i class="bx bx-flag"></i> Ficha t&eacute;cnica aeronaves
+      <i class="bx bx-flag"></i> Ficha t&eacute;cnica Aeronaves
     </ng-template>
     <form [formGroup]="detailAssets" class="form-material">
       <div class="aircraftInformation">
@@ -2057,7 +1704,7 @@
           Los campos con <span>*</span> son requeridos
         </p>
         <div class="row pt-5">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('description')"
               label="Descripci&oacute;n"
@@ -2078,7 +1725,7 @@
                 [readOnly]="true"></textarea>
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('guardCustody')"
               label="Guarda Custodia"
@@ -2103,7 +1750,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('status')"
               label="Estatus"
@@ -2125,7 +1772,7 @@
                 formControlName="status" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('vigilanceRequired')"
               label="Requiere Vigilancia"
@@ -2150,7 +1797,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('propertyType')"
               label="Tipo de Inmueble"
@@ -2172,7 +1819,7 @@
                 formControlName="propertyType" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('vigilanceLevel')"
               label="Nivel de Vigilancia"
@@ -2197,7 +1844,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('surfaceMts')"
               label="Mts&#46; de Terreno"
@@ -2220,7 +1867,7 @@
                 formControlName="surfaceMts" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('mtsOfiWarehouse')"
               label="Metros de Bodega"
@@ -2245,7 +1892,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('consSurfaceMts')"
               label="Mts&#46; Construidos de Terreno"
@@ -2268,7 +1915,7 @@
                 formControlName="consSurfaceMts" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('bedrooms')"
               label="Habitaciones"
@@ -2293,7 +1940,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('publicDeed')"
               label="Escritura p&uacute;blica"
@@ -2315,7 +1962,7 @@
                 formControlName="publicDeed" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('bathroom')"
               label="Ba&ntilde;o"
@@ -2340,7 +1987,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('pubRegProperty')"
               label="Registro Público de Propiedad"
@@ -2362,7 +2009,7 @@
                 formControlName="pubRegProperty" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('kitchen')"
               label="Cocina"
@@ -2387,7 +2034,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('appraisalValue')"
               label="Valor Aval&uacute;o"
@@ -2410,7 +2057,7 @@
                 formControlName="appraisalValue" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('livingRoom')"
               label="Sala"
@@ -2435,7 +2082,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('appraisalDate')"
               label="Fecha de Aval&uacute;o"
@@ -2463,7 +2110,7 @@
                 (bsValueChange)="changeDateEvaluoEvent($event)" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('diningRoom')"
               label="Comedor"
@@ -2488,7 +2135,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('certLibLien')"
               label="Certificado de Liberaci&oacute;n de Gravamen"
@@ -2510,7 +2157,7 @@
                 formControlName="certLibLien" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('study')"
               label="Estudio"
@@ -2535,7 +2182,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('espPark')"
               label="Espacio de Estacionamiento"
@@ -2557,7 +2204,7 @@
                 formControlName="espPark" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('pffDate')"
               label="Fecha de Paso al Fisco"
@@ -2588,7 +2235,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('certLibLienDate')"
               label="Fecha de Certificado de Liberacion de Gravamen"
@@ -2616,7 +2263,7 @@
                 (bsValueChange)="changeCertiviDateEvent($event)" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('attachment')"
               label="Embargo"
@@ -2641,7 +2288,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('gravFavorThird')"
               label="Gravamen a Favor de Tercero"
@@ -2663,7 +2310,7 @@
                 formControlName="gravFavorThird" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('coOwnership')"
               label="Copropiedad"
@@ -2686,8 +2333,56 @@
             </form-field>
           </div>
         </div>
+
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
+            <form-field
+              [control]="goodDomicilieForm.get('lien')"
+              label="Gravamen"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="lien"
+                [readOnly]="isGoodTypeReadOnly" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('lien')"
+              label="Gravamen"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="lien" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <form-field
+              [control]="goodDomicilieForm.get('gravPleaseTrans')"
+              label="Gravamen a Favor de Transferente"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="gravPleaseTrans"
+                [readOnly]="isGoodTypeReadOnly" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('gravPleaseTrans')"
+              label="Gravamen a Favor de Transferente"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="gravPleaseTrans" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('embFavorThird')"
               label="Embargo a Favor de Tercero"
@@ -2709,7 +2404,7 @@
                 formControlName="embFavorThird" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('decreeExproProc')"
               label="DecretoExproProc"
@@ -2733,7 +2428,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
               label="% de Copropietario"
@@ -2755,7 +2450,7 @@
                 formControlName="ownershipPercentage" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('declareRemediation')"
               label="Declaraci&oacute;n Remediaci&oacute;n"
@@ -2779,7 +2474,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('decreeExproSupe')"
               label="DecretoExproSupe"
@@ -2801,7 +2496,7 @@
                 formControlName="decreeExproSupe" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('assurance')"
               label="Aseguramiento"
@@ -2825,7 +2520,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('heritage')"
               label="Patrimonio"
@@ -2847,10 +2542,10 @@
                 formControlName="heritage" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('propTitleFolio')"
-              label="Folio T&iacute;tulo de Propietario"
+              label="Folio T&iacute;tulo de Propiedad"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2860,7 +2555,7 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('propTitleFolio')"
-              label="Folio T&iacute;tulo de Propietario"
+              label="Folio T&iacute;tulo de Propiedad"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -2872,7 +2567,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('echoForecast')"
               label="Privisi&oacute;n Ecol&oacute;gica"
@@ -2895,7 +2590,7 @@
             </form-field>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('echoForecastPercentage')"
               label="% Previsi&oacute;n Ecol&oacute;gica"
@@ -2920,7 +2615,7 @@
         </div>
 
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('measuresAdjacent')"
               label="Medidas de Colindancia"
@@ -2955,31 +2650,31 @@
                 formControlName="measuresAdjacent" /> -->
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
-              [control]="goodDomicilieForm.get('physicalPossession')"
-              label="Poses&iacute;n F&iacute;sica"
+              [control]="goodDomicilieForm.get('vouchersWater')"
+              label="Comprobantes de Agua"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                formControlName="physicalPossession"
+                formControlName="vouchersWater"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
-              [control]="goodDomicilieForm.get('physicalPossession')"
-              label="Poses&iacute;n F&iacute;sica"
+              [control]="goodDomicilieForm.get('vouchersWater')"
+              label="Comprobantes de Agua"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="physicalPossession" />
+                formControlName="vouchersWater" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('debts')"
               label="Adeudos"
@@ -3001,7 +2696,53 @@
                 formControlName="debts" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
+            <form-field
+              [control]="goodDomicilieForm.get('physicalPossession')"
+              label="Posesi&oacute;n F&iacute;sica"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="physicalPossession"
+                [readOnly]="isGoodTypeReadOnly" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('physicalPossession')"
+              label="Posesi&oacute;n F&iacute;sica"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="physicalPossession" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-5">
+            <form-field
+              [control]="goodDomicilieForm.get('closed')"
+              label="Clausurado"
+              *ngIf="process != 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="closed"
+                [readOnly]="isGoodTypeReadOnly" />
+            </form-field>
+            <form-field
+              [control]="goodDomicilieForm.get('closed')"
+              label="Clausurado"
+              *ngIf="process == 'classify-assets'">
+              <input
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="closed" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('familyHeritage')"
               label="Patrimonio de Familia"
@@ -3025,29 +2766,29 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
-              [control]="goodDomicilieForm.get('closed')"
-              label="Clausurado"
+              [control]="goodDomicilieForm.get('problemDesc')"
+              label="Descripci&oacute;n de Problem&aacute;tica"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
-                formControlName="closed"
+                formControlName="problemDesc"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
             <form-field
-              [control]="goodDomicilieForm.get('closed')"
-              label="Clausurado"
+              [control]="goodDomicilieForm.get('problemDesc')"
+              label="Descripci&oacute;n de Problem&aacute;tica"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
                 class="form-control"
                 [readOnly]="true"
-                formControlName="closed" />
+                formControlName="problemDesc" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('forProblems')"
               label="Problem&aacute;ticas"
@@ -3071,29 +2812,7 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-4">
-            <form-field
-              [control]="goodDomicilieForm.get('problemDesc')"
-              label="Descripci&oacute;n de Problem&aacute;tica"
-              *ngIf="process != 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="problemDesc"
-                [readOnly]="isGoodTypeReadOnly" />
-            </form-field>
-            <form-field
-              [control]="goodDomicilieForm.get('problemDesc')"
-              label="Descripci&oacute;n de Problem&aacute;tica"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="problemDesc" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
+          <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('photosAttached')"
               label="Fotos Adjuntas"
@@ -3113,30 +2832,6 @@
                 class="form-control"
                 [readOnly]="true"
                 formControlName="photosAttached" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row pt-4">
-          <div class="col-md-4">
-            <form-field
-              [control]="goodDomicilieForm.get('vouchersWater')"
-              label="Comprobantes de Agua"
-              *ngIf="process != 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="vouchersWater"
-                [readOnly]="isGoodTypeReadOnly" />
-            </form-field>
-            <form-field
-              [control]="goodDomicilieForm.get('vouchersWater')"
-              label="Comprobantes de Agua"
-              *ngIf="process == 'classify-assets'">
-              <input
-                type="text"
-                class="form-control"
-                [readOnly]="true"
-                formControlName="vouchersWater" />
             </form-field>
           </div>
         </div>

@@ -25,7 +25,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class DepartmentFormComponent extends BasePage implements OnInit {
   departmentForm: ModelForm<IDepartment>;
   department: IDepartment;
-  title: string = 'Departamento';
+  title: string = 'MANTENIMIENTO DE AREAS';
   edit: boolean = false;
 
   idDelegation: IDelegation;
@@ -106,6 +106,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     });
     if (this.department != null) {
       this.edit = true;
+      console.log(this.department);
       this.departmentForm.patchValue(this.department);
       this.idDelegation = this.department
         .numDelegation as unknown as IDelegation;
@@ -116,12 +117,14 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         this.idSubDelegation.id
       );
     }
+    this.getSubDelegations({ page: 1, limit: 10, text: '' });
   }
 
   getDelegations(params: ListParams) {
     this.serviceDeleg.getAll(params).subscribe(
       data => {
         this.delegations = new DefaultSelect(data.data, data.count);
+        console.log(data);
       },
       err => {
         let error = '';
@@ -138,10 +141,11 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
-    this.subdelegations = new DefaultSelect();
-    // console.log(this.PN_NODELEGACION.value);
-    if (this.delegation.value)
+    this.subdelegations = new DefaultSelect([], 0, true);
+    this.departmentForm.controls['numSubDelegation'].setValue(null);
+    if (this.delegation.value) {
       this.getSubDelegations({ page: 1, limit: 10, text: '' });
+    }
   }
 
   getSubDelegations(lparams: ListParams) {

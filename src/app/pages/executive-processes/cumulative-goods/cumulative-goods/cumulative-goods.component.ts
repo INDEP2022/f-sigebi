@@ -52,6 +52,7 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
   maxDateEnd = new Date();
   maxDateStart: Date;
   minDateEnd: Date;
+  today: Date;
 
   phaseEdo: number;
 
@@ -71,12 +72,14 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
     private siabService: SiabService
   ) {
     super();
-    this.maxDateStart = new Date(
+
+    this.today = new Date();
+    /*this.maxDateStart = new Date(
       this.maxDateEnd.getFullYear(),
       this.maxDateEnd.getMonth(),
       this.maxDateEnd.getDate() - 0
     );
-    this.minDateEnd = new Date(this.maxDateEnd.getFullYear() - 1, 0, 1);
+    this.minDateEnd = new Date(this.maxDateEnd.getFullYear() - 1, 0, 1);*/
   }
 
   ngOnInit(): void {
@@ -99,10 +102,11 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, [Validators.required]],
-      subdelegation: [null, [Validators.required]],
-      toMonth: [null, [Validators.required, maxDate(new Date())]],
-      fromMonth: [null, [Validators.required, maxDate(new Date())]],
+      delegation: [null],
+      subdelegation: [null],
+      rangeDate: [null, [Validators.required, maxDate(new Date())]],
+      //toMonth: [null, [Validators.required, maxDate(new Date())]],
+      //fromMonth: [null, [Validators.required, maxDate(new Date())]],
     });
   }
 
@@ -112,13 +116,7 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
         this.delegations = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.delegations = new DefaultSelect([], 0);
       },
       () => {}
     );
@@ -126,14 +124,13 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
 
   onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
-    this.subdelegations = new DefaultSelect();
-    // console.log(this.PN_NODELEGACION.value);
+    this.subdelegations = new DefaultSelect([], 0);
+    this.form.controls['subdelegation'].setValue(null);
     if (this.delegation.value)
       this.getSubDelegations({ page: 1, limit: 10, text: '' });
   }
 
   getSubDelegations(lparams: ListParams) {
-    // console.log(lparams);
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
@@ -149,14 +146,7 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
         this.subdelegations = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
+        this.subdelegations = new DefaultSelect([], 0);
       },
     });
   }
@@ -181,9 +171,53 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    this.siabService.fetchReportBlank('blank').subscribe({
+    //TODO: VALIDAR SI EL REPORTE SERÁ POR MES O RANGO DE FECHAS
+    this.loading = true;
+
+    const { rangeDate, delegation, subdelegation } = this.form.value;
+
+    const startTemp = `${rangeDate[0].getFullYear()}-${
+      rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[0].getUTCMonth() + 1}-${
+      rangeDate[0].getDate() <= 9 ? 0 : ''
+    }${rangeDate[0].getDate()}`;
+
+    const endTemp = `${rangeDate[1].getFullYear()}-${
+      rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[1].getUTCMonth() + 1}-${
+      rangeDate[1].getDate() <= 9 ? 0 : ''
+    }${rangeDate[1].getDate()}`;
+
+    let reportParams: any = {
+      pf_fecini: startTemp,
+      pf_fecfin: endTemp,
+    };
+
+    if (delegation) {
+      reportParams = {
+        ...reportParams,
+        pn_delegacion: delegation,
+      };
+    }
+
+    if (subdelegation) {
+      reportParams = {
+        ...reportParams,
+        pn_subdelegacion: subdelegation,
+      };
+    }
+
+    console.log(reportParams);
+    //Todo: Get Real Report
+    this.getReport('RGERDIRCTRLXMES', reportParams);
+    //this.getReportBlank('blank');
+  }
+
+  getReport(report: string, params: any): void {
+    this.loading = true;
+    this.siabService.fetchReport(report, params).subscribe({
       next: response => {
-        console.log('información del blob', response);
+        this.loading = false;
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         let config = {
@@ -192,21 +226,42 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
               type: 'pdf',
             },
-            callback: (response: any) => {},
+            callback: (data: any) => {},
           }, //pasar datos por aca
           class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
           ignoreBackdropClick: true, //ignora el click fuera del modal
         };
         this.modalService.show(PreviewDocumentsComponent, config);
       },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
+  }
+
+  getReportBlank(report: string): void {
+    this.siabService.fetchReportBlank(report).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
       },
     });
   }

@@ -20,7 +20,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
-  title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
+  title: string = 'TURNAR LAS SOLICITUDES SELECCIONAS';
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
@@ -29,6 +29,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   typeUser: string = 'TE';
   user: any;
   username: string = '';
+  deleRegionalId: string = '';
+
   requestService = inject(RequestService);
   userProcessService = inject(UserProcessService);
   taskService = inject(TaskService);
@@ -53,10 +55,12 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.removeUnNecessaryData();
-
+    const storeData = this.authService.decodeToken();
+    this.deleRegionalId = storeData.delegacionreg;
     this.requestForm.controls['typeUser'].valueChanges.subscribe(
       (data: any) => {
         this.typeUser = data;
+
         this.getUserList();
       }
     );
@@ -76,6 +80,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.loading = true;
     this.typeUser = this.requestForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', this.typeUser);
+    //this.params.value.addFilter('regionalDelegation', this.deleRegionalId);
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
@@ -99,6 +104,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   removeUnNecessaryData() {
     for (let i = 0; i < this.requestToTurn.length; i++) {
+      console.log(this.requestToTurn[i]);
       const request = this.requestToTurn[i];
       delete request.delegationName;
       delete request.stateOfRepublicName;
@@ -127,7 +133,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   confirm() {
     if (this.user === undefined) {
-      this.onLoadToast('info', 'Informacion', `Seleccione un usuario!`);
+      this.onLoadToast('info', 'Información', `Seleccione un usuario`);
       return;
     }
     this.loading = true;
@@ -135,7 +141,13 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       let index = i + 1;
       item.requestStatus = 'A_TURNAR';
       item.receiptRoute = 'ELECTRONICA';
-      item.affair = 37;
+      //
+      item.affair =
+        item.typeOfTransfer == 'FGR_SAE' ||
+        item.typeOfTransfer == 'PGR_SAE' ||
+        item.typeOfTransfer == 'SAT_SAE'
+          ? 39
+          : 37;
       item.targetUserType = this.requestForm.controls['typeUser'].value;
       item.targetUser = this.user.id;
       item.modificationDate = new Date().toISOString();

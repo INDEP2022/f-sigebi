@@ -17,8 +17,8 @@ export type _Params = string | HttpParams | ListParams | ObjectParams;
   providedIn: 'root',
 })
 export class HttpService {
-  private readonly url = environment.API_URL;
-  private readonly prefix = environment.URL_PREFIX;
+  protected readonly url = environment.API_URL;
+  protected readonly prefix = environment.URL_PREFIX;
   protected httpClient = inject(HttpClient);
   protected microservice: string;
   constructor() {}
@@ -32,6 +32,7 @@ export class HttpService {
   protected post<T = any>(route: string, body: {}, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
+    console.log(url);
     return this.httpClient.post<T>(`${url}`, body, { params });
   }
 
@@ -68,7 +69,7 @@ export class HttpService {
    * @param rawParams query params de la ruta
    * @returns regresa una instancia de HttpParams
    */
-  private getParams(rawParams: _Params) {
+  protected getParams(rawParams: _Params) {
     if (rawParams instanceof HttpParams) {
       return rawParams;
     }

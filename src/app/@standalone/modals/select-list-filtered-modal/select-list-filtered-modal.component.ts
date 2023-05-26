@@ -58,6 +58,7 @@ export class SelectListFilteredModalComponent
   initialCharge = true;
   haveSearch = true;
   showError: boolean = true;
+  widthButton = false;
   searchFilter: SearchBarFilter; // Input requerido al llamar el modal
   filters: DynamicFilterLike[] = []; // Input opcional para agregar varios filtros dinamicos
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
@@ -79,23 +80,32 @@ export class SelectListFilteredModalComponent
     // console.log(this.settings);
 
     this.addFilters();
-    if (this.dataObservableFn) {
-      this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        this.getAndSetInitialCharge();
-      });
-    } else if (this.dataObservableListParamsFn) {
-      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        this.getAndSetInitialCharge();
-      });
-    } else if (this.dataObservableId) {
-      this.id.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-        this.getAndSetInitialCharge();
-      });
+    if (!this.widthButton) {
+      if (this.dataObservableFn) {
+        this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+          this.getAndSetInitialCharge();
+        });
+      } else if (this.dataObservableListParamsFn) {
+        this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+          this.getAndSetInitialCharge();
+        });
+      } else if (this.dataObservableId) {
+        this.id.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+          this.getAndSetInitialCharge();
+        });
+      }
     }
   }
 
+  search() {
+    this.loading = true;
+    setTimeout(() => {
+      this.getData();
+    }, 1000);
+  }
+
   private getAndSetInitialCharge() {
-    if (this.initialCharge) {
+    if (this.initialCharge || !this.widthButton) {
       this.getData();
     } else {
       this.initialCharge = true;
@@ -103,6 +113,7 @@ export class SelectListFilteredModalComponent
   }
 
   getData(): void {
+    console.log(this.filterParams.getValue().getParams());
     this.loading = true;
     let servicio = this.dataObservableFn
       ? this.dataObservableFn(
@@ -119,13 +130,17 @@ export class SelectListFilteredModalComponent
         next: data => {
           console.log(data);
           this.columns = data.data;
-          this.totalItems = data.count;
+          this.totalItems = data.count || 0;
           this.loading = false;
         },
         error: err => {
           console.log(err);
+          if (err.status == 400) {
+            if (this.showError) {
+              this.onLoadToast('error', 'Error', 'No se encontrarón registros');
+            }
+          }
           this.loading = false;
-          if (this.showError) this.onLoadToast('error', 'Error', err);
         },
       });
     }
@@ -135,8 +150,16 @@ export class SelectListFilteredModalComponent
     if (this.filters.length > 0) {
       const params = new FilterParams();
       this.filters.forEach(f => {
-        if (f.value !== null && f.value !== undefined)
+        if (f.value !== null && f.value !== undefined && this.type === 'text') {
           params.addFilter(f.field, f.value, f?.operator);
+        } else if (
+          f.value !== null &&
+          f.value !== undefined &&
+          f.value !== '' &&
+          this.type !== 'number'
+        ) {
+          params.addFilter(f.field, f.value, f?.operator);
+        }
       });
       this.filterParams.next(params);
     }
@@ -147,7 +170,6 @@ export class SelectListFilteredModalComponent
   }
 
   selectEvent(event: IUserRowSelectEvent<any>) {
-    console.log(event);
     if (this.settings.selectMode === 'multi') {
       this.selectRow(event.selected);
     } else {
@@ -156,7 +178,6 @@ export class SelectListFilteredModalComponent
   }
 
   private selectRow(row: any) {
-    console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;
     if (this.selectOnClick) {

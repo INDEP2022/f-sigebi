@@ -12,6 +12,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DocumentVerificationRevisionResourcesRoutingModule } from './document-verification-revision-resources-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { ExpedientSharedComponent } from 'src/app/@standalone/shared-forms/expedient-shared/expedient-shared.component';
+import { HistoricalSituationGoodsModule } from '../historical-situation-goods/historical-situation-goods.module';
 import { DocumentVerificationRevisionResourcesComponent } from './document-verification-revision-resources/document-verification-revision-resources.component';
 
 @NgModule({
@@ -19,7 +21,9 @@ import { DocumentVerificationRevisionResourcesComponent } from './document-verif
   imports: [
     CommonModule,
     DocumentVerificationRevisionResourcesRoutingModule,
+    ExpedientSharedComponent,
     SharedModule,
+    HistoricalSituationGoodsModule,
   ],
 })
 export class DocumentVerificationRevisionResourcesModule {}

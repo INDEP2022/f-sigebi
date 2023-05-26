@@ -1,4 +1,9 @@
-<button class="btn btn-sm btn-return" (click)="return()">
+<form-loader
+  *ngIf="pageLoading"
+  [greater]="true"
+  text="Cerrando Acta... por favor espere"></form-loader>
+
+<button class="btn btn-sm btn-return" (click)="back()">
   <i class="bx bx-chevron-left float-icon"></i> Regresar
 </button>
 
@@ -9,12 +14,17 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mr-0">
-        <div class="col-md-2">
+        <div class="col-md-2 pr-0">
           <form-field [control]="form.get('statusActa')" label="Status Acta">
-            <select class="form-control" formControlName="statusActa">
-              <option value="ABIERTA">Abierto</option>
-              <option value="CERRADA">Cerrado</option>
-            </select>
+            <ng-select
+              formControlName="statusActa"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="TODOS">Todos</ng-option>
+              <ng-option value="ABIERTA">Abierto</ng-option>
+              <ng-option value="CERRADA">Cerrado</ng-option>
+            </ng-select>
           </form-field>
           <!-- <app-select-form
             [form]="form"
@@ -25,7 +35,7 @@
             [list]="statusList"
             [(params)]="paramsStatus"></app-select-form> -->
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 pr-0">
           <form-field [control]="form.get('acta')" label="No&#46; Acta">
             <input
               type="number"
@@ -35,7 +45,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-2 pr-0">
           <form-field
             [control]="form.get('fechaCaptura')"
             label="Fecha Captura">
@@ -48,7 +58,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 pr-0">
           <app-proceeding-types-shared
             [form]="form"
             [readonly]="true"></app-proceeding-types-shared>
@@ -57,8 +67,8 @@
       <app-key-proceedings-form
         [form]="form"
         [statusActaValue]="statusActaValue"></app-key-proceedings-form>
-      <div class="action-buttons mr-4">
-        <div class="col-sm-4">
+      <!-- <div class="mr-4">
+        <div class="col-sm-4 pl-0">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -68,28 +78,7 @@
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <div class="col-sm-4">
-          <app-goodtracker-button
-            [disabled]="statusActaValue === 'CERRADA'"
-            [data]="data"
-            [origin]="origin"></app-goodtracker-button>
-        </div>
-
-        <div class="col-sm-4">
-          <app-massive-delete-button
-            [disabled]="
-              !(
-                statusActaValue === 'ABIERTA' &&
-                selecteds &&
-                selecteds.length > 0
-              )
-            "
-            [actaId]="actaId"
-            [selecteds]="selecteds"
-            (finishDelete)="getData()">
-          </app-massive-delete-button>
-        </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </app-card>
@@ -97,8 +86,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Bienes</h5>
-    <div class="buttons mt-2">
+    <div class="buttons mt-2" style="column-gap: 10px">
       <app-columns-select
+        *ngIf="data && data.length > 0"
         [(settings)]="settingsGoods"
         [defaultColumns]="6"></app-columns-select>
       <app-excel-button
@@ -109,19 +99,37 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-12">
         <app-update-dates-goods
           [disabled]="statusActaValue !== 'ABIERTA' && data && data.length > 0"
           [data]="data"
           inicioColumn="fec_aprobacion_x_admon"
           finColumn="fec_indica_usuario_aprobacion"
-          (updateGoodEvent)="
-            data = $event; updateDatesTable()
-          "></app-update-dates-goods>
+          (updateGoodEvent)="updateDatesTable($event)"></app-update-dates-goods>
+      </div>
+      <div class="col-md-6 goodTracker mt-4">
+        <app-goodtracker-button
+          [disabled]="statusActaValue === 'CERRADA'"
+          [data]="data"
+          [origin]="origin"></app-goodtracker-button>
+      </div>
+      <div class="col-md-6 massiveDelete mt-4 mb-2">
+        <app-massive-delete-button
+          [disabled]="
+            !(
+              statusActaValue === 'ABIERTA' &&
+              selecteds &&
+              selecteds.length > 0
+            )
+          "
+          [actaId]="actaId"
+          [selecteds]="selecteds"
+          (finishDelete)="getData()">
+        </app-massive-delete-button>
       </div>
     </div>
-    <div *ngIf="dataForAdd && dataForAdd.length > 0">
-      <h5>Bienes agregados</h5>
+    <!-- <div *ngIf="dataForAdd && dataForAdd.length > 0">
+      <h5>Bienes agregados por Rastreador</h5>
       <div class="row pt-4 table-container">
         <div class="col-md-12 table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
@@ -138,22 +146,27 @@
       <app-pagination
         [params]="paramsForAdd"
         [totalItems]="dataForAdd.length"></app-pagination>
-    </div>
+    </div> -->
 
     <app-table-goods
       [settingsTable]="settingsGoods"
+      [loading]="loading"
       [data]="data"
       [totalItems]="totalItems"
       [statusActaValue]="statusActaValue"
       (updateGoodsRow)="updateGoodsRow($event)"
-      (updateData)="this.params = $event; getData()"
+      (updateData)="updateData($event)"
       (rowsSelected)="rowsSelected($event)"
       (showDeleteAlert)="showDeleteAlert($event)"></app-table-goods>
 
-    <hr class="row" />
+    <!-- <hr class="row" /> -->
     <app-cants
       [id]="actaId"
+      [bienesRas]="bienesRas"
+      [expedientesRas]="expedientesRas"
+      [dictamenesRas]="dictamenesRas"
       [typeProceeding]="typeProceeding"
+      [goodsCant]="goodsCant"
       [updateData]="data"></app-cants>
   </div>
 </app-card>

@@ -7,11 +7,13 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IFormGroup } from 'src/app/core/interfaces/model-form';
@@ -22,6 +24,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -35,7 +38,7 @@ import { REQUEST_OF_ASSETS_COLUMNS } from '../classification-assets.columns';
 @Component({
   selector: 'app-classification-assets-tab',
   templateUrl: './classification-assets-tab.component.html',
-  styles: [],
+  styleUrls: ['./classification-assets-tab.component.scss'],
 })
 export class ClassificationAssetsTabComponent
   extends BasePage
@@ -56,7 +59,7 @@ export class ClassificationAssetsTabComponent
   paramsLvl2 = new BehaviorSubject<ListParams>(new ListParams());
   paramsLvl3 = new BehaviorSubject<ListParams>(new ListParams());
   paramsLvl4 = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: any[] = [];
+  paragraphs = new LocalDataSource();
   assetsId: string | number;
   detailArray: IFormGroup<IGood>;
   goodObject: any;
@@ -75,6 +78,8 @@ export class ClassificationAssetsTabComponent
   goodSelect: any = [];
   idGood: string | number;
   formLoading: boolean = false;
+  settingsGood = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  isGoodSelected: boolean = false;
   constructor(
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
@@ -84,7 +89,8 @@ export class ClassificationAssetsTabComponent
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private typeRelevantSevice: TypeRelevantService,
     private genericService: GenericService,
-    private goodDomicilieService: GoodDomiciliesService
+    private goodDomicilieService: GoodDomiciliesService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -94,12 +100,7 @@ export class ClassificationAssetsTabComponent
     this.showHideErrorInterceptorService.showHideError(false);
     this.prepareForm();
     this.tablePaginator();
-    this.settings = {
-      ...TABLE_SETTINGS,
-      actions: false,
-      selectMode: '',
-      columns: REQUEST_OF_ASSETS_COLUMNS,
-    };
+    this.settingsGood.columns = REQUEST_OF_ASSETS_COLUMNS;
     this.initForm();
     this.request = this.requestObject.getRawValue();
   }
@@ -132,6 +133,11 @@ export class ClassificationAssetsTabComponent
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.idRequest);
+    this.params.value.addFilter(
+      'processStatus',
+      'CLASIFICAR_BIEN,SOLICITAR_ACLARACION',
+      SearchFilter.IN
+    );
     const filter = this.params.getValue().getParams();
     this.goodService.getAll(filter).subscribe({
       next: resp => {
@@ -160,10 +166,19 @@ export class ClassificationAssetsTabComponent
 
           const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
           item['destinyName'] = destiny;
+
+          if (item.fraccion) {
+            item['fractionCode'] = item.fraccion.code;
+          } else {
+            item['fractionCode'] = '';
+          }
+
+          item['unitMeasureName'] = await this.getLigieUnit(item.unitMeasure);
+          item['ligieUnitName'] = await this.getLigieUnit(item.ligieUnit);
         });
 
         Promise.all(result).then(data => {
-          this.paragraphs = resp.data;
+          this.paragraphs.load(resp.data);
           this.totalItems = resp.count;
           this.loading = false;
         });
@@ -196,7 +211,7 @@ export class ClassificationAssetsTabComponent
         params['filter.keyId'] = `$eq:${id}`;
         this.genericService.getAll(params).subscribe({
           next: resp => {
-            resolve(resp.data[0].description);
+            resolve(resp.data.length > 0 ? resp.data[0].description : '');
           },
         });
       } else {
@@ -205,44 +220,26 @@ export class ClassificationAssetsTabComponent
     });
   }
 
-  /*getData() {
-    if (this.idRequest) {
-      this.loading = true;
-      this.params.getValue()['filter.requestId'] = this.idRequest;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          const info = data.data.map(items => {
-            const fraction: any = items.fractionId;
-            this.idFraction = fraction.code;
-            items.fractionId = fraction.description;
-            return items;
-          });
+  getLigieUnit(id?: string) {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.uomCode'] = `$eq:${id}`;
+      params.limit = 20;
 
-          const filtergoodType = info.map(async item => {
-            const goodType: any = await this.getGoodType(item.goodTypeId);
-            item['goodTypeId'] = goodType;
-            if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
-            if (item['physicalStatus'] == 2) item['physicalStatus'] = 'MALO';
-            if (item['stateConservation'] == 1)
-              item['stateConservation'] = 'BUENO';
-            if (item['stateConservation'] == 2)
-              item['stateConservation'] = 'MALO';
-            if (item['destiny'] == 1) item['destiny'] = 'VENTA';
-            return item;
-          });
-
-          Promise.all(filtergoodType).then(data => {
-            this.paragraphs = data;
-            this.totalItems = this.paragraphs.length;
-            this.loading = false;
-          });
-        },
-        error: error => {
-          this.loading = false;
-        },
-      });
-    }
-  } */
+      this.goodsQueryService
+        .getCatMeasureUnitView(params)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: resp => {
+            const ligieUnit = resp.data[0].measureTlUnit;
+            resolve(ligieUnit);
+          },
+          error: error => {
+            resolve('');
+          },
+        });
+    });
+  }
 
   getGoodType(goodTypeId: string | number) {
     this.showHideErrorInterceptorService.showHideError(false);
@@ -251,6 +248,22 @@ export class ClassificationAssetsTabComponent
         resolve(data.description);
       });
     });
+  }
+
+  updateTableInfo(event: any) {
+    this.paragraphs.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === event.id) {
+          for (const key in event) {
+            if (key != 'id') {
+              item[key] = event[key];
+            }
+          }
+        }
+        this.paragraphs.load(data);
+      });
+    });
+    this.goodObject = null;
   }
 
   selectGood(event: any) {
@@ -264,10 +277,11 @@ export class ClassificationAssetsTabComponent
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
-      }, 1000);
-      setTimeout(() => {
+        if (this.detailArray.controls['id'].value !== null) {
+          this.isGoodSelected = true;
+        }
         this.formLoading = false;
-      }, 4000);
+      }, 1000);
     } else {
       // this.goodSelect[0].quantity = 0;
       this.detailArray.patchValue(null);
@@ -281,6 +295,40 @@ export class ClassificationAssetsTabComponent
       next: resp => {
         this.domicilieObject = resp as IDomicilies;
       },
+    });
+  }
+
+  updateTableEvent(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map(async (item: any) => {
+        if (item.id === event.id) {
+          item.ligieSection = event.ligiesSection;
+          item.ligieChapter = event.ligieChapter;
+          item.ligieLevel1 = event.ligieLevel1;
+          item.ligieLevel2 = event.ligieLevel2;
+          item.ligieLevel3 = event.ligieLevel3;
+          item.ligieLevel4 = event.ligieLevel4;
+          item.fractionId = event.fractionId;
+          item.fractionCode = event.fractionCode;
+          item.ligieUnit = event.ligieUnit;
+          item.goodClassNumber = event.goodClassNumber;
+          const goodTypeName = await this.getTypeGood(item.goodTypeId);
+          item['goodTypeName'] = goodTypeName;
+        }
+      });
+      this.paragraphs.load(data);
+    });
+  }
+
+  updateStatusGood(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map(async (item: any) => {
+        if (item.id === this.goodObject.id) {
+          item.processStatus = event.processStatus;
+          item.goodStatus = event.goodStatus;
+        }
+      });
+      this.paragraphs.load(data);
     });
   }
 
@@ -560,279 +608,7 @@ export class ClassificationAssetsTabComponent
       description: [null],
       fileNumber: [null],
       fractionId: [null],
+      saeMeasureUnit: [null],
     });
   }
-
-  /*initForm() {
-    this.goodsForm = this.fb.group({
-      id: [null],
-      goodId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieSection: [null, , [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieChapter: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel1: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel2: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel3: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieLevel4: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      requestId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      goodTypeId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      color: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      goodDescription: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-      ],
-      quantity: [1, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      duplicity: [
-        'N',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      capacity: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      volume: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      fileeNumber: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
-      ],
-      useType: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      physicalStatus: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      stateConservation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      origin: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      goodClassNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      ligieUnit: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      appraisal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ],
-      destiny: [null, [Validators.pattern(NUMBERS_PATTERN)]], //preguntar Destino ligie
-      transferentDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      compliesNorm: [
-        'N',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
-      ], //cumple norma
-      notesTransferringEntity: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1500)],
-      ],
-      unitMeasure: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ], // preguntar Unidad Medida Transferente
-      saeDestiny: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      brand: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(350),
-        ],
-      ],
-      subBrand: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(300),
-        ],
-      ],
-      armor: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      model: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(300),
-        ],
-      ],
-      doorsNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      axesNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      engineNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], //numero motor
-      tuition: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      serie: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      chassis: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      cabin: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      fitCircular: [
-        'N',
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
-      theftReport: [
-        'N',
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
-      addressId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      operationalState: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      manufacturingYear: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      enginesNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], // numero de motores
-      flag: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      openwork: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      sleeve: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      length: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
-        ],
-      ],
-      shipName: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(100),
-        ],
-      ],
-      publicRegistry: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], //registro public
-      ships: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
-      ],
-      dgacRegistry: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ], //registro direccion gral de aereonautica civil
-      airplaneType: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      caratage: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
-        ],
-      ], //kilatage
-      material: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
-        ],
-      ],
-      weight: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(30),
-        ],
-      ],
-      fractionId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-    });
-  } */
 }

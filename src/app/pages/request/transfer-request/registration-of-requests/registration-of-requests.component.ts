@@ -37,6 +37,7 @@ import { RequestService } from '../../../../core/services/requests/request.servi
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { SelectTypeUserComponent } from '../select-type-user/select-type-user.component';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
+import { MotiveRefuseModalComponent } from './motive-refuse-modal/motive-refuse-modal.component';
 import { RegistrationHelper } from './registrarion-of-request-helper.component';
 
 @Component({
@@ -93,6 +94,8 @@ export class RegistrationOfRequestsComponent
   authorityName: string = '';
   haveDictamen: boolean = false;
 
+  requestApproved: boolean = false;
+
   requestList: IRequest;
 
   formLoading: boolean = true;
@@ -100,7 +103,7 @@ export class RegistrationOfRequestsComponent
   question: boolean = false;
   verifyResp: string = null;
   task: any = null;
-
+  statusTask: any = '';
   pgr: boolean = false;
 
   constructor(
@@ -131,9 +134,12 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    const authService: any = this.authService.decodeToken();
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
-    console.log('task', this.task);
+    this.isRequestAlreadyApproved(id);
+    // DISABLED BUTTON - FINALIZED //
+    this.statusTask = this.task.status;
 
     this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
@@ -156,8 +162,12 @@ export class RegistrationOfRequestsComponent
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
   associateExpedientListener() {
     this.requestHelperService.currentExpedient.subscribe({
-      next: resp => {
+      next: async resp => {
         if (resp === true) {
+          const request: any = await this.getAsyncRequestById();
+          this.registRequestForm.controls['recordId'].setValue(
+            request.recordId
+          );
           this.isExpedient = true;
           this.staticTabs.tabs[0].active = true;
         }
@@ -176,7 +186,7 @@ export class RegistrationOfRequestsComponent
         [
           Validators.required,
           Validators.minLength(1),
-          Validators.maxLength(30),
+          Validators.maxLength(50),
         ],
       ],
       regionalDelegationId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -310,9 +320,14 @@ export class RegistrationOfRequestsComponent
           await this.getDictamen(data.id);
         }
 
+        this.verifyTransDelegaStatiAuthoExist(data);
+
         //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
         this.isExpedient = data.recordId ? true : false;
         this.registRequestForm.patchValue(data);
+        if (!data?.typeOfTransfer) {
+          data.typeOfTransfer = 'MANUAL';
+        }
         this.requestData = data as IRequest;
         this.formLoading = false;
         /*request.receptionDate = new Date().toISOString();
@@ -326,6 +341,30 @@ export class RegistrationOfRequestsComponent
         console.log(error.error.message);
       },
     });
+  }
+
+  verifyTransDelegaStatiAuthoExist(data: any) {
+    if (
+      !data.transferenceId ||
+      !data.regionalDelegationId ||
+      !data.stationId ||
+      !data.authorityId
+    ) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Sin los campos de transferente, emisora y autoridad no se podran realizar las documentaciones requeridas! ',
+        icon: 'error',
+        width: 450,
+        showCancelButton: false,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#b38e5d',
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+      }).then(async result => {
+        if (result.isConfirmed) {
+        }
+      });
+    }
   }
 
   setRequiredFields(data: any) {
@@ -489,19 +528,6 @@ export class RegistrationOfRequestsComponent
     }
   }
 
-  getGoodQuantity(requestId: number) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.requestId'] = `$eq:${requestId}`;
-      this.goodService.getAll(params).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {},
-      });
-    });
-  }
-
   getFractionCode(fractionId: number) {
     return new Promise((resolve, reject) => {
       this.fractionService.getById(fractionId).subscribe({
@@ -533,7 +559,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'finish';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -544,7 +570,7 @@ export class RegistrationOfRequestsComponent
     const typeCommit = 'returnar';
     this.msgSaveModal(
       'Finalizar Solicitud',
-      'Esta seguro de finalizar la solicitud actual?',
+      '¿Está seguro de finalizar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -609,7 +635,7 @@ export class RegistrationOfRequestsComponent
   confirm() {
     this.msgSaveModal(
       'Aceptar',
-      'Asegúrese de tener guardado los formularios antes de turnar la solicitud',
+      'Asegúrese de haber guardado la información antes de turnar la solicitud',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -780,26 +806,111 @@ export class RegistrationOfRequestsComponent
   }
   /* Fin Metodo para guardar verifucacion cumplimiento */
 
+  /* Metodo para crear solo aprovacion de solicitud */
+  createApprovalProcessOnly() {
+    return new Promise((resolve, reject) => {
+      const user: any = this.authService.decodeToken();
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = this.task.assignees;
+      task['assigneesDisplayname'] = this.task.displayName;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestData.id);
+      task[
+        'title'
+      ] = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestData.id;
+      task['expedientId'] = this.requestData.recordId;
+      task['idDelegationRegional'] = user.department;
+      task['urlNb'] = 'pages/request/transfer-request/process-approval';
+
+      this.taskService.createTask(task).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+          reject(false);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'No se pudo crear la tarea de Aprovación de Solicitud'
+          );
+        },
+      });
+    });
+  }
+  /* FIN CREAR SOLO TAREA APROVACION DE SOLICITUD */
+
+  /* Cerrar la tarea de validacion documental */
+  async closeValidateDocumentation() {
+    const title = `Cerrar tarea de (Destino-Documental), No. Solicitud: ${this.requestData.id}`;
+    const url =
+      'pages/request/transfer-request/notify-clarification-inadmissibility';
+    const from = 'VERIFICAR_CUMPLIMIENTO';
+    const to = 'NOTIFICAR_ACLARACIONES';
+    const user: any = this.authService.decodeToken();
+    const taskRes = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      true,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Destino_Documental',
+      'APROBAR_SOLICITUD_AA'
+    );
+    if (taskRes) {
+      this.loader.load = false;
+      this.msgGuardado(
+        'success',
+        'Turnado Exitoso',
+        `Se Turno la solicitud con el folio: ${this.requestData.id}`
+      );
+      console.log('Tarea Cerrada');
+    }
+  }
+  /* FIN CERRAR VALIDACION DOCUMENTAL */
+
   close() {
     this.registRequestForm.reset();
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
 
-  signDictum() {
-    const idDoc = this.route.snapshot.paramMap.get('id');
+  async signDictum() {
+    const idSolicitud = this.route.snapshot.paramMap.get('id');
     const idTypeDoc = this.idTypeDoc;
     const typeAnnex = 'approval-request';
+    const sign: boolean = await this.ableToSignDictamen();
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclararon'
+      );
+      return;
+    }
 
-    this.requestService.getById(idDoc).subscribe({
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === true) {
+      this.onLoadToast('info', '', 'Ya se genero un dictamen');
+      return;
+    }
+
+    this.requestService.getById(idSolicitud).subscribe({
       next: response => {
-        this.requestList = response;
+        const requestData = response;
 
         let config: ModalOptions = {
           initialState: {
-            idDoc,
+            idSolicitud,
             idTypeDoc,
             typeAnnex,
-            response,
+            requestData,
             callback: (next: boolean) => {},
           },
           class: 'modal-lg modal-dialog-centered',
@@ -815,10 +926,42 @@ export class RegistrationOfRequestsComponent
   }
 
   /** Proceso de aprobacion */
-  approveRequest() {
+  async approveRequest() {
+    console.log(this.requestApproved);
+    if (this.requestApproved == true) {
+      this.onLoadToast(
+        'error',
+        'Solicitud aprovado',
+        'La solicitud ya fue aprovada'
+      );
+      return;
+    }
+
+    const sign: boolean = await this.ableToSignDictamen();
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclararon'
+      );
+      return;
+    }
+
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'No se puede aprobar la solicitud',
+        'Es requerido previamente tener firmado el dictamen'
+      );
+      this.deleteMsjRefuse();
+      this.loader.load = false;
+      return;
+    }
+
     this.msgSaveModal(
       'Aprobar',
-      'Deseas turnar la solicitud con folio: ' + this.requestData.id + '?',
+      '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       this.typeDocument
@@ -827,19 +970,9 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     this.loader.load = true;
-    const existDictamen = await this.getDictamen(this.requestData.id);
-    if (existDictamen === false) {
-      this.onLoadToast(
-        'info',
-        'No se puede aprobar',
-        'Es requerido previamente tener firmado el dictamen'
-      );
-      this.loader.load = false;
-      return;
-    }
 
-    const title = `Solicitud de Programacion con el folio: ${this.requestData.id}`;
-    const url = 'pages/request/programming-request/schedule-reception';
+    const title = ``;
+    const url = '';
     const from = 'SOLICITAR_APROBACION';
     const to = 'APROBADO';
     const user: any = this.authService.decodeToken();
@@ -858,6 +991,7 @@ export class RegistrationOfRequestsComponent
     );
     if (taskResult === true) {
       this.loader.load = false;
+      //this.cleanMotiveRefuse();
       this.msgGuardado(
         'success',
         'Turnado Exitoso',
@@ -868,10 +1002,29 @@ export class RegistrationOfRequestsComponent
   /** fin de proceso */
 
   /* Inicio de rechazar aprovacion */
-  refuseRequest() {
+  async refuseRequest() {
+    if (this.requestApproved == true) {
+      this.onLoadToast(
+        'error',
+        'Solicitud aprovado',
+        'La solicitud ya fue aprovada'
+      );
+      return;
+    }
+
+    const sign: boolean = await this.ableToSignDictamen();
+    if (sign == false) {
+      this.onLoadToast(
+        'error',
+        'Bienes no aclarados',
+        'Algunos bienes aun no se aclarar'
+      );
+      return;
+    }
+
     this.msgSaveModal(
       'Rechazar',
-      'Deseas rechazar la solicitud con el folio: ' + this.requestData.id + '?',
+      '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
       undefined,
       'refuse'
@@ -879,33 +1032,30 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
-    const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/verify-compliance';
-      const from = 'SOLICITAR_APROBACION';
-      const to = 'VERIFICAR_CUMPLIMIENTO';
-      const user: any = this.authService.decodeToken();
-      const taskResult = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        false,
-        this.task.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Aprobar_Solicitud',
-        'RECHAZAR'
+    const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+    const url = 'pages/request/transfer-request/verify-compliance';
+    const from = 'SOLICITAR_APROBACION';
+    const to = 'VERIFICAR_CUMPLIMIENTO';
+    const user: any = this.authService.decodeToken();
+    const taskResult = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      false,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Aprobar_Solicitud',
+      'RECHAZAR'
+    );
+    if (taskResult === true) {
+      this.msgGuardado(
+        'success',
+        'Solicitud Rechazada',
+        `Se Rechazo la Solicitud con el Folio: ${this.requestData.id}`
       );
-      if (taskResult === true) {
-        this.msgGuardado(
-          'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
-        );
-      }
     }
   }
   /* Fin rechazo de aprovacion */
@@ -959,6 +1109,8 @@ export class RegistrationOfRequestsComponent
       task['requestId'] = request.id;
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
+      task['processName'] = 'SolicitudTransferencia';
+      task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
       let orderservice: any = {};
@@ -973,6 +1125,7 @@ export class RegistrationOfRequestsComponent
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
+          //this.deleteMsjRefuse();
         },
         error: error => {
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
@@ -982,24 +1135,18 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getOldTask() {
-    return new Promise((resolve, reject) => {
-      const params = new FilterParams();
-      params.addFilter('requestId', this.requestData.id);
-      const filter = params.getParams();
-      this.taskService.getAll(filter).subscribe({
-        next: resp => {
-          const task = {
-            assignees: resp.data[0].assignees,
-            assigneesDisplayname: resp.data[0].assigneesDisplayname,
-          };
-          resolve(task);
-        },
-        error: error => {
-          this.message('error', 'Error', 'Error al obtener la tarea antigua');
-          reject(error.error.message);
-        },
-      });
+  deleteMsjRefuse() {
+    const requestObj: object = {
+      id: this.requestData.id,
+      rejectionComment: null,
+    };
+    this.requestService.update2(this.requestData.id, requestObj).subscribe({
+      next: response => {
+        console.log('Actualizado', response);
+      },
+      error: error => {
+        console.log('No actualizado', error);
+      },
     });
   }
 
@@ -1046,77 +1193,117 @@ export class RegistrationOfRequestsComponent
     }).then(async result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
+          console.log('finish');
           this.finishMethod();
         }
         if (typeCommit === 'returnar') {
+          console.log('returnar');
+
           this.returnarMethod();
         }
         if (typeCommit === 'captura-solicitud') {
+          console.log('captura-solicitud');
           this.confirmMethod();
         }
         if (typeCommit === 'verificar-cumplimiento') {
+          console.log('verificar-cumplimiento');
           this.question = true;
-          setTimeout(() => {
+          setTimeout(async () => {
+            console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
+              await this.updateGoodStatus('CLASIFICAR_BIEN');
+              console.log('CLASIFICAR_BIEN');
               this.verifyComplianceMethod();
             } else if (this.verifyResp === 'sin articulos') {
-              Swal.fire({
-                title: 'Error',
-                text: 'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
-                icon: 'error',
-                showCancelButton: false,
-                confirmButtonColor: '#AD4766',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar',
-              }).then(result => {
-                if (result.isConfirmed) {
-                }
-              });
+              this.verifyCumplianteMsg(
+                'Error',
+                'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
+                'error'
+              );
             } else if (this.verifyResp === 'sin guardar') {
-              Swal.fire({
-                title: 'No se pudo turnar la solicitud',
-                text: 'Guarde el formulario antes de turnar la solicitud',
-                icon: 'info',
-                showCancelButton: false,
-                confirmButtonColor: '#AD4766',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar',
-              }).then(result => {});
+              this.verifyCumplianteMsg(
+                'No se pudo turnar la solicitud',
+                'Guarde el formulario antes de turnar la solicitud',
+                'info'
+              );
             }
             this.question = false;
           }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
+          await this.updateGoodStatus('DESTINO_DOCUMENTAL');
+          //creat tarea para destino documental
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
+          this.loader.load = true;
+          this.deleteMsjRefuse();
+          await this.updateGoodStatus('SOLICITAR_APROBACION');
+          //tiene aclaraciones
           const clarification = await this.haveNotificacions();
           console.log(clarification);
-          console.log(this.requestData.typeOfTransfer);
-          //debugger;
-          if (
-            clarification === true &&
-            this.requestData.typeOfTransfer !== 'MANUAL'
-          ) {
+          this.loader.load = false;
+          if (clarification === 'POR_ACLARAR') {
+            //consultar si ya exise una tarea de solicitar aprovacion creada
+            const existApprovalTask = await this.existApprobalTask();
+            if (existApprovalTask === true) {
+              //si existe crea solo la Notificacion de aclaracion
+              await this.notifyClarificationsMethod();
+            } else {
+              //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+              const result = await this.createApprovalProcessOnly();
+              if (result) {
+                await this.notifyClarificationsMethod();
+              }
+            }
+          } else if (clarification === 'ACLARADO') {
             const user: any = this.authService.decodeToken();
             const body: any = {};
             body.id = this.requestData.id;
-            body.rulingCreatorName = user.username;
+            body.rulingCreatorName = user.name;
             await this.updateRequest(body);
-            await this.notifyClarificationsMethod();
-          } else {
-            this.destinyDocumental();
+            //se cierra la tarea de destino documental
+            await this.closeValidateDocumentation();
+          } else if (clarification === 'SIN_ACLARACIONES') {
+            const user: any = this.authService.decodeToken();
+            const body: any = {};
+            body.id = this.requestData.id;
+            body.rulingCreatorName = user.name;
+            await this.updateRequest(body);
+            //se cierra la tarea de destino documental y se crea una nueva
+            await this.destinyDocumental();
           }
         }
         if (typeCommit === 'proceso-aprovacion') {
+          await this.updateGoodStatus('APROBADO');
           this.approveRequestMethod();
         }
 
         if (typeCommit === 'refuse') {
-          this.refuseMethod();
+          await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
+          this.motivoRechazo();
         }
       }
     });
+  }
+
+  //modal de motivo del rechazo
+  motivoRechazo() {
+    const dataRequest = this.requestData;
+
+    let config: ModalOptions = {
+      initialState: {
+        dataRequest,
+        callback: (next: boolean) => {
+          if (next) {
+            this.refuseMethod();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(MotiveRefuseModalComponent, config);
   }
 
   //revisar las pruebas
@@ -1124,24 +1311,140 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       let params = new FilterParams();
       params.addFilter('applicationId', this.requestData.id);
-      params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
+      //params.addFilter('processStatus', '$not:VERIFICAR_CUMPLIMIENTO'); //ACLARADO
       let filter = params.getParams();
-      //debugger;
       this.goodResDevService.getAllGoodResDev(filter).subscribe({
         next: (resp: any) => {
-          if (resp.data) {
-            resolve(true);
+          const goodsClarified = resp.data.filter(
+            (x: any) => x.good.goodStatus === 'ACLARADO'
+          );
+
+          const goodsImprocedente = resp.data.filter(
+            (x: any) => x.good.goodStatus === 'IMPROCEDENTE'
+          );
+
+          if (goodsClarified.length > 0 || goodsImprocedente.length > 0) {
+            resolve('ACLARADO');
           } else {
-            resolve(false);
+            resolve('POR_ACLARAR');
           }
+          console.log(goodsClarified);
         },
         error: (error: any) => {
-          resolve(false);
+          resolve('SIN_ACLARACIONES');
+          this.loader.load = false;
           /*this.onLoadToast(
             'error',
             'Error interno',
             'No se pudo obtener el bien-res-dev'
           );*/
+        },
+      });
+    });
+  }
+
+  async updateGoodStatus(newProcessStatus: string) {
+    let goods: any = await this.getAllGood();
+    goods.data.map(async (good: any) => {
+      //consultar si aclarado puede volver a modificarse
+      if (
+        good.processStatus != 'SOLICITAR_ACLARACION' &&
+        good.processStatus != 'IMPROCEDENTE' &&
+        good.processStatus != 'SOLICITAR_APROBACION'
+      ) {
+        let body: any = {};
+        body.id = good.id;
+        body.goodId = good.goodId;
+        body.processStatus = newProcessStatus;
+        await this.updateGood(body);
+      }
+
+      if (
+        this.process === 'process-approval' &&
+        good.processStatus == 'SOLICITAR_APROBACION'
+      ) {
+        let body: any = {};
+        body.id = good.id;
+        body.goodId = good.goodId;
+        body.processStatus = newProcessStatus;
+        body.goodStatus = newProcessStatus;
+        await this.updateGood(body);
+      }
+    });
+  }
+
+  getAllGood() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.requestId'] = `$eq:${this.requestData.id}`;
+      this.goodService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject('error');
+          console.log(error);
+          this.onLoadToast(
+            'error',
+            'Error en los bienes',
+            'Error al obtener los bienes'
+          );
+        },
+      });
+    });
+  }
+
+  isRequestAlreadyApproved(id: string | number) {
+    const params = new ListParams();
+    params['filter.requestId'] = `$eq:${id}`;
+    this.goodService.getAll(params).subscribe({
+      next: resp => {
+        const filter = resp.data.filter(x => x.processStatus === 'APROBADO');
+        const response = filter.length > 0 ? true : false;
+        this.requestApproved = response;
+      },
+      error: error => {
+        console.log(error);
+        if (error.error.message != 'No se encontrarón registros.') {
+          this.onLoadToast(
+            'error',
+            'Error en la solicitud',
+            'Error al verificar si la solicitud ya fue aprobada'
+          );
+        }
+      },
+    });
+  }
+
+  updateGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.update(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          console.log(error);
+          reject(false);
+        },
+      });
+    });
+  }
+
+  existApprobalTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      params.addFilter(
+        'title',
+        `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`
+      );
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
         },
       });
     });
@@ -1172,12 +1475,18 @@ export class RegistrationOfRequestsComponent
     this.bsModalRef = this.modalService.show(component, config);
   }
 
-  /* dinamyCallFrom() {
-    this.registRequestForm.valueChanges.subscribe(data => {
-      this.requestData = data;
-    });
+  async ableToSignDictamen() {
+    const goods: any = await this.getAllGood();
+    let canSign: boolean = false;
+    const filter = goods.data.filter(
+      (x: any) =>
+        x.processStatus == 'SOLICITAR_APROBACION' ||
+        x.processStatus == 'IMPROCEDENTE'
+    );
+
+    return filter.length == goods.count ? true : false;
   }
- */
+
   msgGuardado(icon: any, title: string, message: string) {
     Swal.fire({
       title: title,
@@ -1190,6 +1499,21 @@ export class RegistrationOfRequestsComponent
     }).then(result => {
       if (result.isConfirmed) {
         this.close();
+      }
+    });
+  }
+
+  verifyCumplianteMsg(title: string, text: string, icon: any) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      showCancelButton: false,
+      confirmButtonColor: '#AD4766',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
       }
     });
   }

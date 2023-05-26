@@ -33,32 +33,37 @@
               type="number"
               class="form-control"
               formControlName="saldo"
-              [readonly]="!isFirstCase" />
+              [readonly]="!firstCase" />
           </form-field>
         </div>
       </div>
       <div class="row">
-        <div class="d-flex justify-content-center">
-          <div class="col-md-6">
+        <div class="d-flex justify-content-center" style="text-align: center">
+          <div class="col-md-12">
             <div class="row">
               <div class="form-group">
                 <button
                   class="mx-1"
                   size="small"
                   (click)="partialize()"
-                  [disabled]="form.invalid || formGood.invalid">
+                  [disabled]="form.invalid || formGood.invalid || loading">
                   Parcializa
                 </button>
                 <button class="mx-1" size="small" (click)="cleanBlock()">
                   Limpia Bloque
                 </button>
-                <button class="mx-1" size="small" (click)="checkSum('V')">
+                <button
+                  class="mx-1"
+                  size="small"
+                  (click)="checkSum('V')"
+                  [disabled]="formGood.invalid || loading">
                   Verifica Suma
                 </button>
                 <button
                   class="mx-1 my-1"
                   size="small"
-                  [disabled]="form.invalid || formGood.invalid">
+                  (click)="apply()"
+                  [disabled]="formGood.invalid || loading">
                   Aplica
                 </button>
               </div>
@@ -67,11 +72,12 @@
         </div>
       </div>
     </form>
-    <div class="row pt-2 scroll-table">
+    <div class="row pt-2 scroll-table" [class]="loading ? 'table-loading' : ''">
       <ng2-smart-table
         class="col-md-12"
         [settings]="settingsGoods"
-        [source]="bienesPar"></ng2-smart-table>
+        [source]="bienesPar"
+        (delete)="deleteRow($event)"></ng2-smart-table>
     </div>
   </div>
 </app-card>

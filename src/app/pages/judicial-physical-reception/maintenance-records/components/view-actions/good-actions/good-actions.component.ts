@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TableReplaceColumnModalComponent } from 'src/app/@standalone/modals/table-replace-column-modal/table-replace-column-modal.component';
@@ -15,8 +23,9 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
-import { firstFormatDate } from 'src/app/shared/utils/date';
+import { secondFormatDate } from 'src/app/shared/utils/date';
 import { MaintenanceRecordsService } from './../../../services/maintenance-records.service';
 
 @Component({
@@ -28,9 +37,9 @@ import { MaintenanceRecordsService } from './../../../services/maintenance-recor
         display: flex;
         width: 100%;
         margin-left: 20px;
-        app-select-form {
-          margin-right: 15px;
-          width: calc(100% - 78px);
+        column-gap: 10px;
+        ng-custom-select-loading {
+          width: calc(100% - 70px);
         }
       }
     `,
@@ -48,7 +57,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   selectedsForUpdate: IDetailProceedingsDeliveryReception[] = [];
   // dataForAdd: IDetailProceedingsDeliveryReception[] = [];
   selectedGood: any;
-
+  @ViewChild('actaLabel') actaLabel: TemplateRef<any>;
+  @ViewChild('actaOption') actaOption: TemplateRef<any>;
   paramsGoods = new FilterParams();
   operatorGoods = SearchFilter.IN;
   paramsControl = new FilterParams();
@@ -67,8 +77,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   ) {
     super();
     this.form = this.fb.group({
-      goodId: [null, [Validators.required]],
-      action: [null, [Validators.required]],
+      goodId: [null],
+      action: [null],
     });
   }
 
@@ -77,45 +87,38 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   }
 
   get data() {
-    return this.service.data;
+    return this.service.data.concat(this.service.dataForAdd);
+  }
+
+  get dataForAdd() {
+    return this.service.dataForAdd;
   }
 
   get goodsList() {
     return this.goodTrackerService.getAll(this.paramsGoods.getParams());
   }
 
+  get rowsSelectedNotLocal() {
+    return this.rowsSelected.filter(x => !x.createdLocal);
+  }
+
+  selectGood(good: any) {
+    console.log(good);
+    this.selectedGood = good;
+  }
+
   addGood() {
     // console.log(row);
-    // this.dataForAdd.push({
-    //   numberProceedings: +this.nroActa,
-    //   numberGood: this.form.get('goodId').value,
-    //   amount: this.selectedGood.quantity,
-    //   received: 'S',
-    //   approvedDateXAdmon: firstFormatDate(new Date()),
-    //   approvedXAdmon: 'S',
-    //   approvedUserXAdmon: localStorage.getItem('username'),
-    //   dateIndicatesUserApproval: firstFormatDate(new Date()),
-    //   numberRegister: null,
-    //   reviewIndft: null,
-    //   correctIndft: null,
-    //   idftUser: null,
-    //   idftDate: null,
-    //   numDelegationIndft: null,
-    //   yearIndft: null,
-    //   monthIndft: null,
-    //   idftDateHc: null,
-    //   packageNumber: null,
-    //   exchangeValue: null,
-    // });
-    this.addGoodEvent.emit({
+    // debugger;
+    const newGood: IDetailProceedingsDeliveryReception = {
       numberProceedings: +this.nroActa,
       numberGood: this.form.get('goodId').value,
       amount: this.selectedGood.quantity,
       received: 'S',
-      approvedDateXAdmon: firstFormatDate(new Date()),
+      approvedDateXAdmon: secondFormatDate(new Date()),
       approvedXAdmon: 'S',
       approvedUserXAdmon: localStorage.getItem('username'),
-      dateIndicatesUserApproval: firstFormatDate(new Date()),
+      dateIndicatesUserApproval: secondFormatDate(new Date()),
       numberRegister: null,
       reviewIndft: null,
       correctIndft: null,
@@ -127,18 +130,38 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
       idftDateHc: null,
       packageNumber: null,
       exchangeValue: null,
+      warehouse: this.selectedGood.warehouseNumber,
+      vault: this.selectedGood.vaultNumber,
+      createdLocal: true,
+    };
+    this.detailService.create(newGood).subscribe({
+      next: response => {
+        this.onLoadToast('success', 'Bien', 'Agregado exitosamente');
+        this.updateTable.emit();
+      },
+      error: err => {
+        let message = 'No se pudo agregar el bien';
+        if (err.message === 'El registro ya existe.') {
+          message = 'Bien ya registrado';
+        }
+        this.onLoadToast('error', 'Error', message);
+      },
     });
-    // this.totalItems++;
-    // this.service
-    //   .create({
+
+    // const goodForAdd = this.dataForAdd.findIndex(
+    //   x => x.numberGood === this.form.get('goodId').value
+    // );
+
+    // if (goodForAdd === -1) {
+    //   this.dataForAdd.push({
     //     numberProceedings: +this.nroActa,
     //     numberGood: this.form.get('goodId').value,
     //     amount: this.selectedGood.quantity,
     //     received: 'S',
-    //     approvedDateXAdmon: new Date(),
+    //     approvedDateXAdmon: firstFormatDate(new Date()),
     //     approvedXAdmon: 'S',
     //     approvedUserXAdmon: localStorage.getItem('username'),
-    //     dateIndicatesUserApproval: new Date(),
+    //     dateIndicatesUserApproval: firstFormatDate(new Date()),
     //     numberRegister: null,
     //     reviewIndft: null,
     //     correctIndft: null,
@@ -150,18 +173,16 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     //     idftDateHc: null,
     //     packageNumber: null,
     //     exchangeValue: null,
-    //   })
-    //   .subscribe({
-    //     next: response => {
-    //       this.onLoadToast(
-    //         'success',
-    //         this.form.get('goodId').value,
-    //         'Agregado exitosamente'
-    //       );
-    //       this.updateTable.emit();
-    //     },
-    //     error: err => {},
+    //     warehouse: this.selectedGood.warehouseNumber,
+    //     vault: this.selectedGood.vaultNumber,
+    //     createdLocal: true,
     //   });
+    // } else {
+    //   this.dataForAdd[goodForAdd].amount =
+    //     +(this.selectedGood.quantity + '') +
+    //     +(this.dataForAdd[goodForAdd].amount + '');
+    // }
+    // this.service.dataForAdd = [...this.service.dataForAdd];
   }
 
   openModals() {
@@ -184,14 +205,24 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           },
           settings: { ...TABLE_SETTINGS },
           tableData: this.rowsSelected,
-          service: this.proceedingService,
-          dataObservableFn: this.proceedingService.getAll2,
+          // service: this.proceedingService,
+          // dataObservableFn: this.proceedingService.getAll2,
+          labelTemplate: this.actaLabel,
+          optionTemplate: this.actaOption,
           idSelect: 'id',
-          labelSelect: 'id',
-          paramFilter: 'id',
-          operator: SearchFilter.ILIKE,
+          labelSelect: 'keysProceedings',
+          label: 'Acta',
+          paramSearch: 'filter.keysProceedings',
+          prefixSearch: '$ilike',
+          path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
-            numberProceedings: [null, [Validators.required]],
+            numberProceedings: [
+              null,
+              [
+                Validators.required,
+                Validators.pattern(POSITVE_NUMBERS_PATTERN),
+              ],
+            ],
           }),
           formField: 'numberProceedings',
         },
@@ -214,13 +245,13 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
             },
           },
           settings: { ...TABLE_SETTINGS },
+          label: 'Estatus del bien',
           tableData: this.rowsSelected,
-          service: this.statusGoodService,
-          dataObservableFn: this.statusGoodService.getAllSelf,
+          path: 'good/api/v1/status-good',
           idSelect: 'status',
           labelSelect: 'status',
-          paramFilter: 'status',
-          operator: SearchFilter.ILIKE,
+          paramSearch: 'filter.status',
+          prefixSearch: '$ilike',
           form: this.fb.group({
             status: [null, [Validators.required]],
             justification: [null, [Validators.required]],
@@ -238,13 +269,40 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     newValue: { numberProceedings: string },
     self: GoodActionsComponent
   ) {
+    // debugger
     const goods = self.rowsSelected.map(good => good.numberGood);
     let message = '';
     goods.forEach((good, index) => {
       message += good + (index < goods.length - 1 ? ',' : '');
     });
+    self.changeGoodsAct(message, newValue.numberProceedings);
+  }
 
-    this.updateTable.emit();
+  changeGoodsAct(message: string, numberProceedings: string) {
+    this.proceedingService
+      .createMassiveDetail(
+        this.rowsSelected.map(x => {
+          return {
+            ...x,
+            numberProceedings: +numberProceedings,
+            numberGood: +(x.numberGood + ''),
+          };
+        })
+      )
+      .subscribe({
+        next: response => {
+          // debugger;
+          this.proceedingService
+            .deleteMassiveDetails(this.rowsSelected)
+            .subscribe({
+              next: response => {
+                // debugger;
+                this.onLoadToast('success', 'Bienes Actualizados', message);
+                this.updateTable.emit();
+              },
+            });
+        },
+      });
   }
 
   replaceStatus(
@@ -256,9 +314,13 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     goods.forEach((good, index) => {
       message += good + (index < goods.length - 1 ? ',' : '');
     });
-    self.goodService.updateGoodStatusMassive(goods, newValue.status).subscribe({
+    self.updateGoodStatusMassive(goods, newValue.status, message);
+  }
+
+  updateGoodStatusMassive(goods: number[], status: string, message: string) {
+    this.goodService.updateGoodStatusMassive(goods, status).subscribe({
       next: response => {
-        self.onLoadToast('success', 'Estados Actualizados', message);
+        this.onLoadToast('success', 'Estados Actualizados', message);
         this.updateTable.emit();
       },
     });
@@ -279,15 +341,21 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   }
 
   updateGoods() {
+    this.service.dataForAdd = this.selectedsForUpdate.filter(
+      x => x.createdLocal
+    );
     this.detailService
       .updateMasive(
-        this.selectedsForUpdate.map(item => {
-          return {
-            fec_aprobacion_x_admon: item.approvedDateXAdmon + '',
-            fec_indica_usuario_aprobacion: item.dateIndicatesUserApproval + '',
-            no_bien: item.numberGood + '',
-          };
-        }),
+        this.selectedsForUpdate
+          .filter(x => !x.createdLocal)
+          .map(item => {
+            return {
+              fec_aprobacion_x_admon: item.approvedDateXAdmon + '',
+              fec_indica_usuario_aprobacion:
+                item.dateIndicatesUserApproval + '',
+              no_bien: item.numberGood + '',
+            };
+          }),
         +this.nroActa
       )
       .subscribe({

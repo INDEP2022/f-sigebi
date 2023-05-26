@@ -3686,7 +3686,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     }
     // Mensaje de proceso de validación actual
     this.DeclarationsValidationMassive.message_progress =
-      'Creando registro en historico del bien.';
+      'Creando registro en histórico del bien.';
     console.log(this.DeclarationsValidationMassive.message_progress);
     let goodHistory: IHistoryGood = {
       propertyNum: parseInt(infoData.objInsertResponse['LNU_NO_BIEN']), // Numero de bien

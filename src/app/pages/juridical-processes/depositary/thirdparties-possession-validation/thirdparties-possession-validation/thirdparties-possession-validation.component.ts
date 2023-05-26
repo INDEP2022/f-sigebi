@@ -1,35 +1,35 @@
-/** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, debounceTime } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ISentSirsae } from 'src/app/core/models/administrative-processes/history-good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   GOODS_COLUMNS,
   NOTIFICATIONS_COLUMNS,
 } from './thirdparties-possession-validation-columns';
-/** LIBRERÍAS EXTERNAS IMPORTS */
-
-/** SERVICE IMPORTS */
-import { IGood } from 'src/app/core/models/ms-good/good';
-import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
-import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
-import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
-import { UsersService } from 'src/app/core/services/ms-users/users.service';
-
-/** ROUTING MODULE */
-
-/** COMPONENTS IMPORTS */
 
 const predifinedText =
   'En cumplimiento a la instrucción judicial derivada del juicio de amparo <A> por el cual se informa que se resolvió provisionalmente conceder al quejoso la restitución de la posesión  uso y disfrute  del(los) siguiente(s) mueble(s). Al respecto me permito señalar: \n\n<B> \n\n<C> \n\nCon fundamento en la fracción XIV del artículo 39 del Estatuto Orgánico del Servicio de Administración y Enajenación de Bienes y considerando la instrucción judicial deducida del juicio de garantías emitida por el Juez <DATOS DE JUZGADO>, por el cual se otorga la suspensión definitiva al quejoso <QUEJOSO> respecto del disfrute del inmueble de marras y, consecuentemente, la restitución de la posesión, en tal sentido y salvo que no exista aseguramiento anterior o posterior decretado por autoridad competente para ello, esa Delegación a su cargo deberá dar cabal cumplimiento a la suspensión definitiva, levantado para tal efecto el acta administrativa de entrega de posesión por virtud de suspensión provisional, afectando, consecuentemente, el SIAB bajo el estatus ¿PD3¿ ¿entrega en posesión a terceros por instrucción judicial¿. \n\nEl cumplimiento señalado, deberá realizarlo a la brevedad e informar al Juez de Amparo sobre los actos tendientes a su cumplimiento. \n\nNo omito señalar, que en el supuesto de que se resuelva el amparo en el cuaderno incidental y/o principal negando la protección de la justicia federal, se deberán llevar a cabo las acciones legales correspondientes para recuperar la posesión del inmueble asegurado. \n\nFinalmente, le informo que debe hacer del conocimiento de la autoridad que decretó el aseguramiento, así como, en su caso, del Juez que conozca del proceso penal federal. \n\nQuedo a sus órdenes para cualquier comentario.';
@@ -67,9 +67,10 @@ export class ThirdpartiesPossessionValidationComponent
 
   // Table settings
   tableSettingsBienes = {
+    selectedRowIndex: -1,
     rowClassFunction: (row: any) => {
       if (row.cells[1].value != 'ADM') {
-        return 'bg-dark';
+        return 'bg-dark text-white disabled-custom';
       } else {
         return 'bg-primary';
       }
@@ -80,9 +81,9 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
-    selectMode: 'multi',
+    selectMode: 'none',
     hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
+    // mode: 'external', // ventana externa
 
     columns: GOODS_COLUMNS,
   };
@@ -97,19 +98,20 @@ export class ThirdpartiesPossessionValidationComponent
       edit: false,
       delete: false,
     },
-    selectMode: 'multi',
-    hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
+    selectedRowIndex: -1,
+
+    selectMode: 'single',
+    hideSubHeader: true,
+    mode: 'external',
 
     columns: GOODS_COLUMNS,
   };
-  // Data table
   dataTableBienesOficio: IGood[] = [];
 
   expedientNumber: number = 0;
   public form: FormGroup;
   public formCcpOficio: FormGroup;
-  public noExpediente: FormGroup;
+  public noExpediente = new FormControl(null);
   public formGood: FormGroup;
 
   constructor(
@@ -117,6 +119,10 @@ export class ThirdpartiesPossessionValidationComponent
     private notificationService: NotificationService,
     private goodService: GoodService,
     private usersService: UsersService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private historyGoodService: HistoryGoodService,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
   ) {
     super();
@@ -124,14 +130,13 @@ export class ThirdpartiesPossessionValidationComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.loading = true;
+    // this.loading = true;
 
-    this.noExpediente
-      .get('noExpediente')
-      .valueChanges.pipe(debounceTime(500))
-      .subscribe(x => {
-        this.getNotifications(new ListParams(), x);
-      });
+    // this.noExpediente.valueChanges // .get('noExpediente')
+    //   .pipe(debounceTime(500))
+    //   .subscribe(x => {
+    //     this.getNotifications();
+    //   });
 
     this.form
       .get('wheelNumber')
@@ -145,13 +150,13 @@ export class ThirdpartiesPossessionValidationComponent
   private prepareForm() {
     this.form = this.fb.group({
       wheelNumber: '',
-      officeExternalKey: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
-      addressee: ['', [Validators.pattern(STRING_PATTERN)]], // Detalle destinatario
+      officeExternalKey: [''],
+      addressee: ['', [Validators.pattern(STRING_PATTERN)]],
       texto: '',
     });
-    this.noExpediente = this.fb.group({
-      noExpediente: '',
-    });
+    // this.noExpediente = this.fb.group({
+    //   noExpediente: '',
+    // });
     this.formCcpOficio = this.fb.group({
       ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
       ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
@@ -175,7 +180,7 @@ export class ThirdpartiesPossessionValidationComponent
     data.limit = params.limit;
 
     if (wheelNumber) {
-      data.addFilter('wheelNumber', wheelNumber);
+      data.addFilter('steeringwheelNumber', wheelNumber);
     }
 
     this.goodPosessionThirdpartyService.getAll(data.getParams()).subscribe({
@@ -183,9 +188,11 @@ export class ThirdpartiesPossessionValidationComponent
         this.formCcpOficio.get('ccp1').patchValue(data.data[0].usrCcp1);
         this.formCcpOficio.get('ccp2').patchValue(data.data[0].usrCcp2);
         this.formCcpOficio.get('firma').patchValue(data.data[0].usrResponsible);
-        this.goodsPosessionThirdParty = data.data;
       },
       error: err => {
+        this.formCcpOficio.get('ccp1').patchValue('');
+        this.formCcpOficio.get('ccp2').patchValue('');
+        this.formCcpOficio.get('firma').patchValue('');
         this.loading = false;
       },
     });
@@ -215,7 +222,19 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
-  getNotifications(params: ListParams, numberExpedient?: number) {
+  clearForm() {
+    this.form.reset();
+    this.formCcpOficio.reset();
+    this.noExpediente.reset();
+    this.formGood.reset();
+    this.dataTableBienes = [];
+    this.dataTableBienesOficio = [];
+    this.dataTableNotifications = [];
+    this.wheelNotifications = null;
+  }
+
+  getNotifications(params = new ListParams()) {
+    const numberExpedient = this.noExpediente.value;
     this.expedientNumber = numberExpedient;
     if (!numberExpedient) {
       this.dataTableNotifications = [];
@@ -234,12 +253,13 @@ export class ThirdpartiesPossessionValidationComponent
     }
 
     this.dataTableNotifications = [];
-
+    this.loading = true;
     this.notificationService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableNotifications = data.data;
+        this.loading = false;
       },
-      error: err => {
+      error: () => {
         this.loading = false;
       },
     });
@@ -262,6 +282,7 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService.getAllFilter(data.getParams()).subscribe({
       next: data => {
         this.dataTableBienes = data.data;
+        this.loading = false;
       },
       error: err => {
         this.loading = false;
@@ -317,8 +338,11 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService
       .updateGoodStatus(this.selectedRows.goodId, 'STI')
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          this.handleSuccess();
+          this.selectedRows = {};
+        },
+        error: () => (this.loading = false),
       });
   }
 
@@ -341,8 +365,11 @@ export class ThirdpartiesPossessionValidationComponent
     this.goodService
       .updateGoodStatus(this.selectedRows2.goodId, 'ADM')
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          this.handleSuccess();
+          this.selectedRows2 = {};
+        },
+        error: () => (this.loading = false),
       });
   }
 
@@ -355,7 +382,22 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   sendForm() {
-    if (!this.form.get('officeExternalKey').value) {
+    let cveOficio = this.form.get('officeExternalKey').value;
+
+    if (
+      this.form.invalid ||
+      this.formCcpOficio.invalid ||
+      this.noExpediente.invalid
+    ) {
+      this.alert(
+        'info',
+        'Revisa los campos',
+        'Existen errores en algunos de tus campos.'
+      );
+      return;
+    }
+
+    if (!cveOficio) {
       this.alert(
         'info',
         '',
@@ -363,7 +405,6 @@ export class ThirdpartiesPossessionValidationComponent
       );
       return;
     }
-
     const maxNumClaveArmada = this.goodsPosessionThirdParty.reduce(
       (max, obj) => {
         return Math.max(max, obj.numClueNavy || 0);
@@ -371,16 +412,74 @@ export class ThirdpartiesPossessionValidationComponent
       0
     );
 
-    let oficio = maxNumClaveArmada + 1;
+    if (cveOficio.includes('?')) {
+      let anio = cveOficio.substring(
+        cveOficio.lastIndexOf('/') + 1,
+        cveOficio.length
+      );
+      console.log(anio);
+      if (!cveOficio.includes('?') && cveOficio.endsWith(anio)) {
+        let oficio = maxNumClaveArmada + 1;
 
-    this.formGood.get('closingDate').patchValue(new Date());
-    this.formGood.get('numClueNavy').patchValue(
-      this.formGood
-        .get('numClueNavy')
-        .value.replace('?', ('00000' + oficio).slice(-5))
-        .replace(' ', '')
-    );
-    this.alert('info', 'Nota', 'La clave ya ha sido enviada.');
+        cveOficio = cveOficio
+          .replace('?', ('00000' + oficio).slice(-5))
+          .replace(' ', '');
+
+        console.log(maxNumClaveArmada);
+
+        console.log(oficio);
+        this.formGood.get('closingDate').patchValue(new Date());
+        this.form
+          .get('officeExternalKey')
+          .patchValue(
+            cveOficio
+              .replace('?', ('00000' + oficio).slice(-5))
+              .replace(' ', '')
+          );
+
+        this.formGood.get('numClueNavy').patchValue(oficio);
+
+        let clave = 0;
+        for (let i = 0; i < this.goodsPosessionThirdParty.length; i++) {
+          if (
+            this.goodsPosessionThirdParty[i].jobKey === cveOficio &&
+            this.goodsPosessionThirdParty[i].jobKey.indexOf('?') === -1
+          ) {
+            clave++;
+          }
+        }
+
+        if (clave > 1) {
+          this.alert(
+            'info',
+            'Fatal ERROR ir al área de sistemas hay más de una clave armada con el mismo número',
+            ''
+          );
+        }
+      }
+    }
+
+    const request: ISentSirsae = {
+      armyJobKey: this.formGood.get('numClueNavy').value,
+      delegationNumOpinion: this.formGood.get('delegationCloseNumber').value,
+      date: new Date().toString(),
+      expedientNumber: this.noExpediente.value,
+    };
+
+    console.log(request);
+
+    this.historyGoodService.sentSirsae(request).subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: err => {
+        this.alert(
+          'error',
+          'Ha ocurrido un error',
+          'Inténtalo de nuevo más tarde.'
+        );
+      },
+    });
   }
 
   btnInsertarTextoPredefinido() {
@@ -404,14 +503,14 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   btnImprimir() {
-    this.loading = true;
-    const pdfurl = `http://reports-qa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+    // this.loading = true;
+    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
 
-    const downloadLink = document.createElement('a');
-    //console.log(linkSource);
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
+    // const downloadLink = document.createElement('a');
+    // //console.log(linkSource);
+    // downloadLink.href = pdfurl;
+    // downloadLink.target = '_blank';
+    // downloadLink.click();
 
     // console.log(this.flyersForm.value);
     let params = { ...this.form.value };
@@ -419,7 +518,43 @@ export class ThirdpartiesPossessionValidationComponent
       if (params[key] === null) delete params[key];
     }
     //let newWin = window.open(pdfurl, 'test.pdf');
-    this.alert('success', '', 'Reporte generado');
-    this.loading = false;
+    // this.alert('success', '', 'Reporte generado');
+    // this.loading = false;
+    this.siabService
+      // .fetchReport('RGEROFPRECEPDOCUM', params)
+      .fetchReport('blank', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 }

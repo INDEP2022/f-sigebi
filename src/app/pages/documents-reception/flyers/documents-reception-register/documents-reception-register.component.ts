@@ -530,6 +530,41 @@ export class DocumentsReceptionRegisterComponent
       },
       error: () => {},
     });
+    this.userProcedureBlockedCheck();
+  }
+
+  userProcedureBlockedCheck() {
+    if (this.userId) {
+      const params = new FilterParams();
+      params.addFilter('reading', 'S');
+      params.addFilter('writing', 'S');
+      params.addFilter('typeNumber', 'OFICIALIA');
+      params.addFilter('user', this.userId);
+      this.loading = true;
+      this.docRegisterService.userAreaCheck(params.getParams()).subscribe({
+        next: data => {
+          if (data.data.length > 0) {
+            if (this.procedureStatus == ProcedureStatus.sent) {
+              this.procedureBlocked = true;
+            } else {
+              this.procedureBlocked = false;
+            }
+            this.loading = false;
+          } else {
+            if (this.procedureStatus == ProcedureStatus.sent) {
+              this.procedureBlocked = true;
+            }
+          }
+          this.loading = false;
+        },
+        error: err => {
+          if (this.procedureStatus == ProcedureStatus.sent) {
+            this.procedureBlocked = true;
+          }
+          this.loading = false;
+        },
+      });
+    }
   }
 
   checkPgrGoods(processId?: number, flyerId?: number) {
@@ -1857,6 +1892,12 @@ export class DocumentsReceptionRegisterComponent
     this.formControls.receiptDate.disable();
     this.checkDailyEviction();
     this.destinationAreaChange();
+    if (notif.wheelStatus == 'ENVIADO') {
+      this.procedureStatus = ProcedureStatus.sent;
+      this.userProcedureBlockedCheck();
+    } else {
+      this.procedureStatus = ProcedureStatus.pending;
+    }
     console.log(Object.keys(this.pageParams).length);
     if (Object.keys(this.pageParams).length == 0) {
       this.enableSaveFlyer = true;
@@ -1894,8 +1935,15 @@ export class DocumentsReceptionRegisterComponent
         dictamen: false,
       };
     }
-    console.log(this.procedureId);
-    this.router.navigateByUrl('/pages/juridical/file-data-update');
+
+    this.docDataService.previousRoute = {
+      route: this.router.url,
+      params: {
+        wheelNumber: this.wheelNumber.value,
+      },
+    };
+
+    this.router.navigate(['/pages/juridical/file-data-update']);
   }
 
   showTrackRecords(trackRecords: INotification[]) {
@@ -1924,7 +1972,7 @@ export class DocumentsReceptionRegisterComponent
   sendFlyer() {
     this.alertQuestion(
       'question',
-      '¿Desea enviar este volante?',
+      '¿Desea enviar y bloquear este volante?',
       '',
       'Enviar'
     ).then(question => {
@@ -1940,9 +1988,12 @@ export class DocumentsReceptionRegisterComponent
                 next: data => {
                   this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
                   this.procedureStatus = ProcedureStatus.sent;
-                  this.userRecipient.disable();
-                  this.userCpp.disable();
-                  this.alert('success', 'Estado actualizado correctamente', '');
+                  this.userProcedureBlockedCheck();
+                  this.onLoadToast(
+                    'success',
+                    'Volante y trámite actualizados correctamente',
+                    ''
+                  );
                 },
                 error: () =>
                   this.onLoadToast(
@@ -1955,17 +2006,41 @@ export class DocumentsReceptionRegisterComponent
             this.onLoadToast(
               'warning',
               'No se puede actualizar el estado',
-              'Parametro faltante: pNoTramtie'
+              'Parametro faltante: pNoTramite'
             );
           }
+        } else {
           if (this.wheelNumber.value != null) {
             this.notificationService
               .update(Number(this.wheelNumber.value), {
                 wheelStatus: 'ENVIADO',
               })
               .subscribe({
-                next: data => {},
+                next: data => {
+                  this.formControls.wheelStatus.setValue(ProcedureStatus.sent);
+                  this.procedureStatus = ProcedureStatus.sent;
+                  this.userProcedureBlockedCheck();
+                  this.onLoadToast(
+                    'success',
+                    'Volante actualizado correctamente',
+                    ''
+                  );
+                },
+                error: err => {
+                  console.log(err);
+                  this.onLoadToast(
+                    'error',
+                    'Error',
+                    'Hubo un problema al enviar y bloquear el volante'
+                  );
+                },
               });
+          } else {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Hubo un problema al enviar y bloquear el volante'
+            );
           }
         }
       }
@@ -2504,13 +2579,14 @@ export class DocumentsReceptionRegisterComponent
             field: 'referralNoteType',
             value: this.wheelType.value,
           },
-          {
+          /*{
             field: 'id',
-          },
+          },*/
         ],
-        searchFilterCompatible: false,
+        searchFilterCompatible: true,
         selectOnClick: true,
-        placeholder: 'Buscar por Número de Asunto...',
+        placeholder: 'Buscar tipo de asunto...',
+        type: 'text',
       },
       this.selectAffair
     );

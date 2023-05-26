@@ -48,6 +48,7 @@
                       dropdownToggle
                       id="loadBtn"
                       type="button"
+                      [disabled]="isLoadingLoadFile"
                       class="btn btn-sm btn-info btn-block active me-2 font-size-14 dropdown-toggle"
                       aria-controls="dropdown-animated">
                       <i class="bx bx-file text-light float-icon"></i>
@@ -68,7 +69,7 @@
                             hidden
                             type="file"
                             accept=".csv, .xlsx, .xls"
-                            (change)="readFile($event, 'rfc')"
+                            (change)="onClickLoadFile($event, 'rfc')"
                         /></a>
                       </li>
                       <li role="menuitem">
@@ -80,7 +81,7 @@
                             hidden
                             type="file"
                             accept=".csv, .xlsx, .xls"
-                            (change)="readFile($event, 'client_id')"
+                            (change)="onClickLoadFile($event, 'client_id')"
                         /></a>
                       </li>
                     </ul>
@@ -117,19 +118,11 @@
               <form-field
                 [control]="form.get('eventId')"
                 class="form-group position-relative d-flex">
-                <!-- <ng-custom-select
-                  class="form-control"
-                  path="event/api/v1/comer-event"
-                  formControlName="eventId"
-                  (valueChange)="selectEvent($event)">
-                  <ng-template let-item>
-                    {{ item.id }}/ {{ item.processKey }}
-                  </ng-template>
-                </ng-custom-select> -->
                 <input
                   type="number"
                   class="form-control px-3"
-                  formControlName="eventId" />
+                  formControlName="eventId"
+                  (keyup.enter)="searchEvent()" />
                 <button
                   class="btn-event-search mt-2"
                   type="button"
@@ -156,7 +149,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
               <p class="text-muted">
-                {{ selectedEvent.eventDate | date: 'medium' }}
+                {{ selectedEvent.eventDate | date : 'medium' }}
               </p>
             </div>
             <div
@@ -176,7 +169,7 @@
               <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
               <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
               <p class="text-muted">
-                {{ selectedEvent.failedDate | date: 'medium' }}
+                {{ selectedEvent.failedDate | date : 'medium' }}
               </p>
             </div>
             <div
@@ -212,18 +205,22 @@
             [isAnimated]="true"
             [collapse]="!toggleFilter">
             <div class="col-sm-4 col-md-2">
-              <!-- <form-field [control]="consultForm.get('batchId')">
-                <ngx-select
-                  [form]="consultForm"
-                  [data]="batchItems"
+              <form-field
+                label="Lote"
+                class="form-group"
+                [control]="form.get('batchId')">
+                <ng-custom-select
+                  class="form-control"
+                  formControlName="batchId"
+                  paramSearch="search"
                   value="id"
-                  bindLabel="id"
-                  label="Id Lote"
-                  (fetchItems)="getBatches($event)"
+                  [path]="pathGetBath"
                   control="batchId">
-                </ngx-select>
-              </form-field> -->
-              <app-batch-shared [form]="form"> ></app-batch-shared>
+                  <ng-template let-item>
+                    {{ item.id }}/ {{ item.description }}
+                  </ng-template>
+                </ng-custom-select>
+              </form-field>
             </div>
             <div class="col-sm-4 col-md-2">
               <form-field [control]="form.get('status')" label="Estatus">
@@ -237,19 +234,7 @@
                 </ng-select>
               </form-field>
             </div>
-            <!-- <div class="col-sm-4 col-md-2">
-              <form-field [control]="form.get('operationId')">
-                <ngx-select
-                  [form]="form"
-                  [data]="[]"
-                  value="id"
-                  bindLabel="id"
-                  label="Id Operación"
-                  (fetchItems)="getOperations($event)"
-                  control="operationId">
-                </ngx-select>
-              </form-field>
-            </div> -->
+
             <div class="col-sm-4 col-md-2">
               <form-field
                 [control]="form.get('insertDate')"

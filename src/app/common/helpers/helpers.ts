@@ -33,7 +33,8 @@ export function showToast(
   data: SwalOptions | string
 ): Promise<SweetAlertResult<any>> {
   if (typeof data === 'string') data = { text: data } as SwalOptions;
-  return Swal.fire({
+
+  const toast = Swal.mixin({
     icon: 'success',
     toast: true,
     position: 'top-end',
@@ -41,8 +42,14 @@ export function showToast(
     showCloseButton: true,
     buttonsStyling: false,
     showConfirmButton: false,
+    timerProgressBar: true,
     ...data,
+    didOpen: toast => {
+      toast.addEventListener('mouseenter', Swal.stopTimer);
+      toast.addEventListener('mouseleave', Swal.resumeTimer);
+    },
   });
+  return toast.fire();
 }
 
 export function showAlert<T = any>({
@@ -117,4 +124,35 @@ export function generateUrlOrPath(
     return `${microservice}/${prefix}${route}`;
   }
   return `${url}${microservice}/${prefix}${route}`;
+}
+
+import { read, utils } from 'xlsx';
+export async function getDataFromExcel<T = any>(file: File): Promise<T[]> {
+  const reader = new FileReader();
+  const onLoad = () =>
+    new Promise((resolve, reject) => {
+      reader.onload = event => resolve(event.target.result);
+      reader.onerror = error => reject(error);
+    });
+  reader.readAsBinaryString(file);
+  await onLoad();
+  const result = reader.result as string;
+  const workbook = read(result, { type: 'binary' });
+  const sheetNames = workbook.SheetNames;
+  return utils.sheet_to_json<T>(workbook.Sheets[sheetNames[0]]);
+}
+
+export function goFormControlAndFocus(formControlName: string) {
+  try {
+    const formControl = document.querySelector(
+      `[formcontrolname="${formControlName}"]`
+    ) as HTMLInputElement;
+    formControl.scrollIntoView({
+      behavior: 'smooth',
+    });
+    console.log({ formControl });
+    formControl.focus();
+  } catch (error) {
+    console.log(error);
+  }
 }

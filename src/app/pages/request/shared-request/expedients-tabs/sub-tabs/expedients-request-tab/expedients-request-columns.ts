@@ -1,6 +1,6 @@
 export const EXPEDIENTS_REQUEST_COLUMNS = {
   id: {
-    title: 'No. solicitud',
+    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
@@ -47,19 +47,24 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
   },
 
   paperNumber: {
-    title: 'No. oficio',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
 
   receiptRoute: {
-    title: 'Via de recepción',
+    title: 'Via de Recepción',
     type: 'string',
     sort: false,
   },
 
   typeOfTransfer: {
     title: 'Tipo Transferencia',
+    type: 'string',
+    sort: false,
+  },
+  affair: {
+    title: 'Asunto',
     type: 'string',
     sort: false,
   },

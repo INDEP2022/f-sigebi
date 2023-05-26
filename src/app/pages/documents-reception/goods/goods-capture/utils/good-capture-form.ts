@@ -65,6 +65,7 @@ export class GOOD_CAPTURE_FORM {
   ]);
   esEmpresa = new FormControl<boolean>(null);
   noExpediente = new FormControl<number>(null);
+  status = new FormControl<string>(null);
 }
 
 export class GOOD_FORM {
@@ -196,6 +197,7 @@ export class GOOD_TO_SAVE {
   quantity: string;
   observations: string;
   identifier: string;
+  status: string;
   labelNumber: string;
   unit: string;
   referenceValue: string;

@@ -10,29 +10,78 @@
       (submit)="mostrarInfo()"
       class="container-fluid form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-            <!-- <label class="label w-100">No. Bien</label> -->
-            <input class="form-control w-100" formControlName="noBien" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-          <div class="form-group">
-            <input class="form-control w-100" placeholder="Detalle Remitente" />
-            <label class="form-control-label w-100">Detalle Remitente</label>
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
           </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <div class="card">
+            <div class="card-header">
+              <form-field
+                class="col-sm-12 col-12 col-md-4 p-2"
+                [control]="form.get('noBien')"
+                label="No&#46; Bien">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="noBien" />
+              </form-field>
+              <div class="col-sm-12 col-12 col-md-8 p-2 text-end">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="getGoodData()">
+                  Buscar
+                  <i aria-hidden="true" class="fa fa-search text-pink"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <form-field
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [control]="form.get('descripcion')"
+                label="Descripci&oacute;n del Bien">
+                <textarea
+                  rows="5"
+                  [readonly]="true"
+                  class="form-control"
+                  formControlName="descripcion"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-8">
+          <h6>Pagos Recibidos en el Banco</h6>
+        </div>
+        <div class="col-12 col-sm-12 col-md-4 text-end">
+          <app-columns-select
+            [(settings)]="tableFactGenSettings"></app-columns-select>
+        </div>
+        <div
+          class="col-sm-12 col-12 col-md-12 table-responsive p-1 mt-4 mb-4"
+          style="max-height: 500px; overflow-y: scroll">
+          <div [class]="loadingTable ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="tableFactGenSettings"
+              [source]="dataFactGen">
+              <!-- (userRowSelect)="selectRow($event, $event.data)" -->
+            </ng2-smart-table>
+          </div>
+        </div>
+        <div class="col-12">
+          <!-- <app-pagination
+          [params]="paramsPayBanks"
+          [totalItems]="totalItemsPayBanks"></app-pagination> -->
         </div>
       </div>
     </form>
     <!-- form No Bien -->
-
-    <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableFactGenSettings"
-          [source]="dataFactGen"></ng2-smart-table>
-      </div>
-    </div>
   </div>
 </app-card>

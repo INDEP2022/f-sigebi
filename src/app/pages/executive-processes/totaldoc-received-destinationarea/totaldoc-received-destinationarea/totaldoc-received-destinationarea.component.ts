@@ -7,9 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
@@ -45,7 +46,8 @@ export class TotaldocReceivedDestinationareaComponent
     private modalService: BsModalService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
-    private departamentService: DepartamentService
+    private departamentService: DepartamentService,
+    private siabService: SiabService
   ) {
     super();
     this.today = new Date();
@@ -58,7 +60,7 @@ export class TotaldocReceivedDestinationareaComponent
   private prepareForm() {
     this.form = this.fb.group({
       rangeDate: [null, [Validators.required, maxDate(new Date())]],
-      report: [null],
+      report: [false],
       departamentDes: [null], //noDepartament Destino
       delegationDes: [null], //noDelegation Destino
       subdelegationDes: [null], //noSubDelegation Destino
@@ -71,25 +73,26 @@ export class TotaldocReceivedDestinationareaComponent
         this.areas = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.areas = new DefaultSelect([], 0);
       },
       () => {}
     );
   }
 
   onValuesChange(areaChange: IDepartment) {
-    this.idDel = areaChange.delegation as IDelegation;
-    this.idSub = areaChange.numSubDelegation as ISubdelegation;
     console.log(areaChange);
-    this.areaValue = areaChange;
-    this.form.controls['delegationDes'].setValue(this.idDel.description);
-    this.form.controls['subdelegationDes'].setValue(this.idSub.description);
+    this.form.controls['delegationDes'].setValue(null);
+    this.form.controls['subdelegationDes'].setValue(null);
+    if (areaChange !== undefined) {
+      this.idDel = areaChange.delegation as IDelegation;
+      this.idSub = areaChange.numSubDelegation as ISubdelegation;
+      this.areaValue = areaChange;
+      this.form.controls['delegationDes'].setValue(this.idDel.description);
+      this.form.controls['subdelegationDes'].setValue(this.idSub.description);
+    } else {
+      this.idDel = null;
+      this.idSub = null;
+    }
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -101,53 +104,97 @@ export class TotaldocReceivedDestinationareaComponent
 
   cleanForm(): void {
     this.form.reset();
+    this.form.controls['report'].setValue(false);
   }
 
   confirm(): void {
     this.loading = true;
-    console.log(this.form.value);
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+    const rangeDate = this.form.controls['rangeDate'].value;
+    const detailReport = this.form.controls['report'].value;
 
-    const downloadLink = document.createElement('a');
-    //console.log(linkSource);
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
+    const startTemp = `${rangeDate[0].getFullYear()}-${
+      rangeDate[0].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[0].getUTCMonth() + 1}-${
+      rangeDate[0].getDate() <= 9 ? 0 : ''
+    }${rangeDate[0].getDate()}`;
 
-    // console.log(this.flyersForm.value);
-    let params = { ...this.form.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
-    //let newWin = window.open(pdfurl, 'test.pdf');
-    this.onLoadToast('success', '', 'Reporte generado');
-    this.loading = false;
+    const endTemp = `${rangeDate[1].getFullYear()}-${
+      rangeDate[1].getUTCMonth() + 1 <= 9 ? 0 : ''
+    }${rangeDate[1].getUTCMonth() + 1}-${
+      rangeDate[1].getDate() <= 9 ? 0 : ''
+    }${rangeDate[1].getDate()}`;
+
+    let reportParams: any = {
+      PFECHARECINI: startTemp,
+      PFECHARECFIN: endTemp,
+    };
+
+    if (this.areaValue)
+      reportParams = {
+        ...reportParams,
+        PDPTO: this.areaValue.id,
+        PDELEGACION: this.idDel.id,
+        PSUBDELEGACION: this.idSub.id,
+      };
+
+    console.log(reportParams);
+
+    detailReport
+      ? this.getReport('RCONDIRREPORECDODA', reportParams)
+      : //Todo: Get Real Report
+        //this.getReport('RCONDIRREPORECDOCA', reportParams);
+        this.getReportBlank('blank');
   }
 
-  readFile(file: IReport) {
-    const reader = new FileReader();
-    reader.readAsDataURL(file.data);
-    reader.onload = _event => {
-      // this.retrieveURL = reader.result;
-      this.openPrevPdf(reader.result as string);
-    };
+  getReport(report: string, params: any): void {
+    this.siabService.fetchReport(report, params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
   }
 
-  openPrevPdf(pdfurl: string) {
-    console.log(pdfurl);
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
+  getReportBlank(report: string): void {
+    this.siabService.fetchReportBlank(report).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+      },
+    });
   }
 }

@@ -2,7 +2,11 @@ import { Component, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TURN_SELECTED_COLUMNS } from '../../request-in-turn/request-in-turn-selected/request-in-turn-selected-columns';
@@ -41,11 +45,23 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   //typeTurn: string;
   request: any;
+  op: any;
   user: any;
-  typeUser: string = '';
-  //injections
-  private userProcessService = inject(UserProcessService);
 
+  typeUser: string = '';
+
+  delegationUserLog: string = '';
+  role: string = '';
+  process: string = '';
+  typeUserSelect: string = '';
+
+  //injections
+  deleRegionalId: any;
+  validBtn: any = false;
+  idUser: any;
+  storeData: any;
+  private userProcessService = inject(UserProcessService);
+  private readonly authService = inject(AuthService);
   constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
     super();
     this.settings.columns = TURN_SELECTED_COLUMNS;
@@ -59,21 +75,89 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.typeUser = this.request.targetUserType;
+    if (this.process == 'schedule') {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getAllUsersSchedule(
+          this.typeUserSelect,
+          this.delegationUserLog,
+          this.role
+        );
+      });
+    } else {
+      this.typeUser = this.request.targetUserType;
+      this.storeData = this.authService.decodeToken();
+      this.deleRegionalId = this.storeData.delegacionreg;
+      this.role = this.storeData.puesto;
 
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getAllUsers();
-    });
+      console.log('stored data', this.storeData);
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getAllUsers();
+      });
+    }
   }
 
   getAllUsers() {
     this.loading = true;
     this.params.value.addFilter('employeeType', this.typeUser);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalId,
+      SearchFilter.ILIKE
+    );
+    if (this.op == 2) {
+      this.params.value.addFilter('position', this.role);
+    }
+
     const filter = this.params.getValue().getParams();
+
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
+        console.log('usuarios', resp);
         resp.data.map((item: any) => {
           item['fullName'] = item.firstName + ' ' + item.lastName;
+        });
+
+        resp.data.sort(function (a: any, b: any) {
+          return a.fullName - b.fullName;
+        });
+
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
+  }
+
+  getAllUsersSchedule(typeUser: string, delegation: string, role: string) {
+    /* console.log('tipo', typeUser);
+    console.log('delegación', delegation);
+    console.log('rol', role);
+ */
+    this.loading = true;
+
+    this.params.value.addFilter('position', role);
+    this.params.value.addFilter('employeeType', typeUser);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      delegation,
+      SearchFilter.ILIKE
+    );
+
+    const filter = this.params.getValue().getParams();
+
+    this.userProcessService.getAll(filter).subscribe({
+      next: resp => {
+        console.log('usuarios', resp);
+        resp.data.map((item: any) => {
+          item['fullName'] = item.firstName + ' ' + item.lastName;
+        });
+
+        resp.data.sort(function (a: any, b: any) {
+          return a.fullName - b.fullName;
         });
 
         this.paragraphs = resp.data;
@@ -88,6 +172,14 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   }
 
   selectedRow(user: any) {
+    if (this.idUser == user.data.id) {
+      this.idUser = '';
+      this.validBtn = false;
+    } else {
+      this.validBtn = true;
+      this.idUser = user.data.id;
+    }
+
     this.user = user.data;
   }
   triggerEvent(item: any) {
@@ -97,6 +189,7 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   confirm(): void {
     this.triggerEvent(this.user);
     this.close();
+    this.modalRef.content.callback(this.user);
   }
 
   close(): void {

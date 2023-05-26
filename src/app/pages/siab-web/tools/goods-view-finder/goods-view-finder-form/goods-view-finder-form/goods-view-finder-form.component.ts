@@ -160,7 +160,7 @@ export class GoodsViewFinderFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas buscar el bien?'
+      '¿Desea buscar el bien?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

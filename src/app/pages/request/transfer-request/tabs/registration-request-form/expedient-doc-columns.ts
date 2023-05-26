@@ -13,49 +13,49 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   id: {
-    title: 'No. solicitud',
+    title: 'No. Solicitud',
     type: 'text',
     sort: false,
   },
 
   recordId: {
-    title: 'No. expediente',
+    title: 'No. Expediente',
     type: 'text',
     sort: false,
   },
 
   applicationDate: {
-    title: 'Fecha de solicitud',
+    title: 'Fecha de Solicitud',
     type: 'date',
     sort: false,
   },
 
   paperDate: {
-    title: 'Fecha de oficio',
+    title: 'Fecha de Oficio',
     type: 'text',
     sort: false,
   },
 
   nameOfOwner: {
-    title: 'Nombre del remitente',
+    title: 'Nombre del Remitente',
     type: 'text',
     sort: false,
   },
 
   holderCharge: {
-    title: 'Cargo del remitente',
+    title: 'Cargo del Remitente',
     type: 'text',
     sort: false,
   },
 
   phoneOfOwner: {
-    title: 'Telefono del remitente',
+    title: 'Teléfono del Remitente',
     type: 'text',
     sort: false,
   },
 
   emailOfOwner: {
-    title: 'Email del remitente',
+    title: 'Email del Remitente',
     type: 'text',
     sort: false,
   },
@@ -103,49 +103,49 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   indicatedTaxpayer: {
-    title: 'Contribuyente y/o indiciado',
+    title: 'Contribuyente y/o Indiciado',
     type: 'string',
     sort: false,
   },
 
   transferFile: {
-    title: 'Expediente transferente/PAMA',
+    title: 'Expediente Transferente/PAMA',
     type: 'string',
     sort: false,
   },
 
   circumstantialRecord: {
-    title: 'Acta circunstanciada',
+    title: 'Acta Circunstanciada',
     type: 'string',
     sort: false,
   },
 
   previousInquiry: {
-    title: 'Averiguación previa',
+    title: 'Averiguación Previa',
     type: 'string',
     sort: false,
   },
 
   lawsuit: {
-    title: 'Causa penal',
+    title: 'Causa Penal',
     type: 'string',
     sort: false,
   },
 
   protectNumber: {
-    title: 'No amparo',
+    title: 'No. Amparo',
     type: 'string',
     sort: false,
   },
 
   tocaPenal: {
-    title: 'Toca penal',
+    title: 'Toca Penal',
     type: 'string',
     sort: false,
   },
 
   paperNumber: {
-    title: 'No oficio',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
@@ -157,7 +157,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   publicMinistry: {
-    title: 'Ministerio publico',
+    title: 'Ministerio Público',
     type: 'string',
     sort: false,
   },
@@ -175,7 +175,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   receiptRoute: {
-    title: 'Vía de recepción',
+    title: 'Vía de Recepción',
     type: 'string',
     sort: false,
   },
@@ -187,7 +187,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
   },
 
   typeRecord: {
-    title: 'Tipo expediente',
+    title: 'Tipo Expediente',
     type: 'string',
     sort: false,
   },
@@ -205,49 +205,49 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
     sort: false,
   },
   id: {
-    title: 'No. solicitud',
+    title: 'No. Solicitud',
     type: 'text',
     sort: false,
   },
 
   recordId: {
-    title: 'No. expediente',
+    title: 'No. Expediente',
     type: 'text',
     sort: false,
   },
 
   applicationDate: {
-    title: 'Fecha de solicitud',
+    title: 'Fecha de Solicitud',
     type: 'text',
     sort: false,
   },
 
   paperDate: {
-    title: 'Fecha de oficio',
+    title: 'Fecha de Oficio',
     type: 'text',
     sort: false,
   },
 
   nameOfOwner: {
-    title: 'Nombre del remitente',
+    title: 'Nombre del Remitente',
     type: 'text',
     sort: false,
   },
 
   holderCharge: {
-    title: 'Cargo del remitente',
+    title: 'Cargo del Remitente',
     type: 'text',
     sort: false,
   },
 
   phoneOfOwner: {
-    title: 'Telefono del remitente',
+    title: 'Teléfono del Remitente',
     type: 'text',
     sort: false,
   },
 
   emailOfOwner: {
-    title: 'Email del remitente',
+    title: 'Email del Remitente',
     type: 'text',
     sort: false,
   },
@@ -295,73 +295,73 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   targetUser: {
-    title: 'Usuario destino',
+    title: 'Usuario Destino',
     type: 'string',
     sort: false,
   },
 
   indicatedTaxpayer: {
-    title: 'Contribuyente y/o indiciado',
+    title: 'Contribuyente y/o Indiciado',
     type: 'string',
     sort: false,
   },
 
   transferenceFile: {
-    title: 'Expediente transferente/PAMA',
+    title: 'Expediente Transferente/PAMA',
     type: 'string',
     sort: false,
   },
 
   transferEntNotes: {
-    title: 'Notas entidad transferente',
+    title: 'Notas Entidad Transferente',
     type: 'string',
     sort: false,
   },
 
   addressId: {
-    title: 'idDireccion',
+    title: 'Dirección',
     type: 'string',
     sort: false,
   },
 
   originInfo: {
-    title: 'Procedencia información',
+    title: 'Procedencia Información',
     type: 'string',
     sort: false,
   },
 
   circumstantialRecord: {
-    title: 'Acta circunstanciada',
+    title: 'Acta Circunstanciada',
     type: 'string',
     sort: false,
   },
 
   previousInquiry: {
-    title: 'Averiguación previa',
+    title: 'Averiguación Previa',
     type: 'string',
     sort: false,
   },
 
   lawsuit: {
-    title: 'Causa penal',
+    title: 'Causa Penal',
     type: 'string',
     sort: false,
   },
 
   protectNumber: {
-    title: 'No amparo',
+    title: 'No. Amparo',
     type: 'string',
     sort: false,
   },
 
   tocaPenal: {
-    title: 'Toca penal',
+    title: 'Toca Penal',
     type: 'string',
     sort: false,
   },
 
   paperNumber: {
-    title: 'No oficio',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
@@ -373,7 +373,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   publicMinistry: {
-    title: 'Ministerio publico',
+    title: 'Ministerio Público',
     type: 'string',
     sort: false,
   },
@@ -391,13 +391,13 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   receiptRoute: {
-    title: 'Vía de recepción',
+    title: 'Vía de Recepción',
     type: 'string',
     sort: false,
   },
 
   destinationManagement: {
-    title: 'Gestión de destino',
+    title: 'Gestión de Destino',
     type: 'string',
     sort: false,
   },
@@ -409,7 +409,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   typeRecord: {
-    title: 'Tipo expediente',
+    title: 'Tipo Expediente',
     type: 'string',
     sort: false,
   },
@@ -432,7 +432,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
   },
 
   interiorNumber: {
-    title: 'Número interior',
+    title: 'Número Interior',
     type: 'number',
     sort: false,
   },
@@ -464,7 +464,7 @@ export const EXPEDIENT_DOC_REQ_COLUMNS = {
 
 export const EXPEDIENT_DOC_EST_COLUMNS = {
   goodId: {
-    title: 'Número de gestión',
+    title: 'Número de Gestión',
     type: 'number',
     sort: false,
   },
@@ -476,19 +476,19 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
   },
 
   fileNumber: {
-    title: 'No. expediente de la transferente',
+    title: 'No. Expediente de la Transferente',
     type: 'string',
     sort: false,
   },
 
   requestId: {
-    title: 'No. solicitud',
+    title: 'No. Solicitud',
     type: 'number',
     sort: false,
   },
 
   goodDescription: {
-    title: 'Descripción de bien transferente',
+    title: 'Descripción de Bien Transferente',
     type: 'string',
     sort: false,
   },
@@ -500,25 +500,25 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
   },
 
   physicalStatusName: {
-    title: 'Estado fisico',
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
 
   unitMeasure: {
-    title: 'Unidad de medida transferente',
+    title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
   },
 
   quantity: {
-    title: 'Cantidad de la transferente',
+    title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
   },
 
   destinyName: {
-    title: 'Destino ligie',
+    title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
@@ -532,31 +532,31 @@ export const EXPEDIENT_DOC_EST_COLUMNS = {
 
 export const EXPEDIENT_DOC_SEA_COLUMNS = {
   dDocName: {
-    title: 'Nom. documento',
+    title: 'Nom. Documento',
     type: 'string',
     sort: false,
   },
 
   xidExpediente: {
-    title: 'No. expediente',
+    title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
 
   xidSolicitud: {
-    title: 'No. solicitud',
+    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
 
   ddocTitle: {
-    title: 'Título del documento',
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
 
   xtipoDocumentoNombre: {
-    title: 'Tipo de documento',
+    title: 'Tipo de Documento',
     type: 'string',
     sort: false,
   },
@@ -568,7 +568,7 @@ export const EXPEDIENT_DOC_SEA_COLUMNS = {
   },
 
   dInDate: {
-    title: 'Fecha de creación',
+    title: 'Fecha de Creación',
     type: 'string',
     sort: false,
   },

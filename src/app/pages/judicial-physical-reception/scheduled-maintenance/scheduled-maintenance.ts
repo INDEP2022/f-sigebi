@@ -1,5 +1,6 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -8,8 +9,10 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
@@ -22,22 +25,36 @@ export abstract class ScheduledMaintenance extends BasePage {
   first = true;
   @ViewChild(Ng2SmartTableComponent) table: Ng2SmartTableComponent;
   elementToExport: any[];
+
+  like = SearchFilter.LIKE;
+  hoy = new Date();
   settings1 = {
     ...TABLE_SETTINGS,
     pager: {
       display: false,
     },
-    hideSubHeader: true,
+    hideSubHeader: false,
     selectedRowIndex: -1,
     mode: 'external',
+    actions: {
+      ...TABLE_SETTINGS.actions,
+      columnTitle: '',
+      position: 'left',
+      add: false,
+    },
     columns: {
       id: {
         title: 'ID',
         type: 'string',
         sort: false,
       },
+      // typeProceedings: {
+      //   title: 'Tipo de Evento',
+      //   type: 'string',
+      //   sort: false,
+      // },
       keysProceedings: {
-        title: 'Programa Recepcion Entrega',
+        title: 'Programa Recepción Entrega',
         type: 'string',
         sort: false,
       },
@@ -45,9 +62,10 @@ export abstract class ScheduledMaintenance extends BasePage {
         title: 'Fecha Captura',
         type: Date,
         sort: false,
+        // width: '150px'
       },
       elaborate: {
-        title: 'Ingreso',
+        title: 'Ingresó',
         type: 'string',
         sort: false,
       },
@@ -80,10 +98,6 @@ export abstract class ScheduledMaintenance extends BasePage {
         title: 'Observaciones',
         sort: false,
       },
-      label: {
-        title: 'Label',
-        sort: false,
-      },
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -91,6 +105,7 @@ export abstract class ScheduledMaintenance extends BasePage {
     { id: 'ABIERTA', description: 'Abierto' },
     { id: 'CERRADA', description: 'Cerrado' },
   ];
+  stringPattern = STRING_PATTERN;
   data: IProceedingDeliveryReception[] = [];
   totalItems: number = 0;
   paramsTypes: ListParams = new ListParams();
@@ -98,6 +113,10 @@ export abstract class ScheduledMaintenance extends BasePage {
   tiposEvento: { id: string; description: string }[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new FilterParams();
+  paramsCoords = new ListParams();
+  paramsUsers = new FilterParams();
+  delegationService = inject(DelegationService);
+  userService = inject(UsersService);
   constructor(
     protected fb: FormBuilder,
     protected service: ProceedingsDeliveryReceptionService,
@@ -109,20 +128,52 @@ export abstract class ScheduledMaintenance extends BasePage {
     // console.log(this.settings1);
   }
 
-  get fechaInicio() {
-    return this.form.get('fechaInicio');
+  // get fechaInicio() {
+  //   return this.form.get('fechaInicio');
+  // }
+
+  // get coordRegional() {
+  //   return this.delegationService.getAll(this.paramsCoords);
+  // }
+
+  get usuarios() {
+    return this.userService.getAllSegUsers(this.paramsUsers.getParams());
   }
 
+  get rangeDateValue() {
+    return this.form
+      ? this.form.get('rangeDate')
+        ? this.form.get('rangeDate').value
+        : null
+      : null;
+  }
+
+  deleteRange() {
+    this.form.get('rangeDate').setValue(null);
+  }
+
+  resetView() {
+    console.log('RESET VIEW');
+    this.data = [];
+    this.totalItems = 0;
+  }
+
+  extraOperations() {}
+
   ngOnInit(): void {
+    this.extraOperations();
     this.prepareForm();
     this.service.getTypes().subscribe({
       next: response => {
         this.tiposEvento = response.data;
       },
     });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
-      // console.log(x);
-      this.getData();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        console.log(response);
+
+        this.getData();
+      },
     });
   }
 
@@ -130,34 +181,49 @@ export abstract class ScheduledMaintenance extends BasePage {
     const filtersActa = window.localStorage.getItem(this.formStorage);
     if (filtersActa) {
       const newData = JSON.parse(filtersActa);
-      newData.fechaInicio = newData.fechaInicio
-        ? new Date(newData.fechaInicio)
-        : null;
-      newData.fechaFin = newData.fechaFin ? new Date(newData.fechaFin) : null;
+      console.log(newData);
+      if (newData.rangeDate) {
+        const inicio = newData.rangeDate[0].split('T')[0];
+        const final = newData.rangeDate[1].split('T')[0];
+        newData.rangeDate = [new Date(inicio), new Date(final)];
+      }
+      // const fechaInicio = newData.fechaInicio
+      //   ? new Date(newData.fechaInicio)
+      //   : null;
+      // const fechaFin = newData.fechaFin ? new Date(newData.fechaFin) : null;
+      // newData.rangeDate = [fechaInicio, fechaFin];
       this.form.setValue(newData);
     }
   }
 
   saveForm() {
-    let form = this.form.getRawValue();
-    if (!form.fechaInicio) {
-      form.fechaInicio = null;
+    if (this.form) {
+      let form = this.form.getRawValue();
+      console.log(form);
+
+      // if (!form.rangeDate) {
+      //   form.rangeDate = null;
+      // }
+      // if (!form.fechaInicio) {
+      //   form.fechaInicio = null;
+      // }
+      // if (!form.fechaFin) {
+      //   form.fechaFin = null;
+      // }
+      window.localStorage.setItem(this.formStorage, JSON.stringify(form));
     }
-    if (!form.fechaFin) {
-      form.fechaFin = null;
-    }
-    window.localStorage.setItem(this.formStorage, JSON.stringify(form));
   }
 
   prepareForm() {
     this.form = this.fb.group({
       tipoEvento: [null, [Validators.required]],
-      fechaInicio: [null],
-      fechaFin: [null],
+      rangeDate: [null],
+      // fechaInicio: [null],
+      // fechaFin: [null],
       statusEvento: [null],
       coordRegional: [null, [Validators.pattern(STRING_PATTERN)]],
       usuario: [null, [Validators.pattern(STRING_PATTERN)]],
-      claveActa: [null],
+      claveActa: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.setForm();
     console.log(this.form.value);
@@ -165,13 +231,14 @@ export abstract class ScheduledMaintenance extends BasePage {
 
   private fillParams() {
     const tipoEvento = this.form.get('tipoEvento').value;
-    const fechaInicio: Date | string = this.form.get('fechaInicio').value;
-    const fechaFin: Date = this.form.get('fechaFin').value;
+    // const fechaInicio: Date | string = this.form.get('fechaInicio').value;
+    // const fechaFin: Date = this.form.get('fechaFin').value;
     const statusEvento = this.form.get('statusEvento').value;
     const coordRegional = this.form.get('coordRegional').value;
     const usuario = this.form.get('usuario').value;
     const cveActa = this.form.get('claveActa').value;
-    // console.log(fechaInicio, coordRegional);
+    const rangeDate = this.form.get('rangeDate').value;
+    console.log(rangeDate);
     if (this.form.invalid) {
       return false;
     }
@@ -184,26 +251,42 @@ export abstract class ScheduledMaintenance extends BasePage {
     if (statusEvento && statusEvento !== 'TODOS') {
       this.filterParams.addFilter('statusProceedings', statusEvento);
     }
-    if (fechaInicio) {
-      const inicio =
-        fechaInicio instanceof Date
-          ? fechaInicio.toISOString().split('T')[0]
-          : fechaInicio;
-      const final = fechaFin
-        ? fechaFin.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0];
+
+    if (rangeDate) {
+      const inicio = rangeDate[0].toISOString().split('T')[0];
+      const final = rangeDate[1].toISOString().split('T')[0];
       this.filterParams.addFilter(
         'captureDate',
         inicio + ',' + final,
         SearchFilter.BTW
       );
+      // rangeDate instanceof Date
+      //   ? fechaInicio.toISOString().split('T')[0]
+      //   : fechaInicio;
     }
-    if (coordRegional)
+    // if (fechaInicio) {
+    //   const inicio =
+    //     fechaInicio instanceof Date
+    //       ? fechaInicio.toISOString().split('T')[0]
+    //       : fechaInicio;
+    //   const final = fechaFin
+    //     ? fechaFin.toISOString().split('T')[0]
+    //     : new Date().toISOString().split('T')[0];
+    //   this.filterParams.addFilter(
+    //     'captureDate',
+    //     inicio + ',' + final,
+    //     SearchFilter.BTW
+    //   );
+    // }
+    console.log(coordRegional);
+    if (coordRegional && coordRegional.length > 0) {
       this.filterParams.addFilter(
         'numDelegation_1.description',
         coordRegional,
         SearchFilter.IN
       );
+    }
+
     if (cveActa) {
       this.filterParams.addFilter('keysProceedings', cveActa);
     }
@@ -215,13 +298,27 @@ export abstract class ScheduledMaintenance extends BasePage {
   }
 
   getData() {
+    if (!this.form) {
+      return;
+    }
     this.saveForm();
+    // this.fillParams()
     if (this.fillParams()) {
       this.loading = true;
       this.service.getAll(this.filterParams.getParams()).subscribe({
         next: response => {
           console.log(response);
-          this.data = [...response.data];
+          if (response.data.length === 0) {
+            this.onLoadToast('error', 'No se encontraron datos');
+          }
+          this.data = [
+            ...response.data.map(x => {
+              return {
+                ...x,
+                captureDate: format(new Date(x.captureDate), 'dd/MM/yyyy'),
+              };
+            }),
+          ];
           this.totalItems = response.count;
           this.loading = false;
           // setTimeout(() => {
@@ -230,6 +327,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         },
         error: error => {
           console.log(error);
+          this.onLoadToast('error', 'No se encontraron datos');
           this.loading = false;
           this.data = [];
         },

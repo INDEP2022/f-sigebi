@@ -1,31 +1,31 @@
 //Components
 
 export const COLUMNS = {
-  numberGood: {
+  NO_BIEN: {
     title: 'No. Bien',
     sort: false,
   },
-  datePayment: {
+  FEC_PAGO: {
     title: 'Fecha de Pago',
     sort: false,
   },
-  importe: {
+  IMPORTE: {
     title: 'Importe',
     sort: false,
   },
-  paymentConcept: {
+  CVE_CONCEPTO_PAGO: {
     title: 'Concepto de pago',
     sort: false,
   },
-  observation: {
+  OBSERVACION: {
     title: 'Observaciones',
     sort: false,
   },
-  legal: {
+  JURIDICO: {
     title: 'Jurídico',
     sort: false,
   },
-  administrative: {
+  ADMINISTRA: {
     title: 'Administrativo',
     sort: false,
   },

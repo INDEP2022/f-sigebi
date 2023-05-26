@@ -8,7 +8,7 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          [disabled]="registRequestForm.invalid"
+          [disabled]="registRequestForm.invalid || statusTask == 'FINALIZADA'"
           (click)="saveClarification()">
           <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
         </button>
@@ -17,6 +17,7 @@
       <div class="p-2" *ngIf="approvalProcess && haveDictamen == false">
         <button
           type="button"
+          [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-primary btn-sm active"
           (click)="signDictum()">
           <i class="bx bxs-pencil"></i> Firmar Dictamen
@@ -30,6 +31,7 @@
             requestData?.typeOfTransfer === 'PGR_SAE')
         ">
         <button
+          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-secondary btn-sm active"
           (click)="finish()">
@@ -45,6 +47,7 @@
         ">
         <button
           type="button"
+          [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-secondary btn-sm active"
           (click)="returnar()">
           <i class="bx bxs-right-arrow-square"></i> Returnar
@@ -52,6 +55,7 @@
       </div>
       <div class="p-2" *ngIf="!approvalProcess">
         <button
+          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
@@ -60,6 +64,7 @@
       </div>
       <div class="p-2" *ngIf="approvalProcess">
         <button
+          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="approveRequest()">
@@ -68,6 +73,7 @@
       </div>
       <div class="p-2" *ngIf="approvalProcess">
         <button
+          [disabled]="statusTask == 'FINALIZADA'"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="refuseRequest()">
@@ -161,6 +167,16 @@
                     {{ registRequestForm?.get('recordId').value }}
                   </div>
                 </div>
+                <div
+                  class="col-md-4"
+                  *ngIf="infoRequest?.rejectionComment != null">
+                  <div>
+                    <label class="text-danger" for=""
+                      >Solicitud Rechazada por el Siguiente Motivo:
+                    </label>
+                    {{ infoRequest?.rejectionComment }}
+                  </div>
+                </div>
               </div>
             </div>
           </app-card>
@@ -219,15 +235,10 @@
                   [question]="question"
                   (response)="getResponse($event)"></app-clarifications>
                 <!-- fin -->
-                <!-- notificar aclaraciones o improcedencias -->
-                <app-notification-assets-tab
-                  *ngIf="notifyClarifiOrImpropriety"
-                  [isSaving]="saveClarifiObject"
-                  [process]="process"></app-notification-assets-tab>
-                <!-- fin -->
                 <!-- Aprovar solicitudes -->
                 <app-approval-assets-tabs
                   *ngIf="approvalProcess"
+                  [requestObject]="requestData"
                   [dataObject]="object"
                   [process]="process"></app-approval-assets-tabs>
                 <!-- Fin -->

@@ -7,13 +7,15 @@
       <div class="row">
         <div class="col-md-12 mt-4">
           <form-field
-            label="No. Dictaminación"
             [control]="documentsDictumXStateMForm.get('officialNumber')">
-            <input
-              type="number"
-              class="form-control"
-              maxlength="40"
-              formControlName="officialNumber" />
+            <ngx-select
+              (fetchItems)="getDictNumbers($event)"
+              [data]="selectDictNumber"
+              [form]="documentsDictumXStateMForm"
+              value="id"
+              bindLabel="id"
+              label="No. Dictaminación"
+              control="officialNumber"></ngx-select>
           </form-field>
         </div>
 
@@ -30,7 +32,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6 mt-4">
+        <!-- <div class="col-md-6 mt-4">
           <form-field
             label="No. Expediente"
             [control]="documentsDictumXStateMForm.get('expedientNumber')">
@@ -41,9 +43,24 @@
               maxlength="11"
               formControlName="expedientNumber" />
           </form-field>
-        </div>
+        </div> -->
 
         <div class="col-md-6 mt-4">
+          <form-field
+            [control]="documentsDictumXStateMForm.get('expedientNumber')">
+            <ngx-select
+              (fetchItems)="getExpedients($event)"
+              [data]="selectExpedient"
+              [form]="documentsDictumXStateMForm"
+              value="id"
+              bindLabel="id"
+              label="No. Expediente"
+              control="expedientNumber">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <!-- <div class="col-md-6 mt-4">
           <form-field
             label="No. Bien"
             [control]="documentsDictumXStateMForm.get('stateNumber')">
@@ -53,6 +70,20 @@
               class="form-control"
               maxlength="11"
               formControlName="stateNumber" />
+          </form-field>
+        </div> -->
+
+        <div class="col-md-6 mt-4">
+          <form-field [control]="documentsDictumXStateMForm.get('stateNumber')">
+            <ngx-select
+              (fetchItems)="getGoods($event)"
+              [data]="selectGood"
+              [form]="documentsDictumXStateMForm"
+              value="id"
+              bindLabel="id"
+              label="No. Bien"
+              control="stateNumber">
+            </ngx-select>
           </form-field>
         </div>
 
@@ -88,7 +119,6 @@
             label="Usuario Recibió"
             [control]="documentsDictumXStateMForm.get('userReceipt')">
             <input
-              type="number"
               class="form-control"
               maxlength="11"
               formControlName="userReceipt" />
@@ -115,7 +145,6 @@
             label="Usuario Insertó"
             [control]="documentsDictumXStateMForm.get('userInsertion')">
             <input
-              type="number"
               class="form-control"
               maxlength="30"
               formControlName="userInsertion" />
@@ -139,10 +168,9 @@
 
         <div class="col-md-6 mt-4">
           <form-field
-            label="Usuario Insertó"
+            label="Aseg. Dev. Clave"
             [control]="documentsDictumXStateMForm.get('secureKey')">
             <input
-              type="number"
               class="form-control"
               maxlength="3"
               formControlName="secureKey" />
@@ -155,6 +183,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          [disabled]="documentsDictumXStateMForm.invalid"
           [type]="'button'"
           (confirm)="confirm()"></confirm-button>
       </div>

@@ -164,7 +164,7 @@ export class ProposalInventoriesDonationComponent
   public updateAdvance() {
     this.alertQuestion(
       'info',
-      '¿Deseas actualizar el avance del inventario?',
+      '¿Desea actualizar el avance del inventario?',
       ''
     ).then(resp => (resp.isConfirmed ? this.updateContracts() : null));
   }

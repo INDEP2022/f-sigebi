@@ -85,7 +85,7 @@ export class ServiceTransportableGoodsFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas eliminar el servicio?'
+      '¿Estás seguro que desea eliminar el servicio?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

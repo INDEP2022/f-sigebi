@@ -9,7 +9,7 @@ export const LIST_ASSETS_COLUMN = {
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  gooddescription: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,

@@ -30,6 +30,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   loadingText = '';
   userName = '';
   consultTasksForm: FormGroup;
+  department = '';
 
   constructor(
     private taskService: TaskService,
@@ -49,6 +50,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.userName = this.authService.decodeToken().preferred_username;
+    this.department = this.authService.decodeToken().department;
 
     this.consultTasksForm = this.fb.group({
       unlinked: [null, Validators.required],
@@ -67,10 +69,10 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoOrdenServicio: ['', Validators.pattern(NUMBERS_PATTERN)],
-      txtAsignado: [
-        '',
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
-      ],
+      // txtAsignado: [
+      //   '',
+      //   [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      // ],
       txtNoOrdenPago: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtAprobador: [
         '',
@@ -97,6 +99,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
+      State: ['null'],
+      typeOfTrasnfer: [null],
     });
 
     this.params
@@ -106,19 +110,69 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       )
       .subscribe();
   }
-
+  searchTasks() {
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    this.params
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => this.getTasks())
+      )
+      .subscribe();
+  }
   exportToExcel() {
     const filename: string = this.userName + '-Tasks';
     // El type no es necesario ya que por defecto toma 'xlsx'
     this.excelService.export(this.tasks, { filename });
   }
 
-  getTasks() {
+  private getTasks() {
     let isfilterUsed = false;
     const params = this.params.getValue();
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    const user = this.authService.decodeToken() as any;
+
+    this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue(
+      Number.parseInt(user.department)
+    );
+    console.log(this.consultTasksForm.value);
+    this.filterParams
+      .getValue()
+      .addFilter('assignees', user.username, SearchFilter.ILIKE);
+    //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
+    const filterStatus = this.consultTasksForm.get('State').value;
+    console.log(filterStatus);
+    if (filterStatus) {
+      isfilterUsed = true;
+      if (filterStatus === 'null') {
+        this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+      } else if (filterStatus === 'FINALIZADA') {
+        this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
+      }
+      if (filterStatus === 'TODOS') {
+        console.log('todos');
+        this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
+      }
+    }
+
+    if (this.consultTasksForm.value.typeOfTrasnfer) {
+      isfilterUsed = true;
+      const value = this.consultTasksForm.value.typeOfTrasnfer;
+
+      if (value == 'FGR_SAE') {
+        this.filterParams
+          .getValue()
+          .addFilter('request.typeOfTransfer', 'PGR_SAE', SearchFilter.EQ);
+        this.filterParams
+          .getValue()
+          .addFilter('request.typeOfTransfer', value, SearchFilter.OR);
+      } else {
+        this.filterParams
+          .getValue()
+          .addFilter('request.typeOfTransfer', value, SearchFilter.EQ);
+      }
+    }
 
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
@@ -160,16 +214,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtAsignado || this.userName) {
-      // isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'assignees',
-          this.consultTasksForm.value.txtAsignado || this.userName,
-          SearchFilter.ILIKE
-        );
-    }
+    // if (this.consultTasksForm.value.txtAsignado || this.userName) {
+    //   // isfilterUsed = true;
+    //   this.filterParams
+    //     .getValue()
+    //     .addFilter(
+    //       'assignees',
+    //       this.consultTasksForm.value.txtAsignado || this.userName,
+    //       SearchFilter.ILIKE
+    //     );
+    // }
     if (this.consultTasksForm.value.txtNoOrdenPago) {
       isfilterUsed = true;
       this.filterParams
@@ -220,10 +274,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (
-      this.consultTasksForm.value.txtFecAsigDesde &&
-      this.consultTasksForm.value.txtFecAsigHasta
-    ) {
+    if (this.consultTasksForm.value.txtFecAsigDesde) {
       isfilterUsed = true;
       const fechaInicio = this.consultTasksForm.value.txtFecAsigDesde;
       const fechaFin = this.consultTasksForm.value.txtFecAsigHasta;
@@ -232,9 +283,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         fechaInicio instanceof Date
           ? fechaInicio.toISOString().split('T')[0]
           : fechaInicio;
-      const final = fechaFin
-        ? fechaFin.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0];
+      const final = fechaFin ? fechaFin.toISOString().split('T')[0] : inicio;
 
       this.filterParams
         .getValue()
@@ -259,23 +308,22 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         fechaInicio instanceof Date
           ? fechaInicio.toISOString().split('T')[0]
           : fechaInicio;
-      const final = fechaFin
-        ? fechaFin.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0];
+      const final = fechaFin ? fechaFin.toISOString().split('T')[0] : inicio;
 
       this.filterParams
         .getValue()
         .addFilter('endDate', inicio + ',' + final, SearchFilter.BTW);
     }
-    if (this.consultTasksForm.value.txtNoDelegacionRegional) {
+    if (
+      typeof this.consultTasksForm.value.txtNoDelegacionRegional == 'number'
+    ) {
       isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'regionalDelegationId',
-          this.consultTasksForm.value.txtNoDelegacionRegional,
-          SearchFilter.ILIKE
-        );
+      this.filterParams.getValue().addFilter(
+        'idDelegationRegional',
+        // request.regionalDelegationNumber
+        this.consultTasksForm.value.txtNoDelegacionRegional,
+        SearchFilter.EQ
+      );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
       isfilterUsed = true;
@@ -287,24 +335,24 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    if (this.consultTasksForm.value.txtNoTransferente) {
+    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
-          'transferenceId',
+          'request.transferenceId',
           this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
-    if (this.consultTasksForm.value.txtNoProgramacion) {
+    if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
       isfilterUsed = true;
       this.filterParams
         .getValue()
         .addFilter(
           'programmingId',
           this.consultTasksForm.value.txtNoProgramacion,
-          SearchFilter.ILIKE
+          SearchFilter.EQ
         );
     }
 
@@ -321,11 +369,13 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     this.tasks = [];
     this.totalItems = 0;
-    if (!isfilterUsed) {
-      this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
-    }
+    // if (!isfilterUsed) {
+    //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+    // }
     this.taskService
-      .getTasksByUser(this.filterParams.getValue().getParams())
+      .getTasksByUser(
+        this.filterParams.getValue().getParams().concat('&sortBy=id:DESC')
+      )
       .subscribe({
         next: response => {
           console.log('Response: ', response);
@@ -342,6 +392,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           } */
           response.data.map((item: any) => {
             item.taskNumber = item.id;
+            item.requestId =
+              item.requestId != null ? item.requestId : item.programmingId;
           });
 
           this.tasks = response.data;
@@ -355,12 +407,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.consultTasksForm.reset();
     this.consultTasksForm.updateValueAndValidity();
     this.consultTasksForm.controls['txtSearch'].setValue('');
-    this.getTasks();
+    this.searchTasks();
   }
 
   onKeydown(event: any) {
     console.log('Apreto enter event', event);
-    this.getTasks();
+    this.searchTasks();
   }
 
   openTask(selected: any): void {
@@ -373,7 +425,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     localStorage.setItem(`Task`, JSON.stringify(obj2Storage));
 
-    if (selected.requestId !== null || selected.urlNb !== null) {
+    if (selected.requestId !== null && selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
       console.log(url);
       this.router.navigateByUrl(url);

@@ -1,19 +1,30 @@
 //Components
 
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const COLUMNS = {
-  number: {
+  goodId: {
     title: 'No. Bien',
     sort: false,
   },
   description: {
     title: 'Descripcion',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
   },
-  kitchenware: {
+  menaje: {
     title: 'Menaje',
     sort: false,
   },
-  quantityDict: {
+  amountDict: {
     title: 'Cant. Dict.',
     sort: false,
   },
@@ -21,12 +32,77 @@ export const COLUMNS = {
     title: 'Estatus',
     sort: false,
   },
-  ident: {
+  identifier: {
     title: 'Ident',
     sort: false,
   },
-  processes: {
-    title: 'Procesos',
+  extDomProcess: {
+    title: 'Proceso',
+    sort: false,
+  },
+};
+
+export const officeTypeOption = [
+  {
+    option: 'ASEGURADOS ORDINARIOS',
+    value: 'A-O',
+  },
+  {
+    option: 'ASEGURADOS ORDINARIOS HMLLO',
+    value: 'A-OH',
+  },
+  {
+    option: 'ASEGURADOS TERCER TRANSITORIO',
+    value: 'A-TT',
+  },
+  {
+    option: 'COMERCIO EXTERIOR',
+    value: 'C-E',
+  },
+  {
+    option: 'DECOMISO',
+    value: 'D',
+  },
+  {
+    option: 'DEVOLUCIÓN ASEGURADOS',
+    value: 'D-A',
+  },
+  {
+    option: 'DEVOLUCIÓN NUMERARIO ASEGURADO',
+    value: 'D-NA',
+  },
+  {
+    option: 'NUMERARIO ASEGURADO',
+    value: 'N-A',
+  },
+  {
+    option: 'TESOFE',
+    value: 'T',
+  },
+  {
+    option: 'DECLARATORIA ABANDONO NUMERARIO',
+    value: 'DAN',
+  },
+  {
+    option: 'DECLARATORIA ABANDONO BIENES',
+    value: 'DAB',
+  },
+  {
+    option: 'EXTINCIÓN DE DOMINIO',
+    value: 'E-D',
+  },
+];
+export const RELATED_FOLIO_COLUMNS = {
+  id: {
+    title: 'Folio',
+    sort: false,
+  },
+  sheets: {
+    title: 'Documentos',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción del documento',
     sort: false,
   },
 };

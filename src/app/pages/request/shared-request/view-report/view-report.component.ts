@@ -117,7 +117,7 @@ export class ViewReportComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas adjuntar el documento?'
+      '¿Estás seguro que desea adjuntar el documento?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

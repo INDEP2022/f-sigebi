@@ -5,54 +5,121 @@
 
   <div body>
     <form [formGroup]="form" class="container-fluid form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-            <input class="form-control" formControlName="noBien" />
-          </form-field>
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-sm-12">
+          <div class="row">
+            <div class="col-12 mb-2 mt-2">
+              <form-field [control]="form.get('noBien')">
+                <ngx-select
+                  [form]="form"
+                  control="noBien"
+                  (change)="getGood($event)"
+                  (fetchItems)="listGoodsId($event)"
+                  [data]="selectRegDele"
+                  label="No&#46; Bien"
+                  value="id"
+                  bindLabel="descriptionAndId">
+                </ngx-select>
+              </form-field>
+            </div>
+
+            <div class="col-12 mb-3 mt-2">
+              <form-field
+                [control]="form.get('descripcion')"
+                label="Descripci&oacute;n">
+                <label class="form-control-label w-100">{{
+                  descripcion
+                }}</label>
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="descripcion" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mb-3 mt-2">
+              <form-field [control]="form.get('cantidad')" label="Cantidad">
+                <label class="form-control-label w-100">{{ cantidad }}</label>
+
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="cantidad" />
+              </form-field>
+            </div>
+            <div class="col-12 mb-3 mt-2">
+              <form-field [control]="form.get('unidad')" label="Unidad">
+                <label class="form-control-label w-100">{{ unidad }}</label>
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="unidad" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('cantidad')" label="Cantidad">
-            <input class="form-control" formControlName="cantidad" />
-          </form-field>
+        <div class="col-lg-5 col-sm-12">
+          <div class="row">
+            <div class="col-12 mb-3 mt-2">
+              <form-field [control]="form.get('estatus')" label="Estatus">
+                <label class="form-control-label w-100">{{ estatus }}</label>
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="estatus" />
+              </form-field>
+            </div>
+            <div class="col-12 mb-3 mt-2">
+              <form-field
+                [control]="form.get('clasificacion')"
+                label="Clasificaci&oacute;n">
+                <label class="form-control-label w-100">{{
+                  clasificacion
+                }}</label>
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="clasificacion" />
+              </form-field>
+            </div>
+            <div class="col-12 mb-3 mt-2">
+              <form-field [control]="form.get('destino')" label="Destino">
+                <label class="form-control-label w-100">{{ destino }}</label>
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="destino" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('unidad')" label="Unidad">
-            <input class="form-control" formControlName="unidad" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('estatus')" label="Estatus">
-            <input class="form-control" formControlName="estatus" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('clasificacion')"
-            label="Clasificaci&oacute;n">
-            <input class="form-control" formControlName="clasificacion" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('destino')" label="Destino">
-            <input class="form-control" formControlName="destino" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('descripcion')"
-            label="Descripci&oacute;n">
-            <input class="form-control" formControlName="descripcion" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm"
-              (click)="btnAplicaAbandono()">
-              Aplica Abandono
-            </button>
+
+        <div class="col-12">
+          <div class="row form-group justify-content-center">
+            <div class="col-lg-5 col-md-5 col-5 form-group">
+              <button
+                style="float: right"
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="btnAplicaAbandono()"
+                [disabled]="!form.valid || loading">
+                Aplica Abandono
+              </button>
+            </div>
+            <div class="col-lg-5 col-md-5 col-5 form-group">
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm"
+                (click)="cleanForm()">
+                Limpiar
+              </button>
+            </div>
           </div>
         </div>
       </div>

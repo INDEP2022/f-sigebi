@@ -1,21 +1,26 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      &Oacute;rdenes de ingreso por bien de depositar&iacute;a
-    </h5>
+    <div class="col-12 col-sm-12 col-md-8">
+      <h5 class="title">
+        &Oacute;rdenes de ingreso por bien de depositar&iacute;a
+      </h5>
+    </div>
+    <div class="col-12 col-sm-12 col-md-4 text-end">
+      <button class="btn btn-primary active btn-sm" (click)="goBack()">
+        Regresar
+      </button>
+    </div>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberGood')" label="No Bien">
-            <ng-select
-              [items]="itemsJsonInterfaz"
-              bindLabel="goodNumber"
-              bindValue="appointmentNumber"
+            <input
+              type="number"
+              class="form-control"
               formControlName="numberGood"
-              class="form-control">
-            </ng-select>
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -23,7 +28,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="contractKey" />
+              formControlName="contractKey"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-5 col-sm-12 col-xs-12">
@@ -31,7 +37,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="depositary" />
+              formControlName="depositary"
+              [readonly]="true" />
           </form-field>
         </div>
       </div>
@@ -43,7 +50,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="description"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -61,7 +69,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
-                (click)="print()">
+                (click)="print()"
+                [disabled]="form.invalid">
                 Imprimir
               </button>
             </div>
@@ -73,17 +82,31 @@
       </div>
       <hr />
       <div class="row pl-3">Firmante</div>
-
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('user')" label="Usuario">
-            <ng-select
-              [items]="itemsJsonInterfazUser"
-              bindLabel="usuario.user"
-              bindValue="id"
-              formControlName="user"
-              class="form-control">
-            </ng-select>
+          <form-field [control]="form.get('userId')">
+            <ngx-select
+              [form]="form"
+              [data]="users$"
+              (change)="getDescUser($event)"
+              (fetchItems)="getUsers($event)"
+              bindLabel="userAndName"
+              control="userId"
+              label="Usuario"
+              [searchOnInit]="true"
+              [showTooltip]="true"
+              termMaxLength="30"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+            <ng-template #userLabel let-item="item">
+              {{ item.id }} - {{ item.name }}
+            </ng-template>
+            <ng-template #userOption let-item="item">
+              <div [title]="item.id + '-' + item.name">
+                {{ item.id }} - {{ item.name }}
+              </div>
+            </ng-template>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -91,16 +114,23 @@
             <input
               type="text"
               class="form-control"
-              formControlName="username" />
+              formControlName="username"
+              [readonly]="true" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('charge')" label="Puesto">
-            <input type="text" class="form-control" formControlName="charge" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="charge"
+              [readonly]="true" />
           </form-field>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12"></div>
       </div>
     </form>
   </div>
 </app-card>
-<!--{{itemsJsonInterfaz | json}}-->

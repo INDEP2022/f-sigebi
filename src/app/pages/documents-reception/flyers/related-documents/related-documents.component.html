@@ -304,7 +304,8 @@
               [data]="goodTypes"
               [showTooltip]="true"
               label="Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo"
-              (fetchItems)="getClasifSubTypeGoods($event)">
+              (fetchItems)="getClasifSubTypeGoods($event)"
+              (change)="getIdClasify($event)">
             </ngx-select>
           </form-field>
           <form-check
@@ -330,7 +331,10 @@
             </div>
           </div>
           <div class="col-md-12 mt-3 text-right">
-            <button type="button" class="btn btn-info btn-sm mr-2">
+            <button
+              type="button"
+              class="btn btn-info btn-sm mr-2"
+              (click)="openModal()">
               Documentos
             </button>
             <button

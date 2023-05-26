@@ -7,18 +7,34 @@
     <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
     <div class="row w-100 alert alert-info">
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-        <form [formGroup]="noExpediente" class="form-material">
+        <form class="form-material">
           <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field [control]="noExpediente.get('noExpediente')">
-                <div class="d-flex">
+              <div class="d-flex align-item-center gap-2">
+                <form-field [control]="noExpediente" label="No. Expediente">
                   <input
                     placeholder="No. Expediente"
                     type="number"
+                    min="1"
                     class="form-control"
-                    formControlName="noExpediente" />
+                    (keyup.enter)="getNotifications()"
+                    [formControl]="noExpediente" />
+                </form-field>
+                <div>
+                  <button
+                    [disabled]="loading"
+                    (click)="getNotifications()"
+                    class="btn btn-sm btn-primary active">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <button
+                    (click)="clearForm()"
+                    [disabled]="loading"
+                    class="ml-2 btn btn-sm btn-secondary active">
+                    <i class="fas fa-eraser"></i>
+                  </button>
                 </div>
-              </form-field>
+              </div>
             </div>
             <div class="col-sm-12 col-12 col-md-8 p-2">
               <h6>NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE</h6>
@@ -209,7 +225,10 @@
                 maxlength="40"
                 [control]="formGood.get('closingDate')"
                 label="Fecha de Cierre">
-                <input class="form-control" formControlName="closingDate" />
+                <input
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="closingDate" />
               </form-field>
             </div>
           </div>

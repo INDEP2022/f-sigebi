@@ -12,7 +12,6 @@ import { IDocTypes, IWContent } from '../../models/ms-wcontent/wcontent.model';
   providedIn: 'root',
 })
 export class WContentService extends HttpWContentService {
-  private Path = environment.API_URL;
   private http = inject(HttpClient);
 
   constructor() {
@@ -98,7 +97,7 @@ export class WContentService extends HttpWContentService {
     //responseType: 'arraybuffer' as 'json',
     //responseType: 'blob',
     //});
-    const url = `http://sigebimsqa.indep.gob.mx/${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&idSolicitud=${idRequest}`;
+    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&idSolicitud=${idRequest}`;
 
     return this.http.get(url, { responseType: 'blob' });
   }
@@ -108,7 +107,7 @@ export class WContentService extends HttpWContentService {
     idRequest: string,
     ciudad?: string
   ) {
-    const url = `http://sigebimsqa.indep.gob.mx/${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&ID_SOLICITUD=${idRequest}&ID_SOLICITUD=${ciudad}`;
+    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&ID_SOLICITUD=${idRequest}&ID_SOLICITUD=${ciudad}`;
 
     return this.http.get(url, { responseType: 'blob' });
   }

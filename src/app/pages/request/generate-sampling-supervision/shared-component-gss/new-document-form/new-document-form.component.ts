@@ -1,6 +1,7 @@
 import {
   Component,
   ElementRef,
+  inject,
   OnChanges,
   OnInit,
   SimpleChanges,
@@ -8,6 +9,8 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -28,7 +31,7 @@ export class NewDocumentFormComponent
   fileToUpload: File | null = null;
   sizeMessage: boolean = false;
 
-  typeDocSelected = new DefaultSelect();
+  typeDocSelected: any = []; //new DefaultSelect();
   stateSelected = new DefaultSelect();
   typeTranferSelected = new DefaultSelect();
   regionalDelegationSelected = new DefaultSelect();
@@ -37,6 +40,8 @@ export class NewDocumentFormComponent
   data: string = '';
   typeComponent: string = '';
   isDisable: boolean = false;
+
+  private readonly wcontentService = inject(WContentService);
 
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
@@ -48,6 +53,7 @@ export class NewDocumentFormComponent
       this.isDisable = false;
     }*/
     this.initForm();
+    this.getTypeDocSelect();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -89,7 +95,14 @@ export class NewDocumentFormComponent
     }
   }
 
-  getTypeDocSelect(event: any) {}
+  getTypeDocSelect(event?: any) {
+    const params = new ListParams();
+    this.wcontentService.getDocumentTypes(params).subscribe({
+      next: resp => {
+        this.typeDocSelected = resp.data;
+      },
+    });
+  }
 
   getStateSelect(event: any) {}
 

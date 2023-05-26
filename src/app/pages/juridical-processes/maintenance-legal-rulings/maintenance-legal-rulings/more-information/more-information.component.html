@@ -1,33 +1,61 @@
-<form [formGroup]="form" class="form-material">
+<form [formGroup]="form" class="form-material" (ngSubmit)="send()">
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('numberOfDict')"
+        [control]="form.get('dictatesNumber')"
         label="No&#46; Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="numberOfDict" />
+        <input
+          type="number"
+          class="form-control"
+          maxlength="11"
+          formControlName="dictatesNumber" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field
-        [control]="form.get('typeDict')"
+        [control]="form.get('rulingType')"
         label="Tipo Dictaminaci&oacute;n">
-        <input class="form-control" formControlName="typeDict" />
+        <input
+          class="form-control"
+          maxlength="15"
+          required
+          formControlName="rulingType" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
-      <form-field [control]="form.get('textX')" label="Texto 1">
-        <textarea class="form-control" formControlName="textX"></textarea>
+      <form-field [control]="form.get('textx')" label="Texto 1">
+        <textarea
+          rows="5"
+          class="form-control"
+          maxlength="4000"
+          formControlName="textx"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
-      <form-field [control]="form.get('textY')" label="Texto 2">
-        <textarea class="form-control" formControlName="textY"></textarea>
+      <form-field [control]="form.get('textoy')" label="Texto 2">
+        <textarea
+          rows="5"
+          class="form-control"
+          maxlength="4000"
+          formControlName="textoy"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
-      <form-field [control]="form.get('textZ')" label="Texto 3">
-        <textarea class="form-control" formControlName="textZ"></textarea>
+      <form-field [control]="form.get('textoz')" label="Texto 3">
+        <textarea
+          rows="5"
+          class="form-control"
+          maxlength="4000"
+          formControlName="textoz"></textarea>
       </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <button
+        class="btn btn-sm btn-primary active"
+        type="submit"
+        [disabled]="form.invalid">
+        Guardar
+      </button>
     </div>
   </div>
 </form>

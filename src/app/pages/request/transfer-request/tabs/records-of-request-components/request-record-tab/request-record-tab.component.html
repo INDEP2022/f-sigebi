@@ -36,6 +36,7 @@
               class="form-control"
               #dp="bsDatepicker"
               bsDatepicker
+              [maxDate]="maxDate"
               [bsValue]="bsPriorityDate"
               (bsValueChange)="changePriorityDateEvent($event)" />
           </form-field>
@@ -51,6 +52,7 @@
               class="form-control"
               #dp="bsDatepicker"
               bsDatepicker
+              [maxDate]="maxDate"
               [bsValue]="bsReceptionValue"
               [disabled]="true"
               required />
@@ -65,6 +67,7 @@
               class="form-control"
               [bsValue]="bsPaperValue"
               #dp="bsDatepicker"
+              [maxDate]="maxDate"
               bsDatepicker
               (bsValueChange)="changeDateEvent($event)" />
             <!-- <span class="text-danger bg-white border-0 ui-inputgroup-addon">*</span>
@@ -144,7 +147,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('holderCharge')"
-            label="Cargo {{ transfe }}">
+            label="Cargo {{ transfe === 'MP' ? 'y/o Adscripción' : transfe }}">
             <input
               type="text"
               maxlength="100"
@@ -184,7 +187,7 @@
         <div class="col-md-4">
           <form-field
             [control]="requestForm.get('holderCharge')"
-            label="Cargo {{ transfe }}">
+            label="Cargo {{ transfe === 'MP' ? 'y/o Adscripción' : transfe }}">
             <input
               type="text"
               maxlength="100"
@@ -329,7 +332,7 @@
 
       <div class="row pt-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
         <!-- FIN TRANSFERENTES 1 Y 3 -->
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field
             [control]="requestForm.get('trialType')"
             label="Tipo de Juicio">
@@ -339,7 +342,7 @@
               formControlName="trialType"
               maxlength="100" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-4">
           <ngx-select
             [form]="requestForm"
@@ -422,7 +425,7 @@
         <div class="col-md-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
           <form-field
             [control]="requestForm.get('domainExtinction')"
-            label="Extinci&oacute;n Dominio">
+            label="Extinci&oacute;n de Dominio">
             <input
               type="text"
               class="form-control"

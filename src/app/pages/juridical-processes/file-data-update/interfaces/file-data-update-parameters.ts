@@ -20,6 +20,7 @@ export interface IJuridicalFileDataUpdateParams {
   pGestOk: number;
   pNoTramite: number;
   dictamen: boolean;
+  pNoVolante?: number | string;
 }
 
 export interface IJuridicalRulingParams {
@@ -55,4 +56,5 @@ export interface IJuridicalShiftChangeParams {
   iden: number;
   exp: number;
   pNoTramite: number;
+  affair: any;
 }

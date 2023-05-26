@@ -10,6 +10,7 @@ export interface IGood {
   complianceLeaveDate?: string;
   quantity?: number;
   goodStatus?: string;
+  aliasWarehouse?: string;
   cant: string;
   notifyDate?: string | Date;
   dateEntry: string;
@@ -25,8 +26,8 @@ export interface IGood {
   solIncripRegister?: any;
   fecOpinion?: any;
   proficientOpinion?: any;
-  fileeNumber: string;
-  appraisal: string;
+  fileNumber?: string;
+  appraisal?: string;
   appraiserOpinion?: any;
   goodTypeId: number;
   originSignals?: any;
@@ -634,4 +635,9 @@ export interface IGoodSearchGoodByFile {
 export interface IGoodSearchGoodByClasification {
   screenKey: string;
   clasifGoodNumber: number;
+}
+
+export interface IGoodAttribGoodBad {
+  id: string | number;
+  motive: string;
 }

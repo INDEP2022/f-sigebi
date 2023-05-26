@@ -11,18 +11,15 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <ngx-select
-            [form]="form"
-            control="idExpedient"
-            (fetchItems)="getExpedients()"
-            [showTooltip]="true"
-            [data]="selectExpedient"
-            change="getExpedientById()"
-            bindLabel="indicatedName"
-            label="Expediente"
-            value="id"></ngx-select>
+          <form-field [control]="form.get('idExpedient')" label="Expediente">
+            <input
+              (change)="expedientChange()"
+              type="number"
+              class="form-control"
+              formControlName="idExpedient" />
+          </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
@@ -32,7 +29,7 @@
               formControlName="preliminaryInquiry" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="form.get('criminalCase')" label="Causa Penal">
             <input
               type="text"
@@ -40,7 +37,10 @@
               formControlName="criminalCase" />
           </form-field>
         </div>
-        <div class="col-md-2">
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('circumstantialRecord')"
             label="Acta Circunstanciada">
@@ -50,7 +50,7 @@
               formControlName="circumstantialRecord" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="form.get('keyPenalty')" label="Toca penal">
             <input
               type="text"
@@ -58,27 +58,12 @@
               formControlName="keyPenalty" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid"
-            (click)="getExpedientById()">
-            Buscar
+
+        <div class="col">
+          <button type="button" class="btn btn-sm btn-primary active">
+            Agregar Bienes
           </button>
         </div>
-        <!-- <div class="col-md-2">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                type="button"
-                class="btn btn-sm btn-primary active"
-                [disabled]="!form.valid"
-                (click)="show = !show">
-                {{ show ? 'Agregar otros' : 'Agregar bienes' }}
-              </button>
-            </div>
-          </div>
-        </div> -->
       </div>
     </form>
   </div>
@@ -88,8 +73,8 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row pt-5">
-        <div class="col-md-1">
-          <form-field [control]="form.get('noAuth')" label="No. Bien">
+        <div class="col-md-2">
+          <form-field [control]="form.get('noAuth')" label="No">
             <input
               type="text"
               class="form-control"
@@ -98,7 +83,7 @@
               maxlength="10" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('authNotice')"
             label="Oficio de autorizaci&oacute;n">
@@ -117,6 +102,11 @@
               formControlName="fromDate"
               [bsConfig]="bsConfig" />
           </form-field>
+        </div>
+        <div class="col">
+          <button class="btn btn-sm btn-info">
+            <i class="fa fa-arrow-down"></i>
+          </button>
         </div>
         <div class="col-md-2">
           <button
@@ -153,115 +143,130 @@
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
+
       <div class="row">
-        <div class="col-md-2">
-          <button
-            type="button"
-            class="btn btn-success btn-sm active"
-            (click)="fileExcel.click()">
-            Abrir archivo Excel o CSV
-          </button>
-          <input
-            type="file"
-            (change)="ReadExcel($event)"
-            name="fileExcel"
-            #fileExcel
-            class="d-none"
-            accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+        <div class="d-flex justify-content-between">
+          <div>
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Disponibles</span
+            >
+            <span class="text-danger"
+              ><i class="fa fa-square"></i> No disponibles</span
+            >
+          </div>
+
+          <div>
+            <div class="row">
+              <div class="col-md-12 text-right">
+                <button
+                  type="button"
+                  class="btn btn-success btn-sm active"
+                  (click)="fileExcel.click()">
+                  Insertar vía archivo plano
+                </button>
+                <input
+                  type="file"
+                  (change)="ReadExcel($event)"
+                  name="fileExcel"
+                  #fileExcel
+                  class="d-none"
+                  accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+              </div>
+            </div>
+            <div class="row">
+              <small>
+                Seleccionar archivo de la ruta:
+                src\app\pages\executive-processes\filesTest
+              </small>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="row pt-5">
         <div class="col-md-5">
-          <p>
-            Seleccionar archivo de la ruta:
-            src\app\pages\executive-processes\filesTest
-          </p>
-        </div>
-      </div>
+          <div class="row">
+            <form-field
+              [control]="form.get('scanFolio')"
+              label="Folio de escaneo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="scanFolio" />
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-between">
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-info active"
+                  (click)="msjRequest()">
+                  Solicitud
+                </button>
+              </div>
 
-      <div class="row">
-        <p class="d-flex justify-content-center">
-          <span class="text-success mr-5"
-            ><i class="fa fa-square"></i> Disponibles</span
-          >
-          <span class="text-danger"
-            ><i class="fa fa-square"></i> No disponibles</span
-          >
-        </p>
-      </div>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-info active"
+                  (click)="msjScan()">
+                  Escanear
+                </button>
+              </div>
 
-      <div class="form-group row pt-5">
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('scanFolio')"
-            label="Folio de escaneo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="scanFolio" />
-          </form-field>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-info active"
+                  (click)="openPrevImg()">
+                  Ver IMG
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-1">
-          <button
-            type="submit"
-            class="btn-sm btn-info active"
-            (click)="msjRequest()">
-            Solicitud
-          </button>
-        </div>
+        <div class="col-md-5 offset-md-2">
+          <div class="row">
+            <form-field
+              [control]="form.get('cancelSheet')"
+              label="Folio de Cancelaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cancelSheet" />
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-between">
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-info active"
+                  (click)="msjRequest()">
+                  Solicitud
+                </button>
+              </div>
 
-        <div class="col-sm-1">
-          <button
-            type="submit"
-            class="btn-sm btn-info active"
-            (click)="msjScan()">
-            Escanear
-          </button>
-        </div>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-info active"
+                  (click)="msjScan()">
+                  Escanear
+                </button>
+              </div>
 
-        <div class="col-sm-1">
-          <button
-            type="submit"
-            class="btn-sm btn-info active"
-            (click)="openPrevImg()">
-            Ver IMG
-          </button>
-        </div>
-
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('cancelSheet')"
-            label="Folio de Cancelaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cancelSheet" />
-          </form-field>
-        </div>
-
-        <div class="col-sm-1">
-          <button
-            type="submit"
-            class="btn-sm btn-info active"
-            (click)="msjRequest()">
-            Solicitud
-          </button>
-        </div>
-
-        <div class="col-sm-1">
-          <button
-            type="submit"
-            class="btn-sm btn-info active"
-            (click)="msjScan()">
-            Escanear
-          </button>
-        </div>
-
-        <div class="col-sm-1">
-          <button
-            type="submit"
-            class="btn-sm btn-info active"
-            (click)="openPrevImg()">
-            Ver IMG
-          </button>
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-info active"
+                  (click)="openPrevImg()">
+                  Ver IMG
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </form>

@@ -1,14 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { DictationEndpoints } from 'src/app/common/constants/endpoints/ms-dictation-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IDictation } from '../../models/ms-dictation/dictation-model';
+import {
+  ICopiesOfficeSendDictation,
+  IDictation,
+  IDictationCopies,
+  IInitFormLegalOpinionOfficeBody,
+  IInitFormLegalOpinionOfficeResponse,
+  ITmpDictationCreate,
+  ITmpExpDesahogoB,
+} from '../../models/ms-dictation/dictation-model';
+
 @Injectable({
   providedIn: 'root',
 })
 export class DictationService extends HttpService {
+  public clasifGoodNumber: number | string;
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
   constructor() {
     super();
@@ -34,9 +46,16 @@ export class DictationService extends HttpService {
 
   getById(body: {
     id: string | number;
-    typeDict: string;
+    typeDict?: string;
   }): Observable<IDictation> {
     return this.get(this.route.Dictation, body);
+  }
+
+  findByIds(body: {
+    id: string | number;
+    typeDict?: string | number;
+  }): Observable<IDictation> {
+    return this.post(this.route.FindByIds, body);
   }
 
   create(body: IDictation) {
@@ -57,5 +76,101 @@ export class DictationService extends HttpService {
   getParamsOfTypeGood(model: Object) {
     const route = `${DictationEndpoints.getParamsOfTypeGood}`;
     return this.post(route, model);
+  }
+
+  //***********************************************************/
+  findByIdsOficNum(param: _Params) {
+    return this.get<IListResponse<IDictation>>(this.route.Dictation, param);
+  }
+
+  findUserByOficNum(param: _Params) {
+    return this.get<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      param
+    );
+  }
+
+  getInitFormDictation(
+    body: IInitFormLegalOpinionOfficeBody
+  ): Observable<IListResponse<IInitFormLegalOpinionOfficeResponse>> {
+    return this.post<IListResponse<IInitFormLegalOpinionOfficeResponse>>(
+      DictationEndpoints.InitFormLegalOpinionOffice,
+      body
+    );
+  }
+
+  getInitFormDictation2(
+    body: IInitFormLegalOpinionOfficeBody
+  ): Observable<IListResponse<IInitFormLegalOpinionOfficeResponse>> {
+    return this.post<IListResponse<IInitFormLegalOpinionOfficeResponse>>(
+      DictationEndpoints.InitFormLegalOpinionOffice2,
+      body
+    );
+  }
+
+  getCopiesOfficeSendDictation(
+    body: ICopiesOfficeSendDictation
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.CopiesOfficeSendDictation,
+      body
+    );
+  }
+
+  postCargaMasDesahogob(body: any) {
+    const route = `${DictationEndpoints.CargaMasDesahogob}`;
+    return this.post(route, body);
+  }
+
+  postFindGoodDictGood1(body: {
+    NO_OF_DICTA: any;
+    TIPO_DICTAMINACION: string;
+  }) {
+    const route = `${DictationEndpoints.FindGoodDictGood1}`;
+    return this.post(route, body);
+  }
+
+  getDocumentsForDictation(
+    id: string | number
+  ): Observable<IListResponse<any>> {
+    const route = `r-dictation-doc?filter.numberClassifyGood=$eq:${id}`;
+    return this.get(route);
+  }
+
+  updateByIdDictament(objParam: any) {
+    return this.put<IListResponse<IDictation>>(this.route.Dictation, objParam);
+  }
+
+  postFindDescriptionOpinion(body: _Params) {
+    return this.post<IListResponse<{ dictamen: number; descripcion: string }>>(
+      this.route.FindDescriptionOpinion,
+      body
+    );
+  }
+
+  getRTdictaAarusr(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.RTdictaAarusr,
+      params
+    );
+  }
+
+  deleteCopiesOfficialOpinion(params: IDictationCopies) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      params
+    );
+  }
+
+  createTmpDictation(body: ITmpDictationCreate) {
+    return this.post(DictationEndpoints.TmpDictation, body);
+  }
+
+  deleteTmpDictation(id: number) {
+    return this.delete(`${DictationEndpoints.TmpDictation}/${id}`);
+  }
+
+  createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
+    return this.post(DictationEndpoints.TmpExpDesahogoB, body);
   }
 }

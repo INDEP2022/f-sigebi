@@ -35,8 +35,22 @@ export class UserFormComponent extends BasePage implements OnInit {
   }
   prepareForm() {
     this.userForm = this.fb.group({
-      user: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
-      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      user: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(70),
+          Validators.pattern(NAME_PATTERN),
+        ],
+      ],
+      email: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(40),
+          Validators.pattern(EMAIL_PATTERN),
+        ],
+      ],
       userCharge: [null, [Validators.required]],
     });
 
@@ -67,7 +81,7 @@ export class UserFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Advertencía',
-      '¿Deseas crear el usuario a la programación?',
+      '¿Desea crear el usuario a la programación?',
       'Guardar'
     ).then(question => {
       if (question.isConfirmed) {
@@ -93,7 +107,7 @@ export class UserFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Deseas editar el usuario?'
+      '¿Desea editar el usuario?'
     ).then(question => {
       if (question.isConfirmed) {
         console.log(this.userForm.value);
@@ -106,7 +120,6 @@ export class UserFormComponent extends BasePage implements OnInit {
         this.programmingService.updateUserProgramming(formData).subscribe({
           next: res => {
             this.loading = true;
-            this.onLoadToast('success', 'Usuario editado correctamente', '');
             this.modalService.content.callback(true);
             this.close();
           },

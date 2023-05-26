@@ -65,7 +65,8 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="DscUnidad"
-              bindValue="IdUnidad">
+              bindValue="IdUnidad"
+              (change)="getUnit($event)">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.DscUnidad">
                   {{ item.DscUnidad }}
@@ -171,7 +172,7 @@
 
         <div class="col-md-6">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Periodo de reserva&#58;</label>
+            <label class="col-lg-5 text-right">Periodo de Reserva&#58;</label>
             <span>
               {{ associateFileForm.get('reservePeriodInai').value }}
             </span>
@@ -230,18 +231,20 @@
         <div class="col-md-6">
           <form-field
             [control]="associateFileForm.get('expedientDate')"
-            label="Fecha expediente">
+            label="Fecha Expediente">
             <input
               class="form-control"
               formControlName="expedientDate"
-              bsDatepicker />
+              bsDatepicker
+              ngModel
+              [maxDate]="maxDate" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right"
-              >Secci&oacute;n documental&#58;</label
+              >Secci&oacute;n Documental&#58;</label
             >
             <span>
               {{ associateFileForm.get('documentarySectionInai').value }}
@@ -254,7 +257,7 @@
         <div class="col-md-6">
           <form-field
             [control]="associateFileForm.get('reserveDateInai')"
-            label="Fecha de reserva">
+            label="Fecha de Reserva">
             <input
               class="form-control"
               formControlName="reserveDateInai"
@@ -264,7 +267,7 @@
 
         <div class="col-md-6">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Serie documental&#58;</label>
+            <label class="col-lg-5 text-right">Serie Documental&#58;</label>
             <span>
               {{ associateFileForm.get('documentarySeriesInai').value }}</span
             >
@@ -289,7 +292,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right"
-              >Vigencia del archivo de tr&aacute;mite&#58;</label
+              >Vigencia del Archivo de Tr&aacute;mite&#58;</label
             >
             <span> {{ associateFileForm.get('vaProcedureInai').value }} </span>
           </div>
@@ -313,7 +316,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-5 text-right"
-              >Vigencia de archivo de concentraci&oacute;n&#58;</label
+              >Vigencia de Archivo de Concentraci&oacute;n&#58;</label
             >
             <span>
               {{ associateFileForm.get('vaConcentrationInai').value }}
@@ -334,7 +337,7 @@
 
         <div class="col-md-6">
           <div class="form-group">
-            <label class="col-lg-5 text-right">Valores documentales&#58;</label>
+            <label class="col-lg-5 text-right">Valores Documentales&#58;</label>
             <span>
               {{ associateFileForm.get('documentaryValueInai').value }}
             </span>
