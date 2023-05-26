@@ -20,7 +20,9 @@
                     "></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="_tableSettingsProcedeFormalizacion"
@@ -49,7 +51,9 @@
                     "></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   (edit)="editStage2($event.data)"
                   [attr.class]="'table-bordered'"
@@ -77,7 +81,9 @@
                     "></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   (edit)="editStage3($event.data)"
                   [attr.class]="'table-bordered'"
@@ -102,7 +108,9 @@
                     [(settings)]="_tableSettingsTodos"></app-columns-select>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="_tableSettingsTodos"
