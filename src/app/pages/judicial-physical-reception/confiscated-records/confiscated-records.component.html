@@ -5,24 +5,7 @@
 
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-9 d-inline-flex">
-              <form-field [control]="form.get('expediente')" label="Expediente">
-                <input
-                  (ngModelChange)="
-                    toggleByLength('expedient-number', 'expediente')
-                  "
-                  [min]="0"
-                  type="number"
-                  [class]="blockExpedient ? 'disabled' : ''"
-                  class="form-control"
-                  formControlName="expediente" />
-              </form-field>
-            </div>
-          </div>
-        </div>
+      <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
             <div class="col-md-9">
@@ -36,36 +19,82 @@
             </div>
           </div>
         </div>
+        <div class="col-md-4">
+          <div *ngIf="searchByOtherData" class="row">
+            <div class="row mt-3">
+              <ngx-select
+                control="listExpedients"
+                label="Expedientes"
+                bindLabel="id"
+                (change)="selectExpedient($event)"
+                [data]="dataExpedients"
+                [searchable]="false"
+                [form]="form"></ngx-select>
+            </div>
+          </div>
+        </div>
         <div *ngIf="navigateProceedings" class="col-md-4">
-          <div class="row">
+          <span>Navegación de actas</span>
+          <div class="row mt-3">
             <div class="col-md-9">
               <button
                 id="expedient-number"
                 [disabled]="!prevProce"
-                class="btn btn-secondary btn-sm active mr-2"
+                class="btn btn-secondary btn-sm active"
                 (click)="prevProceeding()">
-                Anterior
+                <i class="fa fa-angle-left"></i>
               </button>
+              <span class="mr-3 ml-3">{{
+                numberProceeding + 1 > proceedingData.length
+                  ? 'Nuevo'
+                  : numberProceeding + 1
+              }}</span>
               <button
                 id="expedient-number"
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"
                 (click)="nextProceeding()">
-                Siguiente
+                <i class="fa fa-angle-right"></i>
+              </button>
+              <button
+                *ngIf="newAct"
+                id="expedient-number"
+                class="btn btn-primary btn-sm active ml-4">
+                Nueva acta
               </button>
             </div>
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row mb-3 mt-3">
-        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('expediente')" label="Expediente">
+                <input
+                  (ngModelChange)="
+                    toggleByLength('expedient-number', 'expediente')
+                  "
+                  [min]="0"
+                  type="number"
+                  [max-length]="10"
+                  [class]="blockExpedient ? 'disabled' : ''"
+                  class="form-control"
+                  formControlName="expediente" />
+              </form-field>
+            </div>
+          </div>
+        </div>
         <div class="col-md-4">
           <div class="row">
             <form-field
               [control]="form.get('averPrev')"
               label="Averiguaci&oacute;n Previa">
               <input
+                (ngModelChange)="toggleByLength('expedient-number', 'averPrev')"
                 type="string"
+                [max-length]="40"
                 class="form-control"
                 formControlName="averPrev" />
             </form-field>
@@ -75,6 +104,10 @@
           <div class="row">
             <form-field [control]="form.get('causaPenal')" label="Causa Penal">
               <input
+              (ngModelChange)="
+              toggleByLength('expedient-number', 'causaPenal')
+            "
+            [max-length]="40"
                 type="string"
                 class="form-control"
                 formControlName="causaPenal" />
@@ -82,6 +115,7 @@
           </div>
         </div>
       </div>
+      <hr class="row" />
       <div class="row">
         <div class="col-md-12">
           <div class="row">
@@ -263,6 +297,7 @@
                 <input
                   type="number"
                   class="form-control"
+                  min="1"
                   formControlName="folioEscaneo"
                   maxlength="15" />
               </form-field>
@@ -273,6 +308,7 @@
                 class="btn btn-primary btn-sm active"
                 type="button"
                 size="small"
+                min="1"
                 (click)="replicateFolio()">
                 Replicar Folio
               </button>
@@ -303,6 +339,7 @@
                 <input
                   bsDatepicker
                   class="form-control disabled"
+                  [readOnly]="true"
                   formControlName="fecReception" />
               </form-field>
             </div>
@@ -313,6 +350,7 @@
                 label="Fecha Captura">
                 <input
                   bsDatepicker
+                  [readOnly]="true"
                   class="form-control disabled"
                   formControlName="fecCaptura" />
               </form-field>
@@ -351,7 +389,7 @@
             <div class="col-md-9">
               <form-field
                 [control]="form.get('testigo')"
-                label="Testigo de la Contr&#46;">
+                label="Testigo de la Contralor&iacute;a">
                 <input
                   type="text"
                   [maxlength]="100"
@@ -361,42 +399,51 @@
               </form-field>
             </div>
           </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row mb-5">
+        <div class="d-flex justify-content-center">
+          <div>
+            <button
+              type="button"
+              [class]="btnCSSAct"
+              class="btn btn-primary btn-sm active mr-2 ml-2"
+              (click)="saveButton()"
+              size="small">
+              Guardar
+            </button>
+            <button
+              type="button"
+              [class]="btnCSSAct"
+              class="btn btn-sm active mr-2 ml-2"
+              (click)="toggleActaBtn()"
+              size="small">
+              {{ labelActa }}
+            </button>
+            <a
+              [routerLink]="['partialization']"
+              class="my-1 mx-2 btn btn-warning active btn-sm"
+              size="small"
+              (click)="goParcializacion()"
+              >Parcializaci&oacute;n
+            </a>
 
-          <div class="row">
-            <div class="col-md-12">
-              <button
-                type="button"
-                [class]="btnCSSAct"
-                class="btn btn-sm active mr-2 ml-2"
-                (click)="toggleActaBtn()"
-                size="small">
-                {{ labelActa }}
-              </button>
-              <a
-                [routerLink]="['partialization']"
-                class="my-1 mx-2 btn btn-warning active btn-sm"
-                size="small"
-                (click)="goParcializacion()"
-                >Parcializaci&oacute;n
-              </a>
-
-              <button
-                type="button"
-                class="my-1 mx-2 btn btn-danger active btn-sm"
-                (click)="deleteProceeding()">
-                Eliminar Acta
-              </button>
-              <button
-                type="button"
-                class="my-1 mx-2 btn btn-secondary active btn-sm"
-                (click)="goCargaMasiva()">
-                Carga Masiva
-              </button>
-            </div>
+            <button
+              type="button"
+              class="my-1 mx-2 btn btn-danger active btn-sm"
+              (click)="deleteProceeding()">
+              Eliminar Acta
+            </button>
+            <button
+              type="button"
+              class="my-1 mx-2 btn btn-secondary active btn-sm"
+              (click)="goCargaMasiva()">
+              Carga Masiva
+            </button>
           </div>
         </div>
       </div>
-
       <hr class="row" />
       <div class="row pt-2 scroll-table">
         <ng2-smart-table
@@ -428,22 +475,30 @@
         </div>
       </div>
 
-      <div class="row pt-2">
-        <div class="col-md-12 text-center">
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            [disabled]="!dataGoodAct"
-            (click)="deleteGood()">
-            <i class="fa fa-angle-up"></i>
-          </button>
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            [disabled]="!act2Valid"
-            (click)="addGood()">
-            <i class="fa fa-angle-down"></i>
-          </button>
+      <div class="row pt-2 pb-4">
+        <div class="col-md-12 d-flex justify-content-center">
+          <div class="d-flex justify-content-center align-items-sm-center">
+            <div class="col-md-3">
+              <label for="">Eliminar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!dataGoodAct"
+                (click)="deleteGood()">
+                <i class="fa fa-angle-up"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <label for="">Agregar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!act2Valid"
+                (click)="addGood()">
+                <i class="fa fa-angle-down"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <hr class="row" />
@@ -465,6 +520,7 @@
               [class]="!isSelectGood ? 'disabled' : ''"
               control="edoFisico"
               [searchable]="false"
+              (change)="applyEdoFisOne($event)"
               [form]="form"
               [data]="dataEdoFisico"></ngx-select>
           </form-field>

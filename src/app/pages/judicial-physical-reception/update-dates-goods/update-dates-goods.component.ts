@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { RangePickerModalComponent } from 'src/app/@standalone/modals/range-picker-modal/range-picker-modal.component';
+import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { firstFormatDate } from 'src/app/shared/utils/date';
 
@@ -11,17 +12,22 @@ import { firstFormatDate } from 'src/app/shared/utils/date';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './update-dates-goods.component.html',
-  styles: [],
+  styleUrls: ['./update-dates-goods.component.scss'],
 })
 export class UpdateDatesGoodsComponent implements OnInit {
   @Input() disabled: boolean;
   @Input() data: any[];
   @Input() inicioColumn: string = 'approvedDateXAdmon';
   @Input() finColumn: string = 'dateIndicatesUserApproval';
+  @Input() noActa: number;
   selectedsForUpdate: any[] = [];
   @Output() updateGoodEvent = new EventEmitter();
   form: FormGroup;
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private detailService: ProceedingsDetailDeliveryReceptionService
+  ) {
     this.form = this.fb.group({
       inicio: [null],
       fin: [null],
@@ -37,17 +43,15 @@ export class UpdateDatesGoodsComponent implements OnInit {
   }
 
   update() {
-    this.updateGoodEvent.emit(
-      this.data.map(x => {
-        return {
-          ...x,
-          [this.inicioColumn]: firstFormatDate(
-            new Date(this.fechaInicio.value)
-          ),
-          [this.finColumn]: firstFormatDate(new Date(this.fin.value)),
-        };
-      })
-    );
+    const newData = this.data.map(x => {
+      return {
+        ...x,
+        [this.inicioColumn]: firstFormatDate(new Date(this.fechaInicio.value)),
+        [this.finColumn]: firstFormatDate(new Date(this.fin.value)),
+      };
+    });
+
+    this.updateGoodEvent.emit(newData);
   }
 
   ngOnInit(): void {

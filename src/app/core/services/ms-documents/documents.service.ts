@@ -109,6 +109,20 @@ export class DocumentsService extends HttpService {
     return this.post(route, { armyOfficeKey });
   }
 
+  getDocParaDictum(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DocumentsEndpoints.DocumentsForDictum}`,
+      params
+    );
+  }
+
+  deleteDocumentsDictuXStateM(params: any): Observable<{ count: number }> {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}`;
+    return this.delete(
+      route + `/${params.typeDictum}/${params.officialNumber}`
+    );
+  }
+
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);

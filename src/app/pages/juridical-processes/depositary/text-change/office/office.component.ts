@@ -57,6 +57,8 @@ export class OfficeComponent extends BasePage implements OnInit {
   @Input() oficnum: number | string;
   @Output() oficnumChange = new EventEmitter<number | string>();
   valLocal: IdatosLocales;
+  year: number;
+  users$$ = new DefaultSelect<ISegUsers>();
 
   constructor(
     private fb: FormBuilder,
@@ -73,6 +75,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.year = new Date().getFullYear();
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'E', label: 'PERSONA EXTERNA' },
@@ -163,8 +166,14 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.form.get('flyerNumber').setValue(resp.data[0].flyerNumber);
           this.form.get('officio').setValue(resp.data[0].jobBy);
           //====================================================================================//
-          this.form.get('RemitenteSenderUser').setValue(resp.data[0].sender);
           this.form.get('addressee').setValue(resp.data[0].addressee);
+          this.form.get('RemitenteSenderUser').setValue(resp.data[0].sender);
+          const param = new ListParams();
+          param.text = resp.data[0].sender;
+          console.log(
+            'resp.data[0].sender => ' + JSON.stringify(resp.data[0].sender)
+          );
+          this.getUsers$(param);
           this.getPuestoUser(resp.data[0].cveChargeRem);
           this.form.get('paragraphInitial').setValue(resp.data[0].text1);
           this.form.get('paragraphFinish').setValue(resp.data[0].text2);
@@ -268,7 +277,8 @@ export class OfficeComponent extends BasePage implements OnInit {
 ================================================================================================*/
   buscarOficio() {
     this.filterParamsLocal.getValue().removeAllFilters();
-    if (!this.form.get('proceedingsNumber').invalid) {
+
+    if ((this.form.get('proceedingsNumber').value || '').trim().length > 0) {
       if (!(this.form.get('proceedingsNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -280,7 +290,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    if (!this.form.get('managementNumber').invalid) {
+    if ((this.form.get('managementNumber').value || '').trim().length > 0) {
       if (!(this.form.get('managementNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -292,7 +302,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    if (!this.form.get('flyerNumber').invalid) {
+    if ((this.form.get('flyerNumber').value || '').trim().length > 0) {
       if (!(this.form.get('flyerNumber').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -304,7 +314,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       }
     }
 
-    if (!this.form.get('officio').invalid) {
+    if ((this.form.get('officio').value || '').trim().length > 0) {
       if (!(this.form.get('officio').value.trim() === '')) {
         this.filterParamsLocal
           .getValue()
@@ -315,6 +325,15 @@ export class OfficeComponent extends BasePage implements OnInit {
           );
       }
     }
+
+    this.filterParamsLocal
+      .getValue()
+      .addFilter(
+        'fecha_inserto',
+        this.year + '-01-01' + ':' + this.year + '-12-31',
+        SearchFilter.BTW
+      );
+
     this.onmanagementNumberEnter(this.filterParamsLocal);
     this.verBoton = true;
   }
@@ -386,6 +405,26 @@ export class OfficeComponent extends BasePage implements OnInit {
     this.getAllUsers(params).subscribe();
   }
 
+  getUsers$($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers$(params).subscribe();
+  }
+
+  getAllUsers$(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+
   getAllUsers(params: FilterParams) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
@@ -431,7 +470,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   }
   getDescUserPuesto(event: Event) {
     let userDatos = JSON.parse(JSON.stringify(event));
-    this.form.get('RemitenteSenderUser').setValue(userDatos.name);
+
     this.dynamicCatalogsService
       .getPuestovalue(userDatos.positionKey)
       .subscribe({

@@ -132,6 +132,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+  searchByOtherData = false;
+  dataExpedients = new DefaultSelect()
   act2Valid: boolean = false;
   btnCSSAct = 'btn-success';
   dataGoodAct = new LocalDataSource();
@@ -189,6 +191,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       expediente: [null, [Validators.required]],
       averPrev: [null],
+      noExpedienteTransf: [null],
       acta: [null],
       transfer: [null],
       ident: [null],
@@ -229,7 +232,26 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     });
   }
 
+  selectExpedient(e:any){
+
+  }
+
   //Inicializa
+  getDataExpedient() {
+    this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
+      resp => {
+        console.log(resp);
+        console.log(resp.preliminaryInquiry);
+        this.form.get('averPrev').setValue(resp.preliminaryInquiry);
+        console.log(resp.expTransferNumber);
+        this.form.get('noExpedienteTransf').setValue(resp.expTransferNumber);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
   initalizateProceeding() {
     const user = localStorage.getItem('username');
     const paramsF = new FilterParams();
@@ -457,6 +479,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   getGoodsByExpedient() {
     //Validar si hay un acta abierta
+    this.getDataExpedient();
 
     const paramsF = new FilterParams();
     paramsF.addFilter(
@@ -464,7 +487,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'DXCVENT');
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);

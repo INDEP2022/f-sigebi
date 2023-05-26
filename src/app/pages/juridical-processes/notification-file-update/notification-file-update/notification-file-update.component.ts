@@ -172,4 +172,8 @@ export class NotificationFileUpdateComponent
       }
     });
   }
+
+  cleanExpediente() {
+    this.form.get('noExpediente').setValue('');
+  }
 }

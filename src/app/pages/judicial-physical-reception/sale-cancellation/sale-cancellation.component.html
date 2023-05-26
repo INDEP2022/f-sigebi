@@ -7,15 +7,7 @@
       <div class="row">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
-              <form-field [control]="form.get('expediente')" label="Expediente">
-                <input
-                  type="number"
-                  class="form-control"
-                  [min]="0"
-                  formControlName="expediente" />
-              </form-field>
-            </div>
+           
             <div class="col-md-3">
               <button
                 id="expedient-number"
@@ -27,22 +19,25 @@
                 ">
                 Buscar
               </button>
+              <span>{{ statusProceeding }}</span>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="row">
-            <span>{{ statusProceeding }}</span>
-            <!--  <div class="col-md-9">
-              <form-field
-                [control]="form.get('averPrev')"
-                label="Averiguaci&oacute;n Previa">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="averPrev" />
-              </form-field>
-            </div> -->
+            <div *ngIf="searchByOtherData" class="row">
+              <div class="row mt-3">
+                <ngx-select
+                control="listExpedients"
+                  label="Expedientes"
+                  bindLabel="id"
+                  (change)="selectExpedient($event)"
+                  [data]="dataExpedients"
+                  [searchable]="false"
+                  [form] = 'form'
+                  ></ngx-select>
+              </div>
+            </div>
           </div>
         </div>
         <div *ngIf="navigateProceedings" class="col-md-4">
@@ -63,6 +58,43 @@
                 Siguiente
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-md-4">
+          <div class="col-md-9">
+            <form-field [control]="form.get('expediente')" label="Expediente">
+              <input
+                type="number"
+                class="form-control"
+                [min]="0"
+                formControlName="expediente" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field
+              [control]="form.get('averPrev')"
+              label="Averiguaci&oacute;n Previa">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="averPrev" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field
+              [control]="form.get('noExpedienteTransf')"
+              label="No. expediente Transferente">
+              <input
+                type="string"
+                class="form-control"
+                formControlName="noExpedienteTransf" />
+            </form-field>
           </div>
         </div>
       </div>

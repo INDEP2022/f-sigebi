@@ -198,6 +198,11 @@ export class GoodService extends HttpService {
     return this.put(route);
   }
 
+  updateGoodStatusAndDate(goodNumber: number | string, status: string) {
+    const route = `${GoodEndpoints.Good}/update-status-and-date-reception`;
+    return this.put(route, { goodNumber, status });
+  }
+
   remove(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.delete(route);
@@ -246,7 +251,7 @@ export class GoodService extends HttpService {
   }
 
   getStatusGood(params?: string) {
-    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}${params}`);
+    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}?${params}`);
   }
 
   getBySafe(

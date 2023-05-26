@@ -43,7 +43,7 @@
                   type="text"
                   class="form-control"
                   min="0"
-                  maxlength="11"
+                  maxlength="10"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
@@ -167,15 +167,38 @@
               </form-field>
             </div> -->
             <!--  -->
-            <div class="col-md-4 p-2">
+            <div class="col-4 p-2">
               <form-field
-                [control]="dictaminacionesForm.get('autoriza_remitente')"
-                label="Autoriza Dict.">
-                <input
+                [control]="dictaminacionesForm.get('autoriza_remitente')">
+                <!-- <input
                   class="form-control"
-                  formControlName="autoriza_remitente" />
+                  formControlName="autoriza_remitente" /> -->
+                <ngx-select
+                  label="Autoriza Dict."
+                  [form]="dictaminacionesForm"
+                  [data]="users$"
+                  (change)="userChange($event)"
+                  (fetchItems)="getUsers($event)"
+                  bindLabel="userAndName"
+                  control="autoriza_remitente"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30"
+                  [labelTemplate]="userLabel"
+                  [optionTemplate]="userOption">
+                </ngx-select>
+                <ng-template #userLabel let-item="item">
+                  <!-- {{ item.name }} -->
+                  {{ item.id }}
+                </ng-template>
+                <ng-template #userOption let-item="item">
+                  <div [title]="item.id + '-' + item.name">
+                    {{ item.id }}
+                  </div>
+                </ng-template>
               </form-field>
             </div>
+
             <div class="col-md-8 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_nombre')"
@@ -229,7 +252,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-8">
+        <!-- <div class="col-md-8">
           <form-field [control]="subtipoForm.get('type')">
             <ngx-select
               class="form-control"
@@ -244,9 +267,34 @@
               (change)="onTypesChange($event)">
             </ngx-select>
           </form-field>
+        </div> -->
+
+        <div class="col-md-8">
+          <form-field [control]="subtipoForm.get('sssubtype')">
+            <ngx-select
+              [searchOnInit]="true"
+              (fetchItems)="getSssubtypes($event)"
+              [data]="sssubtypes"
+              [form]="subtipoForm"
+              value="id"
+              label="Subtipo - Ssubtipo - Sssubtipo"
+              bindLabel="description"
+              control="sssubtype"
+              (change)="onValuesChange($event)"
+              [labelTemplate]="sssubtypeLabel"
+              [optionTemplate]="sssubtypeOption">
+              <!-- (change)="onSssubtypesChange($event)" -->
+            </ngx-select>
+          </form-field>
         </div>
       </div>
     </form>
+    <ng-template #sssubtypeLabel let-item="item"
+      >{{ item.id }} - {{ item.description }}</ng-template
+    >
+    <ng-template #sssubtypeOption let-item="item"
+      >{{ item.id }} - {{ item.description }}</ng-template
+    >
 
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">

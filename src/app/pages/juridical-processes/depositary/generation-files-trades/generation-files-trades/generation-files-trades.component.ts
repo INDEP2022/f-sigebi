@@ -71,7 +71,8 @@ export class GenerationFilesTradesComponent
 
         this.selectWheel = new DefaultSelect(data.data, data.count);
       },
-      error: () => {
+      error: error => {
+        this.onLoadToast('warning', error.error.message, '');
         this.cleanForm();
         this.selectWheel = new DefaultSelect();
       },
@@ -85,8 +86,8 @@ export class GenerationFilesTradesComponent
     if (item.managementNumber) {
       if (item != undefined) {
         this.loading = false;
-        this.form.get('noExpediente').setValue(item.recordNumber);
-        this.form.get('noExpediente').setValue(item.recordNumber);
+        // this.form.get('noExpediente').setValue(item.recordNumber);
+        this.form.get('noExpediente').setValue(item.proceedingsNumber);
         this.form.get('noOficio').setValue(item.managementNumber);
         this.form.get('tipoOficio').setValue(item.jobType);
         this.form.get('estatus').setValue(item.statusOf);

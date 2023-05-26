@@ -129,6 +129,8 @@ export enum ENDPOINT_LINKS {
   WarehouseClassifyCosts = 'parametergood/warehouse-classif-costs',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
   Document = 'documents',
+  DocumentAplication1 = 'application/queryDocDictation',
+  DocumentAplication2 = 'application/queryDocDictation2',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
@@ -142,6 +144,7 @@ export enum ENDPOINT_LINKS {
   DinamicTablesFind = 'dynamiccatalog/api/v1/dinamic-tables/find-tvaltable1-by-tableKey',
   DinamicTable = 'dinamic-tables/get-tvaltable5-by-table',
   DinamicTable1 = 'dinamic-tables/tavaltable1',
+  Table1 = 'dynamiccatalog/tval-table-1',
 
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',

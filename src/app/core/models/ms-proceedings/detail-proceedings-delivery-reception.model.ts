@@ -24,7 +24,6 @@ export interface IDetailProceedingsDeliveryReception {
 }
 
 export interface IDeleteDetailProceeding {
-  numGoodId: string | number;
-  numGoodProceedingsId: string | number;
-  numDetailId: string | number;
+  numberGood: string | number;
+  numberProceedings: string | number;
 }
