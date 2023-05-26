@@ -1,7 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { addDays, format } from 'date-fns';
-import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -180,59 +179,6 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     this.render.addClass(btn, 'disabled');
   }
 
-  /* btnGeneralTab() {
-    if (
-      (this.form.get('clasificacion').value != this.getgoodCategory ||
-        this.form.get('remarks').value != this.getoriginSignals) &&
-      this.idGood != undefined &&
-      this.idGood != null
-    ) {
-      this.enableButton('update-general-good');
-    } else {
-      this.disabledButton('update-general-good');
-    }
-  } */
-
-  /* btnAppraisTab() {
-    this.enableButton('apprais-good');
-  } */
-
-  /*  btnAbandonment() {
-    if (
-      (this.form.get('fechaAseg').value != this.getnotifyDate ||
-        this.form.get('notificado').value != this.getnotifyA ||
-        this.form.get('lugar').value != this.getplaceNotify) &&
-      this.idGood != undefined &&
-      this.idGood != null
-    ) {
-      this.enableButton('first-notice-abandonment');
-    } else {
-      this.disabledButton('first-notice-abandonment');
-    }
-  } */
-
-  /* btnOpinion() {
-    const dateString = this.form.get('fechaDictamen').value;
-    const formatString = 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ [(]z[)]';
-    const isValidDateFormat = moment(dateString, formatString, true).isValid();
-    if (
-      ((isValidDateFormat
-        ? moment(dateString).format('DD-MM-YYYY')
-        : dateString) != this.getfechaDictamen ||
-        this.form.get('dictamenPerito').value != this.getdictamenPerito ||
-        this.form.get('dictamenInstitucion').value !=
-          this.getdictamenInstitucion ||
-        this.form.get('dictamenPerenidad').value !=
-          this.getdictamenPerenidad) &&
-      this.idGood != undefined &&
-      this.idGood != null
-    ) {
-      this.enableButton('opinion');
-    } else {
-      this.disabledButton('opinion');
-    }
-  } */
-
   //Catalogos
 
   getCurrency(params: ListParams) {
@@ -410,10 +356,10 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         this.goodStatus = data.goodStatus;
         this.getgoodCategory = data.goodCategory;
         this.getoriginSignals = data.originSignals;
-        this.getnotifyDate = moment(data.notifyDate).format('DD-MM-YYYY');
+        this.getnotifyDate = format(data.notifyDate, 'dd-MM-yyyy');
         this.getnotifyA = data.notifyA;
         this.getplaceNotify = data.placeNotify;
-        this.getfechaDictamen = moment(data.dateOpinion).format('DD-MM-YYYY');
+        this.getfechaDictamen = format(data.dateOpinion, 'dd-MM-yyyy');
         this.getdictamenPerenidad = data.opinion;
         this.getdictamenPerito = data.proficientOpinion;
         this.getdictamenInstitucion = data.valuerOpinion;
@@ -426,7 +372,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         data.dateOpinion != null
           ? this.form
               .get('fechaDictamen')
-              .setValue(moment(data.dateOpinion).format('DD-MM-YYYY'))
+              .setValue(format(data.dateOpinion, 'dd-MM-yyyy'))
           : this.form.get('fechaDictamen').setValue('');
         this.fillFormData(data.proficientOpinion, 'dictamenPerito');
         this.fillFormData(data.valuerOpinion, 'dictamenInstitucion');
@@ -434,7 +380,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         data.notifyDate != null
           ? this.form
               .get('fechaAseg')
-              .setValue(moment(data.notifyDate).format('DD-MM-YYYY'))
+              .setValue(format(data.notifyDate, 'dd-MM-yyyy'))
           : this.form.get('fechaAseg').setValue('');
         this.fillFormData(data.notifyA, 'notificado');
         this.fillFormData(data.placeNotify, 'lugar');

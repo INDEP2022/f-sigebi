@@ -39,4 +39,11 @@ export class HistoricalProcedureManagementService extends HttpService {
       params
     );
   }
+
+  updateWithBody(params: any): Observable<IListResponse<IProceduremanagement>> {
+    return this.post<IListResponse<any>>(
+      'proceduremanagement/pup-act-gestion',
+      params
+    );
+  }
 }

@@ -8,4 +8,6 @@ export enum DepositaryEndPoints {
   PaymentRefPrepOI = `payment-ref/prep-oi`,
   RemovePaymentRefRemove = `payment-ref/remove-disper-payments-ref`,
   ValidBlackListAppointment = `valid-black-list/appointment`,
+  AplicationcargaCliente1 = 'application/cargaCliente1',
+  AplicationcargaCliente2 = 'application/cargaCliente2',
 }

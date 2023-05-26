@@ -8,10 +8,10 @@
           readonly />
       </form-field>
     </div> -->
-  <div class="col-xs-6">
+  <div class="col-md-4">
     <div class="cantidad">
-      <label for="">Cantidad de Expedientes</label>
-      <div>{{ files }}</div>
+      <label for="">Cantidad de Bienes</label>
+      <div>{{ goodsCant + bienesRas }}</div>
     </div>
 
     <!-- <app-card [header]="true">
@@ -23,10 +23,25 @@
       </div>
     </app-card> -->
   </div>
-  <div class="col-xs-6">
+  <div class="col-md-4">
+    <div class="cantidad">
+      <label for="">Cantidad de Expedientes</label>
+      <div>{{ files + expedientesRas }}</div>
+    </div>
+
+    <!-- <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Cantidad de Expedientes</h5>
+      </div>
+      <div body>
+        {{files}}
+      </div>
+    </app-card> -->
+  </div>
+  <div class="col-md-4">
     <div class="cantidad">
       <label for="">Cantidad de Dictamenes</label>
-      <div>{{ dictamenes }}</div>
+      <div>{{ dictamenes + dictamenesRas }}</div>
     </div>
 
     <!-- <app-card [header]="true">

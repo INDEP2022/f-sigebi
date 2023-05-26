@@ -136,9 +136,7 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="
-              affair == null || dictOffice == '' || isLoadingOfficeOfRelief
-            "
+            [disabled]="!affair || !dictOffice || isLoadingOfficeOfRelief"
             (click)="onClickOfficeOfRelief()">
             Oficio de Desahogo
             <ng-container *ngIf="isLoadingOfficeOfRelief"
@@ -148,7 +146,7 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="dictum == '' || affair == null || dictOffice != 'D'"
+            [disabled]="!dictum || !affair || dictOffice != 'D'"
             (click)="sendToJuridicalRuling()">
             Dictaminaci&oacute;n Jur&iacute;dica
           </button>
@@ -567,13 +565,25 @@
       <div class="row">
         <div class="d-flex justify-content-center">
           <div>
+            <!-- <button
+              outline
+              type="button"
+              class="mr-3 mt-3 btn btn-sm active btn-primary"
+              [disabled]="
+                wheelNumber == null ||
+                expedientNumber == null ||
+                userRecipient == null
+              "
+              (click)="openToShiftChange()">
+              Reasignaci&oacute;n de Turno
+            </button> -->
             <button
               outline
               type="button"
               class="mr-3 mt-3 btn btn-sm active btn-primary"
-              [disabled]="wheelNumber == null || expedientNumber == null"
+              [disabled]="!wheelNumber || !userRecipient || !expedientNumber"
               (click)="openToShiftChange()">
-              Reasignaci&oacute;n de Turno
+              Reasignaci&oacute;n de Turnos
             </button>
           </div>
           <div *ngIf="layout == 'FILE-UPDATE'">

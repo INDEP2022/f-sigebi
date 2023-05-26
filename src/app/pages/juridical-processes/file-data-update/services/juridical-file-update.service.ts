@@ -148,7 +148,11 @@ export class JuridicalFileUpdateService extends HttpService {
         return {
           ...data,
           data: data.data.map(d => {
-            return { ...d, nameAndId: `${d.dictamen} - ${d.descripcion}` };
+            return {
+              id: d.dictamen,
+              description: d.descripcion,
+              nameAndId: `${d.dictamen} - ${d.descripcion}`,
+            };
           }),
         };
       })
@@ -177,7 +181,7 @@ export class JuridicalFileUpdateService extends HttpService {
   }
 
   getRecipientUser(body: {
-    copyNumber: string | number;
+    copyNumber?: string | number;
     flierNumber: string | number;
   }) {
     return this.flyerCopiesService.findByIds(body);

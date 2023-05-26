@@ -47,4 +47,18 @@ export class SecurityService extends HttpService {
       params
     );
   }
+
+  lovCitiesRegCity(body: any, params: _Params) {
+    return this.post(
+      `${SecurityEndpoints.AplicationLovCitiesRegCity}`,
+      body,
+      params
+    );
+  }
+  getAllFilterAssigned(params: any) {
+    return this.get<IListResponse<IAccesTrackingXArea>>(
+      `access-tracking-x-area`,
+      params
+    );
+  }
 }

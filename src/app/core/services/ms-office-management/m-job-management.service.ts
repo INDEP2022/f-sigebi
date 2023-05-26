@@ -29,4 +29,31 @@ export class MJobManagementService extends HttpService {
   getDocOficioGestion(params?: ListParams): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>('document-job-management', params);
   }
+
+  deleteDocOficioGestion(params?: any): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>('document-job-management', params);
+  }
+
+  deleteMJobGestion(params: any): Observable<IListResponse<IMJobManagement>> {
+    return this.delete<IListResponse<any>>('m-job-management', params);
+  }
+
+  getMOficioGestionStage2(
+    params: any
+  ): Observable<IListResponse<IMJobManagement>> {
+    return this.get<IListResponse<any>>(
+      `application/stage2/${params.numberManagement}`
+    );
+  }
+
+  getMOficioGestionlnJob(
+    params: any
+  ): Observable<IListResponse<IMJobManagement>> {
+    return this.post<IListResponse<any>>(`application/lnJob`, params);
+  }
+  getMOficioGestionmaxLnJob(
+    params: any
+  ): Observable<IListResponse<IMJobManagement>> {
+    return this.post<IListResponse<any>>(`application/maxLnJob`, params);
+  }
 }
