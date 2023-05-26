@@ -154,9 +154,11 @@ export class GoodsDepositaryComponent
       case 'P':
         return 'RGENADBBIENESXDEP';
       case 'D':
-        return 'RGENADBBIENESXDED';
+        // return 'RGENADBBIENESXDED';
+        return 'blank';
       case 'R':
-        return 'RGENADBBIENESXDER';
+        // return 'RGENADBBIENESXDER';
+        return 'blank';
       default:
         return 'RGENADBBIENESXDET';
     }
