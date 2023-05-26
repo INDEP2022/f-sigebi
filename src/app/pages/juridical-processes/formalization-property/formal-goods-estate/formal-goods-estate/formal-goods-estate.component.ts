@@ -18,7 +18,10 @@ import {
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IFormalizeProcesses } from 'src/app/core/models/formalize-processes/formalize-processes.model';
 import { IComerLotEvent } from 'src/app/core/models/ms-event/event.model';
 import { ComerClientsService1 } from 'src/app/core/services/ms-customers/comer-clients-service';
@@ -114,13 +117,58 @@ export class FormalGoodsEstateComponent
 
   ngOnInit(): void {
     this.settingColumns();
+
+    this._dataTableProcedeFormalizacion
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'eventId'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getFormalizeProccess();
+        }
+      });
+
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
         tap(() => {
           this.getFormalizeProccess();
+        })
+      )
+      .subscribe();
+    this.params2
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
           this.getStage2();
+        })
+      )
+      .subscribe();
+    this.params3
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
           this.getStage3();
+        })
+      )
+      .subscribe();
+    this.params4
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
           this.getTodos();
         })
       )
@@ -160,10 +208,19 @@ export class FormalGoodsEstateComponent
           } else {
             item['status'] = 'INVA';
           }
+
+          if (item.date) {
+            let date = new Date(item.date);
+            item['dateIncorporado'] = await this.formatDate(date);
+          } else {
+            item['dateIncorporado'] = '';
+          }
         });
 
         Promise.all(result).then(data => {
-          this._dataTableProcedeFormalizacion = response.data;
+          this._dataTableProcedeFormalizacion.load(response.data);
+          this._dataTableProcedeFormalizacion.refresh();
+          // this._dataTableProcedeFormalizacion = response.data;
           console.log(
             'Datos regresados: ',
             this._dataTableProcedeFormalizacion
@@ -174,6 +231,13 @@ export class FormalGoodsEstateComponent
       },
       error => (this.loading = false)
     );
+  }
+
+  async formatDate(date: any) {
+    let day = date.getDate() + 1;
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
   edit(dataFormalize: IFormalizeProcesses) {
     this.openModal({ dataFormalize });
@@ -244,6 +308,7 @@ export class FormalGoodsEstateComponent
 
     this.formalizeProcessService.getAll(params).subscribe(
       (response: any) => {
+        console.log('RES', response);
         let result = response.data.map(async (item: any) => {
           item['processKey'] =
             item.eventId == null
@@ -254,6 +319,20 @@ export class FormalGoodsEstateComponent
               ? 'SIN NOTARIO'
               : item.notaryDetails.name + ' ' + item.notaryDetails.lastName;
           item['notaryCli'] = item.notaryCli ? item.notaryCli : '';
+
+          if (item.date != null) {
+            let date = new Date(item.date);
+            item['dateIncorporado'] = await this.formatDate(date);
+          } else {
+            item['dateIncorporado'] = '';
+          }
+
+          if (item.assignmentnotDate != null) {
+            let date = new Date(item.assignmentnotDate);
+            item['dateAssignmentnotDate'] = await this.formatDate(date);
+          } else {
+            item['dateAssignmentnotDate'] = '';
+          }
         });
 
         Promise.all(result).then(data => {
@@ -360,6 +439,27 @@ export class FormalGoodsEstateComponent
             item.eventId == null
               ? 'Evento Inválido'
               : item.eventDetails.processKey;
+
+          if (item.date != null) {
+            let date = new Date(item.date);
+            item['dateIncorporado'] = await this.formatDate(date);
+          } else {
+            item['dateIncorporado'] = '';
+          }
+
+          if (item.writingAntDate != null) {
+            let date = new Date(item.writingAntDate);
+            item['dateWritingAntDate'] = await this.formatDate(date);
+          } else {
+            item['dateWritingAntDate'] = '';
+          }
+
+          if (item.writingDate) {
+            let date = new Date(item.writingDate);
+            item['dateWritingDate'] = await this.formatDate(date);
+          } else {
+            item['dateWritingDate'] = '';
+          }
         });
 
         Promise.all(result).then(data => {

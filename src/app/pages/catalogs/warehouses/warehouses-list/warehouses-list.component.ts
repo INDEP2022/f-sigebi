@@ -94,7 +94,6 @@ export class WarehousesListComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
-
   }
   async getDetType(response: any): Promise<void> {
     for (let i = 0; i < response.data.length; i++) {
@@ -107,7 +106,7 @@ export class WarehousesListComponent extends BasePage implements OnInit {
             console.log(resp.data[0].otvalor);
             response.data[i].detType = resp.data[0].otvalor;
           },
-          error: erro => (console.log(erro)),
+          error: erro => console.log(erro),
           complete: () => {
             if (i == response.data.length - 1) {
               this.warehouses = response.data;
@@ -117,8 +116,8 @@ export class WarehousesListComponent extends BasePage implements OnInit {
               this.totalItems = response.count;
               this.loading = false;
             }
-          }
-        })
+          },
+        });
       } else if (i == response.data.length - 1) {
         this.warehouses = response.data;
         console.log(response.data);
@@ -127,9 +126,8 @@ export class WarehousesListComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       }
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
-
   }
   async getUser(): Promise<void> {
     for (let i = 0; i < this.warehouses.length; i++) {
