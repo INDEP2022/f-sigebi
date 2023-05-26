@@ -252,7 +252,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-8">
+        <!-- <div class="col-md-8">
           <form-field [control]="subtipoForm.get('type')">
             <ngx-select
               class="form-control"
@@ -267,9 +267,34 @@
               (change)="onTypesChange($event)">
             </ngx-select>
           </form-field>
+        </div> -->
+
+        <div class="col-md-8">
+          <form-field [control]="subtipoForm.get('sssubtype')">
+            <ngx-select
+              [searchOnInit]="true"
+              (fetchItems)="getSssubtypes($event)"
+              [data]="sssubtypes"
+              [form]="subtipoForm"
+              value="id"
+              label="Subtipo - Ssubtipo - Sssubtipo"
+              bindLabel="description"
+              control="sssubtype"
+              (change)="onValuesChange($event)"
+              [labelTemplate]="sssubtypeLabel"
+              [optionTemplate]="sssubtypeOption">
+              <!-- (change)="onSssubtypesChange($event)" -->
+            </ngx-select>
+          </form-field>
         </div>
       </div>
     </form>
+    <ng-template #sssubtypeLabel let-item="item"
+      >{{ item.id }} - {{ item.description }}</ng-template
+    >
+    <ng-template #sssubtypeOption let-item="item"
+      >{{ item.id }} - {{ item.description }}</ng-template
+    >
 
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">

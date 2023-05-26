@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
+import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import {
   ICopiesOfficeSendDictation,
   IDictation,
@@ -11,6 +12,7 @@ import {
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IValidaCambioEstatus } from 'src/app/core/models/ms-good/good';
+import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -66,6 +68,10 @@ export class LegalOpinionsOfficeService {
   saveDictations(body: IDictation) {
     return this.msDictationService.create(body);
   }
+  // Update Dictaminaciones
+  updateDictations(body: Partial<IDictation>) {
+    return this.msDictationService.update(body);
+  }
   // Save TMP Dictaminaciones
   createTmpDictation(body: ITmpDictationCreate) {
     return this.msDictationService.createTmpDictation(body);
@@ -85,6 +91,10 @@ export class LegalOpinionsOfficeService {
   saveOfficeDictation(body: IOfficialDictation) {
     return this.msOficialDictationService.create(body);
   }
+  // Update Oficio Dictaminaciones
+  updateOfficeDictation(body: Partial<IOfficialDictation>) {
+    return this.msOficialDictationService.update(body);
+  }
   getElectronicFirmData(params: _Params) {
     return this.msSsf3SignatureElecDocsService.getAllFiltered(params);
   }
@@ -92,11 +102,29 @@ export class LegalOpinionsOfficeService {
   deleteElectronicFirmData(body: any) {
     return this.msSsf3SignatureElecDocsService.deleteElectronicFirm(body);
   }
+  // Get Copies Dictation
   getOfficeCopiesDictation(params: _Params) {
     return this.msCopiesOfficialOpinionService.getAll(params);
   }
+  // Save Text Oficio Dictaminaciones
+  saveCopiesOfficeDictation(body: ICopiesOfficialOpinion) {
+    return this.msCopiesOfficialOpinionService.create(body);
+  }
+  // Update Text Oficio Dictaminaciones
+  updateCopiesOfficeDictation(body: Partial<ICopiesOfficialOpinion>) {
+    return this.msCopiesOfficialOpinionService.update(body);
+  }
+  // Get text office
   getOfficeTextDictation(params: _Params) {
     return this.msJobDictumTextsService.getAll(params);
+  }
+  // Save Text Oficio Dictaminaciones
+  saveTextOfficeDictation(body: IJobDictumTexts) {
+    return this.msJobDictumTextsService.create(body);
+  }
+  // Update Text Oficio Dictaminaciones
+  updateTextOfficeDictation(body: Partial<IJobDictumTexts>) {
+    return this.msJobDictumTextsService.update(body);
   }
   getInitFormDictation(body: IInitFormLegalOpinionOfficeBody) {
     return this.msDictationService.getInitFormDictation(body);

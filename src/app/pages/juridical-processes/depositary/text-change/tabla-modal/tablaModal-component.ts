@@ -56,10 +56,14 @@ export class tablaModalComponent extends BasePage implements OnInit {
       .findByIdsOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          console.log('lookDictamenesByDictamens this.data => ' + this.data);
           this.data = resp.data;
         },
         error: err => {
-          this.onLoadToast('error', 'error', err.error.message);
+          console.log(
+            'lookDictamenesByDictamens this.data => ' + err.error.message
+          );
+          this.onLoadToast('error', 'error', 'No existen registros ');
         },
       });
   }
