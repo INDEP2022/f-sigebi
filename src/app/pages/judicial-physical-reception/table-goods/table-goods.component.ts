@@ -22,6 +22,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
     this.updateSettingsGoods();
   }
   @Input() override loading = false;
+  @Input() haveServerPagination: boolean; // campo requerido
   @Input() haveDelete = true;
   @Input() data: any[] = [];
   @Input() totalItems: number = 0;
@@ -30,6 +31,7 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   @Output() rowsSelected = new EventEmitter();
   @Output() updateGoodsRow = new EventEmitter();
   @Output() showDeleteAlert = new EventEmitter();
+  dataPaginated: any[] = [];
   count = 0;
   private _statusActaValue: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -40,10 +42,18 @@ export class TableGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       // console.log(x);
-      if (this.count > 0) {
-        this.updateData.emit(params);
+      if (this.haveServerPagination) {
+        if (this.count > 0) {
+          this.updateData.emit(params);
+        }
+        this.count++;
+      } else {
+        const cantidad = params.page * params.limit;
+        this.dataPaginated = this.data.slice(
+          (params.page - 1) * params.limit,
+          cantidad > this.data.length ? this.data.length : cantidad
+        );
       }
-      this.count++;
     });
   }
 

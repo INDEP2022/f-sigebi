@@ -45,15 +45,10 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     }
   }
 
-  getGoodByRastrer(
-    goods: number[],
-    action: string,
-    typeProceeding: string,
-    good: IGoodsByProceeding
-  ) {
+  getGoodByRastrer(goods: number[], action: string, good: IGoodsByProceeding) {
     return this.post<IListResponse<IGoodsByProceeding>>(
       'aplication/get-goods-indicators',
-      { goods, action, typeProceeding }
+      { goods, action }
     ).pipe(
       map(items => {
         // debugger;

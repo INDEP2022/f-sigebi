@@ -63,9 +63,12 @@ export class ScheduledMaintenanceDetailComponent
   settingsGoods = { ...settingsGoods };
   settingsGoodsForAdd = {
     ...settingsGoods,
+    hideSubHeader: false,
     edit: { ...settingsGoods.edit, confirmSave: false },
     delete: { ...settingsGoods.delete, confirmDelete: false },
   };
+  // loadingRastrerGoods = false;
+  // toggleInformation = true;
   areaProcess: string;
   params: ListParams = new ListParams();
   initialValue: any;
@@ -434,7 +437,7 @@ export class ScheduledMaintenanceDetailComponent
     let columnGoodId = {
       title: 'Localidad Ent. Transferente.',
       type: 'string',
-      sort: false,
+      sort: true,
       editable: false,
     };
     const params = new ListParams();
@@ -486,7 +489,37 @@ export class ScheduledMaintenanceDetailComponent
             columns: newColumns,
           };
           this.getData();
+
           console.log(this.settingsGoods);
+        },
+      });
+  }
+
+  fillGoodsByRastrerContent(response: any[]) {
+    // this.loadingRastrerGoods = true;
+    console.log(this.areaProcess);
+    this.detailService
+      .getGoodByRastrer(
+        response.map(item => +item.goodNumber),
+        this.areaProcess,
+        this.data[0]
+      )
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: goods => {
+          console.log(goods);
+          this.totalItems += goods.data.length;
+          this.bienesRas = goods.bienes;
+          this.expedientesRas = goods.expedientes;
+          this.dictamenesRas = goods.dictamenes;
+          this.data = [...this.data.concat(goods.data)];
+          // this.dataForAdd = goods.data;
+          console.log(this.totalItems);
+          this.loading = false;
+        },
+        error: err => {
+          this.onLoadToast('error', 'Bienes', 'Bienes no válidos para agregar');
+          this.loading = false;
         },
       });
   }
@@ -499,35 +532,7 @@ export class ScheduledMaintenanceDetailComponent
         //   this.detailService.getGoodByID(good.goodNumber);
         // });
         if (response && response.length > 0) {
-          console.log(this.areaProcess);
-          this.detailService
-            .getGoodByRastrer(
-              response.map(item => +item.goodNumber),
-              this.areaProcess,
-              this.typeProceeding,
-              this.data[0]
-            )
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe({
-              next: goods => {
-                console.log(goods);
-                this.totalItems += goods.data.length;
-                this.bienesRas = goods.bienes;
-                this.expedientesRas = goods.expedientes;
-                this.dictamenesRas = goods.dictamenes;
-                this.data = [...this.data.concat(goods.data)];
-                console.log(this.totalItems);
-                this.loading = false;
-              },
-              error: err => {
-                this.onLoadToast(
-                  'error',
-                  'Bienes',
-                  'Bienes no válidos para agregar'
-                );
-                this.loading = false;
-              },
-            });
+          this.fillGoodsByRastrerContent(response);
         } else {
           this.loading = false;
         }
@@ -601,6 +606,7 @@ export class ScheduledMaintenanceDetailComponent
     console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
+    // this.params.limit = 0;
     const detail = JSON.parse(
       window.localStorage.getItem('detailActa')
     ) as IProceedingDeliveryReception;
@@ -616,13 +622,52 @@ export class ScheduledMaintenanceDetailComponent
             this.goodsCant = response.total;
             // console.log(this.goodsCant);
             this.totalItems = response.count;
-            this.fillGoodsByRastrer();
+            // this.loading = false;
+            // this.fillGoodsByRastrer();
+            this.fillGoodsByRastrerContent([
+              { goodNumber: '537814' },
+              { goodNumber: '537813' },
+              { goodNumber: '537812' },
+              { goodNumber: '537811' },
+              { goodNumber: '537810' },
+              { goodNumber: '537545' },
+              { goodNumber: '537544' },
+              { goodNumber: '537543' },
+              { goodNumber: '537542' },
+              { goodNumber: '537539' },
+              { goodNumber: '537538' },
+              { goodNumber: '537536' },
+              { goodNumber: '537535' },
+              { goodNumber: '537411' },
+              { goodNumber: '537534' },
+              { goodNumber: '537410' },
+              { goodNumber: '536720' },
+            ]);
           },
           error: err => {
             this.data = [];
-            this.loading = false;
+            // this.loading = false;
             this.totalItems = 0;
-            this.fillGoodsByRastrer();
+            this.fillGoodsByRastrerContent([
+              { goodNumber: '537814' },
+              { goodNumber: '537813' },
+              { goodNumber: '537812' },
+              { goodNumber: '537811' },
+              { goodNumber: '537810' },
+              { goodNumber: '537545' },
+              { goodNumber: '537544' },
+              { goodNumber: '537543' },
+              { goodNumber: '537542' },
+              { goodNumber: '537539' },
+              { goodNumber: '537538' },
+              { goodNumber: '537536' },
+              { goodNumber: '537535' },
+              { goodNumber: '537411' },
+              { goodNumber: '537534' },
+              { goodNumber: '537410' },
+              { goodNumber: '536720' },
+            ]);
+            // this.fillGoodsByRastrer();
           },
         });
     }
@@ -663,6 +708,7 @@ export class ScheduledMaintenanceDetailComponent
                 );
               },
             });
+        } else {
         }
       }
     });
