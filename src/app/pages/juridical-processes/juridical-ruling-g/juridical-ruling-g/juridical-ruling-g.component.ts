@@ -927,9 +927,6 @@ export class JuridicalRulingGComponent
   }
 
   btnVerify() {
-    let cveOficio = this.dictaminacionesForm.get('cveOficio').value;
-    let tipo = this.expedientesForm.get('tipoDictaminacion').value;
-    let noDictaminacion = this.expedientesForm.get('noDictaminacion').value;
     const status = this.statusDict;
     const expedient = this.expedientesForm.get('noExpediente').value;
     if (this.goodsValid.length === 0) {
@@ -949,17 +946,8 @@ export class JuridicalRulingGComponent
               ['/pages/general-processes/goods-partialization'],
               {
                 queryParams: {
-                  // anterior..
-                  // good: this.goodsValid[0].id,
-                  // screen: 'FACTJURDICTAMASG',
-                  // origin: 'FACTJURDICTAMASG',
-                  // ..
-                  CLAVE_OFICIO_ARMADA: cveOficio,
-                  TIPO: tipo,
-                  P_VALOR: noDictaminacion,
-                  PAQUETE: '',
-                  P_GEST_OK: 1, // ..hardcoded - no llega de la pantalla anterior
-                  P_NO_TRAMITE: 1044141, // ..hardcoded - no llega de la pantalla anterior
+                  good: this.goodsValid[0].id,
+                  screen: 'FACTJURDICTAMASG',
                   origin: 'FACTJURDICTAMASG',
                 },
               }
@@ -1169,7 +1157,6 @@ export class JuridicalRulingGComponent
   userChange(user: any) {
     // ..captura usuario
     console.log(user);
-    this.dictaminacionesForm.get('autoriza_nombre').setValue(user.name);
   }
 
   getUsers($params: ListParams) {
