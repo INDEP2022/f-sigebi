@@ -15,9 +15,6 @@ import { TEXT_CHANGE_COLUMNS } from './tablaModalColumns';
   templateUrl: './tablaModal-component.html',
 })
 export class tablaModalComponent extends BasePage implements OnInit {
-  //this.settings.columns = COLUMNS;
-  //this.settings.actions = false;
-  //filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   dataAcount: IListResponse<IAccountMovement> =
     {} as IListResponse<IAccountMovement>;
   filterParams: BehaviorSubject<FilterParams>;
@@ -59,11 +56,14 @@ export class tablaModalComponent extends BasePage implements OnInit {
       .findByIdsOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.log('MODAL =>>  ' + JSON.stringify(resp.data));
+          console.log('lookDictamenesByDictamens this.data => ' + this.data);
           this.data = resp.data;
         },
         error: err => {
-          this.onLoadToast('error', 'error', err.error.message);
+          console.log(
+            'lookDictamenesByDictamens this.data => ' + err.error.message
+          );
+          this.onLoadToast('error', 'error', 'No existen registros ');
         },
       });
   }

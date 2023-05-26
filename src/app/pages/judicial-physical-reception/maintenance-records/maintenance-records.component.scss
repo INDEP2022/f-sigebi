@@ -1,3 +1,22 @@
+#maintenanceRecords {
+}
+
+:host::ng-deep app-pagination {
+  .pagination {
+    display: flex;
+    column-gap: 5px;
+
+    .page-item {
+      .page-link {
+        width: 36px !important;
+        height: 36px !important;
+        display: flex !important;
+        margin-top: 0px !important;
+      }
+    }
+  }
+}
+
 .scroll-table {
   height: 250px;
   overflow-y: auto;
@@ -33,8 +52,10 @@
 :host ::ng-deep app-card {
   .card .card-header {
     height: auto !important;
+
     h5 {
       margin-top: 0px;
+
       &:after {
         height: 50px !important;
         top: -15px !important;
