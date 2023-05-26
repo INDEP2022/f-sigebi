@@ -25,8 +25,11 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
   }
 
-  editDetailProcee(model: IDetailProceedingsDeliveryReception){
-    return this.put(ProceedingsEndpoints.DetailProceedingsDeliveryReception, model)
+  editDetailProcee(model: IDetailProceedingsDeliveryReception) {
+    return this.put(
+      ProceedingsEndpoints.DetailProceedingsDeliveryReception,
+      model
+    );
   }
 
   addGoodToProceedings(model: Partial<IDetailProceedingsDeliveryReception>) {

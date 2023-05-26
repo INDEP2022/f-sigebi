@@ -19,7 +19,7 @@ export class JobDictumTextsService extends HttpService {
     );
   }
 
-  update(jobDictumTexts: IJobDictumTexts) {
+  update(jobDictumTexts: Partial<IJobDictumTexts>) {
     return this.put(JobDictumTextsEndpoints.JobDictumTexts, jobDictumTexts);
   }
 
