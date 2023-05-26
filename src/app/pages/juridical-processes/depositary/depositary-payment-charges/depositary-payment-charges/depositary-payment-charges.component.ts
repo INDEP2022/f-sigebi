@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
@@ -12,6 +12,8 @@ import { IRefPayDepositary } from 'src/app/core/models/ms-depositarypayment/ms-d
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
+//import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
+import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -65,7 +67,8 @@ export class DepositaryPaymentChargesComponent
     private router: Router,
     private massiveGoodService: MassiveGoodService,
     private usersService: UsersService,
-    private bankService: BankService
+    private bankService: BankService,
+    private massiveDepositaryService: MassiveDepositaryService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -126,7 +129,7 @@ export class DepositaryPaymentChargesComponent
     this.form = this.fb.group({
       numberGood: [null, null],
       event: [null, null],
-      cve_bank: [null, null],
+      cve_bank: [null, [Validators.required]],
       loand: [null, null],
     });
   }
@@ -157,6 +160,9 @@ export class DepositaryPaymentChargesComponent
     ).subscribe({
       next: resp => {
         this.data = resp.data;
+        console.log('<<<<<<  this.data  >>>>>>');
+        console.log(this.data);
+        console.log('<<<<<<  this.data  >>>>>>');
         this.totalItems = resp.count;
         this.loading = false;
       },
@@ -185,34 +191,44 @@ export class DepositaryPaymentChargesComponent
   }
 
   ReadExcel(event: any) {
-    if (
-      this.formgetCveBank !== null &&
-      this.formgetCveBank !== '' &&
-      this.formgetCveBank !== undefined
-    ) {
+    if (this.form.get('cve_bank').valid) {
       let file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('pBank', this.form.get('cve_bank').value);
+
+      this.massiveDepositaryService.pupBurdenDataCSV(formData).subscribe({
+        next: resp => {
+          console.log(resp.data);
+          this.onLoadToast('success', 'Se dio de alta el archivo ', 'Correcto');
+        },
+        error: eror => {
+          this.onLoadToast('error', 'Error', eror.error.message);
+        },
+      });
+
       let fileReader = new FileReader();
       fileReader.readAsBinaryString(file);
 
       fileReader.onload = e => {
         var workbook = XLSX.read(fileReader.result, { type: 'binary' });
+
         var buffer = new Buffer(fileReader.result.toString());
         var string = buffer.toString('base64');
+
         var sheetNames = workbook.SheetNames;
 
         this.ExcelData = XLSX.utils.sheet_to_json(
           workbook.Sheets[sheetNames[0]]
         );
+
+        console.log('this.ExcelData =>>>>  ', this.ExcelData);
+
         this.data = [];
 
         this.data = this.ExcelData.map((data: any) =>
           this.setDataTableFromExcel(data)
         );
-
-        console.log(
-          '1 =>> ' + JSON.stringify(this.setDataTableFromExcel(this.ExcelData))
-        );
-        console.log('2 =>> ' + JSON.stringify(this.data[0]));
       };
     } else {
       this.onLoadToast(
@@ -224,7 +240,7 @@ export class DepositaryPaymentChargesComponent
   }
 
   btnPaymentDispersion() {
-    if (this.form.get('numberGood').valid) {
+    if (!this.form.get('numberGood').value) {
       const { idBien } = this.form.get('numberGood').value;
       this.router.navigate(
         [
@@ -302,15 +318,27 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
   setDataTableFromExcel(excelData: any) {
     return {
       movementNumber: excelData.MOV,
-      movement: excelData.ABONO,
-      sucursal: excelData.sucursal,
-      referenceori: excelData.REFERENCIA,
+      movement: excelData.CODIGO,
+      sucursal: excelData.SUCURSAL,
+      referenceori: excelData.REFERENCIA_ORI,
       date: this.milisegundoToDate(excelData.FECHA),
+      reference: excelData.REFERENCIA,
+      amount: excelData.ABONO,
     };
   }
 
   milisegundoToDate(milis: any) {
+    console.log('ENTRA FECHA =>> ' + milis);
     let fecha = new Date(milis);
+    console.log('SALE FECHA =>> ' + fecha);
+    console.log(
+      'FECHA =>> ' +
+        fecha.getFullYear() +
+        '-' +
+        (fecha.getMonth() + 1) +
+        '-' +
+        fecha.getDate()
+    );
     return (
       fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate()
     );

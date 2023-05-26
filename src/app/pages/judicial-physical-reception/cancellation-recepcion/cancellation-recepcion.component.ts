@@ -1810,17 +1810,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
         res => {
           const modelEdit: IProccedingsDeliveryReception = {
-            comptrollerWitness: this.form.get('testigo').value,
             observations: this.form.get('observaciones').value,
             witness1: this.form.get('autoridadCancela').value,
             witness2: this.form.get('elabora').value,
-            address: this.form.get('direccion').value,
-            elaborationDate: format(
-              this.form.get('fecElab').value,
-              'yyyy-MM,dd HH:mm'
-            ),
-            datePhysicalReception: format(
-              this.form.get('fecCierreActa').value,
+            address: format(this.form.get('direccion').value,
               'yyyy-MM,dd HH:mm'
             ),
             captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
@@ -1910,7 +1903,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   refillData(){
-
     const paramsF = new FilterParams();
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value)
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(

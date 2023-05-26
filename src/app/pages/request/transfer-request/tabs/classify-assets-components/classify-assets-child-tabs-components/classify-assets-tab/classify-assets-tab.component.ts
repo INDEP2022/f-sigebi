@@ -844,6 +844,7 @@ export class ClassifyAssetsTabComponent
     }
   }
   cleanLvl(lvl?: number) {
+    this.advSearch = false;
     this.classiGoodsForm.controls['goodTypeId'].setValue(null);
     this.selectLevel4 = [];
     this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
@@ -990,7 +991,9 @@ export class ClassifyAssetsTabComponent
 
             if (fraction) {
               this.fractionCode = fraction.fractionCode;
+
               if (this.fractionCode.length === 8) {
+                console.log('<<<<<<<<<<<<<>>>>>>>>>>>>>', fraction);
                 this.setNoClasifyGood(fraction);
                 this.setUnidLigieMeasure(fraction);
                 this.setFractionId(data, fraction.fractionCode, 'Seccion');
@@ -1192,7 +1195,7 @@ export class ClassifyAssetsTabComponent
   }
 
   getRelevantTypeId(arrayData: any, id: number): any {
-    if (arrayData && id) {
+    if (arrayData != undefined || arrayData != null) {
       return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
     }
   }

@@ -67,7 +67,6 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
 
   getUserInfo() {
     this.programmingRequestService.getUserInfo().subscribe((data: any) => {
-      console.log('data user log', data);
       this.nameUser = data.name;
       this.typeUserLog = data.employeetype;
       this.regionalDelegationNum = data.department;
@@ -134,7 +133,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
-      `¿Desea turnar la solicitud a ${this.nickName}?`
+      `¿Desea turnar la solicitud a ${this.userName}?`
     ).then(async question => {
       if (question.isConfirmed) {
         const programmingResult: any = await this.createProgramming();
@@ -165,8 +164,6 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
             'pages/request/programming-request/perform-programming';
           task['processName'] = 'SolicitudProgramacion';
           body['task'] = task;
-
-          console.log('task', body);
           const taskResult = await this.createTaskOrderService(body);
           this.loading = false;
           if (taskResult) {
@@ -210,8 +207,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
         typeUserSelect,
         callback: (user: IUserTurn) => {
           if (user) {
-            console.log('user', user);
-            this.userName = user.firstName;
+            this.userName = user.fullName;
             this.nickName = user.username;
           }
         },

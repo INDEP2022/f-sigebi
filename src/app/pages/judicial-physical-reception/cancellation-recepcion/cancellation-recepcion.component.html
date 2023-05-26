@@ -22,14 +22,13 @@
           <div *ngIf="searchByOtherData" class="row">
             <div class="row mt-3">
               <ngx-select
-              control="listExpedients"
+                control="listExpedients"
                 label="Expedientes"
                 bindLabel="id"
                 (change)="selectExpedient($event)"
                 [data]="dataExpedients"
                 [searchable]="false"
-                [form] = 'form'
-                ></ngx-select>
+                [form]="form"></ngx-select>
             </div>
           </div>
         </div>
