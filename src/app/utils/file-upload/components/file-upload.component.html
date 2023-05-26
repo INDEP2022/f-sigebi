@@ -3,7 +3,10 @@
     (change)="onSelect($event)"
     [expandable]="true"
     [accept]="accept">
-    <ngx-dropzone-label>Selecciona o arrastra los archivos!</ngx-dropzone-label>
+    <ngx-dropzone-label
+      >Haz clic para seleccionar las imágenes o arrástralas
+      aquí</ngx-dropzone-label
+    >
     <ngx-dropzone-preview
       ngProjectAs="ngx-dropzone-preview"
       [file]="fileEvent.file"
@@ -41,7 +44,7 @@
 <div class="row pt-3">
   <div class="col-md-12 text-center">
     <button class="btn btn-primary" (click)="confirm()">
-      Subir Archivos
+      Subir imágen
       <i class="fa fa-upload"></i>
     </button>
   </div>
