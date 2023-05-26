@@ -589,7 +589,6 @@ export class ScheduledMaintenanceDetailComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            // console.log(response);
             this.data = response.data;
             this.goodsCant = response.total;
             // console.log(this.goodsCant);
