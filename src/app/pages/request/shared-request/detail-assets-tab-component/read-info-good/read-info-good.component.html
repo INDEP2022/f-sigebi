@@ -274,9 +274,7 @@
         </div>
 
         <div class="row pt-4">
-          <div
-            class="col-md-6"
-            *ngIf="typeOfRequest == 'MANUAL' || typeOfRequest == 'SAT_SAE'">
+          <div class="col-md-6">
             <div>
               <label>Unidad medida INDEP: </label>
               <span class="fs-4"> {{ saeMeasureUnit }}</span>
@@ -646,7 +644,7 @@
           <div class="col-md-6">
             <label>Fecha ingreso: </label>
             <span class="fs-4">
-              {{ goodData?.admissionDate | date: 'dd/MM/yyyy' }}
+              {{ goodData?.admissionDate | date : 'dd/MM/yyyy' }}
             </span>
           </div>
           <div class="col-md-6">

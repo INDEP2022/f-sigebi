@@ -46,6 +46,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 /** ROUTING MODULE */
 
@@ -423,7 +424,7 @@ export class JuridicalRulingComponent
 
   async loadExpedientInfo(id: number | string) {
     const response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation?filter.expedientNumber=' +
+      `${environment.API_URL}dictation/api/v1/dictation?filter.expedientNumber=` +
         id,
       {
         method: 'GET',
@@ -525,7 +526,7 @@ export class JuridicalRulingComponent
    */
   async getDicDescriptionByGood(id: number) {
     const response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation-x-good1/find-by-ids',
+      `${environment.API_URL}dictation/api/v1/dictation-x-good1/find-by-ids`,
       {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -898,7 +899,7 @@ export class JuridicalRulingComponent
 
   async checkout1(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp1`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -910,7 +911,7 @@ export class JuridicalRulingComponent
 
   async checkout2(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp2`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -922,7 +923,7 @@ export class JuridicalRulingComponent
 
   async checkout3(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp3`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
