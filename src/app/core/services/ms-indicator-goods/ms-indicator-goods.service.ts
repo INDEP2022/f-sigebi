@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { format } from 'date-fns';
 import { forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { EIndicatorGoodsEndpoints } from 'src/app/common/constants/endpoints/ms-indicatorgoods-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IFormScheduledDetail } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/scheduled-maintenance-detail/interfaces';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 import {
   IListResponse,
   IListResponseMessage,
@@ -107,14 +107,14 @@ export class MsIndicatorGoodsService extends HttpService {
           data: data.map(item => {
             return {
               ...item,
-              fec_aprobacion_x_admon: format(
-                new Date(item.fec_aprobacion_x_admon),
-                'dd/MM/yyyy'
-              ),
-              fec_indica_usuario_aprobacion: format(
-                new Date(item.fec_indica_usuario_aprobacion),
-                'dd/MM/yyyy'
-              ),
+              fec_aprobacion_x_admon: formatForIsoDate(
+                item.fec_aprobacion_x_admon,
+                'string'
+              ) as string,
+              fec_indica_usuario_aprobacion: formatForIsoDate(
+                item.fec_indica_usuario_aprobacion,
+                'string'
+              ) as string,
               agregado: 'AE',
             };
           }),

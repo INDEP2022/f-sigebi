@@ -3,7 +3,7 @@
   [greater]="true"
   text="Cerrando Acta... por favor espere"></form-loader>
 
-<button class="btn btn-sm btn-return" (click)="return()">
+<button class="btn btn-sm btn-return" (click)="back()">
   <i class="bx bx-chevron-left float-icon"></i> Regresar
 </button>
 
@@ -105,9 +105,7 @@
           [data]="data"
           inicioColumn="fec_aprobacion_x_admon"
           finColumn="fec_indica_usuario_aprobacion"
-          (updateGoodEvent)="
-            data = $event; updateDatesTable()
-          "></app-update-dates-goods>
+          (updateGoodEvent)="updateDatesTable($event)"></app-update-dates-goods>
       </div>
       <div class="col-md-6 goodTracker mt-4">
         <app-goodtracker-button

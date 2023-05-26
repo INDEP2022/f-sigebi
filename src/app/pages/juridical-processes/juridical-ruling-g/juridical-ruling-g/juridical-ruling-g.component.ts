@@ -53,6 +53,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 import { TempGood } from './dataTemp';
 
@@ -554,6 +555,9 @@ export class JuridicalRulingGComponent
                   this.expedientesForm.get('noExpediente').value
               );
             this.expedientesForm
+              .get('tipoDictaminacion')
+              .setValue(params?.tipoDic);
+            this.expedientesForm
               .get('noVolante')
               .setValue(params?.volante || null);
             this.dictaminacionesForm
@@ -1022,7 +1026,7 @@ export class JuridicalRulingGComponent
 
   async checkout1(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp1`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1034,7 +1038,7 @@ export class JuridicalRulingGComponent
 
   async checkout2(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp2`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1046,7 +1050,7 @@ export class JuridicalRulingGComponent
 
   async checkout3(object: object) {
     let response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp3`,
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -1058,7 +1062,7 @@ export class JuridicalRulingGComponent
 
   async loadExpedientInfo(id: number | string) {
     const response = await fetch(
-      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation?filter.expedientNumber=' +
+      `${environment.API_URL}dictation/api/v1/dictation?filter.expedientNumber=` +
         id,
       {
         method: 'GET',
@@ -1166,6 +1170,7 @@ export class JuridicalRulingGComponent
   userChange(user: any) {
     // ..captura usuario
     console.log(user);
+    this.dictaminacionesForm.get('autoriza_nombre').setValue(user.name);
   }
 
   getUsers($params: ListParams) {

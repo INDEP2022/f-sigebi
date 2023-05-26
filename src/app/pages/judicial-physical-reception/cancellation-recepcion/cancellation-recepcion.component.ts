@@ -482,7 +482,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.form.get(formName).setValue(data.goodStatus);
       },
       err => {
-        this.form.get(formName).setValue(null);
+        this.form.get(formName).setValue(data.goodStatus);
       }
     );
   }
@@ -647,7 +647,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.navigateProceedings = true;
         this.idProceeding = dataRes.id;
       },
-      err => console.log(err)
+      err => {}
     );
   }
 
@@ -696,6 +696,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.requireAct1();
           this.maxDate = new Date();
           this.checkChange();
+          this.inputsNewProceeding();
           this.getTransfer();
         }
       },
@@ -706,6 +707,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.maxDate = new Date();
         this.getTransfer();
         this.checkChange();
+        this.inputsNewProceeding();
       }
     );
   }
@@ -1061,7 +1063,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       newDetailProceeding.amount = element.quantity;
       newDetailProceeding.received = 'S';
       newDetailProceeding.approvedXAdmon = 'S';
-      newDetailProceeding.approvedUserXAdmon = localStorage.getItem('username');
+      newDetailProceeding.approvedUserXAdmon = localStorage
+        .getItem('username')
+        .toLocaleUpperCase();
       newDetailProceeding.numberRegister = element.registryNumber;
       console.log(newDetailProceeding);
       this.serviceDetailProc
@@ -1117,7 +1121,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           const paramsF = new FilterParams();
           let VAL_MOVIMIENTO = 0;
 
-          paramsF.addFilter('valUser', localStorage.getItem('username'));
+          paramsF.addFilter(
+            'valUser',
+            localStorage.getItem('username').toLocaleUpperCase()
+          );
           paramsF.addFilter('valMinutesNumber', this.idProceeding);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsF.getParams())
@@ -1217,7 +1224,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           ),
           address: this.form.get('direccion').value,
           statusProceedings: 'ABIERTA',
-          elaborate: localStorage.getItem('username'),
+          elaborate: localStorage.getItem('username').toLocaleUpperCase(),
           numFile: this.form.get('expediente').value,
           witness1: this.form.get('autoridadCancela').value,
           witness2: this.form.get('elabora').value,
@@ -1398,7 +1405,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(res => {
           const idProceed = JSON.parse(JSON.stringify(res.data[0])).id;
           const paramsFProg = new FilterParams();
-          paramsFProg.addFilter('valUser', localStorage.getItem('username'));
+          paramsFProg.addFilter(
+            'valUser',
+            localStorage.getItem('username').toLocaleUpperCase()
+          );
           paramsFProg.addFilter('valMinutesNumber', idProceed);
           this.serviceProgrammingGood
             .getTmpProgValidation(paramsFProg.getParams())
@@ -1721,69 +1731,86 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   deleteProceeding() {
     console.log(this.form.get('fecElab').value);
-    if (this.v_atrib_del === 0) {
-      if (this.statusProceeding === 'CERRADO') {
-        this.alert(
-          'error',
-          'No puede elimar acta',
-          'No puede eliminar un Acta cerrada'
-        );
-      }
-      if (
-        this.form.get('fecElab').value != null &&
-        format(this.form.get('fecElab').value, 'MM-yyyy') !=
-          format(new Date(), 'MM-yyyy')
-      ) {
-        this.alert(
-          'error',
-          'No puede eliminar acta',
-          'No puede eliminar un Acta fuera del mes de elaboración'
-        );
+    if (this.statusProceeding != '') {
+      if (this.v_atrib_del === 0) {
+        if (['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
+          this.alert(
+            'error',
+            'No puede elimar acta',
+            'No puede eliminar un Acta cerrada'
+          );
+        } else if (
+          this.form.get('fecElab').value != null &&
+          format(this.form.get('fecElab').value, 'MM-yyyy') !=
+            format(new Date(), 'MM-yyyy')
+        ) {
+          this.alert(
+            'error',
+            'No puede eliminar acta',
+            'No puede eliminar un Acta fuera del mes de elaboración'
+          );
+        } else {
+          this.alertQuestion(
+            'question',
+            '¿Desea eliminar completamente el acta?',
+            `Se eliminará el acta ${this.form.get('acta2').value}`,
+            'Eliminar'
+          ).then(q => {
+            if (q.isConfirmed) {
+              const paramsF = new FilterParams();
+              paramsF.addFilter(
+                'keysProceedings',
+                this.form.get('acta2').value
+              );
+              this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+                res => {
+                  console.log();
+                  const realData = JSON.parse(JSON.stringify(res.data[0]));
+                  this.serviceDetailProc
+                    .PADelActaEntrega(realData.id)
+                    .subscribe(res => {
+                      this.form
+                        .get('expediente')
+                        .setValue(this.numberExpedient);
+                      this.dataGoods.load(
+                        this.dataGoods['data'].map((e: any) => {
+                          for (let element of this.dataGoodAct['data']) {
+                            if (e.id === element.id) {
+                              return { ...e, avalaible: true };
+                            } else {
+                              return e;
+                            }
+                          }
+                        })
+                      );
+                      this.clearInputs();
+                      this.getGoodsByExpedient();
+                      this.statusProceeding = '';
+                      if (this.proceedingData.length === 1) {
+                        this.navigateProceedings = false;
+                        this.nextProce = true;
+                        this.prevProce = false;
+                        this.numberProceeding = 0;
+                      } else {
+                        this.nextProceeding();
+                      }
+                      this.alert('success', 'Acta eliminada con éxito', '');
+                    });
+                },
+                err => {
+                  console.log(err);
+                  this.alert(
+                    'error',
+                    'No se pudo eliminar acta',
+                    'Secudió un problema al eliminar el acta'
+                  );
+                }
+              );
+            }
+          });
+        }
       }
     }
-
-    this.alertQuestion(
-      'question',
-      '¿Desea eliminar completamente el acta?',
-      `Se eliminará el acta ${this.form.get('acta2').value}`,
-      'Eliminar'
-    ).then(q => {
-      if (q.isConfirmed) {
-        const paramsF = new FilterParams();
-        paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
-        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-          res => {
-            console.log();
-            const realData = JSON.parse(JSON.stringify(res.data[0]));
-            this.serviceDetailProc
-              .PADelActaEntrega(realData.id)
-              .subscribe(res => {
-                this.form.get('expediente').setValue(this.numberExpedient);
-                this.dataGoods.load(
-                  this.dataGoods['data'].map((e: any) => {
-                    for (let element of this.dataGoodAct['data']) {
-                      if (e.id === element.id) {
-                        return { ...e, avalaible: true };
-                      }
-                    }
-                  })
-                );
-                this.clearInputs();
-                this.getGoodsByExpedient();
-                this.alert('success', 'Acta eliminada con éxito', '');
-              });
-          },
-          err => {
-            console.log(err);
-            this.alert(
-              'error',
-              'No se pudo eliminar acta',
-              'Secudió un problema al eliminar el acta'
-            );
-          }
-        );
-      }
-    });
   }
 
   //NAVIGATE PROCEEDING

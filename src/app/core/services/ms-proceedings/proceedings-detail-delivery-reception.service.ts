@@ -4,7 +4,10 @@ import { map } from 'rxjs/operators';
 import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proceedings-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
-import { formatForIsoDate } from 'src/app/shared/utils/date';
+import {
+  firstFormatDateToSecondFormatDate,
+  formatForIsoDate,
+} from 'src/app/shared/utils/date';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodsByProceeding } from '../../models/ms-indicator-goods/ms-indicator-goods-interface';
 import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceeding-delivery-reception';
@@ -67,8 +70,10 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
           bienes += +(item.cantidad + '');
           return {
             ...item,
-            fec_aprobacion_x_admon: good.fec_aprobacion_x_admon,
-            fec_indica_usuario_aprobacion: good.fec_indica_usuario_aprobacion,
+            fec_aprobacion_x_admon: good ? good.fec_aprobacion_x_admon : null,
+            fec_indica_usuario_aprobacion: good
+              ? good.fec_indica_usuario_aprobacion
+              : null,
             agregado: 'RA',
           };
         });
@@ -177,8 +182,12 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
           mergeMap(detail => {
             return this.put(this.endpoint, {
               ...detail,
-              approvedDateXAdmon: selected.fec_aprobacion_x_admon,
-              dateIndicatesUserApproval: selected.fec_indica_usuario_aprobacion,
+              approvedDateXAdmon: firstFormatDateToSecondFormatDate(
+                selected.fec_aprobacion_x_admon + ''
+              ),
+              dateIndicatesUserApproval: firstFormatDateToSecondFormatDate(
+                selected.fec_indica_usuario_aprobacion
+              ),
               numberGood: selected.no_bien,
             });
           })
@@ -191,20 +200,18 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     return this.post(this.endpoint + '/id', { numberGood, numberProceedings });
   }
 
-  deleteByIdBP(
+  deleteByBP(
     actaNumber: number,
     processingArea: string,
-    detail: IGoodsByProceeding,
-    contEli: number
+    details: IGoodsByProceeding[]
   ) {
     const body: PBDelete = {
-      contEli,
-      aggregate: 'AE',
-      selEli: 1,
       processingArea,
-      states: detail.estatus,
       user: localStorage.getItem('username'),
       actaNumber,
+      goods: details.map(detail => {
+        return { noBien: +(detail.no_bien + ''), status: detail.estatus };
+      }),
     };
     //   actaNumber,
     //   goodNumber: +detail.no_bien,

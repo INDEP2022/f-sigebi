@@ -5,11 +5,6 @@
     </h5>
     <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings"></app-columns-select>
-      <!-- <div>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
-          Nuevo
-        </button>
-      </div> -->
     </div>
   </div>
 
@@ -24,10 +19,25 @@
                 label="No&#46; Expediente">
                 <input
                   class="form-control"
-                  formControlName="noExpediente"
-                  (keydown)="onKeyPress($event)"
-                  (blur)="onLoadListNotifications()" />
+                  maxlength="11"
+                  type="number"
+                  min="0"
+                  formControlName="noExpediente" />
+                <!-- (blur)="onLoadListNotifications()"  -->
+                <!-- (keydown)="onKeyPress($event)" -->
               </form-field>
+            </div>
+            <div class="col-lg-8">
+              <button
+                (click)="onLoadListNotifications()"
+                class="btn btn-primary active btn-sm ml-3">
+                Buscar
+              </button>
+              <button
+                (click)="cleanExpediente()"
+                class="btn btn-warning active btn-sm ml-3">
+                Limpiar
+              </button>
             </div>
           </div>
         </div>

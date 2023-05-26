@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -519,6 +520,9 @@ export class ClarificationsComponent
         const clarification = resp.data.map(async (item: any) => {
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
+          const date = new Date(item.rejectionDate);
+          const datePipe = new DatePipe('en-US');
+          item['rejectionDate'] = datePipe.transform(date, 'dd/MM/yyyy', 'UTC');
         });
 
         Promise.all(clarification).then(data => {

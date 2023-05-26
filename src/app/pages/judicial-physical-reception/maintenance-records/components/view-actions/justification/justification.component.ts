@@ -31,10 +31,6 @@ export class JustificationComponent extends AlertButton implements OnInit {
     super();
     this.service.formJustification = this.fb.group({
       usuario: [null, [Validators.required]],
-      userName: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
       justification: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

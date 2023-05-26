@@ -160,7 +160,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
           task['programmingId'] = this.programmingId;
           //task['requestId'] = this.programmingId;
           task['expedientId'] = 0;
-          task['regionalDelegationNumber'] = this.regionalDelegationNum;
+          task['idDelegationRegional'] = this.regionalDelegationNum;
           task['urlNb'] =
             'pages/request/programming-request/perform-programming';
           task['processName'] = 'SolicitudProgramacion';
@@ -188,7 +188,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          console.log(error.error.message);
+          console.log(error);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
