@@ -137,8 +137,10 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   users$$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
 
+  datosOpinion: any = [];
+
   valueCharge: Observable<String>;
-  //############################################################################
+
   no_cuenta: number;
   dataAcount: IListResponse<IAccountMovement> =
     {} as IListResponse<IAccountMovement>;
@@ -395,7 +397,7 @@ carga la  información de la parte media de la página
       .getValue()
       .addFilter(
         'numberOfDicta',
-        this.form.value.registerNumber,
+        this.form.value.numberDictamination,
         SearchFilter.EQ
       );
     this.dictationService
@@ -403,20 +405,7 @@ carga la  información de la parte media de la página
       .subscribe({
         next: resp => {
           this.contadorCCP = resp.data;
-
-          console.log(resp);
-          console.log('this.contadorCCP =>> ' + this.contadorCCP);
-
-          this.nrSelecttypePerson! = resp.data[0].personExtInt;
-          this.nrSelecttypePerson_I! = resp.data[1].personExtInt;
-
-          this.form.get('typePerson').setValue(this.nrSelecttypePerson);
-          this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
-          this.form.get('senderUser').setValue(resp.data[0].recipientCopy);
-
-          this.form.get('personaExt').setValue(resp.data[0].namePersonExt);
-          this.form.get('personaExt_I').setValue(resp.data[1].namePersonExt);
-          this.form.get('senderUser_I').setValue(resp.data[1].recipientCopy);
+          this.datosOpinion = resp.data;
         },
         error: errror => {
           this.onLoadToast('error', 'Error', errror.error.message);

@@ -20,3 +20,21 @@
 //     }
 //   }
 // }
+
+.btn-return {
+  color: #9d2449;
+  padding-left: 0px;
+  left: -10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  top: -20px;
+
+  > i {
+    font-size: 35px;
+  }
+
+  &:hover {
+    color: #9d2449;
+  }
+}

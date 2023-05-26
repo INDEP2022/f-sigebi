@@ -245,7 +245,6 @@ export class RegisterDocumentationFormComponent
 
   changePriorityDateEvent(event: any) {
     this.bsPriorityDate = event;
-
     if (this.bsPriorityDate) {
       const date = this.bsPriorityDate.toISOString();
       this.registerForm.controls['priorityDate'].setValue(date);

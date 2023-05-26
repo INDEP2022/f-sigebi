@@ -87,4 +87,18 @@ export class MsDepositaryService extends HttpService {
       `${DepositaryEndPoints.ValidBlackListAppointment}/${id}`
     );
   }
+  getAplicationcargaCliente1(
+    no_appointment?: number
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DepositaryEndPoints.AplicationcargaCliente1}?no_nombramiento=${no_appointment}`
+    );
+  }
+  getAplicationcargaCliente2(
+    no_appointment?: number
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DepositaryEndPoints.AplicationcargaCliente2}?no_nombramiento=${no_appointment}`
+    );
+  }
 }

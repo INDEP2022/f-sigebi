@@ -23,6 +23,7 @@ export class PaginationComponent implements OnInit {
   @Input() maxSize: number = 5;
   @Input() pageSizeOptions: number[] = [10, 25, 50, 100];
   @Input() limit: FormControl = new FormControl(10);
+  @Input() paginatorPageSize: boolean = true;
   constructor() {}
 
   ngOnInit(): void {}

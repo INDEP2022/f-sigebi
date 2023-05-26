@@ -226,7 +226,7 @@
                       >Todos - 0 - TODOS - 0</ng-option
                     >
                     <ng-option *ngFor="let item of tiposData; index as i">
-                      {{ i }}
+                      {{ item }}
                     </ng-option>
                   </ng-select>
 
@@ -444,31 +444,46 @@
                         </div>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('remitente')"
-                          label="Remitente">
-                          <input
+                        <form-field [control]="formOficio.get('remitente')">
+                          <ngx-select
                             [readonly]="!disabledBTNs"
-                            class="form-control"
-                            formControlName="remitente" />
+                            [form]="formOficio"
+                            [data]="senders"
+                            (fetchItems)="getSenders($event)"
+                            bindLabel="userAndName"
+                            control="remitente"
+                            label="Remitente"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="remitente" /> -->
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('destinatario')"
-                          label="Destinatario">
-                          <input
+                        <form-field [control]="formOficio.get('destinatario')">
+                          <ngx-select
                             [readonly]="!disabledBTNs"
-                            class="form-control"
-                            formControlName="destinatario" />
+                            [form]="formOficio"
+                            [data]="recipients"
+                            (fetchItems)="getRecipients($event)"
+                            bindLabel="userAndName"
+                            control="destinatario"
+                            label="Destinatario"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="destinatario" /> -->
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('ciudad')">
                           <ngx-select
+                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="cities2"
-                            (fetchItems)="getCities($event)"
+                            (fetchItems)="getCities2($event)"
                             bindLabel="nameAndId"
                             control="ciudad"
                             label="Ciudad"
