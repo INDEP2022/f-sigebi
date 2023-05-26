@@ -55,7 +55,7 @@ export class ScheduledMaintenanceDetailComponent
   paramsForAdd = new BehaviorSubject<ListParams>(new ListParams());
   paramsStatus: ListParams = new ListParams();
   data: IGoodsByProceeding[] = [];
-  dataForAdd: IGoodsByProceeding[] = [];
+  goodsByRastrer: IGoodsByProceeding[] = [];
   totalItems: number = 0;
   goodsCant: number = 0;
   selecteds: IGoodsByProceeding[] = [];
@@ -66,6 +66,8 @@ export class ScheduledMaintenanceDetailComponent
     edit: { ...settingsGoods.edit, confirmSave: false },
     delete: { ...settingsGoods.delete, confirmDelete: false },
   };
+  // loadingRastrerGoods = false;
+  // toggleInformation = true;
   areaProcess: string;
   params: ListParams = new ListParams();
   initialValue: any;
@@ -113,6 +115,11 @@ export class ScheduledMaintenanceDetailComponent
 
   get typeProceeding() {
     return this.form.get('tipoEvento') ? this.form.get('tipoEvento').value : '';
+  }
+
+  finishMassiveDelete(deleteds: IGoodsByProceeding[]) {
+    console.log();
+    this.getData();
   }
 
   private getStatusPantallaByGoodIndicator(good: IGoodsByProceeding) {
@@ -486,124 +493,78 @@ export class ScheduledMaintenanceDetailComponent
             columns: newColumns,
           };
           this.getData();
+
           console.log(this.settingsGoods);
         },
       });
   }
 
-  fillGoodsByRastrer() {
+  fillGoodsByRastrerContent(
+    response: any[],
+    deleteds: IGoodsByProceeding[] = []
+  ) {
+    // this.loadingRastrerGoods = true;
+    console.log(this.areaProcess);
+    this.detailService
+      .getGoodByRastrer(
+        response.map(item => +item.goodNumber),
+        this.areaProcess,
+        this.data[0]
+      )
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: goods => {
+          console.log(goods);
+
+          this.bienesRas = goods.bienes;
+          this.expedientesRas = goods.expedientes;
+          this.dictamenesRas = goods.dictamenes;
+          this.goodsByRastrer = goods.data;
+          if (deleteds.length > 0) {
+            const deletedsStr = deleteds.map(x => x.no_bien);
+            this.goodsByRastrer = this.goodsByRastrer.filter(
+              item => !deletedsStr.toString().includes(item.no_bien)
+            );
+          }
+          this.data = [...this.data.concat(this.goodsByRastrer)];
+          this.totalItems += this.goodsByRastrer.length;
+          console.log(this.totalItems);
+          this.loading = false;
+        },
+        error: err => {
+          this.onLoadToast('error', 'Bienes', 'Bienes no válidos para agregar');
+          this.loading = false;
+        },
+      });
+  }
+
+  fillGoodsByRastrer(deleteds: IGoodsByProceeding[] = []) {
     this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
-        // debugger;
-        // response.forEach(good => {
-        //   this.detailService.getGoodByID(good.goodNumber);
-        // });
         if (response && response.length > 0) {
-          console.log(this.areaProcess);
-          this.detailService
-            .getGoodByRastrer(
-              response.map(item => +item.goodNumber),
-              this.areaProcess,
-              this.typeProceeding,
-              this.data[0]
-            )
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe({
-              next: goods => {
-                console.log(goods);
-                this.totalItems += goods.data.length;
-                this.bienesRas = goods.bienes;
-                this.expedientesRas = goods.expedientes;
-                this.dictamenesRas = goods.dictamenes;
-                this.data = [...this.data.concat(goods.data)];
-                console.log(this.totalItems);
-                this.loading = false;
-              },
-              error: err => {
-                this.onLoadToast(
-                  'error',
-                  'Bienes',
-                  'Bienes no válidos para agregar'
-                );
-                this.loading = false;
-              },
-            });
+          this.fillGoodsByRastrerContent(response, deleteds);
         } else {
           this.loading = false;
         }
-
-        // if (response) {
-        //   // console.log(response, this.infoForm);
-        //   this.detailService
-        //     .createMassive(
-        //       response.map(item =>
-        //         trackerGoodToDetailProceeding(item, this.actaId)
-        //       )
-        //     )
-        //     .subscribe({
-        //       next: response2 => {
-        //         const goods = response.map(good => good.goodNumber);
-        //         let message = '';
-        //         goods.forEach((good, index) => {
-        //           message += good + (index < goods.length - 1 ? ',' : '');
-        //         });
-        //         this.onLoadToast('success', 'Bienes Agregados', message);
-        //         this.getData();
-        //       },
-        //       error: err => {
-        //         this.onLoadToast('error', 'Bienes', 'No ');
-        //       },
-        //     });
-        //   // this.service.dataForAdd = [
-        //   //   ...this.service.dataForAdd.concat(
-        //   //     response.map(item =>
-        //   //       trackerGoodToDetailProceeding(item, this.infoForm.id)
-        //   //     )
-        //   //   ),
-        //   // ];
-        // }
-        // this.detailService.createMassive(details)
-        // if (response && response.length > 0) {
-        //   this.service
-        //     .getByGoodRastrer(
-        //       response.map(item => +item.goodNumber),
-        //       this.data[0]
-        //     )
-        //     .pipe(takeUntil(this.$unSubscribe))
-        //     .subscribe({
-        //       next: goods => {
-        //         console.log(goods);
-
-        //         // this.dataForAdd = goods.data;
-        //         this.detailService.createMassive()
-        //       },
-        //       complete: () => {
-        //         this.loading = false;
-        //       },
-        //     });
-        // } else {
-        //   this.loading = false;
-        // }
-        // tracker.unsubscribe();
       },
       error: err => {
         console.log(err);
         this.loading = false;
-        // tracker.unsubscribe();
       },
     });
   }
 
-  getData() {
+  getData(deleteds: IGoodsByProceeding[] = []) {
     const idActa = this.actaId;
     console.log(idActa);
     console.log(new Date());
     console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
-    const detail = JSON.parse(
-      window.localStorage.getItem('detailActa')
-    ) as IProceedingDeliveryReception;
+    this.params.limit = 0;
+    // const detail = JSON.parse(
+    //   window.localStorage.getItem('detailActa')
+    // ) as IProceedingDeliveryReception;
 
     if (idActa) {
       this.service
@@ -616,12 +577,51 @@ export class ScheduledMaintenanceDetailComponent
             this.goodsCant = response.total;
             // console.log(this.goodsCant);
             this.totalItems = response.count;
-            this.fillGoodsByRastrer();
+            // this.loading = false;
+            this.fillGoodsByRastrer(deleteds);
+            // this.fillGoodsByRastrerContent([
+            //   { goodNumber: '537814' },
+            //   { goodNumber: '537813' },
+            //   { goodNumber: '537812' },
+            //   { goodNumber: '537811' },
+            //   { goodNumber: '537810' },
+            //   { goodNumber: '537545' },
+            //   { goodNumber: '537544' },
+            //   { goodNumber: '537543' },
+            //   { goodNumber: '537542' },
+            //   { goodNumber: '537539' },
+            //   { goodNumber: '537538' },
+            //   { goodNumber: '537536' },
+            //   { goodNumber: '537535' },
+            //   { goodNumber: '537411' },
+            //   { goodNumber: '537534' },
+            //   { goodNumber: '537410' },
+            //   { goodNumber: '536720' },
+            // ], deleteds);
           },
           error: err => {
             this.data = [];
-            this.loading = false;
+            // this.loading = false;
             this.totalItems = 0;
+            // this.fillGoodsByRastrerContent([
+            //   { goodNumber: '537814' },
+            //   { goodNumber: '537813' },
+            //   { goodNumber: '537812' },
+            //   { goodNumber: '537811' },
+            //   { goodNumber: '537810' },
+            //   { goodNumber: '537545' },
+            //   { goodNumber: '537544' },
+            //   { goodNumber: '537543' },
+            //   { goodNumber: '537542' },
+            //   { goodNumber: '537539' },
+            //   { goodNumber: '537538' },
+            //   { goodNumber: '537536' },
+            //   { goodNumber: '537535' },
+            //   { goodNumber: '537411' },
+            //   { goodNumber: '537534' },
+            //   { goodNumber: '537410' },
+            //   { goodNumber: '536720' },
+            // ]);
             this.fillGoodsByRastrer();
           },
         });
@@ -663,6 +663,49 @@ export class ScheduledMaintenanceDetailComponent
                 );
               },
             });
+        } else {
+          console.log(item);
+          // const toDelete = this.data.findIndex(row => row == row);
+          this.data = [...this.data.filter(row => row !== item)];
+
+          this.bienesRas -= +item.cantidad;
+          let dictamenesByRastrer = [];
+          switch (this.areaProcess) {
+            case 'RF':
+              dictamenesByRastrer = this.goodsByRastrer
+                .map(good => good.clave_dictamen)
+                .filter(x => x !== null);
+              break;
+            case 'DV':
+              dictamenesByRastrer = this.goodsByRastrer
+                .map(good => good.clave_acta_devolucion)
+                .filter(x => x !== null);
+              break;
+            case 'CM':
+              dictamenesByRastrer = this.goodsByRastrer
+                .map(good => good.cve_evento)
+                .filter(x => x !== null);
+              break;
+            case 'DN':
+              dictamenesByRastrer = this.goodsByRastrer
+                .map(good => good.cve_dic_donacion)
+                .filter(x => x !== null);
+              break;
+            default:
+              dictamenesByRastrer = this.goodsByRastrer
+                .map(good => good.clave_acta_destruccion)
+                .filter(x => x !== null);
+              break;
+          }
+          // this.goodsByRastrer.forEach(good => {
+
+          // })
+          let expedientesByRastrer = this.goodsByRastrer.map(
+            good => good.no_expediente
+          );
+          this.expedientesRas = [...new Set(expedientesByRastrer)].length;
+          this.dictamenesRas = [...new Set(expedientesByRastrer)].length;
+          this.totalItems--;
         }
       }
     });
