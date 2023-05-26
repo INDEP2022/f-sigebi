@@ -345,7 +345,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         res => {
           console.log(res)
           console.log(res.message);
-          if (res.data != null || res.data != undefined) {
+          if (typeof res == 'number' && res > 0) {
             di_disponible = true;
             console.log('Entro if');
             this.serviceGoodProcess.getacceptGoodStatus(modelStatus).subscribe(
