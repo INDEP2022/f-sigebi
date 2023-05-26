@@ -21,6 +21,10 @@ export class MassiveDepositaryService extends HttpService {
     return this.post(this.route.PreViewDataCSV, body);
   }
 
+  pupPreviewDataCSVForDepositary(body: FormData) {
+    return this.post(MassivedepositaryEndpoints.PreViewDataCSV, body);
+  }
+
   burdenDataCSV(model?: IMassiveDepositary) {
     return this.post(MassivedepositaryEndpoints.PupBurdenDataCSV, model);
   }

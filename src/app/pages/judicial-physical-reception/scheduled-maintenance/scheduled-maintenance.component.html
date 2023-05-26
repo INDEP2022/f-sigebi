@@ -183,9 +183,7 @@
             Buscar
           </button>
         </div>
-        <div
-          class="col-md-4"
-          [class]="loading || data.length === 0 ? 'disabled' : ''">
+        <div class="col-md-4" [class]="loading ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"

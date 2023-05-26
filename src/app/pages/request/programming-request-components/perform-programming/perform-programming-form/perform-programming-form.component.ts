@@ -138,6 +138,7 @@ export class PerformProgrammingFormComponent
   totalItemsWarehouseGoods: number = 0;
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsProg = new BehaviorSubject<ListParams>(new ListParams());
+  paramsNewWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
   loadGoods: boolean = false;
   delegationId: number = 0;
@@ -146,6 +147,8 @@ export class PerformProgrammingFormComponent
   employeTypeUserLog: string = '';
   task: any = null;
   showGoods: IGoodProgramming;
+  observationNewWarehouse: number = 0;
+  idNewWarehouse: number = 0;
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingUser = { ...this.settings, ...SettingUserTable };
   settingGuardGoods = {
@@ -224,23 +227,21 @@ export class PerformProgrammingFormComponent
     this.showUsersProgramming();
     this.getProgrammingData();
     this.performSearchForm();
-
+    this.obtainInfoWarehouse();
     this.task = JSON.parse(localStorage.getItem('Task'));
   }
 
-  initialTransferences(params: ListParams) {
-    params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
-    params['sortBy'] = 'nameTransferent:ASC';
-    const state = Number(11);
-    this.transferentesSaeService
-      .getStateByTransferentKey(state, params)
+  obtainInfoWarehouse() {
+    this.paramsNewWarehouse.getValue()['filter.idProgramming'] =
+      this.idProgramming;
+
+    this.storeAkaService
+      .getAllWarehouses(this.paramsNewWarehouse.getValue())
       .subscribe({
         next: response => {
-          console.log('inicializando', response);
-          const transferent = response.data.map(transferent => {
-            return transferent.transferent;
-          });
-          this.transferences = new DefaultSelect(transferent, response.count);
+          console.log('data warehouse', response);
+          this.observationNewWarehouse = response.data[0].nbobservation;
+          this.idNewWarehouse = response.data[0].nbidnewstore;
         },
         error: error => {
           console.log(error);

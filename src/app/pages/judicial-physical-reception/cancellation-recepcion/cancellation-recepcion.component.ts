@@ -1813,7 +1813,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             observations: this.form.get('observaciones').value,
             witness1: this.form.get('autoridadCancela').value,
             witness2: this.form.get('elabora').value,
-            address: format(this.form.get('direccion').value,
+            address: format(
+              this.form.get('direccion').value,
               'yyyy-MM,dd HH:mm'
             ),
             captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
@@ -1902,11 +1903,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     }
   }
 
-  refillData(){
+  refillData() {
     const paramsF = new FilterParams();
-    paramsF.addFilter('keysProceedings', this.form.get('acta2').value)
+    paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-      res=>{
+      res => {
         const paramsF = new FilterParams();
         paramsF.addFilter(
           'numFile',
@@ -1919,18 +1920,16 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           SearchFilter.IN
         );
         this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-          res=>{
-            console.log(res)
+          res => {
+            console.log(res);
           },
-          err =>{
-            console.log(err)
+          err => {
+            console.log(err);
           }
-        )
-      },err =>{
-
-      }
-    )
-    
+        );
+      },
+      err => {}
+    );
   }
 
   fnOpenProceeding() {
@@ -2025,8 +2024,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             );
         }
       });
-    }else{
-      this.newOpenProceeding()
+    } else {
+      this.newOpenProceeding();
     }
   }
 
