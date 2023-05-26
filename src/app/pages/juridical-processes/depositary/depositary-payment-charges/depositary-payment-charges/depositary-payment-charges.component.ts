@@ -221,13 +221,13 @@ export class DepositaryPaymentChargesComponent
           workbook.Sheets[sheetNames[0]]
         );
 
+        console.log('this.ExcelData =>>>>  ', this.ExcelData);
+
         this.data = [];
 
         this.data = this.ExcelData.map((data: any) =>
           this.setDataTableFromExcel(data)
         );
-        //console.log('1 =>> ' + JSON.stringify(this.setDataTableFromExcel(this.ExcelData)));
-        //console.log('2 =>> ' + JSON.stringify(this.data[0]));
       };
     } else {
       this.onLoadToast(
@@ -313,18 +313,6 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
     this.formgetCveBank = event.bankCode;
     this.formgetCodeBank = event.code;
   }
-  /*
-  setDataTableFromExcel(excelData: any) {
-    return {
-      movementNumber: excelData.ID_PAGO,
-      movement: excelData.ABONO,
-      sucursal: excelData.SUCURSAL,
-      referenceori: excelData.REFERENCIA,
-      date: this.milisegundoToDate(excelData.FECHA_REGISTRO),
-    };
-  }
-*/
-  //DESCPAGO		CVE_BANCO		MONTO	ORDENINGRESO
 
   setDataTableFromExcel(excelData: any) {
     return {
