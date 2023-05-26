@@ -13,7 +13,7 @@ export const DEPARTMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  numDelegation: {
+  delegation: {
     title: 'Delegación',
     type: 'string',
     valuePrepareFunction: (value: IDelegation) => {

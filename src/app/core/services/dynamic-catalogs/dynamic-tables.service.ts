@@ -83,7 +83,7 @@ export class DynamicTablesService extends HttpService {
           }),
         };
       }),
-      tap(() => (this.microservice = ''))
+      tap(() => this.microservice)
     );
   }
 }

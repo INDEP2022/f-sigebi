@@ -135,7 +135,6 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const authService: any = this.authService.decodeToken();
-    console.log(authService);
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.isRequestAlreadyApproved(id);
@@ -823,6 +822,7 @@ export class RegistrationOfRequestsComponent
       task['programmingId'] = 0;
       task['requestId'] = this.requestData.id;
       task['expedientId'] = this.requestData.recordId;
+      task['idDelegationRegional'] = user.department;
       task['urlNb'] = 'pages/request/transfer-request/process-approval';
 
       this.taskService.createTask(task).subscribe({
@@ -1110,6 +1110,7 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
+      task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
       let orderservice: any = {};

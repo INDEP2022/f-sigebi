@@ -50,4 +50,10 @@ export class ConciliationDepositaryPaymentsService {
   deletePaymentRefRemove(params: any) {
     return this.msDepositaryService.deletePaymentRefRemove(params);
   }
+  getgetAplicationcargaCliente1(no_appointment: number) {
+    return this.msDepositaryService.getAplicationcargaCliente1(no_appointment);
+  }
+  getgetAplicationcargaCliente2(no_appointment: number) {
+    return this.msDepositaryService.getAplicationcargaCliente2(no_appointment);
+  }
 }

@@ -124,7 +124,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/person',
       },
       {
-        label: 'Procedenias',
+        label: 'Procedencias',
         link: '/pages/catalogs/oring',
       },
       {
@@ -184,7 +184,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/status-process',
       },
       {
-        label: 'Estato Repuves',
+        label: 'Estado Repuves',
         link: '/pages/catalogs/state-repuves',
       },
       {
@@ -235,10 +235,10 @@ export const CATALOGS_ROUTES = [
         label: 'Normas',
         link: '/pages/catalogs/norms',
       },
-      {
-        label: 'Plazos indicadores',
-        link: '/pages/catalogs/indicator-deadlines',
-      },
+      // {
+      //   label: 'Plazos indicadores',
+      //   link: '/pages/catalogs/indicator-deadlines',
+      // },
       {
         label: 'Notarios',
         link: '/pages/catalogs/notary',
