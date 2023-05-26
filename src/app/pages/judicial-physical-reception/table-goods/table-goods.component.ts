@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -55,6 +62,22 @@ export class TableGoodsComponent extends BasePage implements OnInit {
         );
       }
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+    const data = changes['data'];
+    if (data !== undefined) {
+      if (this.haveServerPagination === false) {
+        const cantidad = 1 * 10;
+        this.dataPaginated = data.currentValue.slice(
+          0,
+          cantidad > data.currentValue.length
+            ? data.currentValue.length
+            : cantidad
+        );
+      }
+    }
   }
 
   updateRow(event: any) {

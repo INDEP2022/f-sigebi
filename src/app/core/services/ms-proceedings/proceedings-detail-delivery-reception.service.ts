@@ -36,14 +36,16 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
         return item.clave_acta_devolucion;
       // case 'DS':
       //   return item.clave_acta_destruccion;
-      // case 'CM':
-      //   return item.cve_evento;
-      // case 'DN':
-      //   return item.cve_dic_donacion;
+      case 'CM':
+        return item.cve_evento;
+      case 'DN':
+        return item.cve_dic_donacion;
       default:
         return item.clave_acta_destruccion;
     }
   }
+
+  getDictamenes(data: IGoodsByProceeding) {}
 
   getGoodByRastrer(goods: number[], action: string, good: IGoodsByProceeding) {
     return this.post<IListResponse<IGoodsByProceeding>>(
@@ -60,6 +62,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
         let expedientes = [
           ...new Set(items.data.map(item => item.no_expediente)),
         ];
+        console.log(expedientes);
         let bienes = 0;
         const data = items.data.map(item => {
           bienes += +(item.cantidad + '');
