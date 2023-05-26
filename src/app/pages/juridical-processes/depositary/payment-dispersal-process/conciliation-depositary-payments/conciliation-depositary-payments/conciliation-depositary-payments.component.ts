@@ -229,6 +229,16 @@ export class ConciliationDepositaryPaymentsComponent
 
     if (this.form.get('noBien').valid && this.noBienReadOnly) {
       // Recargar los clientes
+      if (!this.depositaryAppointment.appointmentNumber) {
+        this.alert(
+          'warning',
+          'Se requiere un Número de Nombramiento para continuar, Búsque otro Bien e intente nuevamente',
+          ''
+        );
+        return;
+      }
+      this.loading = true;
+      this.depositaryRecharge();
     } else {
       this.alert(
         'warning',
@@ -237,6 +247,79 @@ export class ConciliationDepositaryPaymentsComponent
       );
     }
   }
+
+  depositaryRecharge() {
+    this.svConciliationDepositaryPaymentsService
+      .getgetAplicationcargaCliente1(
+        Number(this.depositaryAppointment.appointmentNumber)
+      )
+      .subscribe({
+        next: res => {
+          console.log(res.data);
+          if (res.data.length > 0) {
+            this.dataPersonsDepositary.personNum =
+              res.data[res.data.length - 1].no_persona;
+            // this.dataPersonsDepositary.personNum =
+            //   res.data[res.data.length - 1].nombre;
+            this.formDepositario
+              .get('idDepositario')
+              .setValue(res.data[res.data.length - 1].no_persona);
+            this.formDepositario
+              .get('depositario')
+              .setValue(res.data[res.data.length - 1].nombre);
+            this.dataPersonsDepositary.process = 'S';
+            this.dataPersonsDepositary.sendSirsae = 'N';
+            this.dataPersonsDepositary.modifyStatus = 'N';
+            this.actualDate = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
+            this.dataPersonsDepositary.dateExecution = this.actualDate;
+            this.formDepositario
+              .get('fechaEjecucion')
+              .setValue(this.dataPersonsDepositary.dateExecution);
+            this.formDepositario
+              .get('procesar')
+              .setValue(
+                this.dataPersonsDepositary.process == 'S' ? true : false
+              );
+            this.depositaryRecharge_Delete();
+          } else {
+            this.loading = false;
+            this.alertInfo('error', 'No se encontraró otro Depositario', '');
+          }
+        },
+        error: err => {
+          this.loading = false;
+          console.log(err);
+          this.alertInfo(
+            'error',
+            'Ocurrió un error al recargar el Depositario',
+            err.error.message
+          );
+        },
+      });
+  }
+
+  depositaryRecharge_Delete() {
+    this.svConciliationDepositaryPaymentsService
+      .getgetAplicationcargaCliente2(
+        Number(this.depositaryAppointment.appointmentNumber)
+      )
+      .subscribe({
+        next: res => {
+          console.log(res.data);
+          this.loading = false;
+        },
+        error: err => {
+          this.loading = false;
+          console.log(err);
+          this.alertInfo(
+            'error',
+            'Ocurrió un error al recargar el Depositario',
+            err.error.message
+          );
+        },
+      });
+  }
+
   btnValidacionPagos(form: any): any {
     this.formDepositario = form.depositario;
     this.form = form.form;

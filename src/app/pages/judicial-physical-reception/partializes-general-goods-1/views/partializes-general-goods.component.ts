@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PartializeGeneralGoodV2Service } from '../services/partialize-general-good-v2.service';
@@ -12,6 +13,7 @@ export class PartializesGeneralGoodsComponent {
   version: number;
   clasificators = 'Clasificadores (1424, 1426, 1427, 1575, 1590)';
   constructor(
+    private location: Location,
     private route: ActivatedRoute,
     private service1: PartializeGeneralGoodService,
     // private serviceTab2: PartializeGeneralGoodTab2Service,
@@ -24,6 +26,10 @@ export class PartializesGeneralGoodsComponent {
 
   get pageLoading() {
     return this.service.pageLoading;
+  }
+
+  back() {
+    this.location.back();
   }
 
   ngOnInit() {

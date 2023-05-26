@@ -69,7 +69,7 @@ export class ExpedientService extends HttpService {
           }),
         };
       }),
-      tap(() => (this.microservice = ''))
+      tap(() => this.microservice)
     );
   }
 }

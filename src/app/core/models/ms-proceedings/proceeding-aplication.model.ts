@@ -1,11 +1,8 @@
 export interface PBDelete {
-  contEli: number;
-  selEli: number;
-  aggregate: string;
   processingArea: string;
-  states: string;
   user: string;
   actaNumber: number;
+  goods: { status: string; noBien: number }[];
   // processingArea: string | null;
   // states: string | null;
   // selEli: number;

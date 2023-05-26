@@ -181,7 +181,7 @@ export class JuridicalFileUpdateService extends HttpService {
   }
 
   getRecipientUser(body: {
-    copyNumber: string | number;
+    copyNumber?: string | number;
     flierNumber: string | number;
   }) {
     return this.flyerCopiesService.findByIds(body);

@@ -11,6 +11,7 @@ import {
   IInitFormLegalOpinionOfficeBody,
   IInitFormLegalOpinionOfficeResponse,
   ITmpDictationCreate,
+  ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
 
 @Injectable({
@@ -147,11 +148,29 @@ export class DictationService extends HttpService {
     );
   }
 
+  getRTdictaAarusr(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.RTdictaAarusr,
+      params
+    );
+  }
+
+  deleteCopiesOfficialOpinion(params: IDictationCopies) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      params
+    );
+  }
+
   createTmpDictation(body: ITmpDictationCreate) {
     return this.post(DictationEndpoints.TmpDictation, body);
   }
 
   deleteTmpDictation(id: number) {
     return this.delete(`${DictationEndpoints.TmpDictation}/${id}`);
+  }
+
+  createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
+    return this.post(DictationEndpoints.TmpExpDesahogoB, body);
   }
 }

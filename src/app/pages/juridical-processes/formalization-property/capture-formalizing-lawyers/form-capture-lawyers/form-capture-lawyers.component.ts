@@ -136,9 +136,38 @@ export class FormCaptureLawyersComponent
 
   create() {
     this.loading = true;
-    this.comerNotariesTercsService.create(this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
+    let params = new ListParams();
+    params['filter.physicalRfc'] = `$eq:${this.form.get('physicalRfc').value}`;
+
+    if (this.edit) {
+      params['filter.id'] = `$not:${this.lawyer.id}`;
+    }
+
+    this.comerNotariesTercsService.getAll(params).subscribe(
+      data => {
+        this.handleRfcPhisycal();
+        this.loading = false;
+      },
+      error => {
+        console.log('err');
+        if (error.error.message == 'No se encontrarón registros.') {
+          this.comerNotariesTercsService.create(this.form.value).subscribe(
+            data => this.handleSuccess(),
+            error => (
+              this.onLoadToast(
+                'error',
+                'Error al crear abogado formalizador',
+                ``
+              ),
+              (this.loading = false)
+            )
+          );
+        } else {
+          this.onLoadToast('error', error.error.message, ``);
+        }
+
+        this.loading = false;
+      }
     );
   }
 
@@ -170,6 +199,7 @@ export class FormCaptureLawyersComponent
     this.comerNotariesTercsService.getAll(params).subscribe(
       data => {
         this.handleRfcPhisycal();
+        this.loading = false;
       },
       error => {
         this.comerNotariesTercsService

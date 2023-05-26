@@ -12,6 +12,7 @@ import { IRefPayDepositary } from 'src/app/core/models/ms-depositarypayment/ms-d
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
+//import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';

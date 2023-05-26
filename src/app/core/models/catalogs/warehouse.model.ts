@@ -15,5 +15,6 @@ export interface IWarehouse {
   localityCode: ILocality;
   indActive: string | null;
   type: string | null;
+  detType?: string;
   responsibleDelegation: number | string | null;
 }

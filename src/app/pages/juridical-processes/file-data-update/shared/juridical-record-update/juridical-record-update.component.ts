@@ -8,7 +8,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import esLocale from 'date-fns/locale/es';
@@ -30,7 +30,6 @@ import {
   ListParams,
   SearchFilter,
 } from '../../../../../common/repository/interfaces/list-params';
-import { showHideErrorInterceptorService } from '../../../../../common/services/show-hide-error-interceptor.service';
 import { IListResponse } from '../../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../../core/models/catalogs/affair.model';
 import { IAuthority } from '../../../../../core/models/catalogs/authority.model';
@@ -173,7 +172,7 @@ export class JuridicalRecordUpdateComponent
   fetchForForm: FetchForForm;
 
   constructor(
-    private fb: FormBuilder,
+    // private fb: FormBuilder,
     private activiveRoute: ActivatedRoute,
     private modalService: BsModalService,
     private router: Router,
@@ -181,7 +180,7 @@ export class JuridicalRecordUpdateComponent
     private fileUpdateService: JuridicalFileUpdateService,
     private fileUpdComService: FileUpdateCommunicationService,
     private docRegisterService: DocReceptionRegisterService,
-    private showHideService: showHideErrorInterceptorService,
+    // private showHideService: showHideErrorInterceptorService,
     private authService: AuthService,
     private documentsService: DocumentsService,
     private abandonmentsService: AbandonmentsDeclarationTradesService
@@ -267,11 +266,10 @@ export class JuridicalRecordUpdateComponent
       changes['selectedNotification']?.currentValue &&
       !changes['selectedNotification']?.isFirstChange()
     ) {
-      this.dictum = '';
-      this.dictOffice = '';
+      // this.dictum = '';
+      // this.dictOffice = '';
       this.prevDictumKey = undefined;
       // this.affair = null;
-      console.log('selectedNotification', changes['selectedNotification']);
       this.fillForm(changes['selectedNotification'].currentValue);
     }
   }
@@ -489,7 +487,6 @@ export class JuridicalRecordUpdateComponent
       entryProcedureDate: notif.entryProcedureDate,
       dictumKey: notif.dictumKey,
     };
-    console.log(this.fileDataUpdateForm.value, 'valores');
 
     this.fileDataUpdateForm.patchValue({ ...values });
     if (notif.expedientNumber == null) {
@@ -859,7 +856,6 @@ export class JuridicalRecordUpdateComponent
 
   cveDictumWhenValidateItemObserver(description: string) {
     const filterParams = new FilterParams();
-    console.log('description', description);
     filterParams.addFilter('description', description);
     return this.fileUpdateService.getDictum(filterParams.getParams());
   }
@@ -895,7 +891,6 @@ export class JuridicalRecordUpdateComponent
   }
 
   deactivateSearch() {
-    console.log('deactivateSearch', this.formControls);
     this.fileDataUpdateForm.enable();
     if (this.layout == 'FILE-UPDATE') {
       this.fileDataUpdateForm.patchValue(
@@ -923,7 +918,6 @@ export class JuridicalRecordUpdateComponent
     //   // this.dictOffice = this.formControls.dictumKey.value?.dict_ofi;
     //   this.cveDictumWhenValidateItem(this.dictum);
     // }
-    console.log(this.formControls.dictumKey.value);
     this.checkToEnableDictum();
   }
 
@@ -1534,7 +1528,6 @@ export class JuridicalRecordUpdateComponent
   }
 
   changeDictum(dictum: { id: number; description: string } /* IOpinion */) {
-    console.log({ dictum });
     this.dictum = dictum.description;
     this.cveDictumWhenValidateItem(this.dictum);
     // this.dictOffice = dictum.dict_ofi;
