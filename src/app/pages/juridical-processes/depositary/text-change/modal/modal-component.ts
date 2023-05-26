@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   FilterParams,
@@ -7,11 +7,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
-import {
-  KEYGENERATION_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -19,40 +14,15 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './modal-component.html',
 })
 export class ModalComponent implements OnInit {
-  form: FormGroup = this.fb.group({
-    senderUserRemitente: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    addressee_I: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    descriptionSender: [
-      null,
-      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
-    typePerson: [null, [Validators.required]],
-    senderUser: [null, null],
-    personaExt: [null, null],
-    typePerson_I: [null, [Validators.required]],
-    senderUser_I: [null, null],
-    personaExt_I: [null, null],
-    key: [
-      null,
-      [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-    ],
-    numberDictamination: [
-      null,
-      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
-    ],
-  });
+  @Input() datosOpinion!: any;
+  @Input() form: FormGroup;
 
   users$ = new DefaultSelect<ISegUsers>();
   nameUserDestinatario: ISegUsers;
   options: any[];
   personExtInt: string;
   personExtInt_I: string;
+  nrSelecttypePerson: string;
 
   constructor(private usersService: UsersService, private fb: FormBuilder) {}
 
@@ -62,6 +32,16 @@ export class ModalComponent implements OnInit {
       { value: 'E', label: 'PERSONA EXTERNA' },
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
+
+    this.form.get('typePerson_I').valueChanges.subscribe(value => {
+      if (value === 'S') {
+        this.form.get('senderUser').setValue(null);
+      } else {
+        this.form.get('senderUser').setValue('');
+      }
+    });
+
+    this.setValues();
   }
   getUsers($params: ListParams) {
     let params = new FilterParams();
@@ -90,5 +70,12 @@ export class ModalComponent implements OnInit {
     } else {
       this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
     }
+  }
+
+  setValues() {
+    this.nrSelecttypePerson! = this.datosOpinion.personExtInt;
+    this.form.get('typePerson_I').setValue(this.nrSelecttypePerson);
+    this.form.get('senderUser_I').setValue(this.datosOpinion.recipientCopy);
+    this.form.get('personaExt_I').setValue(this.datosOpinion.namePersonExt);
   }
 }
