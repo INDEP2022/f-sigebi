@@ -50,6 +50,7 @@
         <!-- VOLANTE/EXPEDIENTE PANTALLA -->
 
         <!-- DECLARATORIA PANTALLA -->
+
         <tab heading="DECLARATORIA" *ngIf="showTabs">
           <!-- Forms DECLARATORIA -->
           <!-- <ngx-form-declaratoria
@@ -113,18 +114,15 @@
                       [searchable]="false"
                       class="form-control"
                       [clearable]="false">
+                      <ng-option value="null">Seleccione una opción</ng-option>
                       <ng-option *ngIf="tipoBien == 7" value="DAN"
                         >DAN - DECLARATORIA ABANDONO NUMERARIO</ng-option
                       >
                       <ng-option *ngIf="tipoBien != 7" value="DAB"
                         >DAB - DECLARATORIA ABANDONO BIENES</ng-option
                       >
-                      <ng-option value="FGR"
-                        >FGR - DECLARATORIA ABANDONO FGR</ng-option
-                      >
-                      <ng-option value="PJF"
-                        >PJF - DECLARATORIA ABANDONO PJF</ng-option
-                      >
+                      <!-- <ng-option value="FGR">FGR - DECLARATORIA ABANDONO FGR</ng-option>
+                      <ng-option value="PJF">PJF - DECLARATORIA ABANDONO PJF</ng-option> -->
                     </ng-select>
                   </form-field>
                 </div>
@@ -228,7 +226,7 @@
                       >Todos - 0 - TODOS - 0</ng-option
                     >
                     <ng-option *ngFor="let item of tiposData; index as i">
-                      {{ i }}
+                      {{ item }}
                     </ng-option>
                   </ng-select>
 
@@ -365,6 +363,7 @@
                     Aprobar
                   </button>
                   <button
+                    (click)="eliminar()"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
                     Eliminar
@@ -434,7 +433,7 @@
                           <div class="col-md-4">
                             <form-field
                               [control]="formOficio.get('oficio')"
-                              label="No. Gestión">
+                              label="No. Gesti&oacute;n">
                               <input
                                 [readonly]="!disabledBTNs"
                                 type="number"
@@ -445,33 +444,55 @@
                         </div>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('remitente')"
-                          label="Remitente">
-                          <input
+                        <form-field [control]="formOficio.get('remitente')">
+                          <ngx-select
                             [readonly]="!disabledBTNs"
-                            class="form-control"
-                            formControlName="remitente" />
+                            [form]="formOficio"
+                            [data]="senders"
+                            (fetchItems)="getSenders($event)"
+                            bindLabel="userAndName"
+                            control="remitente"
+                            label="Remitente"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="remitente" /> -->
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('destinatario')"
-                          label="Destinatario">
-                          <input
+                        <form-field [control]="formOficio.get('destinatario')">
+                          <ngx-select
                             [readonly]="!disabledBTNs"
-                            class="form-control"
-                            formControlName="destinatario" />
+                            [form]="formOficio"
+                            [data]="recipients"
+                            (fetchItems)="getRecipients($event)"
+                            bindLabel="userAndName"
+                            control="destinatario"
+                            label="Destinatario"
+                            [searchOnInit]="true"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="destinatario" /> -->
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
-                        <form-field
-                          [control]="formOficio.get('ciudad')"
-                          label="Ciudad">
-                          <input
+                        <form-field [control]="formOficio.get('ciudad')">
+                          <ngx-select
                             [readonly]="!disabledBTNs"
-                            class="form-control"
-                            formControlName="ciudad" />
+                            [form]="formOficio"
+                            [data]="cities2"
+                            (fetchItems)="getCities2($event)"
+                            bindLabel="nameAndId"
+                            control="ciudad"
+                            label="Ciudad"
+                            [searchOnInit]="false"
+                            [showTooltip]="true"
+                            termMaxLength="30">
+                          </ngx-select>
+
+                          <!-- <input [readonly]="!disabledBTNs" class="form-control" formControlName="ciudad" /> -->
                         </form-field>
                       </div>
                     </div>
@@ -706,22 +727,27 @@
               <div class="row justify-content-center">
                 <div class="col-sm-12 col-12 col-md-6 text-center">
                   <button
+                    [disabled]="!btnOficion"
+                    (click)="oficio()"
                     type="button"
                     class="btn btn-primary btn-sm active ml-2 mr-2">
                     Imp.
                   </button>
                   <button
+                    (click)="envofi()"
                     [disabled]="!disabledBTNs"
                     class="btn btn-secondary btn-sm active ml-2 mr-2">
-                    <i class="bx bx-lock-open"></i>
+                    <i *ngIf="iconLock" class="bx bx-lock-open-alt"></i>
+                    <i *ngIf="!iconLock" class="bx bx-lock-alt"></i>
                   </button>
                   <!-- <button *ngIf="!lockStatus" class="btn btn-secondary btn-sm active ml-2 mr-2">
                     <i class="bx bx-lock"></i>
                   </button>
-                  <button *ngIf="lockStatus" class="btn btn-secondary btn-sm active ml-2 mr-2">
+                  <button *ngIf="lockStatus" class="btn btn-primary btn-sm active ml-2 mr-2">
                     <i class="bx bx-lock-open"></i>
                   </button> -->
                   <button
+                    (click)="borrar()"
                     [disabled]="!disabledBTNs"
                     type="button"
                     class="btn btn-danger btn-sm active ml-2 mr-2">

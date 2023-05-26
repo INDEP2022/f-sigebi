@@ -10,4 +10,5 @@ export enum SecurityEndpoints {
   TrackingProfileXPant = 'tracking-profile-x-pant',
   TrackingTdictaXProfileMim = 'tracking-tdicta-x-profile-mim',
   UsersTracking = 'users-tracking',
+  AplicationLovCitiesRegCity = 'application/lov-cities-reg-cities-city',
 }

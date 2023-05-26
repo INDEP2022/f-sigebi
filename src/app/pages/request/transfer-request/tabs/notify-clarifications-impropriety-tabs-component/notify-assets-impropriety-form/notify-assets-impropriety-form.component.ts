@@ -92,7 +92,7 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       addresseeName: [
-        '',
+        this.infoRequest?.nameOfOwner || null,
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
@@ -101,7 +101,7 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       positionAddressee: [
-        '',
+        this.infoRequest?.holderCharge || null,
         [
           Validators.pattern(STRING_PATTERN),
           Validators.required,
@@ -110,30 +110,18 @@ export class NotifyAssetsImproprietyFormComponent
       ],
 
       senderName: [
-        this.infoRequest.nameOfOwner,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(50),
-        ],
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderCharge: [
-        this.infoRequest.holderCharge,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(50),
-        ],
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       consistentIn: [
-        '',
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(1000),
-        ],
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
 
       paragraphInitial: [
@@ -147,59 +135,22 @@ export class NotifyAssetsImproprietyFormComponent
 
       clarification: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(1000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
 
       observations: [
-        this.dataClarifications2?.observations,
+        this.dataClarifications2?.observations || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
-      /*foundation: [
-        ' ',
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
-        ],
-      ], */
-
-      /*transmitterId: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
-      ], */
-
-      /*invoiceLearned: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ], */
-
-      /*worthAppraisal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ], */
-
-      /*jobClarificationKey: [
-        this.dataClarifications2.chatClarification.keyClarificationPaper,
-        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
-      ], */
-
       userAreaCaptures: [
-        this.dataClarifications2?.chatClarification?.areaUserCapture,
+        this.dataClarifications2?.chatClarification?.areaUserCapture || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
 
       webMail: [
-        ' ',
-        [
-          //Validators.required,
-          Validators.pattern(EMAIL_PATTERN),
-          Validators.maxLength(30),
-        ],
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
     });
   }
@@ -229,11 +180,7 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
-            if (this.typeClarifications == 2) {
-              this.oficioImprocedencia(); //Aclaración PGR tipo 2
-            } else {
-              this.aclaracionAsegurados(); //Aclaración PGR tipo 1
-            }
+            this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }

@@ -14,9 +14,13 @@ import { IParametersIndicators } from './../../../../../../core/models/catalogs/
 export class CantsComponent implements OnInit {
   @Input() id: string;
   @Input() typeProceeding: string;
+  @Input() goodsCant: number;
   @Input() set updateData(value: any) {
     this.getData();
   }
+  @Input() bienesRas: number = 0;
+  @Input() expedientesRas: number = 0;
+  @Input() dictamenesRas: number = 0;
   // form: FormGroup;
   files: number = 0;
   dictamenes: number = 0;

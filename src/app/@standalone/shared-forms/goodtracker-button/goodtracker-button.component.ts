@@ -46,7 +46,7 @@ export class GoodtrackerButtonComponent extends AlertButton implements OnInit {
       this.alertQuestion(
         'warning',
         'Rastreador de bienes',
-        'Quiere continuar con el proceso?'
+        '¿Quiere continuar con el proceso?'
       ).then(question => {
         if (question.isConfirmed) {
           this.redirectGoodTracker(question);

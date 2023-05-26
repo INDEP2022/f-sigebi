@@ -20,6 +20,7 @@ import { NotificationService as _NotificationService } from 'src/app/core/servic
 import { TmpNotificationService } from 'src/app/core/services/ms-notification/tmp-notification.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
+import { environment } from 'src/environments/environment';
 export interface IRecord {
   id: string;
   dateAgreementAssurance?: any;
@@ -153,7 +154,7 @@ export class GoodsCaptureService {
 
   findById(recordId: number) {
     return this.httClient.get<IRecord>(
-      `http://sigebimsqa.indep.gob.mx/expedient/api/v1/find-identificator/${recordId}`
+      `${environment.API_URL}expedient/api/v1/find-identificator/${recordId}`
     );
   }
 
@@ -190,14 +191,14 @@ export class GoodsCaptureService {
 
   getMaxPaperWorkByExpedient(expedient: string) {
     return this.httClient.get(
-      'http://sigebimsqa.indep.gob.mx/proceduremanagement/api/v1/proceduremanagement/max/' +
+      `${environment.API_URL}proceduremanagement/api/v1/proceduremanagement/max/` +
         expedient
     );
   }
 
   getUnitsByClasifNum(clasifNum: number, params: ListParams) {
     return this.httClient.get(
-      'http://sigebimsqa.indep.gob.mx/goodsquery/api/v1/ligie-units-measure/getUnit/' +
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getUnit/` +
         clasifNum,
       { params }
     );
