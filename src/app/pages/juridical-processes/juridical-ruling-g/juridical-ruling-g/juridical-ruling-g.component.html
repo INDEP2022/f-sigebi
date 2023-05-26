@@ -167,7 +167,7 @@
               </form-field>
             </div> -->
             <!--  -->
-            <div class="col-4 p-2">
+            <div class="col-12 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_remitente')">
                 <!-- <input
@@ -188,24 +188,23 @@
                   [optionTemplate]="userOption">
                 </ngx-select>
                 <ng-template #userLabel let-item="item">
-                  <!-- {{ item.name }} -->
-                  {{ item.id }}
+                  {{ item.id }} - {{ item.name }}
                 </ng-template>
                 <ng-template #userOption let-item="item">
                   <div [title]="item.id + '-' + item.name">
-                    {{ item.id }}
+                    {{ item.id }} - {{ item.name }}
                   </div>
                 </ng-template>
               </form-field>
             </div>
 
-            <div class="col-md-8 p-2">
+            <!-- <div class="col-md-8 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_nombre')"
                 label="">
                 <input class="form-control" formControlName="autoriza_nombre" />
               </form-field>
-            </div>
+            </div> -->
 
             <div class="col-12 p-2">
               <form-field
