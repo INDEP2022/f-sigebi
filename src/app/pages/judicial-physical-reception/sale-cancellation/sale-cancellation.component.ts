@@ -132,6 +132,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
+  searchByOtherData = false;
+  dataExpedients = new DefaultSelect();
   act2Valid: boolean = false;
   btnCSSAct = 'btn-success';
   dataGoodAct = new LocalDataSource();
@@ -229,6 +231,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       noBoveda: [null],
     });
   }
+
+  selectExpedient(e: any) {}
 
   //Inicializa
   getDataExpedient() {
