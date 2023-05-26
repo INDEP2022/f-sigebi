@@ -137,8 +137,9 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   users$$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
 
+  datosOpinion: any = [];
+
   valueCharge: Observable<String>;
-  //############################################################################
   no_cuenta: number;
   dataAcount: IListResponse<IAccountMovement> =
     {} as IListResponse<IAccountMovement>;
@@ -315,7 +316,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       callback: (next: any) => {
         const data = JSON.parse(JSON.stringify(next));
         console.log('  ===>   ', data);
-        this.form.get('expedientNumber').setValue(data.id);
+        // this.form.get('expedientNumber').setValue(data.id);
         this.form.get('registerNumber').setValue(data.registerNumber);
         this.form.get('wheelNumber').setValue(data.wheelNumber);
         this.form.get('typeDict').setValue(data.typeDict);
@@ -395,7 +396,7 @@ carga la  información de la parte media de la página
       .getValue()
       .addFilter(
         'numberOfDicta',
-        this.form.value.registerNumber,
+        this.form.value.numberDictamination,
         SearchFilter.EQ
       );
     this.dictationService
@@ -403,10 +404,10 @@ carga la  información de la parte media de la página
       .subscribe({
         next: resp => {
           this.contadorCCP = resp.data;
-
+          this.datosOpinion = resp.data;
           console.log(resp);
           console.log('this.contadorCCP =>> ' + this.contadorCCP);
-
+          /*
           this.nrSelecttypePerson! = resp.data[0].personExtInt;
           this.nrSelecttypePerson_I! = resp.data[1].personExtInt;
 
@@ -417,6 +418,7 @@ carga la  información de la parte media de la página
           this.form.get('personaExt').setValue(resp.data[0].namePersonExt);
           this.form.get('personaExt_I').setValue(resp.data[1].namePersonExt);
           this.form.get('senderUser_I').setValue(resp.data[1].recipientCopy);
+          */
         },
         error: errror => {
           this.onLoadToast('error', 'Error', errror.error.message);
