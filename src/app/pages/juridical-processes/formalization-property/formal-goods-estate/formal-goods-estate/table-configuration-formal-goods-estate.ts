@@ -161,7 +161,7 @@ export const FORMALIZACION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  date: {
+  dateIncorporado: {
     title: 'Incorporado',
     type: 'string',
     sort: false,
@@ -212,7 +212,7 @@ export const ASIGN_NOTARIES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  date: {
+  dateIncorporado: {
     title: 'Incorporado',
     type: 'string',
     sort: false,
@@ -242,7 +242,7 @@ export const ASIGN_NOTARIES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  assignmentnotDate: {
+  dateAssignmentnotDate: {
     title: 'Asignación Formalizador',
     type: 'string',
     sort: false,
@@ -286,7 +286,7 @@ export const ESCRITURACION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  date: {
+  dateIncorporado: {
     title: 'Incorporado',
     type: 'string',
     sort: false,
@@ -296,7 +296,7 @@ export const ESCRITURACION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  writingDate: {
+  dateWritingAntDate: {
     title: 'Fecha Escritura',
     type: 'number',
     sort: false,
@@ -306,7 +306,7 @@ export const ESCRITURACION_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  writingAntDate: {
+  dateWritingDate: {
     title: 'No. Fecha',
     type: 'string',
     sort: false,
