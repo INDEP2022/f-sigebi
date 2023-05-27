@@ -10,6 +10,7 @@ import {
   ITmpExpDesahogoB,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
+import { IDocumentServiceGetFiles } from 'src/app/core/models/ms-documents/idocument.interface';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IValidaCambioEstatus } from 'src/app/core/models/ms-good/good';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
@@ -18,6 +19,7 @@ import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dicta
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
+import { IDocumentService } from 'src/app/core/services/ms-documents/idocument.service';
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -48,7 +50,8 @@ export class LegalOpinionsOfficeService {
     private msGoodprocessService: GoodprocessService,
     private msNotificationService: NotificationService,
     private msSecurityService: SecurityService,
-    private msGoodService: GoodService
+    private msGoodService: GoodService,
+    private msIDocumentService: IDocumentService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -176,6 +179,12 @@ export class LegalOpinionsOfficeService {
   }
   createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
     return this.msDictationService.createTmpExpDesahogoB(body);
+  }
+  saveDocumentFirm(body: any) {
+    return this.msIDocumentService.saveFile(body);
+  }
+  getDocumentsFirm(body: IDocumentServiceGetFiles) {
+    return this.msIDocumentService.getFiles(body);
   }
 
   getTexto3FromOfficeDictation(
