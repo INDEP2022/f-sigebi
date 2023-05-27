@@ -9,9 +9,9 @@ export const COLUMNS_CAPTURE_EVENTS = {
     type: 'string',
     sort: false,
   },
-  good: {
-    title: 'Bien',
-    type: 'string',
+  numberGood: {
+    title: 'No. Bien',
+    type: 'number',
     sort: false,
   },
   status: {
@@ -26,6 +26,7 @@ export const COLUMNS_CAPTURE_EVENTS = {
   },
   descriptionGood: {
     title: 'Descripción del Bien',
+    valuePrepareFunction: (value: any, row: any) => row.good.description,
     type: 'string',
     sort: false,
   },
@@ -37,6 +38,7 @@ export const COLUMNS_CAPTURE_EVENTS = {
   proceedings: {
     title: 'Expediente',
     type: 'number',
+    valuePrepareFunction: (value: any, row: any) => row.good.fileNumber,
     sort: false,
   },
   quantity: {

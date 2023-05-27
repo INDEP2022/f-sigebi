@@ -20,4 +20,12 @@ export class CopiesOfficialOpinionService extends HttpService {
       params
     );
   }
+
+  create(body: ICopiesOfficialOpinion) {
+    return this.post(DictationEndpoints.BasePath, body);
+  }
+
+  update(body: Partial<ICopiesOfficialOpinion>) {
+    return this.put(DictationEndpoints.BasePath, body);
+  }
 }

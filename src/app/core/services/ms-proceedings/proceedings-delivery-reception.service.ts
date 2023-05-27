@@ -280,4 +280,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
     return this.put(route, model);
   }
+
+  getByUserAndArea(user: string, area: string) {
+    return this.get(
+      `${ProceedingsEndpoints.ProceedingsDeliveryReception}/find/user/${user}/area/${area}`
+    );
+  }
 }

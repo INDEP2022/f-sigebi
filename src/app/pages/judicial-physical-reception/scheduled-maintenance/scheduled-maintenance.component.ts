@@ -75,9 +75,12 @@ export class ScheduledMaintenanceComponent
         'No se ha especificado el Tipo de Evento'
       );
     }
-    this.router.navigate([
-      'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event',
-    ]);
+    this.router.navigate(
+      [
+        'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event',
+      ],
+      { queryParams: { tipoEvento: this.form.value.tipoEvento } }
+    );
     // if(this.form.get('tipoEvento').value === 'EVENTREC'){
 
     // }
@@ -128,6 +131,17 @@ export class ScheduledMaintenanceComponent
   rowsSelected(event: IProceedingDeliveryReception) {
     console.log(event);
     if (event.id) {
+      this.router.navigate(
+        [
+          'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event',
+        ],
+        {
+          queryParams: {
+            tipoEvento: event.typeProceedings,
+            numeroActa: event.id,
+          },
+        }
+      );
       // this.showTable1 = false;
       // this.loading = true;
       // let params = this.paramsIndicators.value;
