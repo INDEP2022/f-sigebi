@@ -1,4 +1,5 @@
 export const DOC_REQUEST_TAB_COLUMNS = {
+  //Arreglar
   dDocName: {
     title: 'No. Documento',
     type: 'string',
