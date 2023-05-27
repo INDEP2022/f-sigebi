@@ -1750,7 +1750,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     elaborate: localStorage
                       .getItem('username')
                       .toLocaleUpperCase(),
-                    numFile: this.form.get('expediente').value,
+                    numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
                     typeProceedings: ['D', 'ND'].includes(
