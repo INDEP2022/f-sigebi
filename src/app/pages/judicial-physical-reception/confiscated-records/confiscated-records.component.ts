@@ -1496,7 +1496,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   fnOpenProceeding() {
     if (['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
       this.alertQuestion(
-        'warning',
+        'question',
         `¿Está seguro de abrir el Acta ${this.form.get('acta2').value} ?`,
         ''
       ).then(q => {

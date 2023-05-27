@@ -129,13 +129,14 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   currentPagePUP_GEN_MASIV: number = 0;
   // SAVE DATA OR UPDATE
   _saveDictation: boolean = false;
-  _saveOfficeDictation: boolean = false;
-  _saveTextDictation: boolean = false;
-  _saveCopiesDictation: boolean = false;
   _saveDictation_loading: boolean = false;
+  _saveOfficeDictation: boolean = false;
   _saveOfficeDictation_loading: boolean = false;
+  _saveTextDictation: boolean = false;
   _saveTextDictation_loading: boolean = false;
+  _saveCopiesDictation: boolean = false;
   _saveCopiesDictation_loading: boolean = false;
+  _totalCopiesTo: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -196,6 +197,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this._saveTextDictation_loading = false;
     this._saveCopiesDictation = true; // Se actualiza el registro actual solamente
     this._saveCopiesDictation_loading = false;
+    this._totalCopiesTo = 0;
   }
 
   initFormPostGetUserData() {
@@ -792,6 +794,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           this.officeCopiesDictationData = data.data;
           // Set copies data
           this.totalCopiesTo = data.count;
+          this._totalCopiesTo = data.count;
           // this.buildCopiesToControls();
           this.setDataOfficeCopiesDictation();
           subscription.unsubscribe();
@@ -2642,37 +2645,50 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   }
 
   saveCopiesOfficeDictation() {
-    this.continueSearchAppoinment(this.dictationData);
-    // this._saveCopiesDictation_loading = true;
-    // this.officeCopiesDictationData.forEach(elementCopies => {
-    //   if (this._saveCopiesDictation) {
-    //     this.svLegalOpinionsOfficeService
-    //       .saveCopiesOfficeDictation(elementCopies)
-    //       .subscribe({
-    //         next: data => {
-    //           console.log('SAVE COPIES DICTAMEN', data);
-    //           this._saveCopiesDictation_loading = false;
-    //         },
-    //         error: error => {
-    //           console.log(error);
-    //           this._saveCopiesDictation_loading = false;
-    //         },
-    //       });
-    //   } else {
-    //     this.svLegalOpinionsOfficeService
-    //       .updateCopiesOfficeDictation(elementCopies)
-    //       .subscribe({
-    //         next: data => {
-    //           console.log('UPDATE COPIES DICTAMEN', data);
-    //           this._saveCopiesDictation_loading = false;
-    //         },
-    //         error: error => {
-    //           console.log(error);
-    //           this._saveCopiesDictation_loading = false;
-    //         },
-    //       });
-    //   }
-    // });
+    // this.continueSearchAppoinment(this.dictationData);
+    this._saveCopiesDictation_loading = true;
+    this.officeCopiesDictationData.forEach((elementCopies, count) => {
+      console.log(count, this._totalCopiesTo);
+      if (this._saveCopiesDictation && count + 1 > this._totalCopiesTo) {
+        this.svLegalOpinionsOfficeService
+          .saveCopiesOfficeDictation(elementCopies)
+          .subscribe({
+            next: data => {
+              console.log('SAVE COPIES DICTAMEN', data);
+              this._saveCopiesDictation_loading = false;
+              if (this.officeCopiesDictationData.length == count + 1) {
+                this.continueSearchAppoinment(this.dictationData);
+              }
+            },
+            error: error => {
+              console.log(error);
+              this._saveCopiesDictation_loading = false;
+              if (this.officeCopiesDictationData.length == count + 1) {
+                this.continueSearchAppoinment(this.dictationData);
+              }
+            },
+          });
+      } else {
+        this.svLegalOpinionsOfficeService
+          .updateCopiesOfficeDictation(elementCopies)
+          .subscribe({
+            next: data => {
+              console.log('UPDATE COPIES DICTAMEN', data);
+              this._saveCopiesDictation_loading = false;
+              if (this.officeCopiesDictationData.length == count + 1) {
+                this.continueSearchAppoinment(this.dictationData);
+              }
+            },
+            error: error => {
+              console.log(error);
+              this._saveCopiesDictation_loading = false;
+              if (this.officeCopiesDictationData.length == count + 1) {
+                this.continueSearchAppoinment(this.dictationData);
+              }
+            },
+          });
+      }
+    });
   }
 
   testSendFile() {

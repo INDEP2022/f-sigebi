@@ -33,7 +33,13 @@ type Attr = { [key: string]: string };
 @Component({
   selector: 'ngx-select',
   templateUrl: './select.component.html',
-  styles: [],
+  styles: [
+    `
+      .form-control {
+        height: auto !important;
+      }
+    `,
+  ],
 })
 export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() form: FormGroup;

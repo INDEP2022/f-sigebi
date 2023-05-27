@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SelectFormComponent } from './../../../@standalone/shared-forms/select-form/select-form.component';
 
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ExcelReportComponent } from 'src/app/@standalone/excel-report/excel-report.component';
@@ -47,6 +48,7 @@ import { ScheduledMaintenanceComponent } from './scheduled-maintenance.component
     TableGoodsComponent,
     GoodtrackerButtonComponent,
     FormLoaderComponent,
+    AccordionModule,
   ],
 })
 export class ScheduledMaintenanceModule {}
