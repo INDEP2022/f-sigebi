@@ -326,48 +326,65 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   updateDatesTable(newData: any[]) {
-    console.log(this.data);
-    this.detailService
-      .updateMasive(
-        newData
-          .filter(x => x.agregado === 'AE')
-          .map(x => {
+    console.log(newData);
+    const arrayToUpdate = newData.filter(x => x.agregado === 'AE');
+    const goodsByRastrer = newData.filter(x => x.agregado === 'RA');
+    if (arrayToUpdate.length > 0) {
+      this.detailService
+        .updateMasive(
+          arrayToUpdate.map(x => {
             return {
               fec_aprobacion_x_admon: x.fec_aprobacion_x_admon,
               fec_indica_usuario_aprobacion: x.fec_indica_usuario_aprobacion,
               no_bien: x.no_bien,
             };
           }),
-        this.actaId
-      )
-      .subscribe({
-        next: response => {
-          let goods = '';
-          newData.forEach((selected, index) => {
-            goods += selected.no_bien + (index < newData.length - 1 ? ',' : '');
-          });
-          // const message = `Se actualizo el bien N° ${newData.no_bien} `;
-          const message = `Se actualizaron los bienes N° ${goods} `;
-          this.onLoadToast('success', 'Exito', message);
-          this.data = newData;
-          // this.updateTable.emit();
-        },
-        error: err => {
-          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
-        },
-      });
-    this.onLoadToast('info', 'Bienes', 'Fechas actualizadas');
+          this.actaId
+        )
+        .subscribe({
+          next: response => {
+            let goods = '';
+            newData.forEach((selected, index) => {
+              goods +=
+                selected.no_bien + (index < newData.length - 1 ? ',' : '');
+            });
+            // const message = `Se actualizo el bien N° ${newData.no_bien} `;
+            const message = `Se actualizaron los bienes N° ${goods} `;
+            this.onLoadToast('success', 'Exito', message);
+            this.data = [...newData];
+            // this.data = [...this.data]
+            // this.updateTable.emit();
+          },
+          error: err => {
+            this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+            this.data = [
+              ...this.data
+                .filter(x => x.agregado === 'AE')
+                .concat(goodsByRastrer),
+            ];
+          },
+        });
+    } else {
+      if (goodsByRastrer.length > 0) {
+        this.data = [...newData];
+        this.onLoadToast('success', 'Bienes', 'Fechas actualizadas');
+      }
+    }
   }
 
   updateGoodsRow(event: any) {
     console.log(event);
     let { newData, confirm, data } = event;
     // confirm.resolve(data);
+
     if (
       !newData.fec_aprobacion_x_admon ||
       !newData.fec_indica_usuario_aprobacion
     ) {
       this.alertTableIncompleteFields();
+      return;
+    }
+    if (newData.agregado === 'RA') {
       return;
     }
     if (
@@ -579,25 +596,28 @@ export class ScheduledMaintenanceDetailComponent
             this.totalItems = response.count;
             // this.loading = false;
             this.fillGoodsByRastrer(deleteds);
-            // this.fillGoodsByRastrerContent([
-            //   { goodNumber: '537814' },
-            //   { goodNumber: '537813' },
-            //   { goodNumber: '537812' },
-            //   { goodNumber: '537811' },
-            //   { goodNumber: '537810' },
-            //   { goodNumber: '537545' },
-            //   { goodNumber: '537544' },
-            //   { goodNumber: '537543' },
-            //   { goodNumber: '537542' },
-            //   { goodNumber: '537539' },
-            //   { goodNumber: '537538' },
-            //   { goodNumber: '537536' },
-            //   { goodNumber: '537535' },
-            //   { goodNumber: '537411' },
-            //   { goodNumber: '537534' },
-            //   { goodNumber: '537410' },
-            //   { goodNumber: '536720' },
-            // ], deleteds);
+            // this.fillGoodsByRastrerContent(
+            //   [
+            //     { goodNumber: '537814' },
+            //     { goodNumber: '537813' },
+            //     { goodNumber: '537812' },
+            //     { goodNumber: '537811' },
+            //     { goodNumber: '537810' },
+            //     { goodNumber: '537545' },
+            //     { goodNumber: '537544' },
+            //     { goodNumber: '537543' },
+            //     { goodNumber: '537542' },
+            //     { goodNumber: '537539' },
+            //     { goodNumber: '537538' },
+            //     { goodNumber: '537536' },
+            //     { goodNumber: '537535' },
+            //     { goodNumber: '537411' },
+            //     { goodNumber: '537534' },
+            //     { goodNumber: '537410' },
+            //     { goodNumber: '536720' },
+            //   ],
+            //   deleteds
+            // );
           },
           error: err => {
             this.data = [];
