@@ -74,7 +74,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('delegation', this.delegationUserLog);
     this.showHideErrorInterceptorService.showHideError(false);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -91,51 +90,16 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
       .getAllUsersWithRol(this.paramsShowUsers.getValue())
       .subscribe({
         next: response => {
-          console.log('response', response);
+          this.usersData.load(response.data);
+          this.totalItems = response.count;
+          this.loading = false;
         },
         error: error => {
+          this.loading = false;
+          this.onLoadToast('info', 'Error', 'Usuarios no encontrados');
           console.log(error);
         },
       });
-
-    /*this.params.value.addFilter('employeeType', this.typeUser);
-    this.params.value.addFilter(
-      'regionalDelegation',
-      this.delegationUserLog,
-      SearchFilter.ILIKE
-    );
-    const filter = this.params.getValue().getParams();
-
-    this.userProcessService.getAll(filter).subscribe({
-      next: resp => {
-        resp.data.map((item: any) => {
-          item['fullName'] = item.firstName + ' ' + item.lastName;
-        });
-
-        resp.data.sort(function (a: any, b: any) {
-          return a.fullName - b.fullName;
-        });
-
-        this.usersData.load(resp.data);
-        this.totalItems = resp.count;
-        this.loading = false;
-      },
-      error: error => {
-        console.log(error);
-        this.loading = false;
-      },
-    }); */
-
-    /*this.params.getValue()['search'] = this.params.getValue().text;
-    this.params.getValue()['filter.employeeType'] = this.typeUser;
-    //this.params.getValue()['filter.regionalDelegation'] = this.delegation;
-    this.userProcessService.getAll(this.params.getValue()).subscribe(data => {
-      console.log('data', data);
-      //this.filterUsersProg(data.data);
-      this.usersData.load(data.data);
-      this.totalItems = data.count;
-      this.loading = false;
-    }); */
   }
 
   //Filtrar los usuarios que ya estén programados
@@ -173,7 +137,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   sendUser(user: any, selected: boolean) {
     if (selected) {
       this.userInfo.push(user);
-      console.log(this.userInfo);
     } else {
       this.userInfo = this.userInfo.filter(
         _user => _user.wheelNumber != _user.wheelNumber
@@ -182,7 +145,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log('Usuario a guardar', this.userInfo);
     if (this.userInfo.length > 0) {
       let count: number = 0;
       this.userInfo.map(info => {
