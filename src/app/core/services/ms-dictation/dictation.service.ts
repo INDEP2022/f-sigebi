@@ -13,6 +13,7 @@ import {
   ITmpDictationCreate,
   ITmpExpDesahogoB,
 } from '../../models/ms-dictation/dictation-model';
+import { IRTdictaAarusr } from '../../models/ms-dictation/r-tdicta-aarusr.model';
 
 @Injectable({
   providedIn: 'root',
@@ -148,7 +149,9 @@ export class DictationService extends HttpService {
     );
   }
 
-  getRTdictaAarusr(params?: ListParams): Observable<IListResponse<any>> {
+  getRTdictaAarusr(
+    params?: ListParams
+  ): Observable<IListResponse<IRTdictaAarusr>> {
     return this.get<IListResponse<any>>(
       DictationEndpoints.RTdictaAarusr,
       params
