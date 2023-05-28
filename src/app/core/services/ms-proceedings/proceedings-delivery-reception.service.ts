@@ -6,6 +6,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import {
   IListResponse,
+  IListResponseMessage,
   IResponse,
 } from '../../interfaces/list-response.interface';
 import { IDetailProceedingsDeliveryReception } from '../../models/ms-proceedings/detail-proceeding-delivery-reception';
@@ -58,11 +59,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
         delete selected.vault;
         return this.createDetail(selected).pipe(
           map(item => {
-            return { deleted: selected.numberGood + '' } as IDeleted;
+            return { numberGood: selected.numberGood + '' } as any;
           }),
-          catchError(err =>
-            of({ error: selected.numberGood + '' } as INotDeleted)
-          )
+          catchError(err => of({ error: selected.numberGood + '' } as any))
         );
       })
     );
@@ -75,7 +74,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     }>('detail-proceedings-delivery-reception', model);
   }
 
-  deleteMassiveDetails(selecteds?: IDetailProceedingsDeliveryReception[]) {
+  deleteMassiveDetails(
+    selecteds?: { numberGood: number; numberProceedings: number }[]
+  ) {
     return forkJoin(
       selecteds.map(selected =>
         this.deleteDetail(selected.numberGood, selected.numberProceedings).pipe(
@@ -228,8 +229,8 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
 
   getAll(
     params?: _Params
-  ): Observable<IListResponse<IProceedingDeliveryReception>> {
-    return this.get<IListResponse<IProceedingDeliveryReception>>(
+  ): Observable<IListResponseMessage<IProceedingDeliveryReception>> {
+    return this.get<IListResponseMessage<IProceedingDeliveryReception>>(
       this.endpoint,
       params
     );
