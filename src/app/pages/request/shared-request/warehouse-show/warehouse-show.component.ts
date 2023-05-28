@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IStoreStock } from 'src/app/core/models/ms-store-alias-stock/store-alias-stock.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
@@ -162,10 +163,20 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    const confirmWarehouse = this.modalService.show(WarehouseConfirmComponent, {
+    const store = this.store;
+    console.log('almac', store);
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      store,
+      callback: (next: boolean) => {},
+    };
+
+    this.modalService.show(WarehouseConfirmComponent, config);
+
+    /*const confirmWarehouse = this.modalService.show(WarehouseConfirmComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
+    }); */
   }
 
   close() {

@@ -22,14 +22,13 @@
           <div *ngIf="searchByOtherData" class="row">
             <div class="row mt-3">
               <ngx-select
-              control="listExpedients"
+                control="listExpedients"
                 label="Expedientes"
                 bindLabel="id"
                 (change)="selectExpedient($event)"
                 [data]="dataExpedients"
                 [searchable]="false"
-                [form] = 'form'
-                ></ngx-select>
+                [form]="form"></ngx-select>
             </div>
           </div>
         </div>
@@ -71,12 +70,12 @@
           <div class="col-md-9">
             <form-field [control]="form.get('expediente')" label="Expediente">
               <input
-              (ngModelChange)="
-                    toggleByLength('expedient-number', 'expediente')
-                  "
-                  [max-length]="10"
-                  [class]="blockExpedient ? 'disabled' : ''"
-                  [min]="0"
+                (ngModelChange)="
+                  toggleByLength('expedient-number', 'expediente')
+                "
+                [max-length]="10"
+                [class]="blockExpedient ? 'disabled' : ''"
+                [min]="0"
                 type="number"
                 class="form-control"
                 formControlName="expediente" />
@@ -89,10 +88,8 @@
               [control]="form.get('averPrev')"
               label="Averiguaci&oacute;n Previa">
               <input
-              (ngModelChange)="
-                    toggleByLength('expedient-number', 'averPrev')
-                  "
-                  [max-length]="40"
+                (ngModelChange)="toggleByLength('expedient-number', 'averPrev')"
+                [max-length]="40"
                 type="string"
                 class="form-control"
                 formControlName="averPrev" />
@@ -101,14 +98,12 @@
         </div>
         <div class="col-md-4">
           <div class="row">
-            <form-field
-              [control]="form.get('causaPenal')"
-              label="Causa penal">
+            <form-field [control]="form.get('causaPenal')" label="Causa penal">
               <input
-              (ngModelChange)="
-              toggleByLength('expedient-number', 'causaPenal')
-            "
-            [max-length]="40"
+                (ngModelChange)="
+                  toggleByLength('expedient-number', 'causaPenal')
+                "
+                [max-length]="40"
                 type="string"
                 class="form-control"
                 formControlName="causaPenal" />
@@ -120,7 +115,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('acta')">
                 <ngx-select
                   id="acta"
@@ -147,7 +142,7 @@
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
@@ -157,19 +152,17 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <div class="col">
-                <form-field [control]="form.get('recibe')">
-                  <ngx-select
-                    (fetchItems)="getRecibe($event)"
-                    id="transfer"
-                    [class]="initialBool ? 'disabled' : ''"
-                    control="recibe"
-                    label="Recibe"
-                    bindLabel="delegation"
-                    [data]="recibeSelect"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
+              <form-field [control]="form.get('recibe')">
+                <ngx-select
+                  (fetchItems)="getRecibe($event)"
+                  id="transfer"
+                  [class]="initialBool ? 'disabled' : ''"
+                  control="recibe"
+                  label="Recibe"
+                  bindLabel="delegation"
+                  [data]="recibeSelect"
+                  [form]="form"></ngx-select>
+              </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="form.get('admin')">
@@ -404,7 +397,7 @@
                 [control]="form.get('folioEscaneo')"
                 label="Folio de Escaneo">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="folioEscaneo" />
               </form-field>

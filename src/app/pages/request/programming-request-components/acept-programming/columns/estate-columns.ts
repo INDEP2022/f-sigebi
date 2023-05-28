@@ -57,6 +57,24 @@ export const ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
+
+  townshipKey: {
+    title: 'Municipio',
+    type: 'string',
+    sort: false,
+  },
+
+  settlementKey: {
+    title: 'Localidad',
+    type: 'string',
+    sort: false,
+  },
+
+  code: {
+    title: 'Codigo Postal',
+    type: 'string',
+    sort: false,
+  },
 };
 
 export const ESTATE_COLUMNS_VIEW = {

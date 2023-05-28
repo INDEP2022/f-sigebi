@@ -207,7 +207,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       'Solicitud de alta de almacén con folio: ' + this.programmingId;
     task['programmingId'] = this.programmingId;
     task['expedientId'] = 0;
-    task['regionalDelegationNumber'] = this.regDelData.id;
+    task['idDelegationRegional'] = this.regDelData.id;
     task['urlNb'] = 'pages/request/programming-request/warehouse';
     task['processName'] = 'SolicitudProgramacion';
     body['task'] = task;

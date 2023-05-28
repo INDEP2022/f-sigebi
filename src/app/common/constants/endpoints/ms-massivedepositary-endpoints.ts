@@ -3,5 +3,5 @@ export enum MassivedepositaryEndpoints {
   DataCSV = 'application/pupBurdenDataCSV',
   PreViewDataCSV = 'application/pupPreviewDataCSV',
   PupBurdenDataCSV = 'PupBurdenDataCSV',
-  PupPreviewDataCSV = 'PupPreviewDataCSV',
+  PupPreviewDataCSV = 'application/PupPreviewDataCSV',
 }
