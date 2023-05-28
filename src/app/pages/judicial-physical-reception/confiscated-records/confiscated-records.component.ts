@@ -1496,7 +1496,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   fnOpenProceeding() {
     if (['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
       this.alertQuestion(
-        'warning',
+        'question',
         `¿Está seguro de abrir el Acta ${this.form.get('acta2').value} ?`,
         ''
       ).then(q => {
@@ -1750,7 +1750,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     elaborate: localStorage
                       .getItem('username')
                       .toLocaleUpperCase(),
-                    numFile: this.form.get('expediente').value,
+                    numFile: parseInt(this.idProceeding.toString()),
                     witness1: this.form.get('entrega').value,
                     witness2: this.form.get('recibe2').value,
                     typeProceedings: ['D', 'ND'].includes(

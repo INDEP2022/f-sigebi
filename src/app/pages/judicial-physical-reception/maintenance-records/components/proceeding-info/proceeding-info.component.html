@@ -85,7 +85,7 @@
               type="text"
               class="form-control"
               formControlName="cveActa"
-              maxlength="30"
+              maxlength="60"
               [readonly]="loading" />
           </form-field>
         </div>
@@ -111,7 +111,15 @@
             [readonly]="disabled"></app-proceeding-types-shared>
         </div> -->
         <div class="col-12">
-          <ng-custom-select-loading
+          <form-field [control]="form.get('tipoActa')" label="Etiqueta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tipoActa"
+              maxlength="30"
+              [readonly]="disabled" />
+          </form-field>
+          <!-- <ng-custom-select-loading
             [form]="form"
             formControlName="tipoActa"
             label="Tipo de Acta"
@@ -120,7 +128,7 @@
             [searchable]="false"
             loadingText="Cargando tipos de acta..."
             path="proceeding/api/v1/proceedings-delivery-reception/get-types">
-          </ng-custom-select-loading>
+          </ng-custom-select-loading> -->
         </div>
       </div>
       <div class="row mb-4">
