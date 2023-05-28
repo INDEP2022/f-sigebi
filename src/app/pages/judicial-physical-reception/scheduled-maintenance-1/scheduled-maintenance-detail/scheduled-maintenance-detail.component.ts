@@ -29,6 +29,7 @@ import {
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 import { IParametersIndicators } from './../../../../core/models/catalogs/parameters-indicators.model';
 import { IProceedingDeliveryReception } from './../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { GOOD_TRACKER_ORIGINS } from './../../../general-processes/goods-tracker/utils/constants/origins';
@@ -225,18 +226,31 @@ export class ScheduledMaintenanceDetailComponent
         detail.keysProceedings = this.form.get('claveActa').value;
         detail.statusProceedings = this.statusActaValue;
         detail.closeDate = new Date().toISOString();
+        detail.captureDate = firstFormatDateToSecondFormatDate(
+          detail.captureDate
+        );
         let message = '';
-        // this.proceedingService
-        //   .update2(detail)
-        //   .pipe(takeUntil(this.$unSubscribe))
-        //   .subscribe({
-        //     next: response => {
-        //       this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
-        //     },
-        //     error: err => {
-        //       this.massiveUpdate('');
-        //     },
-        //   });
+        this.proceedingService
+          .update2(detail)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: response => {
+              this.onLoadToast(
+                'success',
+                'Se actualizo el acta N° ' + detail.id
+              );
+              this.pageLoading = false;
+              // this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
+            },
+            error: err => {
+              this.onLoadToast(
+                'error',
+                'No se pudo actualizar el acta N° ' + detail.id
+              );
+              // this.massiveUpdate('');
+              this.pageLoading = false;
+            },
+          });
       } else {
         this.form.get('statusActa').setValue('ABIERTA');
       }
@@ -578,7 +592,7 @@ export class ScheduledMaintenanceDetailComponent
     console.log(new Date().toISOString());
     this.loading = true;
     this.params['id'] = idActa;
-    this.params.limit = 0;
+    this.params.limit = 10000;
     // const detail = JSON.parse(
     //   window.localStorage.getItem('detailActa')
     // ) as IProceedingDeliveryReception;
