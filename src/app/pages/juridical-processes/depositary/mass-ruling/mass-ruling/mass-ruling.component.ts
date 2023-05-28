@@ -11,31 +11,30 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import {
-  getDataFromExcel,
-  getUser,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MassiveDictationService } from 'src/app/core/services/ms-massivedictation/massivedictation.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { MassRullingResponses } from '../tools/mass-rulling-responses';
 
 @Component({
   selector: 'app-mass-ruling',
   templateUrl: './mass-ruling.component.html',
   styleUrls: ['./mass-ruling.component.scss'],
 })
-export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
+export class MassRulingComponent
+  extends MassRullingResponses
+  implements OnInit, OnDestroy
+{
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   expedientNumber: number = null;
   wheelNumber: number = null;
@@ -81,17 +80,18 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     mode: 'external', // ventana externa
 
     columns: {
-      erroresProceso: {
+      description: {
         title: 'Errores del proceso',
       },
     },
   };
   // Data table
-  dataTableErrors = [
-    {
-      erroresProceso: 'DATA',
-    },
-  ];
+  dataTableErrors: { processId: any; description: string }[] = [];
+
+  btnsEnabled = {
+    btnDictation: false,
+    btnGoodDictation: false,
+  };
 
   public form = new FormGroup({
     id: new FormControl(null, Validators.required),
@@ -107,30 +107,35 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     wheelNumber: new FormControl('', Validators.required),
     delete: new FormControl({ value: false, disabled: true }),
   });
-  public formCargaMasiva: FormGroup;
+  public formCargaMasiva = new FormGroup({
+    identificadorCargaMasiva: new FormControl('', [
+      Validators.required,
+      Validators.pattern(KEYGENERATION_PATTERN),
+    ]),
+  });
   isDisabledBtnGoodDictation = true;
+  file: File | null = null;
   // public searchForm: FormGroup;
   constructor(
     private fb: FormBuilder,
-    private dictationService: DictationService,
-    private goodService: GoodService,
+    protected dictationService: DictationService,
+    // private goodService: GoodService,
     private massiveGoodService: MassiveGoodService,
     private modalService: BsModalService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private notificationsService: NotificationService,
-    private massiveDictationService: MassiveDictationService,
-    private documentsService: DocumentsService
+    protected massiveDictationService: MassiveDictationService,
+    protected documentsService: DocumentsService,
+    private authService: AuthService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-
-    this.form.get('wheelNumber').valueChanges.subscribe(x => {
-      this.getVolante();
-    });
+    // this.form.get('wheelNumber').valueChanges.subscribe(x => {
+    //   this.getVolante();
+    // });
   }
 
   getDictations(
@@ -150,7 +155,6 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
-    // data.page = params.page;
     data.limit = 1;
 
     if (id) {
@@ -189,153 +193,177 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     this.getDictations(id, wheelNumber);
   }
 
-  private prepareForm() {
-    // this.form = this.fb.group();
-    // this.searchForm = this.fb.group({
-    //   wheelNumber: null,
-    //   expedientNumber: null,
-    // });
-    this.formCargaMasiva = this.fb.group({
-      identificadorCargaMasiva: [
-        '',
-        [Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-    });
-  }
-
-  private showToasterError(message: string) {
-    showToast({
-      icon: 'error',
-      title: 'Error',
-      text: message,
-    });
-  }
-
-  async CountDictationGoodFile(armyOfficeKey: any) {
-    const result = await firstValueFrom(
-      this.documentsService.postCountDictationGoodFile(armyOfficeKey)
-    );
-    return result;
-  }
-
-  getRtdictaAarusr(toolbarUser: any): Promise<any> {
-    // select USUARIO
-    // 		INTO USUAR
-    // 		from R_TDICTA_AARUSR
-    // 	 WHERE nO_TIPO ='ELIMINAR'
-    // 		 AND USUARIO   =:TOOLBAR_USUARIO;
-    //TODO: Esperando endpoint
-    return Promise.resolve('USUARIO');
-  }
-
-  async procedureDeleteDictationMoreTax(passOfficeArmy: string) {
-    const result = await firstValueFrom(
-      this.massiveDictationService.deleteDictationMoreTax(passOfficeArmy)
-    );
-    return result;
-  }
   close() {
     this.modalService.hide();
   }
+
+  uploadForFileGoodDictation() {}
+
+  async uploadForIdentifier() {
+    if (!this.dataTable[0].hasOwnProperty('id')) {
+      this.onLoadToast(
+        'warning',
+        'No se tiene datos cargados en la tabla de carga masiva'
+      );
+      return;
+    }
+    const question = await this.alertQuestion(
+      'warning',
+      'Confirmación',
+      'Los Bienes del Dictamen serán eliminados, desea continuar?'
+    );
+    if (!question.isConfirmed) {
+      return;
+    }
+
+    const identifier = this.dataTable[0].id;
+    this.btnsEnabled.btnGoodDictation = true;
+    this.massiveDictationService.deleteGoodOpinion(identifier).subscribe({
+      next: () => {
+        this.onLoadToast('success', 'Proceso Terminado');
+        this.dataTable = [];
+        this.formCargaMasiva.reset();
+        this.form.get('delete').setValue(false);
+        this.form.get('delete').disable();
+        this.btnsEnabled.btnGoodDictation = false;
+        this.file = null;
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast(
+          'warning',
+          'Error al eliminar los bienes del dictamen'
+        );
+        this.btnsEnabled.btnGoodDictation = false;
+      },
+    });
+  }
+
   onClickGoodDictation() {
-    if (this.dataTable.length === 0) {
-      this.showToasterError(
+    if (this.dataTable.length < 1) {
+      this.onLoadToast(
+        'warning',
         'No se tiene datos cargados en la tabla de carga masiva'
       );
       return;
     }
 
-    let identifier: number = null;
-    if (this.dataTable[0].hasOwnProperty('id')) {
-      identifier = this.dataTable[0].id;
+    if (this.file) {
+      this.uploadForFileGoodDictation();
     } else {
-      this.showToasterError(
-        'No se tiene datos cargados en la tabla de carga masiva'
+      this.uploadForIdentifier();
+    }
+
+    // let identifier: number = null;
+    // if (this.dataTable[0].hasOwnProperty('id')) {
+    //   identifier = this.dataTable[0].id;
+    // } else {
+    //   this.onLoadToast(
+    //     'warning',
+    //     'No se tiene datos cargados en la tabla de carga masiva'
+    //   );
+    //   return;
+    // }
+
+    // this.alertQuestion(
+    //   'warning',
+    //   'Confirmación',
+    //   'Los Bienes del Dictamen serán eliminados, desea continuar?'
+    // ).then(question => {
+    //   if (question.isConfirmed) {
+    //     this.loading = true;
+    //     // TODO: Esperando resolucion de incidencia 785 para comprobación eliminación de carga masiva
+    //     this.massiveDictationService.deleteGoodOpinion(identifier).subscribe({
+    //       next: data => {
+    //         this.loading = false;
+    //         console.log(data);
+    //         showToast({
+    //           icon: 'success',
+    //           text: 'Proceso Terminado',
+    //         });
+    //         this.dataTable = [];
+    //         this.formCargaMasiva.reset();
+    //         this.form.get('delete').setValue(false);
+    //         this.isDisabledBtnGoodDictation = true;
+    //         this.form.get('delete').disable();
+    //       },
+    //       error: err => {
+    //         this.loading = false;
+    //         console.log(err);
+    //         this.onLoadToast('warning', err.error.message);
+    //       },
+    //     });
+    //   }
+    // });
+  }
+
+  //TODO: FOR TESTING
+  async onClickDictation() {
+    console.log(this.authService.decodeToken());
+    const armyOfficeKey = this.form.get('passOfficeArmy').value;
+    if (!armyOfficeKey) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debe ingresar la clave de la oficina del ejercito'
       );
+      return;
+    }
+    try {
+      this.btnsEnabled.btnDictation = true;
+      await this.CountDictationGoodFile(armyOfficeKey);
+    } catch (ex) {
+      this.btnsEnabled.btnDictation = false;
+      this.alert('error', 'Error', 'Error desconocido Consulte a su Analista');
       return;
     }
 
     this.alertQuestion(
-      'warning',
-      'Confirmación',
-      'Los Bienes del Dictamen serán eliminados, desea continuar?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.loading = true;
-        // TODO: Esperando resolucion de incidencia 785 para comprobación eliminación de carga masiva
-        this.massiveDictationService.deleteGoodOpinion(identifier).subscribe({
-          next: data => {
-            this.loading = false;
-            console.log(data);
-            showToast({
-              icon: 'success',
-              text: 'Proceso Terminado',
-            });
-            this.dataTable = [];
-            this.formCargaMasiva.reset();
-            this.form.get('delete').setValue(false);
-            this.isDisabledBtnGoodDictation = true;
-            this.form.get('delete').disable();
-          },
-          error: err => {
-            this.loading = false;
-            console.log(err);
-            this.showToasterError(err.error.message);
-          },
-        });
+      'info',
+      'Información',
+      'Desea eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value
+    ).then(async question => {
+      if (!question.isConfirmed) {
+        this.btnsEnabled.btnDictation = false;
+        return;
       }
-    });
-  }
+      let usuar;
+      try {
+        const user = this.authService.decodeToken().name;
+        usuar = await this.getRtdictaAarusr(user);
+      } catch (ex) {
+        this.btnsEnabled.btnDictation = false;
+        this.alert(
+          'error',
+          'Error',
+          'Su usuario no tiene permiso para eliminar registros'
+        );
+        return;
+      }
 
-  async onClickDictation() {
-    const armyOfficeKey = this.form.get('passOfficeArmy').value;
-    if (!armyOfficeKey) {
-      showToast({
-        icon: 'error',
-        text: 'Debe ingresar la clave de la oficina del ejercito',
-      });
-      return;
-    }
-    try {
-      const result = await this.CountDictationGoodFile(armyOfficeKey);
-      this.alertQuestion(
-        'info',
-        'Información',
-        'Desea eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value
-      ).then(async question => {
-        if (!question.isConfirmed) {
-          return;
-        }
-        //TODO: Esperando endpoint para eliminar dictamen
-        const user = getUser();
-        const usuar = this.getRtdictaAarusr(user);
-        if (usuar) {
-          try {
-            const passOfficeArmy = this.form.get('passOfficeArmy').value;
-            const result = await this.procedureDeleteDictationMoreTax(
-              passOfficeArmy
-            );
-            this.alert('success', 'Dictamen', 'Proceso terminado');
-          } catch (ex: any) {
-            this.alert(
-              'error',
-              'Error',
-              'Error desconocido Consulte a su Analista'
-            );
-          }
-        } else {
+      if (usuar?.user) {
+        try {
+          const passOfficeArmy = this.form.get('passOfficeArmy').value;
+          await this.procedureDeleteDictationMoreTax(passOfficeArmy);
+          this.alert('success', 'Dictamen', 'Proceso terminado');
+          this.btnsEnabled.btnDictation = false;
+        } catch (ex: any) {
+          this.btnsEnabled.btnDictation = false;
           this.alert(
             'error',
             'Error',
-            'Su usuario no tiene permiso para eliminar registros'
+            'Error desconocido Consulte a su Analista'
           );
         }
-      });
-    } catch (ex) {
-      // console.log(ex);
-      this.alert('error', 'Error', 'Error desconocido Consulte a su Analista');
-    }
-    console.log('Dictamenes');
+      } else {
+        this.alert(
+          'error',
+          'Error',
+          'Su usuario no tiene permiso para eliminar registros'
+        );
+        this.btnsEnabled.btnDictation = false;
+      }
+    });
   }
 
   btnCargarIdentificador() {
@@ -361,10 +389,11 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       next: data => {
         this.dataTable = data.data;
         this.loading = false;
-        console.log(data.data);
+        this.file = null;
       },
-      error: err => {
+      error: () => {
         this.dataTable = [];
+        this.file = null;
         this.loading = false;
       },
     });
@@ -380,22 +409,33 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       event.target.value = null;
       return;
     }
-    const data = await getDataFromExcel(event.target.files[0]);
+    this.file = event.target.files[0];
+    const data = await getDataFromExcel(this.file);
     if (!this.validateExcel(data)) {
-      console.log('Error');
       return;
     }
-    console.log(data);
-    this.dataTable = data.map((item: any) => {
-      return {
+    const dataTable: any[] = [];
+    const dataTableError: any[] = [];
+    data.forEach((item: any, index) => {
+      if (isNaN(item.NO_BIEN) || isNaN(item.NO_EXPEDIENTE)) {
+        dataTableError.push({
+          processId: 12345,
+          fileNumber: `REGISTRO: ${index + 1}, CONTENIDO NO_BIEN: ${
+            item.NO_BIEN
+          }, NO_EXPEDIENTE: ${item.NO_EXPEDIENTE} `,
+        });
+        return;
+      }
+      dataTable.push({
         goodNumber: { id: item.NO_BIEN },
         fileNumber: { id: item.NO_EXPEDIENTE },
-      };
+      });
     });
+    this.dataTableErrors = dataTableError;
+    this.dataTable = dataTable;
     this.form.get('id').setValue(null);
     this.form.get('delete').enable();
     this.form.get('delete').setValue(false);
-    this.isDisabledBtnGoodDictation = true;
     this.isDisableCreateDictation = false;
   }
 
@@ -453,16 +493,16 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
     }
   }
 
-  async btnExpedientesXls(event: any) {
-    const data = await getDataFromExcel(event.target.files[0]);
-    if (!this.validateExcel(data)) {
-      return;
-    }
-    console.log({ data });
-  }
+  // async btnExpedientesXls(event: any) {
+  //   const data = await getDataFromExcel(event.target.files[0]);
+  //   if (!this.validateExcel(data)) {
+  //     return;
+  //   }
+  //   console.log({ data });
+  // }
 
   isDisableCreateDictation = false;
-  async btnCrearDictamenes() {
+  async onClickLoadDictation() {
     let vNO_OF_DICTA;
     if (this.form.invalid) {
       this.alert('error', 'Se debe ingresar un dictamen', '');
@@ -490,15 +530,6 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
         this.alert('error', 'Error inesperado en el proceso.', '');
       },
     });
-
-    // this.dictationService.create(this.form.value).subscribe({
-    //   next: data => {
-    //     console.log(data);
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //   },
-    // });
   }
 
   async getDictationForId() {
