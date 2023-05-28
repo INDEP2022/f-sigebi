@@ -85,7 +85,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   getRequestInfo(requestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
     this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria`;
-    if (!requestId) console.log('NULO');
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();

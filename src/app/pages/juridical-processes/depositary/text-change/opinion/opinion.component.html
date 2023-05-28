@@ -241,8 +241,10 @@
   </div-->
 
   <!---->
-  <div class="row mt-3" *ngFor="let item of contadorCCP">
-    <app-textChange-modal></app-textChange-modal>
+  <div class="row mt-3" *ngFor="let item of datosOpinion">
+    <app-textChange-modal
+      [datosOpinion]="item"
+      [form]="form"></app-textChange-modal>
   </div>
   <hr />
   <div class="row mb-5">
