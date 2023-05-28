@@ -213,6 +213,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       task['programmingId'] = 0;
       task['requestId'] = request.id;
       task['expedientId'] = 0;
+      task['idDelegationRegional'] = user.department;
+      //task['assignedDate'] = new Date().toISOString();
       task['urlNb'] = 'pages/request/transfer-request/registration-request';
       task['processName'] = 'SolicitudTransferencia';
 
