@@ -108,6 +108,7 @@
           <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
             <div class="form-group ml-2 mr-2">
               <button
+                [disabled]="btnsEnabled.btnDictation"
                 type="button"
                 class="btn btn-primary active btn-sm text-wrap"
                 (click)="onClickDictation()">
@@ -132,6 +133,7 @@
           <div class="col-12 pl-2 p-1 text-center d-flex align-items-center">
             <div class="form-group m-1 ml-2 mr-2">
               <button
+                [disabled]="formCargaMasiva.invalid"
                 type="button"
                 (click)="btnCargarIdentificador()"
                 class="btn btn-primary active btn-sm text-wrap">
@@ -143,7 +145,7 @@
                 <button
                   type="button"
                   [disabled]="isDisableCreateDictation"
-                  (click)="btnCrearDictamenes()"
+                  (click)="onClickLoadDictation()"
                   class="btn btn-primary active btn-sm">
                   Crear Dict&aacute;menes
                 </button>
