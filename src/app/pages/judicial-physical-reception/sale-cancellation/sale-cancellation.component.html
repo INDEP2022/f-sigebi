@@ -13,10 +13,7 @@
                 id="expedient-number"
                 class="btn btn-primary btn-sm active"
                 (click)="goodsByExpediente()"
-                [disabled]="
-                  form.get('expediente').value == null ||
-                  form.get('expediente').value < 0
-                ">
+                >
                 Buscar
               </button>
               <span>{{ statusProceeding }}</span>
@@ -68,6 +65,7 @@
             "
                 type="number"
                 class="form-control"
+                [readOnly]="blockExpedient"
                 [min]="0"
                 [max-length]="10"
                 formControlName="expediente" />
@@ -264,6 +262,7 @@
             <div class="col-md-9">
               <form-field [control]="form.get('entrega')" label="Entrega">
                 <input
+                  [class]="isEnableEntrega ? '':'disabled'"
                   type="text"
                   class="form-control"
                   formControlName="entrega" />
@@ -277,6 +276,7 @@
                 [control]="form.get('fecElabRecibo')"
                 label="Fecha Elaboraci&oacute;n Recibo">
                 <input
+                [class]="isEnableFecElabRecibo ? '':'disabled'"
                   bsDatepicker
                   class="form-control"
                   formControlName="fecElabRecibo" />
@@ -290,6 +290,7 @@
                 [control]="form.get('fecEntregaBienes')"
                 label="Fecha Entrega de Bienes">
                 <input
+                  [class]="isEnableFecEntrBien ? '':'disabled'"
                   bsDatepicker
                   class="form-control"
                   formControlName="fecEntregaBienes" />
@@ -323,6 +324,7 @@
                 label="Fecha Elaboraci&oacute;n">
                 <input
                   bsDatepicker
+                  [class]="isEnableFecElab ? '':'disabled'"
                   id="fecElab"
                   class="form-control"
                   [maxDate]="maxDate"
@@ -359,6 +361,7 @@
                 [control]="form.get('observaciones')"
                 label="Observaciones">
                 <textarea
+                  [class]="isEnableObservaciones ? '':'disabled'"
                   rows="2"
                   class="form-control"
                   formControlName="observaciones"></textarea>
@@ -370,6 +373,7 @@
             <div class="col-md-9">
               <form-field [control]="form.get('recibe2')" label="Recibe">
                 <input
+                [class]="isEnableRecibe ? '':'disabled'"
                   type="text"
                   class="form-control"
                   formControlName="recibe2" />
@@ -383,6 +387,7 @@
                 [control]="form.get('testigo')"
                 label="Testigo de la Contr&#46;">
                 <input
+                  [class]="isEnableTestigo ? '':'disabled'"
                   type="text"
                   class="form-control"
                   formControlName="testigo" />
@@ -475,13 +480,13 @@
           <button
             type="button"
             class="mx-2 btn btn-secondary btn-sm active"
-            (click)="deleteGoods()">
+            (click)="newDeleteGoods()">
             <i class="fa fa-angle-up"></i>
           </button>
           <button
             type="button"
             class="mx-2 btn btn-secondary btn-sm active"
-            (click)="addGood()">
+            (click)="newAddGood()">
             <i class="fa fa-angle-down"></i>
           </button>
         </div>
