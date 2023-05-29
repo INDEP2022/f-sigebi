@@ -44,19 +44,22 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   searchGood() {
-    this.resetForm();
+    this.formLoading = true;
     this.goodService.getByGoodNumber(this.noBien.value).subscribe({
       next: response => {
+        this.resetForm();
         console.log(response);
         this.selectGood(response.data[0]);
         // this.selectGood(response)
       },
       error: err => {
+        this.resetForm();
         this.onLoadToast(
           'error',
           'N° Bien ' + this.noBien.value,
           'No encontrado'
         );
+        this.formLoading = false;
       },
     });
   }
@@ -259,6 +262,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.form.reset();
     this.formControl.reset();
     this.service.bienesPar = [];
+    this.service.pagedBienesPar = [];
     this.service.sumCant = 0;
     this.service.sumVal14 = 0;
   }
@@ -409,7 +413,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   }
 
   async selectGood(good: IGood) {
-    this.formLoading = true;
     await this.selectGoodContent(good);
     this.formLoading = false;
   }

@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
@@ -53,7 +53,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     ],
     registerNumber: [
       null,
-      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(11)],
     ],
     wheelNumber: [
       null,
@@ -118,6 +118,11 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       null,
       [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
     ],
+    extPerson: this.fb.array([
+      this.fb.control('', [Validators.required]),
+      this.fb.control('', [Validators.required]),
+      this.fb.control('', [Validators.required]),
+    ]),
   });
 
   intIDictation: IDictation;
@@ -396,10 +401,14 @@ carga la  información de la parte media de la página
   getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
     let variable: IDictation = JSON.parse(JSON.stringify(datos));
+    /*
+    this.filterParams
+      .getValue()
+      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);*/
 
     this.filterParams
       .getValue()
-      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
+      .addFilter('numberOfDicta', 404526, SearchFilter.EQ);
 
     console.log(
       'Entra =>  ' +
@@ -602,6 +611,23 @@ carga la  información de la parte media de la página
     });
   }
 
+  get extPersonArray() {
+    return this.form.get('extPerson') as FormArray;
+  }
+
+  /*
+addExtPersonArray(){
+
+const filterForm = this.fb.group({
+                             ,
+                             this.fb.control('' ,[Validators.required]),
+                             this.fb.control('' ,[Validators.required])
+    });
+    
+    this.extPersonArray.push(this.fb.control('' ,[Validators.required]));
+}
+*/
+
   // NO SE USAN PERO HAY QUE REVISAR SU FUNCIONAMIENTO
 
   loadUserDestinatario() {
@@ -620,6 +646,4 @@ carga la  información de la parte media de la página
       },
     });
   }
-
-  validaCampos(event: Event) {}
 }

@@ -15,17 +15,17 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   street: {
-    title: 'Dirección',
+    title: 'Calle',
     type: 'string',
     sort: false,
   },
   streetNumber: {
-    title: 'Numero Dirección',
+    title: 'No.Exterior',
     type: 'string',
     sort: false,
   },
   apartmentNumber: {
-    title: 'Número Apartamento',
+    title: 'No.Interior',
     type: 'string',
     sort: false,
   },
@@ -69,26 +69,26 @@ export const PERSON_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  manager: {
-    title: 'Gerente',
-    type: 'string',
-    sort: false,
-  },
-  numberDeep: {
-    title: 'Número Deep',
-    type: 'string',
-    sort: false,
-  },
-  profesion: {
-    title: 'Profesión',
-    type: 'string',
-    sort: false,
-  },
-  curriculum: {
-    title: 'Curriculum',
-    type: 'string',
-    sort: false,
-  },
+  // manager: {
+  //   title: 'Gerente',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // numberDeep: {
+  //   title: 'Número Deep',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // profesion: {
+  //   title: 'Profesión',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // curriculum: {
+  //   title: 'Curriculum',
+  //   type: 'string',
+  //   sort: false,
+  // },
   DetEntFed: {
     title: 'Ent.Federativa',
     type: 'string',
@@ -99,44 +99,44 @@ export const PERSON_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  observations: {
-    title: 'Observaciones',
-    type: 'string',
-    sort: false,
-  },
-  precedentSecodam: {
-    title: 'Anteecedetes SECODAm',
-    type: 'string',
-    sort: false,
-  },
-  precedentPgr: {
-    title: 'Antecedentes PGR',
-    type: 'string',
-    sort: false,
-  },
-  precedentPff: {
-    title: 'Antecedentes PFF',
-    type: 'string',
-    sort: false,
-  },
-  precedentSera: {
-    title: 'Anteecedetes SERA',
-    type: 'string',
-    sort: false,
-  },
-  precedent0ther: {
-    title: 'Otros Antecedentes',
-    type: 'string',
-    sort: false,
-  },
+  // observations: {
+  //   title: 'Observaciones',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // precedentSecodam: {
+  //   title: 'Anteecedetes SECODAm',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // precedentPgr: {
+  //   title: 'Antecedentes PGR',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // precedentPff: {
+  //   title: 'Antecedentes PFF',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // precedentSera: {
+  //   title: 'Anteecedetes SERA',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // precedent0ther: {
+  //   title: 'Otros Antecedentes',
+  //   type: 'string',
+  //   sort: false,
+  // },
   email: {
     title: 'Email',
     type: 'string',
     sort: false,
   },
-  blackList: {
-    title: 'Lista Negra',
-    type: 'string',
-    sort: false,
-  },
+  // blackList: {
+  //   title: 'Lista Negra',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };
