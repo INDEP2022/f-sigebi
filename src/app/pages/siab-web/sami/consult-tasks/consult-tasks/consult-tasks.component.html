@@ -249,6 +249,18 @@
                 [control]="consultTasksForm.get('txtNoDelegacionRegional')"
                 label="No. de Delegación Regional">
                 <input
+                  type="text"
+                  class="form-control"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="delegation"
+                  maxlength="20"
+                  (keydown.enter)="onKeydown($event)"
+                  readOnly="true" />
+              </form-field>
+              <!-- <form-field
+                [control]="consultTasksForm.get('txtNoDelegacionRegional')"
+                label="No. de Delegación Regional">
+                <input
                   type="number"
                   min="0"
                   max="999999999999999"
@@ -256,24 +268,8 @@
                   formControlName="txtNoDelegacionRegional"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
-              </form-field>
+              </form-field> -->
             </div>
-            <!-- </div>
-          <div class="row margin-input"> -->
-            <!-- <div class="col-md-5">
-              <form-field
-                [control]="consultTasksForm.get('txtNoSolicitud')"
-                label="No. Solicitud">
-                <input
-                  type="number"
-                  min="0" max="999999999999999"
-                  class="form-control"
-                  formControlName="txtNoSolicitud"
-                  placeholder="No. de Solicitud"
-                  maxlength="20"
-                  (keydown.enter)="onKeydown($event)" />
-              </form-field>
-            </div> -->
             <div class="col-md-6 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoTransferente')"

@@ -148,6 +148,7 @@ export function goFormControlAndFocus(formControlName: string) {
       `[formcontrolname="${formControlName}"]`
     ) as HTMLInputElement;
     formControl.scrollIntoView({
+      inline: 'center',
       behavior: 'smooth',
     });
     console.log({ formControl });

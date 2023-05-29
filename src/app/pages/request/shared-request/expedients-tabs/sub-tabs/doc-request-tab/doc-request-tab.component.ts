@@ -226,6 +226,7 @@ export class DocRequestTabComponent
           //console.log('docs', data);
           const transferent = await this.getInfoRequest();
           if (transferent == 1) {
+            console.log('transferente igual a 1');
             const filterDoc = data.data.filter((item: any) => {
               if (
                 item.dDocType == 'Document' &&
@@ -269,8 +270,12 @@ export class DocRequestTabComponent
           }
 
           if (transferent != 1) {
+            console.log('transferente diferente a 1');
             const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document' && item.xidBien == '         ') {
+              if (
+                (item.dDocType == 'Document' && item.xidBien == '         ') ||
+                item.dDocType == 'Document'
+              ) {
                 return item;
               }
             });
@@ -399,6 +404,7 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (resp: any) => {
+          console.log();
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
         },
       });
