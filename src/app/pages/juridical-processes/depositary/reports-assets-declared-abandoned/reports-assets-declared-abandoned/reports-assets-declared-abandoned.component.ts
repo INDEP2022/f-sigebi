@@ -3,11 +3,17 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -27,6 +33,7 @@ export class ReportsAssetsDeclaredAbandonedComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   public delegations = new DefaultSelect();
   public subdelegations = new DefaultSelect();
+  users$ = new DefaultSelect<ISegUsers>();
 
   constructor(
     private fb: FormBuilder,
@@ -35,7 +42,9 @@ export class ReportsAssetsDeclaredAbandonedComponent
     private datePipe: DatePipe,
     private siabService: SiabService,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private usersService: UsersService,
+    private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
   }
@@ -72,6 +81,7 @@ export class ReportsAssetsDeclaredAbandonedComponent
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       capturingUser: [null, [Validators.required]],
+      user: [null],
     });
   }
 
@@ -84,6 +94,42 @@ export class ReportsAssetsDeclaredAbandonedComponent
     this.subdelegationService.getAll(params).subscribe(data => {
       this.subdelegations = new DefaultSelect(data.data, data.count);
     });
+  }
+
+  public getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  public getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+
+  public getDescUserPuesto(event: Event) {
+    let userDatos = JSON.parse(JSON.stringify(event));
+    this.form.get('user').setValue(userDatos.name);
+    this.dynamicCatalogsService
+      .getPuestovalue(userDatos.positionKey)
+      .subscribe({
+        next: resp => {
+          this.form.get('charge').setValue(resp.data.value);
+        },
+        error: err => {
+          this.form.get('charge').setValue('');
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
   }
 
   cleanForm(): void {
@@ -107,7 +153,7 @@ export class ReportsAssetsDeclaredAbandonedComponent
       PN_BIENFIN: this.form.controls['atgood'].value,
       PN_EXPEDINI: this.form.controls['ofFile'].value,
       PN_EXPEDFIN: this.form.controls['atFile'].value,
-      PC_USUARIO: this.form.controls['capturingUser'].value,
+      PC_USUARIO: this.form.controls['user'].value,
     };
     this.siabService
       .fetchReport('RGERJURDECLARABAND', params)

@@ -67,11 +67,22 @@
   </div>
 </form>
 <div
+  *ngIf="firstCase"
   class="pt-2 scroll-table table-responsive"
   [class]="loading ? 'table-loading' : ''">
   <ng2-smart-table
     class="col-md-12"
-    [settings]="settingsGoods"
+    [settings]="settingsGoddFirstCase"
+    [source]="pagedBienesPar"
+    (delete)="deleteRow($event)"></ng2-smart-table>
+</div>
+<div
+  *ngIf="!firstCase"
+  class="pt-2 scroll-table table-responsive"
+  [class]="loading ? 'table-loading' : ''">
+  <ng2-smart-table
+    class="col-md-12"
+    [settings]="settingsGoodsSecondCase"
     [source]="pagedBienesPar"
     (delete)="deleteRow($event)"></ng2-smart-table>
 </div>

@@ -4,6 +4,7 @@ export enum GOOD_TRACKER_ORIGINS {
   DetailProceedings = 'FMENTREC_0002',
   MaintenanceProceedings = 'FACTREFACTAERCIER',
   DestructionManagement = 'FESTATUSRGA',
+  EventosCapture = 'FINDICA_0035_1',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -11,4 +12,5 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FMENTREC_0002' = 'Mantenimiento de Programaciones',
   'FACTREFACTAERCIER' = 'Mantenimiento de Actas',
   'FESTATUSRGA' = 'Gestión de Autorización de Destrucción',
+  'FINDICA_0035_1' = 'Capura de Eventos',
 }
