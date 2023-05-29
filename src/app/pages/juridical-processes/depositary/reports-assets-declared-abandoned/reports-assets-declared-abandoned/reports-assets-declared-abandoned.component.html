@@ -77,12 +77,33 @@
             <input type="text" class="form-control" formControlName="atgood" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <app-user-shared
+        <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+          <ngx-select
             [form]="form"
-            [userField]="'capturingUser'"
-            [label]="'Usuario que Ratifica'"></app-user-shared>
+            [data]="users$"
+            (change)="getDescUserPuesto($event)"
+            (fetchItems)="getUsers($event)"
+            bindLabel="userAndName"
+            control="capturingUser"
+            label="Usuario que Ratifica"
+            [searchOnInit]="true"
+            [showTooltip]="true"
+            termMaxLength="30"
+            [labelTemplate]="userLabel"
+            [optionTemplate]="userOption">
+          </ngx-select>
+          <ng-template #userLabel let-item="item">
+            {{ item.id }} - {{ item.name }}
+          </ng-template>
+          <ng-template #userOption let-item="item">
+            <div [title]="item.id + '-' + item.name">
+              {{ item.id }} - {{ item.name }}
+            </div>
+          </ng-template>
         </div>
+        <form-field [control]="form.get('user')">
+          <input type="hidden" class="form-control" formControlName="user" />
+        </form-field>
       </div>
     </form>
   </div>
