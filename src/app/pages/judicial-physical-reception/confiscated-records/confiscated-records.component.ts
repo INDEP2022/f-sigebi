@@ -709,14 +709,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
 
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
@@ -734,7 +734,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   .getEtiqXClasif(paramsF2.getParams())
                   .subscribe(
                     res => {
-                      v_no_etiqueta =parseInt(res.data[0]['labelNumber']);
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
                       const generalModel: Map<string, any> = new Map();
                       generalModel.set('id', e.id);
                       generalModel.set('goodId', e.goodId);
@@ -747,14 +747,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -796,14 +796,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -833,14 +833,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -2871,10 +2871,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const edoFis: any = await this.getIndEdoFisAndVColumna(data);
     console.log(edoFis);
     if (edoFis.V_NO_COLUMNA === 0) {
-      await this.validatePreInsert(data)
+      await this.validatePreInsert(data);
       this.form.get(formName).setValue('OTRO');
     } else {
-      await this.validatePreInsert(data)
+      await this.validatePreInsert(data);
       this.form.get(formName).setValue(data[`val${edoFis.V_NO_COLUMNA}`]);
     }
   }

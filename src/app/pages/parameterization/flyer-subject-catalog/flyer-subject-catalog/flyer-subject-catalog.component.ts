@@ -30,7 +30,6 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   columns: IAffair[] = [];
 
-
   affairList: IAffair[] = [];
   affairTypeList: IAffairType[] = [];
   affairs: IAffair;
