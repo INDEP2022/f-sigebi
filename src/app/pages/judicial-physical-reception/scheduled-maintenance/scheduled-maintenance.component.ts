@@ -30,12 +30,12 @@ export class ScheduledMaintenanceComponent
   // data2: any[] = [];
   constructor(
     protected override fb: FormBuilder,
-    protected override service: ProceedingsDeliveryReceptionService,
+    protected override deliveryService: ProceedingsDeliveryReceptionService,
     protected override detailService: ProceedingsDetailDeliveryReceptionService,
     private serviceIndicator: MsIndicatorGoodsService,
     private router: Router
   ) {
-    super(fb, service, detailService, 'filtersIndica');
+    super(fb, deliveryService, detailService, 'filtersIndica');
     // this.settings1 = {
     //   ...this.settings1,
     //   actions: null,
@@ -75,9 +75,12 @@ export class ScheduledMaintenanceComponent
         'No se ha especificado el Tipo de Evento'
       );
     }
-    this.router.navigate([
-      'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event',
-    ]);
+    this.router.navigate(
+      [
+        'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event',
+      ],
+      { queryParams: { tipoEvento: this.form.value.tipoEvento } }
+    );
     // if(this.form.get('tipoEvento').value === 'EVENTREC'){
 
     // }
@@ -102,7 +105,7 @@ export class ScheduledMaintenanceComponent
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.service.deleteById(item).subscribe({
+        this.deliveryService.deleteById(item).subscribe({
           next: response => {
             console.log(response);
             this.getData();
@@ -128,6 +131,17 @@ export class ScheduledMaintenanceComponent
   rowsSelected(event: IProceedingDeliveryReception) {
     console.log(event);
     if (event.id) {
+      this.router.navigate(
+        [
+          'pages/final-destination-process/delivery-schedule/schedule-of-events/capture-event',
+        ],
+        {
+          queryParams: {
+            tipoEvento: event.typeProceedings,
+            numeroActa: event.id,
+          },
+        }
+      );
       // this.showTable1 = false;
       // this.loading = true;
       // let params = this.paramsIndicators.value;
@@ -150,7 +164,7 @@ export class ScheduledMaintenanceComponent
     }
   }
 
-  exportExcel() {
+  async exportExcel() {
     // const data = <IProceedingDeliveryReception[]>this.table.source.data;
     // this.elementToExport = data.map(item => {
     //   return {
@@ -165,7 +179,8 @@ export class ScheduledMaintenanceComponent
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
     );
-    this.service.getExcel2(this.data).subscribe(x => {
+    const data = await this.data.getAll();
+    this.deliveryService.getExcel2(data).subscribe(x => {
       this.elementToExport = x;
       this.flagDownload = !this.flagDownload;
       console.log(x);

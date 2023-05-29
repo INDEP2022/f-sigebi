@@ -40,46 +40,57 @@ export class MassiveDeleteButtonComponent
       this.selecteds.map(selected => selected.no_bien).toString()
     ).then(question => {
       if (question.isConfirmed) {
-        this.detailService
-          .deleteByBP(this.actaId, this.typeProceeding, this.selecteds)
-          .subscribe({
-            next: response => {
-              this.onLoadToast('success', 'Exito', `Bienes eliminados`);
-              // console.log(response);
-              // const removeds: string[] = [];
-              // const notRemoveds: string[] = [];
-              // response.forEach(item => {
-              //   const { deleted } = item as IDeleted;
-              //   const { error } = item as INotDeleted;
-              //   if (deleted) {
-              //     removeds.push(deleted);
-              //   }
-              //   if (error) {
-              //     notRemoveds.push(error);
-              //   }
-              // });
-              // this.showMessageGoodsRemoved(removeds, notRemoveds);
-              this.finishDelete.emit();
-            },
-            error: err => {
-              this.onLoadToast(
-                'error',
-                'ERROR',
-                `No se pudieron eliminar los bienes`
-              );
-              // let bienes = '';
-              // this.selecteds.forEach((selected, index) => {
-              //   bienes +=
-              //     selected.no_bien +
-              //     (index < this.selecteds.length - 1 ? ',' : '');
-              // });
-              // this.onLoadToast(
-              //   'error',
-              //   'ERROR',
-              //   `No se pudieron eliminar los bienes N° ${bienes}`
-              // );
-            },
-          });
+        const byRastrer = this.selecteds.filter(x => x.agregado === 'RA');
+        const notRastrer = this.selecteds.filter(x => x.agregado !== 'RA');
+        let deletedByRastrer: IGoodsByProceeding[] = [];
+        if (byRastrer.length > 0) {
+          deletedByRastrer = byRastrer;
+        }
+        if (notRastrer.length > 0) {
+          this.detailService
+            .deleteByBP(this.actaId, this.typeProceeding, notRastrer)
+            .subscribe({
+              next: response => {
+                this.onLoadToast('success', 'Exito', `Bienes eliminados`);
+                // console.log(response);
+                // const removeds: string[] = [];
+                // const notRemoveds: string[] = [];
+                // response.forEach(item => {
+                //   const { deleted } = item as IDeleted;
+                //   const { error } = item as INotDeleted;
+                //   if (deleted) {
+                //     removeds.push(deleted);
+                //   }
+                //   if (error) {
+                //     notRemoveds.push(error);
+                //   }
+                // });
+                // this.showMessageGoodsRemoved(removeds, notRemoveds);
+                this.finishDelete.emit(deletedByRastrer);
+              },
+              error: err => {
+                this.onLoadToast(
+                  'error',
+                  'ERROR',
+                  `No se pudieron eliminar los bienes`
+                );
+                this.finishDelete.emit(deletedByRastrer);
+                // let bienes = '';
+                // this.selecteds.forEach((selected, index) => {
+                //   bienes +=
+                //     selected.no_bien +
+                //     (index < this.selecteds.length - 1 ? ',' : '');
+                // });
+                // this.onLoadToast(
+                //   'error',
+                //   'ERROR',
+                //   `No se pudieron eliminar los bienes N° ${bienes}`
+                // );
+              },
+            });
+        } else {
+          this.finishDelete.emit(deletedByRastrer);
+        }
       }
     });
   }

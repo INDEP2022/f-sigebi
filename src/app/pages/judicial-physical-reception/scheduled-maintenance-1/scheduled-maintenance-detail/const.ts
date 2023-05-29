@@ -139,7 +139,7 @@ export const settingsGoods = {
   },
   selectedRowIndex: -1,
   sort: false,
-  hideSubHeader: true,
+  hideSubHeader: false,
   mode: 'inline',
   selectMode: 'multi',
   noDataMessage: 'No se encontrarón registros',
