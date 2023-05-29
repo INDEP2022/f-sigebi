@@ -8,14 +8,14 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
-import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
 import { WarehousesDetailComponent } from '../warehouses-detail/warehouses-detail.component';
 import { WAREHOUSE_COLUMNS } from './warehouse-columns';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 
 @Component({
   selector: 'app-warehouses-list',
@@ -81,11 +81,11 @@ export class WarehousesListComponent extends BasePage implements OnInit {
     };
     this.warehouseService.getAll(params).subscribe({
       next: response => {
-        this.getDetType(response)
-          .then(() => {
-            this.getUser();
-          })
-          .catch(error => {});
+        this.getDetType(response).then(() => {
+          this.getUser();
+        }).catch((error) => {
+
+        });
       },
       error: error => {
         this.data.load([]);
@@ -157,7 +157,7 @@ export class WarehousesListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       }
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
   }
   openForm(warehouse?: IWarehouse) {

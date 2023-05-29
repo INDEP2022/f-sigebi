@@ -122,7 +122,7 @@ export enum ENDPOINT_LINKS {
   ZipCode = 'catalog/zip-code', //
   IndicatorsParameter = 'parametergood/indicators-parameter',
   DetailIndParameter = 'parametergood/detail-ind-parameter',
-  parametergood = 'parametergood/tmp-max-cierre-acta-dev',
+  parametergood = 'parametergood/time-max-close-certificate-dev',
   parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
   WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',
@@ -136,7 +136,7 @@ export enum ENDPOINT_LINKS {
   DocumentsForDictum = 'documents-for-dictum',
   DocumentsForDictumType = 'documents/api/v1/documents-for-dictum',
   DocumentSeparators = 'documents/document-separator',
-  DocumentsType = 'documents-types/',
+  DocumentsType = 'documents-types',
   DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
