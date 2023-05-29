@@ -3363,7 +3363,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log('No :(');
           });
         }
-        this.alert('success', 'Se registró el almacen en los bienes', '');
+        this.alert('success', 'Se registró el almacén en los bienes', '');
       } else {
         this.alert(
           'warning',
