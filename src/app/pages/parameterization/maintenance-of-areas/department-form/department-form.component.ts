@@ -137,7 +137,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -200,12 +200,10 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.departmentService
-      .update2(this.departmentForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.departmentService.update2(this.departmentForm.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   create() {

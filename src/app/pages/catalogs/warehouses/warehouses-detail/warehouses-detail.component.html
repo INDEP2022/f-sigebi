@@ -6,23 +6,13 @@
     <form class="form-material" [formGroup]="warehouseForm">
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('description')"
-            label="Descripci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
+          <form-field [control]="warehouseForm.get('description')" label="Descripci&oacute;n">
+            <input type="text" class="form-control" formControlName="description" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="warehouseForm.get('ubication')"
-            label="Ubicaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="ubication" />
+          <form-field [control]="warehouseForm.get('ubication')" label="Ubicaci&oacute;n">
+            <input type="text" class="form-control" formControlName="ubication" />
           </form-field>
         </div>
       </div>
@@ -30,40 +20,20 @@
       <div class="row mt-4">
         <div class="col-md-4">
           <form-field [control]="warehouseForm.get('stateCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="states"
-              bindLabel="descCondition"
-              label="Estado"
-              value="id"
-              (fetchItems)="getStates($event)"
-              (change)="getCitie($event)"
-              control="stateCode"></ngx-select>
+            <ngx-select [form]="warehouseForm" [data]="states" bindLabel="descCondition" label="Estado" value="id"
+              (fetchItems)="getStates($event)" (change)="getCitie($event)" control="stateCode"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="warehouseForm.get('cityCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="cities"
-              bindLabel="nameCity"
-              label="Ciudad"
-              value="idCity"
-              (fetchItems)="getCities($event)"
-              (change)="getMunicipalitie($event)"
-              control="cityCode"></ngx-select>
+            <ngx-select [form]="warehouseForm" [data]="cities" bindLabel="nameCity" label="Ciudad" value="idCity"
+              (fetchItems)="getCities($event)" (change)="getMunicipalitie($event)" control="cityCode"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="warehouseForm.get('municipalityCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="municipalities"
-              bindLabel="description"
-              label="Municipio"
-              value="codeMunicipalityId"
-              (fetchItems)="getMunicipalities($event)"
-              (change)="getLocalitie($event)"
+            <ngx-select [form]="warehouseForm" [data]="municipalities" bindLabel="description" label="Municipio"
+              value="codeMunicipalityId" (fetchItems)="getMunicipalities($event)" (change)="getLocalitie($event)"
               control="municipalityCode"></ngx-select>
           </form-field>
         </div>
@@ -72,42 +42,24 @@
       <div class="row mt-4">
         <div class="col-md-12">
           <form-field [control]="warehouseForm.get('localityCode')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="localities"
-              label="Localidad"
-              bindLabel="nameLocation"
-              value="id"
-              (fetchItems)="getLocalities($event)"
-              control="localityCode"></ngx-select>
+            <ngx-select [form]="warehouseForm" [data]="localities" label="Localidad" bindLabel="nameLocation" value="id"
+              (fetchItems)="getLocalities($event)" control="localityCode"></ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field [control]="warehouseForm.get('manager')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="user"
-              label="Responsable"
-              bindLabel="name"
-              value="user"
-              (fetchItems)="getUser($event)"
-              control="manager"></ngx-select>
+            <ngx-select [form]="warehouseForm" [data]="user" label="Responsable" bindLabel="name" value="user"
+              (fetchItems)="getUser($event)" control="manager"></ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-12">
           <form-field [control]="warehouseForm.get('type')">
-            <ngx-select
-              [form]="warehouseForm"
-              [data]="type"
-              label="Tipo Almac&eacute;n"
-              bindLabel="otvalor"
-              value="otkey"
-              (fetchItems)="getType($event)"
-              control="type"></ngx-select>
+            <ngx-select [form]="warehouseForm" [data]="type" label="Tipo Almac&eacute;n" bindLabel="otvalor"
+              value="otkey" (fetchItems)="getType($event)" control="type"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -117,10 +69,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!warehouseForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
+        <confirm-button [disabled]="!warehouseForm.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

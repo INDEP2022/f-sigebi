@@ -3,17 +3,14 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
-import { LocalDataSource } from 'ng2-smart-table';
-import {
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IdentifierService } from 'src/app/core/services/catalogs/identifier.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { IdentifierFormComponent } from '../identifier-form/identifier-form.component';
 import { IDENTIFIER_COLUMNS } from './identifier-columns';
+import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-identifiers-list',

@@ -26,9 +26,7 @@ export class BanksDetailComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private bankService: BankService
-  ) {
-    super();
-  }
+  ) { super() }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -36,7 +34,13 @@ export class BanksDetailComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      bankCode: [null, [Validators.required, Validators.maxLength(10)]],
+      bankCode: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+        ],
+      ],
       name: [
         null,
         [

@@ -67,7 +67,7 @@ export class AccountBanksSharedComponent extends BasePage implements OnInit {
         });
       }
     });
-    this.getBanks(new ListParams());
+    this.getBanks(new ListParams);
   }
 
   getBanks(params: ListParams) {
