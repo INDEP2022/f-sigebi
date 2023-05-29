@@ -13,7 +13,6 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
-  ICopiesJobManagementDto,
   IdatosLocales,
   IGoodJobManagement,
   ImanagementOffice,
@@ -53,7 +52,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
-  filtroPersonaExt: ICopiesJobManagementDto[] = [];
+  // filtroPersonaExt: ICopiesJobManagementDto[] = [];
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -448,7 +447,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   getPersonaExt_Int(params: _Params) {
     this.serviceOficces.getPersonaExt_Int(params).subscribe({
       next: resp => {
-        this.filtroPersonaExt = resp.data;
+        // this.filtroPersonaExt = resp.data;
         this.nrSelecttypePerson = resp.data[0].personExtInt;
         this.nrSelecttypePerson_I = resp.data[1].personExtInt;
         this.form.get('typePerson').setValue(this.nrSelecttypePerson);
