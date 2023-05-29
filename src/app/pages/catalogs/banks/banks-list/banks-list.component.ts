@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { IBank } from '../../../../core/models/catalogs/bank.model';
@@ -18,6 +19,8 @@ export class BanksListComponent extends BasePage implements OnInit {
   bank: IBank[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
 
   constructor(
     private bankService: BankService,
@@ -26,10 +29,12 @@ export class BanksListComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...BANKS_COLUMNS },
@@ -37,6 +42,28 @@ export class BanksListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getBanks();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getBanks());
@@ -44,9 +71,15 @@ export class BanksListComponent extends BasePage implements OnInit {
 
   getBanks() {
     this.loading = true;
-    this.bankService.getAll(this.params.getValue()).subscribe(
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.bankService.getAll(params).subscribe(
       response => {
         this.bank = response.data;
+        this.data.load(this.bank);
+        this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -65,7 +98,11 @@ export class BanksListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) this.getBanks();
+      if (next) {
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getBanks());
+      }
     });
   }
 
@@ -88,7 +125,11 @@ export class BanksListComponent extends BasePage implements OnInit {
 
   delete(id: string) {
     this.bankService.remove(id).subscribe({
-      next: () => this.getBanks(),
+      next: () => {
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getBanks());
+      }
     });
   }
 }

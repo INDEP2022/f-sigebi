@@ -11,7 +11,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { transferenteAndAct } from 'src/app/common/validations/custom.validators';
-import { IPAAbrirActasPrograma, IPACambioStatus } from 'src/app/core/models/good-programming/good-programming';
+import {
+  IPAAbrirActasPrograma,
+  IPACambioStatus,
+} from 'src/app/core/models/good-programming/good-programming';
 import {
   IAcceptGoodStatus,
   IAcceptGoodStatusScreen,
@@ -1294,11 +1297,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 const tipo_acta = 'DXCV';
                 this.openProceedingFn();
               } else {
-                this.closeProceedingFn()
+                this.closeProceedingFn();
               }
             },
             err => {
-              this.closeProceedingFn()
+              this.closeProceedingFn();
             }
           );
       },
@@ -1368,53 +1371,65 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 this.alert('warning', 'Debe especificar almacen', '');
               } else {
                 //!Necesita validación de EDO_FISICO EN los que sean requeridos
-                this.alertQuestion('question','¿Seguro que desea realizar el cierre de esta acta?','').then((q:any) => {
-                  if(q.isConfirmed){
+                this.alertQuestion(
+                  'question',
+                  '¿Seguro que desea realizar el cierre de esta acta?',
+                  ''
+                ).then((q: any) => {
+                  if (q.isConfirmed) {
                     const model: IPACambioStatus = {
                       P_NOACTA: this.idProceeding,
                       P_PANTALLA: 'FACTREFACTAVENT',
                       P_FECHA_RE_FIS: this.form.get('fecReception').value,
                       P_TIPO_ACTA: 'DXCV',
                     };
-                    console.log(model)
+                    console.log(model);
                     this.serviceProgrammingGood.paChangeStatus(model).subscribe(
                       res => {
                         const paramsF = new FilterParams();
-                    paramsF.addFilter(
-                      'valUser',
-                      localStorage.getItem('username').toLocaleLowerCase()
-                    );
-                    paramsF.addFilter('valMinutesNumber', this.idProceeding);
-                    this.serviceProgrammingGood
-                      .getTmpProgValidation(paramsF.getParams()).subscribe(
-                        res => {
-                          const VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                          if(VAL_MOVIMIENTO != 0){
-                            this.statusProceeding = 'CERRADO'
-                            this.labelActa = 'Abrir acta'
-                            this.btnCSSAct = 'btn-success';
-                            this.alert('success','El acta ha sido cerrada','')
-                          }else{
-                            //!ELSE DE CERRAR
-                          }
-                        },err => {
-                            //!ELSE DE CERRAR
-                        }
-                      )
-                        console.log(res)
-                        
+                        paramsF.addFilter(
+                          'valUser',
+                          localStorage.getItem('username').toLocaleLowerCase()
+                        );
+                        paramsF.addFilter(
+                          'valMinutesNumber',
+                          this.idProceeding
+                        );
+                        this.serviceProgrammingGood
+                          .getTmpProgValidation(paramsF.getParams())
+                          .subscribe(
+                            res => {
+                              const VAL_MOVIMIENTO = res.data[0]['valmovement'];
+                              if (VAL_MOVIMIENTO != 0) {
+                                this.statusProceeding = 'CERRADO';
+                                this.labelActa = 'Abrir acta';
+                                this.btnCSSAct = 'btn-success';
+                                this.alert(
+                                  'success',
+                                  'El acta ha sido cerrada',
+                                  ''
+                                );
+                              } else {
+                                //!ELSE DE CERRAR
+                              }
+                            },
+                            err => {
+                              //!ELSE DE CERRAR
+                            }
+                          );
+                        console.log(res);
                       },
                       err => {
                         console.log(err);
-                                    this.alert(
-                                      'error',
-                                      'Ocurrió un error inesperado',
-                                      'Ocurrió un error inesperado al intentar cerrar el acta. Por favor intentelo nuevamente'
-                                    );
+                        this.alert(
+                          'error',
+                          'Ocurrió un error inesperado',
+                          'Ocurrió un error inesperado al intentar cerrar el acta. Por favor intentelo nuevamente'
+                        );
                       }
-                    )
+                    );
                   }
-                })
+                });
               }
             }
           } else {

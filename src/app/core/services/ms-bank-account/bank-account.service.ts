@@ -8,6 +8,7 @@ import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tes
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IBankAccount } from '../../models/catalogs/bank-account.model';
 import { IAccountMovement } from '../../models/ms-account-movements/account-movement.model';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 @Injectable({
   providedIn: 'root',
@@ -42,7 +43,7 @@ export class BankAccountService
     return this.post<IBankAccount>(`${this.api}/find-by-ids`, accountNumber);
   }
 
-  getAllWithFilters(params?: string): Observable<IListResponse<IBankAccount>> {
+  getAllWithFilters(params?: _Params): Observable<IListResponse<IBankAccount>> {
     return this.get<IListResponse<IBankAccount>>(this.api, params);
   }
 
