@@ -25,6 +25,11 @@ export const NOTIFICATION_COLUMNS = {
       return '';
     },
   },
+  protectionKey: {
+    title: 'Clave Amparo',
+    type: 'string',
+    sort: false,
+  },
   preliminaryInquiry: {
     title: 'Averiguación Previa',
     type: 'string',
@@ -32,11 +37,6 @@ export const NOTIFICATION_COLUMNS = {
   },
   criminalCase: {
     title: 'Causa Penal',
-    type: 'string',
-    sort: false,
-  },
-  protectionKey: {
-    title: 'Clave Amparo',
     type: 'string',
     sort: false,
   },
