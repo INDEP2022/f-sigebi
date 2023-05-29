@@ -51,7 +51,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() maxSelectedItems: number;
   @Input() searchable: boolean = true;
   @Input() searchOnInit: boolean = false;
-  @Input() typeToSearchText: string = 'Escriba 3 o mas caracteres';
+  @Input() typeToSearchText: string = 'Escriba 3 o más caracteres';
   @Input() paramFilter = 'search';
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() fetchByParamsItems = new EventEmitter<FilterParams>();

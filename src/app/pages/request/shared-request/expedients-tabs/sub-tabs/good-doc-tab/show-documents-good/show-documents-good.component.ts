@@ -185,15 +185,15 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
       const typeDoc = info.map(async (items: any) => {
         const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-        const regionalDelegation = await this.getRegionalDelegation(
+        /*const regionalDelegation = await this.getRegionalDelegation(
           items.xdelegacionRegional
         );
         const state = await this.getStateDoc(items.xestado);
         const transferent = await this.getTransferent(items.xidTransferente);
         items['delegationName'] = regionalDelegation;
         items['stateName'] = state;
-        items['transferentName'] = transferent;
-        items.xtipoDocumento = filter[0].ddescription;
+        items['transferentName'] = transferent; */
+        //items.xtipoDocumento = filter[0].ddescription;
         return items;
       });
 

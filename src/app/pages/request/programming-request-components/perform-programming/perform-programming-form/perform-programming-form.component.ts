@@ -110,9 +110,9 @@ export class PerformProgrammingFormComponent
   headingWarehouse: string = `Almacén INDEP(0)`;
   idProgramming: number = 0;
   idAuthority: string = '';
-  idState: string = '';
-  idTrans: number = 0;
-  idStation: number = 0;
+  idState: number = 0;
+  idTrans: string | number;
+  idStation: string | number;
   idTypeRelevant: number = 0;
   showForm: boolean = false;
   showUbication: boolean = false;
@@ -139,8 +139,10 @@ export class PerformProgrammingFormComponent
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsProg = new BehaviorSubject<ListParams>(new ListParams());
   paramsNewWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+  paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
   loadGoods: boolean = false;
+  newTransferent: boolean = true;
   delegationId: number = 0;
   delRegUserLog: string = '';
   delegation: string = '';
@@ -219,15 +221,17 @@ export class PerformProgrammingFormComponent
     this.getInfoUserLog();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
-    this.getAuthoritySelect(new ListParams());
     this.getAkaWarehouse(new ListParams());
     this.getStates(new ListParams());
     this.getMunicipalities(new ListParams());
     this.getLocalities(new ListParams());
+    this.getWarehouseSelect(new ListParams());
+    this.getTransferentSelect(new ListParams());
     this.showUsersProgramming();
     this.getProgrammingData();
     this.performSearchForm();
     this.obtainInfoWarehouse();
+
     this.task = JSON.parse(localStorage.getItem('Task'));
   }
 
@@ -243,9 +247,7 @@ export class PerformProgrammingFormComponent
           this.observationNewWarehouse = response.data[0].nbobservation;
           this.idNewWarehouse = response.data[0].nbidnewstore;
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
   }
 
@@ -300,8 +302,12 @@ export class PerformProgrammingFormComponent
   }
 
   prepareForm() {
+    let now = moment();
+    console.log('fecha', now.format());
+
     this.formLoading = true;
-    const fiveDays = addDays(new Date(), 5);
+    //const fiveDays = addDays(ParseIso(new Date()), 5);
+    const fiveDays = addDays(Number(now.format()), 5);
     this.performForm = this.fb.group({
       emailTransfer: [
         null,
@@ -826,13 +832,28 @@ export class PerformProgrammingFormComponent
   }
 
   stateSelect(state: IStateOfRepublic) {
-    this.idState = state.id;
-    this.getTransferentSelect(new ListParams());
+    this.idState = Number(state.id);
     this.getWarehouseSelect(new ListParams());
     if (this.idTrans) this.getStations(new ListParams());
   }
 
   getTransferentSelect(params?: ListParams) {
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        console.log('transferentes', data);
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          return data;
+        });
+        this.transferences = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log('error', error);
+      },
+    });
+    /* 
     params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
     params['sortBy'] = 'nameTransferent:ASC';
     params.limit = 30;
@@ -850,7 +871,7 @@ export class PerformProgrammingFormComponent
         error: error => {
           console.log(error);
         },
-      });
+      }); */
   }
 
   transferentSelect(transferent: ITransferente) {
@@ -859,14 +880,23 @@ export class PerformProgrammingFormComponent
   }
 
   getStations(params?: ListParams) {
-    if (this.idTrans && this.idState) {
-      this.showSelectStation = true;
-      params['filter.idTransferent'] = this.idTrans;
-      params['filter.keyState'] = this.idState;
-      this.stationService.getAll(params).subscribe(data => {
+    this.showSelectStation = true;
+    params['filter.idTransferent'] = this.idTrans;
+    params['filter.stationName'] = `$ilike:${params.text}`;
+    params['sortBy'] = 'stationName:ASC';
+
+    this.stationService.getAll(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.stationName}`;
+          return data;
+        });
         this.stations = new DefaultSelect(data.data, data.count);
-      });
-    }
+      },
+      error: () => {
+        this.stations = new DefaultSelect();
+      },
+    });
   }
 
   stationSelect(item: IStation) {
@@ -875,18 +905,24 @@ export class PerformProgrammingFormComponent
   }
 
   getAuthoritySelect(params?: ListParams) {
-    if (this.idTrans && this.idStation) {
-      const columns = {
-        idTransferer: this.idTrans,
-        idStation: this.idStation,
-      };
-
-      this.authorityService.postByColumns(params, columns).subscribe(data => {
+    params['filter.authorityName'] = `$ilike:${params.text}`;
+    params['filter.idTransferer'] = `$eq:${this.idTrans}`;
+    params['sortBy'] = 'authorityName:ASC';
+    delete params['search'];
+    delete params.text;
+    this.authorityService.getAll(params).subscribe({
+      next: data => {
+        console.log('autoridades', data);
+        data.data.map(data => {
+          data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
+          return data;
+        });
         this.authorities = new DefaultSelect(data.data, data.count);
-
-        this.showSelectAuthority = true;
-      });
-    }
+      },
+      error: () => {
+        this.authorities = new DefaultSelect();
+      },
+    });
   }
 
   getAkaWarehouse(params?: ListParams) {
@@ -952,19 +988,12 @@ export class PerformProgrammingFormComponent
   }
 
   getWarehouseSelect(params: ListParams) {
-    if (this.idState) {
-      this.showWarehouseInfo = true;
-      params['filter.stateCode'] = this.idState;
-      if (params.text) {
-        this.warehouseService.search(params).subscribe(data => {
-          this.warehouse = new DefaultSelect(data.data, data.count);
-        });
-      } else {
-        this.warehouseService.getAll(params).subscribe(data => {
-          this.warehouse = new DefaultSelect(data.data, data.count);
-        });
-      }
-    }
+    this.showWarehouseInfo = true;
+    params.limit = 6039;
+    //params['filter.stateCode'] = this.idState;
+    this.warehouseService.getAll(params).subscribe(data => {
+      this.warehouse = new DefaultSelect(data.data, data.count);
+    });
   }
 
   //Visualizar bienes transportables //
@@ -1201,6 +1230,7 @@ export class PerformProgrammingFormComponent
           const idTransferent = this.idTrans;
           config.initialState = {
             idTransferent,
+            typeTransportable: 'guard',
             callback: (data: any) => {
               if (data) this.addGoodsGuards(data);
             },
@@ -1305,6 +1335,7 @@ export class PerformProgrammingFormComponent
           const idTransferent = this.idTrans;
           config.initialState = {
             idTransferent,
+            typeTransportable: 'warehouse',
             callback: (data: any) => {
               if (data) this.addGoodsWarehouse();
             },
@@ -1505,6 +1536,8 @@ export class PerformProgrammingFormComponent
 
   //Actualizar programación con información de la programación
   confirm() {
+    console.log('this.performForm.value', this.performForm.value);
+
     this.alertQuestion(
       'info',
       'Confirmación',
@@ -1518,7 +1551,6 @@ export class PerformProgrammingFormComponent
           .setValue(this.delegationId);
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
-
         this.programmingGoodService
           .updateProgramming(this.idProgramming, this.performForm.value)
           .subscribe({
@@ -1526,14 +1558,15 @@ export class PerformProgrammingFormComponent
               this.loading = false;
               this.onLoadToast(
                 'success',
-                'Programacíón guardada correctamente',
-                ''
+                'Acción correcta',
+                'Programacíón guardada correctamente'
               );
               this.performForm
                 .get('regionalDelegationNumber')
                 .setValue(this.delegation);
               this.getProgrammingData();
               this.formLoading = false;
+              this.newTransferent = false;
             },
           });
       }
@@ -1815,23 +1848,17 @@ export class PerformProgrammingFormComponent
         .get('observation')
         .setValue(this.dataProgramming.observation);
       this.performForm
-        .get('tranferId')
-        .setValue(Number(this.dataProgramming.tranferId));
-      this.performForm
         .get('stationId')
         .setValue(Number(this.dataProgramming.stationId));
-      this.performForm
-        .get('autorityId')
-        .setValue(this.dataProgramming.autorityId);
       this.performForm
         .get('typeRelevantId')
         .setValue(this.dataProgramming.typeRelevantId);
       this.performForm
         .get('startDate')
         .setValue(moment(this.dataProgramming.startDate).format('DD/MM/YYYY'));
-      this.performForm
+      /*this.performForm
         .get('endDate')
-        .setValue(moment(this.dataProgramming.endDate).format('DD/MM/YYYY'));
+        .setValue(moment(this.dataProgramming.endDate).format('DD/MM/YYYY')); */
 
       this.paramsTransportableGoods.getValue()['filter.programmingId'] =
         this.idProgramming;
@@ -1848,6 +1875,62 @@ export class PerformProgrammingFormComponent
             console.log(error);
           },
         });
+
+      if (this.dataProgramming.storeId) {
+        this.warehouseService.getById(this.dataProgramming.storeId).subscribe({
+          next: response => {
+            this.warehouseUbication = response.description;
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+      }
+
+      if (this.dataProgramming.tranferId) {
+        this.newTransferent = false;
+        this.transferentService
+          .getById(this.dataProgramming.tranferId)
+          .subscribe({
+            next: response => {
+              console.log('transferente seleecionada', response);
+              const nameAndId = `${response.id} - ${response.nameTransferent}`;
+              this.performForm.get('tranferId').setValue(nameAndId);
+            },
+            error: error => {
+              console.log(error);
+            },
+          });
+      }
+
+      this.params.getValue()['filter.idTransferent'] =
+        this.dataProgramming.tranferId;
+      this.stationService.getAll(this.params.getValue()).subscribe({
+        next: response => {
+          console.log('Emisora', response.data[0]);
+          const nameAndId = `${response.data[0].id} - ${response.data[0].stationName}`;
+          this.performForm.get('stationId').setValue(nameAndId);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+      this.paramsAuthority.getValue()['filter.idTransferer'] =
+        this.dataProgramming.tranferId;
+      console.log('transferent', this.paramsAuthority);
+      this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
+        next: response => {
+          console.log('autor', response);
+          const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
+          this.performForm.get('autorityId').setValue(nameAndId);
+          this.idStation = this.dataProgramming.stationId;
+          this.idTrans = this.dataProgramming.tranferId;
+          this.getAuthoritySelect(new ListParams());
+        },
+        error: error => {
+          console.log('a', error);
+        },
+      });
     }
   }
 
