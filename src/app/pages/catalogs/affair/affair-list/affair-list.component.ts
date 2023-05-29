@@ -23,9 +23,9 @@ export class AffairListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   data: LocalDataSource = new LocalDataSource();
-
-  columns: IAffair[] = [];
   columnFilters: any = [];
+  columns: IAffair[] = [];
+
 
   constructor(
     private modalService: BsModalService,
@@ -88,8 +88,8 @@ export class AffairListComponent extends BasePage implements OnInit {
     this.affairService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
+        console.log(this.columns);
         this.totalItems = response.count || 0;
-
         this.data.load(this.columns);
         this.data.refresh();
         this.loading = false;
@@ -121,14 +121,14 @@ export class AffairListComponent extends BasePage implements OnInit {
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(affair.id);
+        this.delete(affair.id, affair.nbOrigen);
         Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: number) {
-    this.affairService.remove2(id).subscribe({
+  delete(id: number, nb: string) {
+    this.affairService.remove2(id, nb).subscribe({
       next: () => this.getAffairAll(),
     });
   }

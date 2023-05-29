@@ -19,7 +19,7 @@ export const WAREHOUSE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  manager: {
+  DetManager: {
     title: 'Responsable',
     type: 'string',
     sort: false,
