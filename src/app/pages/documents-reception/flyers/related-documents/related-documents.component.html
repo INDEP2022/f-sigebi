@@ -384,8 +384,8 @@
                 [control]="managementForm.get('ccp4')"
                 label="C.P.P.">
                 <select class="form-control" formControlName="ccp4">
-                  <option value="Interno">Interno</option>
-                  <option value="Externo">Externo</option>
+                  <option value="INTERNO">INTERNO</option>
+                  <option value="EXTERNO">EXTERNO</option>
                 </select>
               </form-field>
               <form-field
@@ -395,15 +395,18 @@
                   [data]="select"
                   [form]="managementForm"
                   [showTooltip]="true"
-                  control="ccp5"></ngx-select>
+                  control="ccp5"
+                  (fetchItems)="getFromSelect($event)"
+                  bindLabel="userAndName"
+                  value="user"></ngx-select>
               </form-field>
               <form-field
                 class="col-md-4"
                 [control]="managementForm.get('ccp6')"
                 label="C.P.P.">
                 <select class="form-control" formControlName="ccp6">
-                  <option value="Interno">Interno</option>
-                  <option value="Externo">Externo</option>
+                  <option value="INTERNO">INTERNO</option>
+                  <option value="EXTERNO">EXTERNO</option>
                 </select>
               </form-field>
               <form-field
@@ -413,7 +416,10 @@
                   [data]="select"
                   [form]="managementForm"
                   [showTooltip]="true"
-                  control="ccp5"></ngx-select>
+                  control="ccp5"
+                  (fetchItems)="getFromSelect($event)"
+                  bindLabel="userAndName"
+                  value="user"></ngx-select>
               </form-field>
             </div>
           </div>
