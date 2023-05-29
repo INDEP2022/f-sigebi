@@ -14,7 +14,7 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  manager: {
+  managerDetail: {
     title: 'Responsable',
     type: 'string',
     sort: false,
