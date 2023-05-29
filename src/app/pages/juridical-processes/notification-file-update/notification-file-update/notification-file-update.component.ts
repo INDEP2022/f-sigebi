@@ -11,6 +11,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
 import { EditFormComponent } from '../edit-form/edit-form.component';
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -97,7 +98,14 @@ export class NotificationFileUpdateComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noExpediente: ['', [Validators.required]],
+      noExpediente: [
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
     });
   }
 
