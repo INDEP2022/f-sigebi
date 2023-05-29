@@ -1355,8 +1355,8 @@ export class RegistrationOfRequestsComponent
 
     goods.data.map(async (good: any, index: number) => {
       //consultar si aclarado puede volver a modificarse
-      index = index + 1;
-      console.log(index);
+      //index = index + 1;
+      //console.log(index);
       if (
         good.processStatus != 'SOLICITAR_ACLARACION' &&
         good.processStatus != 'IMPROCEDENTE' &&
