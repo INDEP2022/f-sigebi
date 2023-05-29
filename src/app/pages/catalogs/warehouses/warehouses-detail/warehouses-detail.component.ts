@@ -8,12 +8,12 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
-import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
-import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 
 @Component({
   selector: 'app-warehouses-detail',
@@ -68,12 +68,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
           Validators.required,
         ]),
       ],
-      ubication: [
-        null,
-        Validators.compose([
-          Validators.required,
-        ]),
-      ],
+      ubication: [null, Validators.compose([Validators.required])],
       manager: [null, Validators.compose([Validators.pattern(STRING_PATTERN)])],
       registerNumber: [null],
       stateCodeID: [
@@ -148,7 +143,10 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
           this.warehouseForm.controls['type'].value
         );
       }
-      this.getUser(new ListParams(), this.warehouseForm.controls['manager'].value);
+      this.getUser(
+        new ListParams(),
+        this.warehouseForm.controls['manager'].value
+      );
     } else {
       this.warehouseForm.controls['indActive'].setValue(1);
       this.getType(new ListParams());
@@ -184,22 +182,22 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       registerNumber: this.warehouseForm.controls['registerNumber'].value,
       stateCode:
         this.warehouse.stateCode.descCondition !=
-          this.warehouseForm.get('stateCode').value
+        this.warehouseForm.get('stateCode').value
           ? this.warehouseForm.get('stateCode').value
           : this.warehouseForm.controls['stateCodeID'].value,
       cityCode:
         this.warehouse.cityCode.nameCity !=
-          this.warehouseForm.get('cityCode').value
+        this.warehouseForm.get('cityCode').value
           ? this.warehouseForm.controls['cityCode'].value
           : this.warehouseForm.controls['cityCodeID'].value,
       municipalityCode:
         this.warehouse.municipalityCode.nameMunicipality !=
-          this.warehouseForm.get('municipalityCode').value
+        this.warehouseForm.get('municipalityCode').value
           ? this.warehouseForm.controls['municipalityCode'].value
           : this.warehouseForm.controls['municipalityCodeID'].value,
       localityCode:
         this.warehouse.localityCode.nameLocation !=
-          this.warehouseForm.get('localityCode').value
+        this.warehouseForm.get('localityCode').value
           ? this.warehouseForm.controls['localityCode'].value
           : this.warehouseForm.controls['localityCodeID'].value,
       indActive: this.warehouseForm.controls['indActive'].value,
