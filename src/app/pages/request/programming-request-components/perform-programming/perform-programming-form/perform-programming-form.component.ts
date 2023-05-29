@@ -231,7 +231,6 @@ export class PerformProgrammingFormComponent
     this.getProgrammingData();
     this.performSearchForm();
     this.obtainInfoWarehouse();
-
     this.task = JSON.parse(localStorage.getItem('Task'));
   }
 

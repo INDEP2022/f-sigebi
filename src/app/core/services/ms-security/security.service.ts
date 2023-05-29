@@ -55,4 +55,8 @@ export class SecurityService extends HttpService {
       params
     );
   }
+
+  getFilterAllUsersTracker(params: any) {
+    return this.get<IListResponse<any>>(`access-tracking-x-area`, params);
+  }
 }
