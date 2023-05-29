@@ -17,6 +17,7 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
@@ -128,7 +129,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private dictationService: DictationService,
-    private serviceRelatedDocumentsService: RelatedDocumentsService
+    private serviceRelatedDocumentsService: RelatedDocumentsService,
+    private securityService: SecurityService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -1005,5 +1007,22 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  getFromSelect(params: ListParams) {
+    this.securityService.getAllUsersTracker(params).subscribe(
+      (data: any) => {
+        let result = data.data.map(async (item: any) => {
+          item['userAndName'] = item.user + ' - ' + item.name;
+        });
+        Promise.all(result).then((resp: any) => {
+          this.select = new DefaultSelect(data.data, data.count);
+          this.loading = false;
+        });
+      },
+      error => {
+        this.select = new DefaultSelect();
+      }
+    );
   }
 }
