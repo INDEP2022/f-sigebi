@@ -12,7 +12,7 @@
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm disabled active"
-                (click)="goodsByExpediente()">
+                (click)="searchButton()">
                 Buscar
               </button>
               <span class="ml-3">{{ statusProceeding }}</span>
@@ -59,7 +59,8 @@
               <button
                 *ngIf="newAct"
                 id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4">
+                class="btn btn-primary btn-sm active ml-4"
+                (click)="newProceeding()">
                 Nueva acta
               </button>
             </div>
@@ -70,7 +71,7 @@
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9 d-inline-flex">
+            <div class="col-md-9">
               <form-field [control]="form.get('expediente')" label="Expediente">
                 <input
                   (ngModelChange)="
@@ -79,7 +80,7 @@
                   [min]="0"
                   type="number"
                   [max-length]="10"
-                  [class]="blockExpedient ? 'disabled' : ''"
+                  [readOnly]="blockExpedient"
                   class="form-control"
                   formControlName="expediente" />
               </form-field>
@@ -138,6 +139,7 @@
                 <ngx-select
                   id="transfer"
                   control="transfer"
+                  class="pt-5"
                   [class]="initialdisabled ? 'disabled' : ''"
                   label="Transfer"
                   bindLabel="transferentkey"

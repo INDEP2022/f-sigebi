@@ -158,14 +158,14 @@
             [form]="form"></app-elaborate-users-shared> -->
         </div>
       </div>
-      <div class="row">
+      <!-- <div class="row">
         <form-field [control]="form.get('claveActa')" label="Programación">
           <input
             class="form-control"
             formControlName="claveActa"
             maxlength="75" />
         </form-field>
-      </div>
+      </div> -->
       <!-- <app-key-proceedings-form
         [form]="form"
         statusActaValue="ABIERTA"></app-key-proceedings-form> -->
@@ -183,9 +183,7 @@
             Buscar
           </button>
         </div>
-        <div
-          class="col-md-4"
-          [class]="loading || data.length === 0 ? 'disabled' : ''">
+        <div class="col-md-4" [class]="loading ? 'disabled' : ''">
           <button
             class="btn btn-primary btn-sm active"
             type="submit"
@@ -201,7 +199,7 @@
             [defaultColumns]="5"></app-columns-select>
           <div
             [class]="
-              loading || loadingExcel || data.length === 0 ? 'disabled' : ''
+              loading || loadingExcel || items.length === 0 ? 'disabled' : ''
             "
             (click)="exportExcel()">
             <app-excel-report

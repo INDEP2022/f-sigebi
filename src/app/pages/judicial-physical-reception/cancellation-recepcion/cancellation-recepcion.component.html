@@ -10,7 +10,7 @@
             <div class="col-md-9">
               <button
                 id="expedient-number"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary btn-sm active mr-4"
                 (click)="goodsByExpediente()">
                 Buscar
               </button>
@@ -115,7 +115,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
+            <div class="col-md">
               <form-field [control]="form.get('acta')">
                 <ngx-select
                   id="acta"
@@ -142,7 +142,7 @@
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
@@ -152,19 +152,17 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <div class="col">
-                <form-field [control]="form.get('recibe')">
-                  <ngx-select
-                    (fetchItems)="getRecibe($event)"
-                    id="transfer"
-                    [class]="initialBool ? 'disabled' : ''"
-                    control="recibe"
-                    label="Recibe"
-                    bindLabel="delegation"
-                    [data]="recibeSelect"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
+              <form-field [control]="form.get('recibe')">
+                <ngx-select
+                  (fetchItems)="getRecibe($event)"
+                  id="transfer"
+                  [class]="initialBool ? 'disabled' : ''"
+                  control="recibe"
+                  label="Recibe"
+                  bindLabel="delegation"
+                  [data]="recibeSelect"
+                  [form]="form"></ngx-select>
+              </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="form.get('admin')">
@@ -179,7 +177,7 @@
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col-md-2">
+            <div class="col-md">
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="number"
@@ -250,6 +248,7 @@
                   bsDatepicker
                   (ngModelChange)="fecElab()"
                   class="form-control"
+                  [max-length]="10"
                   [class]="!isEnableFecElab ? 'disabled' : ''"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
@@ -287,6 +286,7 @@
             <textarea
               rows="3"
               class="form-control"
+              [maxlength]="1000"
               [class]="!isEnableDireccion ? 'disabled' : ''"
               formControlName="direccion"></textarea>
           </form-field>
@@ -298,6 +298,7 @@
             label="Observaciones">
             <textarea
               rows="3"
+              [maxlength]="1000"
               class="form-control"
               [class]="!isEnableObservaciones ? 'disabled' : ''"
               formControlName="observaciones"></textarea>
@@ -314,6 +315,7 @@
               <input
                 type="text"
                 class="form-control"
+              [maxlength]="100"
                 [class]="!isEnableAutoridadCancela ? 'disabled' : ''"
                 formControlName="autoridadCancela" />
             </form-field>
@@ -322,7 +324,8 @@
             <form-field [control]="form.get('elabora')" label="Elabora C&#47;S">
               <input
                 type="text"
-                class="form-control"
+              [maxlength]="100"
+              class="form-control"
                 [class]="!isEnableElabora ? 'disabled' : ''"
                 formControlName="elabora" />
             </form-field>
@@ -333,7 +336,8 @@
               label="Testigo de la Contratalor&iacute;a">
               <input
                 type="text"
-                class="form-control"
+              [maxlength]="100"
+              class="form-control"
                 [class]="!isEnableTestigo ? 'disabled' : ''"
                 formControlName="testigo" />
             </form-field>
@@ -399,7 +403,7 @@
                 [control]="form.get('folioEscaneo')"
                 label="Folio de Escaneo">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="folioEscaneo" />
               </form-field>

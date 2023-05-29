@@ -54,6 +54,11 @@ export class StoreAliasStockService extends HttpService {
     return this.post(route, data);
   }
 
+  updateDataStore(id: number, data: IStoreStock) {
+    const route = `tsig004-store/${id}`;
+    return this.put(route, data);
+  }
+
   remove(id: string | number) {
     const route = `${AliasStockEndpoint.AliasStock}/${id}`;
     return this.delete(route);
