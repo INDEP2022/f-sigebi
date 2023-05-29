@@ -80,7 +80,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
     } else {
       console.log('no');
     }
-    this.getDelegations(new ListParams());
+    this.getDelegations(new ListParams);
   }
 
   getDelegations(params: ListParams) {
@@ -97,7 +97,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 

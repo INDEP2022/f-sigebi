@@ -6,9 +6,7 @@
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
       <div>
-        <button
-          (click)="openForm()"
-          class="btn btn-sm btn-primary active ml-3 btn-header">
+        <button (click)="openForm()" class="btn btn-sm btn-primary active ml-3 btn-header">
           Nuevo
         </button>
       </div>
@@ -19,12 +17,8 @@
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="openForm($event.data)"
-            (delete)="delete($event.data)">
+          <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings" [source]="data"
+            (edit)="openForm($event.data)" (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
       </div>

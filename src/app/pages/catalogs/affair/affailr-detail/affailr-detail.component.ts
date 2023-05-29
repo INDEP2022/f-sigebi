@@ -46,7 +46,7 @@ export class AffailrDetailComponent extends BasePage implements OnInit {
       clv: [null],
       status: [null],
       registerNumber: [null],
-      nbOrigen: [null],
+      nbOrigen: [null]
     });
     if (this.affair != null) {
       this.edit = true;
