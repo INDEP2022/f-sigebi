@@ -7,10 +7,6 @@ export const COLUMNS = {
     title: 'Nombre Completo',
     sort: false,
   },
-  profile: {
-    title: 'Perfil',
-    sort: false,
-  },
   manager: {
     title: 'Responsable',
     sort: false,
@@ -37,6 +33,30 @@ export const COLUMNS = {
   },
   zipC: {
     title: 'Codigo Postal',
+    sort: false,
+  },
+  suburb: {
+    title: 'Colonia',
+    sort: false,
+  },
+  delegation: {
+    title: 'Delegacion',
+    sort: false,
+  },
+  keyEntFed: {
+    title: 'Ent.Federativa',
+    sort: false,
+  },
+  observations: {
+    title: 'Observaciones',
+    sort: false,
+  },
+  curriculum: {
+    title: 'Curriculum',
+    sort: false,
+  },
+  keyOperation: {
+    title: 'Giro',
     sort: false,
   },
 };

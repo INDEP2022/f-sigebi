@@ -642,6 +642,7 @@ export class NotificationAssetsTabComponent
       task['programmingId'] = 0;
       task['requestId'] = request.id;
       task['expedientId'] = request.recordId;
+      task['idDelegationRegional'] = user.department;
       task['urlNb'] = url;
       body['task'] = task;
 

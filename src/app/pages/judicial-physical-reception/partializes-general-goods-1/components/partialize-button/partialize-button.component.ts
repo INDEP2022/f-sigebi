@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, of } from 'rxjs';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { FunctionButtons } from '../../models/function-buttons';
 
@@ -97,9 +97,10 @@ export class PartializeButtonComponent
 
   private validationImporte() {
     // debugger;
-    const cantidad = +(this.good.quantity + '');
+    const cantidad = +this.cantidad.value;
     if (!this.validationClasif()) {
-      if (this.version === 1 ? cantidad < 0.1 : cantidad < 2) {
+      if (cantidad < 0.1) {
+        // if (this.version === 1 ? cantidad < 0.1 : cantidad < 2) {
         this.onLoadToast(
           'error',
           'Parcialización',
@@ -132,9 +133,9 @@ export class PartializeButtonComponent
   private async validationInmueble() {
     const clasificador = this.good.goodClassNumber;
     const inmuebleValidation = await firstValueFrom(
-      this.goodSSSubtypeService.getAll2(
-        'filter.numType=$in:2,6&filter.numClasifGoods=' + clasificador
-      )
+      this.goodSSSubtypeService
+        .getAll2('filter.numType=$in:2,6&filter.numClasifGoods=' + clasificador)
+        .pipe(catchError(error => of({ count: 0 })))
     );
     this.v_inmueble = inmuebleValidation.count;
     if (this.v_inmueble > 0) {
@@ -198,7 +199,9 @@ export class PartializeButtonComponent
   private async validationNumerario() {
     const clasificador = this.good.goodClassNumber;
     const numerarioValidation = await firstValueFrom(
-      this.goodSSSubtypeService.getAll2('filter.numClasifGoods=' + clasificador)
+      this.goodSSSubtypeService
+        .getAll2('filter.numType=$in:7&filter.numClasifGoods=' + clasificador)
+        .pipe(catchError(error => of({ count: 0 })))
     );
     this.v_numerario = numerarioValidation.count;
     if (this.v_numerario === 0) {
@@ -329,10 +332,7 @@ export class PartializeButtonComponent
     newImporte: number
   ) {
     // debugger;
-    this.vfactor = this.cantidad.value / this.vimporte;
-    console.log(this.cantidad.value, this.vimporte);
-    this.vres = this.vimporte - newImporte;
-    this.vident = 0;
+
     if (this.bienesPar[this.bienesPar.length - 2]) {
       this.vident = this.bienesPar[this.bienesPar.length - 1].id;
     }
@@ -370,6 +370,21 @@ export class PartializeButtonComponent
     this.form.get('saldo').setValue(this.vres);
   }
 
+  private calcImporte() {
+    const newImporte: number =
+      this.cantPar.value * this.cantidad.value + this.vsum;
+    if (newImporte > this.vimporte) {
+      this.onLoadToast(
+        'error',
+        'Parcialización',
+        'No es posible parcializar, excede por ' + (newImporte - this.vimporte)
+      );
+      this.form.get('ind').setValue('S');
+      return 0;
+    }
+    return newImporte;
+  }
+
   private fillBienesParV1(
     v_cantidad: number,
     v_unidad: string,
@@ -405,26 +420,16 @@ export class PartializeButtonComponent
     if (this.form.valid && this.formGood.valid) {
       // debugger;
       console.log(this.sumCant + '', this.sumVal14 + '');
-      if (this.version === 1) {
-        if (!this.validationImporte()) return;
-      } else {
-        if (!this.validationImporte2()) return;
-      }
+      if (!this.validationImporte()) return;
+
+      // if (this.version === 1) {
+      //   if (!this.validationImporte()) return;
+      // } else {
+      //   if (!this.validationImporte2()) return;
+      // }
 
       // this.vsum = 0;
       let v_cantidad, v_unidad, v_avaluo;
-      const newImporte: number =
-        this.cantPar.value * this.cantidad.value + this.vsum;
-      if (newImporte > this.vimporte) {
-        this.onLoadToast(
-          'error',
-          'Parcialización',
-          'No es posible parcializar, excede por ' +
-            (newImporte - this.vimporte)
-        );
-        this.form.get('ind').setValue('S');
-        return;
-      }
 
       if (this.version === 1) {
         const validationIn = await this.validationInmueble();
@@ -446,16 +451,22 @@ export class PartializeButtonComponent
 
         const validationNum = await this.validationNumerario();
         if (!validationNum) return;
+        const newImporte = this.calcImporte();
+        if (newImporte === 0) return;
         // if (!this.validationClasif()) {
         //   this.vsum = this.sumCant ?? 0;
         // } else {
         //   this.vsum = this.sumVal14 ?? 0;
         // }
+        this.vfactor = this.cantidad.value / this.vimporte;
+        console.log(this.cantidad.value, this.vimporte);
+        this.vres = this.vimporte - newImporte;
+        this.vident = 0;
         this.fillBienesParV1(v_cantidad, v_unidad, v_avaluo, newImporte);
       } else {
-        this.vfactor = this.cantidad.value / this.vimporte;
-        this.vres = this.vimporte - newImporte;
-        this.fillBienesParV2();
+        // this.vfactor = this.cantidad.value / this.vimporte;
+        // this.vres = this.vimporte - newImporte;
+        // this.fillBienesParV2();
       }
       console.log(this.sumCant + '', this.sumVal14 + '');
     } else {
