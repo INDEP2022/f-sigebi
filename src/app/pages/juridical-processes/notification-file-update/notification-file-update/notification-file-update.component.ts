@@ -2,6 +2,7 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -9,11 +10,13 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
 import { EditFormComponent } from '../edit-form/edit-form.component';
+import { NOTIFICATION_COLUMNS } from './notification-file-update-columns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -32,34 +35,9 @@ export class NotificationFileUpdateComponent
   implements OnInit, OnDestroy
 {
   override loading: boolean = true;
-  COLUMNS = {
-    wheelNumber: {
-      title: 'No Volante',
-    },
-    affairKey: {
-      title: 'Asunto',
-    },
-    observations: {
-      title: 'Descripción',
-    },
-    captureDate: {
-      title: 'Fecha Captura',
-    },
-    protectionKey: {
-      title: 'Clave Amparo',
-    },
-    preliminaryInquiry: {
-      title: 'Averiguación Previa',
-    },
-    criminalCase: {
-      title: 'Causa Penal',
-    },
-    expedientNumber: {
-      title: 'No Expediente',
-    },
-  };
 
-  dataFactGen: any[] = [];
+  totalItems: number = 0;
+  dataFactGen: INotification[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   public form: FormGroup;
@@ -71,8 +49,11 @@ export class NotificationFileUpdateComponent
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = this.COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      columns: { ...NOTIFICATION_COLUMNS },
+    };
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
