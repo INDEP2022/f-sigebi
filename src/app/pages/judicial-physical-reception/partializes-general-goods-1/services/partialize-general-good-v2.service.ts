@@ -31,7 +31,7 @@ export class PartializeGeneralGoodV2Service extends PartializeGeneralGood {
     this.dbPartialize = 'goodsPartializeds1v1';
     this.dbSelectedGood = 'goodSelected1v1';
     this.clasificators = '62, 1424, 1426';
-    this.settingsGoods = { ...this.settingsGoods, columns: this.columns };
+    // this.settingsGoods = { ...this.settingsGoods, columns: this.columns };
   }
 
   override get vimporte() {

@@ -2,6 +2,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IBienesPar } from '../models/bienesPar.model';
+import { columnsFirstCase, columnsSecondCase } from '../models/columns';
 
 export abstract class PartializeGeneralGood {
   formGood: FormGroup;
@@ -12,6 +13,7 @@ export abstract class PartializeGeneralGood {
   buttonsLoading = false;
   pageLoading = false;
   pagedBienesPar: any[] = [];
+  firstCase = true;
   private _bienesPar: IBienesPar[] = [];
   get bienesPar() {
     return this._bienesPar;
@@ -29,9 +31,15 @@ export abstract class PartializeGeneralGood {
   //     delete: true,
   //   }
   // };
-  settingsGoods = {
+  settingsGoodsFirstCase = {
     ...TABLE_SETTINGS,
     actions: false,
+    columns: columnsFirstCase,
+  };
+  settingsGoodsSecondCase = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: columnsSecondCase,
   };
   sumCant = 0;
   sumVal14 = 0;
