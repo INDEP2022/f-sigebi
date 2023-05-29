@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { format } from 'date-fns';
 import { firstValueFrom, map } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -37,6 +37,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       this.apply();
     }
   }
+  @Output() fillPagedRow = new EventEmitter();
   checkSum: CheckSum;
   vsumimp = 0;
   constructor(
@@ -509,6 +510,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           val12: null,
           val13: null,
         };
+        debugger;
         const { v_cantidad, v_unidad, v_avaluo } = await this.setMeasureData();
         const clasificador = this.good.goodClassNumber;
         const numerarioValidation = await firstValueFrom(
@@ -516,8 +518,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             'filter.numClasifGoods=' + clasificador + '&filter.numType=7'
           )
         );
-        debugger;
-        const v_numerario = numerarioValidation.count;
+        const v_numerario = numerarioValidation.count
+          ? numerarioValidation.count
+          : 0;
         if (v_numerario !== 0) {
           if (this.validationClasif()) {
             item = {
@@ -579,22 +582,27 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         }
         if (this.validationClasif()) {
           item.importe = v_importe - vsumimp;
-          if (this.good.quantity !== 1) {
-            item.cantidad = v_importe - vsumimp;
-          } else {
-            item.cantidad = this.good.quantity;
-          }
+
+          // if (this.good.quantity !== 1) {
+          //   item.cantidad = v_importe - vsumimp;
+          // } else {
+          //   item.cantidad = this.good.quantity;
+          // }
           vval2 = Number((item.avaluo ? item.avaluo : item.importe).toFixed(2));
           vimpbien = item.importe;
         } else {
-          item.cantidad = v_importe - vsumimp;
+          // item.cantidad = v_importe - vsumimp;
           vval2 = +this.good.val14;
           vimpbien = item.cantidad;
         }
+        item.cantidad = +(this.saldo.value + '');
         const descriptions = await this.fillDescriptions(item, vimpbien);
         vobserv_padre = descriptions.vobserv_padre;
         vdesc_padre = descriptions.vdesc_padre;
         item.noBien = descriptions.noBien;
+        this.bienesPar.pop();
+        this.bienesPar.push(item);
+        this.fillPagedRow.emit();
         vobservaciones = 'Saldo parcializado del bien: ' + this.good.goodId;
         // try {
         //   await this.insertaBien(
@@ -678,7 +686,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       }
     }
     // this.service.pageLoading = false;
-    // this.loader.load = false;
+    this.loader.load = false;
     // this.service.bienesPar = [];
     // this.service.pagedBienesPar = [];
     // this.service.formGood.reset();
