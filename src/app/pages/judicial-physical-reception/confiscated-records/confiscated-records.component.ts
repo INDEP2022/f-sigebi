@@ -328,6 +328,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       next: data => {
         if (!['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
           const modelEdit: IDetailProceedingsDeliveryReception = {
+            received: data.toggle ? 'S' : null,
             exchangeValue: data.toggle ? 1 : null,
             numberGood: data.row.id,
             numberProceedings: this.idProceeding,
@@ -673,6 +674,187 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   validateCveAct() {}
 
+  validatePreInsert(e: any) {
+    let v_no_clasif_camb: number;
+    let v_no_etiqueta: number;
+    const edoFis: any = this.getIndEdoFisAndVColumna(e);
+    return new Promise((resolve, reject) => {
+      if (e.indEdoFisico) {
+        if (e[`val${edoFis.V_NO_COLUMNA}`] == 'MALO') {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('type', 'EDO_FIS');
+          paramsF.addFilter('classifyGoodNumber', e.goodClassNumber);
+          this.serviceClassifyGood
+            .getChangeClass(paramsF.getParams())
+            .subscribe(
+              res => {
+                v_no_clasif_camb = res.data[0]['classifyChangeNumber'];
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
+
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood
+                        .updateWithoutId(jsonModel)
+                        .subscribe(res => {
+                          console.log(res)
+                        },
+                        err =>{
+                          console.log(err)
+                        });
+
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              },
+              err => {
+                v_no_clasif_camb = 0;
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta =parseInt(res.data[0]['labelNumber']);
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood
+                        .updateWithoutId(jsonModel)
+                        .subscribe(res => {
+                          console.log(res)
+                        },
+                        err =>{
+                          console.log(err)
+                        });
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              }
+            );
+        } else if (e[`val${edoFis.V_NO_COLUMNA}`] == 'REGULAR') {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('type', 'EDO_FIS');
+          paramsF.addFilter('classifyGoodNumber', e.goodClassNumber);
+          this.serviceClassifyGood
+            .getChangeClass(paramsF.getParams())
+            .subscribe(
+              res => {
+                if (res.data.length > 1) {
+                  v_no_clasif_camb = e.goodClassNumber;
+                } else {
+                  v_no_clasif_camb = res.data[0]['classifyChangeNumber'];
+                }
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood
+                        .updateWithoutId(jsonModel)
+                        .subscribe(res => {
+                          console.log(res)
+                        },
+                        err =>{
+                          console.log(err)
+                        });
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              },
+              err => {
+                v_no_clasif_camb = 0;
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood
+                        .updateWithoutId(jsonModel)
+                        .subscribe(res => {
+                          console.log(res)
+                        },
+                        err =>{
+                          console.log(err)
+                        });
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              }
+            );
+        }
+      }
+    });
+  }
+
   newGetGoods() {
     const btn = document.getElementById('expedient-number');
 
@@ -848,6 +1030,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           'Hubo un error al buscar el expediente',
           'El número de expediente buscado presentó un error, puede que no exista, por favor verificar y volver a intentar.'
         );
+        this.blockExpedient = false;
       }
     );
   }
@@ -2688,8 +2871,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const edoFis: any = await this.getIndEdoFisAndVColumna(data);
     console.log(edoFis);
     if (edoFis.V_NO_COLUMNA === 0) {
+      await this.validatePreInsert(data)
       this.form.get(formName).setValue('OTRO');
     } else {
+      await this.validatePreInsert(data)
       this.form.get(formName).setValue(data[`val${edoFis.V_NO_COLUMNA}`]);
     }
   }
