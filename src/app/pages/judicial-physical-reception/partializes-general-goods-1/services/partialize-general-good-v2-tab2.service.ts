@@ -34,7 +34,7 @@ export class PartializeGeneralGoodV2Tab2Service extends PartializeGeneralGood {
   constructor(override fb: FormBuilder) {
     super(fb);
     this.clasificators = '62, 1424, 1426';
-    this.settingsGoods = { ...this.settingsGoods, columns: this.columns };
+    // this.settingsGoods = { ...this.settingsGoods, columns: this.columns };
   }
 
   override get vimporte() {

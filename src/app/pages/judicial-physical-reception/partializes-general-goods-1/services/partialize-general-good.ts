@@ -53,11 +53,27 @@ export abstract class PartializeGeneralGood {
     return !this.validationClasif() ? this.sumCant : this.sumVal14;
   }
 
+  get cantidad() {
+    return this.formControl
+      ? this.formControl.get('cantidad')
+        ? this.formControl.get('cantidad').value
+        : 0
+      : 0;
+  }
+
+  get val14() {
+    return this.formGood
+      ? this.formGood.get('importe')
+        ? this.formGood.get('importe').value
+        : 0
+      : 0;
+  }
+
   get vimporte() {
     return !this.validationClasif()
-      ? +(this.good.quantity + '')
-      : this.good.val14
-      ? +this.good.val14.trim()
+      ? +(this.cantidad + '')
+      : this.val14
+      ? +Number((this.val14 + '').replace(',', '.')).toFixed(4)
       : -1;
   }
 

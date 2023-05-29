@@ -42,11 +42,11 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
-import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 /** ROUTING MODULE */
 
@@ -73,6 +73,8 @@ export class JuridicalRulingComponent
   wheelNumber: string | number = undefined;
   delegationDictNumber: string | number = undefined;
   keyArmyNumber: string | number = undefined;
+  public buttonDisabled: boolean = false;
+  public buttonDeleteDisabled: boolean = true;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
   //tipos
@@ -339,15 +341,24 @@ export class JuridicalRulingComponent
   }
 
   getParams() {
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.legalForm
-          .get('noExpediente')
-          .setValue(
-            params['noExpediente'] ? Number(params['noExpediente']) : undefined
-          );
-      });
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.legalForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.subtipoForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      // TODO: no tiene número de volante
+      // this.expedientesForm.get('noVolante').setValue(params?.volante);
+      // this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
+    });
+    // this.activatedRoute.queryParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(params => {
+    //     this.legalForm
+    //       .get('noExpediente')
+    //       .setValue(
+    //         params['noExpediente'] ? Number(params['noExpediente']) : undefined
+    //       );
+    //   });
     this.changeNumExpediente();
   }
 
@@ -409,6 +420,15 @@ export class JuridicalRulingComponent
           this.legalForm
             .get('label')
             .setValue(new Date(res.data[0].instructorDate) || undefined);
+          if (res.data[0].typeDict == 'PROCEDENCIA') {
+            this.buttonDisabled = true;
+          }
+          if (
+            res.data[0].statusDict == 'DICTAMINADO' ||
+            res.data[0].statusDict == 'ABIERTO'
+          ) {
+            this.buttonDeleteDisabled = false;
+          }
         })
         .catch(err => {
           this.legalForm.get('tipoDictaminacion').setValue(null);
@@ -424,7 +444,7 @@ export class JuridicalRulingComponent
 
   async loadExpedientInfo(id: number | string) {
     const response = await fetch(
-      `${environment.API_URL}dictation/api/v1/dictation?filter.expedientNumber=` +
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation?filter.expedientNumber=' +
         id,
       {
         method: 'GET',
@@ -451,17 +471,16 @@ export class JuridicalRulingComponent
   }
 
   prepareForm() {
-    this.expedientesForm = this.fb.group({
-      tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: ['791474', [Validators.required]],
-      averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
-      causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      delito: [false],
-      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
     this.legalForm = this.fb.group({
       tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: [null, [Validators.required]],
+      noExpediente: [
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
       // averPrevia: [null, [Validators.pattern(KEYGENERATION_PATTERN)]], // Se cambia por preliminaryInquiry (según doc)
       preliminaryInquiry: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       // causaPenal: [null, [Validators.pattern(STRING_PATTERN)]], // Se cambia por CriminalCase (según doc)
@@ -471,7 +490,10 @@ export class JuridicalRulingComponent
       // observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       fecDest: [null, [Validators.required]],
-      fecDicta: [null, [Validators.required]],
+      fecRes: [null, [Validators.required]],
+      fecNotiAse: [null, [Validators.required]],
+      fecNoti: [null, [Validators.required]],
+      fecDicta: [null],
       autoriza: [null, [Validators.required]],
       cveOficio: [null, [Validators.required]],
       ident: [null],
@@ -526,7 +548,7 @@ export class JuridicalRulingComponent
    */
   async getDicDescriptionByGood(id: number) {
     const response = await fetch(
-      `${environment.API_URL}dictation/api/v1/dictation-x-good1/find-by-ids`,
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation-x-good1/find-by-ids',
       {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -899,7 +921,7 @@ export class JuridicalRulingComponent
 
   async checkout1(object: object) {
     let response = await fetch(
-      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp1`,
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -911,7 +933,7 @@ export class JuridicalRulingComponent
 
   async checkout2(object: object) {
     let response = await fetch(
-      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp2`,
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -923,7 +945,7 @@ export class JuridicalRulingComponent
 
   async checkout3(object: object) {
     let response = await fetch(
-      `${environment.API_URL}dictation/api/v1/application/factjurdictamasDeleteDisctp3`,
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',

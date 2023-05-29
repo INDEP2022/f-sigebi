@@ -25,10 +25,10 @@
               </div>
               <div class="row mt-3">
                 <form-field
-                  [control]="expedientesForm.get('noExpediente')"
+                  [control]="legalForm.get('noExpediente')"
                   label="No. Expediente">
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
                     (blur)="changeNumExpediente()"
                     formControlName="noExpediente"
@@ -92,7 +92,7 @@
               <div class="col-md-6">
                 <div class="row">
                   <form-field
-                    [control]="legalForm.get('fecDicta')"
+                    [control]="legalForm.get('fecNotiAse')"
                     label="Fec. Notif Aseg">
                     <input
                       formControlName="fecDicta"
@@ -104,7 +104,7 @@
               <div class="col-md-6">
                 <div class="row">
                   <form-field
-                    [control]="legalForm.get('fecDicta')"
+                    [control]="legalForm.get('fecRes')"
                     label="Fecha Resolución">
                     <input
                       formControlName="fecDicta"
@@ -116,7 +116,7 @@
               <div class="col-md-6 col-md-offset-6 mt-3">
                 <div class="row">
                   <form-field
-                    [control]="legalForm.get('fecDicta')"
+                    [control]="legalForm.get('fecNoti')"
                     label="Fecha Notificación">
                     <input
                       formControlName="fecDicta"
@@ -333,7 +333,8 @@
         </button>
         <button
           class="btn btn-danger btn-sm active m-3"
-          (click)="btnDeleteDictation()">
+          (click)="btnDeleteDictation()"
+          [disabled]="buttonDeleteDisabled">
           Borrar Dictamen
         </button>
         <button
@@ -341,7 +342,10 @@
           (click)="btnDocumentos()">
           Documentos
         </button>
-        <button class="btn btn-warning btn-sm active m-3" (click)="btnVerify()">
+        <button
+          class="btn btn-warning btn-sm active m-3"
+          (click)="btnVerify()"
+          [disabled]="buttonDisabled">
           Parcializar
         </button>
         <button

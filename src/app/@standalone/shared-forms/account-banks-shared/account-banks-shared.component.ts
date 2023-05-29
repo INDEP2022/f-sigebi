@@ -46,7 +46,9 @@ export class AccountBanksSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.bankField);
     this.form.get(this.bankField).valueChanges.subscribe(data => {
+      console.log(data);
       if (data) {
         this.service.getById({ accountNumber: data }).subscribe({
           next: resp => {
@@ -65,6 +67,7 @@ export class AccountBanksSharedComponent extends BasePage implements OnInit {
         });
       }
     });
+    this.getBanks(new ListParams());
   }
 
   getBanks(params: ListParams) {
