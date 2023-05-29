@@ -70,6 +70,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
   changeAll() {
     for (let item of this.dataGoods['data']) {
       console.log(item);
+
       const generalModel: Map<string, any> = new Map();
       generalModel.set('id', parseInt(item.id.toString()));
       generalModel.set('goodId', parseInt(item.id.toString()));
@@ -78,8 +79,9 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
         JSON.stringify(Object.fromEntries(generalModel))
       );
       this.serviceGood.updateWithoutId(jsonModel).subscribe(
-        res => {
+        async res => {
           console.log(res);
+          await this.validatePreInsert(item);
         },
         err => {
           console.log(err);
@@ -109,6 +111,187 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
     const newDataJSON = JSON.stringify(newData);
     console.log(JSON.parse(newDataJSON));
     this.dataGoods = new LocalDataSource(JSON.parse(newDataJSON));
+  }
+
+  validatePreInsert(e: any) {
+    let v_no_clasif_camb: number;
+    let v_no_etiqueta: number;
+    const edoFis: any = this.getIndEdoFisAndVColumna(e);
+    return new Promise((resolve, reject) => {
+      if (e.indEdoFisico) {
+        if (e[`val${edoFis.V_NO_COLUMNA}`] == 'MALO') {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('type', 'EDO_FIS');
+          paramsF.addFilter('classifyGoodNumber', e.goodClassNumber);
+          this.serviceClassifyGood
+            .getChangeClass(paramsF.getParams())
+            .subscribe(
+              res => {
+                v_no_clasif_camb = res.data[0]['classifyChangeNumber'];
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
+
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              },
+              err => {
+                v_no_clasif_camb = 0;
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              }
+            );
+        } else if (e[`val${edoFis.V_NO_COLUMNA}`] == 'REGULAR') {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('type', 'EDO_FIS');
+          paramsF.addFilter('classifyGoodNumber', e.goodClassNumber);
+          this.serviceClassifyGood
+            .getChangeClass(paramsF.getParams())
+            .subscribe(
+              res => {
+                if (res.data.length > 1) {
+                  v_no_clasif_camb = e.goodClassNumber;
+                } else {
+                  v_no_clasif_camb = res.data[0]['classifyChangeNumber'];
+                }
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              },
+              err => {
+                v_no_clasif_camb = 0;
+                const paramsF2 = new FilterParams();
+                paramsF2.addFilter('classifyGoodNumber', v_no_clasif_camb);
+                this.serviceClassifyGood
+                  .getEtiqXClasif(paramsF2.getParams())
+                  .subscribe(
+                    res => {
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
+                      const generalModel: Map<string, any> = new Map();
+                      generalModel.set('id', e.id);
+                      generalModel.set('goodId', e.goodId);
+                      v_no_clasif_camb > 0
+                        ? generalModel.set(`goodClassNumber`, v_no_clasif_camb)
+                        : '';
+                      v_no_etiqueta > 0
+                        ? generalModel.set(`labelNumber`, v_no_etiqueta)
+                        : '';
+                      const jsonModel = JSON.parse(
+                        JSON.stringify(Object.fromEntries(generalModel))
+                      );
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    },
+                    err => {
+                      v_no_etiqueta = 0;
+                      resolve({ v_no_clasif_camb, v_no_etiqueta });
+                    }
+                  );
+              }
+            );
+        }
+      }
+    });
   }
 
   getIndEdoFisAndVColumna(data: any) {

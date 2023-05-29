@@ -84,6 +84,20 @@
         </div>
       </div>
       <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('manager')">
+            <ngx-select
+              [form]="warehouseForm"
+              [data]="user"
+              label="Responsable"
+              bindLabel="name"
+              value="user"
+              (fetchItems)="getUser($event)"
+              control="manager"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
         <div class="col-md-12">
           <form-field [control]="warehouseForm.get('type')">
             <ngx-select

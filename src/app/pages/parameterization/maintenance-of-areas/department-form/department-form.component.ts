@@ -116,6 +116,8 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       this.departmentForm.controls['numSubDelegation'].setValue(
         this.idSubDelegation.id
       );
+      this.departmentForm.controls['numDelegation'].disable();
+      this.departmentForm.controls['numSubDelegation'].disable();
     }
     this.getSubDelegations({ page: 1, limit: 10, text: '' });
   }
@@ -198,15 +200,17 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.departmentService.update2(this.departmentForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.departmentService
+      .update2(this.departmentForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   create() {
     this.loading = true;
-    this.departmentService.create(this.departmentForm.value).subscribe({
+    this.departmentService.create(this.departmentForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

@@ -24,6 +24,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   CURP_PATTERN,
   KEYGENERATION_PATTERN,
+  NUM_POSITIVE,
   PHONE_PATTERN,
   RFC_PATTERN,
   STRING_PATTERN,
@@ -85,11 +86,26 @@ export class AppointmentsComponent
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: ['3003674', Validators.required], //*
-      descriptionGood: { value: '', disabled: true }, //*
-      noExpedient: { value: '', disabled: true }, //*
-      averiguacionPrevia: [{ value: '', disabled: true }], //*
-      causaPenal: [{ value: '', disabled: true }],
+      noBien: [
+        { value: '', disabled: true },
+        [Validators.maxLength(11), Validators.pattern(NUM_POSITIVE)],
+      ], //*
+      descriptionGood: [
+        { value: '', disabled: true },
+        [Validators.maxLength(1250), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      noExpedient: [
+        { value: '', disabled: true },
+        [Validators.maxLength(30), Validators.pattern(NUM_POSITIVE)],
+      ], //*
+      averiguacionPrevia: [
+        { value: '', disabled: true },
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      causaPenal: [
+        { value: '', disabled: true },
+        [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
+      ], //*
       estatusBien: [{ value: '', disabled: true }], //*
       fechaAcuerdoAsegurado: { value: '', disabled: true }, //*
       fechaRecepcion: { value: '', disabled: true }, //*

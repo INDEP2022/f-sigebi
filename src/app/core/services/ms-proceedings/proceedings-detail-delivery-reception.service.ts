@@ -36,24 +36,21 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
         return item.clave_acta_devolucion;
       // case 'DS':
       //   return item.clave_acta_destruccion;
-      // case 'CM':
-      //   return item.cve_evento;
-      // case 'DN':
-      //   return item.cve_dic_donacion;
+      case 'CM':
+        return item.cve_evento;
+      case 'DN':
+        return item.cve_dic_donacion;
       default:
         return item.clave_acta_destruccion;
     }
   }
 
-  getGoodByRastrer(
-    goods: number[],
-    action: string,
-    typeProceeding: string,
-    good: IGoodsByProceeding
-  ) {
+  getDictamenes(data: IGoodsByProceeding) {}
+
+  getGoodByRastrer(goods: number[], action: string, good: IGoodsByProceeding) {
     return this.post<IListResponse<IGoodsByProceeding>>(
       'aplication/get-goods-indicators',
-      { goods, action, typeProceeding }
+      { goods, action }
     ).pipe(
       map(items => {
         // debugger;
@@ -65,6 +62,7 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
         let expedientes = [
           ...new Set(items.data.map(item => item.no_expediente)),
         ];
+        console.log(expedientes);
         let bienes = 0;
         const data = items.data.map(item => {
           bienes += +(item.cantidad + '');
@@ -166,6 +164,36 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     return this.put(this.endpoint, {
       ...detail,
     });
+  }
+
+  changeAct(
+    details: IDetailProceedingsDeliveryReception[],
+    numberProceedings: string
+  ) {
+    return forkJoin(
+      details.map(detail => {
+        if (detail.good) {
+          delete detail.good;
+        }
+        if (detail.description !== undefined) delete detail.description;
+        if (detail.status !== undefined) delete detail.status;
+        if (detail.vault !== undefined) delete detail.vault;
+        if (detail.warehouse !== undefined) delete detail.warehouse;
+
+        return this.put(this.endpoint, {
+          ...detail,
+          approvedDateXAdmon: detail.approvedDateXAdmon
+            ? firstFormatDateToSecondFormatDate(detail.approvedDateXAdmon + '')
+            : null,
+          dateIndicatesUserApproval: detail.dateIndicatesUserApproval
+            ? firstFormatDateToSecondFormatDate(
+                detail.dateIndicatesUserApproval + ''
+              )
+            : null,
+          numberProceedings,
+        });
+      })
+    );
   }
 
   updateMasive(

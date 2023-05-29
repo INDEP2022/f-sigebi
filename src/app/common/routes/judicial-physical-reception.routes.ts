@@ -21,7 +21,7 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
       },
       {
         label: 'Parcialización de Bienes Generales',
-        link: '/pages/judicial-physical-reception/partializes-general-goods/v1',
+        link: '/pages/judicial-physical-reception/partializes-general-goods',
       },
       // {
       //   label: 'Parcialización de Bienes Generales 2',
