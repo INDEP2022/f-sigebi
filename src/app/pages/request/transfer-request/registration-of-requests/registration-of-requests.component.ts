@@ -1206,13 +1206,13 @@ export class RegistrationOfRequestsComponent
           this.confirmMethod();
         }
         if (typeCommit === 'verificar-cumplimiento') {
+          this.loader.load = true;
           console.log('verificar-cumplimiento');
           this.question = true;
           setTimeout(async () => {
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
               await this.updateGoodStatus('CLASIFICAR_BIEN');
-              console.log('CLASIFICAR_BIEN');
               this.verifyComplianceMethod();
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
@@ -1231,6 +1231,7 @@ export class RegistrationOfRequestsComponent
           }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
+          this.loader.load = true;
           await this.updateGoodStatus('DESTINO_DOCUMENTAL');
           //creat tarea para destino documental
           this.classifyGoodMethod();
@@ -1344,9 +1345,18 @@ export class RegistrationOfRequestsComponent
   }
 
   async updateGoodStatus(newProcessStatus: string) {
-    let goods: any = await this.getAllGood();
-    goods.data.map(async (good: any) => {
+    let goodsCount: any = await this.getAllGood();
+    let goods: any = null;
+    if (goodsCount.count > 10) {
+      goods = await this.getAllGood(goodsCount.count);
+    } else {
+      goods = goodsCount;
+    }
+
+    goods.data.map(async (good: any, index: number) => {
       //consultar si aclarado puede volver a modificarse
+      index = index + 1;
+      console.log(index);
       if (
         good.processStatus != 'SOLICITAR_ACLARACION' &&
         good.processStatus != 'IMPROCEDENTE' &&
@@ -1373,15 +1383,19 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getAllGood() {
+  getAllGood(newLimit?: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
       params['filter.requestId'] = `$eq:${this.requestData.id}`;
+      if (newLimit) {
+        params.limit = newLimit;
+      }
       this.goodService.getAll(params).subscribe({
         next: resp => {
           resolve(resp);
         },
         error: error => {
+          this.loader.load = false;
           reject('error');
           console.log(error);
           this.onLoadToast(
@@ -1423,6 +1437,7 @@ export class RegistrationOfRequestsComponent
           resolve(true);
         },
         error: error => {
+          this.loader.load = false;
           console.log(error);
           reject(false);
         },
@@ -1504,6 +1519,7 @@ export class RegistrationOfRequestsComponent
   }
 
   verifyCumplianteMsg(title: string, text: string, icon: any) {
+    this.loader.load = false;
     Swal.fire({
       title: title,
       text: text,

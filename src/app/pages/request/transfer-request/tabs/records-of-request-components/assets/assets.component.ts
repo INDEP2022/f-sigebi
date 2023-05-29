@@ -22,6 +22,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -93,7 +94,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     private procedureManagementService: ProcedureManagementService,
     private authService: AuthService,
     private fractionService: FractionService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -130,6 +132,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
+    /*this.goodFinderService.goodFinder(this.params.getValue().getParams()).subscribe({
+      next: resp => {
+        resp.data.map((item:any)=>{
+          item['goodTypeName'] =
+        })
+      }
+    })*/
     this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (data: any) => {
         if (data !== null) {

@@ -957,6 +957,12 @@ export class DetailAssetsTabComponentComponent
             resp.data,
             resp.count
           );
+
+          if (this.detailAssets.controls['unitMeasure'].value) {
+            this.detailAssets.controls['unitMeasure'].setValue(
+              this.detailAssets.controls['unitMeasure'].value
+            );
+          }
         },
       });
   }
