@@ -84,6 +84,7 @@ export class JuridicalRulingGComponent
   dictNumber: string | number = undefined;
   delegationDictNumber: string | number = undefined;
   keyArmyNumber: string | number = undefined;
+  maxDate = new Date();
 
   idGoodSelected = 0;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
@@ -303,6 +304,8 @@ export class JuridicalRulingGComponent
   dictaminacionesForm: FormGroup;
   subtipoForm: FormGroup;
   gestionDestinoForm: FormGroup;
+  public buttonDisabled: boolean = false;
+  public buttonDeleteDisabled: boolean = true;
   public listadoDocumentos: boolean = false;
   // public rutaAprobado: string = baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link;
 
@@ -364,7 +367,7 @@ export class JuridicalRulingGComponent
       fechaPPFF: [null, [Validators.required, this.dateValidator]],
       fechaInstructora: [null],
       fechaResolucion: [null],
-      fechaDictaminacion: [null, [Validators.required, this.dateValidator]],
+      fechaDictaminacion: [null],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
@@ -537,6 +540,15 @@ export class JuridicalRulingGComponent
           this.dictaminacionesForm
             .get('estatus')
             .setValue(res.data[0].statusDict || undefined);
+          if (res.data[0].typeDict == 'PROCEDENCIA') {
+            this.buttonDisabled = true;
+          }
+          if (
+            res.data[0].statusDict == 'DICTAMINADO' ||
+            res.data[0].statusDict == 'ABIERTO'
+          ) {
+            this.buttonDeleteDisabled = false;
+          }
         })
         .catch(err => {
           if (

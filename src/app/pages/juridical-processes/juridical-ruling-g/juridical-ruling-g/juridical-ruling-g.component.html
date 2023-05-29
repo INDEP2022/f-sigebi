@@ -42,8 +42,6 @@
                 <input
                   type="text"
                   class="form-control"
-                  min="0"
-                  maxlength="10"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
                   formControlName="noExpediente" />
@@ -111,7 +109,8 @@
                 <input
                   class="form-control"
                   formControlName="fechaPPFF"
-                  bsDatepicker />
+                  bsDatepicker
+                  [maxDate]="maxDate" />
               </form-field>
             </div>
 
@@ -214,7 +213,9 @@
                 <input
                   class="form-control"
                   #cveOficio
-                  formControlName="cveOficio" />
+                  formControlName="cveOficio"
+                  readonly
+                  [disabled]="true" />
               </form-field>
             </div>
             <div class="col-12 p-2">
@@ -409,7 +410,8 @@
         </button>
         <button
           class="btn btn-danger btn-sm active m-3 text-wrap"
-          (click)="btnBorrarDictamen()">
+          (click)="btnBorrarDictamen()"
+          [disabled]="buttonDeleteDisabled">
           Borrar Dictamen
         </button>
         <button
@@ -420,7 +422,8 @@
         </button>
         <button
           class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnParcializar()">
+          (click)="btnParcializar()"
+          [disabled]="buttonDisabled">
           Parcializar
         </button>
       </div>
