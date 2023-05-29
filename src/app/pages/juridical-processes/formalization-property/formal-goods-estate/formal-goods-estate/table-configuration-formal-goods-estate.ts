@@ -45,7 +45,7 @@ export const TABLE_SETTINGS2: TableSettings = {
     deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registros',
+  noDataMessage: 'No se encontraron registros',
   rowClassFunction: (row: any) => {},
 };
 
@@ -113,7 +113,7 @@ export const TABLE_SETTINGS4: TableSettings = {
     deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registros',
+  noDataMessage: 'No se encontraron registros',
   rowClassFunction: (row: any) => {},
 };
 

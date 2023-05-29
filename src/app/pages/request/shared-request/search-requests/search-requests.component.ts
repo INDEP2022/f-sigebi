@@ -153,7 +153,7 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
     // Inicializar items de selects con buscador
     // this.getDelegations({ page: 1, text: '' });
     this.getRegionalDelegationId();
-    this.getRegionalDeleg(new ListParams());
+    this.getRegionalDeleg(new ListParams(), this.deleRegionalId);
     this.getStates(new ListParams());
     //this.getTransferees({ page: 1, text: '' });
     //this.getEmitters({ page: 1, text: '' });
@@ -165,23 +165,42 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
     this.deleRegionalId = id;
   }
 
-  getRegionalDeleg(params?: ListParams) {
+  getRegionalDeleg(params?: ListParams, id?: string | number) {
     //const regDelId = Number(this.getRegionalDelegationId());
     this.regionalDelegationService.getAll(params).subscribe((data: any) => {
-      //this.requestForm.controls['regionalDelegationId'].setValue(data.id);
       this.delegationItems = new DefaultSelect(data.data, data.count);
+      if (id) {
+        this.searchForm.controls['regionalDelegationId'].setValue(
+          this.deleRegionalId
+        );
+      }
     });
   }
 
   updateDelegation(event: any) {
     //TODO: VER EL CAMBIO DE SELECT SE TIENE QUE LIMPIAR
     if (event === undefined) {
+      this.delegationItems = new DefaultSelect();
+      this.searchForm.controls['regionalDelegationId'].setValue(null);
+      this.stateItems = new DefaultSelect();
+      this.searchForm.controls['keyStateOfRepublic'].setValue(null);
+      this.transfereeItems = new DefaultSelect();
+      this.searchForm.controls['transferenceId'].setValue(null);
+      this.emitterItems = new DefaultSelect();
+      this.searchForm.controls['stationId'].setValue(null);
+      this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
+
       this.getRegionalDeleg(new ListParams());
     } else {
       this.stateItems = new DefaultSelect();
+      this.searchForm.controls['keyStateOfRepublic'].setValue(null);
       this.transfereeItems = new DefaultSelect();
+      this.searchForm.controls['transferenceId'].setValue(null);
       this.emitterItems = new DefaultSelect();
+      this.searchForm.controls['stationId'].setValue(null);
       this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
 
       this.deleRegionalId = event.id;
       this.getStates(new ListParams());
@@ -210,8 +229,22 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
 
   stateChanged(event: any) {
     if (event) {
+      this.transfereeItems = new DefaultSelect();
+      this.searchForm.controls['transferenceId'].setValue(null);
+      this.emitterItems = new DefaultSelect();
+      this.searchForm.controls['stationId'].setValue(null);
+      this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
+
       this.stateId = event.id;
       this.getTransferent(new ListParams());
+    } else {
+      this.transfereeItems = new DefaultSelect();
+      this.searchForm.controls['transferenceId'].setValue(null);
+      this.emitterItems = new DefaultSelect();
+      this.searchForm.controls['stationId'].setValue(null);
+      this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
     }
   }
 
@@ -235,8 +268,18 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
 
   transferenceChanges(event: any) {
     if (event != undefined) {
+      this.emitterItems = new DefaultSelect();
+      this.searchForm.controls['stationId'].setValue(null);
+      this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
+
       this.idTransferer = event.id;
       this.getEmitters(new ListParams());
+    } else {
+      this.emitterItems = new DefaultSelect();
+      this.searchForm.controls['stationId'].setValue(null);
+      this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
     }
   }
   getEmitters(params: ListParams) {
@@ -262,8 +305,14 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
 
   stationChanges(event: any) {
     if (event != undefined) {
+      this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
+
       this.idStation = event.id;
       this.getAuthority(new ListParams());
+    } else {
+      this.authorities = new DefaultSelect();
+      this.searchForm.controls['authorityId'].setValue(null);
     }
   }
 
@@ -293,7 +342,7 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
     // console.log(this.searchForm.controls);
     let emptyCount: number = 0;
     let controlCount: number = 0;
-    for (const c in this.searchForm.controls) {
+    /*for (const c in this.searchForm.controls) {
       if (
         this.searchForm.controls[c].value === null ||
         this.searchForm.controls[c].value === ''
@@ -309,12 +358,20 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
         'Complete los campos necesarios para realizar la búsqueda'
       );
       return;
-    }
+    }*/
     this.onSearch.emit(this.searchForm.value);
     this.toggleSearch = false;
   }
 
   reset() {
     this.searchForm.reset();
+    this.stateItems = new DefaultSelect();
+    this.transfereeItems = new DefaultSelect();
+    this.emitterItems = new DefaultSelect();
+    this.authorities = new DefaultSelect();
+
+    this.getRegionalDelegationId();
+    this.getRegionalDeleg(new ListParams(), this.deleRegionalId);
+    this.getStates(new ListParams());
   }
 }

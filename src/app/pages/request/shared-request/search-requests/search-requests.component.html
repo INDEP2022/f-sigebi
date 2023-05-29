@@ -232,10 +232,10 @@
           </div>
           <div class="mt-3 d-flex flex-row-reverse">
             <div class="mx-1">
+              <!-- [disabled]="!searchForm.touched" -->
               <button
                 (click)="search()"
-                class="btn btn-sm btn-primary active btn-sm"
-                [disabled]="!searchForm.touched">
+                class="btn btn-sm btn-primary active btn-sm">
                 <i class="bx bx-search-alt-2 me-1 float-icon"></i> Buscar
               </button>
             </div>

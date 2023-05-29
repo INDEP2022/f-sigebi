@@ -134,12 +134,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
-  searchByOtherData = false;
-  newAct = true;
   act2Valid: boolean = false;
   adminSelect = new DefaultSelect();
+  blockExpedient = false;
   btnCSSAct = 'btn-success';
   countTransferSave: any;
+  dataExpedients = new DefaultSelect();
   dataGoodAct = new LocalDataSource();
   dataGoods = new LocalDataSource();
   dataTransferSave: any[];
@@ -147,34 +147,34 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   goodData: any[] = [];
   idProceeding: number;
   initialBool = true;
+  isEnableAutoridadCancela = true;
+  isEnableDireccion = true;
+  isEnableElabora = true;
+  isEnableFecElab = true;
+  isEnableObservaciones = true;
+  isEnableTestigo = true;
   labelActa = 'Abrir acta';
   maxDate = new Date();
   minDateFecElab: any;
   navigateProceedings = false;
+  newAct = true;
   nextProce = true;
   no_delegacion_1: string;
   no_delegacion_2: string;
-  prevProce = false;
+  numberExpedient = '';
+  numberProceeding = 0;
+  prevProce = true;
   proceedingData: any[] = [];
   recibeSelect = new DefaultSelect();
-  dataExpedients = new DefaultSelect();
   records = new DefaultSelect(['C/A', 'S/A']);
+  reopening = false;
+  scanStatus = false;
+  searchByOtherData = false;
   selectActData: any = null;
   selectData: any = null;
   statusProceeding = '';
   transferSelect = new DefaultSelect();
-  numberProceeding = 0;
   v_atrib_del = 0;
-  reopening = false;
-  scanStatus = false;
-  numberExpedient = '';
-  isEnableTestigo = true;
-  isEnableElabora = true;
-  isEnableAutoridadCancela = true;
-  isEnableObservaciones = true;
-  isEnableDireccion = true;
-  isEnableFecElab = true;
-  blockExpedient = false;
 
   constructor(
     private fb: FormBuilder,
@@ -510,7 +510,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.noRequireAct1();
     this.initialBool = true;
     this.nextProce = true;
-    this.prevProce = false;
+    this.prevProce = true;
     this.act2Valid = false;
     this.navigateProceedings = false;
     this.statusProceeding = '';
@@ -652,7 +652,37 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.blockExpedient = false;
   }
 
-  fillIncomeProceeding(dataRes: any) {
+  newProceeding(){
+    this.numberProceeding = this.proceedingData.length;
+
+    this.getTransfer();
+        this.checkChange();
+        this.maxDate = new Date();
+        this.form.get('acta2').setValue(null);
+        this.form.get('fecElab').setValue(null);
+        this.form.get('fecCierreActa').setValue(null);
+        this.form.get('fecCaptura').setValue(null);
+        this.form.get('direccion').setValue(null);
+        this.form.get('observaciones').setValue(null);
+        this.form.get('autoridadCancela').setValue(null);
+        this.form.get('elabora').setValue(null);
+        this.form.get('testigo').setValue(null);
+        this.statusProceeding = '';
+        this.labelActa = 'Abrir acta';
+        this.btnCSSAct = 'btn-info';
+        this.act2Valid = false;
+        this.navigateProceedings = true;
+        this.nextProce = false;
+        this.prevProce = true;
+        this.initialBool = false;
+        this.newAct = false;
+        this.goodData = [];
+        this.dataGoodAct.load(this.goodData);
+        this.requireAct1();
+        this.inputsNewProceeding();
+  }
+
+  fillIncomeProceeding(dataRes: any, action: string) {
     console.log(dataRes);
     const paramsF = new FilterParams();
     this.maxDate = addDays(new Date(dataRes.elaborationDate), 1);
@@ -676,7 +706,20 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             })
           );
         }
-        this.dataGoodAct.load(this.goodData);
+        this.dataGoodAct.load(this.goodData).then(res => {
+          if (action === 'nextProceeding') {
+            if (this.numberProceeding <= this.proceedingData.length - 1) {
+              this.prevProce = true;
+              this.nextProce = true;
+            }
+          }
+          if (action === 'prevProceeding') {
+            if (this.numberProceeding <= this.proceedingData.length - 1) {
+              this.prevProce = true;
+              this.nextProce = true;
+            }
+          }
+        });;
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -786,7 +829,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         if (res.data != null) {
           this.proceedingData = res.data;
           const dataRes = JSON.parse(JSON.stringify(res.data[0]));
-          this.fillIncomeProceeding(dataRes);
+          this.fillIncomeProceeding(dataRes, '');
           console.log(typeof dataRes);
         } else {
           this.initialBool = false;
@@ -2335,7 +2378,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       if (this.proceedingData.length === 1) {
                         this.navigateProceedings = false;
                         this.nextProce = true;
-                        this.prevProce = false;
+                        this.prevProce = true;
                         this.numberProceeding = 0;
                       } else {
                         this.nextProceeding();
@@ -2361,6 +2404,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //NAVIGATE PROCEEDING
   nextProceeding() {
+    this.prevProce = false
+    this.nextProce = false
+
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
       console.log(this.prevProce);
@@ -2369,13 +2415,20 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       if (this.numberProceeding <= this.proceedingData.length - 1) {
         console.log(this.prevProce);
         console.log(this.numberProceeding);
-        this.prevProce = true;
+        this.act2Valid = false;
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
-        this.fillIncomeProceeding(dataRes);
+        this.fillIncomeProceeding(dataRes, 'nextProceeding');
       } else {
-        this.getTransfer();
+        this.numberProceeding = 0 
+        const dataRes = JSON.parse(
+          JSON.stringify(this.proceedingData[this.numberProceeding])
+        );
+        this.clearInputs()
+        this.fillIncomeProceeding(dataRes, 'nextProceeding');
+        this.act2Valid = false;
+        /* this.getTransfer();
         this.checkChange();
         this.maxDate = new Date();
         this.form.get('acta2').setValue(null);
@@ -2398,30 +2451,40 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         this.goodData = [];
         this.dataGoodAct.load(this.goodData);
         this.requireAct1();
-        this.inputsNewProceeding();
+        this.inputsNewProceeding(); */
       }
     }
   }
 
   prevProceeding() {
     this.initialBool = true;
+    this.prevProce = false
+    this.nextProce = false
     this.noRequireAct1();
+    this.clearInputs()
     if (
       this.numberProceeding <= this.proceedingData.length &&
       this.numberProceeding > 0
     ) {
       this.numberProceeding -= 1;
       console.log(this.numberProceeding);
-      if (this.numberProceeding <= this.proceedingData.length - 1) {
-        this.nextProce = true;
+      if (this.numberProceeding <= this.proceedingData.length - 1) { 
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
-        this.fillIncomeProceeding(dataRes);
-        if (this.numberProceeding == 0) {
+        this.fillIncomeProceeding(dataRes, 'prevProceeding');
+        this.act2Valid = false;
+        /* if (this.numberProceeding == 0) {
           this.prevProce = false;
-        }
+        } */
       }
+    }else{
+      this.numberProceeding = this.proceedingData.length - 1;
+      const dataRes = JSON.parse(
+        JSON.stringify(this.proceedingData[this.numberProceeding])
+      );
+      this.fillIncomeProceeding(dataRes, 'prevProceeding');
+      this.act2Valid = false;
     }
   }
 }

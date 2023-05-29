@@ -8,15 +8,15 @@ import { ILocality } from 'src/app/core/models/catalogs/locality.model';
 import { IMunicipality } from 'src/app/core/models/catalogs/municipality.model';
 import { ISafe, ISafe2 } from 'src/app/core/models/catalogs/safe.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
+import { IUsersTracking } from 'src/app/core/models/ms-security/pup-user.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
-import { IUsersTracking } from 'src/app/core/models/ms-security/pup-user.model';
-import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 
 @Component({
   selector: 'app-vault-detail',
@@ -96,26 +96,39 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       this.vaultForm.controls['stateDetail'].setValue(
         this.valueState.descCondition
       );
-      this.vaultForm.controls['localityDetail'].setValue(this.valueLocality.nameLocation);
+      this.vaultForm.controls['localityDetail'].setValue(
+        this.valueLocality.nameLocation
+      );
       this.vaultForm.controls['municipalityDetail'].setValue(
         this.valueMunicipality.nameMunicipality
       );
       if (this.vaultForm.controls['stateCode'].value) {
-        this.getCities(new ListParams, this.vaultForm.controls['stateCode'].value.toString());
-        this.getMunicipalities(new ListParams, this.vaultForm.controls['stateCode'].value.toString());
+        this.getCities(
+          new ListParams(),
+          this.vaultForm.controls['stateCode'].value.toString()
+        );
+        this.getMunicipalities(
+          new ListParams(),
+          this.vaultForm.controls['stateCode'].value.toString()
+        );
       }
       if (this.vaultForm.controls['municipalityCode'].value) {
-        this.getLocalities(new ListParams, this.vaultForm.controls['municipalityCode'].value.toString());
+        this.getLocalities(
+          new ListParams(),
+          this.vaultForm.controls['municipalityCode'].value.toString()
+        );
       }
       if (this.vaultForm.controls['manager'].value) {
-        this.getUserTracking(new ListParams, this.vaultForm.controls['manager'].value);
+        this.getUserTracking(
+          new ListParams(),
+          this.vaultForm.controls['manager'].value
+        );
       }
     }
     setTimeout(() => {
-      this.getStates(new ListParams);
-      this.getUserTracking(new ListParams);
+      this.getStates(new ListParams());
+      this.getUserTracking(new ListParams());
     }, 1000);
-
   }
 
   confirm() {
@@ -165,8 +178,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       this.manger = new DefaultSelect(data.data, data.count);
     });
   }
-  getStates(params: ListParams,) {
-
+  getStates(params: ListParams) {
     this.stateService.getAll(params).subscribe(
       (data: any) => {
         this.states = new DefaultSelect(data.data, data.count);
@@ -181,7 +193,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
 
         this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 
@@ -228,7 +240,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.vaultForm.controls['municipalityCode'].setValue(
       safeChange2.idMunicipality
     );
-    this.getLocalities(new ListParams, safeChange2.idMunicipality);
+    this.getLocalities(new ListParams(), safeChange2.idMunicipality);
     this.vaultForm.controls['localityCode'].setValue('');
     this.vaultForm.controls['localityDetail'].setValue('');
     this.localities = new DefaultSelect([], 0, true);
@@ -243,8 +255,8 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   onValuesChange4(safeChange4: IStateOfRepublic) {
     this.valueState = safeChange4;
     this.vaultForm.controls['stateCode'].setValue(safeChange4.id);
-    this.getCities(new ListParams, safeChange4.id);
-    this.getMunicipalities(new ListParams, safeChange4.id);
+    this.getCities(new ListParams(), safeChange4.id);
+    this.getMunicipalities(new ListParams(), safeChange4.id);
     this.safes4 = new DefaultSelect();
     this.localities = new DefaultSelect([], 0, true);
     this.vaultForm.controls['cityCode'].setValue('');

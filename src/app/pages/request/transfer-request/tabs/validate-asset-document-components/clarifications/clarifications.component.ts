@@ -659,6 +659,7 @@ export class ClarificationsComponent
           },
           complete: () => {
             this.getClarifications();
+            this.getData();
           },
           error: error => {
             console.log(error);
