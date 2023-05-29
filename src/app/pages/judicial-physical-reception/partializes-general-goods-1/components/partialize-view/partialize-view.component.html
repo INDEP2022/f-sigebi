@@ -52,15 +52,12 @@
       <div [class]="statePartialize">
         <div (click)="pressed(1)">1</div>
         <app-partialize-button
-          [version]="version"
           [press]="pressPartialize"
           (filledRow)="filledRow()"></app-partialize-button>
       </div>
       <div [class]="stateApply">
         <div (click)="pressed(2)">2</div>
-        <app-apply-button
-          [version]="version"
-          [press]="pressApply"></app-apply-button>
+        <app-apply-button [press]="pressApply"></app-apply-button>
       </div>
       <!-- Second Step -->
     </div>

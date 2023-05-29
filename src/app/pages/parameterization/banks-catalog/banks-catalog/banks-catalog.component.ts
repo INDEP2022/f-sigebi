@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IBankAccount } from 'src/app/core/models/catalogs/bank-account.model';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { ListBanksComponent } from '../list-banks/list-banks.component';
 
 @Component({
   selector: 'app-banks-catalog',
@@ -22,7 +21,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private bankServ: BankAccountService,
+    private bankServ: BankAccountService
   ) {
     super();
   }
@@ -71,30 +70,32 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
       this.edit = true;
       this.form.patchValue(this.data);
 
-      if (this.form.controls['accountType'].value === "CONCENTRADORA") {
+      if (this.form.controls['accountType'].value === 'CONCENTRADORA') {
         this.rowSelecc = true;
-        this.bankServ.getById({ accountNumber: this.form.controls['accountNumber'].value }).subscribe({
-          next: resp => {
-            console.log(resp);
-            this.setProperties(resp);
-          },
-          error: err => {
-            let error = '';
-            if (err.status === 0) {
-              error = 'Revise su conexión de Internet.';
-              this.onLoadToast('error', 'Error', error);
-            } else {
-              this.onLoadToast('error', 'Error', err.error.message);
-            }
-          },
-        });
+        this.bankServ
+          .getById({ accountNumber: this.form.controls['accountNumber'].value })
+          .subscribe({
+            next: resp => {
+              console.log(resp);
+              this.setProperties(resp);
+            },
+            error: err => {
+              let error = '';
+              if (err.status === 0) {
+                error = 'Revise su conexión de Internet.';
+                this.onLoadToast('error', 'Error', error);
+              } else {
+                this.onLoadToast('error', 'Error', err.error.message);
+              }
+            },
+          });
       }
       console.log(this.form);
     }
   }
 
   confirm() {
-    console.log(this.form.value)
+    console.log(this.form.value);
     if (this.form.valid) {
       this.form.controls['nameBank'].disable();
       const data = this.form.value;
@@ -135,7 +136,6 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
     } else {
       this.rowSelecc = false;
     }
-
   }
   setProperties(data: IBankAccount) {
     this.form.get('square_I').patchValue(data.square);
@@ -148,5 +148,4 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }
