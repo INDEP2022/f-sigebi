@@ -1,8 +1,8 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
-import { Ng2SmartTableComponent } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -13,14 +13,14 @@ import { DelegationService } from 'src/app/core/services/catalogs/delegation.ser
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { ProceedingsDetailDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-detail-delivery-reception.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IProceedingDeliveryReception } from './../../../core/models/ms-proceedings/proceeding-delivery-reception';
 
 @Component({
   template: '',
 })
-export abstract class ScheduledMaintenance extends BasePage {
+export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersExtra<IProceedingDeliveryReception> {
   form: FormGroup;
   first = true;
   @ViewChild(Ng2SmartTableComponent) table: Ng2SmartTableComponent;
@@ -91,7 +91,7 @@ export abstract class ScheduledMaintenance extends BasePage {
         sort: false,
       },
       comptrollerWitness: {
-        title: 'Testigo Contraloria',
+        title: 'Testigo Contraloría',
         sort: false,
       },
       observations: {
@@ -106,12 +106,11 @@ export abstract class ScheduledMaintenance extends BasePage {
     { id: 'CERRADA', description: 'Cerrado' },
   ];
   stringPattern = STRING_PATTERN;
-  data: IProceedingDeliveryReception[] = [];
-  totalItems: number = 0;
+  // data: IProceedingDeliveryReception[] = [];
   paramsTypes: ListParams = new ListParams();
   paramsStatus: ListParams = new ListParams();
   tiposEvento: { id: string; description: string }[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  // params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new FilterParams();
   paramsCoords = new ListParams();
   paramsUsers = new FilterParams();
@@ -119,11 +118,23 @@ export abstract class ScheduledMaintenance extends BasePage {
   userService = inject(UsersService);
   constructor(
     protected fb: FormBuilder,
-    protected service: ProceedingsDeliveryReceptionService,
+    protected deliveryService: ProceedingsDeliveryReceptionService,
     protected detailService: ProceedingsDetailDeliveryReceptionService,
     @Inject('formStorage') protected formStorage: string
   ) {
     super();
+    this.service = this.deliveryService;
+    this.ilikeFilters = [
+      'keysProceedings',
+      'captureDate',
+      'elaborate',
+      'statusProceedings',
+      'address',
+      'witness1',
+      'witness2',
+      'comptrollerWitness',
+      'observations',
+    ];
     // this.maxDate = new Date();
     // console.log(this.settings1);
   }
@@ -154,16 +165,18 @@ export abstract class ScheduledMaintenance extends BasePage {
 
   resetView() {
     console.log('RESET VIEW');
-    this.data = [];
+    this.data = new LocalDataSource();
     this.totalItems = 0;
   }
 
   extraOperations() {}
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    this.dinamicFilterUpdate();
+    // this.searchParams();
     this.extraOperations();
     this.prepareForm();
-    this.service.getTypes().subscribe({
+    this.deliveryService.getTypes().subscribe({
       next: response => {
         this.tiposEvento = response.data;
       },
@@ -287,17 +300,30 @@ export abstract class ScheduledMaintenance extends BasePage {
       );
     }
 
-    if (cveActa) {
-      this.filterParams.addFilter('keysProceedings', cveActa);
-    }
-    if (usuario)
+    // if (cveActa) {
+    //   this.filterParams.addFilter('keysProceedings', cveActa);
+    // }
+    if (usuario) {
       this.filterParams.addFilter('elaborate', usuario, SearchFilter.LIKE);
+    }
+    console.log(this.columnFilters);
+
+    // this.columnFilters.forEach(x => {
+    //   this.filterParams.addFilter2(x)
+    // })
+    for (var filter in this.columnFilters) {
+      if (this.columnFilters.hasOwnProperty(filter)) {
+        console.log(this.columnFilters[filter]);
+        this.filterParams.addFilter3(filter, this.columnFilters[filter]);
+      }
+    }
+    // this.filterParams.addFilter2(this.columnFilters);
     this.filterParams.page = this.params.getValue().page;
     this.filterParams.limit = this.params.getValue().limit;
     return true;
   }
 
-  getData() {
+  override getData() {
     if (!this.form) {
       return;
     }
@@ -311,14 +337,13 @@ export abstract class ScheduledMaintenance extends BasePage {
           if (response.data.length === 0) {
             this.onLoadToast('error', 'No se encontraron datos');
           }
-          this.data = [
-            ...response.data.map(x => {
-              return {
-                ...x,
-                captureDate: format(new Date(x.captureDate), 'dd/MM/yyyy'),
-              };
-            }),
-          ];
+          (this.items = response.data.map(x => {
+            return {
+              ...x,
+              captureDate: format(new Date(x.captureDate), 'dd/MM/yyyy'),
+            };
+          })),
+            this.data.load(this.items);
           this.totalItems = response.count;
           this.loading = false;
           // setTimeout(() => {
@@ -329,7 +354,7 @@ export abstract class ScheduledMaintenance extends BasePage {
           console.log(error);
           this.onLoadToast('error', 'No se encontraron datos');
           this.loading = false;
-          this.data = [];
+          this.data.load([]);
         },
       });
     } else {

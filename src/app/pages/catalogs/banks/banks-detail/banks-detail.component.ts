@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
 
@@ -9,8 +10,8 @@ import { BankService } from '../../../../core/services/catalogs/bank.service';
   templateUrl: './banks-detail.component.html',
   styles: [],
 })
-export class BanksDetailComponent implements OnInit {
-  loading: boolean = false;
+export class BanksDetailComponent extends BasePage implements OnInit {
+  title: 'ABOGADO';
   status: string = 'Nuevo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
@@ -25,7 +26,7 @@ export class BanksDetailComponent implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private bankService: BankService
-  ) {}
+  ) { super() }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -38,7 +39,6 @@ export class BanksDetailComponent implements OnInit {
         [
           Validators.required,
           Validators.maxLength(10),
-          Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
       name: [
@@ -49,18 +49,11 @@ export class BanksDetailComponent implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      registerNumber: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.minLength(1),
-        ],
-      ],
+      registerNumber: [null],
       ifdsc: [null, [Validators.required, Validators.maxLength(60)]],
-      dateType: [null, [Validators.required]],
+      dateType: [null],
       code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      idProvider: [null, [Validators.required]],
+      idProvider: [null],
     });
     if (this.edit) {
       this.status = 'Actualizar';
@@ -85,14 +78,15 @@ export class BanksDetailComponent implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    // this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
   update() {
     this.loading = true;
-
     this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)

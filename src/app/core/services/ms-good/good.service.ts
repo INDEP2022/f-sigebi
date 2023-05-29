@@ -65,9 +65,10 @@ export class GoodService extends HttpService {
   }
 
   getActAccount(model: IGoodStatusProcess) {
-    return this.post<IResponse>(GoodEndpoints.GoodGetActAccount, model).pipe(
-      map(x => x.count)
-    );
+    return this.post<IResponse<{ actNumber: number }>>(
+      GoodEndpoints.GoodGetActAccount,
+      model
+    ).pipe(map(x => (x.count === 0 ? 0 : x.data ? x.data.actNumber : 0)));
   }
 
   getStatusAndProcess(model: IGoodScreenACtionStatusProcess) {
@@ -251,7 +252,7 @@ export class GoodService extends HttpService {
   }
 
   getStatusGood(params?: string) {
-    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}${params}`);
+    return this.get<IListResponse>(`${GoodEndpoints.OnlyStatus}?${params}`);
   }
 
   getBySafe(

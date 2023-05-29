@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
@@ -53,7 +53,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     ],
     registerNumber: [
       null,
-      [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(11)],
     ],
     wheelNumber: [
       null,
@@ -118,6 +118,11 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       null,
       [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
     ],
+    extPerson: this.fb.array([
+      this.fb.control('', [Validators.required]),
+      this.fb.control('', [Validators.required]),
+      this.fb.control('', [Validators.required]),
+    ]),
   });
 
   intIDictation: IDictation;
@@ -285,18 +290,22 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
             this.form
               .get('expedientNumber')
               .setValue(this.intIDictation.expedientNumber);
+            console.log(' this.intIDictation.id => ' + this.intIDictation.id);
             this.form.get('registerNumber').setValue(this.intIDictation.id);
             this.form
               .get('wheelNumber')
               .setValue(this.intIDictation.wheelNumber);
             this.form.get('typeDict').setValue(this.intIDictation.statusDict);
             this.form.get('key').setValue(this.intIDictation.passOfficeArmy);
-            this.getPersonaExt_Int();
             let obj = {
               officialNumber: this.intIDictation.id,
               typeDict: this.intIDictation.typeDict,
             };
             this.complementoFormulario(obj);
+            this.getPersonaExt_Int(
+              'this.intIDictation => ',
+              this.intIDictation
+            );
           }
         },
         error: err => {
@@ -316,18 +325,18 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       filterParams,
       callback: (next: any) => {
         const data = JSON.parse(JSON.stringify(next));
-        console.log('  ===>   ', data);
-        this.form.get('expedientNumber').setValue(data.id);
-        this.form.get('registerNumber').setValue(data.registerNumber);
+
+        this.form.get('expedientNumber').setValue(data.expedientNumber);
+        this.form.get('registerNumber').setValue(data.id);
         this.form.get('wheelNumber').setValue(data.wheelNumber);
         this.form.get('typeDict').setValue(data.typeDict);
         this.form.get('key').setValue(data.passOfficeArmy);
-        this.getPersonaExt_Int();
         let obj = {
-          officialNumber: data.id,
-          typeDict: data.typeDict,
+          officialNumber: this.form.get('registerNumber').value,
+          typeDict: this.form.get('typeDict').value,
         };
         this.complementoFormulario(obj);
+        this.getPersonaExt_Int('data => ', data);
       },
     };
     this.modalService.show(tablaModalComponent, modalConfig);
@@ -340,8 +349,6 @@ carga la  información de la parte media de la página
   complementoFormulario(obj: any) {
     this.oficialDictationService.getById(obj).subscribe({
       next: resp => {
-        console.log(' 2 => ' + JSON.stringify(resp));
-        console.log('getById =>>  ' + JSON.stringify(resp));
         this.form.get('addressee').setValue(resp.recipient);
         this.form.get('senderUserRemitente').setValue(resp.sender);
         const param = new ListParams();
@@ -355,7 +362,7 @@ carga la  información de la parte media de la página
         this.form.get('paragraphFinish').setValue(resp.text2);
         this.form.get('paragraphOptional').setValue(resp.text3);
         this.form.get('descriptionSender').setValue(resp.desSenderPa);
-        this.getPersonaExt_Int();
+        this.getPersonaExt_Int('resp => ', resp);
       },
       error: error => {
         this.onLoadToast('info', 'info', error.error.message);
@@ -391,15 +398,26 @@ carga la  información de la parte media de la página
         },
       });
   }
-  getPersonaExt_Int() {
+  getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
+    let variable: IDictation = JSON.parse(JSON.stringify(datos));
+    /*
     this.filterParams
       .getValue()
-      .addFilter(
-        'numberOfDicta',
-        this.form.value.numberDictamination,
-        SearchFilter.EQ
-      );
+      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);*/
+
+    this.filterParams
+      .getValue()
+      .addFilter('numberOfDicta', 404526, SearchFilter.EQ);
+
+    console.log(
+      'Entra =>  ' +
+        d +
+        '    datos =>  ' +
+        JSON.stringify(datos) +
+        '        CONSULTA DE PARAMETROS = ' +
+        this.filterParams.getValue().getParams()
+    );
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
@@ -511,7 +529,7 @@ carga la  información de la parte media de la página
     console.warn(JSON.stringify(ofis));
     this.oficialDictationService.update(ofis).subscribe({
       next: resp => {
-        this.onLoadToast('info', 'info', resp);
+        this.onLoadToast('info', 'info', resp.message[0]);
         console.log(resp);
       },
       error: err => {
@@ -593,6 +611,23 @@ carga la  información de la parte media de la página
     });
   }
 
+  get extPersonArray() {
+    return this.form.get('extPerson') as FormArray;
+  }
+
+  /*
+addExtPersonArray(){
+
+const filterForm = this.fb.group({
+                             ,
+                             this.fb.control('' ,[Validators.required]),
+                             this.fb.control('' ,[Validators.required])
+    });
+    
+    this.extPersonArray.push(this.fb.control('' ,[Validators.required]));
+}
+*/
+
   // NO SE USAN PERO HAY QUE REVISAR SU FUNCIONAMIENTO
 
   loadUserDestinatario() {
@@ -611,6 +646,4 @@ carga la  información de la parte media de la página
       },
     });
   }
-
-  validaCampos(event: Event) {}
 }

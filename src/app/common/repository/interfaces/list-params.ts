@@ -41,6 +41,10 @@ export class FilterParams {
     this.filters.push(filter);
   }
 
+  addFilter3(field: string, value: string) {
+    this.filters.push(`${field}=${value}`);
+  }
+
   addFilter(field: string, value: string | number, operator?: SearchFilter) {
     const filter = new DynamicFilter(field, value, operator).getParams();
     this.filters.push(filter);
