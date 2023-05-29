@@ -12,9 +12,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('registerNumber')"
-        label="No. de Gesti&oacute;n">
+      <form-field [control]="form.get('registerNumber')" label="Dicta.">
         <input
           type="text"
           class="form-control"
@@ -189,62 +187,14 @@
     </div>
   </div>
   <div class="row pl-3">C&#46;C&#46;P&#46;</div>
-  <!--div class="row mt-5">
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson">
-          <option *ngFor="let option of options" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('senderUser')">
-        <ngx-select
-          [form]="form"
-          [data]="users$"
-          (change)="getDescUser('control', $event)"
-          [readonly]="form.get('typePerson').value === 'S'"
-          (fetchItems)="getUsers($event)"
-          bindLabel="userAndName"
-          value="id"
-          control="senderUser"
-          label="Usuario"
-          [searchOnInit]="true"
-          [showTooltip]="true"
-          termMaxLength="30"
-          [labelTemplate]="userLabel"
-          [optionTemplate]="userOption">
-        </ngx-select>
-        <ng-template #userLabel let-item="item">
-          {{ item.id }} - {{ item.name }}
-        </ng-template>
-        <ng-template #userOption let-item="item">
-          <div [title]="item.id + '-' + item.name">
-            {{ item.id }} - {{ item.name }}
-          </div>
-        </ng-template>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('personaExt')" label="Nombre Persona">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="personaExt"
-          [readonly]="!(form.get('typePerson').value === 'S')" />
-      </form-field>
-    </div>
-
-
-  </div-->
-
-  <!---->
-  <div class="row mt-3" *ngFor="let item of datosOpinion">
-    <app-textChange-modal
-      [datosOpinion]="item"
-      [form]="form"></app-textChange-modal>
+  <!--Personas Externas-->
+  <div formArrayName="extPerson">
+    <ng-container *ngFor="let item of datosOpinion; let i = index">
+      <app-textChange-modal
+        [datosOpinion]="item"
+        [form]="form"
+        [index]="i"></app-textChange-modal>
+    </ng-container>
   </div>
   <hr />
   <div class="row mb-5">

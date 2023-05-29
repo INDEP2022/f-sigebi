@@ -8,6 +8,7 @@ export interface IWarehouse {
   description: string;
   ubication: string;
   manager: string;
+  DetManager?: string;
   registerNumber: number | null;
   stateCode: IStateOfRepublic;
   cityCode: ICity;
