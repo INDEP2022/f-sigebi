@@ -244,7 +244,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     });
   }
 
-  selectExpedient(e: any) {}
+  selectExpedient(e: any) {
+    console.log(e);
+    this.form.get('expediente').setValue(e.id);
+    this.goodsByExpediente();
+  }
 
   inputsInProceedingClose() {
     this.isEnableTestigo = false;
