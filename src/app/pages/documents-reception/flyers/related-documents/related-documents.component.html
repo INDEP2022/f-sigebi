@@ -119,7 +119,10 @@
             [form]="managementForm"
             control="destinatario"
             [showTooltip]="true"
-            label="Destinatario"></ngx-select>
+            label="Destinatario"
+            (fetchItems)="getFromSelect($event)"
+            bindLabel="userAndName"
+            value="user"></ngx-select>
         </form-field>
 
         <form-field [control]="managementForm.get('ciudad')" class="col-md-4">
