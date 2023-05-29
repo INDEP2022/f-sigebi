@@ -12,7 +12,7 @@
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm disabled active"
-                (click)="goodsByExpediente()">
+                (click)="searchButton()">
                 Buscar
               </button>
               <span class="ml-3">{{ statusProceeding }}</span>
@@ -59,7 +59,8 @@
               <button
                 *ngIf="newAct"
                 id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4">
+                class="btn btn-primary btn-sm active ml-4"
+                (click)="newProceeding()">
                 Nueva acta
               </button>
             </div>
@@ -138,6 +139,7 @@
                 <ngx-select
                   id="transfer"
                   control="transfer"
+                  class="pt-5"
                   [class]="initialdisabled ? 'disabled' : ''"
                   label="Transfer"
                   bindLabel="transferentkey"

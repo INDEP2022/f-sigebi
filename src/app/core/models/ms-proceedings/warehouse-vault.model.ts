@@ -13,5 +13,5 @@ export interface IUpdateVault extends IUpdateWarehouseVault {
 
 export interface IBlkPost {
   no_bien: number | string;
-  no_acta: number | string;
+  no_expediente: number | string;
 }

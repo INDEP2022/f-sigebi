@@ -69,7 +69,7 @@ export class IncidentMaintenanceComponent extends BasePage implements OnInit {
 
     this.securityService.getAllFilterAssigned(params).subscribe({
       next: resp => {
-        console.log(resp);
+        console.log(resp.data);
         this.apruebaSelected = new DefaultSelect(resp.data, resp.count);
       },
       error: error => {
