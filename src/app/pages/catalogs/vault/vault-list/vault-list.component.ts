@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { ISafe } from '../../../../core/models/catalogs/safe.model';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
 import { VaultDetailComponent } from '../vault-detail/vault-detail.component';
 import { VAULT_COLUMNS } from './vault-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 
 @Component({

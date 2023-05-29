@@ -55,6 +55,13 @@
             </ngx-select>
           </form-field>
         </div>
+        <div class="col-md-6">
+          <form-field [control]="vaultForm.get('cityDetail')">
+            <ngx-select (fetchItems)="getCities($event)" [data]="cities" [form]="vaultForm" value="nameCity"
+              bindLabel="nameCity" label="Ciudad" control="cityDetail" (change)="onValuesChange1($event)">
+            </ngx-select>
+          </form-field>
+        </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-12">

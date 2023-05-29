@@ -70,7 +70,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
   changeAll() {
     for (let item of this.dataGoods['data']) {
       console.log(item);
-      
+
       const generalModel: Map<string, any> = new Map();
       generalModel.set('id', parseInt(item.id.toString()));
       generalModel.set('goodId', parseInt(item.id.toString()));
@@ -81,7 +81,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
       this.serviceGood.updateWithoutId(jsonModel).subscribe(
         async res => {
           console.log(res);
-          await this.validatePreInsert(item)
+          await this.validatePreInsert(item);
         },
         err => {
           console.log(err);
@@ -148,14 +148,14 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
 
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
@@ -173,7 +173,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                   .getEtiqXClasif(paramsF2.getParams())
                   .subscribe(
                     res => {
-                      v_no_etiqueta =parseInt(res.data[0]['labelNumber']);
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
                       const generalModel: Map<string, any> = new Map();
                       generalModel.set('id', e.id);
                       generalModel.set('goodId', e.goodId);
@@ -186,14 +186,14 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -235,14 +235,14 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -272,14 +272,14 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {

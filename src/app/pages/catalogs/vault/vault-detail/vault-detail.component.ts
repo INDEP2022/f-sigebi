@@ -253,7 +253,5 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.vaultForm.controls['cityDetail'].setValue('');
     this.vaultForm.controls['municipalityDetail'].setValue('');
     this.vaultForm.controls['localityDetail'].setValue('');
-
   }
-
 }

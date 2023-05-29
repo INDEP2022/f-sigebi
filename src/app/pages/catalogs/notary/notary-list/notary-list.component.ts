@@ -4,12 +4,12 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { LocalDataSource } from 'ng2-smart-table';
+import Swal from 'sweetalert2';
 import { NotaryFormComponent } from '../notary-form/notary-form.component';
 import { INotary } from './../../../../core/models/catalogs/notary.model';
 import { NotaryService } from './../../../../core/services/catalogs/notary.service';
 import { NOTARY_COLUMNS } from './notary-columns';
-import Swal from 'sweetalert2';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-notary-list',

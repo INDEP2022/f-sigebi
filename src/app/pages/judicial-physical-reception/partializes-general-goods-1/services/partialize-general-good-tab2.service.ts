@@ -38,6 +38,6 @@ export class PartializeGeneralGoodTab2Service extends PartializeGeneralGood {
 
   constructor(override fb: FormBuilder) {
     super(fb);
-    this.settingsGoods = { ...this.settingsGoods, columns: this.columns };
+    // this.settingsGoods = { ...this.settingsGoods, columns: this.columns };
   }
 }

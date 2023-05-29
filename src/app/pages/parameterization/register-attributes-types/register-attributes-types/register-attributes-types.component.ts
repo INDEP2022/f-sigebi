@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -15,9 +15,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REGISTER_ATT_TYPES_COLUMNS } from './register-attributes-types-columns';
 //models
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
-import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
-import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 //Services
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
@@ -195,7 +193,13 @@ export class RegisterAttributesTypesComponent
   }
 
   onTypesChange(type: any) {
-    this.resetFields([this.subtype, this.ssubtype, this.sssubtype, this.attrib, this.id]);
+    this.resetFields([
+      this.subtype,
+      this.ssubtype,
+      this.sssubtype,
+      this.attrib,
+      this.id,
+    ]);
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
     console.log(type);
@@ -205,7 +209,7 @@ export class RegisterAttributesTypesComponent
     }
     this.form.updateValueAndValidity();
     // this.goodTypeChange.emit(type);
-    this.getSubtypes(new ListParams)
+    this.getSubtypes(new ListParams());
   }
 
   onSubtypesChange(subtype: any) {
@@ -217,7 +221,7 @@ export class RegisterAttributesTypesComponent
       this.type.setValue(subtype.idTypeGood.id);
       this.subtype.setValue(subtype.id);
     }
-    this.getSsubtypes(new ListParams);
+    this.getSsubtypes(new ListParams());
   }
 
   onSsubtypesChange(ssubtype: any) {
@@ -231,7 +235,7 @@ export class RegisterAttributesTypesComponent
       this.subtype.setValue(ssubtype.numSubType.id);
       this.ssubtype.setValue(ssubtype.numSsubType.id);
     }
-    this.getSssubtypes(new ListParams);
+    this.getSssubtypes(new ListParams());
   }
 
   onSssubtypesChange(sssubtype: any) {
@@ -319,6 +323,5 @@ export class RegisterAttributesTypesComponent
     this.subtypes = new DefaultSelect([], 0, true);
     this.ssubtypes = new DefaultSelect([], 0, true);
     this.sssubtypes = new DefaultSelect([], 0, true);
-
   }
 }

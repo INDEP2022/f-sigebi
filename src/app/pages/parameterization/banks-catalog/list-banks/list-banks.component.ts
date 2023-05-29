@@ -1,20 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
-  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IBankAccount } from 'src/app/core/models/catalogs/bank-account.model';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNSLIST } from './columns';
 import { BanksCatalogComponent } from '../banks-catalog/banks-catalog.component';
-import { LocalDataSource } from 'ng2-smart-table';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { COLUMNSLIST } from './columns';
 
 @Component({
   selector: 'app-list-banks',
@@ -46,7 +43,6 @@ export class ListBanksComponent extends BasePage implements OnInit {
       },
       columns: { ...COLUMNSLIST },
     };
-
   }
 
   ngOnInit(): void {
@@ -91,26 +87,23 @@ export class ListBanksComponent extends BasePage implements OnInit {
   getCourts() {
     this.loading = true;
     let params = {
-
       ...this.filterParams.getValue(),
 
       ...this.columnFilters,
     };
     console.log(params);
-    this.bankService
-      .getAllWithFilters(params)
-      .subscribe({
-        next: response => {
-          this.data.load(response.data);
-          this.data.refresh();
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => (
-          this.onLoadToast('error', error.error.message, ''),
-          (this.loading = false)
-        ),
-      });
+    this.bankService.getAllWithFilters(params).subscribe({
+      next: response => {
+        this.data.load(response.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (
+        this.onLoadToast('error', error.error.message, ''),
+        (this.loading = false)
+      ),
+    });
   }
 
   formDataCourt(data: IBankAccount) {

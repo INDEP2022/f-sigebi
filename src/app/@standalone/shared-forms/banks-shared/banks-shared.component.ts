@@ -91,7 +91,6 @@ export class BanksSharedComponent extends BasePage implements OnInit {
     this.stringBank.next(type.bankCode);
     this.form.updateValueAndValidity();
     //this.objBank.next(this.banks.data[0].bankCode);
-
   }
 
   resetFields(fields: AbstractControl[]) {

@@ -58,5 +58,5 @@ export const COLUMNS = {
   keyOperation: {
     title: 'Giro',
     sort: false,
-  }
+  },
 };

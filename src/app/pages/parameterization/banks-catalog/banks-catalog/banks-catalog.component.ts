@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IBankAccount } from 'src/app/core/models/catalogs/bank-account.model';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { ListBanksComponent } from '../list-banks/list-banks.component';
 
 @Component({
   selector: 'app-banks-catalog',
@@ -22,7 +21,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private bankServ: BankAccountService,
+    private bankServ: BankAccountService
   ) {
     super();
   }
@@ -135,7 +134,6 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
     } else {
       this.rowSelecc = false;
     }
-
   }
   setProperties(data: IBankAccount) {
     this.form.get('square_I').patchValue(data.square);

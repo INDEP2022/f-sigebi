@@ -7,8 +7,9 @@
       <div class="row">
         <div class="col-md-8 col-sm-12 col-xs-12">
           <app-banks-shared [labelName]="'Nombre'" [form]="form" [bankField]="'cveBank'"
-            (nameBank)="form.get('nameBank').patchValue($event)"
-            (stringBank)="form.get('cveBank').patchValue($event)"></app-banks-shared>
+            (nameBank)="form.get('nameBank').patchValue($event)" (stringBank)="
+              form.get('cveBank').patchValue($event)
+            "></app-banks-shared>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 pt-3">
           <form-field [control]="form.get('cveBank')" label="Clave Banco">
@@ -27,7 +28,6 @@
             <input type="text" class="form-control" formControlName="square" />
           </form-field>
         </div>
-
       </div>
       <div class="row mt-2">
         <div class="col-md-6 col-sm-12 col-xs-12">

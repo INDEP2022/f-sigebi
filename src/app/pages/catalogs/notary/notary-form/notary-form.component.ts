@@ -4,7 +4,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
-  EMAIL_PATTERN,
   PHONE_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';

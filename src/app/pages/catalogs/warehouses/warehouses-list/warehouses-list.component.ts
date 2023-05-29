@@ -139,7 +139,7 @@ export class WarehousesListComponent extends BasePage implements OnInit {
             console.log(resp.data[0].name);
             this.warehouses[i].DetManager = resp.data[0].name;
           },
-          error: erro => (console.log(erro)),
+          error: erro => console.log(erro),
           complete: () => {
             if (i == this.warehouses.length - 1) {
               this.warehouses = this.warehouses;
@@ -148,8 +148,8 @@ export class WarehousesListComponent extends BasePage implements OnInit {
               this.data.refresh();
               this.loading = false;
             }
-          }
-        })
+          },
+        });
       } else if (i == this.warehouses.length - 1) {
         this.warehouses = this.warehouses;
         console.log(this.warehouses);
