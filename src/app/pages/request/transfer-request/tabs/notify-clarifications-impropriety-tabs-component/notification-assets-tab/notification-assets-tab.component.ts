@@ -374,7 +374,7 @@ export class NotificationAssetsTabComponent
           if (data.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
             data['clarificationTypeName'] = 'IMPROCEDENCIA';
           }
-          const formatDate = moment(data.rejectionDate).format('DD-MM-YYYY');
+          const formatDate = moment(data.rejectionDate).format('DD/MM/YYYY');
           data.rejectionDate = formatDate;
           return data;
         });
@@ -642,6 +642,7 @@ export class NotificationAssetsTabComponent
       task['programmingId'] = 0;
       task['requestId'] = request.id;
       task['expedientId'] = request.recordId;
+      task['idDelegationRegional'] = user.department;
       task['urlNb'] = url;
       body['task'] = task;
 
@@ -951,7 +952,7 @@ export class NotificationAssetsTabComponent
       const data: ClarificationGoodRejectNotification = {
         rejectNotificationId: this.selectedRow.rejectNotificationId,
         answered: 'IMPROCEDENTE',
-        rejectionDate: '2023-04-30',
+        rejectionDate: '2023-04-30', //Cambiar fecha
       };
       this.rejectedGoodService
         .update(this.selectedRow.rejectNotificationId, data)

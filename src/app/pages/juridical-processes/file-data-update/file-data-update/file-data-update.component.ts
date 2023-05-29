@@ -1,10 +1,8 @@
 /** BASE IMPORT */
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { INotification } from '../../../../core/models/ms-notification/notification.model';
 import {
@@ -34,9 +32,9 @@ export class FileDataUpdateComponent
   columnsType = { ...JURIDICAL_FILE_UPDATE_SEARCH_COLUMNS };
   fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
-    private fb: FormBuilder,
-    private activateRoute: ActivatedRoute,
-    private modalService: BsModalService,
+    // private fb: FormBuilder,
+    // private activateRoute: ActivatedRoute,
+    // private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -44,21 +42,34 @@ export class FileDataUpdateComponent
   ) {
     super();
   }
-
+  wheelNumber: string | null = null;
   ngOnInit(): void {
-    //
+    if (this.docDataService.previousRoute) {
+      this.wheelNumber =
+        this.docDataService.previousRoute?.params?.wheelNumber || null;
+    }
   }
 
   returnToFlyers() {
     this.docDataService.flyersRegistrationParams = {
       pGestOk: 0,
       pNoTramite: null,
-      pNoVolante: null,
+      pNoVolante: this.wheelNumber as any,
       noTransferente: null,
       pSatTipoExp: null,
       pIndicadorSat: null,
     };
-    this.router.navigateByUrl('/pages/documents-reception/flyers-registration');
+
+    this.router.navigate(['/pages/documents-reception/flyers-registration'], {
+      queryParams: {
+        pGestOk: 0,
+        pNoTramite: null,
+        pNoVolante: this.wheelNumber,
+        noTransferente: null,
+        pSatTipoExp: null,
+        pIndicadorSat: null,
+      },
+    });
   }
 
   checkSearchMode(searchMode: boolean) {
@@ -69,17 +80,16 @@ export class FileDataUpdateComponent
   confirm(confirm: boolean) {
     this.confirmSearch = confirm;
     this.changeDetectorRef.detectChanges();
+    // console.log('confirm', confirm);
   }
 
   search(formData: Partial<IJuridicalFileDataUpdateForm>) {
     this.formData = formData;
     this.changeDetectorRef.detectChanges();
-    console.log(formData);
   }
 
   selectData(data: INotification) {
     this.selectedRow = data;
     this.changeDetectorRef.detectChanges();
-    console.log(data);
   }
 }

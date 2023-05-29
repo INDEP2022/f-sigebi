@@ -6,7 +6,7 @@
   <div body>
     <form [formGroup]="turnForm" class="form-material">
       <div class="row">
-        <form-field
+        <!-- <form-field
           class="col-md-2"
           [control]="turnForm.get('wheelNumber')"
           label="No Volante">
@@ -15,9 +15,13 @@
             class="form-control"
             formControlName="wheelNumber"
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-2">
+          <h5>No Volante:</h5>
+          <h6>{{ turnForm.get('wheelNumber').value }}</h6>
+        </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-4"
           [control]="turnForm.get('affair')"
           label="Asunto">
@@ -26,9 +30,13 @@
             type="text"
             formControlName="affair"
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-4">
+          <h5>Asunto:</h5>
+          <h6>{{ turnForm.get('affair').value }}</h6>
+        </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-3"
           [control]="turnForm.get('receiptDate')"
           label="Fec. Recepci&oacute;n">
@@ -37,9 +45,13 @@
             formControlName="receiptDate"
             bsDatepicker
             [readonly]="true" />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-3">
+          <h5>Fec. Recepci&oacute;n:</h5>
+          <h6>{{ turnForm.get('receiptDate').value }}</h6>
+        </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-3"
           [control]="turnForm.get('captureDate')"
           label="Fec. Captura">
@@ -48,10 +60,14 @@
             formControlName="captureDate"
             bsDatepicker
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-3">
+          <h5>Fec. Captura:</h5>
+          <h6>{{ turnForm.get('captureDate').value }}</h6>
+        </div>
       </div>
       <div class="row pt-4 mb-3">
-        <form-field
+        <!-- <form-field
           class="col-md-6"
           [control]="turnForm.get('externalRemitter')"
           label="Remitente">
@@ -59,13 +75,17 @@
             class="form-control"
             formControlName="externalRemitter"
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-6">
+          <h5>Remitente:</h5>
+          <h6>{{ turnForm.get('externalRemitter').value }}</h6>
+        </div>
       </div>
       <hr class="row" />
       <div class="row">
         <div class="col-md-6">
           <p class="font-weight-bold pb-5">Turno anterior</p>
-          <form-field [control]="turnForm.get('prevUser')">
+          <!-- <form-field [control]="turnForm.get('prevUser')">
             <ngx-select
               [form]="turnForm"
               control="prevUser"
@@ -74,7 +94,16 @@
               bindLabel="userAndName"
               [readonly]="true">
             </ngx-select>
-          </form-field>
+          </form-field> -->
+          <small class="font-weight-semibold">Atención</small>
+          <p
+            [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
+            class="font-weight-bold">
+            {{ turnForm.get('prevUser').value?.userAndName }}
+            <ng-container *ngIf="usErrorUserPrev"
+              >El volante no tiene turnados</ng-container
+            >
+          </p>
         </div>
         <div class="col-md-6">
           <p class="font-weight-bold pb-5">Turno nuevo</p>
@@ -169,6 +198,7 @@
           <div class="m-3">
             <confirm-button
               text="Guardar"
+              [disabled]="!turnForm"
               loadingText="Cargando"
               [loading]="loading"
               (confirm)="save()"></confirm-button>

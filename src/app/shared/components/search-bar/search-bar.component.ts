@@ -20,7 +20,7 @@ import { NUMBERS_PATTERN } from '../../../core/shared/patterns';
   selector: 'search-bar',
   template: `
     <div class="form-group form-secondary d-flex">
-      <label class="search-label">{{ label }}</label>
+      <label *ngIf="label" class="search-label">{{ label }}</label>
       <div class="text-search ">
         <input
           type="text"

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +18,6 @@ import { IUserRowSelectEvent } from '../../../../core/interfaces/ng2-smart-table
 import { INotification } from '../../../../core/models/ms-notification/notification.model';
 import { IProceedingDeliveryReception } from '../../../../core/models/ms-proceedings/proceeding-delivery-reception';
 import { IUserAccessAreaRelational } from '../../../../core/models/ms-users/seg-access-area-relational.model';
-import { AffairService } from '../../../../core/services/catalogs/affair.service';
 import { DocReceptionRegisterService } from '../../../../core/services/document-reception/doc-reception-register.service';
 import { CopiesXFlierService } from '../../../../core/services/ms-flier/copies-x-flier.service';
 import { HistoryOfficialService } from '../../../../core/services/ms-historyofficial/historyOfficial.service';
@@ -56,16 +55,16 @@ import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change
           }
         }
       }
+      h6 {
+        color: gray;
+      }
     `,
   ],
 })
 export class RdFShiftChangeComponent extends BasePage implements OnInit {
-  turnForm = this.fb.group({
+  turnForm = new FormGroup({
     wheelNumber: new FormControl<number>(null, Validators.required),
-    affair: new FormControl<string>(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
+    affair: new FormControl<string>(null, [Validators.pattern(STRING_PATTERN)]),
     receiptDate: new FormControl<string | Date>(null, Validators.required),
     captureDate: new FormControl<string | Date>(null, Validators.required),
     externalRemitter: new FormControl<string>(null, [
@@ -97,14 +96,14 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   pageParams: IJuridicalShiftChangeParams = null;
   origin: any;
   constructor(
-    private fb: FormBuilder,
+    // private fb: FormBuilder,
     private modalService: BsModalService,
     private router: Router,
     private route: ActivatedRoute,
     private fileUpdComService: FileUpdateCommunicationService,
     private docRegisterService: DocReceptionRegisterService,
     private notifService: NotificationService,
-    private affairService: AffairService,
+    // private affairService: AffairService,
     private fileUpdateService: JuridicalFileUpdateService,
     private proceedingsDelRecService: ProceedingsDeliveryReceptionService,
     private dictationService: DictationService,
@@ -126,6 +125,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
+    console.log('PARAMS', this.pageParams);
     this.route.queryParamMap.subscribe(params => {
       this.origin = params.get('origin');
     });
@@ -138,10 +138,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     //TODO: Deshablitar controles de fecha
     this.checkParams();
+    // console.log('AQUÍ', this.pageParams.affair);
   }
 
   checkParams() {
-    if (this.pageParams != null) {
+    if (this.pageParams?.iden) {
       if (this.pageParams.iden) {
         this.getNotification();
         this.getDictums();
@@ -149,9 +150,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       if (this.pageParams.exp) {
         this.getProceedings();
       }
+    } else {
+      this.router.navigate(['/pages/juridical/file-data-update']);
     }
   }
 
+  usErrorUserPrev = false;
   getNotification() {
     const param = new FilterParams();
     param.addFilter('wheelNumber', this.pageParams.iden);
@@ -162,6 +166,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           this.notifData = notif;
           this.formControls.wheelNumber.setValue(notif.wheelNumber);
           this.formControls.externalRemitter.setValue(notif.externalRemitter);
+          this.formControls.affair.setValue(this.pageParams.affair.nameAndId);
           this.formControls.receiptDate.setValue(
             format(new Date(notif.receiptDate), 'dd/MM/yyyy')
           );
@@ -170,14 +175,16 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
           );
           this.formControls.captureDate.disable();
           this.formControls.receiptDate.disable();
-          if (notif.affairKey != null)
-            this.affairService.getById(notif.affairKey).subscribe({
-              next: data => {
-                this.formControls.affair.setValue(data.description);
-              },
-            });
+          // if (notif.affairKey != null)
+          //   this.affairService.getById(notif.affairKey).subscribe({
+          //     next: data => {
+          //       this.formControls.affair.setValue(data.description);
+          //     },
+          //   });
           this.fileUpdateService
-            .getRecipientUser({ copyNumber: 1, flierNumber: notif.wheelNumber })
+            .getRecipientUser({
+              /*  copyNumber: 1, */ flierNumber: notif.wheelNumber,
+            })
             .subscribe({
               next: data => {
                 param.removeAllFilters();
@@ -190,10 +197,19 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
                         this.formControls.prevUser.setValue(data.data[0]);
                       }
                     },
-                    error: () => {},
+                    error: error => {
+                      console.log('ERROR', error.error.message);
+                    },
                   });
               },
-              error: () => {},
+              error: () => {
+                this.usErrorUserPrev = true;
+                this.alert(
+                  'error',
+                  'Advertencia',
+                  'El volante no tiene turnados'
+                );
+              },
             });
         }
       },
@@ -208,12 +224,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     this.dictationService.getAllWithFilters(param.getParams()).subscribe({
       next: data => {
         if (data.count > 0) {
-          console.log(data.data);
+          console.log('DICTUMS', data.data);
           this.dictumColumns = data.data;
         }
       },
       error: err => {
-        console.log(err);
+        console.log('DICTUMS', err.error.message);
       },
     });
   }
@@ -263,11 +279,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
         this.loading = false;
-        this.alert(
-          'error',
-          'Turno no actualizado',
-          'Hubo un error al actualizar el turno'
-        );
+        this.alert('error', 'Turno no actualizado', err.error.message);
       },
     });
   }
@@ -336,6 +348,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       });
   }
 
+  // UPDATE DICTÁMENES //
   updateDictums() {
     if (this.selectedDictums.length > 0) {
       this.selectedDictums.forEach(d => {
@@ -352,6 +365,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     }
   }
 
+  // UPDATE ACTAS //
   updateProceedings() {
     if (this.selectedProceedings.length > 0) {
       this.selectedProceedings.forEach(p => {

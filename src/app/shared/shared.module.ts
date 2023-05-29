@@ -31,6 +31,7 @@ import { MaxLengthDirective } from './directives/maxlength.directive';
 import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
+import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
 
@@ -41,6 +42,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     SearchBarComponent,
     ConfirmButtonComponent,
     SelectComponent,
+    CustomSelectWidthLoading,
     SeeMoreComponent,
     ModalComponent,
     CardComponent,
@@ -79,6 +81,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     DividerComponent,
     ConfirmButtonComponent,
     SelectComponent,
+    CustomSelectWidthLoading,
     SeeMoreComponent,
     ModalComponent,
     CardComponent,

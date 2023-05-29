@@ -8,6 +8,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
@@ -29,7 +30,8 @@ export class WarehousesListComponent extends BasePage implements OnInit {
 
   constructor(
     private warehouseService: WarehouseService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tvalTable1Service: TvalTable1Service
   ) {
     super();
     this.settings.columns = WAREHOUSE_COLUMNS;
@@ -77,14 +79,49 @@ export class WarehousesListComponent extends BasePage implements OnInit {
     };
     this.warehouseService.getAll(params).subscribe({
       next: response => {
+        this.getDetType(response);
+      },
+      error: error => {
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
+    });
+  }
+  async getDetType(response: any): Promise<void> {
+    for (let i = 0; i < response.data.length; i++) {
+      const params = new ListParams();
+      params['filter.nmtable'] = `$eq:432`;
+      params['filter.otkey'] = `$eq:${response.data[i].type}`;
+      if (response.data[i].type) {
+        this.tvalTable1Service.getAlls(params).subscribe({
+          next: resp => {
+            console.log(resp.data[0].otvalor);
+            response.data[i].detType = resp.data[0].otvalor;
+          },
+          error: erro => console.log(erro),
+          complete: () => {
+            if (i == response.data.length - 1) {
+              this.warehouses = response.data;
+              console.log(response.data);
+              this.data.load(this.warehouses);
+              this.data.refresh();
+              this.totalItems = response.count;
+              this.loading = false;
+            }
+          },
+        });
+      } else if (i == response.data.length - 1) {
         this.warehouses = response.data;
+        console.log(response.data);
         this.data.load(this.warehouses);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+      }
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
   }
 
   openForm(warehouse?: IWarehouse) {

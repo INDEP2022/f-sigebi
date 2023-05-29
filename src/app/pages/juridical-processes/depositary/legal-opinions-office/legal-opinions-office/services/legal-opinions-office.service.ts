@@ -1,18 +1,35 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
-import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
+import {
+  ICopiesOfficeSendDictation,
+  IDictation,
+  IInitFormLegalOpinionOfficeBody,
+  ITmpDictationCreate,
+  ITmpExpDesahogoB,
+} from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
+import { IDocumentServiceGetFiles } from 'src/app/core/models/ms-documents/idocument.interface';
 import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
+import { IValidaCambioEstatus } from 'src/app/core/models/ms-good/good';
+import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
-import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
+import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation/ms-copies-official-opinion.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
+import { IDocumentService } from 'src/app/core/services/ms-documents/idocument.service';
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,13 +38,20 @@ export class LegalOpinionsOfficeService {
   constructor(
     private msUsersService: UsersService,
     private msCityService: CityService,
-    private msMsDepositaryService: MsDepositaryService,
     private msDictationService: DictationService,
     private msExpedientService: ExpedientService,
     private msOficialDictationService: OficialDictationService,
     private msSsf3SignatureElecDocsService: Ssf3SignatureElecDocsService,
     private msCopiesOfficialOpinionService: CopiesOfficialOpinionService,
-    private msJobDictumTextsService: JobDictumTextsService
+    private msJobDictumTextsService: JobDictumTextsService,
+    private msDictationXGood1Service: DictationXGood1Service,
+    private msProcedureManagement: ProcedureManagementService,
+    private msParametersService: ParametersService,
+    private msGoodprocessService: GoodprocessService,
+    private msNotificationService: NotificationService,
+    private msSecurityService: SecurityService,
+    private msGoodService: GoodService,
+    private msIDocumentService: IDocumentService
   ) {}
 
   getIssuingUserByDetail(params: _Params) {
@@ -39,23 +63,128 @@ export class LegalOpinionsOfficeService {
   getCityByDetail(params: string) {
     return this.msCityService.getAllFiltered(params);
   }
+  // Get Dictaminaciones
   getDictations(params: string) {
     return this.msDictationService.getAllWithFilters(params);
+  }
+  // Save Dictaminaciones
+  saveDictations(body: IDictation) {
+    return this.msDictationService.create(body);
+  }
+  // Update Dictaminaciones
+  updateDictations(body: Partial<IDictation>) {
+    return this.msDictationService.update(body);
+  }
+  // Save TMP Dictaminaciones
+  createTmpDictation(body: ITmpDictationCreate) {
+    return this.msDictationService.createTmpDictation(body);
+  }
+  // Delete TMP Dictaminaciones
+  deleteTmpDictation(id: number) {
+    return this.msDictationService.deleteTmpDictation(id);
   }
   getExpedient(params: ListParams) {
     return this.msExpedientService.getAll(params);
   }
+  // Get Oficio Dictaminaciones
   getOfficeDictation(params: _Params) {
     return this.msOficialDictationService.getAll(params);
+  }
+  // Save Oficio Dictaminaciones
+  saveOfficeDictation(body: IOfficialDictation) {
+    return this.msOficialDictationService.create(body);
+  }
+  // Update Oficio Dictaminaciones
+  updateOfficeDictation(body: Partial<IOfficialDictation>) {
+    return this.msOficialDictationService.update(body);
   }
   getElectronicFirmData(params: _Params) {
     return this.msSsf3SignatureElecDocsService.getAllFiltered(params);
   }
+  // Pendiente
+  deleteElectronicFirmData(body: any) {
+    return this.msSsf3SignatureElecDocsService.deleteElectronicFirm(body);
+  }
+  // Get Copies Dictation
   getOfficeCopiesDictation(params: _Params) {
     return this.msCopiesOfficialOpinionService.getAll(params);
   }
+  // Save Text Oficio Dictaminaciones
+  saveCopiesOfficeDictation(body: ICopiesOfficialOpinion) {
+    return this.msCopiesOfficialOpinionService.create(body);
+  }
+  // Update Text Oficio Dictaminaciones
+  updateCopiesOfficeDictation(body: Partial<ICopiesOfficialOpinion>) {
+    return this.msCopiesOfficialOpinionService.update(body);
+  }
+  // Get text office
   getOfficeTextDictation(params: _Params) {
     return this.msJobDictumTextsService.getAll(params);
+  }
+  // Save Text Oficio Dictaminaciones
+  saveTextOfficeDictation(body: IJobDictumTexts) {
+    return this.msJobDictumTextsService.create(body);
+  }
+  // Update Text Oficio Dictaminaciones
+  updateTextOfficeDictation(body: Partial<IJobDictumTexts>) {
+    return this.msJobDictumTextsService.update(body);
+  }
+  getInitFormDictation(body: IInitFormLegalOpinionOfficeBody) {
+    return this.msDictationService.getInitFormDictation(body);
+  }
+  getInitFormDictation2(body: IInitFormLegalOpinionOfficeBody) {
+    return this.msDictationService.getInitFormDictation2(body);
+  }
+  getCopiesOfficeSendDictation(body: ICopiesOfficeSendDictation) {
+    return this.msDictationService.getCopiesOfficeSendDictation(body);
+  }
+  getInfoUserLogued(params: string) {
+    return this.msUsersService.getInfoUserLogued(params);
+  }
+  getGoods(params: _Params) {
+    return this.msDictationXGood1Service.getAll(params);
+  }
+  getProcedureManagement(params: string) {
+    return this.msProcedureManagement.getAllFiltered(params);
+  }
+  getParameters(params: ListParams) {
+    return this.msParametersService.getAll(params);
+  }
+  getDictaminacionesCount(params: ListParams) {
+    return this.msGoodprocessService.getDictaminacionesCount(params);
+  }
+  getWheelsByFilters(params: _Params) {
+    return this.msNotificationService.getAllFilter(params);
+  }
+  getCuEmisora(params: ListParams) {
+    return this.msGoodprocessService.getCuEmisora(params);
+  }
+  getCuDelRem(params: ListParams) {
+    return this.msGoodprocessService.getCuDelRem(params);
+  }
+  getCuDelDest(params: ListParams) {
+    return this.msGoodprocessService.getCuDelDest(params);
+  }
+  getEtapaByDictation(params: ListParams) {
+    return this.msGoodprocessService.getEtapaByDictation(params);
+  }
+  pupGenMasiv(params: any) {
+    return this.msGoodprocessService.postPupGenMasiv(params);
+  }
+  lovCitiesRegCity(body: any, params: _Params) {
+    return this.msSecurityService.lovCitiesRegCity(body, params);
+  }
+  getPAValidaCambio(body: IValidaCambioEstatus) {
+    return this.msGoodService.PAValidaCambio(body);
+  }
+  createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
+    return this.msDictationService.createTmpExpDesahogoB(body);
+  }
+  saveDocumentFirm(body: any) {
+    return this.msIDocumentService.saveFile(body);
+  }
+  getDocumentsFirm(body: IDocumentServiceGetFiles) {
+    return this.msIDocumentService.getFiles(body);
   }
 
   getTexto3FromOfficeDictation(

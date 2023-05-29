@@ -133,8 +133,9 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   searchGoods(idGood: number | string) {
     // buscar el bien
     this.goodServices.getById(idGood).subscribe({
-      next: response => {
-        this.good = response;
+      next: (response: any) => {
+        console.log(response.data[0]);
+        this.good = response.data[0];
         this.loadActER(this.good.id);
         this.loadDescriptionStatus(this.good.id);
         this.setGood(this.good);

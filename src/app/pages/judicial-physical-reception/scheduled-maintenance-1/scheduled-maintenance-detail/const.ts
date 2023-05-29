@@ -91,6 +91,12 @@ export const columnsGoods = {
       component: DatePickerComponent,
     },
   },
+  agregado: {
+    title: 'Agregado',
+    type: 'string',
+    sort: false,
+    editable: false,
+  },
   tipo_bien: {
     title: 'Tipo Bien',
     type: 'string',
@@ -133,7 +139,7 @@ export const settingsGoods = {
   },
   selectedRowIndex: -1,
   sort: false,
-  hideSubHeader: true,
+  hideSubHeader: false,
   mode: 'inline',
   selectMode: 'multi',
   noDataMessage: 'No se encontrarón registros',
@@ -145,7 +151,7 @@ export const settingsGoods = {
   },
   actions: {
     columnTitle: 'Acciones',
-    position: 'right',
+    position: 'left',
     add: false,
     edit: true,
     delete: true,

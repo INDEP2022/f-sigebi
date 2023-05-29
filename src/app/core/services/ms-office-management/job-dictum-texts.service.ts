@@ -19,11 +19,15 @@ export class JobDictumTextsService extends HttpService {
     );
   }
 
-  update(jobDictumTexts: IJobDictumTexts) {
+  update(jobDictumTexts: Partial<IJobDictumTexts>) {
     return this.put(JobDictumTextsEndpoints.JobDictumTexts, jobDictumTexts);
   }
 
   create(jobDictumTexts: IJobDictumTexts) {
     return this.post(JobDictumTextsEndpoints.JobDictumTexts, jobDictumTexts);
+  }
+
+  remove(body: any) {
+    return this.delete(JobDictumTextsEndpoints.JobDictumTexts, body);
   }
 }

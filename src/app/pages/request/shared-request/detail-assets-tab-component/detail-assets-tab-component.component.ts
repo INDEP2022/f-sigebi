@@ -166,6 +166,7 @@ export class DetailAssetsTabComponentComponent
   ligieUnit: string = '';
   typeOfRequest: string = '';
   detailAssetsInfo: any;
+  subBrand: string = null;
 
   constructor(
     private fb: FormBuilder,
@@ -217,7 +218,6 @@ export class DetailAssetsTabComponentComponent
 
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
-        console.log('inicia<>>>><<<<<>>>>>');
       }
       this.isGoodTypeReadOnly = true;
     }
@@ -226,7 +226,6 @@ export class DetailAssetsTabComponentComponent
       if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        console.log('inicia<>>>><<<<<>>>>>');
         this.getSubBrand(new ListParams(), brand);
       }
     }
@@ -262,16 +261,16 @@ export class DetailAssetsTabComponentComponent
         this.disableDuplicity = true;
       }
 
-      if (this.detailAssets.controls['subBrand'].value) {
+      /*if (this.detailAssets.controls['subBrand'].value) {
         const brand = this.detailAssets.controls['brand'].value;
         this.brandId = brand;
-        console.log('inicia<>>>><<<<<>>>>>');
+        this.subBrand = this.detailAssets.controls['subBrand'].value;
         this.getSubBrand(
           new ListParams(),
           brand,
-          this.detailAssets.controls['subBrand'].value
+          this.subBrand
         );
-      }
+      }*/
     }
     if (this.detailAssets.controls['brand'].value) {
       this.getBrand(
@@ -310,11 +309,11 @@ export class DetailAssetsTabComponentComponent
       this.displayTypeTapInformation(Number(data));
     }
 
-    if (this.detailAssets.controls['subBrand'].value) {
+    /*if (this.detailAssets.controls['subBrand'].value) {
       const brand = this.detailAssets.controls['brand'].value;
       this.brandId = brand;
       this.getSubBrand(new ListParams(), brand);
-    }
+    }*/
 
     if (this.detailAssets.controls['destiny'].value) {
       var destiny = this.detailAssets.controls['destiny'].value;
@@ -367,7 +366,10 @@ export class DetailAssetsTabComponentComponent
     ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
     }
-    this.getBrand(new ListParams(), this.detailAssets.controls['brand'].value);
+
+    if (this.detailAssets.controls['brand'].value == null) {
+      this.getBrand(new ListParams());
+    }
   }
 
   initForm() {
@@ -551,7 +553,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       certLibLienDate: [null],
@@ -629,7 +631,7 @@ export class DetailAssetsTabComponentComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
+          Validators.maxLength(30),
         ],
       ],
       photosAttached: [
@@ -1011,13 +1013,23 @@ export class DetailAssetsTabComponentComponent
       this.getBrand(new ListParams());
     }
   }
+
+  onSubBranchChange(event: any) {
+    if (this.brandId) {
+      this.getSubBrand(new ListParams(), this.brandId);
+    }
+  }
+
   getBrand(params: ListParams, brandId?: string) {
     const filter = new FilterParams();
     filter.page = params.page;
     filter.limit = params.limit;
     filter.addFilter('flexValueMeaning', params.text, SearchFilter.ILIKE);
     if (brandId) {
+      brandId = brandId.toLowerCase();
+      brandId = brandId[0].toUpperCase() + brandId.substring(1);
       filter.addFilter('flexValue', brandId);
+      //filter.search = brandId
     }
 
     this.goodsInvService
@@ -1026,6 +1038,9 @@ export class DetailAssetsTabComponentComponent
       .subscribe({
         next: resp => {
           this.selectBrand = new DefaultSelect(resp.data, resp.count);
+          if (brandId) {
+            this.detailAssets.controls['brand'].setValue(brandId);
+          }
         },
         error: () => {
           this.selectBrand = new DefaultSelect();
@@ -1034,14 +1049,22 @@ export class DetailAssetsTabComponentComponent
   }
 
   getSubBrand(params: ListParams, brandId?: string, description?: string) {
-    const idBrand = brandId ? brandId : this.brandId;
     const filter = new ListParams();
     filter.page = params.page;
     filter.limit = params.limit;
-    filter['filter.carBrand'] = `$eq:${idBrand}`;
+    this.brandId = this.brandId
+      ? this.brandId.toLowerCase()
+      : brandId.toLowerCase();
+    this.brandId = this.brandId
+      ? this.brandId[0].toUpperCase() + this.brandId.substring(1)
+      : brandId[0].toUpperCase() + brandId.substring(1);
+    filter['filter.carBrand'] = `$eq:${this.brandId}`;
     if (description != null) {
-      filter['filter.flexValueMeaningDependent'] = `$ilike:${description}`;
-    } else {
+      description = description.toLowerCase();
+      description = description[0].toUpperCase() + description.substring(1);
+      filter['filter.flexValueMeaningDependent'] = `$eq:${description}`;
+    }
+    if (params.text) {
       filter['filter.flexValueMeaningDependent'] = `$ilike:${params.text}`;
     }
 
@@ -1051,6 +1074,9 @@ export class DetailAssetsTabComponentComponent
       .subscribe({
         next: resp => {
           this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
+          if (description) {
+            this.detailAssets.controls['subBrand'].setValue(description);
+          }
         },
       });
   }
@@ -1461,7 +1487,10 @@ export class DetailAssetsTabComponentComponent
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
-        this.getSubBrand(new ListParams(), data);
+        if (this.detailAssets.controls['subBrand'].value) {
+          const subBrand = this.detailAssets.controls['subBrand'].value;
+          this.getSubBrand(new ListParams(), data, subBrand);
+        }
       }
     });
 

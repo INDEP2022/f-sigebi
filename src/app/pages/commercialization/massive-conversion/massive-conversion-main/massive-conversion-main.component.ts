@@ -24,6 +24,7 @@ import { ComerEventosService } from 'src/app/core/services/ms-event/comer-evento
 import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { environment } from 'src/environments/environment';
 import { AddLcModalComponent } from '../components/add-lc-modal/add-lc-modal.component';
 import { TableCheckPortalDialogComponent } from '../components/table-check-portal-dialog/table-check-portal-dialog.component';
 import { TableCheckboxComponent } from '../components/table-checkbox/table-checkbox.component';
@@ -304,11 +305,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
         formData.append('pmode', 'W');
         let url = '';
         if (type === 'client_id') {
-          url =
-            'http://sigebimsdev.indep.gob.mx/massivecaptureline/api/v1/application/pupInsertRecord';
+          url = `${environment.API_URL}massivecaptureline/api/v1/application/pupInsertRecord`;
         } else {
-          url =
-            'http://sigebimsdev.indep.gob.mx/massivecaptureline/api/v1/application/pupInsertRecordMassively';
+          url = `${environment.API_URL}massivecaptureline/api/v1/application/pupInsertRecordMassively`;
         }
 
         this.httpClient.post(url, formData).subscribe({

@@ -2,6 +2,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IBienesPar } from '../models/bienesPar.model';
+import { columnsFirstCase, columnsSecondCase } from '../models/columns';
 
 export abstract class PartializeGeneralGood {
   formGood: FormGroup;
@@ -10,6 +11,9 @@ export abstract class PartializeGeneralGood {
   // isFirstCase: boolean = false;
   formLoading = false;
   buttonsLoading = false;
+  pageLoading = false;
+  pagedBienesPar: any[] = [];
+  firstCase = true;
   private _bienesPar: IBienesPar[] = [];
   get bienesPar() {
     return this._bienesPar;
@@ -27,17 +31,23 @@ export abstract class PartializeGeneralGood {
   //     delete: true,
   //   }
   // };
-  settingsGoods = {
+  settingsGoodsFirstCase = {
     ...TABLE_SETTINGS,
     actions: false,
+    columns: columnsFirstCase,
+  };
+  settingsGoodsSecondCase = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    columns: columnsSecondCase,
   };
   sumCant = 0;
   sumVal14 = 0;
-  constructor(
-    protected dbPartialize: string,
-    protected dbSelectedGood: string,
-    protected fb: FormBuilder
-  ) {}
+  noActa: number = 0;
+  clasificators: string = '1424, 1426, 1427, 1575, 1590';
+  protected dbPartialize: string;
+  protected dbSelectedGood: string;
+  constructor(protected fb: FormBuilder) {}
 
   get vsum() {
     return !this.validationClasif() ? this.sumCant : this.sumVal14;
@@ -52,7 +62,9 @@ export abstract class PartializeGeneralGood {
   }
 
   validationClasif() {
-    return [1424, 1426, 1427, 1575, 1590].includes(+this.good.goodClassNumber);
+    return this.good
+      ? this.clasificators.includes(this.good.goodClassNumber + '')
+      : false;
   }
 
   savePartializeds() {
@@ -60,11 +72,13 @@ export abstract class PartializeGeneralGood {
   }
 
   saveSelectedGood() {
-    // localStorage.setItem(this.dbSelectedGood, JSON.stringify(this.good));
+    this.bienesPar = [];
+    this.pagedBienesPar = [];
+    localStorage.setItem(this.dbSelectedGood, JSON.stringify(this.good));
   }
 
   getSavedGood(): IGood {
-    return null;
+    // return null;
     const good = localStorage.getItem(this.dbSelectedGood);
     return good ? JSON.parse(good) : null;
   }

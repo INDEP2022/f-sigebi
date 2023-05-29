@@ -148,6 +148,7 @@ export class ChangeOfGoodClassificationComponent
       numberFile: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+
   private buildFormNew() {
     this.formNew = this.fb.group({
       classificationOfGoods: [
@@ -168,10 +169,11 @@ export class ChangeOfGoodClassificationComponent
 
   loadGood() {
     this.loading = true;
+    this.listAtributAct = [];
+    this.refreshTableAct(this.listAtributAct);
     this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
-        console.log(response);
-        this.good = response;
+      next: (response: any) => {
+        this.good = response.data[0];
         this.loadClassifDescription(this.good.goodClassNumber);
         this.loading = false;
         this.classificationOfGoods.enable();
@@ -183,7 +185,6 @@ export class ChangeOfGoodClassificationComponent
   loadClassifDescription(numberClassif: string | number) {
     this.goodSssubtypeService.getClasification(numberClassif).subscribe({
       next: response => {
-        console.log(response);
         this.setGood(this.good, response.data[0]);
       },
       error: err => {
@@ -208,15 +209,18 @@ export class ChangeOfGoodClassificationComponent
       `Se ha cargado correctamente la información del bien No ${good.id}`
     );
   }
+
   accept() {
     //5457740
   }
+
   onChange(event: any) {
     this.getUnitiXClasif();
     this.getEtiqXClasif();
     this.formNew.enable();
     this.btnNewAtribut = false;
   }
+
   getUnitiXClasif() {
     let params = new FilterParams();
     params.addFilter(
@@ -233,6 +237,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   getEtiqXClasif() {
     let params = new FilterParams();
     params.addFilter(
@@ -256,6 +261,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   getDestination() {
     let params = new FilterParams();
     params.addFilter('id', `${this.noEtiqs}`, SearchFilter.IN);
@@ -268,6 +274,7 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   getAtributos(numberClass: string | number, newAtribut: boolean = false) {
     let params = new FilterParams();
     params.addFilter('classifGoodNumber', numberClass, SearchFilter.EQ);
@@ -286,7 +293,16 @@ export class ChangeOfGoodClassificationComponent
       },
     });
   }
+
   newAtribut() {
+    if (this.classificationOfGoods.value === '') {
+      this.onLoadToast(
+        'info',
+        'INformación',
+        'Debe seleccionar un No de clasificación de Bien'
+      );
+      return;
+    }
     this.getAtributos(this.classificationOfGoods.value, true);
   }
   formateObjTabla(array: any[]) {
@@ -301,6 +317,7 @@ export class ChangeOfGoodClassificationComponent
   }
 
   refreshTableAct(array: any[]) {
+    console.log('Refresh', array);
     this.dataAct.load(array);
     this.dataAct.refresh();
   }
@@ -309,8 +326,6 @@ export class ChangeOfGoodClassificationComponent
     this.dataNew.refresh();
   }
   onSaveConfirm(event: any) {
-    console.log(event['newData']);
-
     event.confirm.resolve();
   }
   getOtkeyOtvalue() {
@@ -321,10 +336,7 @@ export class ChangeOfGoodClassificationComponent
           classificationGoodNumber: this.classificationOfGoods.value,
         };
         this.dynamicCatalogsService.getOtkeyOtvalue(filter).subscribe({
-          next: response => {
-            console.log(response.data);
-            console.log(index);
-          },
+          next: response => {},
           error: err => {
             this.onLoadToast('error', 'ERROR', 'Error al cargar los atributos');
           },
@@ -332,11 +344,11 @@ export class ChangeOfGoodClassificationComponent
       }
     });
   }
+
   onChangeValid(event: IAttribClassifGoods) {
     if (event.tableCd !== null) {
-      console.log('Abriendo popup');
-    } else {
       console.log(event);
+    } else {
       this.atributNewSettings.mode = 'inline';
     }
   }
@@ -361,23 +373,27 @@ export class ChangeOfGoodClassificationComponent
         good[`val${atrib.columnNumber}`] = atrib.newVal;
       }
     });
-    this.good = good;
-    this.good.goodClassNumber = this.classificationOfGoods.value;
-    this.good.fileNumber = this.fileNumberNew.value;
-    this.good.unitMeasure = this.unitXClassif.value;
-    this.good.destiny = this.destination.value;
-    this.goodServices.update(this.good).subscribe({
+    const putGood: IGood = {
+      id: Number(good.id),
+      goodId: Number(good.goodId),
+      goodClassNumber: this.classificationOfGoods.value,
+      fileeNumber: this.fileNumberNew.value,
+      unitMeasure: this.unitXClassif.value,
+      destiny: this.destination.value,
+    };
+    this.copiarPropiedades(good, putGood);
+    this.goodServices.update(putGood).subscribe({
       next: response => {
-        console.log(response.data);
         this.onLoadToast(
           'success',
           'ÉXITO',
-          `Se ha actualizado el clasificacion del bien ${this.good.id}`
+          `Se ha actualizado la clasificacion del bien ${this.good.id}`
         );
+        this.listAtributNew = [];
+        this.dataAct.load([]);
+        this.dataAct.refresh();
         this.form.reset();
         this.formNew.reset();
-        this.refreshTableAct([]);
-        this.listAtributNew = [];
       },
       error: err => {
         this.onLoadToast(
@@ -387,5 +403,13 @@ export class ChangeOfGoodClassificationComponent
         );
       },
     });
+  }
+
+  copiarPropiedades(objetoFuente: any, objetoDestino: any) {
+    for (let propiedad in objetoFuente) {
+      if (propiedad.startsWith('val')) {
+        objetoDestino[propiedad] = objetoFuente[propiedad];
+      }
+    }
   }
 }

@@ -5,7 +5,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 
 export const WAREHOUSE_COLUMNS = {
   idWarehouse: {
-    title: 'Registro',
+    title: 'N.Almacen',
     type: 'string',
     sort: false,
   },
@@ -20,15 +20,20 @@ export const WAREHOUSE_COLUMNS = {
     sort: false,
   },
   manager: {
-    title: 'Encargado',
+    title: 'Responsable',
     type: 'string',
     sort: false,
   },
-  registerNumber: {
-    title: 'No. de registro',
+  detType: {
+    title: 'Tipo',
     type: 'string',
     sort: false,
   },
+  // registerNumber: {
+  //   title: 'No. de registro',
+  //   type: 'string',
+  //   sort: false,
+  // },
   stateCode: {
     title: 'Estado',
 
@@ -64,11 +69,6 @@ export const WAREHOUSE_COLUMNS = {
   },
   indActive: {
     title: 'Activo',
-    type: 'string',
-    sort: false,
-  },
-  type: {
-    title: 'Tipo',
     type: 'string',
     sort: false,
   },

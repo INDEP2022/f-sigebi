@@ -1,5 +1,5 @@
-<app-good-form [firstCase]="firstCase"></app-good-form>
-<hr />
+<app-good-form [version]="version"></app-good-form>
+<!-- <hr /> -->
 <form class="form-material mt-5" [formGroup]="form">
   <div class="row">
     <div class="col-md-4">
@@ -23,17 +23,17 @@
     </div>
 
     <div class="col-md-4">
-      <div *ngIf="!firstCase">
+      <div class="saldo">
         <label for="">Saldo: </label>
-        {{ form.get('saldo').value }}
+        <div>{{ form.get('saldo').value }}</div>
       </div>
-      <form-field *ngIf="firstCase" [control]="form.get('saldo')" label="Saldo">
+      <!-- <form-field *ngIf="firstCase" [control]="form.get('saldo')" label="Saldo">
         <input
           type="number"
           class="form-control"
           formControlName="saldo"
           min="1" />
-      </form-field>
+      </form-field> -->
     </div>
   </div>
   <!-- <ol class="c-stepper">
@@ -52,25 +52,42 @@
       <div [class]="statePartialize">
         <div (click)="pressed(1)">1</div>
         <app-partialize-button
+          [version]="version"
           [press]="pressPartialize"
-          [firstCase]="firstCase"></app-partialize-button>
+          (filledRow)="filledRow()"></app-partialize-button>
       </div>
       <div [class]="stateApply">
         <div (click)="pressed(2)">2</div>
         <app-apply-button
-          [press]="pressApply"
-          [firstCase]="firstCase"></app-apply-button>
+          [version]="version"
+          [press]="pressApply"></app-apply-button>
       </div>
       <!-- Second Step -->
     </div>
   </div>
 </form>
 <div
+  *ngIf="firstCase"
   class="pt-2 scroll-table table-responsive"
   [class]="loading ? 'table-loading' : ''">
   <ng2-smart-table
     class="col-md-12"
-    [settings]="settingsGoods"
-    [source]="bienesPar"
+    [settings]="settingsGoddFirstCase"
+    [source]="pagedBienesPar"
     (delete)="deleteRow($event)"></ng2-smart-table>
 </div>
+<div
+  *ngIf="!firstCase"
+  class="pt-2 scroll-table table-responsive"
+  [class]="loading ? 'table-loading' : ''">
+  <ng2-smart-table
+    class="col-md-12"
+    [settings]="settingsGoodsSecondCase"
+    [source]="pagedBienesPar"
+    (delete)="deleteRow($event)"></ng2-smart-table>
+</div>
+<app-pagination
+  [params]="params"
+  [totalItems]="
+    bienesPar.length > 0 ? bienesPar.length - 1 : 0
+  "></app-pagination>

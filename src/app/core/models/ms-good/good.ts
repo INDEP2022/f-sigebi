@@ -725,6 +725,13 @@ export interface IVban {
   ];
 }
 
+export interface IValidaCambioEstatus {
+  p2: number | string | null;
+  p1: number | string | null;
+  p3: string | number | null;
+  p4: string | number | null;
+}
+
 export interface IValNumeOtro {
   pc_pantalla: string;
   no_bien: number;
@@ -745,9 +752,30 @@ export interface GoodGetData {
   screenKey: string;
 }
 
+export interface ILvlPrograma {
+  no_bien: string | number;
+  no_expediente: string | number;
+}
+
 export interface IGoodAndDetailProceeding {
   pTiNumberDeleg: number;
   pTiNumberSubdel: number;
+}
+
+export interface IAcceptGoodStatus {
+  pNumberGood: number | string;
+  pExpedients: number | string;
+}
+
+export interface IAcceptGoodActa {
+  pNumberGood: number | string;
+  pIdentify: string;
+  pVcScreen: string;
+}
+
+export interface IAcceptGoodStatusScreen {
+  pNumberGood: number | string;
+  pVcScreen: string;
 }
 
 // TODO: Checar si la interfaz es la del modelo:
@@ -804,4 +832,18 @@ export interface NoExpediente {
   stationNumber: string;
   authorityNumber: string;
   insertionDatehc?: any;
+}
+
+export interface IAttribGoodBad {
+  id?: number;
+  motive: string;
+  pair1: number;
+  pair2: number;
+  pair3: number;
+  pair4: number;
+}
+
+export interface IGoodSiab {
+  goodNumber: number;
+  status: string;
 }

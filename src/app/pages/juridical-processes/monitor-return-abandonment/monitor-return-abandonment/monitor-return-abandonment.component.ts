@@ -80,6 +80,8 @@ export class MonitorReturnAbandonmentComponent
     };
 
     this._settings.rowClassFunction = (row: any) => {
+      console.log('1', row.data.status);
+      console.log('2', row.data.di_status_final);
       if (
         row.data.status == row.data.di_status_final &&
         row.data.judicialLeaveDate != null
@@ -124,7 +126,7 @@ export class MonitorReturnAbandonmentComponent
 
   public async goodSelect(good: IGood) {
     this.goodData = good;
-
+    console.log();
     // DISABLED BUTTON DECLARACIÓN //
     if (this.id == good.id) {
       this.id = '';
@@ -133,29 +135,32 @@ export class MonitorReturnAbandonmentComponent
       this.validBtn = true;
       this.id = good.id;
     }
-
-    if (good.status != null) {
-      let params = new ListParams();
-      params['filter.status'] = `$ilike:${good.status}`;
-      await this.statusGoodService.getAll(params).subscribe({
-        next: (response: any) => {
-          const data = response.data[0];
-          console.log('a', response);
-          this.form.get('diEstatusBien').setValue(data.description);
-          this.loading = false;
-        },
-        error: err => {
-          this.form
-            .get('diEstatusBien')
-            .setValue('No se encontró estatus del Bien');
-          this.loading = false;
-        },
-      });
+    if (this.id == '') {
+      this.form.get('diEstatusBien').setValue('');
     } else {
-      this.form
-        .get('diEstatusBien')
-        .setValue('El Bien no tiene un estatus asignado');
-      this.loading = false;
+      if (good.status != null) {
+        let params = new ListParams();
+        params['filter.status'] = `$ilike:${good.status}`;
+        await this.statusGoodService.getAll(params).subscribe({
+          next: (response: any) => {
+            const data = response.data[0];
+            console.log('a', response);
+            this.form.get('diEstatusBien').setValue(data.description);
+            this.loading = false;
+          },
+          error: err => {
+            this.form
+              .get('diEstatusBien')
+              .setValue('No se encontró estatus del Bien');
+            this.loading = false;
+          },
+        });
+      } else {
+        this.form
+          .get('diEstatusBien')
+          .setValue('El Bien no tiene un estatus asignado');
+        this.loading = false;
+      }
     }
   }
 
@@ -175,9 +180,11 @@ export class MonitorReturnAbandonmentComponent
 
         if (resp.judicialLeaveDate) {
           if (statusScreen.di_status_final != null) {
+            resp.status = statusScreen.di_status_final;
             // CAMBIAMOS STATUS DEL BIEN POR EL BIEN FINAL OBTENIDO
-            await this.updateStatusGood(resp);
+            // await this.updateStatusGood(resp);
             // APLICAMOS ABANDONO
+
             await this.aplicaAbandono(resp);
           }
         }
@@ -199,7 +206,18 @@ export class MonitorReturnAbandonmentComponent
   }
 
   edit(good: IGood) {
-    this.openModal({ edit: true, good });
+    if (this.id == good.id) {
+      this.id = '';
+      this.validBtn = false;
+    } else {
+      this.validBtn = true;
+      this.id = good.id;
+    }
+    if (this.id == '') {
+      this.form.get('diEstatusBien').setValue('');
+    } else {
+      this.openModal({ edit: true, good });
+    }
   }
 
   openModal(context?: Partial<InputTableComponent>) {
@@ -246,15 +264,19 @@ export class MonitorReturnAbandonmentComponent
   }
 
   public btnDeclaracion() {
-    if (this.goodData.judicialLeaveDate == null) {
-      this.alertInfo(
-        'warning',
-        'Debe capturar primero la fecha de Ratificación Judicial.',
-        ''
-      );
+    if (this.id == '') {
+      this.onLoadToast('warning', 'Debe seleccionar un bien', '');
     } else {
-      const route = `pages/juridical/return-abandonment-monitor/${this.id}`;
-      this.route.navigate([route]);
+      if (this.goodData.judicialLeaveDate == null) {
+        this.alertInfo(
+          'warning',
+          'Debe capturar primero la fecha de Ratificación Judicial.',
+          ''
+        );
+      } else {
+        const route = `pages/juridical/return-abandonment-monitor/${this.id}`;
+        this.route.navigate([route]);
+      }
     }
   }
 
@@ -303,5 +325,17 @@ export class MonitorReturnAbandonmentComponent
         (this.loading = false)
       )
     );
+  }
+
+  Regresar() {
+    const route = `pages/juridical/depositary/notice-of-abandonment-by-return`;
+    this.route.navigate([route]);
+  }
+
+  callForm(event: any) {
+    if (event.target.value) {
+      const route = `pages/general-processes/historical-good-situation`;
+      this.route.navigate([route]);
+    }
   }
 }
