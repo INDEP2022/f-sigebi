@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} Categoria para almacenes</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="warehouseForm">
@@ -33,7 +33,7 @@
         <div class="col-md-4">
           <form-field [control]="warehouseForm.get('municipalityCode')">
             <ngx-select [form]="warehouseForm" [data]="municipalities" bindLabel="description" label="Municipio"
-              value="codeMunicipalityId" (fetchItems)="getMunicipalities($event)" (change)="getLocalitie($event)"
+              value="idMunicipality" (fetchItems)="getMunicipalities($event)" (change)="getLocalitie($event)"
               control="municipalityCode"></ngx-select>
           </form-field>
         </div>

@@ -7,38 +7,38 @@
   <div body>
     <div class="row">
       <div class="col-md-6">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <h6>Tipo de bien</h6>
+        <div class="ch-content" header>
+          <h5 class="title">Tipo de bien</h5>
+          <div class="col-md-5 buttons">
+            <div>
+              <button class="btn btn-primary active btn-sm ml-3" (click)="onSaveConfirm()">
+                Nuevo
+              </button>
+            </div>
           </div>
         </div>
-        <div class="table-responsive">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="typeSettings"
-            [source]="data"
-            (deleteConfirm)="onDeleteConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="typeSettings" [source]="data"
+            (delete)="onDeleteConfirm($event)" (edit)="onSaveConfirm($event)"
+            (rowSelect)="selectTypeGoods($event)"></ng2-smart-table>
+          <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <h6>Subtipo de bien</h6>
+      <div class="col-md-6" *ngIf="rowTypeGoods">
+        <div class="ch-content" header>
+          <h5 class="title">Subtipo de bien</h5>
+          <div class="col-md-5 buttons">
+            <div>
+              <button class="btn btn-primary active btn-sm ml-3" (click)="onSaveConfirm1()">
+                Nuevo
+              </button>
+            </div>
           </div>
         </div>
         <div class="table-responsive">
-          <ng2-smart-table
-            [settings]="subTypeSettings"
-            [source]="data1"
-            (deleteConfirm)="onDeleteConfirm($event)"
-            (editConfirm)="onSaveConfirm1($event)"></ng2-smart-table>
-          <app-pagination
-            [params]="params1"
-            [totalItems]="totalItems1"></app-pagination>
+          <ng2-smart-table [settings]="subTypeSettings" [source]="data1" (delete)="onDeleteConfirm($event)"
+            (edit)="onSaveConfirm1($event)"></ng2-smart-table>
+          <app-pagination [params]="params1" [totalItems]="totalItems1"></app-pagination>
         </div>
       </div>
     </div>
@@ -50,14 +50,9 @@
           </div>
         </div>
         <div class="table-responsive">
-          <ng2-smart-table
-            [settings]="subsubTypeSettings"
-            [source]="data2"
-            (deleteConfirm)="onDeleteConfirm($event)"
+          <ng2-smart-table [settings]="subsubTypeSettings" [source]="data2" (deleteConfirm)="onDeleteConfirm($event)"
             (editConfirm)="onSaveConfirm2($event)"></ng2-smart-table>
-          <app-pagination
-            [params]="params2"
-            [totalItems]="totalItems2"></app-pagination>
+          <app-pagination [params]="params2" [totalItems]="totalItems2"></app-pagination>
         </div>
       </div>
       <div class="col-md-6">
@@ -67,14 +62,9 @@
           </div>
         </div>
         <div class="table-responsive">
-          <ng2-smart-table
-            [settings]="subsubsubTypeSettings"
-            [source]="data3"
-            (deleteConfirm)="onDeleteConfirm($event)"
+          <ng2-smart-table [settings]="subsubsubTypeSettings" [source]="data3" (deleteConfirm)="onDeleteConfirm($event)"
             (editConfirm)="onSaveConfirm3($event)"></ng2-smart-table>
-          <app-pagination
-            [params]="params3"
-            [totalItems]="totalItems3"></app-pagination>
+          <app-pagination [params]="params3" [totalItems]="totalItems3"></app-pagination>
         </div>
       </div>
     </div>

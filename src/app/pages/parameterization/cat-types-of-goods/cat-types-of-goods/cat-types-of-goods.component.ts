@@ -20,6 +20,9 @@ import {
   SUBTYPE_COLUMNS,
   TYPE_COLUMNS,
 } from './cat-types-of-goods-columns';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { CatTypesOfGoodsTypesFormComponent } from '../cat-types-of-goods-types-form/cat-types-of-goods-types-form.component';
+import { CatTypesOfGoodsSubTypeComponent } from '../cat-types-of-goods-sub-type/cat-types-of-goods-sub-type.component';
 
 @Component({
   selector: 'app-cat-types-of-goods',
@@ -62,106 +65,85 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
 
+  rowTypeGoods: boolean = false;
+  idTypeGood: string;
   constructor(
     private goodTypesService: GoodTypeService,
     private goodSubTypesService: GoodSubtypeService,
     private goodSsubtypeService: GoodSsubtypeService,
-    private goodSssubtypeService: GoodSssubtypeService
+    private goodSssubtypeService: GoodSssubtypeService,
+    private modalService: BsModalService,
+
   ) {
     super();
     this.typeSettings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
         add: false,
         position: 'right',
-        width: '10%',
       },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      // add: {
-      //   ...this.settings.add,
-      //   addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      //   createButtonContent:
-      //     '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      //   cancelButtonContent:
-      //     '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      //   confirmCreate: false,
-      // },
-      mode: 'inline',
-      // hideSubHeader: false,
       columns: { ...TYPE_COLUMNS },
     };
     this.subTypeSettings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
         add: false,
         position: 'right',
-        width: '10%',
+        // width: '10%',
       },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      mode: 'inline',
       // hideSubHeader: false,
       columns: { ...SUBTYPE_COLUMNS },
     };
-    this.subsubTypeSettings = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: false,
-        add: false,
-        position: 'right',
-        width: '10%',
-      },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      mode: 'inline',
-      // hideSubHeader: false,
-      columns: { ...SUBSUBTYPE_COLUMNS },
-    };
-    this.subsubsubTypeSettings = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: false,
-        add: false,
-        position: 'right',
-        width: '10%',
-      },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      mode: 'inline',
-      // hideSubHeader: false,
-      columns: { ...SUBSUBSUBTYPE_COLUMNS },
-    };
+    // this.subsubTypeSettings = {
+    //   ...this.settings,
+    //   actions: {
+    //     columnTitle: 'Acciones',
+    //     edit: true,
+    //     delete: false,
+    //     add: false,
+    //     position: 'right',
+    //     width: '10%',
+    //   },
+    //   edit: {
+    //     ...this.settings.edit,
+    //     saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+    //     cancelButtonContent:
+    //       '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+    //     confirmSave: true,
+    //   },
+    //   mode: 'inline',
+    //   // hideSubHeader: false,
+    //   columns: { ...SUBSUBTYPE_COLUMNS },
+    // };
+    // this.subsubsubTypeSettings = {
+    //   ...this.settings,
+    //   actions: {
+    //     columnTitle: 'Acciones',
+    //     edit: true,
+    //     delete: false,
+    //     add: false,
+    //     position: 'right',
+    //     width: '10%',
+    //   },
+    //   edit: {
+    //     ...this.settings.edit,
+    //     saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+    //     cancelButtonContent:
+    //       '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+    //     confirmSave: true,
+    //   },
+    //   mode: 'inline',
+    //   // hideSubHeader: false,
+    //   columns: { ...SUBSUBSUBTYPE_COLUMNS },
+    // };
   }
 
   ngOnInit(): void {
@@ -286,8 +268,16 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
-  getSubExample() {
+  selectTypeGoods(event: any) {
+    this.rowTypeGoods = true;
+    this.idTypeGood = event.data.id;
+    this.getSubExample(event.data.id);
+  }
+  getSubExample(id?: string) {
     this.loading = true;
+    if (id) {
+      this.params1.getValue()['filter.idTypeGood'] = id;
+    }
     let params = {
       ...this.params1.getValue(),
       ...this.columnFilters1,
@@ -337,40 +327,61 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
-  onSaveConfirm(event: any) {
-    this.loading = true;
-    this.goodTypesService
-      .update(event['newData'].id, event['newData'])
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
-    event.confirm.resolve();
+  onSaveConfirm(event?: any) {
+
+    const data = event != null ? event.data : null;
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getExample());
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CatTypesOfGoodsTypesFormComponent, config);
   }
-  onSaveConfirm1(event: any) {
-    this.loading = true;
-    let value = {
-      id: event['newData'].id,
-      idTypeGood: event['newData'].idTypeGood.id,
-      nameSubtypeGood: event['newData'].nameSubtypeGood,
-      noPhotography: event['newData'].noPhotography,
-      descriptionPhotography: event['newData'].descriptionPhotography,
-      noRegister: event['newData'].noRegister,
-      version: event['newData'].version,
-      creationUser: event['newData'].creationUser,
-      creationDate: event['newData'].creationDate,
-      editionUser: event['newData'].editionUser,
-      modificationDate: event['newData'].modificationDate,
+  onSaveConfirm1(event?: any) {
+    // this.loading = true;
+    // let value = {
+    //   id: event['newData'].id,
+    //   idTypeGood: event['newData'].idTypeGood.id,
+    //   nameSubtypeGood: event['newData'].nameSubtypeGood,
+    //   noPhotography: event['newData'].noPhotography,
+    //   descriptionPhotography: event['newData'].descriptionPhotography,
+    //   noRegister: event['newData'].noRegister,
+    //   version: event['newData'].version,
+    //   creationUser: event['newData'].creationUser,
+    //   creationDate: event['newData'].creationDate,
+    //   editionUser: event['newData'].editionUser,
+    //   modificationDate: event['newData'].modificationDate,
+    // };
+
+    // event.confirm.resolve();
+
+    const data = event != null ? event.data : null;
+    const idTypeGood = this.idTypeGood;
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        idTypeGood,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getSubExample());
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
-    const ids = {
-      id: event['newData'].id,
-      idTypeGood: event['newData'].idTypeGood.id,
-    };
-    this.goodSubTypesService.updateByIds(ids, value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-    event.confirm.resolve();
+    this.modalService.show(CatTypesOfGoodsSubTypeComponent, config);
   }
   onSaveConfirm2(event: any) {
     let value = {

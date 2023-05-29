@@ -75,23 +75,23 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
         ]),
       ],
       manager: [null, Validators.compose([Validators.pattern(STRING_PATTERN)])],
-      registerNumber: [null, Validators.compose([Validators.pattern('')])],
+      registerNumber: [null],
       stateCodeID: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([Validators.required]),
       ],
       stateCode: [null],
       cityCodeID: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([Validators.required]),
       ],
       cityCode: [null],
       municipalityCodeID: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([Validators.required]),
       ],
       municipalityCode: [null],
-      localityCodeID: [null, Validators.compose([Validators.pattern('')])],
+      localityCodeID: [null],
       localityCode: [null],
       indActive: [null],
       type: [
@@ -249,7 +249,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   }
   getMunicipalitie(data: any) {
     this.localities = new DefaultSelect([], 0, true);
-    this.warehouseForm.controls['municipalityCode'].setValue(null);
+    // this.warehouseForm.controls['municipalityCode'].setValue(null);
     this.warehouseForm.controls['localityCode'].setValue(null);
     this.getMunicipalities(new ListParams(), data.state);
   }
