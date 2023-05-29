@@ -32,7 +32,8 @@ import { RegisterAttributesTypesModalComponent } from '../register-attributes-ty
 })
 export class RegisterAttributesTypesComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   columns: any[] = [];
   totalItems: number = 0;
@@ -239,7 +240,6 @@ export class RegisterAttributesTypesComponent
   }
 
   onSssubtypesChange(sssubtype: any) {
-
     if (!this.type.value || !this.subtype.value || !this.ssubtype.value) {
       console.log(sssubtype);
       this.types = new DefaultSelect([sssubtype.numType], 1);

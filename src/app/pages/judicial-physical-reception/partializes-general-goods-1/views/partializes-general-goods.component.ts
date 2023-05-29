@@ -15,9 +15,8 @@ export class PartializesGeneralGoodsComponent {
   constructor(
     private location: Location,
     private route: ActivatedRoute,
-    private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service,
-  ) // private service2: PartializeGeneralGoodV2Service
-  {}
+    private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service, // private service2: PartializeGeneralGoodV2Service
+  ) {}
 
   // get service() {
   //   return this.version === 1 ? this.service1 : this.service2;

@@ -49,13 +49,7 @@ export class NotaryFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      phone: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(PHONE_PATTERN),
-        ],
-      ],
+      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
       email: [null, [Validators.required, Validators.email]],
       registryNumber: [null],
     });
