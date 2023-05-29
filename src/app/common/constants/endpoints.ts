@@ -122,7 +122,7 @@ export enum ENDPOINT_LINKS {
   ZipCode = 'catalog/zip-code', //
   IndicatorsParameter = 'parametergood/indicators-parameter',
   DetailIndParameter = 'parametergood/detalle-ind-parametro',
-  parametergood = 'parametergood/tmp-max-cierre-acta-dev',
+  parametergood = 'parametergood/time-max-close-certificate-dev',
   parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
   WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',

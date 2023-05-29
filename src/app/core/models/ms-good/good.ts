@@ -842,3 +842,8 @@ export interface IAttribGoodBad {
   pair3: number;
   pair4: number;
 }
+
+export interface IGoodSiab {
+  goodNumber: number;
+  status: string;
+}
