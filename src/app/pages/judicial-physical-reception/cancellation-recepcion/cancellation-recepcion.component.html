@@ -4,64 +4,110 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
+      <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
             <div class="col-md-9">
-              <form-field [control]="form.get('expediente')" label="Expediente">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="expediente" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
               <button
-                [disabled]="
-                  form.get('expediente').value == null ||
-                  form.get('expediente').value < 0
-                "
                 id="expedient-number"
                 class="btn btn-primary btn-sm active"
                 (click)="goodsByExpediente()">
                 Buscar
               </button>
+              <span>{{ statusProceeding }}</span>
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="row">
-            <span>{{ statusProceeding }}</span>
-            <!--  <div class="col-md-9">
-              <form-field
-                [control]="form.get('averPrev')"
-                label="Averiguaci&oacute;n Previa">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="averPrev" />
-              </form-field>
-            </div> -->
+          <div *ngIf="searchByOtherData" class="row">
+            <div class="row mt-3">
+              <ngx-select
+                control="listExpedients"
+                label="Expedientes"
+                bindLabel="id"
+                (change)="selectExpedient($event)"
+                [data]="dataExpedients"
+                [searchable]="false"
+                [form]="form"></ngx-select>
+            </div>
           </div>
         </div>
         <div *ngIf="navigateProceedings" class="col-md-4">
+          <span>Navegación de actas</span>
           <div class="row">
             <div class="col-md-9">
               <button
                 id="expedient-number"
                 [disabled]="!prevProce"
-                class="btn btn-secondary btn-sm active mr-2"
+                class="btn btn-secondary btn-sm active"
                 (click)="prevProceeding()">
-                Anterior
+                <i class="fa fa-angle-left"></i>
               </button>
+              <span class="mr-3 ml-3">{{
+                numberProceeding + 1 > proceedingData.length
+                  ? 'Nuevo'
+                  : numberProceeding + 1
+              }}</span>
               <button
                 id="expedient-number"
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"
                 (click)="nextProceeding()">
-                Siguiente
+                <i class="fa fa-angle-right"></i>
+              </button>
+              <button
+                *ngIf="newAct"
+                id="expedient-number"
+                class="btn btn-primary btn-sm active ml-4">
+                Nueva acta
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-md-4">
+          <div class="col-md-9">
+            <form-field [control]="form.get('expediente')" label="Expediente">
+              <input
+                (ngModelChange)="
+                  toggleByLength('expedient-number', 'expediente')
+                "
+                [max-length]="10"
+                [class]="blockExpedient ? 'disabled' : ''"
+                [min]="0"
+                type="number"
+                class="form-control"
+                formControlName="expediente" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field
+              [control]="form.get('averPrev')"
+              label="Averiguaci&oacute;n Previa">
+              <input
+                (ngModelChange)="toggleByLength('expedient-number', 'averPrev')"
+                [max-length]="40"
+                type="string"
+                class="form-control"
+                formControlName="averPrev" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <form-field [control]="form.get('causaPenal')" label="Causa penal">
+              <input
+                (ngModelChange)="
+                  toggleByLength('expedient-number', 'causaPenal')
+                "
+                [max-length]="40"
+                type="string"
+                class="form-control"
+                formControlName="causaPenal" />
+            </form-field>
           </div>
         </div>
       </div>
@@ -69,22 +115,18 @@
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
-              <form-field [control]="form.get('acta')" label="Acta 1">
-                <select
+            <div class="col-md-1">
+              <form-field [control]="form.get('acta')">
+                <ngx-select
                   id="acta"
-                  class="form-control"
-                  formControlName="acta"
+                  (change)="changeAct()"
                   [class]="initialBool ? 'disabled' : ''"
-                  (change)="changeAct()">
-                  <option *ngFor="let record of records" [value]="record">
-                    {{ record }}
-                  </option>
-                </select>
-                <!--   <ngx-select
                   control="acta"
-                  [form]="form"
-                  [data]="itemsSelect"></ngx-select> -->
+                  label="Acta"
+                  bindLabel=""
+                  [data]="records"
+                  [searchable]="false"
+                  [form]="form"></ngx-select>
               </form-field>
             </div>
             <div class="col-md-2">
@@ -100,7 +142,7 @@
                   [form]="form"></ngx-select>
               </form-field>
             </div>
-            <div class="col">
+            <div class="col-md-1">
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
@@ -110,19 +152,17 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <div class="col">
-                <form-field [control]="form.get('recibe')">
-                  <ngx-select
-                    (fetchItems)="getRecibe($event)"
-                    id="transfer"
-                    [class]="initialBool ? 'disabled' : ''"
-                    control="recibe"
-                    label="Recibe"
-                    bindLabel="delegation"
-                    [data]="recibeSelect"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
+              <form-field [control]="form.get('recibe')">
+                <ngx-select
+                  (fetchItems)="getRecibe($event)"
+                  id="transfer"
+                  [class]="initialBool ? 'disabled' : ''"
+                  control="recibe"
+                  label="Recibe"
+                  bindLabel="delegation"
+                  [data]="recibeSelect"
+                  [form]="form"></ngx-select>
+              </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="form.get('admin')">
@@ -208,6 +248,7 @@
                   bsDatepicker
                   (ngModelChange)="fecElab()"
                   class="form-control"
+                  [class]="!isEnableFecElab ? 'disabled' : ''"
                   [maxDate]="maxDate"
                   formControlName="fecElab" />
               </form-field>
@@ -244,6 +285,7 @@
             <textarea
               rows="3"
               class="form-control"
+              [class]="!isEnableDireccion ? 'disabled' : ''"
               formControlName="direccion"></textarea>
           </form-field>
         </div>
@@ -255,6 +297,7 @@
             <textarea
               rows="3"
               class="form-control"
+              [class]="!isEnableObservaciones ? 'disabled' : ''"
               formControlName="observaciones"></textarea>
           </form-field>
         </div>
@@ -269,6 +312,7 @@
               <input
                 type="text"
                 class="form-control"
+                [class]="!isEnableAutoridadCancela ? 'disabled' : ''"
                 formControlName="autoridadCancela" />
             </form-field>
           </div>
@@ -277,25 +321,35 @@
               <input
                 type="text"
                 class="form-control"
+                [class]="!isEnableElabora ? 'disabled' : ''"
                 formControlName="elabora" />
             </form-field>
           </div>
           <div class="col">
             <form-field
               [control]="form.get('testigo')"
-              label="Testigo de la Contrataci&oacute;n">
+              label="Testigo de la Contratalor&iacute;a">
               <input
                 type="text"
                 class="form-control"
+                [class]="!isEnableTestigo ? 'disabled' : ''"
                 formControlName="testigo" />
             </form-field>
           </div>
         </div>
       </div>
       <hr class="row" />
-      <div class="row mb-4">
+      <div class="row mb-5">
         <div class="d-flex justify-content-center">
           <div>
+            <button
+              type="button"
+              [class]="btnCSSAct"
+              class="btn btn-primary btn-sm active mr-2 ml-2"
+              (click)="saveButton()"
+              size="small">
+              Guardar
+            </button>
             <button
               type="button"
               [class]="btnCSSAct"
@@ -343,7 +397,7 @@
                 [control]="form.get('folioEscaneo')"
                 label="Folio de Escaneo">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
                   formControlName="folioEscaneo" />
               </form-field>
@@ -383,6 +437,7 @@
             label="Estatus ">
             <input
               type="text"
+              (dblclick)="goToHistorico()"
               class="form-control"
               [readOnly]="true"
               formControlName="estatusPrueba" />
@@ -400,20 +455,29 @@
       </div>
 
       <div class="row pt-2">
-        <div class="col-md-12 text-center">
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            [disabled]="dataGoodAct['data'].length == 0"
-            (click)="deleteGoods()">
-            <i class="fa fa-angle-up"></i>
-          </button>
-          <button
-            type="button"
-            class="mx-2 btn btn-secondary btn-sm active"
-            (click)="addGood()">
-            <i class="fa fa-angle-down"></i>
-          </button>
+        <div class="col-md-12 d-flex justify-content-center">
+          <div class="d-flex justify-content-center align-items-sm-center">
+            <div class="col-md-3">
+              <label for="">Eliminar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!dataGoodAct"
+                (click)="deleteGoods()">
+                <i class="fa fa-angle-up"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <label for="">Agregar</label>
+              <button
+                type="button"
+                class="mx-2 btn btn-secondary btn-sm active"
+                [disabled]="!act2Valid"
+                (click)="addGood()">
+                <i class="fa fa-angle-down"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -434,6 +498,7 @@
           <input
             type="text"
             class="form-control"
+            (dblclick)="goToHistorico()"
             [readOnly]="true"
             formControlName="estatusBienActa" />
         </form-field>

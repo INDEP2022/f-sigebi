@@ -124,9 +124,14 @@ export class CaptureFormalizingLawyersComponent
     this.comerNotariesTercsService.remove(id).subscribe({
       next: () => {
         this.getLawyers(),
-          this.alert('success', 'ABOGADO FORMALIZADOR', 'Borrado');
+          this.alert('success', 'ABOGADO FORMALIZADOR', 'Eliminado');
       },
-      error(err) {
+      error: err => {
+        this.alert(
+          'error',
+          'ABOGADO FORMALIZADOR',
+          'Error al intentar eliminar'
+        );
         console.log('ERROR', err);
       },
     });

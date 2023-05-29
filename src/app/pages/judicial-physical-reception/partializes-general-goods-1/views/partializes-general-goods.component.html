@@ -1,13 +1,14 @@
+<button class="btn btn-sm btn-return" (click)="back()">
+  <i class="bx bx-chevron-left float-icon"></i> Regresar
+</button>
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      Parcializaci&oacute;n de Bienes Generales {{ version }}
-    </h5>
+    <h5 class="title">Parcializaci&oacute;n de Bienes Generales</h5>
   </div>
   <div body>
     <div id="partializes-general-goods">
-      <form-loader *ngIf="pageLoading"></form-loader>
-      <app-partialize-view [version]="version"></app-partialize-view>
+      <form-loader *ngIf="pageLoading" [greater]="true"></form-loader>
+      <app-partialize-view></app-partialize-view>
 
       <!-- <tabset>
         <tab [heading]="clasificators">

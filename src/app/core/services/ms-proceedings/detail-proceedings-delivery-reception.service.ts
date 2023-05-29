@@ -25,6 +25,13 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
   }
 
+  editDetailProcee(model: IDetailProceedingsDeliveryReception) {
+    return this.put(
+      ProceedingsEndpoints.DetailProceedingsDeliveryReception,
+      model
+    );
+  }
+
   addGoodToProceedings(model: Partial<IDetailProceedingsDeliveryReception>) {
     return this.post(
       ProceedingsEndpoints.DetailProceedingsDeliveryReception,
@@ -44,5 +51,12 @@ export class DetailProceeDelRecService extends HttpService {
       'detail-proceedings-delivery-reception',
       params
     );
+  }
+
+  remove(numberGood: string | number, numberProceedings: string | number) {
+    return this.delete('detail-proceedings-delivery-reception', {
+      numberGood,
+      numberProceedings,
+    });
   }
 }

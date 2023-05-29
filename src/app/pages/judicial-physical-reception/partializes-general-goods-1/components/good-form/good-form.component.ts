@@ -11,7 +11,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { AlertButton } from '../../../scheduled-maintenance-1/models/alert-button';
-import { PartializeGeneralGoodV2Service } from '../../services/partialize-general-good-v2.service';
 import { PartializeGeneralGoodService } from '../../services/partialize-general-good.service';
 
 @Component({
@@ -26,12 +25,12 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   // moreParams: string[] = [];
   goodFilter = SearchFilter.EQ;
   toggleInformation = true;
-  firstCase = true;
+  // firstCase = true;
   // operator = SearchFilter.LIKE;
   constructor(
-    private service1: PartializeGeneralGoodService,
+    private service: PartializeGeneralGoodService,
     // private serviceTab2: PartializeGeneralGoodTab2Service,
-    private service2: PartializeGeneralGoodV2Service,
+    // private service2: PartializeGeneralGoodV2Service,
     // private service2Tab2: PartializeGeneralGoodV2Tab2Service,
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
@@ -39,9 +38,13 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     private statusScreenService: StatusXScreenService
   ) {
     super();
+    // this.form.get('noBien').valueChanges.subscribe({next:response => {
+    //   this.resetForm();
+    // }})
   }
 
   searchGood() {
+    this.resetForm();
     this.goodService.getByGoodNumber(this.noBien.value).subscribe({
       next: response => {
         console.log(response);
@@ -67,7 +70,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // }
     // this.moreParams = [];
     this.service.initFormGood();
-    this.selectGood(this.service.getSavedGood());
+    // this.selectGood(this.service.getSavedGood());
     // if (this.firstCase === true) {
     // this.service.initFormGood();
     // this.selectGood(this.serviceTab1.getSavedGood());
@@ -92,16 +95,16 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // }
   }
 
-  get service() {
-    return this.version === 1 ? this.service1 : this.service2;
-    // return this.version === 1
-    //   ? this.firstCase === true
-    //     ? this.serviceTab1
-    //     : this.serviceTab2
-    //   : this.firstCase === true
-    //     ? this.service2Tab1
-    //     : this.service2Tab2;
-  }
+  // get service() {
+  //   return this.version === 1 ? this.service1 : this.service2;
+  //   // return this.version === 1
+  //   //   ? this.firstCase === true
+  //   //     ? this.serviceTab1
+  //   //     : this.serviceTab2
+  //   //   : this.firstCase === true
+  //   //     ? this.service2Tab1
+  //   //     : this.service2Tab2;
+  // }
 
   get formLoading() {
     return this.service.formLoading;
@@ -125,6 +128,14 @@ export class GoodFormComponent extends AlertButton implements OnInit {
 
   get formControl() {
     return this.service.formControl;
+  }
+
+  get firstCase() {
+    return this.service.firstCase;
+  }
+
+  set firstCase(value) {
+    this.service.firstCase = value;
   }
 
   // get goodsList() {
@@ -219,6 +230,10 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     return this.service.good;
   }
 
+  get goodId() {
+    return this.good ? this.good.goodId : null;
+  }
+
   private async validateGood(good: IGood) {
     let mensaje = await firstValueFrom(
       this.goodService.getValigFlag(good.goodId)
@@ -268,35 +283,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         process: good.extDomProcess,
       })
     );
-    /**
-     * BEGIN
-         SELECT NVL(MAX(NO_ACTA),0)
-           INTO vno_acta
-           FROM DETALLE_ACTA_ENT_RECEP
-          WHERE NO_ACTA IN (SELECT NO_ACTA
-                              FROM ACTAS_ENTREGA_RECEPCION
-                             WHERE TIPO_ACTA = 'EVENTREC')
-            AND NO_BIEN = :BIENES.NO_BIEN;
-
-         IF vno_acta > 0 THEN
-            SELECT COUNT(0)
-              INTO v_cuantos
-              FROM ESTATUS_X_PANTALLA
-             WHERE CVE_PANTALLA = 'FINDICA_0035_1'
-               AND ACCION = 'RF'
-               AND ESTATUS_FINAL = :BIENES.ESTATUS
-               AND PROCESO_EXT_DOM = :BIENES.PROCESO_EXT_DOM;
-
-            IF v_cuantos = 0 THEN
-               vno_acta := 0;
-            END IF;
-         END IF;
-
-      EXCEPTION
-         WHEN OTHERS THEN
-            vno_acta := 0;
-      END;
-     */
   }
 
   async selectGoodContent(good: IGood) {
@@ -377,12 +363,12 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         this.service.formControl.get('saldo').setValue(good.quantity);
       }
     } else {
-      this.service.good = good;
-      if ([62, 1426, 1424].includes(+good.goodClassNumber)) {
-        this.saldo.setValue(good.val2);
-      } else {
-        this.saldo.setValue(good.quantity);
-      }
+      // this.service.good = good;
+      // if ([62, 1426, 1424].includes(+good.goodClassNumber)) {
+      //   this.saldo.setValue(good.val2);
+      // } else {
+      //   this.saldo.setValue(good.quantity);
+      // }
     }
     this.service.saveSelectedGood();
     const statusGood = good.status

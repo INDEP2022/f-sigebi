@@ -33,15 +33,21 @@ export class ScheduledMaintenanceComponent
   constructor(
     private modalService: BsModalService,
     protected override fb: FormBuilder,
-    protected override service: ProceedingsDeliveryReceptionService,
+    protected override deliveryService: ProceedingsDeliveryReceptionService,
     protected override detailService: ProceedingsDetailDeliveryReceptionService,
     private router: Router
   ) {
-    super(fb, service, detailService, 'filtersActa');
+    super(fb, deliveryService, detailService, 'filtersActa');
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
-      actions: { ...this.settings1.actions, delete: true },
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'left',
+        add: false,
+        edit: true,
+        delete: true,
+      },
     };
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
@@ -101,7 +107,7 @@ export class ScheduledMaintenanceComponent
       'Desea eliminar estos registros?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.service.deleteMasive(this.selecteds).subscribe({
+        this.deliveryService.deleteMasive(this.selecteds).subscribe({
           next: response => {
             console.log(response);
             const removeds: string[] = [];
@@ -154,7 +160,7 @@ export class ScheduledMaintenanceComponent
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.service.deleteById(item).subscribe({
+        this.deliveryService.deleteById(item).subscribe({
           next: response => {
             console.log(response);
             this.getData();
@@ -187,8 +193,8 @@ export class ScheduledMaintenanceComponent
       {
         title: 'Actas por Bien',
         columnsType: { ...ACTAS_BY_GOOD_COLUMNS },
-        service: this.service,
-        dataObservableId: this.service.getByGoodId,
+        service: this.deliveryService,
+        dataObservableId: this.deliveryService.getByGoodId,
         searchFilter: null,
         showError: false,
         initialCharge: false,

@@ -5,18 +5,21 @@
   <div body>
     <form [formGroup]="responseForm" class="form-material">
       <form-field
-        [control]="responseForm.get('idWarehouse')"
+        [control]="responseForm.get('nbidnewstore')"
         label="Id almac&eacute;n">
-        <input type="text" class="form-control" formControlName="idWarehouse" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nbidnewstore" />
       </form-field>
       <div class="row pt-4">
         <form-field
-          [control]="responseForm.get('observation')"
+          [control]="responseForm.get('nbobservation')"
           label="Observaci&oacute;n">
           <input
             type="text"
             class="form-control"
-            formControlName="observation" />
+            formControlName="nbobservation" />
         </form-field>
       </div>
     </form>

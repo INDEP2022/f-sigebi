@@ -3,9 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { PartializesGeneralGoodsComponent } from './views/partializes-general-goods.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'v1' },
-  { path: 'v1', component: PartializesGeneralGoodsComponent },
-  { path: 'v2', component: PartializesGeneralGoodsComponent },
+  // { path: '', pathMatch: 'full', redirectTo: 'v1' },
+  { path: '', component: PartializesGeneralGoodsComponent },
+  // { path: 'v2', component: PartializesGeneralGoodsComponent },
   // {
   //   path:'',component:Par
   // }

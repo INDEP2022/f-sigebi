@@ -141,3 +141,19 @@ export async function getDataFromExcel<T = any>(file: File): Promise<T[]> {
   const sheetNames = workbook.SheetNames;
   return utils.sheet_to_json<T>(workbook.Sheets[sheetNames[0]]);
 }
+
+export function goFormControlAndFocus(formControlName: string) {
+  try {
+    const formControl = document.querySelector(
+      `[formcontrolname="${formControlName}"]`
+    ) as HTMLInputElement;
+    formControl.scrollIntoView({
+      inline: 'center',
+      behavior: 'smooth',
+    });
+    console.log({ formControl });
+    formControl.focus();
+  } catch (error) {
+    console.log(error);
+  }
+}

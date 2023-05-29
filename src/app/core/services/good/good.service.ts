@@ -9,7 +9,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
-import { IAttribGoodBad } from '../../models/ms-good/good';
+import { IAttribGoodBad, IGoodSiab } from '../../models/ms-good/good';
 
 @Injectable({
   providedIn: 'root',
@@ -120,6 +120,13 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
   ): Observable<IListResponse<IAttribGoodBad>> {
     return this.get<IListResponse<IAttribGoodBad>>(
       GoodEndpoints.AttribGoodBad,
+      params
+    );
+  }
+
+  getGoodSiabAll(params?: _Params): Observable<IListResponse<IGoodSiab>> {
+    return this.get<IListResponse<IGoodSiab>>(
+      GoodEndpoints.GoodGetSiab,
       params
     );
   }

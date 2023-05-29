@@ -1,15 +1,8 @@
-<form class="form-material" [formGroup]="form">
+<form class="form-material" [formGroup]="form" id="proceeding-info">
   <div class="row border border-dark">
     <div class="row header-proceeding-info">
       <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
       <div class="col-md-6 buttons">
-        <div class="col-md-6">
-          <app-clean-filters-shared
-            [form]="form"
-            (cleanFiltersEvent)="
-              deleteProceedings()
-            "></app-clean-filters-shared>
-        </div>
         <div class="col-md-6">
           <button
             [class]="disabled || form.invalid || registro ? 'disabled' : ''"
@@ -18,6 +11,21 @@
             <i class="fa fa-search"></i> Filtrar
           </button>
         </div>
+        <div class="col-md-6">
+          <app-clean-filters-shared
+            [form]="form"
+            (cleanFiltersEvent)="
+              deleteProceedings()
+            "></app-clean-filters-shared>
+        </div>
+        <!-- <div class="col-md-6">
+          <button
+            [class]="disabled || form.invalid || !registro ? 'disabled' : ''"
+            class="btn btn-primary btn-sm active"
+            (click)="filter()">
+            <i class="fa fa-trash"></i> Eliminar
+          </button>
+        </div> -->
       </div>
     </div>
     <div class="col-md-6 mt-5">
@@ -77,7 +85,7 @@
               type="text"
               class="form-control"
               formControlName="cveActa"
-              maxlength="30"
+              maxlength="60"
               [readonly]="loading" />
           </form-field>
         </div>
@@ -95,14 +103,36 @@
         </div>
       </div>
       <div class="row mb-4">
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <app-proceeding-types-shared
             [form]="form"
             formField="tipoActa"
             label="Tipo Acta"
             [readonly]="disabled"></app-proceeding-types-shared>
+        </div> -->
+        <div class="col-12">
+          <form-field [control]="form.get('tipoActa')" label="Etiqueta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tipoActa"
+              maxlength="30"
+              [readonly]="disabled" />
+          </form-field>
+          <!-- <ng-custom-select-loading
+            [form]="form"
+            formControlName="tipoActa"
+            label="Tipo de Acta"
+            value="id"
+            bindLabel="description"
+            [searchable]="false"
+            loadingText="Cargando tipos de acta..."
+            path="proceeding/api/v1/proceedings-delivery-reception/get-types">
+          </ng-custom-select-loading> -->
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row mb-4">
+        <div class="col-12">
           <form-field [control]="form.get('labelActa')" label="Etiqueta">
             <input
               type="text"
@@ -116,25 +146,39 @@
       <div class="row mb-3">
         <form-field [control]="form.get('address')" label="Direcci&oacute;n">
           <textarea
-            rows="3"
+            rows="2"
             class="form-control"
             formControlName="address"
             maxlength="600"
             [readonly]="disabled"></textarea>
         </form-field>
       </div>
-      <div class="row" style="margin-bottom: 1.25rem">
+      <div class="row mb-1">
         <form-field [control]="form.get('observations')" label="Observaciones">
           <textarea
-            rows="3"
+            rows="2"
             class="form-control"
             formControlName="observations"
             maxlength="600"
             [readonly]="disabled"></textarea>
         </form-field>
       </div>
-      <div class="row">
-        <app-recibe-form
+      <div class="row mb-4">
+        <ng-custom-select-loading
+          [form]="form"
+          [readonly]="loading"
+          formControlName="numDelegation1"
+          label="Delegación Recibe"
+          value="id"
+          bindLabel="id"
+          paramSearch="filter.id"
+          prefixSearch="$eq"
+          path="catalog/api/v1/delegation"
+          [updateValues]="true"
+          [labelTemplate]="delegationLabel"
+          [optionTemplate]="delegationOption">
+        </ng-custom-select-loading>
+        <!-- <app-recibe-form
           [form]="form"
           [disabled]="disabled"
           label="Recibe"
@@ -145,7 +189,7 @@
           [disabled]="disabled"
           label="Administra"
           formField="numDelegation2"
-          formFieldName="numDelegation2Description"></app-recibe-form>
+          formFieldName="numDelegation2Description"></app-recibe-form> -->
         <!-- <div class="col-md-6">
           <form-field [control]="form.get('numDelegation1')" label="Recibe">
             <input
@@ -165,8 +209,33 @@
           </form-field>
         </div> -->
       </div>
+      <div class="mb-3">
+        <ng-custom-select-loading
+          [form]="form"
+          [readonly]="loading"
+          formControlName="numDelegation2"
+          label="Delegación Administra "
+          value="id"
+          bindLabel="id"
+          paramSearch="filter.id"
+          prefixSearch="$eq"
+          path="catalog/api/v1/delegation"
+          [updateValues]="true"
+          [labelTemplate]="delegationLabel"
+          [optionTemplate]="delegationOption">
+        </ng-custom-select-loading>
+      </div>
+
+      <ng-template #delegationLabel let-item="item">
+        <div>{{ item.id }} - {{ item.description }}</div>
+      </ng-template>
+      <ng-template #delegationOption let-item="item">
+        <div [title]="item.id + '-' + item.description">
+          {{ item.id }} - {{ item.description }}
+        </div>
+      </ng-template>
     </div>
-    <div class="col-md-6 mt-5">
+    <div class="col-md-6 secondColumn">
       <div class="row mb-4 notInputs">
         <div class="col-md-6">
           <form-field
@@ -293,7 +362,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row mb-4">
+      <div class="row mb-4 mt-3">
         <form-field [control]="form.get('witness1')" label="Testigo 1">
           <input
             type="text"
@@ -316,7 +385,7 @@
       <div class="row">
         <form-field
           [control]="form.get('comptrollerWitness')"
-          label="Testigo Contraloria">
+          label="Testigo Contraloría">
           <input
             type="text"
             class="form-control"

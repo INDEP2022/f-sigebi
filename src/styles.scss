@@ -504,7 +504,7 @@ ng-scrollbar.table-scrollbar {
 
 .bg-green-to-confirm-verdadero {
   background-color: #28a745 !important;
-  color: black;
+  color: red;
   font-weight: 900;
   padding: 0.3rem;
 }
@@ -517,4 +517,9 @@ ng-scrollbar.table-scrollbar {
 
 #monitorABN table:not(.normal-hover) tbody tr:hover {
   color: black;
+}
+
+.disabled-custom {
+  pointer-events: none !important;
+  // opacity: 0.7 !important;
 }

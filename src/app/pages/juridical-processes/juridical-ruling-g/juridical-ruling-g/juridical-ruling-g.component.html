@@ -26,8 +26,8 @@
                 <ngx-select
                   [searchOnInit]="true"
                   [data]="typesDict"
-                  [form]="expedientesForm"
                   [searchable]="false"
+                  [form]="expedientesForm"
                   label="Tipo Dictaminación"
                   bindLabel="typeDict"
                   control="tipoDictaminacion"
@@ -40,13 +40,13 @@
                 [control]="expedientesForm.get('noExpediente')"
                 label="No. Expediente">
                 <input
-                  min="0"
                   type="text"
                   class="form-control"
+                  min="0"
+                  maxlength="10"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente"
-                  maxlength="10" />
+                  formControlName="noExpediente" />
               </form-field>
             </div>
             <!-- Averiguación Previa -->
@@ -167,15 +167,38 @@
               </form-field>
             </div> -->
             <!--  -->
-            <div class="col-md-4 p-2">
+            <div class="col-4 p-2">
               <form-field
-                [control]="dictaminacionesForm.get('autoriza_remitente')"
-                label="Autoriza Dict.">
-                <input
+                [control]="dictaminacionesForm.get('autoriza_remitente')">
+                <!-- <input
                   class="form-control"
-                  formControlName="autoriza_remitente" />
+                  formControlName="autoriza_remitente" /> -->
+                <ngx-select
+                  label="Autoriza Dict."
+                  [form]="dictaminacionesForm"
+                  [data]="users$"
+                  (change)="userChange($event)"
+                  (fetchItems)="getUsers($event)"
+                  bindLabel="userAndName"
+                  control="autoriza_remitente"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30"
+                  [labelTemplate]="userLabel"
+                  [optionTemplate]="userOption">
+                </ngx-select>
+                <ng-template #userLabel let-item="item">
+                  <!-- {{ item.name }} -->
+                  {{ item.id }}
+                </ng-template>
+                <ng-template #userOption let-item="item">
+                  <div [title]="item.id + '-' + item.name">
+                    {{ item.id }}
+                  </div>
+                </ng-template>
               </form-field>
             </div>
+
             <div class="col-md-8 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('autoriza_nombre')"
@@ -229,7 +252,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-8">
+        <!-- <div class="col-md-8">
           <form-field [control]="subtipoForm.get('type')">
             <ngx-select
               class="form-control"
@@ -244,9 +267,34 @@
               (change)="onTypesChange($event)">
             </ngx-select>
           </form-field>
+        </div> -->
+
+        <div class="col-md-8">
+          <form-field [control]="subtipoForm.get('sssubtype')">
+            <ngx-select
+              [searchOnInit]="true"
+              (fetchItems)="getSssubtypes($event)"
+              [data]="sssubtypes"
+              [form]="subtipoForm"
+              value="id"
+              label="Subtipo - Ssubtipo - Sssubtipo"
+              bindLabel="description"
+              control="sssubtype"
+              (change)="onValuesChange($event)"
+              [labelTemplate]="sssubtypeLabel"
+              [optionTemplate]="sssubtypeOption">
+              <!-- (change)="onSssubtypesChange($event)" -->
+            </ngx-select>
+          </form-field>
         </div>
       </div>
     </form>
+    <ng-template #sssubtypeLabel let-item="item"
+      >{{ item.id }} - {{ item.description }}</ng-template
+    >
+    <ng-template #sssubtypeOption let-item="item"
+      >{{ item.id }} - {{ item.description }}</ng-template
+    >
 
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
@@ -338,7 +386,7 @@
                 [source]="documents"></ng2-smart-table>
             </div>
             <div class="col-md-2">
-              <p class="text-info h5">No&#46; bien</p>
+              <p class="text-info h5">No. Bien</p>
               <p class="text-info h5">{{ idGoodSelected }}</p>
             </div>
           </div>
@@ -355,7 +403,6 @@
         <!-- [disabled]="isDocsEmpty()" -->
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
-          [disabled]="isDocsEmpty()"
           (click)="btnApprove()">
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar
@@ -367,8 +414,8 @@
         </button>
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
-          (click)="btnImprimeOficio()"
-          [routerLink]="rutaAprobado">
+          (click)="btnImprimeOficio()">
+          <!-- [routerLink]="returnRoute" -->
           Imprime Oficio
         </button>
         <button
