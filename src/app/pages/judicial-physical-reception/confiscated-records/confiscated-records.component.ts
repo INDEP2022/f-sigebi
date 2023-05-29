@@ -201,7 +201,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   idProceeding: number | string;
   navigateProceedings = false;
   nextProce = true;
-  prevProce = false;
+  prevProce = true;
   numberProceeding = 0;
   v_atrib_del = 0;
   numberExpedient = '';
@@ -709,14 +709,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
 
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
@@ -734,7 +734,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   .getEtiqXClasif(paramsF2.getParams())
                   .subscribe(
                     res => {
-                      v_no_etiqueta =parseInt(res.data[0]['labelNumber']);
+                      v_no_etiqueta = parseInt(res.data[0]['labelNumber']);
                       const generalModel: Map<string, any> = new Map();
                       generalModel.set('id', e.id);
                       generalModel.set('goodId', e.goodId);
@@ -747,14 +747,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -796,14 +796,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -833,14 +833,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       const jsonModel = JSON.parse(
                         JSON.stringify(Object.fromEntries(generalModel))
                       );
-                      this.serviceGood
-                        .updateWithoutId(jsonModel)
-                        .subscribe(res => {
-                          console.log(res)
+                      this.serviceGood.updateWithoutId(jsonModel).subscribe(
+                        res => {
+                          console.log(res);
                         },
-                        err =>{
-                          console.log(err)
-                        });
+                        err => {
+                          console.log(err);
+                        }
+                      );
                       resolve({ v_no_clasif_camb, v_no_etiqueta });
                     },
                     err => {
@@ -958,7 +958,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   newSearchExp() {
     this.blockExpedient = true;
     this.nextProce = true;
-    this.prevProce = false;
+    this.prevProce = true;
     this.navigateProceedings = false;
     this.initialdisabled = true;
     this.act2Valid = false;
@@ -1140,7 +1140,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   goodsByExpediente() {
     this.blockExpedient = true;
     this.nextProce = true;
-    this.prevProce = false;
+    this.prevProce = true;
     this.navigateProceedings = false;
     this.initialdisabled = true;
     this.act2Valid = false;
@@ -1373,9 +1373,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (this.numberProceeding <= this.proceedingData.length - 1) {
               this.prevProce = true;
               this.nextProce = true;
-              if (this.numberProceeding == 0) {
-                this.prevProce = false;
-              }
             }
           }
         });
@@ -1490,13 +1487,21 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.numberProceeding += 1;
       console.log(this.numberProceeding);
       if (this.numberProceeding <= this.proceedingData.length - 1) {
-        this.prevProce = true;
+        this.act2Valid = false;
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
+        this.clearInputs()
         this.fillIncomeProceeding(dataRes, 'nextProceeding');
       } else {
-        console.log('Primer else');
+        this.numberProceeding = 0;
+        const dataRes = JSON.parse(
+          JSON.stringify(this.proceedingData[this.numberProceeding])
+        );
+        this.clearInputs()
+        this.fillIncomeProceeding(dataRes, 'nextProceeding');
+        this.act2Valid = false;
+        /* console.log('Primer else');
         this.inputsNewProceeding();
 
         this.clearInputs();
@@ -1515,17 +1520,25 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.prevProce = true;
         this.goodData = [];
         this.saveDataAct = [];
-        this.dataGoodAct.load(this.goodData);
+        this.dataGoodAct.load(this.goodData); */
       }
     } else {
-      console.log('Segundo else');
-      this.prevProce = true;
+      /* console.log('Segundo else');
+      this.prevProce = true; */
+
+      this.numberProceeding = 0;
+      const dataRes = JSON.parse(
+        JSON.stringify(this.proceedingData[this.numberProceeding])
+      );
+      this.fillIncomeProceeding(dataRes, 'nextProceeding');
     }
   }
 
   prevProceeding() {
-    this.prevProce = false;
-    this.nextProce = false;
+    console.log(this.numberProceeding)
+    console.log(this.proceedingData.length)
+    /* this.prevProce = false;
+    this.nextProce = false; */
     if (
       this.numberProceeding <= this.proceedingData.length &&
       this.numberProceeding > 0
@@ -1533,7 +1546,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.numberProceeding -= 1;
       console.log(this.numberProceeding);
       if (this.numberProceeding <= this.proceedingData.length - 1) {
-        this.nextProce = true;
         this.act2Valid = false;
         this.newAct = true;
         const dataRes = JSON.parse(
@@ -1541,10 +1553,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         );
         this.clearInputs();
         this.fillIncomeProceeding(dataRes, 'prevProceeding');
-        if (this.numberProceeding == 0) {
-          this.prevProce = false;
-        }
+       /*  if (this.numberProceeding == 0) {
+          
+          /* this.prevProce = false;
+        } */
       }
+    } else {
+      this.numberProceeding = this.proceedingData.length - 1;
+      const dataRes = JSON.parse(
+        JSON.stringify(this.proceedingData[this.numberProceeding])
+      );
+      this.fillIncomeProceeding(dataRes, 'prevProceeding');
+      this.act2Valid = false;
     }
   }
 
@@ -2700,7 +2720,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           if (this.proceedingData.length === 1) {
                             this.navigateProceedings = false;
                             this.nextProce = true;
-                            this.prevProce = false;
+                            this.prevProce = true;
                             this.numberProceeding = 0;
                           } else {
                             this.proceedingData.filter((e: any) => {
@@ -2871,10 +2891,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const edoFis: any = await this.getIndEdoFisAndVColumna(data);
     console.log(edoFis);
     if (edoFis.V_NO_COLUMNA === 0) {
-      await this.validatePreInsert(data)
+      await this.validatePreInsert(data);
       this.form.get(formName).setValue('OTRO');
     } else {
-      await this.validatePreInsert(data)
+      await this.validatePreInsert(data);
       this.form.get(formName).setValue(data[`val${edoFis.V_NO_COLUMNA}`]);
     }
   }
@@ -2897,11 +2917,29 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     ]);
   }
 
-  /* goToHistorico() {
-    this.router.navigate([
-      '/pages/general-processes/historical-good-situation',
-    ]);
-  } */
+  selectRowBovedaAlmacen(data: any) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('idWarehouse', data.storeNumber);
+    this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.form.get('almacen').setValue(res.data[0]);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+    this.serviceVault
+      .getAllFilter(`filter.idSafe=$eq:${data.vaultNumber}`)
+      .subscribe(
+        res => {
+          this.form.get('boveda').setValue(res.data[0]);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
 
   estadoFisBien(data: any) {
     const edo = this.form.get('edoFisico');
@@ -2947,6 +2985,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.selectEdoFisRow(data, 'edoFisico');
       this.statusGood('estatusBienActa', data);
       this.form.get('indEdoFisico').setValue(data.indEdoFisico);
+      this.selectRowBovedaAlmacen(data);
     }
   }
 
@@ -3363,7 +3402,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log('No :(');
           });
         }
-        this.alert('success', 'Se registró el almacen en los bienes', '');
+        this.alert('success', 'Se registró el almacén en los bienes', '');
       } else {
         this.alert(
           'warning',
@@ -3428,11 +3467,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     }
   }
 
-  //!
-  //!
-  //TODO: ESTOY AQUÍ
-  //!
-  //!
   getIndEdoFisAndVColumna(data: any) {
     let V_IND_EDO_FISICO: number;
     let V_NO_COLUMNA: number;

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { format } from 'date-fns';
 import { firstValueFrom, map } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -37,6 +37,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       this.apply();
     }
   }
+  @Output() fillPagedRow = new EventEmitter();
   checkSum: CheckSum;
   vsumimp = 0;
   constructor(
@@ -205,24 +206,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //     vb_estatus_valido,
     //   };
     // }
-    if (this.bienesPar.length === 0) {
-      this.onLoadToast(
-        'error',
-        'Error',
-        'No se tienen cantidades a parcializar...'
-      );
-      return {
-        v_verif_des,
-        v_importe,
-        v_estatus,
-      };
-    }
     if (this.validationClasif()) {
-      v_importe = +(this.good.appraisedValue
-        ? this.good.appraisedValue
-        : this.good.val14
-        ? this.good.val14
-        : '0');
+      v_importe = +(+(
+        this.good.appraisedValue
+          ? this.good.appraisedValue + ''
+          : this.good.val14
+          ? this.good.val14
+          : '0'
+      ).replace(',', '.')).toFixed(4);
     } else {
       v_importe = +(this.good.quantity + '');
     }
@@ -249,6 +240,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       v_verif_des = await this.getVerificaDesCargaMasiva();
     } catch (x: any) {
       console.log(x);
+      v_verif_des = 0;
       // this.onLoadToast(
       //   'error',
       //   'Verificación Descarga Masiva',
@@ -437,6 +429,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       vaccion: string,
       v_verif_des: number = 0;
     if (this.version === 1) {
+      if (this.bienesPar.length === 0) {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'No se tienen cantidades a parcializar...'
+        );
+        return;
+      }
       const result = await this.validationsV1(
         v_verif_des,
         v_importe,
@@ -468,28 +468,29 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vsumimp = vsumimp + vimpbien;
         const descriptions = await this.fillDescriptions(item, vimpbien);
         console.log(descriptions);
+        item.noBien = descriptions.noBien;
         vobserv_padre = descriptions.vobserv_padre;
         vdesc_padre = descriptions.vdesc_padre;
         vobservaciones = 'Parcializado del bien: ' + this.good.goodId;
-        try {
-          await this.insertaBien(
-            item,
-            this.good,
-            v_estatus,
-            this.good.extDomProcess,
-            vval2,
-            vobservaciones,
-            vfactor,
-            vfactornum,
-            v_verif_des,
-            this.service.noActa
-          );
-        } catch (x: any) {
-          console.log(x);
-          this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
-          // this.loading = false;
-          return;
-        }
+        // try {
+        //   await this.insertaBien(
+        //     item,
+        //     this.good,
+        //     v_estatus,
+        //     this.good.extDomProcess,
+        //     vval2,
+        //     vobservaciones,
+        //     vfactor,
+        //     vfactornum,
+        //     v_verif_des,
+        //     this.service.noActa
+        //   );
+        // } catch (x: any) {
+        //   console.log(x);
+        //   this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
+        //   // this.loading = false;
+        //   return;
+        // }
       });
       if (vsumimp < v_importe) {
         vfactor = (v_importe - vsumimp) / v_importe;
@@ -509,6 +510,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           val12: null,
           val13: null,
         };
+        debugger;
         const { v_cantidad, v_unidad, v_avaluo } = await this.setMeasureData();
         const clasificador = this.good.goodClassNumber;
         const numerarioValidation = await firstValueFrom(
@@ -516,18 +518,13 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             'filter.numClasifGoods=' + clasificador + '&filter.numType=7'
           )
         );
-        debugger;
-        const v_numerario = numerarioValidation.count;
+        const v_numerario = numerarioValidation.count
+          ? numerarioValidation.count
+          : 0;
         if (v_numerario !== 0) {
           if (this.validationClasif()) {
             item = {
-              id: null,
-              noBien: null,
-              descripcion: null,
-              proceso: null,
-              cantidad: null,
-              avaluo: null,
-              importe: 0,
+              ...item,
               val10: 0,
               val11: 0,
               val12: 0,
@@ -585,42 +582,48 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         }
         if (this.validationClasif()) {
           item.importe = v_importe - vsumimp;
-          if (this.good.quantity !== 1) {
-            item.cantidad = v_importe - vsumimp;
-          } else {
-            item.cantidad = this.good.quantity;
-          }
+
+          // if (this.good.quantity !== 1) {
+          //   item.cantidad = v_importe - vsumimp;
+          // } else {
+          //   item.cantidad = this.good.quantity;
+          // }
           vval2 = Number((item.avaluo ? item.avaluo : item.importe).toFixed(2));
           vimpbien = item.importe;
         } else {
-          item.cantidad = v_importe - vsumimp;
+          // item.cantidad = v_importe - vsumimp;
           vval2 = +this.good.val14;
           vimpbien = item.cantidad;
         }
+        item.cantidad = +(this.saldo.value + '');
         const descriptions = await this.fillDescriptions(item, vimpbien);
         vobserv_padre = descriptions.vobserv_padre;
         vdesc_padre = descriptions.vdesc_padre;
+        item.noBien = descriptions.noBien;
+        this.bienesPar.pop();
+        this.bienesPar.push(item);
+        this.fillPagedRow.emit();
         vobservaciones = 'Saldo parcializado del bien: ' + this.good.goodId;
-        try {
-          await this.insertaBien(
-            item,
-            this.good,
-            v_estatus,
-            this.good.extDomProcess,
-            vval2,
-            vobservaciones,
-            vfactor,
-            vfactornum,
-            v_verif_des,
-            this.service.noActa
-          );
-        } catch (x: any) {
-          console.log(x);
-          this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
-          // this.loading = false;
-          this.loader.load = false;
-          return;
-        }
+        // try {
+        //   await this.insertaBien(
+        //     item,
+        //     this.good,
+        //     v_estatus,
+        //     this.good.extDomProcess,
+        //     vval2,
+        //     vobservaciones,
+        //     vfactor,
+        //     vfactornum,
+        //     v_verif_des,
+        //     this.service.noActa
+        //   );
+        // } catch (x: any) {
+        //   console.log(x);
+        //   this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
+        //   // this.loading = false;
+        //   this.loader.load = false;
+        //   return;
+        // }
       }
       const observations =
         vobserv_padre +
@@ -638,15 +641,15 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         observations.length > 1250 ? 1250 : observations.length
       );
       this.formGood.get('descripcion').setValue(this.good.description);
-      if (this.service.noActa > 0) {
-        await firstValueFrom(
-          this.detailReceptionService.deleteById(
-            this.good.goodId,
-            this.service.noActa
-          )
-        );
-      }
-      this.saldo.setValue(0);
+      // if (this.service.noActa > 0) {
+      //   await firstValueFrom(
+      //     this.detailReceptionService.deleteById(
+      //       this.good.goodId,
+      //       this.service.noActa
+      //     )
+      //   );
+      // }
+      // this.saldo.setValue(0);
     } else {
       // const checkSum = new CheckSum();
       // checkSum.firstCase = this.firstCase;
@@ -684,10 +687,10 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     }
     // this.service.pageLoading = false;
     this.loader.load = false;
-    this.service.bienesPar = [];
-    this.service.pagedBienesPar = [];
-    this.service.formGood.reset();
-    this.service.formControl.reset();
+    // this.service.bienesPar = [];
+    // this.service.pagedBienesPar = [];
+    // this.service.formGood.reset();
+    // this.service.formControl.reset();
     this.onLoadToast(
       'success',
       'Parcialización',

@@ -16,6 +16,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ModalComponent implements OnInit {
   @Input() datosOpinion!: any;
   @Input() form: FormGroup;
+  @Input() index!: number;
 
   users$ = new DefaultSelect<ISegUsers>();
   nameUserDestinatario: ISegUsers;
@@ -40,7 +41,7 @@ export class ModalComponent implements OnInit {
         this.form.get('senderUser').setValue('');
       }
     });
-
+    console.log('INDEX => ' + this.index);
     this.setValues();
   }
   getUsers($params: ListParams) {
