@@ -43,11 +43,21 @@
                 (click)="prevProceeding()">
                 <i class="fa fa-angle-left"></i>
               </button>
-              <span class="mr-3 ml-3">{{
-                numberProceeding + 1 > proceedingData.length
-                  ? 'Nuevo'
-                  : numberProceeding + 1
-              }}</span>
+              <span class="mr-3 ml-3"
+                >{{
+                  numberProceeding + 1 > proceedingData.length
+                    ? 'Nuevo'
+                    : numberProceeding + 1
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length ? null : ' - '
+                }}
+                {{
+                  numberProceeding + 1 > proceedingData.length
+                    ? null
+                    : proceedingData.length
+                }}</span
+              >
               <button
                 id="expedient-number"
                 class="btn btn-secondary btn-sm active"
@@ -58,7 +68,8 @@
               <button
                 *ngIf="newAct"
                 id="expedient-number"
-                class="btn btn-primary btn-sm active ml-4">
+                class="btn btn-primary btn-sm active ml-4"
+                (click)="newProceeding()">
                 Nueva acta
               </button>
             </div>
@@ -315,7 +326,7 @@
               <input
                 type="text"
                 class="form-control"
-              [maxlength]="100"
+                [maxlength]="100"
                 [class]="!isEnableAutoridadCancela ? 'disabled' : ''"
                 formControlName="autoridadCancela" />
             </form-field>
@@ -324,8 +335,8 @@
             <form-field [control]="form.get('elabora')" label="Elabora C&#47;S">
               <input
                 type="text"
-              [maxlength]="100"
-              class="form-control"
+                [maxlength]="100"
+                class="form-control"
                 [class]="!isEnableElabora ? 'disabled' : ''"
                 formControlName="elabora" />
             </form-field>
@@ -336,8 +347,8 @@
               label="Testigo de la Contratalor&iacute;a">
               <input
                 type="text"
-              [maxlength]="100"
-              class="form-control"
+                [maxlength]="100"
+                class="form-control"
                 [class]="!isEnableTestigo ? 'disabled' : ''"
                 formControlName="testigo" />
             </form-field>
