@@ -259,6 +259,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.form.reset();
     this.formControl.reset();
     this.service.bienesPar = [];
+    this.service.pagedBienesPar = [];
     this.service.sumCant = 0;
     this.service.sumVal14 = 0;
   }
