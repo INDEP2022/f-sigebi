@@ -118,9 +118,7 @@ export class DocumentsService extends HttpService {
 
   deleteDocumentsDictuXStateM(params: any): Observable<{ count: number }> {
     const route = `${DocumentsEndpoints.DocumentsDictuXStateM}`;
-    return this.delete(
-      route + `/${params.typeDictum}/${params.officialNumber}`
-    );
+    return this.delete(route, params);
   }
 
   // updateClarDocImp(id: string | number, data: Object) {
