@@ -1,14 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 //import { AssociateFileButtonComponent } from './associate-file-button/associate-file-button.component';
 import { COLUMNS, COLUMNS2 } from './columns';
 //Provisional Data
-import { DATA } from './data';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 
 @Component({
   selector: 'app-search-request-similar-goods',
@@ -19,7 +23,7 @@ export class SearchRequestSimilarGoodsComponent
   extends BasePage
   implements OnInit
 {
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
   selectedRows: any = [];
@@ -31,6 +35,10 @@ export class SearchRequestSimilarGoodsComponent
   settings2;
 
   showDetails: boolean = false;
+
+  /* injections */
+  private requestService = inject(RequestService);
+  /*  */
 
   constructor(private modalService: BsModalService) {
     super();
@@ -60,20 +68,55 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   ngOnInit(): void {
-    this.data.load(DATA);
+    //this.data.load(DATA);
   }
 
-  /*getFiles(requestInfo: any) {
-    console.log(requestInfo);
+  getFormSeach(formSearch: any) {
+    this.params.getValue().addFilter('recordId', '$null', SearchFilter.NOT);
+    for (const key in formSearch) {
+      if (formSearch[key] != null) {
+        this.params.getValue().addFilter(key, formSearch[key]);
+      }
+    }
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getFiles();
+    });
+  }
+
+  getFiles() {
+    const filter = this.params.getValue().getParams(); //.getValue().getFilterParams();
+    console.log(filter);
+    this.requestService.getAll(filter).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        resp.data.map((item: any) => {
+          item['regionalDelegationName'] = item.regionalDelegation
+            ? item.regionalDelegation.description
+            : '';
+          item['stateName'] = item.state ? item.state.descCondition : '';
+          item['transferentName'] = item.transferent
+            ? item.transferent.name
+            : '';
+          item['stationName'] = item.emisora ? item.emisora.stationName : '';
+          item['authorityName'] = item.authority
+            ? item.authority.authorityName
+            : '';
+        });
+
+        this.data.load(resp.data);
+        this.totalItems = resp.count;
+      },
+    });
     // Llamar servicio para buscar expedientes
-    let columns = this.data;
+    /*let columns = this.data;
     columns.forEach(c => {
       c = Object.assign({ associate: '' }, c);
     });
     this.fileColumns = columns;
     this.totalItems - this.fileColumns.length;
-    console.log(this.fileColumns);
-  }*/
+    console.log(this.fileColumns);*/
+  }
 
   onCustom($event: any) {
     if ($event.action === 'associate') {
