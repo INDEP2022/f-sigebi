@@ -1481,7 +1481,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('recibe').reset();
     this.form.get('admin').reset();
     this.form.get('folio').reset();
-    this.form.get('folioEscaneo').reset()
+    this.form.get('folioEscaneo').reset();
 
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
