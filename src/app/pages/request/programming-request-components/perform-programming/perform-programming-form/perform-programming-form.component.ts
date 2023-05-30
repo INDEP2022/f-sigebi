@@ -320,10 +320,9 @@ export class PerformProgrammingFormComponent
   }
 
   prepareForm() {
-    this.formLoading = true;
-    //const fiveDays = addDays(parseISO(now.format()), 5);
     let now = moment();
-
+    console.log('fecha', now.format());
+    this.formLoading = true;
     const daysToAdd = 5;
     const date = new Date(now.format());
     const dateformat = this.addUsingDates(date, daysToAdd);
@@ -1545,9 +1544,6 @@ export class PerformProgrammingFormComponent
           .setValue(this.delegationId);
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
-
-        console.log('task', task);
-
         /*this.programmingGoodService
           .updateProgramming(this.idProgramming, this.performForm.value)
           .subscribe({
@@ -1852,9 +1848,9 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(moment(this.dataProgramming.startDate).format('DD/MM/YYYY'));
-      this.performForm
+      /*this.performForm
         .get('endDate')
-        .setValue(moment(this.dataProgramming.endDate).format('DD/MM/YYYY'));
+        .setValue(moment(this.dataProgramming.endDate).format('DD/MM/YYYY')); */
 
       this.paramsTransportableGoods.getValue()['filter.programmingId'] =
         this.idProgramming;

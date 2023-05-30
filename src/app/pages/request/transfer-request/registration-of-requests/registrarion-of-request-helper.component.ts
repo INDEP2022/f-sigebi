@@ -268,7 +268,7 @@ export class RegistrationHelper extends BasePage {
             sinDestinoT = true;
             this.message(
               'error',
-              `Error en el bien ${good.goodDescription}`,
+              `Error en el bien ${good.id} ${good.goodDescription}`,
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;
