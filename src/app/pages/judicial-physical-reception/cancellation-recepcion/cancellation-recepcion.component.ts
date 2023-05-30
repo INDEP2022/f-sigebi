@@ -719,11 +719,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               this.nextProce = true;
             }
           }
-<<<<<<< HEAD
         });;
-=======
-        });
->>>>>>> 9b7453fb3a1a3d561ccae5077228d42df89d4aa9
 
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         this.form.get('direccion').setValue(dataRes.address);
@@ -2414,13 +2410,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   //NAVIGATE PROCEEDING
   nextProceeding() {
-<<<<<<< HEAD
     this.prevProce = false
     this.nextProce = false
-=======
-    this.prevProce = false;
-    this.nextProce = false;
->>>>>>> 9b7453fb3a1a3d561ccae5077228d42df89d4aa9
 
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -2436,19 +2427,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         );
         this.fillIncomeProceeding(dataRes, 'nextProceeding');
       } else {
-<<<<<<< HEAD
         this.numberProceeding = 0 
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
         this.clearInputs()
-=======
-        this.numberProceeding = 0;
-        const dataRes = JSON.parse(
-          JSON.stringify(this.proceedingData[this.numberProceeding])
-        );
-        this.clearInputs();
->>>>>>> 9b7453fb3a1a3d561ccae5077228d42df89d4aa9
         this.fillIncomeProceeding(dataRes, 'nextProceeding');
         this.act2Valid = false;
         /* this.getTransfer();
@@ -2481,28 +2464,17 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   prevProceeding() {
     this.initialBool = true;
-<<<<<<< HEAD
     this.prevProce = false
     this.nextProce = false
     this.noRequireAct1();
     this.clearInputs()
-=======
-    this.prevProce = false;
-    this.nextProce = false;
-    this.noRequireAct1();
-    this.clearInputs();
->>>>>>> 9b7453fb3a1a3d561ccae5077228d42df89d4aa9
     if (
       this.numberProceeding <= this.proceedingData.length &&
       this.numberProceeding > 0
     ) {
       this.numberProceeding -= 1;
       console.log(this.numberProceeding);
-<<<<<<< HEAD
       if (this.numberProceeding <= this.proceedingData.length - 1) { 
-=======
-      if (this.numberProceeding <= this.proceedingData.length - 1) {
->>>>>>> 9b7453fb3a1a3d561ccae5077228d42df89d4aa9
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
@@ -2512,11 +2484,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           this.prevProce = false;
         } */
       }
-<<<<<<< HEAD
     }else{
-=======
-    } else {
->>>>>>> 9b7453fb3a1a3d561ccae5077228d42df89d4aa9
       this.numberProceeding = this.proceedingData.length - 1;
       const dataRes = JSON.parse(
         JSON.stringify(this.proceedingData[this.numberProceeding])
