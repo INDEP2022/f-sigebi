@@ -91,7 +91,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         sort: false,
       },
       comptrollerWitness: {
-        title: 'Testigo Contraloria',
+        title: 'Testigo Contraloría',
         sort: false,
       },
       observations: {

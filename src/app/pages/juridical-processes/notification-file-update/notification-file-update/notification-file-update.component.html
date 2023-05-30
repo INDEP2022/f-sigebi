@@ -4,7 +4,9 @@
       ACTUALIZACI&Oacute;N DEL EXPEDIENTE EN NOTIFICACI&Oacute;N
     </h5>
     <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <app-columns-select
+        [(settings)]="settings"
+        [defaultColumns]="7"></app-columns-select>
     </div>
   </div>
 
@@ -19,9 +21,7 @@
                 label="No&#46; Expediente">
                 <input
                   class="form-control"
-                  maxlength="11"
-                  type="number"
-                  min="0"
+                  type="text"
                   formControlName="noExpediente" />
                 <!-- (blur)="onLoadListNotifications()"  -->
                 <!-- (keydown)="onKeyPress($event)" -->
@@ -55,5 +55,8 @@
         </div>
       </div>
     </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>

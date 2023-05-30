@@ -20,4 +20,9 @@ export enum DictationEndpoints {
   RTdictaAarusr = 'r-tdicta-aarusr',
   TmpDictation = 'tmp-dictation',
   TmpExpDesahogoB = 'tmp-exp-desahogob',
+  GetOfficeByYear = 'application/get-office-by-year',
+  GetOfficeByYear_ = 'application/get-office-by-year2',
+  GetOfficeByYear1 = 'application/get-office-by-year-1',
+  GetOfficeByYear2 = 'application/get-office-by-year-2',
+  GetOfficeByYear3 = 'application/get-office-by-year-3',
 }

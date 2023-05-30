@@ -34,7 +34,7 @@ export class BulkUploadComponent implements OnInit {
       delete: false,
     },
     hideSubHeader: true, //oculta subheaader de filtro
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
     mode: 'external', // ventana externa
     columns: {
       clasif: {
@@ -92,7 +92,7 @@ export class BulkUploadComponent implements OnInit {
       delete: false,
     },
     hideSubHeader: true, //oculta subheaader de filtro
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
     mode: 'external', // ventana externa
     columns: {
       numberGood: {

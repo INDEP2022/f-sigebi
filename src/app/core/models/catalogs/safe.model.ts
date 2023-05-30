@@ -8,6 +8,7 @@ export interface ISafe {
   description?: string;
   ubication?: string;
   manager?: string;
+  managerDetail?: string;
   registerNumber?: number | null | string;
   stateCode?: number | null | string;
   stateDetail?: IStateOfRepublic;

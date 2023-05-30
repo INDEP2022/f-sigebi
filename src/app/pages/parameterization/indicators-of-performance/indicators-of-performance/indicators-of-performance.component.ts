@@ -42,7 +42,7 @@ export class IndicatorsOfPerformanceComponent
   totalItems2: number = 0;
   typeItem: any[];
   typeItem1: any[];
-
+  rowSelecct: boolean = false;
   constructor(
     private fb: FormBuilder,
     private indicatorsParameterService: IndicatorsParameterService,
@@ -113,9 +113,7 @@ export class IndicatorsOfPerformanceComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDetailIndParameterAll());
+
     this.prepareForm();
     this.typeItem = [
       { label: 'Fec. Recepción/Escaneo', value: 'FRECEPCION' },
@@ -158,8 +156,9 @@ export class IndicatorsOfPerformanceComponent
       },
     });
   }
-  getDetailIndParameterAll() {
+  getDetailIndParameterAll(id?: string) {
     this.loading = true;
+    this.params.getValue()['filter.indicatorNumber'] = id;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters2,
@@ -175,7 +174,8 @@ export class IndicatorsOfPerformanceComponent
       },
       error: error => {
         this.loading = false;
-        console.log(error);
+        this.data2.load([]);
+        this.data2.refresh();
       },
     });
   }
@@ -184,6 +184,10 @@ export class IndicatorsOfPerformanceComponent
     this.indicatorsOfPerformanceForm.controls['indicatorNumber'].setValue(
       event.data.id
     );
+    this.rowSelecct = true;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDetailIndParameterAll(event.data.id));
   }
   confirm() {
     console.log(
