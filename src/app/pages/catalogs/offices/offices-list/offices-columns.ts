@@ -64,9 +64,4 @@ export const OFFICES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  // noRegistration: {
-  //   title: 'Numero registro',
-  //   type: 'number',
-  //   sort: false,
-  // },
 };
