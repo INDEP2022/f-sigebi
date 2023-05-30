@@ -43,6 +43,7 @@ import Swal from 'sweetalert2';
 import { InappropriatenessFormComponent } from '../inappropriateness-form/inappropriateness-form.component';
 import { InappropriatenessPgrSatFormComponent } from '../inappropriateness-pgr-sat-form/inappropriateness-pgr-sat-form.component';
 
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintSatAnswerComponent } from '../print-sat-answer/print-sat-answer.component';
 import { RefuseClarificationModalComponent } from '../refuse-clarification-modal/refuse-clarification-modal.component';
@@ -115,6 +116,7 @@ export class NotificationAssetsTabComponent
   good: IGoodresdev[] = [];
   showButton = true;
   notification: ClarificationGoodRejectNotification;
+  affairName: string = '';
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -130,7 +132,8 @@ export class NotificationAssetsTabComponent
     private regionalDelegationService: RegionalDelegationService,
     private stationService: StationService,
     private stateOfRepublicService: StateOfRepublicService,
-    private authorityService: AuthorityService
+    private authorityService: AuthorityService,
+    private affairService: AffairService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -216,7 +219,12 @@ export class NotificationAssetsTabComponent
           this.regDelName(data?.regionalDelegationId);
           this.stationName(data?.stationId);
           this.stateName(data?.keyStateOfRepublic);
-          this.authorityName(data?.authorityId);
+          this.authorityName(
+            data.transferenceId,
+            data.stationId,
+            data.authorityId
+          );
+          this.getAffairName(data?.affair);
         });
         this.requestData = data.data[0];
       },
@@ -241,12 +249,23 @@ export class NotificationAssetsTabComponent
       error: error => {},
     });
   }
+
   stationName(idStation: string | number) {
-    this.stationService.getById(idStation).subscribe({
-      next: data => {
-        this.nameStation = data.stationName;
-      },
-      error: error => {},
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${idStation}`;
+      this.stationService.getAll(params).subscribe({
+        next: data => {
+          console.log('Emisora si', data.data[0].stationName);
+          this.nameStation = data.data[0].stationName;
+          resolve(true);
+        },
+        error: error => {
+          console.log('Emisora no', error.error);
+          this.nameStation = '';
+          resolve(true);
+        },
+      });
     });
   }
 
@@ -259,12 +278,44 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  authorityName(authorityId: string | number) {
-    this.authorityService.getById(authorityId).subscribe({
-      next: data => {
-        this.nameAuthority = data.authorityName;
+  authorityName(
+    idTransferent: number | string,
+    idStation: number | string,
+    idAuthority: number | string
+  ) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.idStation'] = `$eq:${idStation}`;
+      params['filter.idTransferer'] = `$eq:${idTransferent}`;
+      params['filter.idAuthority'] = `$eq:${idAuthority}`;
+      this.authorityService.getAll(params).subscribe({
+        next: data => {
+          console.log('Autoridad si', data.data[0].authorityName);
+          this.nameAuthority = data.data[0].authorityName;
+          resolve(true);
+        },
+        error: error => {
+          console.log('Autoridad no', error.error);
+          this.nameAuthority = '';
+          resolve(true);
+        },
+      });
+    });
+  }
+
+  getAffairName(idAffair: number | string) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${idAffair}`;
+    params['filter.nbOrigen'] = `$eq:SAMI`;
+    this.affairService.getAll(params).subscribe({
+      next: ({ data }) => {
+        console.log('asunto si', data[0].description);
+        this.affairName = data[0].description;
       },
-      error: error => {},
+      error: error => {
+        console.log('Asunto no', error.error);
+        this.affairName = '';
+      },
     });
   }
 
@@ -323,7 +374,7 @@ export class NotificationAssetsTabComponent
           if (data.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
             data['clarificationTypeName'] = 'IMPROCEDENCIA';
           }
-          const formatDate = moment(data.rejectionDate).format('DD-MM-YYYY');
+          const formatDate = moment(data.rejectionDate).format('DD/MM/YYYY');
           data.rejectionDate = formatDate;
           return data;
         });
@@ -591,6 +642,7 @@ export class NotificationAssetsTabComponent
       task['programmingId'] = 0;
       task['requestId'] = request.id;
       task['expedientId'] = request.recordId;
+      task['idDelegationRegional'] = user.department;
       task['urlNb'] = url;
       body['task'] = task;
 
@@ -900,7 +952,7 @@ export class NotificationAssetsTabComponent
       const data: ClarificationGoodRejectNotification = {
         rejectNotificationId: this.selectedRow.rejectNotificationId,
         answered: 'IMPROCEDENTE',
-        rejectionDate: '2023-04-30',
+        rejectionDate: '2023-04-30', //Cambiar fecha
       };
       this.rejectedGoodService
         .update(this.selectedRow.rejectNotificationId, data)

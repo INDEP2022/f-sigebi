@@ -2,6 +2,16 @@
   <div class="ch-content" header>
     <h5 class="title">Bienes localizados</h5>
     <div class="buttons">
+      <div class="mx-1">
+        <confirm-button
+          type="button"
+          [loading]="includeLoading"
+          text="Incluir"
+          loadingText="Cargando..."
+          className="btn-secondary"
+          [btnSmall]="true"
+          (confirm)="include()"></confirm-button>
+      </div>
       <app-columns-select [(settings)]="settings"></app-columns-select>
       <div class="btn-group" dropdown>
         <button

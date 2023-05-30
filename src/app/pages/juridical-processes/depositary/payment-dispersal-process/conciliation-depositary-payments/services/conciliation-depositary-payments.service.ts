@@ -3,6 +3,7 @@ import { IPaymendtDepParamsDep } from 'src/app/core/models/ms-depositary/ms-depo
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,8 @@ export class ConciliationDepositaryPaymentsService {
   constructor(
     private msDepositaryService: MsDepositaryService,
     private msGoodService: GoodService,
-    private msMsDepositaryPaymentService: MsDepositaryPaymentService
+    private msMsDepositaryPaymentService: MsDepositaryPaymentService,
+    private msGoodprocessService: GoodprocessService
   ) {}
 
   getGoodAppointmentDepositaryByNoGood(params: string) {
@@ -35,5 +37,23 @@ export class ConciliationDepositaryPaymentsService {
   }
   getPaymentRefValidDep(params: any) {
     return this.msDepositaryService.getPaymentRefValidDep(params);
+  }
+  getPaymentRefPrepOI(params: any) {
+    return this.msDepositaryService.getPaymentRefPrepOI(params);
+  }
+  getValidStatusProcess(params: number) {
+    return this.msGoodprocessService.getById(params);
+  }
+  getValidBlackListProcess(params: number) {
+    return this.msDepositaryService.getValidBlackListAppointment(params);
+  }
+  deletePaymentRefRemove(params: any) {
+    return this.msDepositaryService.deletePaymentRefRemove(params);
+  }
+  getgetAplicationcargaCliente1(no_appointment: number) {
+    return this.msDepositaryService.getAplicationcargaCliente1(no_appointment);
+  }
+  getgetAplicationcargaCliente2(no_appointment: number) {
+    return this.msDepositaryService.getAplicationcargaCliente2(no_appointment);
   }
 }

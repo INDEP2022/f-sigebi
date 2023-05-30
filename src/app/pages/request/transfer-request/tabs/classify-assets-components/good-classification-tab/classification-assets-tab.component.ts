@@ -255,7 +255,6 @@ export class ClassificationAssetsTabComponent
       data.map((item: any) => {
         if (item.id === event.id) {
           for (const key in event) {
-            console.log(key);
             if (key != 'id') {
               item[key] = event[key];
             }
@@ -264,22 +263,20 @@ export class ClassificationAssetsTabComponent
         this.paragraphs.load(data);
       });
     });
+    this.goodObject = null;
   }
 
   selectGood(event: any) {
     this.formLoading = true;
-    //console.log("info del goodSELECTED v1", this.detailArray.value); //henry|
     this.detailArray.reset();
     this.goodSelect = event.selected;
     this.goodObject = event.selected[0];
     this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
-        //console.log("info del goodSELECTED v1", this.goodSelect[0]); //henry|
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
         this.getDomicilieGood(this.goodSelect[0].addressId);
-        console.log('infor del good v1', this.goodSelect[0] as IGood); //henry
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
@@ -317,6 +314,18 @@ export class ClassificationAssetsTabComponent
           item.goodClassNumber = event.goodClassNumber;
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
+        }
+      });
+      this.paragraphs.load(data);
+    });
+  }
+
+  updateStatusGood(event: any) {
+    this.paragraphs.getElements().then((data: any) => {
+      data.map(async (item: any) => {
+        if (item.id === this.goodObject.id) {
+          item.processStatus = event.processStatus;
+          item.goodStatus = event.goodStatus;
         }
       });
       this.paragraphs.load(data);

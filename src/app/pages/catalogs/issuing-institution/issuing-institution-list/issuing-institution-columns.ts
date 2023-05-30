@@ -1,4 +1,4 @@
-import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { ICitys } from 'src/app/core/models/catalogs/issuing-institution.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 export const ISSUING_INSTITUTION_COLUMNS = {
   id: {
@@ -68,8 +68,8 @@ export const ISSUING_INSTITUTION_COLUMNS = {
   numCity: {
     title: 'Ciudad',
     type: 'string',
-    valuePrepareFunction: (value: ICity) => {
-      return value?.nameCity || '';
+    valuePrepareFunction: (value: ICitys) => {
+      return value != null ? value.name : '';
     },
     sort: false,
   },

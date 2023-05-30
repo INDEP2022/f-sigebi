@@ -8,7 +8,7 @@
 <form [formGroup]="formOficiopageFin" class="container-fluid form-material">
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-6 pr-3">
-      <form-field [control]="formOficiopageFin.get('page')" label="page">
+      <form-field [control]="formOficiopageFin.get('page')" label="Inicio">
         <textarea class="form-control" formControlName="page"></textarea>
       </form-field>
     </div>
@@ -47,26 +47,58 @@
 <!-- Form CON COPIA PARA -->
 <form [formGroup]="formCcpOficio" class="container-fluid form-material">
   <div class="row tp-2 mb-2">
-    <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
-      <form-field [control]="formCcpOficio.get('ccp')" label="C&#46;P&#46;P">
-        <select class="form-control" formControlName="ccp">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="'INTERNO'">INTERNO</option>
-          <option [value]="'EXTERNO'">EXTERNO</option>
-        </select>
-      </form-field>
+    <div class="col-12">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
+          <form-field
+            [control]="formCcpOficio.get('ccp')"
+            label="C&#46;P&#46;P">
+            <select class="form-control" formControlName="ccp">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'INTERNO'">INTERNO</option>
+              <option [value]="'EXTERNO'">EXTERNO</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
+          <ngx-select
+            [data]="items"
+            bindLabel="nombreUsuarioName"
+            label="Nombre Usuario"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="formCcpOficio"
+            control="nombreUsuario"></ngx-select>
+        </div>
+      </div>
     </div>
-    <div class="col-sm-12 col-12 col-md-4 p-1 pt-0 pb-0">
-      <ngx-select
-        [data]="items"
-        bindLabel="nombreUsuarioName"
-        label="Nombre Usuario"
-        value="id"
-        (fetchItems)="getFromSelect($event)"
-        [form]="formCcpOficio"
-        control="nombreUsuario"></ngx-select>
+    <div class="col-12">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
+          <form-field
+            [control]="formCcpOficio.get('ccp')"
+            label="C&#46;P&#46;P">
+            <select class="form-control" formControlName="ccp">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'INTERNO'">INTERNO</option>
+              <option [value]="'EXTERNO'">EXTERNO</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
+          <form-field [control]="formCcpOficio.get('ccp2')">
+            <input
+              class="form-control"
+              formControlName="ccp2"
+              type="text"
+              name="cpp2"
+              id="cpp2" />
+          </form-field>
+        </div>
+      </div>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
+
+    <!-- <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
       <form-field [control]="formCcpOficio.get('ccp2')" label="C&#46;P&#46;P">
         <select class="form-control" formControlName="ccp2">
           <option [value]="null">Seleccione un valor</option>
@@ -74,16 +106,25 @@
           <option [value]="'EXTERNO'">EXTERNO</option>
         </select>
       </form-field>
-    </div>
-    <div class="col-sm-12 col-12 col-md-4 p-1 pt-0 pb-0">
-      <ngx-select
-        [data]="items"
-        bindLabel="nombreUsuario2Name"
-        label="Nombre Usuario"
-        value="id"
-        (fetchItems)="getFromSelect($event)"
-        [form]="formCcpOficio"
-        control="nombreUsuario2"></ngx-select>
+    </div> -->
+    <!-- <div class="col-sm-12 col-12 col-md-4 p-1 pt-0 pb-0">
+      <ngx-select [data]="items" bindLabel="nombreUsuario2Name" label="Nombre Usuario" value="id"
+        (fetchItems)="getFromSelect($event)" [form]="formCcpOficio" control="nombreUsuario2"></ngx-select>
+    </div> -->
+  </div>
+  <div class="col-sm-12 col-12 col-md-12">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-12 col-md-6 text-center">
+        <button type="button" class="btn btn-primary btn-sm active ml-2 mr-2">
+          Imp.
+        </button>
+        <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+          <i class="bx bxs-printer"></i>
+        </button>
+        <button type="button" class="btn btn-danger btn-sm active ml-2 mr-2">
+          Borra
+        </button>
+      </div>
     </div>
   </div>
 </form>

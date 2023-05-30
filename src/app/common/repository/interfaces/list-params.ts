@@ -9,6 +9,17 @@ export class ListParams {
   //filter?: string = '';
 }
 
+export class FilterBulkTechnical {
+  //text?: string = '';
+  [others: string]: string | number;
+  page?: number = 1;
+  inicio?: number = 1;
+  limit?: number = 10;
+  pageSize?: number = 10;
+  //take?: number = 10;
+  filter?: string = '';
+}
+
 export class FilterParams {
   page?: number = 1;
   limit?: number = 10;
@@ -30,6 +41,10 @@ export class FilterParams {
     this.filters.push(filter);
   }
 
+  addFilter3(field: string, value: string) {
+    this.filters.push(`${field}=${value}`);
+  }
+
   addFilter(field: string, value: string | number, operator?: SearchFilter) {
     const filter = new DynamicFilter(field, value, operator).getParams();
     this.filters.push(filter);
@@ -43,6 +58,10 @@ export class FilterParams {
 
   getFilterParams() {
     return this.filters.join('&');
+  }
+
+  getFilterByParam(param: string) {
+    return this.filters.find(x => x.includes(param));
   }
 
   removeAllFilters() {

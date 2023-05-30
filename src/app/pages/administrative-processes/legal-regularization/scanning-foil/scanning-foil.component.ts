@@ -77,7 +77,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     }
     const documents: IDocuments = {
       numberProceedings: this.good.fileNumber,
-      keySeparator: 60,
+      keySeparator: '60',
       keyTypeDocument: 'ENTRE',
       natureDocument: 'ORIGINAL',
       descriptionDocument: 'REGULARIZACION JURIDICA',
@@ -86,8 +86,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       userRequestsScan: this.user.usuario.user,
       scanRequestDate: new Date(),
       associateUniversalFolio: null,
-      flyerNumber: this.good.flyerNumber,
-      goodNumber: this.good.id,
+      flyerNumber: Number(this.good.flyerNumber),
+      goodNumber: Number(this.good.id),
       numberDelegationRequested: this.user.usuario.delegationNumber,
       numberDepartmentRequest: this.user.usuario.departamentNumber,
       numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
@@ -107,7 +107,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.generate();
       },
       error: err => {
-        console.log(err);
+        console.error(err);
         this.onLoadToast('error', 'ERROR', err.error.message);
       },
     });

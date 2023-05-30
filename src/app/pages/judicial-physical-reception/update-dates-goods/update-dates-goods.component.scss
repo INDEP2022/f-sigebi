@@ -1,0 +1,8 @@
+.updateDatesGoods {
+  display: flex;
+  column-gap: 15px;
+
+  @media screen and (max-width: 567px) {
+    flex-direction: column;
+  }
+}
