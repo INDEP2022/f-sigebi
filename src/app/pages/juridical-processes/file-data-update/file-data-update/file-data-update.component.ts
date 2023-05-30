@@ -1,6 +1,6 @@
 /** BASE IMPORT */
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
@@ -33,7 +33,7 @@ export class FileDataUpdateComponent
   fieldsToSearch = [...JURIDICAL_FILE_UPDATE_SEARCH_FIELDS];
   constructor(
     // private fb: FormBuilder,
-    // private activateRoute: ActivatedRoute,
+    private activateRoute: ActivatedRoute,
     // private modalService: BsModalService,
     private router: Router,
     public fileUpdateService: JuridicalFileUpdateService,
@@ -43,11 +43,18 @@ export class FileDataUpdateComponent
     super();
   }
   wheelNumber: string | null = null;
+  previousRoute: string | null = null;
   ngOnInit(): void {
-    if (this.docDataService.previousRoute) {
-      this.wheelNumber =
-        this.docDataService.previousRoute?.params?.wheelNumber || null;
-    }
+    // if (this.docDataService.previousRoute) {
+    //   this.wheelNumber =
+    //     this.docDataService.previousRoute?.params?.wheelNumber || null;
+    // }
+    // console.log(document.referrer, 'previa ruta');
+    this.previousRoute =
+      this.activateRoute.snapshot.queryParams?.['previousRoute'] || null;
+    this.wheelNumber =
+      this.activateRoute.snapshot.queryParams?.['wheelNumber'] || null;
+    console.log(this.previousRoute, 'previa ruta');
   }
 
   returnToFlyers() {
