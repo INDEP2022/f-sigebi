@@ -31,6 +31,7 @@ export class PartializeButtonComponent
   @Output() notFilledRow = new EventEmitter();
   v_inmueble: number;
   vres: number;
+  vresVal14: number;
   vident: number;
   get sumCant() {
     return this.service.sumCant;
@@ -97,8 +98,9 @@ export class PartializeButtonComponent
   }
 
   private validationImporte() {
-    // debugger;
-    const cantidad = +this.cantidad.value;
+    debugger;
+    console.log(this.good);
+    const cantidad = +this.good.quantity;
     if (!this.validationClasif()) {
       if (cantidad < 0.1) {
         // if (this.version === 1 ? cantidad < 0.1 : cantidad < 2) {
