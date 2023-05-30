@@ -274,11 +274,27 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     //   this.selectedDictums,
     //   this.selectedProceedings
     // );
+    this.loading = true;
     try {
-      this.loading = true;
       await firstValueFrom(this.historyOfficeService.create(body));
     } catch (ex) {
+      this.loading = false;
+      this.alert('error', 'Error ', 'Los ids ya fueron creados');
+      return;
+    }
+    try {
+      await firstValueFrom(
+        this.procedureManageService.updateForWheelNumber(
+          this.notifData.wheelNumber,
+          {
+            tiKeyNewPerson: this.formControls.newUser.value?.user,
+          }
+        )
+      );
+      this.updateNotification();
+    } catch (ex) {
       console.log(ex);
+      this.alert('error', 'Error ', 'Error al crear histórico');
       this.loading = false;
     }
     // this.historyOfficeService.create(body).subscribe({
@@ -293,27 +309,27 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     // });
   }
 
-  updateFlyerCopy() {
-    const body = {
-      copyNumber: 1,
-      flierNumber: this.notifData.wheelNumber,
-      copyuser: this.formControls.newUser.value?.user,
-    };
-    this.flyerCopiesService.update(body).subscribe({
-      next: () => {
-        this.updateNotification();
-      },
-      error: err => {
-        console.log(err);
-        this.loading = false;
-        this.alert(
-          'error',
-          'Turno no actualizado',
-          'Hubo un error al actualizar el turno'
-        );
-      },
-    });
-  }
+  // updateFlyerCopy() {
+  //   const body = {
+  //     copyNumber: 1,
+  //     flierNumber: this.notifData.wheelNumber,
+  //     copyuser: this.formControls.newUser.value?.user,
+  //   };
+  //   this.flyerCopiesService.update(body).subscribe({
+  //     next: () => {
+  //       this.updateNotification();
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //       this.loading = false;
+  //       this.alert(
+  //         'error',
+  //         'Turno no actualizado',
+  //         'Hubo un error al actualizar el turno'
+  //       );
+  //     },
+  //   });
+  // }
 
   updateNotification() {
     const body = {

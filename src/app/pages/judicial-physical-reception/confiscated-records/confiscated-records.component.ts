@@ -1491,14 +1491,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
-        this.clearInputs()
+        this.clearInputs();
         this.fillIncomeProceeding(dataRes, 'nextProceeding');
       } else {
         this.numberProceeding = 0;
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
-        this.clearInputs()
+        this.clearInputs();
         this.fillIncomeProceeding(dataRes, 'nextProceeding');
         this.act2Valid = false;
         /* console.log('Primer else');
@@ -1535,8 +1535,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   prevProceeding() {
-    console.log(this.numberProceeding)
-    console.log(this.proceedingData.length)
+    console.log(this.numberProceeding);
+    console.log(this.proceedingData.length);
     /* this.prevProce = false;
     this.nextProce = false; */
     if (
@@ -1553,7 +1553,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         );
         this.clearInputs();
         this.fillIncomeProceeding(dataRes, 'prevProceeding');
-       /*  if (this.numberProceeding == 0) {
+        /*  if (this.numberProceeding == 0) {
           
           /* this.prevProce = false;
         } */
