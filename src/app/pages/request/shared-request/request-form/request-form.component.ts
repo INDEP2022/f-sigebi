@@ -189,6 +189,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       task['programmingId'] = 0;
       task['requestId'] = this.requestId;
       task['expedientId'] = 0;
+      task['idDelegationRegional'] = user.department;
       task['urlNb'] =
         this.op != 2
           ? 'pages/request/list/new-transfer-request'
@@ -478,6 +479,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           task['expedientId'] = 0;
           task['urlNb'] = 'pages/request/transfer-request/registration-request';
           task['processName'] = 'SolicitudTransferencia';
+          task['idDelegationRegional'] = actualUser.department;
           body['task'] = task;
 
           let orderservice: any = {};

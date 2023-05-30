@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
+import { firstValueFrom } from 'rxjs';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -125,6 +126,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
       columns: { ...SHIFT_CHANGE_PROCEEDINGS_COLUMNS },
     };
     this.pageParams = this.fileUpdComService.juridicalShiftChangeParams;
+    this.pageParams.iden ||= this.route.snapshot.params?.['iden'];
+    this.pageParams.exp ||= this.route.snapshot.params?.['exp'];
     console.log('PARAMS', this.pageParams);
     this.route.queryParamMap.subscribe(params => {
       this.origin = params.get('origin');
@@ -250,7 +253,7 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  save() {
+  async save() {
     if (!this.turnForm.valid) {
       this.turnForm.markAllAsTouched();
       this.turnForm.updateValueAndValidity();
@@ -271,17 +274,23 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     //   this.selectedDictums,
     //   this.selectedProceedings
     // );
-    this.loading = true;
-    this.historyOfficeService.create(body).subscribe({
-      next: () => {
-        this.updateFlyerCopy();
-      },
-      error: err => {
-        console.log(err);
-        this.loading = false;
-        this.alert('error', 'Turno no actualizado', err.error.message);
-      },
-    });
+    try {
+      this.loading = true;
+      await firstValueFrom(this.historyOfficeService.create(body));
+    } catch (ex) {
+      console.log(ex);
+      this.loading = false;
+    }
+    // this.historyOfficeService.create(body).subscribe({
+    //   next: () => {
+    //     this.updateFlyerCopy();
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     this.loading = false;
+    //     this.alert('error', 'Turno no actualizado', err.error.message);
+    //   },
+    // });
   }
 
   updateFlyerCopy() {
@@ -315,9 +324,9 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     };
     this.notifService.update(this.notifData.wheelNumber, body).subscribe({
       next: () => {
-        this.updateProcedureUser();
-        this.updateDictums();
-        this.updateProceedings();
+        // this.updateProcedureUser();
+        // this.updateDictums();
+        // this.updateProceedings();
         this.loading = false;
         this.alert(
           'success',
@@ -388,11 +397,11 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
     }
   }
 
-  return() {
+  goBack() {
     let params = this.fileUpdComService.fileDataUpdateParams;
     params = {
       pGestOk: 1,
-      pNoTramite: this.pageParams.pNoTramite,
+      pNoTramite: this.pageParams?.pNoTramite,
       dictamen: false,
     };
     // if (params == null) {
@@ -405,7 +414,12 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
         '/pages/juridical/abandonments-declaration-trades'
       );
     } else {
-      this.router.navigateByUrl('/pages/juridical/file-data-update');
+      this.router.navigate(['/pages/juridical/file-data-update'], {
+        queryParams: {
+          wheelNumber: this.pageParams.iden,
+          previousRoute: this.route.snapshot.queryParams?.['previousRoute'],
+        },
+      });
     }
   }
 

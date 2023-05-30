@@ -52,6 +52,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
+  // filtroPersonaExt: ICopiesJobManagementDto[] = [];
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -59,6 +60,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   valLocal: IdatosLocales;
   year: number;
   users$$ = new DefaultSelect<ISegUsers>();
+  users_1 = new DefaultSelect<ISegUsers>();
 
   constructor(
     private fb: FormBuilder,
@@ -76,25 +78,9 @@ export class OfficeComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.year = new Date().getFullYear();
-    this.options = [
-      { value: null, label: 'Seleccione un valor' },
-      { value: 'E', label: 'PERSONA EXTERNA' },
-      { value: 'I', label: 'PERSONA INTERNA' },
-    ];
+
     this.loadUserDestinatario();
     this.buildForm();
-    this.form.get('typePerson').valueChanges.subscribe(value => {
-      if (value === 'E') {
-        this.form.get('senderUser').setValue(null);
-      } else {
-        this.form.get('senderUser').setValue('');
-      }
-    });
-    this.form.get('typePerson_I').valueChanges.subscribe(value => {
-      if (value === 'E') {
-        this.form.get('senderUser_I').setValue(null);
-      }
-    });
   }
 
   /**
@@ -148,6 +134,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       typePerson_I: [null, [Validators.required]],
       senderUser_I: [null, null],
       personaExt_I: [null, [Validators.required]],
+      extPersonArray: this.fb.array([]),
     });
   }
 
@@ -186,17 +173,6 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'error', err.error.message);
         },
       });
-  }
-
-  /*   Evento que se ejecuta para llenar los campos con el nombre de los destinatarios
-========================================================================================*/
-  getDescUser(control: string, event: Event) {
-    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
-    if (control === 'control') {
-      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
-    } else {
-      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
-    }
   }
 
   /*   Evento que se ejecuta para llenar el combo con los destinatarios
@@ -252,25 +228,6 @@ export class OfficeComponent extends BasePage implements OnInit {
         );
       this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
     }
-  }
-
-  /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
-===============================================================================================================*/
-  getPersonaExt_Int(params: _Params) {
-    this.serviceOficces.getPersonaExt_Int(params).subscribe({
-      next: resp => {
-        this.nrSelecttypePerson = resp.data[0].personExtInt;
-        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
-        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
-        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
-
-        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
-        this.form.get('personaExt_I').setValue(resp.data[0].nomPersonExt);
-      },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
-      },
-    });
   }
 
   /*   Evento que se ejecuta para llenar los parametros con los que se va a realizar la busqueda
@@ -397,14 +354,6 @@ export class OfficeComponent extends BasePage implements OnInit {
     });
   }
 
-  getUsers($params: ListParams) {
-    let params = new FilterParams();
-    params.page = $params.page;
-    params.limit = $params.limit;
-    params.search = $params.text;
-    this.getAllUsers(params).subscribe();
-  }
-
   getUsers$($params: ListParams) {
     let params = new FilterParams();
     params.page = $params.page;
@@ -425,14 +374,22 @@ export class OfficeComponent extends BasePage implements OnInit {
     );
   }
 
-  getAllUsers(params: FilterParams) {
+  getUsers_1($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers_1(params).subscribe();
+  }
+
+  getAllUsers_1(params: FilterParams) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
-        this.users$ = new DefaultSelect([], 0, true);
+        this.users_1 = new DefaultSelect([], 0, true);
         return throwError(() => error);
       }),
       tap(response => {
-        this.users$ = new DefaultSelect(response.data, response.count);
+        this.users_1 = new DefaultSelect(response.data, response.count);
       })
     );
   }
@@ -475,6 +432,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getPuestovalue(userDatos.positionKey)
       .subscribe({
         next: resp => {
+          alert('  getDescUserPuesto ' + resp.data.value);
           this.form.get('charge').setValue(resp.data.value);
         },
         error: err => {
@@ -482,5 +440,25 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'Error', err.error.message);
         },
       });
+  }
+
+  /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
+===============================================================================================================*/
+  getPersonaExt_Int(params: _Params) {
+    this.serviceOficces.getPersonaExt_Int(params).subscribe({
+      next: resp => {
+        // this.filtroPersonaExt = resp.data;
+        this.nrSelecttypePerson = resp.data[0].personExtInt;
+        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
+        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
+        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
+
+        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
+        this.form.get('personaExt_I').setValue(resp.data[0].nomPersonExt);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
   }
 }
