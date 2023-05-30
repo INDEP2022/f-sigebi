@@ -14,11 +14,6 @@ export const columnsFirstCase = {
     type: 'string',
     sort: false,
   },
-  cantidad: {
-    title: 'Cantidad',
-    type: 'string',
-    sort: false,
-  },
   avaluo: {
     title: 'Valor Avalúo',
     type: 'string',
