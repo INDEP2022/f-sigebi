@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { addDays } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -42,6 +41,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
@@ -150,7 +150,9 @@ export class PerformProgrammingFormComponent
   task: any = null;
   showGoods: IGoodProgramming;
   observationNewWarehouse: number = 0;
+  keepDatepickerOpened: true;
   idNewWarehouse: number = 0;
+  dateValidate: any;
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingUser = { ...this.settings, ...SettingUserTable };
   settingGuardGoods = {
@@ -186,7 +188,8 @@ export class PerformProgrammingFormComponent
     private router: Router,
     private municipalityService: MunicipalityService,
     private localityService: LocalityService,
-    private storeAkaService: StoreAliasStockService
+    private storeAkaService: StoreAliasStockService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
 
@@ -216,8 +219,6 @@ export class PerformProgrammingFormComponent
   }
 
   ngOnInit(): void {
-    this.showHideErrorInterceptorService.showHideError(false);
-    this.prepareForm();
     this.getInfoUserLog();
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
@@ -231,7 +232,26 @@ export class PerformProgrammingFormComponent
     this.getProgrammingData();
     this.performSearchForm();
     this.obtainInfoWarehouse();
+    this.prepareForm();
     this.task = JSON.parse(localStorage.getItem('Task'));
+  }
+
+  addUsingDates(date: Date, days: number) {
+    let nextDay = date;
+    let daysToAdd = 1;
+    while (days > 0) {
+      const _nextDay = new Date(
+        nextDay.getTime() + daysToAdd * 24 * 60 * 60 * 1000
+      );
+      if (_nextDay.getDay() < 4) {
+        nextDay = _nextDay;
+        daysToAdd = 1;
+        days--;
+      } else {
+        daysToAdd++;
+      }
+    }
+    return nextDay;
   }
 
   obtainInfoWarehouse() {
@@ -242,7 +262,6 @@ export class PerformProgrammingFormComponent
       .getAllWarehouses(this.paramsNewWarehouse.getValue())
       .subscribe({
         next: response => {
-          console.log('data warehouse', response);
           this.observationNewWarehouse = response.data[0].nbobservation;
           this.idNewWarehouse = response.data[0].nbidnewstore;
         },
@@ -301,12 +320,14 @@ export class PerformProgrammingFormComponent
   }
 
   prepareForm() {
-    let now = moment();
-    console.log('fecha', now.format());
-
     this.formLoading = true;
-    //const fiveDays = addDays(ParseIso(new Date()), 5);
-    const fiveDays = addDays(Number(now.format()), 5);
+    //const fiveDays = addDays(parseISO(now.format()), 5);
+    let now = moment();
+
+    const daysToAdd = 5;
+    const date = new Date(now.format());
+    const dateformat = this.addUsingDates(date, daysToAdd);
+
     this.performForm = this.fb.group({
       emailTransfer: [
         null,
@@ -332,8 +353,8 @@ export class PerformProgrammingFormComponent
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      startDate: [null, [Validators.required, minDate(new Date())]],
-      endDate: [null, [Validators.required, minDate(new Date(fiveDays))]],
+      startDate: [null, [Validators.required, minDate(new Date(dateformat))]],
+      endDate: [null, [Validators.required, minDate(new Date(dateformat))]],
       observation: [
         null,
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
@@ -346,6 +367,17 @@ export class PerformProgrammingFormComponent
       typeRelevantId: [null, [Validators.required]],
       storeId: [null],
       folio: [null],
+    });
+  }
+
+  getDateValidate(date: string) {
+    return new Promise((resolve, reject) => {
+      this.goodProcessService.getDateRange(date, 5).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: error => {},
+      });
     });
   }
 
@@ -370,7 +402,8 @@ export class PerformProgrammingFormComponent
   }
 
   showWarehouse(warehouse: IWarehouse) {
-    this.warehouseUbication = warehouse.ubication;
+    console.log('almacén', warehouse);
+    this.warehouseUbication = warehouse?.ubication;
     this.showUbication = true;
   }
 
@@ -841,40 +874,20 @@ export class PerformProgrammingFormComponent
     params['filter.status'] = `$eq:${1}`;
     this.transferentService.getAll(params).subscribe({
       next: data => {
-        console.log('transferentes', data);
         data.data.map(data => {
           data.nameAndId = `${data.id} - ${data.nameTransferent}`;
           return data;
         });
         this.transferences = new DefaultSelect(data.data, data.count);
       },
-      error: error => {
-        console.log('error', error);
-      },
+      error: error => {},
     });
-    /* 
-    params['filter.transferent.nameTransferent'] = `$ilike:${params.text}`;
-    params['sortBy'] = 'nameTransferent:ASC';
-    params.limit = 30;
-    this.showSelectTransferent = true;
-    const state = Number(this.idState);
-    this.transferentesSaeService
-      .getStateByTransferentKey(state, params)
-      .subscribe({
-        next: response => {
-          const transferent = response.data.map(transferent => {
-            return transferent.transferent;
-          });
-          this.transferences = new DefaultSelect(transferent, response.count);
-        },
-        error: error => {
-          console.log(error);
-        },
-      }); */
   }
 
   transferentSelect(transferent: ITransferente) {
     this.idTrans = transferent?.id;
+    this.performForm.get('stationId').setValue(null);
+    this.performForm.get('autorityId').setValue(null);
     this.getStations(new ListParams());
   }
 
@@ -899,6 +912,7 @@ export class PerformProgrammingFormComponent
   }
 
   stationSelect(item: IStation) {
+    this.performForm.get('autorityId').setValue(null);
     this.idStation = item.id;
     this.getAuthoritySelect(new ListParams());
   }
@@ -911,7 +925,6 @@ export class PerformProgrammingFormComponent
     delete params.text;
     this.authorityService.getAll(params).subscribe({
       next: data => {
-        console.log('autoridades', data);
         data.data.map(data => {
           data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
@@ -929,9 +942,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.akaWarehouse = new DefaultSelect(response.data, response.count);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -944,9 +955,7 @@ export class PerformProgrammingFormComponent
         this.statesSearch = new DefaultSelect(statesData, response.count);
       },
 
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -958,9 +967,7 @@ export class PerformProgrammingFormComponent
           response.count
         );
       },
-      error: error => {
-        console.log('error');
-      },
+      error: error => {},
     });
   }
 
@@ -969,9 +976,7 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.localities = new DefaultSelect(response.data, response.count);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -1009,7 +1014,6 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          console.log('é', response);
           const goodsFilter = response.data.map(items => {
             if (items.physicalState) {
               if (items.physicalState == 1) {
@@ -1088,7 +1092,6 @@ export class PerformProgrammingFormComponent
 
   /*------Inserta bienes con status transportable -----*/
   async insertGoodsProgTrans() {
-    console.log('good', this.goodSelect);
     this.goodSelect.map((item: any) => {
       const formData: Object = {
         programmingId: this.idProgramming,
@@ -1100,9 +1103,7 @@ export class PerformProgrammingFormComponent
       };
       this.programmingGoodService.createGoodsService(formData).subscribe({
         next: () => {},
-        error: error => {
-          console.log('error insertar', error);
-        },
+        error: error => {},
       });
     });
 
@@ -1127,9 +1128,7 @@ export class PerformProgrammingFormComponent
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {},
-          error: error => {
-            console.log('Error actualizar bien', error);
-          },
+          error: error => {},
         });
       });
 
@@ -1474,9 +1473,7 @@ export class PerformProgrammingFormComponent
         next: res => {
           resolve(true);
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
     });
   }
@@ -1524,9 +1521,7 @@ export class PerformProgrammingFormComponent
                 );
                 this.getProgGoods();
               },
-              error: error => {
-                console.log(error);
-              },
+              error: error => {},
             });
         }
       }
@@ -1536,7 +1531,6 @@ export class PerformProgrammingFormComponent
   //Actualizar programación con información de la programación
   confirm() {
     console.log('this.performForm.value', this.performForm.value);
-
     this.alertQuestion(
       'info',
       'Confirmación',
@@ -1545,12 +1539,16 @@ export class PerformProgrammingFormComponent
       if (question.isConfirmed) {
         this.loading = true;
         this.formLoading = true;
+        const task = JSON.parse(localStorage.getItem('Task'));
         this.performForm
           .get('regionalDelegationNumber')
           .setValue(this.delegationId);
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
-        this.programmingGoodService
+
+        console.log('task', task);
+
+        /*this.programmingGoodService
           .updateProgramming(this.idProgramming, this.performForm.value)
           .subscribe({
             next: async () => {
@@ -1567,7 +1565,7 @@ export class PerformProgrammingFormComponent
               this.formLoading = false;
               this.newTransferent = false;
             },
-          });
+          }); */
       }
     });
   }
@@ -1744,7 +1742,7 @@ export class PerformProgrammingFormComponent
     task['programmingId'] = this.idProgramming;
     //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
-    task['regionalDelegationNumber'] = this.delegationId;
+    task['idDelegationRegional'] = this.delegationId;
     task['urlNb'] = 'pages/request/programming-request/acept-programming';
     task['processName'] = 'SolicitudProgramacion';
     body['task'] = task;
@@ -1815,7 +1813,6 @@ export class PerformProgrammingFormComponent
             'Error',
             'Error al visualizar los bienes disponibles a programar'
           );
-          console.log(error);
         },
       });
   }
@@ -1855,9 +1852,9 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(moment(this.dataProgramming.startDate).format('DD/MM/YYYY'));
-      /*this.performForm
+      this.performForm
         .get('endDate')
-        .setValue(moment(this.dataProgramming.endDate).format('DD/MM/YYYY')); */
+        .setValue(moment(this.dataProgramming.endDate).format('DD/MM/YYYY'));
 
       this.paramsTransportableGoods.getValue()['filter.programmingId'] =
         this.idProgramming;
@@ -1870,9 +1867,7 @@ export class PerformProgrammingFormComponent
             this.showGuard(data.data);
             this.showWarehouseGoods(data.data);
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
 
       if (this.dataProgramming.storeId) {
@@ -1880,9 +1875,7 @@ export class PerformProgrammingFormComponent
           next: response => {
             this.warehouseUbication = response.description;
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       }
 
@@ -1892,13 +1885,10 @@ export class PerformProgrammingFormComponent
           .getById(this.dataProgramming.tranferId)
           .subscribe({
             next: response => {
-              console.log('transferente seleecionada', response);
               const nameAndId = `${response.id} - ${response.nameTransferent}`;
               this.performForm.get('tranferId').setValue(nameAndId);
             },
-            error: error => {
-              console.log(error);
-            },
+            error: error => {},
           });
       }
 
@@ -1906,29 +1896,22 @@ export class PerformProgrammingFormComponent
         this.dataProgramming.tranferId;
       this.stationService.getAll(this.params.getValue()).subscribe({
         next: response => {
-          console.log('Emisora', response.data[0]);
           const nameAndId = `${response.data[0].id} - ${response.data[0].stationName}`;
           this.performForm.get('stationId').setValue(nameAndId);
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
       this.paramsAuthority.getValue()['filter.idTransferer'] =
         this.dataProgramming.tranferId;
-      console.log('transferent', this.paramsAuthority);
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
-          console.log('autor', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;
           this.idTrans = this.dataProgramming.tranferId;
           this.getAuthoritySelect(new ListParams());
         },
-        error: error => {
-          console.log('a', error);
-        },
+        error: error => {},
       });
     }
   }
