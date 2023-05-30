@@ -690,6 +690,7 @@ export class ScheduledMaintenanceDetailComponent
               },
               error: err => {
                 console.log(err);
+                this.loading = false;
                 this.onLoadToast(
                   'error',
                   'ERROR',
