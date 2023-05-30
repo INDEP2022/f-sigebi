@@ -63,6 +63,10 @@ export class DictationService extends HttpService {
     return this.post(this.route.Dictation, body);
   }
 
+  createPersonExt(body: IDictationCopies) {
+    return this.post(this.route.Dictation, body);
+  }
+
   update(body: Partial<IDictation>) {
     return this.put(this.route.Dictation, body);
   }
@@ -88,6 +92,13 @@ export class DictationService extends HttpService {
     return this.get<IListResponse<IDictationCopies>>(
       this.route.CopiesOfficialOpinion,
       param
+    );
+  }
+
+  updateUserByOficNum(body: any) {
+    return this.put<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      body
     );
   }
 
@@ -175,5 +186,30 @@ export class DictationService extends HttpService {
 
   createTmpExpDesahogoB(body: ITmpExpDesahogoB) {
     return this.post(DictationEndpoints.TmpExpDesahogoB, body);
+  }
+
+  sendGetOfficeByYear(body: Object) {
+    const route = `${DictationEndpoints.GetOfficeByYear}`;
+    return this.post(route, body);
+  }
+
+  sendGetOfficeByYear2(body: Object) {
+    const route = `${DictationEndpoints.GetOfficeByYear_}`;
+    return this.post(route, body);
+  }
+
+  sendConsulta1(anio: string) {
+    const route = `${DictationEndpoints.GetOfficeByYear1}`;
+    return this.get(route + `/${anio}`);
+  }
+
+  sendConsulta2(anio: string) {
+    const route = `${DictationEndpoints.GetOfficeByYear2}`;
+    return this.get(route + `/${anio}`);
+  }
+
+  sendConsulta3(anio: string) {
+    const route = `${DictationEndpoints.GetOfficeByYear3}`;
+    return this.get(route + `/${anio}`);
   }
 }

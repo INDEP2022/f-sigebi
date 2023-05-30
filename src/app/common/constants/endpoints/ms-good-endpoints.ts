@@ -39,6 +39,7 @@ export enum GoodProcessPoints {
   acceptGoodActa = `application/acceptGoodActa`,
   acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+  dateRange = `util-pkg/getDate`,
 }
 
 export enum GoodFinderEndpoint {
