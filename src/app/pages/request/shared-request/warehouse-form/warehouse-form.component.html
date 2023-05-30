@@ -355,6 +355,8 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!warehouseForm.valid"
+          [text]="'Enviar'"
+          [loadingText]="'Enviando almacén'"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

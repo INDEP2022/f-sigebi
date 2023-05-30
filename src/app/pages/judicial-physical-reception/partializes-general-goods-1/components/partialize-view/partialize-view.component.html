@@ -53,11 +53,14 @@
         <div (click)="pressed(1)">1</div>
         <app-partialize-button
           [press]="pressPartialize"
+          (notFilledRow)="loading = false"
           (filledRow)="filledRow()"></app-partialize-button>
       </div>
       <div [class]="stateApply">
         <div (click)="pressed(2)">2</div>
-        <app-apply-button [press]="pressApply"></app-apply-button>
+        <app-apply-button
+          [press]="pressApply"
+          (fillPagedRow)="filledRow()"></app-apply-button>
       </div>
       <!-- Second Step -->
     </div>

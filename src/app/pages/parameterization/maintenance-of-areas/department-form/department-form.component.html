@@ -37,8 +37,10 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field [control]="departmentForm.get('id')" label="Codigo">
-            <input type="number" class="form-control" formControlName="id" />
+          <form-field
+            [control]="departmentForm.get('dsarea')"
+            label="&Aacute;rea">
+            <input type="text" class="form-control" formControlName="dsarea" />
           </form-field>
         </div>
         <div class="col-md-6">
