@@ -399,7 +399,9 @@
             bindLabel="nameAndId"
             control="institutionNumber"
             label="{{
-              initialCondition == 'T' ? 'Solicitante' : 'Autoridad Emisora'
+              initialCondition == 'T' || formControls?.wheelType?.value == 'P'
+                ? 'Solicitante'
+                : 'Autoridad Emisora'
             }}"
             [searchOnInit]="true"
             termMaxLength="200"
