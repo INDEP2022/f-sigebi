@@ -1,4 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -12,6 +20,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import { DateCellComponent } from 'src/app/@standalone/smart-table/date-cell/date-cell.component';
 import {
   FilterParams,
   ListParams,
@@ -32,15 +41,21 @@ import {
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
-import { COLUMNS_CAPTURE_EVENTS } from './columns-capture-events';
+import {
+  COLUMNS_CAPTURE_EVENTS,
+  COLUMNS_CAPTURE_EVENTS_2,
+} from './columns-capture-events';
+import { SmartDateInputHeaderDirective } from './directives/smart-date-input.directive';
 import { CaptureEventProceeding } from './utils/capture-event-proceeding';
 import {
   CaptureEventRegisterForm,
   CaptureEventSiabForm,
 } from './utils/capture-events-forms';
 import { EventCaptureButtons } from './utils/event-capture-butttons';
+
 interface IBlkCtrl {
   component: string | number;
   typeNum: string | number;
@@ -79,7 +94,12 @@ interface IBlkProceeding {
     `,
   ],
 })
-export class EventCaptureComponent extends BasePage implements OnInit {
+export class EventCaptureComponent
+  extends BasePage
+  implements OnInit, AfterViewInit, AfterContentInit
+{
+  @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
+  private itemsElements: QueryList<ElementRef>;
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
   ]);
@@ -173,14 +193,76 @@ export class EventCaptureComponent extends BasePage implements OnInit {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
     this.authUserName = this.authService.decodeToken().name;
-    this.settings = { ...this.settings, columns: COLUMNS_CAPTURE_EVENTS };
-    console.log(this.settings);
+    this.settings = {
+      ...this.settings,
+      columns: {
+        ...COLUMNS_CAPTURE_EVENTS,
+        start: {
+          title: 'Inicio',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          filter: {
+            type: 'custom',
+            component: DateCellComponent,
+          },
+          filterFunction: (value: any, query: any) => {
+            if (query != 'skip') {
+              this.detail = this.detail.map(d => {
+                return { ...d, start: new Date(query) };
+              });
+            }
+            return query;
+          },
+          renderComponent: DateCellComponent,
+          onComponentInitFunction: (instance: DateCellComponent) =>
+            this.test(instance),
+        },
+        end: {
+          title: 'Finalización',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          filter: {
+            type: 'custom',
+            component: DateCellComponent,
+          },
+          filterFunction: (value: any, query: any) => {
+            console.log({ value, query });
+          },
+          renderComponent: DateCellComponent,
+        },
+        select: {
+          title: 'Selec.',
+          sort: false,
+          type: 'custom',
+          filter: false,
+          showAlways: true,
+          renderComponent: CheckboxElementComponent,
+        },
+        ...COLUMNS_CAPTURE_EVENTS_2,
+      },
+      hideSubHeader: false,
+      actions: false,
+    };
     this.activatedRoute.queryParams.subscribe(params => {
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
 
     console.log(this.global);
+  }
+
+  test(instance: DateCellComponent) {
+    instance.inputChange.subscribe(val => {
+      console.log(val);
+    });
+  }
+  ngAfterContentInit(): void {
+    console.log(this.itemsElements);
+  }
+  ngAfterViewInit(): void {
+    console.log(this.itemsElements);
   }
 
   getUserDelegation() {
@@ -223,7 +305,7 @@ export class EventCaptureComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (!area.value) {
+    if (!typeEvent.value) {
       this.alert('error', 'Error', 'No se ha especificado el Tipo de Evento');
       return;
     }
@@ -689,11 +771,41 @@ export class EventCaptureComponent extends BasePage implements OnInit {
   getDetail() {
     const params = new FilterParams();
     params.addFilter('numberProceedings', this.proceeding.id);
-    return this.detailDeliveryReceptionService.getAll(params.getParams()).pipe(
-      tap(response => {
-        this.detail = response.data;
-      })
-    );
+    return this.eventProgrammingService
+      .getGoodsIndicators(this.proceeding.id)
+      .pipe(
+        tap(res => {
+          this.detail = res.data.map(detail => {
+            const { typeEvent } = this.registerControls;
+            let locTrans = '';
+            if (typeEvent.value == 'RF') {
+              if (this.blkProceeding.txtCrtSus1) {
+                locTrans = detail.warehouselocation;
+              } else {
+                locTrans = detail.transferentcity;
+              }
+            } else {
+              switch (typeEvent.value) {
+                case 'DN':
+                  locTrans = detail.donationcontractkey;
+                  break;
+                case 'DV':
+                  locTrans = detail.devolutionproceedingkey;
+                  break;
+                case 'CM':
+                  locTrans = detail.dictationkey;
+                  break;
+                case 'DS':
+                  locTrans = detail.destructionproceedingkey;
+                  break;
+                default:
+                  break;
+              }
+            }
+            return { ...detail, locTrans };
+          });
+        })
+      );
   }
 
   patchProceedingValue(proceeding: IProceedings) {}
