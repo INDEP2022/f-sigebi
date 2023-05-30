@@ -45,6 +45,15 @@
         </div>
         <div class="col-md-6">
           <form-field
+            [control]="departmentForm.get('dsarea')"
+            label="&Aacute;rea">
+            <input type="text" class="form-control" formControlName="dsarea" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
             [control]="departmentForm.get('description')"
             label="Descripci&oacute;n">
             <input
@@ -54,6 +63,7 @@
           </form-field>
         </div>
       </div>
+
       <!-- <div class="row pt-5">
         <div class="col-md-3">
           <form-field

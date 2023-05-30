@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-cat-types-of-goods-sub-type',
-  templateUrl: './cat-types-of-goods-sub-type.component.html',
+  selector: 'app-cat-types-of-goods-sub-sub-sub-type',
+  templateUrl: './cat-types-of-goods-sub-sub-sub-type.component.html',
   styles: [],
 })
-export class CatTypesOfGoodsSubTypeComponent
+export class CatTypesOfGoodsSubSubSubTypeComponent
   extends BasePage
   implements OnInit
 {
@@ -18,10 +18,13 @@ export class CatTypesOfGoodsSubTypeComponent
   typeGoodsForm: ModelForm<any>;
   data: any;
   idTypeGood: string;
+  idSsTypeGood: string;
+  idSssTypeGood: string;
+
   constructor(
-    private goodSubTypesService: GoodSubtypeService,
     private fb: FormBuilder,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private goodSssubtypeService: GoodSssubtypeService
   ) {
     super();
   }
@@ -32,26 +35,29 @@ export class CatTypesOfGoodsSubTypeComponent
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
       id: [null],
-      nameSubtypeGood: ['', Validators.compose([Validators.required])],
-      idTypeGood: [null],
-      noPhotography: [null],
-      descriptionPhotography: ['', Validators.compose([Validators.required])],
-      noRegister: [null],
-      version: null,
-      creationUser: [null],
-      creationDate: [null],
-      editionUser: [null],
-      modificationDate: [null],
+      description: ['', Validators.compose([Validators.required])],
+      // numClasifGoods: [null],
+      numSsubType: [null],
+      numSubType: [null],
+      numType: [null],
+      numRegister: [null],
+      numClasifAlterna: [null],
     });
     if (this.data != null) {
       this.edit = true;
       console.log(this.data);
       this.typeGoodsForm.patchValue(this.data);
-      this.typeGoodsForm.controls['idTypeGood'].setValue(
-        this.data.idTypeGood.id
+      this.typeGoodsForm.controls['numSsubType'].setValue(
+        this.data.numSsubType.id
       );
+      this.typeGoodsForm.controls['numSubType'].setValue(
+        this.data.numSubType.id
+      );
+      this.typeGoodsForm.controls['numType'].setValue(this.data.numType.id);
     } else {
-      this.typeGoodsForm.controls['idTypeGood'].setValue(this.idTypeGood);
+      this.typeGoodsForm.controls['numType'].setValue(this.idTypeGood);
+      this.typeGoodsForm.controls['numSubType'].setValue(this.idSsTypeGood);
+      this.typeGoodsForm.controls['numSsubType'].setValue(this.idSssTypeGood);
     }
   }
   confirm() {
@@ -63,10 +69,13 @@ export class CatTypesOfGoodsSubTypeComponent
   update() {
     this.loading = true;
     const ids = {
+      numClasifGoods: this.typeGoodsForm.controls['numClasifGoods'].value,
       id: this.typeGoodsForm.controls['id'].value,
-      idTypeGood: this.typeGoodsForm.controls['idTypeGood'].value,
+      numSsubType: this.typeGoodsForm.controls['numSsubType'].value,
+      numSubType: this.typeGoodsForm.controls['numSubType'].value,
+      numType: this.typeGoodsForm.controls['numType'].value,
     };
-    this.goodSubTypesService
+    this.goodSssubtypeService
       .updateByIds(ids, this.typeGoodsForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
@@ -75,7 +84,8 @@ export class CatTypesOfGoodsSubTypeComponent
   }
   create() {
     this.loading = true;
-    this.goodSubTypesService
+    // this.typeGoodsForm.controls['id'].setValue(1614);
+    this.goodSssubtypeService
       .create(this.typeGoodsForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
@@ -86,7 +96,7 @@ export class CatTypesOfGoodsSubTypeComponent
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast(
       'success',
-      'Sub Tipo de bienes',
+      'Sub Sub Sub Tipo de bienes',
       `${message} Correctamente`
     );
     this.loading = false;

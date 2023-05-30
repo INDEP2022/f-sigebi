@@ -1,6 +1,8 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} Categoria para almacenes</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Categoria para almacenes
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="warehouseForm">
@@ -48,6 +50,13 @@
         </div>
       </div>
       <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('responsibleDelegation')">
+            <ngx-select [searchOnInit]="true" [form]="warehouseForm" [data]="responsibleDelegation"
+              label="Delegaci&oacute;n Responsable" bindLabel="description" value="delegation"
+              (fetchItems)="getResponsibleDelegation($event)" control="responsibleDelegation"></ngx-select>
+          </form-field>
+        </div>
         <div class="col-md-6">
           <form-field [control]="warehouseForm.get('manager')">
             <ngx-select [form]="warehouseForm" [data]="user" label="Responsable" bindLabel="name" value="user"
