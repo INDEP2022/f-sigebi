@@ -196,7 +196,7 @@ export class JuridicalRecordUpdateComponent
       this.pageParams = this.fileUpdComService.fileDataUpdateParams;
   }
 
-  private get formControls() {
+  get formControls() {
     return this.fileDataUpdateForm.controls;
   }
 
@@ -1404,15 +1404,17 @@ export class JuridicalRecordUpdateComponent
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
       affair: this.formControls.affairKey.value,
+      // origin: this.layout,
     };
     this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
       queryParams: {
-        origin: '/pages/juridical/file-data-update',
+        previousRoute: this.activiveRoute.snapshot.queryParams['previousRoute'],
         form: 'FACTGENACTDATEX',
         iden: this.formControls.wheelNumber.value,
         exp: this.formControls.expedientNumber.value,
         pNoTramite: this.procedureId,
         affair: this.formControls.affairKey.value,
+        // origin: this.layout,
       },
     });
   }
