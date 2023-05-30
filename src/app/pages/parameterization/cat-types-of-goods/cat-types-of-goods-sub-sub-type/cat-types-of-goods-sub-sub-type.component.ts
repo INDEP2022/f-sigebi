@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-cat-types-of-goods-sub-type',
-  templateUrl: './cat-types-of-goods-sub-type.component.html',
+  selector: 'app-cat-types-of-goods-sub-sub-type',
+  templateUrl: './cat-types-of-goods-sub-sub-type.component.html',
   styles: [],
 })
-export class CatTypesOfGoodsSubTypeComponent
+export class CatTypesOfGoodsSubSubTypeComponent
   extends BasePage
   implements OnInit
 {
@@ -18,10 +18,11 @@ export class CatTypesOfGoodsSubTypeComponent
   typeGoodsForm: ModelForm<any>;
   data: any;
   idTypeGood: string;
+  idSsTypeGood: string;
   constructor(
-    private goodSubTypesService: GoodSubtypeService,
     private fb: FormBuilder,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private goodSsubtypeService: GoodSsubtypeService
   ) {
     super();
   }
@@ -32,26 +33,20 @@ export class CatTypesOfGoodsSubTypeComponent
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
       id: [null],
-      nameSubtypeGood: ['', Validators.compose([Validators.required])],
-      idTypeGood: [null],
-      noPhotography: [null],
-      descriptionPhotography: ['', Validators.compose([Validators.required])],
+      noSubType: [null],
+      noType: [null],
+      description: ['', Validators.compose([Validators.required])],
       noRegister: [null],
-      version: null,
-      creationUser: [null],
-      creationDate: [null],
-      editionUser: [null],
-      modificationDate: [null],
     });
     if (this.data != null) {
       this.edit = true;
       console.log(this.data);
       this.typeGoodsForm.patchValue(this.data);
-      this.typeGoodsForm.controls['idTypeGood'].setValue(
-        this.data.idTypeGood.id
-      );
+      this.typeGoodsForm.controls['noSubType'].setValue(this.data.noSubType.id);
+      this.typeGoodsForm.controls['noType'].setValue(this.data.noType.id);
     } else {
-      this.typeGoodsForm.controls['idTypeGood'].setValue(this.idTypeGood);
+      this.typeGoodsForm.controls['noType'].setValue(this.idTypeGood);
+      this.typeGoodsForm.controls['noSubType'].setValue(this.idSsTypeGood);
     }
   }
   confirm() {
@@ -64,9 +59,10 @@ export class CatTypesOfGoodsSubTypeComponent
     this.loading = true;
     const ids = {
       id: this.typeGoodsForm.controls['id'].value,
-      idTypeGood: this.typeGoodsForm.controls['idTypeGood'].value,
+      noSubType: this.typeGoodsForm.controls['noSubType'].value,
+      noType: this.typeGoodsForm.controls['noType'].value,
     };
-    this.goodSubTypesService
+    this.goodSsubtypeService
       .updateByIds(ids, this.typeGoodsForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
@@ -75,7 +71,7 @@ export class CatTypesOfGoodsSubTypeComponent
   }
   create() {
     this.loading = true;
-    this.goodSubTypesService
+    this.goodSsubtypeService
       .create(this.typeGoodsForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
@@ -86,7 +82,7 @@ export class CatTypesOfGoodsSubTypeComponent
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast(
       'success',
-      'Sub Tipo de bienes',
+      'Sub Sub Tipo de bienes',
       `${message} Correctamente`
     );
     this.loading = false;

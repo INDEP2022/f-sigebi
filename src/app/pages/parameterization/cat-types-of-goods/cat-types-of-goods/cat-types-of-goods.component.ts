@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -14,15 +15,16 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CatTypesOfGoodsSubSubSubTypeComponent } from '../cat-types-of-goods-sub-sub-sub-type/cat-types-of-goods-sub-sub-sub-type.component';
+import { CatTypesOfGoodsSubSubTypeComponent } from '../cat-types-of-goods-sub-sub-type/cat-types-of-goods-sub-sub-type.component';
+import { CatTypesOfGoodsSubTypeComponent } from '../cat-types-of-goods-sub-type/cat-types-of-goods-sub-type.component';
+import { CatTypesOfGoodsTypesFormComponent } from '../cat-types-of-goods-types-form/cat-types-of-goods-types-form.component';
 import {
   SUBSUBSUBTYPE_COLUMNS,
   SUBSUBTYPE_COLUMNS,
   SUBTYPE_COLUMNS,
   TYPE_COLUMNS,
 } from './cat-types-of-goods-columns';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { CatTypesOfGoodsTypesFormComponent } from '../cat-types-of-goods-types-form/cat-types-of-goods-types-form.component';
-import { CatTypesOfGoodsSubTypeComponent } from '../cat-types-of-goods-sub-type/cat-types-of-goods-sub-type.component';
 
 @Component({
   selector: 'app-cat-types-of-goods',
@@ -66,14 +68,17 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   params3 = new BehaviorSubject<ListParams>(new ListParams());
 
   rowTypeGoods: boolean = false;
+  rowsSsTypeGoods: boolean = false;
+  rowsSssTypeGoods: boolean = false;
   idTypeGood: string;
+  idSsTypeGood: string;
+  idSssTypeGood: string;
   constructor(
     private goodTypesService: GoodTypeService,
     private goodSubTypesService: GoodSubtypeService,
     private goodSsubtypeService: GoodSsubtypeService,
     private goodSssubtypeService: GoodSssubtypeService,
-    private modalService: BsModalService,
-
+    private modalService: BsModalService
   ) {
     super();
     this.typeSettings = {
@@ -102,48 +107,32 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
       // hideSubHeader: false,
       columns: { ...SUBTYPE_COLUMNS },
     };
-    // this.subsubTypeSettings = {
-    //   ...this.settings,
-    //   actions: {
-    //     columnTitle: 'Acciones',
-    //     edit: true,
-    //     delete: false,
-    //     add: false,
-    //     position: 'right',
-    //     width: '10%',
-    //   },
-    //   edit: {
-    //     ...this.settings.edit,
-    //     saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-    //     cancelButtonContent:
-    //       '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-    //     confirmSave: true,
-    //   },
-    //   mode: 'inline',
-    //   // hideSubHeader: false,
-    //   columns: { ...SUBSUBTYPE_COLUMNS },
-    // };
-    // this.subsubsubTypeSettings = {
-    //   ...this.settings,
-    //   actions: {
-    //     columnTitle: 'Acciones',
-    //     edit: true,
-    //     delete: false,
-    //     add: false,
-    //     position: 'right',
-    //     width: '10%',
-    //   },
-    //   edit: {
-    //     ...this.settings.edit,
-    //     saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-    //     cancelButtonContent:
-    //       '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-    //     confirmSave: true,
-    //   },
-    //   mode: 'inline',
-    //   // hideSubHeader: false,
-    //   columns: { ...SUBSUBSUBTYPE_COLUMNS },
-    // };
+    this.subsubTypeSettings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+        width: '10%',
+      },
+      columns: { ...SUBSUBTYPE_COLUMNS },
+    };
+    this.subsubsubTypeSettings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+        width: '10%',
+      },
+      columns: { ...SUBSUBSUBTYPE_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -270,9 +259,11 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   }
   selectTypeGoods(event: any) {
     this.rowTypeGoods = true;
+    this.rowsSsTypeGoods = false;
     this.idTypeGood = event.data.id;
     this.getSubExample(event.data.id);
   }
+
   getSubExample(id?: string) {
     this.loading = true;
     if (id) {
@@ -290,11 +281,27 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
         this.totalItems1 = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data1.load([]);
+        this.data1.refresh();
+        this.totalItems1 = 0;
+      },
     });
   }
-  getGoodSsubtypes() {
+  selectSsubTypeGoods(event: any) {
+    console.log(event.data);
+    this.rowsSsTypeGoods = true;
+    this.rowsSssTypeGoods = false;
+    this.idSsTypeGood = event.data.id;
+    this.getGoodSsubtypes(event.data.id);
+  }
+  getGoodSsubtypes(id?: string) {
     this.loading = true;
+    if (id) {
+      this.params2.getValue()['filter.noSubType'] = id;
+      this.params2.getValue()['filter.noType'] = this.idTypeGood;
+    }
     let params = {
       ...this.params2.getValue(),
       ...this.columnFilters2,
@@ -307,11 +314,26 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
         this.totalItems2 = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data2.load([]);
+        this.data2.refresh();
+      },
     });
   }
-  getGoodSssubtypes() {
+  selectSssubTypeGoods(event: any) {
+    console.log(event.data);
+    this.rowsSssTypeGoods = true;
+    this.idSssTypeGood = event.data.id;
+    this.getGoodSssubtypes(event.data.id);
+  }
+  getGoodSssubtypes(id?: string) {
     this.loading = true;
+    if (id) {
+      this.params3.getValue()['filter.numSubType'] = this.idSsTypeGood;
+      this.params3.getValue()['filter.numType'] = this.idTypeGood;
+      this.params3.getValue()['filter.numSsubType'] = id;
+    }
     let params = {
       ...this.params3.getValue(),
       ...this.columnFilters3,
@@ -324,11 +346,15 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
         this.totalItems3 = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data3.load([]);
+        this.data3.refresh();
+        this.totalItems3 = 0;
+      },
     });
   }
   onSaveConfirm(event?: any) {
-
     const data = event != null ? event.data : null;
     let config: ModalOptions = {
       initialState: {
@@ -347,23 +373,6 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
     this.modalService.show(CatTypesOfGoodsTypesFormComponent, config);
   }
   onSaveConfirm1(event?: any) {
-    // this.loading = true;
-    // let value = {
-    //   id: event['newData'].id,
-    //   idTypeGood: event['newData'].idTypeGood.id,
-    //   nameSubtypeGood: event['newData'].nameSubtypeGood,
-    //   noPhotography: event['newData'].noPhotography,
-    //   descriptionPhotography: event['newData'].descriptionPhotography,
-    //   noRegister: event['newData'].noRegister,
-    //   version: event['newData'].version,
-    //   creationUser: event['newData'].creationUser,
-    //   creationDate: event['newData'].creationDate,
-    //   editionUser: event['newData'].editionUser,
-    //   modificationDate: event['newData'].modificationDate,
-    // };
-
-    // event.confirm.resolve();
-
     const data = event != null ? event.data : null;
     const idTypeGood = this.idTypeGood;
     let config: ModalOptions = {
@@ -383,49 +392,51 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
     };
     this.modalService.show(CatTypesOfGoodsSubTypeComponent, config);
   }
-  onSaveConfirm2(event: any) {
-    let value = {
-      id: event['newData'].id,
-      noSubType: event['newData'].noSubType.id,
-      noType: event['newData'].noType.id,
-      description: event['newData'].id,
-      noRegister: event['newData'].id,
+  onSaveConfirm2(event?: any) {
+    const data = event != null ? event.data : null;
+    const idTypeGood = this.idTypeGood;
+    const idSsTypeGood = this.idSsTypeGood;
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        idTypeGood,
+        idSsTypeGood,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getGoodSsubtypes());
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
-    const ids = {
-      id: event['newData'].id,
-      noSubType: event['newData'].noSubType.id,
-      noType: event['newData'].noType.id,
-    };
-    this.goodSsubtypeService.updateByIds(ids, value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-    event.confirm.resolve();
+    this.modalService.show(CatTypesOfGoodsSubSubTypeComponent, config);
   }
-  onSaveConfirm3(event: any) {
-    let value = {
-      numClasifGoods: event['newData'].numClasifGoods,
-      id: event['newData'].id,
-      description: event['newData'].description,
-      numSsubType: event['newData'].numSsubType.id,
-      numSubType: event['newData'].numSubType.id,
-      numType: event['newData'].numType.id,
-      numRegister: event['newData'].numRegister,
-      numClasifAlterna: event['newData'].numClasifAlterna,
+  onSaveConfirm3(event?: any) {
+    const data = event != null ? event.data : null;
+    const idTypeGood = this.idTypeGood;
+    const idSsTypeGood = this.idSsTypeGood;
+    const idSssTypeGood = this.idSssTypeGood;
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        idTypeGood,
+        idSsTypeGood,
+        idSssTypeGood,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getGoodSssubtypes());
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
-    const ids = {
-      numClasifGoods: event['newData'].numClasifGoods,
-      id: event['newData'].id,
-      numSsubType: (event['newData'].numSsubType as IGoodSsubType).id,
-      numSubType: (event['newData'].numSubType as IGoodSubType).id,
-      numType: (event['newData'].numType as IGoodType).id,
-    };
-
-    this.goodSssubtypeService.updateByIds(ids, value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-    event.confirm.resolve();
+    this.modalService.show(CatTypesOfGoodsSubSubSubTypeComponent, config);
   }
   onDeleteConfirm(event: any) {
     // console.log(event);
@@ -454,26 +465,4 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   //     }
   //   });
   // }
-  create() {
-    this.dataType.getElements().then((data: any) => {
-      this.loading = true;
-      this.handleSuccess();
-    });
-  }
-
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
-
-  handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'Tipos de bienes', `${message} Correctamente`);
-    this.loading = false;
-    this.refresh.emit(true);
-  }
-
-  update() {
-    this.loading = true;
-    this.handleSuccess();
-  }
 }

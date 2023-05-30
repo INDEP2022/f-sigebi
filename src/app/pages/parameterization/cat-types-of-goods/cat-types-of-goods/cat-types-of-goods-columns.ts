@@ -27,23 +27,23 @@ export const SUBSUBTYPE_COLUMNS = {
   id: {
     title: 'No Ssubtipo',
     sort: false,
-    filter: false,
+    // filter: false,
   },
   description: {
     title: 'Descripción',
     sort: false,
-    filter: false,
+    // filter: false,
   },
 };
 export const SUBSUBSUBTYPE_COLUMNS = {
   id: {
     title: 'No Ssstipo',
     sort: false,
-    filter: false,
+    // filter: false,
   },
   description: {
     title: 'Descripción',
     sort: false,
-    filter: false,
+    // filter: false,
   },
 };

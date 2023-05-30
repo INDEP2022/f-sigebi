@@ -2,19 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
-import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
-import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-cat-types-of-goods-types-form',
   templateUrl: './cat-types-of-goods-types-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CatTypesOfGoodsTypesFormComponent extends BasePage implements OnInit {
+export class CatTypesOfGoodsTypesFormComponent
+  extends BasePage
+  implements OnInit
+{
   edit: boolean = false;
   typeGoodsForm: ModelForm<any>;
   data: any;
@@ -22,11 +21,10 @@ export class CatTypesOfGoodsTypesFormComponent extends BasePage implements OnIni
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private goodTypesService: GoodTypeService,
-
-    private goodSsubtypeService: GoodSsubtypeService,
-    private goodSssubtypeService: GoodSssubtypeService,
-  ) { super() }
+    private goodTypesService: GoodTypeService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -34,12 +32,7 @@ export class CatTypesOfGoodsTypesFormComponent extends BasePage implements OnIni
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
       id: [null],
-      nameGoodType: [
-        '',
-        Validators.compose([
-          Validators.required,
-        ]),
-      ],
+      nameGoodType: ['', Validators.compose([Validators.required])],
       maxAsseguranceTime: [null],
       maxFractionTime: [null],
       maxExtensionTime: [null],
@@ -52,8 +45,8 @@ export class CatTypesOfGoodsTypesFormComponent extends BasePage implements OnIni
       creationUser: [null],
       creationDate: [null],
       editionUser: [null],
-      modificationDate: [null]
-    })
+      modificationDate: [null],
+    });
     if (this.data != null) {
       this.edit = true;
       this.typeGoodsForm.patchValue(this.data);
@@ -69,7 +62,10 @@ export class CatTypesOfGoodsTypesFormComponent extends BasePage implements OnIni
   update() {
     this.loading = true;
     this.goodTypesService
-      .update(this.typeGoodsForm.controls['id'].value, this.typeGoodsForm.getRawValue())
+      .update(
+        this.typeGoodsForm.controls['id'].value,
+        this.typeGoodsForm.getRawValue()
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
