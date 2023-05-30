@@ -37,6 +37,7 @@
               label="Estado"
               value="id"
               (fetchItems)="getStates($event)"
+              (change)="getCitie($event)"
               control="stateCode"></ngx-select>
           </form-field>
         </div>
@@ -49,6 +50,7 @@
               label="Ciudad"
               value="idCity"
               (fetchItems)="getCities($event)"
+              (change)="getMunicipalitie($event)"
               control="cityCode"></ngx-select>
           </form-field>
         </div>
@@ -61,20 +63,14 @@
               label="Municipio"
               value="codeMunicipalityId"
               (fetchItems)="getMunicipalities($event)"
+              (change)="getLocalitie($event)"
               control="municipalityCode"></ngx-select>
           </form-field>
         </div>
       </div>
 
       <div class="row mt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="warehouseForm.get('type')"
-            label="Tipo Almac&eacute;n">
-            <input type="text" class="form-control" formControlName="type" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-12">
           <form-field [control]="warehouseForm.get('localityCode')">
             <ngx-select
               [form]="warehouseForm"
@@ -84,6 +80,34 @@
               value="id"
               (fetchItems)="getLocalities($event)"
               control="localityCode"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('manager')">
+            <ngx-select
+              [form]="warehouseForm"
+              [data]="user"
+              label="Responsable"
+              bindLabel="name"
+              value="user"
+              (fetchItems)="getUser($event)"
+              control="manager"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <form-field [control]="warehouseForm.get('type')">
+            <ngx-select
+              [form]="warehouseForm"
+              [data]="type"
+              label="Tipo Almac&eacute;n"
+              bindLabel="otvalor"
+              value="otkey"
+              (fetchItems)="getType($event)"
+              control="type"></ngx-select>
           </form-field>
         </div>
       </div>

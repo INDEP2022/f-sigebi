@@ -5,11 +5,28 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mt-3">
-        <div class="form-material col-md-4">
-          <!-- <form-field [control]="form.get('newValue')" label="">
-            <input class="form-control" formControlName="newValue" />
+        <div
+          class="form-material"
+          [class]="otherFormField ? 'col-md-4' : 'col-md-12'">
+          <!-- <form-field [control]="form.get(formField)" [label]="label">
+            <input
+              class="form-control"
+              [formControlName]="formField"
+              maxlength="30" />
           </form-field> -->
-          <app-select-form
+          <ng-custom-select-loading
+            [form]="form"
+            [formControlName]="formField"
+            [label]="label"
+            [value]="idSelect"
+            [bindLabel]="labelSelect"
+            [paramSearch]="paramSearch"
+            [prefixSearch]="prefixSearch"
+            [path]="path"
+            [labelTemplate]="labelTemplate"
+            [optionTemplate]="optionTemplate">
+          </ng-custom-select-loading>
+          <!-- <app-select-form
             [form]="form"
             [formField]="formField"
             label=""
@@ -19,7 +36,7 @@
             [getListObservable]="getListObservableSelect"
             [paramFilter]="paramFilter"
             [operator]="operator"
-            [(paramsFilter)]="paramsControl"></app-select-form>
+            [(paramsFilter)]="paramsControl"></app-select-form> -->
         </div>
         <div class="form-material col-md-8" *ngIf="otherFormField">
           <form-field

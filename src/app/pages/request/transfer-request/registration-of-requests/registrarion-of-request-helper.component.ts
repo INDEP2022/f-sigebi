@@ -79,6 +79,7 @@ export class RegistrationHelper extends BasePage {
     return new Promise((resolve, reject) => {
       let body: any = {};
       body['xidSolicitud'] = id;
+      body['xtipoDocumento'] = 90;
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
           //console.log(resp);
@@ -113,7 +114,7 @@ export class RegistrationHelper extends BasePage {
 
     const lisDocument: any = await this.getDocument(idRequest);
     //Todo: verificar y obtener documentos de la solicitud
-    /*if (request.recordId === null) {
+    if (request.recordId === null) {
       //Verifica si hay expediente
       this.message(
         'error',
@@ -121,7 +122,7 @@ export class RegistrationHelper extends BasePage {
         'La solicitud no tiene expediente asociado'
       );
       validoOk = false;
-    } else*/ if (lisDocument && lisDocument < 1) {
+    } else if (!lisDocument || lisDocument < 1) {
       this.message(
         'error',
         'Error sin archivos',
@@ -267,7 +268,7 @@ export class RegistrationHelper extends BasePage {
             sinDestinoT = true;
             this.message(
               'error',
-              `Error en el bien ${good.goodDescription}`,
+              `Error en el bien ${good.id} ${good.goodDescription}`,
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;

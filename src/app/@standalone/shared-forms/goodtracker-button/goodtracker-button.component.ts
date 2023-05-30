@@ -36,7 +36,7 @@ export class GoodtrackerButtonComponent extends AlertButton implements OnInit {
       this.alertQuestion(
         'warning',
         'Rastreador de bienes',
-        'La asignación de bienes ya se ha realizado, se ejecuta nuevamente?'
+        '¿La asignación de bienes ya se ha realizado, se ejecuta nuevamente?'
       ).then(question => {
         if (question.isConfirmed) {
           this.redirectGoodTracker(question);
@@ -46,7 +46,7 @@ export class GoodtrackerButtonComponent extends AlertButton implements OnInit {
       this.alertQuestion(
         'warning',
         'Rastreador de bienes',
-        'Quiere continuar con el proceso?'
+        '¿Quiere continuar con el proceso?'
       ).then(question => {
         if (question.isConfirmed) {
           this.redirectGoodTracker(question);

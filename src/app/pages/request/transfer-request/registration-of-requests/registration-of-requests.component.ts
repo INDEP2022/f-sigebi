@@ -37,6 +37,7 @@ import { RequestService } from '../../../../core/services/requests/request.servi
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { SelectTypeUserComponent } from '../select-type-user/select-type-user.component';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
+import { MotiveRefuseModalComponent } from './motive-refuse-modal/motive-refuse-modal.component';
 import { RegistrationHelper } from './registrarion-of-request-helper.component';
 
 @Component({
@@ -93,6 +94,8 @@ export class RegistrationOfRequestsComponent
   authorityName: string = '';
   haveDictamen: boolean = false;
 
+  requestApproved: boolean = false;
+
   requestList: IRequest;
 
   formLoading: boolean = true;
@@ -132,10 +135,9 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     const authService: any = this.authService.decodeToken();
-    console.log(authService);
     const id = this.route.snapshot.paramMap.get('id');
     this.task = JSON.parse(localStorage.getItem('Task'));
-
+    this.isRequestAlreadyApproved(id);
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
@@ -820,6 +822,7 @@ export class RegistrationOfRequestsComponent
       task['programmingId'] = 0;
       task['requestId'] = this.requestData.id;
       task['expedientId'] = this.requestData.recordId;
+      task['idDelegationRegional'] = user.department;
       task['urlNb'] = 'pages/request/transfer-request/process-approval';
 
       this.taskService.createTask(task).subscribe({
@@ -887,8 +890,14 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
+        'Algunos bienes aun no se aclararon'
       );
+      return;
+    }
+
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === true) {
+      this.onLoadToast('info', '', 'Ya se genero un dictamen');
       return;
     }
 
@@ -918,14 +927,35 @@ export class RegistrationOfRequestsComponent
 
   /** Proceso de aprobacion */
   async approveRequest() {
-    const sign: boolean = await this.ableToSignDictamen();
+    console.log(this.requestApproved);
+    if (this.requestApproved == true) {
+      this.onLoadToast(
+        'error',
+        'Solicitud aprovado',
+        'La solicitud ya fue aprovada'
+      );
+      return;
+    }
 
+    const sign: boolean = await this.ableToSignDictamen();
     if (sign == false) {
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclarar'
+        'Algunos bienes aun no se aclararon'
       );
+      return;
+    }
+
+    const existDictamen = await this.getDictamen(this.requestData.id);
+    if (existDictamen === false) {
+      this.onLoadToast(
+        'info',
+        'No se puede aprobar la solicitud',
+        'Es requerido previamente tener firmado el dictamen'
+      );
+      this.deleteMsjRefuse();
+      this.loader.load = false;
       return;
     }
 
@@ -940,28 +970,6 @@ export class RegistrationOfRequestsComponent
 
   async approveRequestMethod() {
     this.loader.load = true;
-    //no tiene aclaraciones
-    const haveClarifications = await this.haveNotificacions();
-    if (haveClarifications === 'POR_ACLARAR') {
-      this.onLoadToast(
-        'info',
-        'No se puede aprobar la solicitud',
-        'La solicitud aun cuenta con bienes por aclarar!'
-      );
-      this.loader.load = false;
-      return;
-    }
-
-    /*const existDictamen = await this.getDictamen(this.requestData.id);
-    if (existDictamen === false) {
-      this.onLoadToast(
-        'info',
-        'No se puede aprobar la solicitud',
-        'Es requerido previamente tener firmado el dictamen'
-      );
-      this.loader.load = false;
-      return;
-    }*/
 
     const title = ``;
     const url = '';
@@ -983,6 +991,7 @@ export class RegistrationOfRequestsComponent
     );
     if (taskResult === true) {
       this.loader.load = false;
+      //this.cleanMotiveRefuse();
       this.msgGuardado(
         'success',
         'Turnado Exitoso',
@@ -994,8 +1003,16 @@ export class RegistrationOfRequestsComponent
 
   /* Inicio de rechazar aprovacion */
   async refuseRequest() {
-    const sign: boolean = await this.ableToSignDictamen();
+    if (this.requestApproved == true) {
+      this.onLoadToast(
+        'error',
+        'Solicitud aprovado',
+        'La solicitud ya fue aprovada'
+      );
+      return;
+    }
 
+    const sign: boolean = await this.ableToSignDictamen();
     if (sign == false) {
       this.onLoadToast(
         'error',
@@ -1015,44 +1032,30 @@ export class RegistrationOfRequestsComponent
   }
 
   async refuseMethod() {
-    const haveClarifications = await this.haveNotificacions();
-    if (haveClarifications === 'POR_ACLARAR') {
-      this.onLoadToast(
-        'info',
-        'No se puede rechazar la solicitud',
-        'La solicitud aun cuenta con bienes por aclarar!'
+    const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
+    const url = 'pages/request/transfer-request/verify-compliance';
+    const from = 'SOLICITAR_APROBACION';
+    const to = 'VERIFICAR_CUMPLIMIENTO';
+    const user: any = this.authService.decodeToken();
+    const taskResult = await this.createTaskOrderService(
+      this.requestData,
+      title,
+      url,
+      from,
+      to,
+      false,
+      this.task.id,
+      user.username,
+      'SOLICITUD_TRANSFERENCIA',
+      'Aprobar_Solicitud',
+      'RECHAZAR'
+    );
+    if (taskResult === true) {
+      this.msgGuardado(
+        'success',
+        'Solicitud Rechazada',
+        `Se Rechazo la Solicitud con el Folio: ${this.requestData.id}`
       );
-      this.loader.load = false;
-      return;
-    }
-
-    const oldTask: any = await this.getOldTask();
-    if (oldTask.assignees != '') {
-      const title = `Registro de solicitud (Verificar Cumplimiento) con folio: ${this.requestData.id}`;
-      const url = 'pages/request/transfer-request/verify-compliance';
-      const from = 'SOLICITAR_APROBACION';
-      const to = 'VERIFICAR_CUMPLIMIENTO';
-      const user: any = this.authService.decodeToken();
-      const taskResult = await this.createTaskOrderService(
-        this.requestData,
-        title,
-        url,
-        from,
-        to,
-        false,
-        this.task.id,
-        user.username,
-        'SOLICITUD_TRANSFERENCIA',
-        'Aprobar_Solicitud',
-        'RECHAZAR'
-      );
-      if (taskResult === true) {
-        this.msgGuardado(
-          'success',
-          'Turnado Exitoso',
-          `Se guardó la solicitud con el folio: ${this.requestData.id}`
-        );
-      }
     }
   }
   /* Fin rechazo de aprovacion */
@@ -1106,6 +1109,8 @@ export class RegistrationOfRequestsComponent
       task['requestId'] = request.id;
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
+      task['processName'] = 'SolicitudTransferencia';
+      task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
       let orderservice: any = {};
@@ -1120,6 +1125,7 @@ export class RegistrationOfRequestsComponent
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
           resolve(true);
+          //this.deleteMsjRefuse();
         },
         error: error => {
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
@@ -1129,24 +1135,18 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  getOldTask() {
-    return new Promise((resolve, reject) => {
-      const params = new FilterParams();
-      params.addFilter('requestId', this.requestData.id);
-      const filter = params.getParams();
-      this.taskService.getAll(filter).subscribe({
-        next: resp => {
-          const task = {
-            assignees: resp.data[0].assignees,
-            assigneesDisplayname: resp.data[0].assigneesDisplayname,
-          };
-          resolve(task);
-        },
-        error: error => {
-          this.message('error', 'Error', 'Error al obtener la tarea antigua');
-          reject(error.error.message);
-        },
-      });
+  deleteMsjRefuse() {
+    const requestObj: object = {
+      id: this.requestData.id,
+      rejectionComment: null,
+    };
+    this.requestService.update2(this.requestData.id, requestObj).subscribe({
+      next: response => {
+        console.log('Actualizado', response);
+      },
+      error: error => {
+        console.log('No actualizado', error);
+      },
     });
   }
 
@@ -1193,15 +1193,21 @@ export class RegistrationOfRequestsComponent
     }).then(async result => {
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
+          console.log('finish');
           this.finishMethod();
         }
         if (typeCommit === 'returnar') {
+          console.log('returnar');
+
           this.returnarMethod();
         }
         if (typeCommit === 'captura-solicitud') {
+          console.log('captura-solicitud');
           this.confirmMethod();
         }
         if (typeCommit === 'verificar-cumplimiento') {
+          this.loader.load = true;
+          console.log('verificar-cumplimiento');
           this.question = true;
           setTimeout(async () => {
             console.log('estado verificar:', this.verifyResp);
@@ -1225,20 +1231,31 @@ export class RegistrationOfRequestsComponent
           }, 400);
         }
         if (typeCommit === 'clasificar-bienes') {
+          this.loader.load = true;
           await this.updateGoodStatus('DESTINO_DOCUMENTAL');
           //creat tarea para destino documental
           this.classifyGoodMethod();
         }
         if (typeCommit === 'validar-destino-bien') {
           this.loader.load = true;
+          this.deleteMsjRefuse();
           await this.updateGoodStatus('SOLICITAR_APROBACION');
+          //tiene aclaraciones
           const clarification = await this.haveNotificacions();
           console.log(clarification);
           this.loader.load = false;
           if (clarification === 'POR_ACLARAR') {
-            const result = await this.createApprovalProcessOnly();
-            if (result) {
+            //consultar si ya exise una tarea de solicitar aprovacion creada
+            const existApprovalTask = await this.existApprobalTask();
+            if (existApprovalTask === true) {
+              //si existe crea solo la Notificacion de aclaracion
               await this.notifyClarificationsMethod();
+            } else {
+              //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
+              const result = await this.createApprovalProcessOnly();
+              if (result) {
+                await this.notifyClarificationsMethod();
+              }
             }
           } else if (clarification === 'ACLARADO') {
             const user: any = this.authService.decodeToken();
@@ -1246,6 +1263,7 @@ export class RegistrationOfRequestsComponent
             body.id = this.requestData.id;
             body.rulingCreatorName = user.name;
             await this.updateRequest(body);
+            //se cierra la tarea de destino documental
             await this.closeValidateDocumentation();
           } else if (clarification === 'SIN_ACLARACIONES') {
             const user: any = this.authService.decodeToken();
@@ -1253,6 +1271,7 @@ export class RegistrationOfRequestsComponent
             body.id = this.requestData.id;
             body.rulingCreatorName = user.name;
             await this.updateRequest(body);
+            //se cierra la tarea de destino documental y se crea una nueva
             await this.destinyDocumental();
           }
         }
@@ -1263,10 +1282,29 @@ export class RegistrationOfRequestsComponent
 
         if (typeCommit === 'refuse') {
           await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
-          this.refuseMethod();
+          this.motivoRechazo();
         }
       }
     });
+  }
+
+  //modal de motivo del rechazo
+  motivoRechazo() {
+    const dataRequest = this.requestData;
+
+    let config: ModalOptions = {
+      initialState: {
+        dataRequest,
+        callback: (next: boolean) => {
+          if (next) {
+            this.refuseMethod();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(MotiveRefuseModalComponent, config);
   }
 
   //revisar las pruebas
@@ -1307,9 +1345,18 @@ export class RegistrationOfRequestsComponent
   }
 
   async updateGoodStatus(newProcessStatus: string) {
-    let goods: any = await this.getAllGood();
-    goods.data.map(async (good: any) => {
+    let goodsCount: any = await this.getAllGood();
+    let goods: any = null;
+    if (goodsCount.count > 10) {
+      goods = await this.getAllGood(goodsCount.count);
+    } else {
+      goods = goodsCount;
+    }
+
+    goods.data.map(async (good: any, index: number) => {
       //consultar si aclarado puede volver a modificarse
+      //index = index + 1;
+      //console.log(index);
       if (
         good.processStatus != 'SOLICITAR_ACLARACION' &&
         good.processStatus != 'IMPROCEDENTE' &&
@@ -1321,18 +1368,34 @@ export class RegistrationOfRequestsComponent
         body.processStatus = newProcessStatus;
         await this.updateGood(body);
       }
+
+      if (
+        this.process === 'process-approval' &&
+        good.processStatus == 'SOLICITAR_APROBACION'
+      ) {
+        let body: any = {};
+        body.id = good.id;
+        body.goodId = good.goodId;
+        body.processStatus = newProcessStatus;
+        body.goodStatus = newProcessStatus;
+        await this.updateGood(body);
+      }
     });
   }
 
-  getAllGood() {
+  getAllGood(newLimit?: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
       params['filter.requestId'] = `$eq:${this.requestData.id}`;
+      if (newLimit) {
+        params.limit = newLimit;
+      }
       this.goodService.getAll(params).subscribe({
         next: resp => {
           resolve(resp);
         },
         error: error => {
+          this.loader.load = false;
           reject('error');
           console.log(error);
           this.onLoadToast(
@@ -1345,6 +1408,28 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  isRequestAlreadyApproved(id: string | number) {
+    const params = new ListParams();
+    params['filter.requestId'] = `$eq:${id}`;
+    this.goodService.getAll(params).subscribe({
+      next: resp => {
+        const filter = resp.data.filter(x => x.processStatus === 'APROBADO');
+        const response = filter.length > 0 ? true : false;
+        this.requestApproved = response;
+      },
+      error: error => {
+        console.log(error);
+        if (error.error.message != 'No se encontrarón registros.') {
+          this.onLoadToast(
+            'error',
+            'Error en la solicitud',
+            'Error al verificar si la solicitud ya fue aprobada'
+          );
+        }
+      },
+    });
+  }
+
   updateGood(body: any) {
     return new Promise((resolve, reject) => {
       this.goodService.update(body).subscribe({
@@ -1352,8 +1437,29 @@ export class RegistrationOfRequestsComponent
           resolve(true);
         },
         error: error => {
+          this.loader.load = false;
           console.log(error);
           reject(false);
+        },
+      });
+    });
+  }
+
+  existApprobalTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      params.addFilter(
+        'title',
+        `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`
+      );
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
         },
       });
     });
@@ -1413,6 +1519,7 @@ export class RegistrationOfRequestsComponent
   }
 
   verifyCumplianteMsg(title: string, text: string, icon: any) {
+    this.loader.load = false;
     Swal.fire({
       title: title,
       text: text,

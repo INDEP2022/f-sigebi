@@ -7,6 +7,7 @@ export enum GoodEndpoints {
   SearchByExpedient = `good/expedient/search`,
   GoodAndDesc = `good/getGoodAndDesc`,
   StatusAndDesc = `good/getDescAndStatus`,
+  OnlyStatus = `status-good`,
   GoodsTransAva = 'goods-trans-ava',
   DeleteByExpedient = `good/deleteByExpendient`,
   DiStatusGood = 'status-good/diStatusGood',
@@ -23,4 +24,25 @@ export enum GoodEndpoints {
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
   Vban = 'good/getBan',
+  AttribGoodBad = 'attrib-good-bad',
+  GetAllGoodQuery = 'good/getAllGoodQuery',
+  PAValidaCambioEstatus = 'good/testValid',
+}
+
+export enum GoodProcessPoints {
+  basepath = `goodprocess`,
+  cuValNume = `application/cuValNume`,
+  cuValOtro = `application/cuValotro`,
+  vnNumerario = `application/getVnNumerario`,
+  lvlPrograma = `application/getLvlPrograma`,
+  goodAndDetail = `application/getBienAndDetailActa`,
+  acceptGoodActa = `application/acceptGoodActa`,
+  acceptGoodStatus = `application/acceptGoodStatus`,
+  acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+  dateRange = `util-pkg/getDate`,
+}
+
+export enum GoodFinderEndpoint {
+  GoodFinderBase = 'goodfinder',
+  GoodQuery = 'good-query',
 }

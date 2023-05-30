@@ -1,0 +1,41 @@
+<ng-container [formGroup]="form">
+  <div
+    class="form-group form-secondary form-static-label"
+    id="custom-select-loading">
+    <ng-select
+      #select
+      class="form-control"
+      notFoundText="No se encontraron elementos"
+      [items]="items"
+      [bindLabel]="bindLabel"
+      [bindValue]="value"
+      [clearable]="true"
+      [hideSelected]="true"
+      [virtualScroll]="true"
+      [searchable]="searchable"
+      [multiple]="multiple"
+      [addTag]="addTag"
+      [loadingText]="loadingText"
+      [typeToSearchText]="typeToSearchText"
+      [loading]="isLoading"
+      [typeahead]="input$"
+      [placeholder]="placeholder"
+      [closeOnSelect]="true"
+      [title]="title"
+      [readonly]="readonly"
+      [inputAttrs]="inputAttrs"
+      [formControlName]="formControlName"
+      (change)="onSelectChange($event)"
+      (clear)="clear($event)"
+      (scrollToEnd)="fetchMore(select.searchTerm)">
+      <!-- <ng-template *ngIf="showTooltip" ng-option-tmp let-item="item">
+        <div [title]="item[bindLabel]">{{ item[bindLabel] }}</div>
+      </ng-template> -->
+    </ng-select>
+    <span class="form-bar"></span>
+    <label class="float-label"
+      >{{ label }}
+      <span [style.color]="'#9D2449'" *ngIf="isRequired()">*</span></label
+    >
+  </div>
+</ng-container>

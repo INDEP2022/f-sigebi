@@ -102,6 +102,38 @@ export class DocumentsService extends HttpService {
     return this.get<IListResponse<IClarificationDocumentsImpro>>(route, params);
   }
 
+  /**
+   * 
+   * @param armyOfficeKey 
+   * @description: `SELECT count(*) 
+     INTO  vTotal
+     FROM DOCUMENTOS_DICTAMEN_X_BIEN_M 
+    WHERE TIPO_DICTAMINACION = 'PROCEDENCIA' 
+      AND NO_OF_DICTA IN (SELECT NO_OF_DICTA 
+                            FROM DICTAMINACIONES
+                           WHERE CLAVE_OFICIO_ARMADA = :DICTAMINACIONES.CLAVE_OFICIO_ARMADA
+                             AND TIPO_DICTAMINACION = 'PROCEDENCIA'` 
+   */
+
+  postCountDictationGoodFile(
+    armyOfficeKey: string
+  ): Observable<IListResponse<{ count: number }>> {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}/dictationGoodFile`;
+    return this.post(route, { armyOfficeKey });
+  }
+
+  getDocParaDictum(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `${DocumentsEndpoints.DocumentsForDictum}`,
+      params
+    );
+  }
+
+  deleteDocumentsDictuXStateM(params: any): Observable<{ count: number }> {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}`;
+    return this.delete(route, params);
+  }
+
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);

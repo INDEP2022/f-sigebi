@@ -11,6 +11,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -31,13 +32,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   userName = '';
   consultTasksForm: FormGroup;
   department = '';
+  delegation: string = null;
 
   constructor(
     private taskService: TaskService,
     private authService: AuthService,
     private excelService: ExcelService,
     public router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private regionalDelegacionService: RegionalDelegationService
   ) {
     super();
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: '' };
@@ -147,12 +150,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       isfilterUsed = true;
       if (filterStatus === 'null') {
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
+        this.getDelegationRegional(user.department);
       } else if (filterStatus === 'FINALIZADA') {
         this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
+        this.getDelegationRegional(user.department);
       }
       if (filterStatus === 'TODOS') {
         console.log('todos');
         this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
+        this.delegation = '';
       }
     }
 
@@ -318,13 +324,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       typeof this.consultTasksForm.value.txtNoDelegacionRegional == 'number'
     ) {
       isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'request.regionalDelegationId',
-          this.consultTasksForm.value.txtNoDelegacionRegional,
-          SearchFilter.EQ
-        );
+      this.filterParams.getValue().addFilter(
+        'idDelegationRegional',
+        // request.regionalDelegationNumber
+        this.consultTasksForm.value.txtNoDelegacionRegional,
+        SearchFilter.EQ
+      );
     }
     if (this.consultTasksForm.value.txtNoSolicitud) {
       isfilterUsed = true;
@@ -393,6 +398,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           } */
           response.data.map((item: any) => {
             item.taskNumber = item.id;
+            item.requestId =
+              item.requestId != null ? item.requestId : item.programmingId;
           });
 
           this.tasks = response.data;
@@ -412,6 +419,19 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   onKeydown(event: any) {
     console.log('Apreto enter event', event);
     this.searchTasks();
+  }
+
+  getDelegationRegional(id: number | string) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.regionalDelegacionService.getAll(params).subscribe({
+      next: resp => {
+        this.delegation = resp.data[0].id + ' - ' + resp.data[0].description;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   openTask(selected: any): void {

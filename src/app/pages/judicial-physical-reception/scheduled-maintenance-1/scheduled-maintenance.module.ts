@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SelectFormComponent } from './../../../@standalone/shared-forms/select-form/select-form.component';
 
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ExcelReportComponent } from 'src/app/@standalone/excel-report/excel-report.component';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { CleanFiltersSharedComponent } from 'src/app/@standalone/shared-forms/clean-filters-shared/clean-filters-shared.component';
 import { ElaborateUsersSharedComponent } from 'src/app/@standalone/shared-forms/elaborate-users-shared/elaborate-users-shared.component';
 import { GoodtrackerButtonComponent } from 'src/app/@standalone/shared-forms/goodtracker-button/goodtracker-button.component';
@@ -45,6 +47,8 @@ import { ScheduledMaintenanceComponent } from './scheduled-maintenance.component
     UpdateDatesGoodsComponent,
     TableGoodsComponent,
     GoodtrackerButtonComponent,
+    FormLoaderComponent,
+    AccordionModule,
   ],
 })
 export class ScheduledMaintenanceModule {}

@@ -125,3 +125,35 @@ export function generateUrlOrPath(
   }
   return `${url}${microservice}/${prefix}${route}`;
 }
+
+import { read, utils } from 'xlsx';
+export async function getDataFromExcel<T = any>(file: File): Promise<T[]> {
+  const reader = new FileReader();
+  const onLoad = () =>
+    new Promise((resolve, reject) => {
+      reader.onload = event => resolve(event.target.result);
+      reader.onerror = error => reject(error);
+    });
+  reader.readAsBinaryString(file);
+  await onLoad();
+  const result = reader.result as string;
+  const workbook = read(result, { type: 'binary' });
+  const sheetNames = workbook.SheetNames;
+  return utils.sheet_to_json<T>(workbook.Sheets[sheetNames[0]]);
+}
+
+export function goFormControlAndFocus(formControlName: string) {
+  try {
+    const formControl = document.querySelector(
+      `[formcontrolname="${formControlName}"]`
+    ) as HTMLInputElement;
+    formControl.scrollIntoView({
+      inline: 'center',
+      behavior: 'smooth',
+    });
+    console.log({ formControl });
+    formControl.focus();
+  } catch (error) {
+    console.log(error);
+  }
+}

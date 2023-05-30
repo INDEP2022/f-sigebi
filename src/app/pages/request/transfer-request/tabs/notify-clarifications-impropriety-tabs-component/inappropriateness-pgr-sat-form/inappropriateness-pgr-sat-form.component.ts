@@ -58,10 +58,8 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    this.dictamenSeq();
+
     this.prepareForm();
   }
 
@@ -84,15 +82,17 @@ export class InappropriatenessPgrSatFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.notification.clarificationType,
-      sender: this.form.controls['senderName'].value,
+      clarification: this.notification?.clarificationType,
+      sender: this.request?.nameOfOwner,
       foundation: this.form.controls['foundation'].value,
       id: null,
       version: 1,
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
-      positionSender: this.form.controls['positionSender'].value,
+      positionSender: this.request?.holderCharge,
       invoiceLearned: this.folioReporte,
+      managedTo: this.form.controls['managedTo'].value,
+      positionAddressee: this.form.controls['positionAddressee'].value,
       //invoiceNumber: 1,
       modificationDate: new Date(),
       creationUser: token.name,
@@ -100,7 +100,8 @@ export class InappropriatenessPgrSatFormComponent
       modificationUser: token.name,
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
-      rejectNoticeId: this.notification.rejectNotificationId,
+      rejectNoticeId: this.notification?.rejectNotificationId,
+      areaUserCapture: token.name,
     };
 
     this.loading = true;

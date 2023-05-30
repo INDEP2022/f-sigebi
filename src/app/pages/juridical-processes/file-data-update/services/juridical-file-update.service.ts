@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { ENDPOINT_LINKS } from '../../../../common/constants/endpoints';
 import { NotificationEndpoints } from '../../../../common/constants/endpoints/ms-notification-endpoints';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
-import { HttpService } from '../../../../common/services/http.service';
+import { HttpService, _Params } from '../../../../common/services/http.service';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IRAsuntDic } from '../../../../core/models/catalogs/r-asunt-dic.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
@@ -42,7 +43,8 @@ export class JuridicalFileUpdateService extends HttpService {
     private mJobManagementService: MJobManagementService,
     private documentsService: DocumentsService,
     private dictationService: DictationService,
-    private mJobManageService: MJobManagementService
+    private goodService: GoodService,
+    private mJobManageService: MJobManagementService // private officeManagementService: MJobManagementService
   ) {
     super();
   }
@@ -140,6 +142,23 @@ export class JuridicalFileUpdateService extends HttpService {
     );
   }
 
+  postFindDescriptionOpinion(body: _Params) {
+    return this.dictationService.postFindDescriptionOpinion(body).pipe(
+      map(data => {
+        return {
+          ...data,
+          data: data.data.map(d => {
+            return {
+              id: d.dictamen,
+              description: d.descripcion,
+              nameAndId: `${d.dictamen} - ${d.descripcion}`,
+            };
+          }),
+        };
+      })
+    );
+  }
+
   getDictum(params: string) {
     return this.opinionService.getAllFiltered(params).pipe(
       map(data => {
@@ -162,7 +181,7 @@ export class JuridicalFileUpdateService extends HttpService {
   }
 
   getRecipientUser(body: {
-    copyNumber: string | number;
+    copyNumber?: string | number;
     flierNumber: string | number;
   }) {
     return this.flyerCopiesService.findByIds(body);
@@ -206,5 +225,17 @@ export class JuridicalFileUpdateService extends HttpService {
 
   getMJobManagement(params: string) {
     return this.mJobManageService.getAllFiltered(params);
+  }
+
+  getMOfficeManagement(params: object) {
+    return this.mJobManageService.postFindById(params);
+  }
+
+  putNotification(wheelNumber: number, notification: Partial<INotification>) {
+    return this.notificationService.update(wheelNumber, notification);
+  }
+
+  getGoodAll(params?: ListParams) {
+    return this.goodService.getAll(params);
   }
 }

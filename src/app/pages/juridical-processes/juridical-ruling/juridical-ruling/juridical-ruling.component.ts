@@ -23,6 +23,7 @@ import {
 
 /** SERVICE IMPORTS */
 /*Redux NgRX Global Vars Service*/
+import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { GlobalVarsService } from 'src/app//shared/global-vars/services/global-vars.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -41,8 +42,9 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker-element';
+import { DatePickerElementComponent } from 'src/app/shared/components/datepicker-element-smarttable/datepicker.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import Swal from 'sweetalert2';
@@ -71,6 +73,8 @@ export class JuridicalRulingComponent
   wheelNumber: string | number = undefined;
   delegationDictNumber: string | number = undefined;
   keyArmyNumber: string | number = undefined;
+  public buttonDisabled: boolean = false;
+  public buttonDeleteDisabled: boolean = true;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
 
   //tipos
@@ -221,7 +225,7 @@ export class JuridicalRulingComponent
         type: 'number',
       },
       description: {
-        title: 'Descripcion Dictaminada',
+        title: 'Descripción Dictaminación',
         type: 'string',
       },
       menaje: {
@@ -229,11 +233,11 @@ export class JuridicalRulingComponent
         type: 'string',
       },
       quantity: {
-        title: 'Cant. Dic..',
+        title: 'Cant. Dictaminación',
         type: 'string',
       },
       status: {
-        title: 'Est',
+        title: 'Estado',
         type: 'string',
       },
       processStatus: {
@@ -309,6 +313,7 @@ export class JuridicalRulingComponent
 
   constructor(
     private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
     private service: GoodTypeService,
     private globalVarsService: GlobalVarsService,
     private readonly goodServices: GoodService,
@@ -332,8 +337,29 @@ export class JuridicalRulingComponent
         this.globalVars = globalVars;
         console.log(globalVars);
       });
-    this.onLoadGoodList();
-    this.onLoadDocumentsByGood();
+    this.getParams();
+  }
+
+  getParams() {
+    this.activatedRoute.queryParams.subscribe((params: any) => {
+      this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.legalForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      this.subtipoForm.get('tipoDictaminacion').setValue(params?.tipoDic);
+      // TODO: no tiene número de volante
+      // this.expedientesForm.get('noVolante').setValue(params?.volante);
+      // this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
+    });
+    // this.activatedRoute.queryParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(params => {
+    //     this.legalForm
+    //       .get('noExpediente')
+    //       .setValue(
+    //         params['noExpediente'] ? Number(params['noExpediente']) : undefined
+    //       );
+    //   });
+    this.changeNumExpediente();
   }
 
   onKeyPress($event: any) {
@@ -344,6 +370,15 @@ export class JuridicalRulingComponent
     this.onLoadGoodList();
     this.onLoadExpedientData();
     this.onLoadDictationInfo();
+    this.resetALL();
+  }
+
+  resetALL() {
+    this.selectedDocuments = [];
+    this.selectedGooods = [];
+    this.selectedGooodsValid = [];
+    this.goodsValid = [];
+    this.data4 = [];
   }
 
   onLoadExpedientData() {
@@ -385,6 +420,15 @@ export class JuridicalRulingComponent
           this.legalForm
             .get('label')
             .setValue(new Date(res.data[0].instructorDate) || undefined);
+          if (res.data[0].typeDict == 'PROCEDENCIA') {
+            this.buttonDisabled = true;
+          }
+          if (
+            res.data[0].statusDict == 'DICTAMINADO' ||
+            res.data[0].statusDict == 'ABIERTO'
+          ) {
+            this.buttonDeleteDisabled = false;
+          }
         })
         .catch(err => {
           this.legalForm.get('tipoDictaminacion').setValue(null);
@@ -427,17 +471,16 @@ export class JuridicalRulingComponent
   }
 
   prepareForm() {
-    this.expedientesForm = this.fb.group({
-      tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: ['791474', [Validators.required]],
-      averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
-      causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      delito: [false],
-      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
-    });
     this.legalForm = this.fb.group({
       tipoDictaminacion: [null, [Validators.required]],
-      noExpediente: [null, [Validators.required]],
+      noExpediente: [
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
       // averPrevia: [null, [Validators.pattern(KEYGENERATION_PATTERN)]], // Se cambia por preliminaryInquiry (según doc)
       preliminaryInquiry: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       // causaPenal: [null, [Validators.pattern(STRING_PATTERN)]], // Se cambia por CriminalCase (según doc)
@@ -447,7 +490,10 @@ export class JuridicalRulingComponent
       // observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
       fecDest: [null, [Validators.required]],
-      fecDicta: [null, [Validators.required]],
+      fecRes: [null, [Validators.required]],
+      fecNotiAse: [null, [Validators.required]],
+      fecNoti: [null, [Validators.required]],
+      fecDicta: [null],
       autoriza: [null, [Validators.required]],
       cveOficio: [null, [Validators.required]],
       ident: [null],
@@ -841,37 +887,41 @@ export class JuridicalRulingComponent
       typeJudgment: this.legalForm.get('tipoDictaminacion').value, // -- typeDict
     };
 
-    this.checkout1(object).then(({ json }) => {
-      json.then(res => {
-        if (res.statusCode === 200) {
-          if (res.vBan === 'S' && res.vDelete === 'S') {
-            // Pendiente
-            // --
-          } else {
-            let object2 = {
-              vProceedingsNumber: res.data.vProceedingsNumber,
-              vTypeDicta: res.data.vTypeDicta,
-              vOfDictaNumber: res.data.vOfDictaNumber,
-              vWheelNumber: res.data.vWheelNumber,
-            };
-            this.checkout2(object2).then(({ json }) => {
-              json.then(res => {
-                if (res.statusCode !== 200) {
-                  this.alert('warning', 'AVISO', res.message[0]);
-                } else {
-                  console.log('TODO SALE BIEN', res.data);
-                }
+    this.checkout1(object)
+      .then(({ json }) => {
+        json.then(res => {
+          if (res.statusCode === 200) {
+            if (res.vBan === 'S' && res.vDelete === 'S') {
+              // Pendiente
+              // --
+            } else {
+              let object2 = {
+                vProceedingsNumber: res.data.vProceedingsNumber,
+                vTypeDicta: res.data.vTypeDicta,
+                vOfDictaNumber: res.data.vOfDictaNumber,
+                vWheelNumber: res.data.vWheelNumber,
+              };
+              this.checkout2(object2).then(({ json }) => {
+                json.then(res => {
+                  if (res.statusCode !== 200) {
+                    this.alert('warning', 'AVISO', res.message[0]);
+                  } else {
+                    console.log('TODO SALE BIEN', res.data);
+                  }
+                });
               });
-            });
+            }
+          } else if (res.statusCode === 400) {
+            this.alert('warning', 'AVISO', res.message[0]);
           }
-        }
-      });
-    });
+        });
+      })
+      .catch(err => {});
   }
 
   async checkout1(object: object) {
     let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp1',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -883,7 +933,7 @@ export class JuridicalRulingComponent
 
   async checkout2(object: object) {
     let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp2',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',
@@ -895,7 +945,7 @@ export class JuridicalRulingComponent
 
   async checkout3(object: object) {
     let response = await fetch(
-      'http://sigebimsqa.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
+      'http://sigebimsdev.indep.gob.mx/dictation/api/v1/application/factjurdictamasDeleteDisctp3',
       {
         headers: { 'content-type': 'application/json' },
         method: 'POST',

@@ -52,7 +52,6 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     const idWarehouse = this.opcion.initialState;
-    console.log(Number(idWarehouse));
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() =>
@@ -64,10 +63,9 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
     this.bsModalRef.hide();
   }
   getGoodByWarehouses(body: Object): void {
-    console.log(body);
+    this.params.getValue()['search'] = this.params.getValue().text;
     this.goodServices.getByWarehouse(body, this.params.getValue()).subscribe({
       next: response => {
-        console.log(response);
         this.goods = response.data;
         this.totalItems = response.count;
         this.loading = false;

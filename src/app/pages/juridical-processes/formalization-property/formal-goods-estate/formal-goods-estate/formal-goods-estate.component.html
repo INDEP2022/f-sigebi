@@ -12,51 +12,114 @@
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Procede Formalizaci&oacute;n</h6>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div class="row mb-2">
+                <div class="d-flex justify-content-end">
+                  <app-columns-select
+                    [(settings)]="
+                      _tableSettingsProcedeFormalizacion
+                    "></app-columns-select>
+                </div>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
-                  [settings]="tableSettingsProcedeFormalizacion"
-                  [source]="dataTableProcedeFormalizacion"></ng2-smart-table>
+                  [settings]="_tableSettingsProcedeFormalizacion"
+                  [source]="_dataTableProcedeFormalizacion"
+                  (edit)="edit($event.data)"
+                  (delete)="goNotaries($event.data)">
+                </ng2-smart-table>
               </div>
+
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
             </div>
           </tab>
+
           <tab heading="Asigna Notario">
             <div class="row w-100">
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Asigna Notario</h6>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="tableSettingsAsignaNotario"
-                  [source]="dataTableAsignaNotario"></ng2-smart-table>
+              <div class="row mb-2">
+                <div class="d-flex justify-content-end">
+                  <app-columns-select
+                    [(settings)]="
+                      _tableSettingsAsignaNotario
+                    "></app-columns-select>
+                </div>
               </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  (edit)="editStage2($event.data)"
+                  [attr.class]="'table-bordered'"
+                  [settings]="_tableSettingsAsignaNotario"
+                  [source]="_dataTableAsignaNotario"
+                  (delete)="goEscrituracion($event.data)"></ng2-smart-table>
+              </div>
+
+              <app-pagination
+                [params]="params2"
+                [totalItems]="totalItems2"></app-pagination>
             </div>
           </tab>
+
           <tab heading="Formaliza Escrituración">
             <div class="row w-100">
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Formaliza Escrituraci&oacute;n</h6>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="tableSettingsFormalizaEscrituracion"
-                  [source]="dataTableFormalizaEscrituracion"></ng2-smart-table>
+              <div class="row mb-2">
+                <div class="d-flex justify-content-end">
+                  <app-columns-select
+                    [(settings)]="
+                      _tableSettingsFormalizaEscrituracion
+                    "></app-columns-select>
+                </div>
               </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  (edit)="editStage3($event.data)"
+                  [attr.class]="'table-bordered'"
+                  [settings]="_tableSettingsFormalizaEscrituracion"
+                  [source]="_dataTableFormalizaEscrituracion"></ng2-smart-table>
+              </div>
+
+              <app-pagination
+                [params]="params3"
+                [totalItems]="totalItems3"></app-pagination>
             </div>
           </tab>
+
           <tab heading="Todos">
             <div class="row w-100">
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <h6>Todos</h6>
               </div>
-              <div class="col-sm-12 col-12 col-md-12 p-2">
+              <div class="row mb-2">
+                <div class="d-flex justify-content-end">
+                  <app-columns-select
+                    [(settings)]="_tableSettingsTodos"></app-columns-select>
+                </div>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 p-2"
+                [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
-                  [settings]="tableSettingsTodos"
-                  [source]="dataTableTodos"></ng2-smart-table>
+                  [settings]="_tableSettingsTodos"
+                  [source]="_dataTableTodos"></ng2-smart-table>
               </div>
+
+              <app-pagination
+                [params]="params4"
+                [totalItems]="totalItems4"></app-pagination>
             </div>
           </tab>
         </tabset>

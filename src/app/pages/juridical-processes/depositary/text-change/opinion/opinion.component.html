@@ -1,50 +1,131 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('numberGood')" label="Expediente">
-        <input type="text" class="form-control" formControlName="numberGood" />
+      <form-field
+        [control]="form.get('expedientNumber')"
+        label="No. Expediente">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="expedientNumber"
+          [readOnly]="verBoton" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('registerNumber')" label="Dicta.">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="registerNumber"
+          [readOnly]="verBoton" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('wheelNumber')" label="No. Volante">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="wheelNumber"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
-        [control]="form.get('numberGestion')"
-        label="No de Gesti&oacute;n">
+        [control]="form.get('typeDict')"
+        label="No. Dictaminaci&oacute;n">
         <input
           type="text"
           class="form-control"
-          formControlName="numberGestion" />
-      </form-field>
-    </div>
-    <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flywheel')" label="Volante">
-        <input type="text" class="form-control" formControlName="flywheel" />
-      </form-field>
-    </div>
-    <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('dictamination')"
-        label="Dictaminaci&oacute;n">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="dictamination" />
+          formControlName="typeDict"
+          [readOnly]="verBoton" />
       </form-field>
     </div>
   </div>
+
   <div class="row mt-5">
     <div class="col-md-8 col-sm-12 col-xs-12">
       <form-field [control]="form.get('key')" label="Clave">
-        <input type="text" class="form-control" formControlName="key" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="key"
+          [readOnly]="verBoton" />
       </form-field>
+    </div>
+
+    <div class="col-md-4 col-sm-12 col-xs-12" *ngIf="!verBoton">
+      <button class="btn btn-primary btn-sm active" (click)="buscardictamen()">
+        Buscar <i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12" *ngIf="verBoton">
+      <button
+        class="btn btn-primary btn-sm active"
+        (click)="nuevaBusquedaOficio()">
+        Nueva B&uacute;squeda <i class="fa fa-search ml-2"></i>
+      </button>
     </div>
   </div>
   <hr />
-  <div class="row">
-    <div class="col-md-4 col-sm-12 col-xs-12">
-      <app-user-shared
-        [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Remitente'"></app-user-shared>
+  <div class="row mt-5">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field
+        [control]="form.get('numberDictamination')"
+        label="No. de Dicta">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="numberDictamination" />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field
+        [control]="form.get('addressee_I')"
+        label="Dictaminaci&oacute;n">
+        <input type="text" class="form-control" formControlName="addressee_I" />
+      </form-field>
+    </div>
+
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('addressee')" label="Destinatario">
+        <input type="text" class="form-control" formControlName="addressee" />
+      </form-field>
+      <!--form-field [control]="form.get('addressee_I')" label="Destinatario">
+      <input type="text" class="form-control" formControlName="addressee_I" />
+    </form-field-->
+    </div>
+  </div>
+
+  <hr />
+  <div class="row mt-5">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+      <form-field [control]="form.get('senderUserRemitente')">
+        <ngx-select
+          [form]="form"
+          [data]="users$$"
+          (change)="getDescUserPuesto($event)"
+          (fetchItems)="getUsers$($event)"
+          bindLabel="userAndName"
+          value="id"
+          control="senderUserRemitente"
+          label="Remitente"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+
+        <!--input type="text" class="form-control"  formControlName="senderUserRemitente"/-->
+      </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field [control]="form.get('charge')" label="Cargo">
@@ -52,26 +133,9 @@
       </form-field>
     </div>
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('addressee')" label="Destinatario">
+      <!--form-field [control]="form.get('addressee')" label="Destinatario">
         <input type="text" class="form-control" formControlName="addressee" />
-      </form-field>
-    </div>
-  </div>
-  <div class="row mt-5">
-    <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
-      <form-field
-        [control]="form.get('numberDictamination')"
-        label="No de Dictaminaci&oacute;n">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="numberDictamination" />
-      </form-field>
-    </div>
-    <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('addressee_I')" label="Destinatario">
-        <input type="text" class="form-control" formControlName="addressee_I" />
-      </form-field>
+      </form-field-->
     </div>
   </div>
   <div class="row mt-5">
@@ -123,39 +187,14 @@
     </div>
   </div>
   <div class="row pl-3">C&#46;C&#46;P&#46;</div>
-  <div class="row mt-5">
-    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="1">PERSONA EXTERNA</option>
-          <option [value]="2">PERSONA INTERNA</option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-7 col-sm-12 col-xs-12">
-      <app-user-shared
+  <!--Personas Externas-->
+  <div formArrayName="extPerson">
+    <ng-container *ngFor="let item of datosOpinion; let i = index">
+      <app-textChange-modal
+        [datosOpinion]="item"
         [form]="form"
-        [userField]="'senderUser'"
-        [label]="'Detinatario Copia'"></app-user-shared>
-    </div>
-  </div>
-  <div class="row mt-3">
-    <div class="col-md-5 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson_I">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="1">PERSONA EXTERNA</option>
-          <option [value]="2">PERSONA INTERNA</option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-7 col-sm-12 col-xs-12">
-      <app-user-shared
-        [form]="form"
-        [userField]="'senderUser_I'"
-        [label]="'Detinatario Copia'"></app-user-shared>
-    </div>
+        [index]="i"></app-textChange-modal>
+    </ng-container>
   </div>
   <hr />
   <div class="row mb-5">
@@ -168,6 +207,14 @@
             [loading]="loading"
             (confirm)="confirm()">
           </confirm-button>
+        </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-info active"
+            (click)="updateDictamen()">
+            Actualizar
+          </button>
         </div>
       </div>
     </div>

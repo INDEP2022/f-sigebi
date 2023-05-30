@@ -6,7 +6,7 @@ export const USER_COLUMNS = {
   },
 
   email: {
-    title: 'Correo electronico',
+    title: 'Correo electrónico',
     type: 'string',
     sort: false,
   },
@@ -26,7 +26,7 @@ export const USER_COLUMNS_SHOW = {
   },
 
   email: {
-    title: 'Correo electronico',
+    title: 'Correo electrónico',
     type: 'string',
     sort: false,
   },

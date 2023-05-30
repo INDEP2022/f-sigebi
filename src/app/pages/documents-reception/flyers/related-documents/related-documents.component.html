@@ -119,7 +119,10 @@
             [form]="managementForm"
             control="destinatario"
             [showTooltip]="true"
-            label="Destinatario"></ngx-select>
+            label="Destinatario"
+            (fetchItems)="getFromSelect($event)"
+            bindLabel="userAndName"
+            value="user"></ngx-select>
         </form-field>
 
         <form-field [control]="managementForm.get('ciudad')" class="col-md-4">
@@ -304,7 +307,8 @@
               [data]="goodTypes"
               [showTooltip]="true"
               label="Clasif --- Sub Tipo --- Ssub tipo --- Sssubtipo"
-              (fetchItems)="getClasifSubTypeGoods($event)">
+              (fetchItems)="getClasifSubTypeGoods($event)"
+              (change)="getIdClasify($event)">
             </ngx-select>
           </form-field>
           <form-check
@@ -330,7 +334,10 @@
             </div>
           </div>
           <div class="col-md-12 mt-3 text-right">
-            <button type="button" class="btn btn-info btn-sm mr-2">
+            <button
+              type="button"
+              class="btn btn-info btn-sm mr-2"
+              (click)="openModal()">
               Documentos
             </button>
             <button
@@ -380,8 +387,8 @@
                 [control]="managementForm.get('ccp4')"
                 label="C.P.P.">
                 <select class="form-control" formControlName="ccp4">
-                  <option value="Interno">Interno</option>
-                  <option value="Externo">Externo</option>
+                  <option value="INTERNO">INTERNO</option>
+                  <option value="EXTERNO">EXTERNO</option>
                 </select>
               </form-field>
               <form-field
@@ -391,15 +398,18 @@
                   [data]="select"
                   [form]="managementForm"
                   [showTooltip]="true"
-                  control="ccp5"></ngx-select>
+                  control="ccp5"
+                  (fetchItems)="getFromSelect($event)"
+                  bindLabel="userAndName"
+                  value="user"></ngx-select>
               </form-field>
               <form-field
                 class="col-md-4"
                 [control]="managementForm.get('ccp6')"
                 label="C.P.P.">
                 <select class="form-control" formControlName="ccp6">
-                  <option value="Interno">Interno</option>
-                  <option value="Externo">Externo</option>
+                  <option value="INTERNO">INTERNO</option>
+                  <option value="EXTERNO">EXTERNO</option>
                 </select>
               </form-field>
               <form-field
@@ -409,7 +419,10 @@
                   [data]="select"
                   [form]="managementForm"
                   [showTooltip]="true"
-                  control="ccp5"></ngx-select>
+                  control="ccp5"
+                  (fetchItems)="getFromSelect($event)"
+                  bindLabel="userAndName"
+                  value="user"></ngx-select>
               </form-field>
             </div>
           </div>

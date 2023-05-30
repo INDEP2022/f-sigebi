@@ -5,34 +5,85 @@
 
   <div body>
     <form [formGroup]="form" class="container-fluid form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
-            <input class="form-control" formControlName="noVolante" />
-          </form-field>
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-sm-12">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('noVolante')">
+                <ngx-select
+                  type="number"
+                  [form]="form"
+                  control="noVolante"
+                  (change)="getWheel($event)"
+                  (fetchItems)="listWheels($event)"
+                  [data]="selectWheel"
+                  label="No&#46; Volante"
+                  value="wheelNumber"
+                  bindLabel="wheelNumber">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field>
+
+        <div class="col-lg-5 col-sm-12">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('noExpediente')"
+                label="No&#46; Expediente">
+                <label class="form-control-label w-100">{{
+                  noExpediente
+                }}</label>
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="noExpediente" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('cveDictamen')"
-            label="Clave Dictamen">
-            <input class="form-control" formControlName="cveDictamen" />
-          </form-field>
+
+        <div class="col-lg-10 col-sm-12 mb-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('cveDictamen')"
+                label="Clave Dictamen">
+                <label class="form-control-label w-100">{{
+                  cveDictamen
+                }}</label>
+                <input
+                  readonly
+                  hidden
+                  class="form-control"
+                  formControlName="cveDictamen" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm"
-              (click)="btnBorrarDesahogo()">
-              Borrar Desahogo
-            </button>
+
+        <div class="col-12">
+          <div class="row form-group justify-content-center">
+            <div class="col-lg-5 col-md-5 col-5 form-group">
+              <button
+                style="float: right"
+                type="button"
+                [disabled]="!form.valid || loading"
+                class="btn btn-primary active btn-sm"
+                (click)="btnBorrarDesahogo()">
+                Borrar Desahogo
+              </button>
+            </div>
+            <div class="col-lg-5 col-md-5 col-5 form-group">
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm"
+                (click)="cleanForm()">
+                Limpiar
+              </button>
+            </div>
           </div>
         </div>
       </div>

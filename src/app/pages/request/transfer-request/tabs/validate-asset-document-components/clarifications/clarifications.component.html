@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12">
       <h5 class="title">
-        Identificar procedencia de bienes destino documental
+        Identificar Procedencia de Bienes Destino Documental
       </h5>
     </div>
   </div>
@@ -104,7 +104,9 @@
         </div>
         <div class="p-2">
           <button
-            [disabled]="statusTask == 'FINALIZADA'"
+            [disabled]="
+              statusTask == 'FINALIZADA' || showClarificationButtons === false
+            "
             class="btn btn-primary btn-sm active"
             (click)="newClarification()">
             Nuevo
@@ -112,7 +114,9 @@
         </div>
         <div class="p-2">
           <button
-            [disabled]="statusTask == 'FINALIZADA'"
+            [disabled]="
+              statusTask == 'FINALIZADA' || showClarificationButtons === false
+            "
             style="margin-left: 2px"
             class="btn btn-secondary btn-sm active"
             (click)="editForm()">
@@ -121,7 +125,9 @@
         </div>
         <div class="p-2">
           <button
-            [disabled]="statusTask == 'FINALIZADA'"
+            [disabled]="
+              statusTask == 'FINALIZADA' || showClarificationButtons === false
+            "
             style="margin-left: 2px"
             class="btn btn-danger btn-sm active"
             (click)="deleteClarification()">

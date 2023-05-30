@@ -392,7 +392,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FGESTBUZONTRAMITE') {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
-    console.log(this.requestOrigin);
+    if (this.origin == 'FESTATUSRGA') {
+      this.router.navigate([
+        '/pages/executive-processes/destruction-authorization-management',
+      ]);
+    }
     if (this.origin == 'FACTGENSOLICDIGIT') {
       this.router.navigate(
         [

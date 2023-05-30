@@ -292,3 +292,12 @@ export interface INotificationTransferentIndiciadoCity {
     depDelegation: string;
   };
 }
+
+export interface INotificationDictum {
+  dictumKey: string;
+}
+
+export interface DictumData {
+  id: any;
+  description: string;
+}

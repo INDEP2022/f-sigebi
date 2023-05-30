@@ -22,6 +22,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -93,7 +94,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     private procedureManagementService: ProcedureManagementService,
     private authService: AuthService,
     private fractionService: FractionService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -130,6 +132,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
+    /*this.goodFinderService.goodFinder(this.params.getValue().getParams()).subscribe({
+      next: resp => {
+        resp.data.map((item:any)=>{
+          item['goodTypeName'] =
+        })
+      }
+    })*/
     this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (data: any) => {
         if (data !== null) {
@@ -260,41 +269,94 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
-    this.loader.load = true;
+    this.loader.load = true; //Loading cambiar por uno de porcentaje
     const file = event.target.files[0];
+    const name = file.name;
+    const lastModified = file.lastModified;
     const user = this.authService.decodeToken().preferred_username;
-
     /*const fileReader = new FileReader();
     fileReader.readAsBinaryString(file);
     fileReader.onload = () => {
-      const result = this.readExcel(fileReader.result);
-      if(result === true){
-        this.uploadFile(file, this.requestObject.id, user);
+      console.log('fileReader ',fileReader)
+      const result:any = this.readExcel(fileReader.result,name,lastModified);
+      if(result != null){
+        this.uploadFile(result, this.requestObject.id, user);
       }
     }*/
     this.uploadFile(file, this.requestObject.id, user);
-    // this.fileUploaded.nativeElement.value = "";
+    this.fileUploaded.nativeElement.value = '';
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
+  readExcel(binaryExcel: string | ArrayBuffer, name: string) {
     try {
-      let correcto = true;
       this.data = this.excelService.getData<any>(binaryExcel);
+
       for (let i = 0; i < this.data.length; i++) {
         const element: any = this.data[i];
-        //|| element['FRACCIÓN ARANCELARIA'] === undefined
-        if (element['CLAVE ARANCELARIA'] === undefined) {
-          this.onLoadToast(
-            'error',
-            'Carga de archivo',
-            'Todos los bienes deben tener una clave arancelaria!'
-          );
-          correcto = false;
-          this.loader.load = false;
-          break;
+        if (element['ENTFED'] != undefined) {
+          element['ENTFED'] = element['ENTFED'].toLowerCase();
+          element['ENTFED'] =
+            element['ENTFED'][0].toUpperCase() + element['ENTFED'].substring(1);
+        } else {
+          element['ENTFED'] = 'xx';
+        }
+
+        if (element['EDOFISICO'] != undefined) {
+          element['EDOFISICO'] = element['EDOFISICO'].toLowerCase();
+          element['EDOFISICO'] =
+            element['EDOFISICO'][0].toUpperCase() +
+            element['EDOFISICO'].substring(1);
+        }
+        if (element['MARCA'] != undefined) {
+          element['MARCA'] = element['MARCA'].toLowerCase();
+          element['MARCA'] =
+            element['MARCA'][0].toUpperCase() + element['MARCA'].substring(1);
+        } else {
+          element['MARCA'] = 'xx';
+        }
+
+        if (element['SUBMARCA'] != undefined) {
+          element['SUBMARCA'] = element['SUBMARCA'].toLowerCase();
+          element['SUBMARCA'] =
+            element['SUBMARCA'][0].toUpperCase() +
+            element['SUBMARCA'].substring(1);
+        }
+
+        if (element['UNIDAD'] != undefined) {
+          element['UNIDAD'] = element['UNIDAD'].toLowerCase();
+          element['UNIDAD'] =
+            element['UNIDAD'][0].toUpperCase() + element['UNIDAD'].substring(1);
+        }
+
+        if (element['ESTADO FÍSICO'] != undefined) {
+          element['ESTADO FÍSICO'] = element['ESTADO FÍSICO'].toLowerCase();
+          element['ESTADO FÍSICO'] =
+            element['ESTADO FÍSICO'][0].toUpperCase() +
+            element['ESTADO FÍSICO'].substring(1);
+        }
+
+        if (element['ESTADO DE CONSERVACIÓN'] != undefined) {
+          element['ESTADO DE CONSERVACIÓN'] =
+            element['ESTADO DE CONSERVACIÓN'].toLowerCase();
+          element['ESTADO DE CONSERVACIÓN'] =
+            element['ESTADO DE CONSERVACIÓN'][0].toUpperCase() +
+            element['ESTADO DE CONSERVACIÓN'].substring(1);
+        }
+
+        if (element['TIPO'] == undefined) {
+          element['TIPO'] = 'xx';
         }
       }
-      return correcto;
+      console.table(this.data);
+      const filename: string = name;
+      const FileType: string =
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      const file = this.excelService.exportJsonToExcelNewFile(
+        this.data,
+        { filename },
+        FileType
+      );
+      return file;
     } catch (error) {
       this.loader.load = false;
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
@@ -540,6 +602,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Error',
             `Error al actualizar los bienes ${error.error.message}`
           );
+          console.log(error);
           console.log(error.error.message);
           reject(false);
         },
@@ -726,6 +789,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.listGoodsFractions = [];
     let existAddres = 0;
+    debugger;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
@@ -749,8 +813,32 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       good.fractionId = Number(this.fractionProperties['fractionId']);
       good.goodTypeId = Number(this.fractionProperties['goodTypeId']);
 
+      /* inf. del bien */
       good.goodDescription = item.goodDescription;
       good.processStatus = item.processStatus;
+
+      good.quantity = item.quantity ? item.quantity : 0;
+      good.duplicity = item.duplicity;
+      good.capacity = item.capacity;
+      good.fileeNumber = item.fileeNumber;
+      good.volume = item.volume;
+      good.physicalStatus = item.physicalStatus;
+      good.useType = item.useType;
+      good.stateConservation = item.stateConservation;
+      good.origin = item.origin;
+      good.destiny = item.destiny;
+      if (item.transferentDestiny) {
+        good.transferentDestiny = item.transferentDestiny;
+      } else if (!item.transferentDestiny && good.destiny) {
+        good.transferentDestiny = item.destiny;
+      } else {
+        good.transferentDestiny = 1;
+      }
+      good.notesTransferringEntity = item.notesTransferringEntity;
+      good.appraisal = item.appraisal ? 'Y' : 'N';
+      good.compliesNorm = item.compliesNorm ? 'Y' : 'N';
+      good.saeDestiny = item.saeDestiny;
+      /*  */
 
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
@@ -835,7 +923,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -868,7 +958,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -904,7 +996,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -937,7 +1031,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -969,7 +1065,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -1001,7 +1099,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async (data: any) => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -1011,7 +1111,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
           this.fractionProperties['unitMeasure'] = fraction.unit
             ? fraction.unit

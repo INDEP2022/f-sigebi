@@ -67,6 +67,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
             } else {
               delete this.columnFilters[field];
             }
+            console.log(this.columnFilters);
           });
           this.getData();
         }
