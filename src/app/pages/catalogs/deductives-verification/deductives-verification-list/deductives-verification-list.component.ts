@@ -105,14 +105,16 @@ export class DeductivesVerificationListComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
-        Swal.fire('Borrado', '', 'success');
+        Swal.fire('Borrado', 'Deductivas', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.deductiveVerificationService.remove(id).subscribe({
-      next: () => this.getData(),
+      next: () => {
+        this.getData(), this.alert('success', 'Deductivas', 'Borrado');
+      },
     });
   }
 }
