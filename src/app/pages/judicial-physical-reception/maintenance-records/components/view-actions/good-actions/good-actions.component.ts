@@ -215,8 +215,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           idSelect: 'id',
           labelSelect: 'keysProceedings',
           label: 'Acta',
-          paramSearch: 'filter.keysProceedings',
-          prefixSearch: '$ilike',
+          paramSearch: 'search',
+          prefixSearch: null,
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
             numberProceedings: [
