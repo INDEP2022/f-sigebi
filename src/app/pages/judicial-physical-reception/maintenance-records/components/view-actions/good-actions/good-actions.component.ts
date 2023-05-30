@@ -25,7 +25,10 @@ import {
 } from 'src/app/core/services/ms-proceedings';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
-import { secondFormatDate } from 'src/app/shared/utils/date';
+import {
+  firstFormatDateToSecondFormatDate,
+  secondFormatDate,
+} from 'src/app/shared/utils/date';
 import { MaintenanceRecordsService } from './../../../services/maintenance-records.service';
 
 @Component({
@@ -212,8 +215,8 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           idSelect: 'id',
           labelSelect: 'keysProceedings',
           label: 'Acta',
-          paramSearch: 'filter.keysProceedings',
-          prefixSearch: '$ilike',
+          paramSearch: 'search',
+          prefixSearch: null,
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
             numberProceedings: [
@@ -279,6 +282,17 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   }
 
   changeGoodsAct(message: string, numberProceedings: string) {
+    // this.detailService.changeAct(this.rowsSelected, numberProceedings).subscribe({
+    //   next: response => {
+    //     // console.log(re);
+    //     this.onLoadToast('success', 'Bienes Cambiados', message);
+    //     this.updateTable.emit();
+    //   },
+    //   error: err => {
+    //     this.onLoadToast('error', 'Bienes no cambiados', message);
+    //   }
+    // })
+
     this.proceedingService
       .createMassiveDetail(
         this.rowsSelected.map(x => {
@@ -286,21 +300,41 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
             ...x,
             numberProceedings: +numberProceedings,
             numberGood: +(x.numberGood + ''),
+            approvedDateXAdmon: x.approvedDateXAdmon
+              ? firstFormatDateToSecondFormatDate(x.approvedDateXAdmon + '')
+              : null,
+            dateIndicatesUserApproval: x.dateIndicatesUserApproval
+              ? firstFormatDateToSecondFormatDate(
+                  x.dateIndicatesUserApproval + ''
+                )
+              : null,
           };
         })
       )
       .subscribe({
         next: response => {
+          console.log(response);
+          // if(response)
           // debugger;
-          this.proceedingService
-            .deleteMassiveDetails(this.rowsSelected)
-            .subscribe({
-              next: response => {
-                // debugger;
-                this.onLoadToast('success', 'Bienes Actualizados', message);
-                this.updateTable.emit();
-              },
-            });
+          const toDeleteds = response.filter(x =>
+            x.hasOwnProperty('numberGood')
+          );
+          if (toDeleteds && toDeleteds.length > 0) {
+            this.proceedingService
+              .deleteMassiveDetails(this.rowsSelected)
+              .subscribe({
+                next: response => {
+                  // debugger;
+                  this.onLoadToast('success', 'Bienes Actualizados', message);
+                  this.updateTable.emit();
+                },
+              });
+          } else {
+            this.onLoadToast('error', 'No se pudo actualizar bienes', message);
+          }
+        },
+        error: err => {
+          console.log(err);
         },
       });
   }

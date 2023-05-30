@@ -198,7 +198,7 @@ export class JuridicalRecordUpdateComponent
       this.pageParams = this.fileUpdComService.fileDataUpdateParams;
   }
 
-  private get formControls() {
+  get formControls() {
     return this.fileDataUpdateForm.controls;
   }
 
@@ -541,7 +541,9 @@ export class JuridicalRecordUpdateComponent
       });
     }
 
-    if (notif.autorityNumber != null) {
+    if (notif.autorityNumber) {
+      console.log(notif.autorityNumber);
+      filterParams.removeAllFilters();
       filterParams.addFilter('idAuthority', notif.autorityNumber);
       filterParams.addFilter('idStation', notif.stationNumber);
       filterParams.addFilter('idTransferer', notif.endTransferNumber);
@@ -553,7 +555,17 @@ export class JuridicalRecordUpdateComponent
               this.formControls.autorityNumber.enable();
               this.formControls.autorityNumber.setValue(data.data[0]);
               this.formControls.autorityNumber.disable();
-              this.getAuthorities({ page: 1, limit: 10 });
+
+              this.formControls.uniqueKey.enable();
+              this.formControls.uniqueKey.setValue({
+                ...data.data[0],
+                uniqueCve: data.data[0].idAuthorityIssuerTransferor,
+              });
+              this.formControls.uniqueKey.setValue(
+                data.data[0].idAuthorityIssuerTransferor
+              );
+              this.formControls.uniqueKey.disable();
+              // this.getAuthorities({ page: 1, limit: 10 });
             }
           },
           error: () => {},
@@ -694,23 +706,23 @@ export class JuridicalRecordUpdateComponent
         },
       });
 
-    filterParams.removeAllFilters();
+    // filterParams.removeAllFilters();
 
-    filterParams.addFilter('transfereeNum', notif.endTransferNumber);
-    filterParams.addFilter('stationNum', notif.stationNumber);
-    filterParams.addFilter('authorityNum', notif.autorityNumber);
-    this.docRegisterService
-      .getUniqueKeyData(filterParams.getParams())
-      .subscribe({
-        next: (data: { count: number; data: any[] }) => {
-          if (data.count > 0) {
-            this.formControls.uniqueKey.enable();
-            this.formControls.uniqueKey.setValue(data.data[0]);
-            this.formControls.uniqueKey.disable();
-          }
-        },
-        error: () => {},
-      });
+    // filterParams.addFilter('transfereeNum', notif.endTransferNumber);
+    // filterParams.addFilter('stationNum', notif.stationNumber);
+    // filterParams.addFilter('authorityNum', notif.autorityNumber);
+    // this.docRegisterService
+    //   .getUniqueKeyData(filterParams.getParams())
+    //   .subscribe({
+    //     next: (data: { count: number; data: any[] }) => {
+    //       if (data.count > 0) {
+    //         this.formControls.uniqueKey.enable();
+    //         this.formControls.uniqueKey.setValue(data.data[0]);
+    //         this.formControls.uniqueKey.disable();
+    //       }
+    //     },
+    //     error: () => {},
+    //   });
 
     filterParams.removeAllFilters();
     filterParams.addFilter('expedient', notif.expedientNumber);
@@ -1397,15 +1409,17 @@ export class JuridicalRecordUpdateComponent
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
       affair: this.formControls.affairKey.value,
+      // origin: this.layout,
     };
     this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
       queryParams: {
-        origin: '/pages/juridical/file-data-update',
+        previousRoute: this.activiveRoute.snapshot.queryParams['previousRoute'],
         form: 'FACTGENACTDATEX',
         iden: this.formControls.wheelNumber.value,
         exp: this.formControls.expedientNumber.value,
         pNoTramite: this.procedureId,
         affair: this.formControls.affairKey.value,
+        // origin: this.layout,
       },
     });
   }

@@ -318,8 +318,9 @@
       <div class="row pt-4">
         <form-field
           class="col-md-6"
-          [control]="fileDataUpdateForm.get('uniqueKey')">
-          <ngx-select
+          [control]="fileDataUpdateForm.get('uniqueKey')"
+          label="Clave &Uacute;nica 3 Niveles">
+          <!-- <ngx-select
             [form]="fileDataUpdateForm"
             [data]="uniqueKeys"
             (fetchItems)="getUniqueKey($event)"
@@ -328,7 +329,9 @@
             label="Clave &Uacute;nica 3 Niveles"
             (change)="setUniqueKeyData($event, true)"
             termMaxLength="5">
-          </ngx-select>
+          </ngx-select> -->
+
+          <input formControlName="uniqueKey" class="form-control" />
         </form-field>
 
         <form-field
@@ -378,7 +381,6 @@
             bindLabel="nameAndId"
             control="autorityNumber"
             label="Autoridad"
-            [searchOnInit]="true"
             [readonly]="stationLoading || transferorLoading"
             termMaxLength="400"
             [showTooltip]="true">
@@ -397,7 +399,9 @@
             bindLabel="nameAndId"
             control="institutionNumber"
             label="{{
-              initialCondition == 'T' ? 'Solicitante' : 'Autoridad Emisora'
+              initialCondition == 'T' || formControls?.wheelType?.value == 'P'
+                ? 'Solicitante'
+                : 'Autoridad Emisora'
             }}"
             [searchOnInit]="true"
             termMaxLength="200"
@@ -502,17 +506,8 @@
             [title]="departmentName"
             readonly />
         </form-field>
-
-        <!-- <div class="col-md-2">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            (click)="openModalAreas()">
-            <i class="bx bx-list-ul bx-sm float-icon"></i>
-          </button>
-        </div> -->
       </div>
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <form-field
           class="col-md-6"
           [control]="fileDataUpdateForm.get('delegationName')"
@@ -536,7 +531,7 @@
             [title]="subDelegationName"
             readonly />
         </form-field>
-      </div>
+      </div>-->
 
       <div class="row pt-4">
         <form-field

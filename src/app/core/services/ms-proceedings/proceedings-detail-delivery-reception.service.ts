@@ -166,6 +166,36 @@ export class ProceedingsDetailDeliveryReceptionService extends HttpService {
     });
   }
 
+  changeAct(
+    details: IDetailProceedingsDeliveryReception[],
+    numberProceedings: string
+  ) {
+    return forkJoin(
+      details.map(detail => {
+        if (detail.good) {
+          delete detail.good;
+        }
+        if (detail.description !== undefined) delete detail.description;
+        if (detail.status !== undefined) delete detail.status;
+        if (detail.vault !== undefined) delete detail.vault;
+        if (detail.warehouse !== undefined) delete detail.warehouse;
+
+        return this.put(this.endpoint, {
+          ...detail,
+          approvedDateXAdmon: detail.approvedDateXAdmon
+            ? firstFormatDateToSecondFormatDate(detail.approvedDateXAdmon + '')
+            : null,
+          dateIndicatesUserApproval: detail.dateIndicatesUserApproval
+            ? firstFormatDateToSecondFormatDate(
+                detail.dateIndicatesUserApproval + ''
+              )
+            : null,
+          numberProceedings,
+        });
+      })
+    );
+  }
+
   updateMasive(
     selecteds: {
       fec_aprobacion_x_admon: string;
