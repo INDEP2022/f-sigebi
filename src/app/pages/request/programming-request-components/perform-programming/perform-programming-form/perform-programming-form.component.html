@@ -158,8 +158,15 @@
               [control]="performForm.get('startDate')"
               label="Fecha inicio operativo">
               <input
+                type="datetime"
                 class="form-control"
                 formControlName="startDate"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
+                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                }"
                 bsDatepicker />
             </form-field>
           </div>
@@ -169,9 +176,16 @@
               [control]="performForm.get('endDate')"
               label="Fecha fin operativo">
               <input
-                bsDatepicker
+                type="datetime"
                 class="form-control"
-                formControlName="endDate" />
+                formControlName="endDate"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  rangeInputFormat: 'DD/MMMM/YYYY, h:mm:ss a',
+                  dateInputFormat: 'DD/MMMM/YYYY, h:mm:ss a'
+                }"
+                bsDatepicker />
             </form-field>
           </div>
         </div>
@@ -356,7 +370,7 @@
         </div>
         <div class="row pt-3" *ngIf="showUbication || dataProgramming?.storeId">
           <div class="col-md-12">
-            <label class="title"
+            <label class="title" *ngIf="warehouseUbication"
               >Direcci&oacute;n Almac&eacute;n&#58;
               {{ warehouseUbication }}</label
             >

@@ -50,7 +50,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     if (this.typeTransportable == 'guard') {
       this.alertQuestion(
         'warning',
-        'Advertencía',
+        'Advertencia',
         '¿Desea asignar el almacén para bienes de resguardo?'
       ).then(question => {
         if (question.isConfirmed) {
@@ -64,7 +64,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     } else if (this.typeTransportable == 'warehouse') {
       this.alertQuestion(
         'warning',
-        'Advertencía',
+        'Advertencia',
         '¿Desea asignar el almacén para bienes de almacén?'
       ).then(question => {
         if (question.isConfirmed) {
