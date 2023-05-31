@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-edit-exp-noti',
@@ -27,12 +28,27 @@ export class EditFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    for (const controlName in this.deductiveForm.controls) {
+      if (this.deductiveForm.controls.hasOwnProperty(controlName)) {
+        if (controlName != 'expedientNumber') {
+          this.deductiveForm.controls[controlName].disable();
+          //console.log(controlName);
+        }
+      }
+    }
   }
 
   private prepareForm() {
     this.deductiveForm = this.fb.group({
       id: [null],
-      expedientNumber: [null],
+      expedientNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
       wheelNumber: [null, [Validators.required]],
       observations: [null, [Validators.required]],
       affairKey: [null, [Validators.required]],
