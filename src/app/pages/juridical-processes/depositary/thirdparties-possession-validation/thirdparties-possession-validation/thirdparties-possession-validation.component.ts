@@ -152,6 +152,13 @@ export class ThirdpartiesPossessionValidationComponent
     //     this.getNotificationByWheel(new ListParams(), x);
     //     this.getGoodsPosessionThird(new ListParams(), x);
     //   });
+    // this.form
+    //   .get('wheelNumber')
+    //   .valueChanges.pipe(debounceTime(500))
+    //   .subscribe(x => {
+    //     this.getNotificationByWheel(new ListParams(), x);
+    //     this.getGoodsPosessionThird(new ListParams(), x);
+    //   });
   }
 
   private prepareForm() {
@@ -272,6 +279,8 @@ export class ThirdpartiesPossessionValidationComponent
         this.wheelNotifications = data.data[0];
 
         this.totalItemsNotificaciones = data.count;
+
+        this.totalItemsNotificaciones = data.count;
       },
       error: err => {
         this.loading = false;
@@ -317,6 +326,7 @@ export class ThirdpartiesPossessionValidationComponent
     }
 
     // this.params = new BehaviorSubject<ListParams>(new ListParams());
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
     let data = this.params.value;
     data.page = params.page;
     data.limit = params.limit;
@@ -332,7 +342,10 @@ export class ThirdpartiesPossessionValidationComponent
       next: data => {
         this.dataTableNotifications = data.data;
         this.totalItemsNotificaciones = data.count;
+        this.totalItemsNotificaciones = data.count;
         this.loading = false;
+        this.notificationSelected = this.dataTableNotifications[0];
+        this.getGoods(new ListParams());
         this.notificationSelected = this.dataTableNotifications[0];
         this.getGoods(new ListParams());
       },
@@ -379,13 +392,17 @@ export class ThirdpartiesPossessionValidationComponent
         this.totalItemsGood = data.count;
         this.isLoadingGood = false;
       },
-      error: err => {
+      error: () => {
         this.isLoadingGood = false;
       },
     });
   }
 
   getGoodsByOffice(params: ListParams, numberExpedient: number) {
+    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    // let data = this.params.value;
+    // data.page = params.page;
+    // data.limit = params.limit;
     // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     // let data = this.params.value;
     // data.page = params.page;
