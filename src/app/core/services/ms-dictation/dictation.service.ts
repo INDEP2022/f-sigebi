@@ -63,6 +63,10 @@ export class DictationService extends HttpService {
     return this.post(this.route.Dictation, body);
   }
 
+  createPersonExt(body: IDictationCopies) {
+    return this.post(this.route.Dictation, body);
+  }
+
   update(body: Partial<IDictation>) {
     return this.put(this.route.Dictation, body);
   }
@@ -88,6 +92,13 @@ export class DictationService extends HttpService {
     return this.get<IListResponse<IDictationCopies>>(
       this.route.CopiesOfficialOpinion,
       param
+    );
+  }
+
+  updateUserByOficNum(body: any) {
+    return this.put<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      body
     );
   }
 
@@ -200,5 +211,10 @@ export class DictationService extends HttpService {
   sendConsulta3(anio: string) {
     const route = `${DictationEndpoints.GetOfficeByYear3}`;
     return this.get(route + `/${anio}`);
+  }
+
+  getFaFlagDest(params: any) {
+    const route = `${DictationEndpoints.FaFlagDest}`;
+    return this.post(route, params);
   }
 }

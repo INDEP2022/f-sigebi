@@ -21,7 +21,6 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   title: string = 'Delegación Estado';
   edit: boolean = false;
   delegationSate: any;
-
   states = new DefaultSelect<IStateOfRepublic>();
   constructor(
     private modalRef: BsModalRef,
