@@ -2218,6 +2218,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                 // COUNT SSF3_FIRMA_ELEC_DOCS
                 // SI COUNT ES 0 LLAMA PUP_REGRESA_ESTATUS
                 // DELETE TMP_DICTAMINACIONES
+                console.log('VERIFICANDOOOOOOOOOOO ');
                 this.sendElectronicFirmData();
               });
             }
