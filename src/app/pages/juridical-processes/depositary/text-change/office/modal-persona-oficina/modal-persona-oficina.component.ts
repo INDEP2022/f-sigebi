@@ -11,10 +11,11 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-textChange-modal',
-  templateUrl: './modal-component.html',
+  selector: 'app-modal-persona-oficina',
+  templateUrl: './modal-persona-oficina.component.html',
+  styles: [],
 })
-export class ModalComponent implements OnInit {
+export class ModalPersonaOficinaComponent implements OnInit {
   form: FormGroup = this.fb.group({
     typePerson_I: [null, null],
     senderUser_I: [null, null],
