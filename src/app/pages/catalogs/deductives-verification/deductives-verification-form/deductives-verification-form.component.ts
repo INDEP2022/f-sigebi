@@ -5,11 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  DOUBLE_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-deductives-verification-form',
@@ -38,7 +34,7 @@ export class DeductivesVerificationFormComponent
 
   private prepareForm() {
     this.deductiveForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

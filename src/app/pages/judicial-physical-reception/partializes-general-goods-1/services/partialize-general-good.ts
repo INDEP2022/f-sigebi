@@ -33,12 +33,24 @@ export abstract class PartializeGeneralGood {
   // };
   settingsGoodsFirstCase = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'left',
+      add: false,
+      edit: false,
+      delete: true,
+    },
     columns: columnsFirstCase,
   };
   settingsGoodsSecondCase = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'left',
+      add: false,
+      edit: false,
+      delete: true,
+    },
     columns: columnsSecondCase,
   };
   sumCant = 0;

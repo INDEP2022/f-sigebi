@@ -1553,10 +1553,6 @@ export class PerformProgrammingFormComponent
       if (question.isConfirmed) {
         this.loading = true;
         this.formLoading = true;
-
-        this.performForm
-          .get('regionalDelegationNumber')
-          .setValue(this.delegationId);
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
         const task = JSON.parse(localStorage.getItem('Task'));

@@ -265,6 +265,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.pagedBienesPar = [];
     this.service.sumCant = 0;
     this.service.sumVal14 = 0;
+    this.service.sumAvaluo = 0;
   }
 
   private validateStatusXPantalla(good: IGood) {

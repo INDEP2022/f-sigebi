@@ -22,9 +22,8 @@ export class PartializeViewComponent extends BasePage implements OnInit {
   page = 1;
 
   constructor(
-    private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service,
-  ) // private service2: PartializeGeneralGoodV2Service
-  {
+    private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service, // private service2: PartializeGeneralGoodV2Service
+  ) {
     super();
     // this.params.value.limit = 11;
   }
@@ -192,10 +191,22 @@ export class PartializeViewComponent extends BasePage implements OnInit {
             .concat(this.bienesPar[this.bienesPar.length - 1]);
         }
         this.bienesPar[this.bienesPar.length - 1].cantidad -= row.data.cantidad;
+        this.bienesPar[this.bienesPar.length - 1].avaluo -= row.data.avaluo;
+        this.bienesPar[this.bienesPar.length - 1].importe -= row.data.importe;
         this.service.sumCant -= row.data.cantidad;
         this.service.sumVal14 -= row.data.importe;
+        this.service.sumAvaluo -= row.data.avaluo;
+        let saldo = +this.form.get('saldo').value;
+        if (!this.firstCase) {
+          saldo += +(row.data.cantidad + '');
+          this.form.get('saldo').setValue(saldo);
+        } else {
+          saldo += +(row.data.importe + '');
+          this.form.get('saldo').setValue(saldo);
+        }
+
         // this.bienesPar[this.bienesPar.length - 1].avaluo -= row.data.avaluo;
-        this.bienesPar[this.bienesPar.length - 1].importe -= row.data.importe;
+
         if (this.bienesPar[this.bienesPar.length - 1].cantidad === 0) {
           this.bienesPar.pop();
         }

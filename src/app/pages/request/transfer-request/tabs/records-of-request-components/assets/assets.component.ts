@@ -789,6 +789,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.listGoodsFractions = [];
     let existAddres = 0;
+    debugger;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
@@ -812,8 +813,32 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       good.fractionId = Number(this.fractionProperties['fractionId']);
       good.goodTypeId = Number(this.fractionProperties['goodTypeId']);
 
+      /* inf. del bien */
       good.goodDescription = item.goodDescription;
       good.processStatus = item.processStatus;
+
+      good.quantity = item.quantity ? item.quantity : 0;
+      good.duplicity = item.duplicity;
+      good.capacity = item.capacity;
+      good.fileeNumber = item.fileeNumber;
+      good.volume = item.volume;
+      good.physicalStatus = item.physicalStatus;
+      good.useType = item.useType;
+      good.stateConservation = item.stateConservation;
+      good.origin = item.origin;
+      good.destiny = item.destiny;
+      if (item.transferentDestiny) {
+        good.transferentDestiny = item.transferentDestiny;
+      } else if (!item.transferentDestiny && good.destiny) {
+        good.transferentDestiny = item.destiny;
+      } else {
+        good.transferentDestiny = 1;
+      }
+      good.notesTransferringEntity = item.notesTransferringEntity;
+      good.appraisal = item.appraisal ? 'Y' : 'N';
+      good.compliesNorm = item.compliesNorm ? 'Y' : 'N';
+      good.saeDestiny = item.saeDestiny;
+      /*  */
 
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
