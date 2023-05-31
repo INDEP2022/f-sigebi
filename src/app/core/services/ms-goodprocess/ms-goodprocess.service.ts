@@ -78,4 +78,8 @@ export class GoodprocessService extends HttpService {
   postPupGenMasiv(params: any) {
     return this.post(`${GoodprocessEndpoints.ApplicationPupGenMasiv}`, params);
   }
+
+  getGoodScreenSend(params: any) {
+    return this.post(`${GoodprocessEndpoints.GetGoodScreenSend}`, params);
+  }
 }

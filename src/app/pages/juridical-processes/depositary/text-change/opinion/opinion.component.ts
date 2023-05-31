@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -17,12 +17,14 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import {
   IDictation,
   IDictationCopies,
 } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
+import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -39,7 +41,10 @@ import {
 } from 'src/app/core/shared/patterns';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
+import { ModalComponent } from '../modal/modal-component';
 import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
+import { EXTERNOS_COLUMS } from '../tabla-modal/tableUserExt';
 
 @Component({
   selector: 'app-opinion',
@@ -47,6 +52,7 @@ import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
   styles: [],
 })
 export class OpinionComponent extends BasePage implements OnInit, OnChanges {
+  /*==================================================*/
   form: FormGroup = this.fb.group({
     expedientNumber: [
       null,
@@ -99,10 +105,10 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     descriptionSender: [
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
-    ],
+    ] /*
     typePerson: [null, null],
     senderUser: [null, null],
-    personaExt: [null, null],
+    personaExt: [null, null],*/,
     typePerson_I: [null, null],
     senderUser_I: [null, null],
     personaExt_I: [null, null],
@@ -123,13 +129,18 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
-    extPerson: this.fb.array([
-      this.fb.control('', null),
-      this.fb.control('', null),
-      this.fb.control('', null),
-    ]),
+    masInfo_1_1: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    masInfo_1_2: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    extPerson: this.fb.array([]),
   });
-
+  totalItems: number;
+  dataExt: IDictationCopies[];
   intIDictation: IDictation;
   localInterfazOfficialDictation: IOfficialDictation;
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -172,6 +183,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private dictationService: DictationService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
+    private modalRef: BsModalRef,
     private siabServiceReport: SiabService,
     private usersService: UsersService,
     private service: BankAccountService,
@@ -179,7 +191,21 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private jobDictumTextsServices: JobDictumTextsService
   ) {
     super();
+
+    this.settings.columns = EXTERNOS_COLUMS;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        add: false,
+        position: 'right',
+      },
+    };
   }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (this.oficnum != null) {
       this.form.get('expedientNumber').setValue(this.oficnum);
@@ -194,19 +220,6 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
     this.loadUserDestinatario();
-
-    this.form.get('typePerson').valueChanges.subscribe(value => {
-      if (value === 'S') {
-        this.form.get('senderUser').setValue(null);
-      } else {
-        this.form.get('senderUser').setValue('');
-      }
-    });
-    this.form.get('typePerson_I').valueChanges.subscribe(value => {
-      if (value === 'S') {
-        this.form.get('senderUser_I').setValue(null);
-      }
-    });
   }
 
   /**
@@ -300,9 +313,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
             this.loadModal(true, filterParams);
           } else {
             this.intIDictation = resp.data[0];
-            this.form
-              .get('expedientNumber')
-              .setValue(this.intIDictation.expedientNumber);
+            //this.form.get('expedientNumber').setValue(this.intIDictation.expedientNumber);
             console.log(' this.intIDictation.id => ' + this.intIDictation.id);
             this.form.get('registerNumber').setValue(this.intIDictation.id);
             this.form
@@ -332,7 +343,10 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
   }
 
   openModal(newOrEdit: boolean, filterParams: BehaviorSubject<FilterParams>) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
     modalConfig.initialState = {
       newOrEdit,
       filterParams,
@@ -421,44 +435,17 @@ carga la  información de la parte media de la página
       .getValue()
       .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
 
-    this.filterParams.getValue().addFilter('id', 36, SearchFilter.EQ);
+    //this.filterParams.getValue().addFilter('id', 36, SearchFilter.EQ);
 
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          console.log(' EXTERNOS ', JSON.stringify(resp.data));
+          this.dataExt = resp.data;
           let datos: IDictationCopies[] = resp.data;
           this.idCopias = datos[0].id;
           this.copyDestinationNumber = datos[0].copyDestinationNumber;
-
-          if (datos[0] !== null && datos[0] !== undefined) {
-            this.nrSelecttypePerson_I =
-              datos[0].personExtInt === 'S' ? 'S' : 'I';
-            this.form.get('typePerson_I').setValue(datos[0].personExtInt);
-            if (this.nrSelecttypePerson_I === 'I') {
-              this.form.get('senderUser_I').setValue(datos[0].recipientCopy);
-              this.form
-                .get('personaExt_I')
-                .setValue(this.form.get('senderUser_I').value);
-            } else {
-              this.form.get('senderUser_I').setValue(null);
-              this.form.get('personaExt_I').setValue(datos[0].namePersonExt);
-            }
-          }
-
-          if (datos[1] !== null && datos[1] !== undefined) {
-            this.nrSelecttypePerson = datos[1].personExtInt === 'S' ? 'S' : 'I';
-            this.form.get('typePerson').setValue(datos[1].personExtInt);
-            if (this.nrSelecttypePerson === 'I') {
-              this.form.get('senderUser').setValue(datos[1].recipientCopy);
-              this.form
-                .get('personaExt')
-                .setValue(this.form.get('senderUser').value);
-            } else {
-              this.form.get('senderUser').setValue(null);
-              this.form.get('personaExt').setValue(datos[1].namePersonExt);
-            }
-          }
         },
         error: errror => {
           this.onLoadToast('error', 'Error', errror.error.message);
@@ -578,8 +565,9 @@ carga la  información de la parte media de la página
     método para actualizar el dictamen en la parte del body
 =======================================================================*/
   updateDictamen() {
-    /*
-   let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(this.form);
+    let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
+      this.form
+    );
     this.oficialDictationService.update(ofis).subscribe({
       next: resp => {
         this.onLoadToast('info', 'info', resp.message[0]);
@@ -589,20 +577,18 @@ carga la  información de la parte media de la página
       },
     });
 
-let data:Partial<IJobDictumTexts> = this.getDatosToUpdateDictamenBodyText(this.form);
+    let data: Partial<IJobDictumTexts> = this.getDatosToUpdateDictamenBodyText(
+      this.form
+    );
 
-this.jobDictumTextsServices
-               .update(data)
-               .subscribe({
-                  next : resp => {
-                           this.onLoadToast('success', 'success', resp.message[0]);       
-                  },
-                  error : erro => {
-                     this.onLoadToast('error', 'Error', erro.error.message);
-                  },
-               });
-    
-*/
+    this.jobDictumTextsServices.update(data).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'success', resp.message[0]);
+      },
+      error: erro => {
+        this.onLoadToast('error', 'Error', erro.error.message);
+      },
+    });
 
     let obj = {
       id: this.idCopias,
@@ -682,6 +668,7 @@ this.jobDictumTextsServices
         },
       });
   }
+
   /*====================================================================
              método para mandar a llamar el reporte
 =======================================================================*/
@@ -708,25 +695,27 @@ this.jobDictumTextsServices
       },
     });
   }
+  //======================================================================
 
-  get extPersonArray() {
+  get extPerson(): FormArray {
     return this.form.get('extPerson') as FormArray;
   }
 
-  /*
-addExtPersonArray(){
-
-const filterForm = this.fb.group({
-                             ,
-                             this.fb.control('' ,[Validators.required]),
-                             this.fb.control('' ,[Validators.required])
+  addExtPersonArray() {
+    const filterForm = this.fb.group({
+      typePerson: ['', Validators.required],
+      senderUser: ['', Validators.required],
+      personaExt: ['', Validators.required],
     });
-    
-    this.extPersonArray.push(this.fb.control('' ,[Validators.required]));
-}
-*/
+    this.extPerson.push(filterForm);
+  }
+
+  deleteExtPerson(indice: number) {
+    this.extPerson.removeAt(indice);
+  }
 
   // NO SE USAN PERO HAY QUE REVISAR SU FUNCIONAMIENTO
+  //=======================================================================
 
   loadUserDestinatario() {
     this.usersService.getUsersJob().subscribe({
@@ -782,17 +771,58 @@ const filterForm = this.fb.group({
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
+  }
 
-    /*
- let data:IDictationCopies {
-  numberOfDicta: string;
-  typeDictamination: string;
-  recipientCopy: string;
-  copyDestinationNumber: number;
-  personExtInt: string;
-  namePersonExt: string;
-  registerNumber: number;
-}
-*/
+  showDeleteAlert(legend: ILegend) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(legend.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(id: number) {
+    alert('BORRARO ' + id);
+    //  this.legendService.remove(id).subscribe({
+    //  next: () => this.getDeductives(),
+    //});
+  }
+
+  openForm(legend?: ILegend) {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      legend,
+      callback: (next: boolean, datos: any) => {
+        if (next) {
+          this.seteaTabla(datos);
+          alert('next' + next + ' ' + datos);
+        }
+      },
+    };
+    this.modalService.show(ModalComponent, modalConfig);
+  }
+  close() {
+    this.modalRef.hide();
+  }
+  seteaTabla(datos: any) {
+    let dato = JSON.parse(JSON.stringify(datos));
+
+    let obj: IDictationCopies = {
+      id: this.idCopias,
+      copyDestinationNumber: this.copyDestinationNumber,
+      typeDictamination: this.form.get('typeDict').value,
+      recipientCopy: this.form.get('typeDict').value,
+      numberOfDicta: this.form.get('registerNumber').value,
+      personExtInt: dato.typePerson_I,
+      namePersonExt: dato.personaExt_I,
+      registerNumber: this.form.get('registerNumber').value,
+    };
+
+    this.dataExt.push(obj);
   }
 }
