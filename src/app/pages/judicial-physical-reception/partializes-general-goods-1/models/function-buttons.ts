@@ -59,9 +59,9 @@ export class FunctionButtons {
     return this.service?.formControl;
   }
 
-  get formGood() {
-    return this.service?.formGood;
-  }
+  // get formGood() {
+  //   return this.service?.formGood;
+  // }
 
   get bienesPar() {
     return this.service?.bienesPar;
