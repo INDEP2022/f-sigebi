@@ -45,4 +45,8 @@ export enum GoodProcessPoints {
 export enum GoodFinderEndpoint {
   GoodFinderBase = 'goodfinder',
   GoodQuery = 'good-query',
+  UpdateRecords = 'good-query/update-good',
+
+  /* Good Data Aset */
+  GoodDataAsetBase = 'gooddataset',
 }
