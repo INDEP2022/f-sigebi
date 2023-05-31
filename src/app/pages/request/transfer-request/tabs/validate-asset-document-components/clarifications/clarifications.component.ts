@@ -24,6 +24,7 @@ import { ClarificationService } from 'src/app/core/services/catalogs/clarificati
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -83,7 +84,8 @@ export class ClarificationsComponent
     private readonly typeRelevantService: TypeRelevantService,
     private readonly genericService: GenericService,
     private readonly goodResDevService: GetGoodResVeService,
-    private readonly chatClarificationService: ChatClarificationsService
+    private readonly chatClarificationService: ChatClarificationsService,
+    private readonly goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -416,78 +418,17 @@ export class ClarificationsComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodService.getAll(filter).subscribe({
-      next: resp => {
-        let result = resp.data.map(async (item: any) => {
-          const goodTypeName = await this.getTypeGood(item.goodTypeId);
-          item['goodTypeName'] = goodTypeName;
-
-          item['fraction'] = item.fractionId ? item.fractionId.description : '';
-
-          item['quantity'] = Number(item.quantity);
-
-          const physicalStatus = await this.getByTheirStatus(
-            item.physicalStatus,
-            'Estado Fisico'
-          );
-          item['physicstateName'] = physicalStatus;
-
-          const stateConservation = await this.getByTheirStatus(
-            item.stateConservation,
-            'Estado Conservacion'
-          );
-          item['stateConservationName'] = stateConservation;
-
-          const transferentDestiny = await this.getByTheirStatus(
-            item.transferentDestiny,
-            'Destino'
-          );
-          item['transferentDestinyName'] = transferentDestiny;
-
-          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
-          item['destinyName'] = destiny;
-        });
-
-        Promise.all(result).then(data => {
-          this.assetsArray.load(resp.data);
-          this.loading = false;
-          this.totalItems = resp.count;
-        });
+    this.goodFinderService.goodFinder(filter).subscribe({
+      next: async (resp: any) => {
+        this.assetsArray.load(resp.data);
+        this.loading = false;
+        this.totalItems = resp.count;
       },
       error: error => {
         this.loading = false;
+        this.onLoadToast('error', 'No se encontraron registros', '');
+        console.log('no se encontraron registros del bien ', error);
       },
-    });
-  }
-
-  getTypeGood(id: number) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        this.typeRelevantService.getById(id).subscribe({
-          next: resp => {
-            resolve(resp.description);
-          },
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  }
-
-  getByTheirStatus(id: number | string, typeName: string) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        var params = new ListParams();
-        params['filter.name'] = `$eq:${typeName}`;
-        params['filter.keyId'] = `$eq:${id}`;
-        this.genericService.getAll(params).subscribe({
-          next: resp => {
-            resolve(resp.data.length > 0 ? resp.data[0].description : '');
-          },
-        });
-      } else {
-        resolve(null);
-      }
     });
   }
 
