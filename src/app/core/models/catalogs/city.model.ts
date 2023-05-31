@@ -1,5 +1,6 @@
 import { IDelegation } from './delegation.model';
 import { IState } from './state-model';
+import { ISubdelegation } from './subdelegation.model';
 
 export interface ICity {
   idCity?: number;
@@ -11,4 +12,6 @@ export interface ICity {
   legendOffice: string;
   noRegister?: number;
   nameAndId?: string;
+  delegation?: IDelegation;
+  subDelegation?: ISubdelegation;
 }
