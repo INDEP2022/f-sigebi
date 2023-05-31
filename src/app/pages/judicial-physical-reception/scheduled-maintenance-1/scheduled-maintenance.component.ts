@@ -38,6 +38,12 @@ export class ScheduledMaintenanceComponent
     private router: Router
   ) {
     super(fb, deliveryService, detailService, 'filtersActa');
+    const paramsActa = localStorage.getItem('paramsActa');
+    if (paramsActa) {
+      const params = JSON.parse(paramsActa);
+      this.params.value.limit = params.limit;
+      this.params.value.page = params.page;
+    }
     this.settings1 = {
       ...this.settings1,
       selectMode: 'multi',
@@ -52,7 +58,15 @@ export class ScheduledMaintenanceComponent
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         console.log(response);
-
+        localStorage.setItem(
+          'paramsActa',
+          JSON.stringify({ limit: response.limit, page: response.page })
+        );
+        // this.router.navigate([], {
+        //   relativeTo: this._route,
+        //   queryParams: { page: response.page },
+        //   queryParamsHandling: 'merge'
+        // })
         this.getData();
       },
     });

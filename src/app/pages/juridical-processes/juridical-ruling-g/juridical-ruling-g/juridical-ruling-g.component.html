@@ -7,7 +7,10 @@
   <div body>
     <div>
       <div>
-        <button class="btn btn-danger" (click)="goBack()">Regresar</button>
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
       </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
@@ -47,7 +50,8 @@
                   class="form-control"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente" />
+                  formControlName="noExpediente"
+                  readonly />
               </form-field>
             </div>
             <!-- Averiguación Previa -->
@@ -121,7 +125,18 @@
               <form-field
                 [control]="dictaminacionesForm.get('wheelNumber')"
                 label="Volante">
-                <input class="form-control" formControlName="wheelNumber" />
+                <input
+                  class="form-control"
+                  formControlName="wheelNumber"
+                  readonly
+                  [disabled]="true" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('criminalCase')"
+                label="Causa Penal">
+                <input class="form-control" formControlName="criminalCase" />
               </form-field>
             </div>
 
@@ -132,7 +147,7 @@
                 <input
                   class="form-control"
                   formControlName="fechaDictaminacion"
-                  bsDatepicker />
+                  readonly />
               </form-field>
             </div>
 
@@ -414,16 +429,13 @@
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar
         </button>
-        <!-- <button
+        <button
           class="btn btn-danger btn-sm active m-3 text-wrap"
           (click)="btnBorrarDictamen()"
           [disabled]="buttonDeleteDisabled">
           Borrar Dictamen
-        </button> -->
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
         </button>
+
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
           (click)="btnImprimeOficio()">
