@@ -57,7 +57,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      goodId: {
+      id: {
         title: 'No. Bien',
         type: 'string',
         sort: false,
@@ -404,7 +404,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   getDataExpedient() {
     this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
       resp => {
-        console.log(resp);
+        /* if(this.form.get('averPrev').value !) null && this.form.get('averPrev').value != resp.preliminaryInquiry){
+      
+        } */
+
         console.log(resp.preliminaryInquiry);
         this.form.get('averPrev').setValue(resp.preliminaryInquiry);
         console.log(resp.criminalCase);
@@ -516,6 +519,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.prevProce = true;
     this.act2Valid = false;
     this.navigateProceedings = false;
+    this.newAct = true;
     this.statusProceeding = '';
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
@@ -1517,11 +1521,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                     witness1:
                                       this.form.get('autoridadCancela').value,
                                     witness2: this.form.get('elabora').value,
-                                    typeProceedings: ['C'].includes(
-                                      this.form.get('acta').value.split('/')[0]
-                                    )
-                                      ? 'RECEPCAN'
-                                      : 'SUSPENSION',
+                                    typeProceedings:
+                                      this.form
+                                        .get('acta')
+                                        .value.split('/')[0] == 'C'
+                                        ? 'RECEPCAN'
+                                        : 'SUSPENSION',
                                     responsible: null,
                                     destructionMethod: null,
                                     observations:
@@ -1686,6 +1691,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.statusProceeding = 'CERRADO';
                         this.inputsInProceedingClose();
                         this.saveDataAct = [];
+                        this.alert(
+                          'success',
+                          'Acta abierta',
+                          `El acta ${
+                            this.form.get('acta2').value
+                          } fue abierta con éxito`
+                        );
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled'); */
@@ -1744,11 +1756,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           numFile: this.form.get('expediente').value,
           witness1: this.form.get('autoridadCancela').value,
           witness2: this.form.get('elabora').value,
-          typeProceedings: ['C'].includes(
-            this.form.get('acta').value.split('/')[0]
-          )
-            ? 'RECEPCAN'
-            : 'SUSPENSION',
+          typeProceedings:
+            this.form.get('acta').value.split('/')[0] == 'C'
+              ? 'RECEPCAN'
+              : 'SUSPENSION',
           responsible: null,
           destructionMethod: null,
           observations: this.form.get('observaciones').value,
@@ -1906,11 +1917,10 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             numFile: this.form.get('expediente').value,
             witness1: this.form.get('autoridadCancela').value,
             witness2: this.form.get('elabora').value,
-            typeProceedings: ['C'].includes(
-              this.form.get('acta').value.split('/')[0]
-            )
-              ? 'RECEPCAN'
-              : 'SUSPENSION',
+            typeProceedings:
+              this.form.get('acta').value.split('/')[0] == 'C'
+                ? 'RECEPCAN'
+                : 'SUSPENSION',
             responsible: null,
             destructionMethod: null,
             observations: this.form.get('observaciones').value,
@@ -1939,7 +1949,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             receiveBy: null,
             affair: null,
           };
-
           console.log(newProceeding);
 
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
@@ -2425,6 +2434,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.prevProce = false;
     this.nextProce = false;
+    this.act2Valid = false;
 
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -2479,6 +2489,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     this.initialBool = true;
     this.prevProce = false;
     this.nextProce = false;
+    this.act2Valid = false;
     this.noRequireAct1();
     this.clearInputs();
     if (
