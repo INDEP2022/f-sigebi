@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
-  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNSPARAMETER } from '../columns';
 import { ParameterFormComponent } from '../parameter-form/parameter-form.component';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-parameter-maintenance',
@@ -96,25 +94,23 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.parameter
-      .getAllWithFilters(params)
-      .subscribe({
-        next: (resp: any) => {
-          console.log(resp);
-          this.parameterData = resp.data;
-          this.data.load(this.parameterData);
-          this.data.refresh();
-          this.totalItems = resp.count;
-          this.loading = false;
-        },
-        error: err => {
-          this.onLoadToast('error', err.error.message, '');
-          this.loading = false;
-          this.data.load([]);
-          this.data.refresh();
-          this.totalItems = 0;
-        },
-      });
+    this.parameter.getAllWithFilters(params).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        this.parameterData = resp.data;
+        this.data.load(this.parameterData);
+        this.data.refresh();
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.onLoadToast('error', err.error.message, '');
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
 
   public openForm(parameter?: IParameters, edit?: boolean) {
