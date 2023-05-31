@@ -165,6 +165,10 @@ export class PerformProgrammingFormComponent
     ...settingWarehouse,
   };
 
+  transferentId: string | number;
+  stationId: string | number;
+  autorityId: string | number;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -1529,6 +1533,17 @@ export class PerformProgrammingFormComponent
 
   //Actualizar programación con información de la programación
   confirm() {
+    this.performForm
+      .get('startDate')
+      .setValue(new Date(this.performForm.get('startDate').value));
+    this.performForm
+      .get('endDate')
+      .setValue(new Date(this.performForm.get('endDate').value));
+
+    this.performForm.get('tranferId').setValue(this.transferentId);
+    this.performForm.get('stationId').setValue(this.stationId);
+    this.performForm.get('autorityId').setValue(this.autorityId);
+
     console.log('this.performForm.value', this.performForm.value);
     this.alertQuestion(
       'info',
@@ -1538,40 +1553,51 @@ export class PerformProgrammingFormComponent
       if (question.isConfirmed) {
         this.loading = true;
         this.formLoading = true;
-        const task = JSON.parse(localStorage.getItem('Task'));
-        this.performForm
-          .get('regionalDelegationNumber')
-          .setValue(this.delegationId);
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
-        /*this.programmingGoodService
-          .updateProgramming(this.idProgramming, this.performForm.value)
-          .subscribe({
-            next: async () => {
-              this.loading = false;
-              this.onLoadToast(
-                'success',
-                'Acción correcta',
-                'Programacíón guardada correctamente'
-              );
-              this.performForm
-                .get('regionalDelegationNumber')
-                .setValue(this.delegation);
-              this.getProgrammingData();
-              this.formLoading = false;
-              this.newTransferent = false;
-            },
-          }); */
+        const task = JSON.parse(localStorage.getItem('Task'));
+        const updateTask = await this.updateTask(folio, task.id);
+        if (updateTask) {
+          this.programmingGoodService
+            .updateProgramming(this.idProgramming, this.performForm.value)
+            .subscribe({
+              next: async () => {
+                this.loading = false;
+                this.onLoadToast(
+                  'success',
+                  'Acción correcta',
+                  'Programacíón guardada correctamente'
+                );
+                this.performForm
+                  .get('regionalDelegationNumber')
+                  .setValue(this.delegation);
+                this.getProgrammingData();
+                this.formLoading = false;
+                this.newTransferent = false;
+              },
+              error: error => {
+                console.log('error', error);
+              },
+            });
+        }
       }
     });
   }
 
-  updateTask(folio: string) {
+  updateTask(folio: string, taskId: number) {
     return new Promise((resolve, reject) => {
       const body: ITask = {
-        id: this.task.id,
-        title: 'Aceptar Programación con folio: ' + folio,
+        title: 'Realizar Programación con folio: ' + folio,
       };
+
+      this.taskService.update(taskId, body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: error => {
+          console.log('error', error);
+        },
+      });
     });
   }
 
@@ -1693,6 +1719,7 @@ export class PerformProgrammingFormComponent
   }
 
   generateFolio(programming: Iprogramming) {
+    console.log('programming', programming);
     return new Promise((resolve, reject) => {
       this.transferentService.getById(programming.tranferId).subscribe({
         next: response => {
@@ -1715,7 +1742,9 @@ export class PerformProgrammingFormComponent
             resolve(folio);
           }
         },
-        error: error => {},
+        error: error => {
+          console.log('error generar folio', error);
+        },
       });
     });
   }
@@ -1847,11 +1876,20 @@ export class PerformProgrammingFormComponent
         .setValue(this.dataProgramming.typeRelevantId);
       this.performForm
         .get('startDate')
-        .setValue(moment(this.dataProgramming.startDate).format('DD/MM/YYYY'));
-      /*this.performForm
+        .setValue(
+          moment(this.dataProgramming.startDate).format(
+            'DD/MMMM/YYYY, h:mm:ss a'
+          )
+        );
+      this.performForm
         .get('endDate')
-        .setValue(moment(this.dataProgramming.endDate).format('DD/MM/YYYY')); */
+        .setValue(
+          moment(this.dataProgramming.endDate).format('DD/MMMM/YYYY, h:mm:ss a')
+        );
 
+      this.transferentId = this.dataProgramming.tranferId;
+      this.stationId = this.dataProgramming.stationId;
+      this.autorityId = this.dataProgramming.autorityId;
       this.paramsTransportableGoods.getValue()['filter.programmingId'] =
         this.idProgramming;
 
@@ -1888,8 +1926,7 @@ export class PerformProgrammingFormComponent
           });
       }
 
-      this.params.getValue()['filter.idTransferent'] =
-        this.dataProgramming.tranferId;
+      this.params.getValue()['filter.id'] = this.dataProgramming.stationId;
       this.stationService.getAll(this.params.getValue()).subscribe({
         next: response => {
           const nameAndId = `${response.data[0].id} - ${response.data[0].stationName}`;
@@ -1897,10 +1934,12 @@ export class PerformProgrammingFormComponent
         },
         error: error => {},
       });
-      this.paramsAuthority.getValue()['filter.idTransferer'] =
-        this.dataProgramming.tranferId;
+
+      this.paramsAuthority.getValue()['filter.idAuthority'] =
+        this.dataProgramming.autorityId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
+          console.log('autoridad', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;
@@ -2018,5 +2057,24 @@ export class PerformProgrammingFormComponent
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
       }
     });
+  }
+
+  checkInfoDate(event: any) {
+    const startDate = event;
+    const endDate = new Date(this.performForm.get('endDate').value);
+    console.log(startDate);
+    const _startDateFormat = moment(startDate).format('DD-MM-YYYY');
+    const _endDateFormat = moment(endDate).format('DD-MM-YYYY');
+    if (_startDateFormat > _endDateFormat) {
+      this.performForm.get('endDate').clearValidators();
+      this.performForm
+        .get('endDate')
+        .addValidators([Validators.required, minDate(new Date(startDate))]);
+      this.performForm.get('endDate').updateValueAndValidity();
+      this.performForm
+        .get('endDate')
+        .setErrors({ minDate: { min: startDate } });
+      this.performForm.markAllAsTouched();
+    }
   }
 }
