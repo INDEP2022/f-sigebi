@@ -4,4 +4,5 @@ export enum UserEndpoints {
   SegAccessAreas = 'seg-access-x-areas', // seg-access-x-areas
   GetUserName = `seg-access-x-areas/get-user-name`,
   VigSupervisionAccess = 'vig-supervision-access',
+  UserAsigne = 'seg-users/user-assigned',
 }
