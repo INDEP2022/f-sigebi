@@ -28,6 +28,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -113,7 +114,8 @@ export class VerifyComplianceTabComponent
     private requestHelperService: RequestHelperService,
     private goodResDevService: GetGoodResVeService,
     private goodsQueryService: GoodsQueryService,
-    private chatClarificationService: ChatClarificationsService
+    private chatClarificationService: ChatClarificationsService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -139,8 +141,8 @@ export class VerifyComplianceTabComponent
       },
     };
 
-    this.columns.unitMeasureName = {
-      ...this.columns.unitMeasureName,
+    this.columns.measureUnitTransferent = {
+      ...this.columns.measureUnitTransferent,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
           this.setUnitTransferent(data);
@@ -575,12 +577,18 @@ export class VerifyComplianceTabComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodServices.getAll(filter).subscribe({
+    this.goodFinderService.goodFinder(filter).subscribe({
       next: resp => {
-        /*let goods = resp.data.filter(x =>  
-          x.processStatus == 'VERIFICAR_CUMPLIMIENTO' || x.processStatus == 'SOLICITAR_ACLARACION'
-        );*/
-
+        this.goodData.load(resp.data); //load  new LocalDataSource()
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+    /*this.goodServices.getAll(filter).subscribe({
+      next: resp => {
         var result = resp.data.map(async (item: any) => {
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
@@ -621,7 +629,7 @@ export class VerifyComplianceTabComponent
       error: error => {
         this.loading = false;
       },
-    });
+    });*/
   }
 
   getTypeGood(id: number) {

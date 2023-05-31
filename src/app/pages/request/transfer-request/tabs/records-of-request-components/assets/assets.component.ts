@@ -132,14 +132,20 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
-    /*this.goodFinderService.goodFinder(this.params.getValue().getParams()).subscribe({
-      next: resp => {
-        resp.data.map((item:any)=>{
-          item['goodTypeName'] =
-        })
-      }
-    })*/
-    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
+    this.goodFinderService
+      .goodFinder(this.params.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.totalItems = resp.count;
+          this.paragraphs = resp.data;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          this.paragraphs = [];
+        },
+      });
+    /*this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (data: any) => {
         if (data !== null) {
           const result = data.data.map(async (item: any) => {
@@ -183,7 +189,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         this.loading = false;
         this.paragraphs = [];
       },
-    });
+    });*/
   }
 
   getGoodType(goodTypeId: number) {
@@ -696,7 +702,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (data) {
           setTimeout(() => {
             this.closeCreateGoodWIndows();
-          }, 600);
+          }, 800);
         }
       },
     });

@@ -9,27 +9,47 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodTypeName: {
+  /* goodTypeName: {
+    title: 'Tipo de Bien',
+    type: 'string',
+    sort: false,
+  }, */
+  descriptionRelevantType: {
     title: 'Tipo de Bien',
     type: 'string',
     sort: false,
   },
-  physicalStatusName: {
+  /* physicalStatusName: {
+    title: 'Estado Físico',
+    type: 'string',
+    sort: false,
+  }, */
+  descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  stateConservationName: {
+  /* stateConservationName: {
+    title: 'Estado de Conservación',
+    type: 'string',
+    sort: false,
+  }, */
+  descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
   },
-  ligieUnit: {
+  /* ligieUnit: {
+    title: 'Unidad de Medida de la Ligie',
+    type: 'string',
+    sort: false,
+  }, */
+  measureUnitLigie: {
     title: 'Unidad de Medida de la Ligie',
     type: 'string',
     sort: false,
@@ -39,12 +59,22 @@ export const ASSETS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  destinyLigieName: {
+  /* destinyLigieName: {
+    title: 'Destino Ligie',
+    type: 'string',
+    sort: false,
+  }, */
+  descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  transferentDestinyName: {
+  /* transferentDestinyName: {
+    title: 'Destino Transferente',
+    type: 'string',
+    sort: false,
+  }, */
+  descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,
@@ -54,11 +84,16 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  fraccion: {
+  /*  fraccion: {
     title: 'Fracción',
     valuePrepareFunction: (value: any) => {
       return value.fractionCode;
     },
+    type: 'string',
+    sort: false,
+  }, */
+  codeFracction: {
+    title: 'Fracción',
     type: 'string',
     sort: false,
   },
