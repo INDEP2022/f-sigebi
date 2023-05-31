@@ -71,7 +71,7 @@ export class CityListComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}.descCondition`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'noDelegation':
+              case 'delegation':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'noSubDelegation':
@@ -121,6 +121,7 @@ export class CityListComponent extends BasePage implements OnInit {
   }
 
   openForm(city?: ICity) {
+    console.log(city);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       city,
