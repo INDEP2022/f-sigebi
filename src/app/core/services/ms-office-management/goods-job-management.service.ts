@@ -61,9 +61,16 @@ export class GoodsJobManagementService extends HttpService {
     );
   }
 
-  deleteCopiesJobManagement(params: _Params) {
+  deleteCopiesJobManagement(params: any) {
     return this.delete<IListResponse<any>>(
       GoodsJobManagementEndpoints.OfficeManagementCopies + `/${params}`
+    );
+  }
+
+  createCopiesJobManagement(obj: any) {
+    return this.post<IListResponse<any>>(
+      GoodsJobManagementEndpoints.OfficeManagementCopies,
+      obj
     );
   }
 }

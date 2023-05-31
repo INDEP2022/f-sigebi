@@ -1,6 +1,8 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { DomSanitizer } from '@angular/platform-browser';
@@ -19,7 +21,10 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
@@ -75,6 +80,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }.`;
   pantallaOption: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
   paramsGestionDictamen: IJuridicalDocumentManagementParams = {
     volante: null,
     expediente: null,
@@ -114,11 +120,14 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   disabledRadio: boolean = false;
   oficioGestion: IMJobManagement;
   disabledAddresse: boolean = false;
+  statusOf: string = undefined;
   screenKeyManagement: string = 'FACTADBOFICIOGEST';
   screenKeyRelated: string = '';
   screenKey: string = '';
   notificationData: INotification;
   loadingGoods: boolean = false;
+  ReadOnly: boolean;
+  today = new DatePipe('en-EN').transform(new Date(), 'dd/MM/yyyy');
 
   constructor(
     private fb: FormBuilder,
@@ -164,6 +173,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.validOficioGestion();
+    // console.log("status OF: ", this.oficioGestion.statusOf);
     this.setInitVariables();
     this.prepareForm();
     this.route.queryParams
@@ -226,7 +237,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     //   volante: 1558043,
     //   pDictamen: '10',
     //   pNoTramite: 1044254,
-    //   tipoOf: 'EXTERNO',
+    //   tipoOf: 'INTERNO',
     //   bien: 'N',
     //   sale: 'D',
     //   doc: 'N',
@@ -284,9 +295,23 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.managementForm = this.fb.group({
-      noVolante: [null, [Validators.required, Validators.maxLength(11)]],
-      noExpediente: [null, [Validators.required, Validators.maxLength(11)]],
-      tipoOficio: [null, [Validators.required, Validators.maxLength(20)]],
+      noVolante: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
+      ],
+      noExpediente: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
+      tipoOficio: [null, [Validators.required]],
       relacionado: [
         { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
@@ -300,6 +325,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       noCiudad: [null],
       ciudad: [null],
       claveOficio: [null],
+      checkText: [null],
       parrafoInicial: [null, Validators.pattern(STRING_PATTERN)],
       tipoTexto: [null],
       justificacion: [null, Validators.pattern(STRING_PATTERN)],
@@ -331,6 +357,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   initComponentDictamen() {
+    this.ReadOnly = true;
     this.getNotificationData();
     // if (
     //   this.managementForm.get('numero').value ||
@@ -356,11 +383,12 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     params.addFilter('jobBy', 'POR DICTAMEN');
     await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
       next: res => {
-        // console.log(res);
+        console.log('Dicataminacion', res.data[0]);
         if (res.count == 0) {
           // this.getDictationByWheel();
         } else {
           this.oficioGestion = res.data[0];
+          this.statusOf = res.data[0].statusOf;
           this.setDataOficioGestion();
           // Se tiene el registro
           this.initFormFromImages();
@@ -375,6 +403,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   setDataOficioGestion() {
     this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
+    console.log('asfasfasfasfa', this.oficioGestion);
+    // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
     this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
     this.managementForm
       .get('numero')
@@ -647,9 +677,10 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     console.log(params, this.dataGood);
     await this.flyerService.getGoodStatusDescription(params).subscribe({
       next: res => {
-        console.log(res);
-        console.log('params, ', this.dataGood);
+        // console.log("Respuesta: ", res.count);
+        // console.log('params, ', this.dataGood);
         this.dataGood[count].desEstatus = res.data[0].description;
+        this.totalItems = res.count;
         this.getAvailableGood(this.dataGood[count], count, total);
       },
       error: err => {
@@ -659,6 +690,11 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.getAvailableGood(this.dataGood[count], count, total);
       },
     });
+  }
+  changeImprocedenteDisabled(event: any) {
+    this.dataGood.forEach(element => {});
+    this.dataGoodTable.load(this.dataGood);
+    this.dataGoodTable.refresh();
   }
 
   changeImprocedente(event: any) {
@@ -769,8 +805,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         .getNotificationByFilter(params.getParams())
         .subscribe({
           next: res => {
-            console.log(res);
+            console.log('prueba', res);
             this.notificationData = res.data[0];
+            this.statusOf = res.data[0].wheelStatus;
             this.setDataNotification();
           },
           error: err => {
