@@ -185,7 +185,7 @@ export class JuridicalRulingGComponent
       },
     },
     rowClassFunction: (row: any) => {
-      if (row.data.status === 'STA') {
+      if (row.data.status === 'STI') {
         return 'bg-secondary text-white';
       } else {
         return 'bg-success text-white';
@@ -605,24 +605,14 @@ export class JuridicalRulingGComponent
     this.btnDeleteDictation();
   }
 
-  goBack() {
-    window.history.back();
-  }
-
   btnImprimeOficio() {
-    console.log(this.expedientesForm);
     if (this.expedientesForm.get('noExpediente').value === null) {
       this.alert('warning', '', 'Debes seleccionar un expediente.');
       return; // Si 'documents' está vacío, detiene la ejecución aquí
     }
-    this.router.navigateByUrl(
-      baseMenu +
-        baseMenuDepositaria +
-        DEPOSITARY_ROUTES_2[0].link +
-        `?origin=juridical-ruling-g&P_VALOR=${
-          this.expedientesForm.get('noVolante').value
-        }&P_NO_TRAMITE=${this.expedientesForm.get('noExpediente').value}`
-    );
+    this.router.navigate([
+      baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link,
+    ]);
   }
   btnParcializar() {
     this.btnVerify();
