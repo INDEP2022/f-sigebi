@@ -294,7 +294,51 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     });
   }
 
-  selectExpedient(e: any) {}
+  searchByOthersData() {
+    const paramsF = new FilterParams();
+    if (this.form.get('averPrev').value != null) {
+      paramsF.addFilter('preliminaryInquiry', this.form.get('averPrev').value);
+      this.serviceExpedient.getAllFilter(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res);
+          this.searchByOtherData = true;
+          this.dataExpedients = new DefaultSelect(res.data);
+        },
+        err => {
+          console.log(err);
+          this.form.get('averPrev').setValue(null);
+          this.dataExpedients = new DefaultSelect();
+          this.alert(
+            'error',
+            'La averiguación previa colocada no tiene datos',
+            ''
+          );
+        }
+      );
+    } else if (this.form.get('causaPenal').value != null) {
+      paramsF.addFilter('criminalCase', this.form.get('causaPenal').value);
+      this.serviceExpedient.getAllFilter(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res);
+          this.searchByOtherData = true;
+          this.dataExpedients = new DefaultSelect(res.data);
+        },
+        err => {
+          console.log(err);
+          this.form.get('causaPenal').setValue(null);
+          this.dataExpedients = new DefaultSelect();
+          this.alert('error', 'La causa penal colocada no tiene datos', '');
+        }
+      );
+    }
+    this.blockExpedient = false;
+  }
+
+  selectExpedient(e: any) {
+    console.log(e);
+    this.form.get('expediente').setValue(e.id);
+    this.goodsByExpediente();
+  }
 
   toggleByLength(idBtn: string, data: string) {
     const type = typeof this.form.get(data).value;
@@ -500,6 +544,11 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           },
           err => {
             console.log(err);
+            this.blockExpedient = false;
+            this.alert('error', 'Clave de transferente inválida', '');
+            this.dataGoods.load([]);
+            this.dataGoodAct.load([]);
+            this.goodData = [];
           }
         );
         /* this.enableElement('acta'); */
@@ -725,21 +774,21 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             address: this.form.get('direccion').value,
             elaborationDate: format(
               this.form.get('fecElab').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
             datePhysicalReception: format(
               this.form.get('fecRecepFisica').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
             dateElaborationReceipt: format(
               this.form.get('fecElabRecibo').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
             dateDeliveryGood: format(
               this.form.get('fecEntregaBienes').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
-            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
           };
           const resData = JSON.parse(JSON.stringify(res.data[0]));
           console.log(modelEdit);
@@ -769,26 +818,26 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             address: this.form.get('direccion').value,
             elaborationDate: format(
               this.form.get('fecElab').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
             datePhysicalReception: format(
               this.form.get('fecRecepFisica').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
             dateElaborationReceipt: format(
               this.form.get('fecElabRecibo').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
             dateDeliveryGood: format(
               this.form.get('fecEntregaBienes').value,
-              'yyyy-MM,dd HH:mm'
+              'yyyy-MM-dd HH:mm'
             ),
-            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
+            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
 
             keysProceedings: this.form.get('acta2').value,
             /* elaborate: 'SERA', */
             elaborate: localStorage.getItem('username').toLocaleUpperCase(),
-            numFile: parseInt(this.idProceeding.toString()),
+            numFile: parseInt(this.numberExpedient),
             typeProceedings: 'DXCVENT',
             responsible: null,
             destructionMethod: null,
@@ -973,6 +1022,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           },
         });
     } else {
+      this.searchByOthersData();
     }
   }
 
@@ -1685,7 +1735,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods/v1',
+      '/pages/judicial-physical-reception/partializes-general-goods',
     ]);
   }
 
@@ -1783,8 +1833,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'No puede eliminar un Acta fuera del mes de elaboración'
         );
       }
-    }
-    if (this.act2Valid && this.statusProceeding != '') {
+    } else if (this.act2Valid && this.statusProceeding != '') {
       this.alertQuestion(
         'question',
         '¿Desea eliminar completamente el acta?',
@@ -1803,6 +1852,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   this.clearInputs();
                   this.getGoodsByExpedient();
                   this.alert('success', 'Acta eliminada con éxito', '');
+                  this.labelActa = 'Abrir acta';
+                  this.btnCSSAct = 'btn-success';
                 },
                 err => {
                   console.log(err);

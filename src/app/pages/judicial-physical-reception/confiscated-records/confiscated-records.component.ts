@@ -46,6 +46,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
@@ -238,12 +239,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private router: Router,
     private serviceGoodProcess: GoodProcessService,
     private modalService: BsModalService,
-    private serviceExpediente: ExpedientService,
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceProceeding: ProceedingsService,
     private serviceClassifyGood: ClassifyGoodService,
     private serviceGoodQuery: GoodsQueryService,
-    private serviceTransferent: TransferenteService
+    private serviceTransferent: TransferenteService,
+    private serviceHistoryGood: HistoryGoodService
   ) {
     super();
   }
@@ -267,6 +268,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('folio').valueChanges.subscribe(res => {
       console.log(res);
     });
+
+    const paramsF = new FilterParams();
+    paramsF.addFilter('propertyNum', 737766);
+    paramsF.sortBy = 'changeDate';
+    this.serviceHistoryGood.getAllFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res.data[res.data.length - 1]);
+      },
+      err => {
+        console.log(err);
+      }
+    );
 
     /* this.applyEdoFis(); */
   }
@@ -969,6 +982,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.statusProceeding = '';
     this.numberExpedient = this.form.get('expediente').value;
     this.noRequireAct1();
+    this.transferSelect = new DefaultSelect();
 
     const btn = document.getElementById('expedient-number');
 
@@ -1092,7 +1106,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods/v1',
+      '/pages/judicial-physical-reception/partializes-general-goods',
     ]);
   }
 
@@ -1481,7 +1495,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('recibe').reset();
     this.form.get('admin').reset();
     this.form.get('folio').reset();
-    this.form.get('folioEscaneo').reset()
+    this.form.get('folioEscaneo').reset();
 
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
@@ -1492,11 +1506,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.nextProce = false;
     this.prevProce = false;
+    this.act2Valid = false;
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
       console.log(this.numberProceeding);
       if (this.numberProceeding <= this.proceedingData.length - 1) {
-        this.act2Valid = false;
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
@@ -1509,7 +1523,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         );
         this.clearInputs();
         this.fillIncomeProceeding(dataRes, 'nextProceeding');
-        this.act2Valid = false;
         /* console.log('Primer else');
         this.inputsNewProceeding();
 
@@ -2902,11 +2915,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const edoFis: any = await this.getIndEdoFisAndVColumna(data);
     console.log(edoFis);
     if (edoFis.V_NO_COLUMNA === 0) {
-      await this.validatePreInsert(data);
+      console.log(edoFis.V_NO_COLUMNA);
       this.form.get(formName).setValue('OTRO');
-    } else {
       await this.validatePreInsert(data);
+    } else {
+      console.log(edoFis.V_NO_COLUMNA);
       this.form.get(formName).setValue(data[`val${edoFis.V_NO_COLUMNA}`]);
+      await this.validatePreInsert(data);
     }
   }
 
@@ -3237,7 +3252,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               err => {
                                 this.alert(
                                   'error',
-                                  'Ocurrió un erro inesperado al intentar mover el bien',
+                                  'Ocurrió un error inesperado al intentar mover el bien',
                                   'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
                                 );
                               }
@@ -3316,25 +3331,58 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(deleteModel);
             this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
               res => {
-                console.log(this.dataGoodAct);
-                this.goodData = this.goodData.filter(
-                  (e: any) => e.id != this.selectActData.id
-                );
-                this.dataGoodAct.load(this.goodData);
-                console.log(this.goodData);
-                this.saveDataAct = this.saveDataAct.filter(
-                  (e: any) => e.id != this.selectActData.id
-                );
+                const paramsF = new FilterParams();
+                paramsF.addFilter('propertyNum', this.selectActData.id);
+                paramsF.sortBy = 'changeDate';
+                this.serviceHistoryGood
+                  .getAllFilter(paramsF.getParams())
+                  .subscribe(
+                    res => {
+                      console.log(res.data[res.data.length - 1]);
+                      const putGood: IGood = {
+                        id: this.selectActData.id,
+                        goodId: this.selectActData.goodId,
+                        status: res.data[res.data.length - 1]['status'],
+                      };
+                      this.serviceGood.update(putGood).subscribe(
+                        res => {
+                          console.log(this.dataGoodAct);
+                          this.goodData = this.goodData.filter(
+                            (e: any) => e.id != this.selectActData.id
+                          );
+                          this.dataGoodAct.load(this.goodData);
+                          console.log(this.goodData);
+                          this.saveDataAct = this.saveDataAct.filter(
+                            (e: any) => e.id != this.selectActData.id
+                          );
 
-                this.dataGoods.load(
-                  this.dataGoods['data'].map((e: any) => {
-                    if (e.id == this.selectActData.id) {
-                      return { ...e, avalaible: true };
-                    } else {
-                      return e;
+                          this.dataGoods.load(
+                            this.dataGoods['data'].map((e: any) => {
+                              if (e.id == this.selectActData.id) {
+                                return { ...e, avalaible: true };
+                              } else {
+                                return e;
+                              }
+                            })
+                          );
+                        },
+                        err => {
+                          this.alert(
+                            'error',
+                            'Ocurrió un error inesperado',
+                            'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                          );
+                        }
+                      );
+                    },
+                    err => {
+                      this.alert(
+                        'error',
+                        'Ocurrió un error inesperado',
+                        'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                      );
                     }
-                  })
-                );
+                  );
               },
               err => {
                 this.alert(
