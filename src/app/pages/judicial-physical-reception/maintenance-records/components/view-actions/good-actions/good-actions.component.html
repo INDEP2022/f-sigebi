@@ -2,7 +2,15 @@
   <div class="row mr-0">
     <div class="col-md-3 p-0">
       <div class="selectGood">
-        <ng-custom-select-loading
+        <form-field [control]="form.get('goodId')" label="Agregar nuevo bien">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="goodId"
+            min="1"
+            max="9999999999" />
+        </form-field>
+        <!-- <ng-custom-select-loading
           [form]="form"
           formControlName="goodId"
           label="Agregar nuevo bien"
@@ -13,7 +21,7 @@
           loadingText="Cargando bienes..."
           path="trackergood/api/v1/trackergood/apps/goodtrackertmp"
           (valueChange)="selectGood($event)">
-        </ng-custom-select-loading>
+        </ng-custom-select-loading> -->
 
         <!-- <app-select-form
           [form]="form"
@@ -29,6 +37,7 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
+          [disabled]="nroActa === undefined || nroActa === null"
           (click)="addGood()">
           <i class="bx bx-list-plus bx-sm float-icon"></i>
         </button>

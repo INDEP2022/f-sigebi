@@ -118,8 +118,8 @@
             [searchOnInit]="true"
             termMaxLength="80"
             [clearable]="false"
-            [showTooltip]="true"
-            [readonly]="layout == 'ABANDONMENT'">
+            [showTooltip]="true">
+            <!-- [readonly]="layout == 'ABANDONMENT'" -->
           </ngx-select>
         </form-field>
       </div>
@@ -136,7 +136,12 @@
           <button
             type="button"
             class="btn btn-sm btn-primary active ml-3"
-            [disabled]="!affair || !dictOffice || isLoadingOfficeOfRelief"
+            [disabled]="
+              !wheelNumber ||
+              isLoadingOfficeOfRelief ||
+              !affair ||
+              dictum == 'CONOCIMIENTO'
+            "
             (click)="onClickOfficeOfRelief()">
             Oficio de Desahogo
             <ng-container *ngIf="isLoadingOfficeOfRelief"

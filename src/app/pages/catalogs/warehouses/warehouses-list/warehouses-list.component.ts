@@ -81,11 +81,16 @@ export class WarehousesListComponent extends BasePage implements OnInit {
     };
     this.warehouseService.getAll(params).subscribe({
       next: response => {
-        this.getDetType(response)
-          .then(() => {
-            this.getUser();
-          })
-          .catch(error => {});
+        // this.getDetType(response).then(() => {
+        //   this.getUser();
+        // }).catch((error) => {
+        this.warehouses = response.data;
+        console.log(response.data);
+        this.data.load(this.warehouses);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+        // });
       },
       error: error => {
         this.data.load([]);

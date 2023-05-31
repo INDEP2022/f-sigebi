@@ -14,10 +14,7 @@ import { format } from 'date-fns';
 import esLocale from 'date-fns/locale/es';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, Observable, takeUntil } from 'rxjs';
-import {
-  goFormControlAndFocus,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { goFormControlAndFocus } from 'src/app/common/helpers/helpers';
 import { DocumentsViewerByFolioComponent } from '../../../../../@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectListFilteredModalComponent } from '../../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
@@ -49,6 +46,7 @@ import {
 } from '../../../../../core/models/catalogs/transferente.model';
 import { IDocuments } from '../../../../../core/models/ms-documents/documents';
 import {
+  DictumData,
   IInstitutionNumber,
   INotification,
 } from '../../../../../core/models/ms-notification/notification.model';
@@ -161,7 +159,8 @@ export class JuridicalRecordUpdateComponent
   @Output() onSearch = new EventEmitter<
     Partial<IJuridicalFileDataUpdateForm>
   >();
-
+  datosEnviados = new EventEmitter<DictumData>();
+  change_Dict: DictumData;
   public optionsTipoVolante = [
     { value: 'A', label: 'Administrativo' },
     { value: 'P', label: 'Procesal' },
@@ -674,17 +673,17 @@ export class JuridicalRecordUpdateComponent
 
     // TODO:
     /* BEGIN
-	   SELECT DESC_TRANSFERENTE
-	   INTO   :TRANSFERENTE
-	   FROM   CAT_TRANSFERENTE
-	   WHERE  NO_TRANSFERENTE = :NO_TRANSFERENTE;
-	EXCEPTION
-	   WHEN no_data_found THEN
-	      NULL;
-	   WHEN OTHERS THEN
-	      LIP_MENSAJE(SQLERRM||'.','S');
-	      RAISE FORM_TRIGGER_FAILURE;
-	END; */
+     SELECT DESC_TRANSFERENTE
+     INTO   :TRANSFERENTE
+     FROM   CAT_TRANSFERENTE
+     WHERE  NO_TRANSFERENTE = :NO_TRANSFERENTE;
+  EXCEPTION
+     WHEN no_data_found THEN
+        NULL;
+     WHEN OTHERS THEN
+        LIP_MENSAJE(SQLERRM||'.','S');
+        RAISE FORM_TRIGGER_FAILURE;
+  END; */
 
     if (notif.crimeKey != null)
       this.docRegisterService.getByTableKeyOtKey(2, notif.crimeKey).subscribe({
@@ -806,9 +805,12 @@ export class JuridicalRecordUpdateComponent
               .getDepartamentsFiltered(filterParams.getParams())
               .subscribe((data: { data: { description: any }[] }) => {
                 this.formControls.destinationArea.enable();
-                this.formControls.destinationArea.setValue(
-                  data.data[0].description
-                );
+                if (data.data[0]) {
+                  this.formControls.destinationArea.setValue(
+                    data.data[0].description
+                  );
+                }
+
                 this.formControls.destinationArea.disable();
               });
           },
@@ -1545,13 +1547,18 @@ export class JuridicalRecordUpdateComponent
     this.dictum = dictum.description;
     this.cveDictumWhenValidateItem(this.dictum);
     // this.dictOffice = dictum.dict_ofi;
+    console.log('ddd', dictum);
+
+    this.change_Dict = dictum;
+    this.fileUpdComService.enviarDatos(this.change_Dict);
+    // this.datosEnviados.emit(this.change_Dict)
     if (this.dictum == 'CONOCIMIENTO') {
       this.formControls.reserved.enable();
-      showToast({
-        icon: 'info',
-        title: 'Justificación',
-        text: 'Para el desahogo de Conocimiento es necesario ingresar la justificación',
-      });
+      this.alert(
+        'info',
+        'Justificación',
+        'Para el desahogo de Conocimiento es necesario ingresar la justificación'
+      );
       goFormControlAndFocus('reserved');
     } else {
       this.formControls.reserved.disable();
