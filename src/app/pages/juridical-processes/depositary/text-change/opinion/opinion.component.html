@@ -10,7 +10,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('registerNumber')" label="Dicta.">
+      <form-field [control]="form.get('registerNumber')" label="Dictamen.">
         <input
           type="text"
           class="form-control"
@@ -343,15 +343,14 @@
       </form-field>
     </div>
   </div>
-
-  <div formArrayName="extPerson">
+  <!--div formArrayName="extPerson">
     <ng-container *ngFor="let item of datosOpinion; let i = index">
       <app-textChange-modal
         [datosOpinion]="item"
         [form]="form"
         [index]="i"></app-textChange-modal>
     </ng-container>
-  </div>
+  </div>-->
   <hr />
   <div class="row mb-5">
     <div class="col-md-12 col-sm-12 col-xs-12">

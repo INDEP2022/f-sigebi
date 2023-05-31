@@ -34,6 +34,45 @@ export class tablaModalComponent extends BasePage implements OnInit {
 
   /********    filtros tabla   ******************/
 
+  fieldsToSearch = [
+    {
+      field: 'Expediente',
+    },
+    {
+      field: 'Gestión',
+    },
+    {
+      field: 'Dictaminación',
+    },
+    {
+      field: 'Volante',
+    },
+    {
+      field: 'Clave',
+    },
+
+    {
+      field: 'expedientNumber',
+      nestedObjField: 'Expediente',
+    },
+    {
+      field: 'id',
+      nestedObjField: 'Gestión',
+    },
+    {
+      field: 'statusDict',
+      nestedObjField: 'Dictaminación',
+    },
+    {
+      field: 'wheelNumber',
+      nestedObjField: 'Volante',
+    },
+    {
+      field: 'passOfficeArmy',
+      nestedObjField: 'Clave',
+    },
+  ];
+
   @ViewChild('table') table: Ng2SmartTableComponent;
 
   constructor(
