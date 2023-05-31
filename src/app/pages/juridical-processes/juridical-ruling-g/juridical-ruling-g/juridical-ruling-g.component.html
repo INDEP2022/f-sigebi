@@ -7,7 +7,10 @@
   <div body>
     <div>
       <div>
-        <button class="btn btn-danger" (click)="goBack()">Regresar</button>
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
       </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
@@ -47,7 +50,8 @@
                   class="form-control"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente" />
+                  formControlName="noExpediente"
+                  readonly />
               </form-field>
             </div>
             <!-- Averiguación Previa -->
@@ -414,16 +418,13 @@
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar
         </button>
-        <!-- <button
+        <button
           class="btn btn-danger btn-sm active m-3 text-wrap"
           (click)="btnBorrarDictamen()"
           [disabled]="buttonDeleteDisabled">
           Borrar Dictamen
-        </button> -->
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
         </button>
+
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
           (click)="btnImprimeOficio()">

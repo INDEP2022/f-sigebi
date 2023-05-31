@@ -25,4 +25,5 @@ export enum DictationEndpoints {
   GetOfficeByYear1 = 'application/get-office-by-year-1',
   GetOfficeByYear2 = 'application/get-office-by-year-2',
   GetOfficeByYear3 = 'application/get-office-by-year-3',
+  FaFlagDest = '/application/fa-flag-dest',
 }

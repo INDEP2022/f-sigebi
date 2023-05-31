@@ -265,7 +265,7 @@ export class RegistrationHelper extends BasePage {
             );
             break;
           } else if (good.ligieUnit == null) {
-          /*else if (good.transferentDestiny == null) {
+            /*else if (good.transferentDestiny == null) {
             sinDestinoT = true;
             this.message(
               'error',
