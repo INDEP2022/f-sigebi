@@ -349,7 +349,10 @@ export class ThirdpartiesPossessionValidationComponent
       next: data => {
         this.dataTableNotifications = data.data;
         this.totalItemsNotificaciones = data.count;
+        this.totalItemsNotificaciones = data.count;
         this.loading = false;
+        this.notificationSelected = this.dataTableNotifications[0];
+        this.getGoods(new ListParams());
         this.notificationSelected = this.dataTableNotifications[0];
         this.getGoods(new ListParams());
       },
