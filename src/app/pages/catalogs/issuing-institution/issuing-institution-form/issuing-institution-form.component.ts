@@ -20,8 +20,7 @@ import { IssuingInstitutionService } from './../../../../core/services/catalogs/
 })
 export class IssuingInstitutionFormComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   issuingInstitutionForm: ModelForm<IIssuingInstitution>;
   issuingInstitution: IIssuingInstitution;
   title: string = 'Institución Emisora';
@@ -53,16 +52,16 @@ export class IssuingInstitutionFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       manager: [null, [Validators.required]],
-      street: [null, [Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       calle: [null, [Validators.pattern(STRING_PATTERN)]],
       numInside: [null, []],
-      numExterior: [null, []],
-      cologne: [null, []],
-      zipCode: [null, []],
+      numExterior: [null, [Validators.required]],
+      cologne: [null, [Validators.required]],
+      zipCode: [null, [Validators.required]],
       delegMunic: [null, []],
-      phone: [null, []],
+      phone: [null, [Validators.required]],
       numClasif: [null, [Validators.required]],
-      numCity: [null, []],
+      numCity: [null, [Validators.required]],
       numRegister: [null, []],
       numTransference: [null, []],
     });
@@ -85,15 +84,15 @@ export class IssuingInstitutionFormComponent
       );
       this.issuingInstitution.numCity
         ? this.getFromSelectCity(
-            new ListParams(),
-            this.issuingInstitution.numCity.toString()
-          )
+          new ListParams(),
+          this.issuingInstitution.numCity.toString()
+        )
         : this.getFromSelectCity(new ListParams());
       this.issuingInstitution.numTransference
         ? this.getFromSelectTransfer(
-            new ListParams(),
-            this.issuingInstitution.numTransference.toString()
-          )
+          new ListParams(),
+          this.issuingInstitution.numTransference.toString()
+        )
         : this.getFromSelectTransfer(new ListParams());
     } else {
       this.issuingInstitutionForm.controls['numClasif'].setValue(
