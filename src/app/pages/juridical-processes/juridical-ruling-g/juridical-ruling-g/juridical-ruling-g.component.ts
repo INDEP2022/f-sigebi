@@ -73,7 +73,6 @@ export class JuridicalRulingGComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
-  params = new BehaviorSubject<ListParams>(new ListParams());
   selectedGooods: IGood[] = [];
   selectedGooodsValid: IGood[] = [];
   goods: IGood[] | any[] = TempGood;
@@ -85,6 +84,9 @@ export class JuridicalRulingGComponent
   delegationDictNumber: string | number = undefined;
   keyArmyNumber: string | number = undefined;
   maxDate = new Date();
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  totalDocuments: number = 0;
 
   idGoodSelected = 0;
   @ViewChild('cveOficio', { static: true }) cveOficio: ElementRef;
@@ -183,7 +185,7 @@ export class JuridicalRulingGComponent
       },
     },
     rowClassFunction: (row: any) => {
-      if (row.data.status === 'STI') {
+      if (row.data.status === 'STA') {
         return 'bg-secondary text-white';
       } else {
         return 'bg-success text-white';
@@ -345,7 +347,7 @@ export class JuridicalRulingGComponent
   prepareForm() {
     this.expedientesForm = this.fb.group({
       noDictaminacion: [null, [Validators.required]],
-      tipoDictaminacion: [null, [Validators.required]],
+      tipoDictaminacion: [null],
       noExpediente: [
         null,
         [
@@ -364,7 +366,7 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm = this.fb.group({
       wheelNumber: [null],
       etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
-      fechaPPFF: [null, [Validators.required, this.dateValidator]],
+      fechaPPFF: [null, [Validators.required]],
       fechaInstructora: [null],
       fechaResolucion: [null],
       fechaDictaminacion: [null],
@@ -729,6 +731,7 @@ export class JuridicalRulingGComponent
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach(good => {
         if (!this.goodsValid.some(v => v === good)) {
+          this.goodsValid = this.goodsValid.concat(this.selectedGooods);
           if (good.status.toUpperCase() !== 'STI') {
             let indexGood = this.goods.findIndex(_good => _good == good);
             this.goods[indexGood].status = 'STI';
@@ -793,6 +796,10 @@ export class JuridicalRulingGComponent
     this.sssubtypes = new DefaultSelect();
     this.subtipoForm.updateValueAndValidity();
     this.goodTypeChange.emit(type);
+  }
+
+  goBack() {
+    this.router.navigateByUrl('/pages/juridical/file-data-update');
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -903,6 +910,7 @@ export class JuridicalRulingGComponent
    * Listado de bienes según No. de expediente
    */
   onLoadGoodList() {
+    this.loading = true;
     this.goodServices
       .getByExpedient(
         this.expedientesForm.get('noExpediente').value,
@@ -911,6 +919,7 @@ export class JuridicalRulingGComponent
       .subscribe({
         next: response => {
           this.goods = response.data;
+          this.totalItems = response.count || 0;
         },
         error: err => {
           console.log(err);
@@ -927,7 +936,7 @@ export class JuridicalRulingGComponent
   }
 
   onLoadDocumentsByGood() {
-    this.documentService.getByGood(this.idGoodSelected).subscribe({
+    this.documentService.getDocumentsByGood(this.idGoodSelected).subscribe({
       next: response => {
         this.data4 = response.data;
       },

@@ -6,6 +6,9 @@
 
   <div body>
     <div>
+      <div>
+        <button class="btn btn-danger" (click)="goBack()">Regresar</button>
+      </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
         <form
@@ -23,15 +26,15 @@
 
             <div class="col-12 p-2">
               <form-field [control]="expedientesForm.get('tipoDictaminacion')">
-                <ngx-select
-                  [searchOnInit]="true"
-                  [data]="typesDict"
-                  [searchable]="false"
-                  [form]="expedientesForm"
-                  label="Tipo Dictaminación"
-                  bindLabel="typeDict"
-                  control="tipoDictaminacion"
-                  (change)="onTypeDictChange($event)"></ngx-select>
+                <input
+                  class="form-control"
+                  #cveOficio
+                  formControlName="tipoDictaminacion"
+                  readonly
+                  [disabled]="true" />
+                <!-- <ngx-select [searchOnInit]="true" [data]="typesDict" [searchable]="false" [form]="expedientesForm"
+                  label="Tipo Dictaminación" bindLabel="typeDict" control="tipoDictaminacion"
+                  (change)="onTypeDictChange($event)"></ngx-select> -->
               </form-field>
             </div>
 
@@ -306,6 +309,9 @@
           [attr.class]="'table-bordered'"
           [settings]="settings1"
           [source]="goods"></ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row pt-2">
