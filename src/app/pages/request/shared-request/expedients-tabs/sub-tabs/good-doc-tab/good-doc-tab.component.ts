@@ -89,8 +89,8 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const filterGoodType = data.data.map(async (item: any) => {
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
+            //const goodType = await this.getGoodType(item.goodTypeId);
+            //item['goodTypeName'] = goodType;
             item['requestId'] = this.idRequest;
 
             if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';

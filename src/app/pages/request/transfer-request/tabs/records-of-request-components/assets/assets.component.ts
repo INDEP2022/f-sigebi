@@ -108,6 +108,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: assets');
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -143,30 +144,27 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async (data: any) => {
         if (data !== null) {
           const result = data.data.map(async (item: any) => {
-            //obtener tipo bien
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
-            //obtener el estado fisico
-            const physicalStatus = await this.getPhysicalStatus(
-              item.physicalStatus
-            );
-            item['physicalStatusName'] = physicalStatus;
-
-            //obtener el estado de concervacion
-            const stateConservation = await this.getStateConservation(
-              item.stateConservation
-            );
-            item['stateConservationName'] = stateConservation;
-
-            //obtener el destino de la transferencia
-            const transferentDestiny = await this.getTransferDestiny(
-              item.transferentDestiny
-            );
-            item['transferentDestinyName'] = transferentDestiny;
-            item['destinyLigieName'] = transferentDestiny;
-
-            const goodMenaje = await this.getMenaje(item.id);
-            item['goodMenaje'] = goodMenaje;
+            // //obtener tipo bien
+            // const goodType = await this.getGoodType(item.goodTypeId);
+            // item['goodTypeName'] = goodType;
+            // //obtener el estado fisico
+            // const physicalStatus = await this.getPhysicalStatus(
+            //   item.physicalStatus
+            // );
+            // item['physicalStatusName'] = physicalStatus;
+            // //obtener el estado de concervacion
+            // const stateConservation = await this.getStateConservation(
+            //   item.stateConservation
+            // );
+            // item['stateConservationName'] = stateConservation;
+            // //obtener el destino de la transferencia
+            // const transferentDestiny = await this.getTransferDestiny(
+            //   item.transferentDestiny
+            // );
+            // item['transferentDestinyName'] = transferentDestiny;
+            // item['destinyLigieName'] = transferentDestiny;
+            // const goodMenaje = await this.getMenaje(item.id);
+            // item['goodMenaje'] = goodMenaje;
           });
 
           Promise.all(result).then(x => {

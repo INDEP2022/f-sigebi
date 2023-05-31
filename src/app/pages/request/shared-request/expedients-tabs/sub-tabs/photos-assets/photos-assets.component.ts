@@ -88,7 +88,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     };
     this.getInfoRequest();
     this.initFilterForm();
-    this.getTypeRelevant(new ListParams());
+    //this.getTypeRelevant(new ListParams());
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -110,8 +110,8 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const filterGoodType = data.data.map(async (item: any) => {
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeId'] = goodType;
+            //const goodType = await this.getGoodType(item.goodTypeId);
+            //item['goodTypeId'] = goodType;
             item['requestId'] = this.idRequest;
 
             if (item['physicalStatus'] == 1) item['physicalStatus'] = 'BUENO';
