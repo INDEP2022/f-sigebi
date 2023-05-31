@@ -108,7 +108,14 @@ export class ThirdpartiesPossessionValidationComponent
 
     columns: GOODS_COLUMNS,
   };
-  dataTableBienesOficio: IGood[] = [];
+  dataTableBienesOficio: {
+    possessionNumber: number;
+    goodNumber: number;
+    steeringwheelNumber: number;
+    nbOrigin: string;
+    status?: any;
+    description?: string;
+  }[] = [];
 
   expedientNumber: number = 0;
   // public form: FormGroup;
@@ -192,14 +199,14 @@ export class ThirdpartiesPossessionValidationComponent
     // });
   }
 
-  detailGoodPosessionThirdParty: {
-    possessionNumber: number;
-    goodNumber: number;
-    steeringwheelNumber: number;
-    nbOrigin: string;
-    status?: any;
-    description?: string;
-  };
+  // detailGoodPosessionThirdParty: {
+  //   possessionNumber: number;
+  //   goodNumber: number;
+  //   steeringwheelNumber: number;
+  //   nbOrigin: string;
+  //   status?: any;
+  //   description?: string;
+  // };
 
   formPositionThirdParty = new FormGroup({
     closingDate: new FormControl(null),
@@ -236,18 +243,19 @@ export class ThirdpartiesPossessionValidationComponent
             )
             .subscribe({
               next: data => {
-                this.detailGoodPosessionThirdParty = data.data[0];
-                this.goodService
-                  .getById(this.detailGoodPosessionThirdParty.goodNumber)
-                  .subscribe({
-                    next: (data: any) => {
-                      console.log('data good', data);
-                      this.detailGoodPosessionThirdParty['description'] =
-                        data.data[0].description;
-                      this.detailGoodPosessionThirdParty['status'] =
-                        data.data[0].status;
-                    },
-                  });
+                console.log('data', data);
+                this.dataTableBienesOficio = data.data;
+                // this.goodService
+                //   .getById(this.detailGoodPosessionThirdParty.goodNumber)
+                //   .subscribe({
+                //     next: (data: any) => {
+                //       console.log('data good', data);
+                //       this.detailGoodPosessionThirdParty['description'] =
+                //         data.data[0].description;
+                //       this.detailGoodPosessionThirdParty['status'] =
+                //         data.data[0].status;
+                //     },
+                //   });
               },
               error: () => {},
             });
@@ -388,18 +396,11 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   getGoods(params: ListParams) {
-    // this.params = new BehaviorSubject<ListParams>(new ListParams());
-    // let data = this.params.value;
-    // data.page = params.page;
-    // data.limit = params.limit;
-    // const numberExpedient = this.notificationSelected.expedientNumber;
     const numberExpedient = this.noExpediente.value;
     this.dataTableBienes = [];
     const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}`;
-    this.getGoodsByOffice(new ListParams(), numberExpedient);
-    // if (numberExpedient) {
-    // data['filter.fileNumber'] = numberExpedient;
-    // }
+    // this.getGoodsByOffice(new ListParams(), numberExpedient);
+
     this.isLoadingGood = true;
     this.goodService.getAllFilter(queryString).subscribe({
       next: data => {
@@ -413,29 +414,18 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
-  getGoodsByOffice(params: ListParams, numberExpedient: number) {
-    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    // let data = this.params.value;
-    // data.page = params.page;
-    // data.limit = params.limit;
-    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    // let data = this.params.value;
-    // data.page = params.page;
-    // data.limit = params.limit;
-
-    // data.addFilter('status', 'STI');
-    // data.addFilter('fileNumber', numberExpedient);
-    const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}&filter.status=STI`;
-    this.dataTableBienesOficio = [];
-    this.goodService.getAllFilter(queryString).subscribe({
-      next: data => {
-        this.dataTableBienesOficio = data.data;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
-  }
+  // getGoodsByOffice(params: ListParams, numberExpedient: number) {
+  //   const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}&filter.status=STI`;
+  //   this.dataTableBienesOficio = [];
+  //   this.goodService.getAllFilter(queryString).subscribe({
+  //     next: data => {
+  //       this.dataTableBienesOficio = data.data;
+  //     },
+  //     error: err => {
+  //       this.loading = false;
+  //     },
+  //   });
+  // }
 
   rowSelected(rows: any) {
     this.selectedRows = rows.isSelected ? rows.data : {};
@@ -513,7 +503,7 @@ export class ThirdpartiesPossessionValidationComponent
   async sendForm() {
     console.log('sendForm');
     if (
-      !this.detailGoodPosessionThirdParty?.goodNumber ||
+      this.dataTableBienesOficio.length < 1 ||
       !this.formPositionThirdParty.value?.jobKey
     ) {
       this.alert(
@@ -766,10 +756,10 @@ export class ThirdpartiesPossessionValidationComponent
     const queryParams = `filter.wheelNumber=${this.formPositionThirdParty.value.steeringwheelNumber}`;
     this.notificationService.getAllFilter(queryParams).subscribe({
       next: data => {
-        const tGood =
-          (this.detailGoodPosessionThirdParty?.goodNumber || '') +
-          ' ' +
-          (this.detailGoodPosessionThirdParty?.description || '');
+        let tGoods = '';
+        this.dataTableBienesOficio.forEach((element, index) => {
+          tGoods += `${element?.goodNumber} ${element?.description}.\n`;
+        });
         let replaceText = predifinedText.replaceAll(
           '<A>',
           this.wheelNotifications
@@ -780,13 +770,7 @@ export class ThirdpartiesPossessionValidationComponent
         if (text) {
           text.replace('<A>', data.data[0].protectionKey);
           replaceText = replaceText.replaceAll('<B>', 'BIEN  DESCRIPCIÓN');
-          replaceText = replaceText.replaceAll(
-            '<C>',
-            tGood
-            // this.dataTableBienes
-            //   ? `${this.dataTableBienes[0].goodId}  ${this.dataTableBienes[0].description}`
-            //   : '<C>'
-          );
+          replaceText = replaceText.replaceAll('<C>', tGoods);
           this.formPositionThirdParty.get('text').setValue(replaceText);
         }
       },
@@ -805,7 +789,7 @@ export class ThirdpartiesPossessionValidationComponent
     // downloadLink.click();
 
     // console.log(this.flyersForm.value);
-    if (!this.detailGoodPosessionThirdParty?.goodNumber) {
+    if (this.dataTableBienesOficio.length < 1) {
       this.alert('info', '', 'Seleccione un bien');
       return;
     }
