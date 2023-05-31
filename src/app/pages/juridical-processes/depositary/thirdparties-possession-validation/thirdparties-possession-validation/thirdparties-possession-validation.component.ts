@@ -18,6 +18,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -341,10 +342,7 @@ export class ThirdpartiesPossessionValidationComponent
       next: data => {
         this.dataTableNotifications = data.data;
         this.totalItemsNotificaciones = data.count;
-        this.totalItemsNotificaciones = data.count;
         this.loading = false;
-        this.notificationSelected = this.dataTableNotifications[0];
-        this.getGoods(new ListParams());
         this.notificationSelected = this.dataTableNotifications[0];
         this.getGoods(new ListParams());
       },
@@ -651,7 +649,9 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   btnReemplazarMarcadores() {
-    console.log(this.formPositionThirdParty.value);
+    if (!this.form.get('texto').value) {
+      this.alert('warning', 'Atención', 'No hay texto para reemplazar.');
+    }
     const queryParams = `filter.wheelNumber=${this.formPositionThirdParty.value.steeringwheelNumber}`;
     this.notificationService.getAllFilter(queryParams).subscribe({
       next: data => {
@@ -763,7 +763,7 @@ export class ThirdpartiesPossessionValidationComponent
   getDestiny(params: ListParams) {
     params['asigUser'] = 'S';
     this.userService.getAllUsersAsigne(params).subscribe({
-      next: data => {
+      next: (data: { data: any[]; count: number }) => {
         const res = data.data.map(item => {
           return { ...item, nameUser: `${item.usuario} - ${item.nombre}` };
         });
