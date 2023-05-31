@@ -45,7 +45,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
 
   searchGood() {
     this.formLoading = true;
-    this.goodService.getByGoodNumber(this.noBien.value).subscribe({
+    this.goodService.getByGoodNumber(this.noBien).subscribe({
       next: response => {
         this.resetForm();
         console.log(response);
@@ -54,11 +54,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       },
       error: err => {
         this.resetForm();
-        this.onLoadToast(
-          'error',
-          'N° Bien ' + this.noBien.value,
-          'No encontrado'
-        );
+        this.onLoadToast('error', 'N° Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
       },
     });
@@ -191,43 +187,47 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   //   return this.goodService.getAll(this.paramsGoods.getParams());
   // }
 
-  get cantidadRows() {
-    return this.form.get('cantidad2');
-  }
+  // get cantidadRows() {
+  //   return this.form.get('cantidad2');
+  // }
 
   get noBien() {
-    return this.form.get('noBien');
+    return this.form
+      ? this.form.get('noBien')
+        ? this.form.get('noBien').value
+        : null
+      : null;
   }
 
-  get cantPadre() {
-    return this.form.get('cantPadre');
-  }
+  // get cantPadre() {
+  //   return this.form.get('cantPadre');
+  // }
 
-  get descripcion() {
-    return this.form.get('descripcion');
-  }
+  // get descripcion() {
+  //   return this.form.get('descripcion');
+  // }
 
-  get avaluo() {
-    return this.form.get('avaluo');
-  }
-  get estatus() {
-    return this.form.get('estatus');
-  }
-  get extDom() {
-    return this.form.get('extDom');
-  }
-  get moneda() {
-    return this.form.get('moneda');
-  }
-  get expediente() {
-    return this.form.get('expediente');
-  }
-  get clasificador() {
-    return this.form.get('clasificador');
-  }
-  get importe() {
-    return this.form.get('importe');
-  }
+  // get avaluo() {
+  //   return this.form.get('avaluo');
+  // }
+  // get estatus() {
+  //   return this.form.get('estatus');
+  // }
+  // get extDom() {
+  //   return this.form.get('extDom');
+  // }
+  // get moneda() {
+  //   return this.form.get('moneda');
+  // }
+  // get expediente() {
+  //   return this.form.get('expediente');
+  // }
+  // get clasificador() {
+  //   return this.form.get('clasificador');
+  // }
+  // get importe() {
+  //   return this.form.get('importe');
+  // }
 
   get good() {
     return this.service.good;
@@ -235,6 +235,14 @@ export class GoodFormComponent extends AlertButton implements OnInit {
 
   get goodId() {
     return this.good ? this.good.goodId : null;
+  }
+
+  get goodClassNumberDesc() {
+    return this.service.goodClassNumberDesc;
+  }
+
+  get goodStatusDesc() {
+    return this.service.goodStatusDesc;
   }
 
   private async validateGood(good: IGood) {
@@ -259,7 +267,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   resetForm() {
     // this.service.formControl.
     this.service.good = null;
-    this.form.reset();
+    // this.form.reset();
     this.formControl.reset();
     this.service.bienesPar = [];
     this.service.pagedBienesPar = [];
@@ -296,9 +304,9 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // debugger;
     if (!good) {
       this.service.good = null;
-      const lastGood = this.form.get('noBien').value;
+      // const lastGood = this.form.get('noBien').value;
       this.resetForm();
-      this.noBien.setValue(lastGood);
+      // this.noBien.setValue(lastGood);
       return;
     }
     if (this.version === 1) {
@@ -379,6 +387,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     const statusGood = good.status
       ? await firstValueFrom(this.statusService.getById(good.status))
       : null;
+    this.service.goodStatusDesc = statusGood ? statusGood.description : '';
     // debugger;
     const sssubtype = good.goodClassNumber
       ? await firstValueFrom(
@@ -387,28 +396,35 @@ export class GoodFormComponent extends AlertButton implements OnInit {
           )
         )
       : null;
-    // console.log(estatusGood);
-    this.form.setValue({
-      noBien: good.goodId,
-      cantPadre: good.goodsPartializationFatherNumber,
-      descripcion: good.description,
-      cantidad: good.quantity,
-      avaluo: good.appraisedValue,
-      estatus: good.goodStatus,
-      estatusDescripcion: statusGood ? statusGood.description : '',
-      extDom: good.extDomProcess,
-      moneda: good.val1,
-      expediente: good.fileNumber,
-      clasificador: good.goodClassNumber ? +good.goodClassNumber : null,
-      clasificadorDescripcion: sssubtype
-        ? sssubtype.data
-          ? sssubtype.data.length > 0
-            ? sssubtype.data[0].description
-            : ''
+    this.service.goodClassNumberDesc = sssubtype
+      ? sssubtype.data
+        ? sssubtype.data.length > 0
+          ? sssubtype.data[0].description
           : ''
-        : '',
-      importe: +good.val14,
-    });
+        : ''
+      : '';
+    // console.log(estatusGood);
+    // this.form.setValue({
+    //   noBien: good.goodId,
+    //   cantPadre: good.goodsPartializationFatherNumber,
+    //   descripcion: good.description,
+    //   cantidad: good.quantity,
+    //   avaluo: good.appraisedValue,
+    //   estatus: good.goodStatus,
+    //   estatusDescripcion: statusGood ? statusGood.description : '',
+    //   extDom: good.extDomProcess,
+    //   moneda: good.val1,
+    //   expediente: good.fileNumber,
+    //   clasificador: good.goodClassNumber ? +good.goodClassNumber : null,
+    //   clasificadorDescripcion: sssubtype
+    //     ? sssubtype.data
+    //       ? sssubtype.data.length > 0
+    //         ? sssubtype.data[0].description
+    //         : ''
+    //       : ''
+    //     : '',
+    //   importe: +good.val14,
+    // });
     // this.service.saveSelectedGood();
     console.log(good);
   }
