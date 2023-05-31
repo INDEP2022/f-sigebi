@@ -14,22 +14,11 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /* goodTypeName: {
-    title: 'Tipo Bien',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionRelevantType: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
-  /* fraccion: {
-    title: 'Fracción',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (value: IFraccion) => (value ? value.code : ''),
-  }, */
   codeFracction: {
     title: 'Fracción',
     type: 'string',
@@ -41,21 +30,11 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /*  ligieUnit: {
-    title: 'Unidad de Medida Ligia',
-    type: 'string',
-    sort: false,
-  }, */
   measureUnitLigie: {
     title: 'Unidad de Medida Ligia',
     type: 'string',
     sort: false,
   },
-  /* unitMeasure: {
-    title: 'Unidad de Medida Transferente',
-    type: 'string',
-    sort: false,
-  }, */
   unitMeasure: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
@@ -66,41 +45,21 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /* physicstateName: {
-    title: 'Estado fisico',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionPhysicalStatus: {
     title: 'Estado fisico',
     type: 'string',
     sort: false,
   },
-  /* stateConservationName: {
-    title: 'Estado de Conservación',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  /* destinyName: {
-    title: 'Destino Ligie',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  /* transferentDestinyName: {
-    title: 'Destino Transferente',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',
