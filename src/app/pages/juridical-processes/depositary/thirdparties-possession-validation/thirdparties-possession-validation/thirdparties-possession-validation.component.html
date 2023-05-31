@@ -17,13 +17,13 @@
                     type="number"
                     min="1"
                     class="form-control"
-                    (keyup.enter)="getNotifications()"
+                    (keyup.enter)="searchInput()"
                     [formControl]="noExpediente" />
                 </form-field>
                 <div>
                   <button
                     [disabled]="loading"
-                    (click)="getNotifications()"
+                    (click)="searchInput()"
                     class="btn btn-sm btn-primary active">
                     <i class="fas fa-search"></i>
                   </button>
@@ -133,12 +133,31 @@
           <form-field
             [control]="form.get('officeExternalKey')"
             label="Clave de Oficio">
-            <input class="form-control" formControlName="officeExternalKey" />
+            <input
+              readonly
+              class="form-control"
+              formControlName="officeExternalKey" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <form-field [control]="form.get('addressee')" label="Destinatario">
+          <!-- <form-field [control]="form.get('addressee')" label="Destinatario">
             <input class="form-control" formControlName="addressee" />
+          </form-field> -->
+
+          <form-field [control]="form.get('addressee')">
+            <ngx-select
+              [form]="form"
+              [data]="addressee"
+              (fetchItems)="getDestiny($event)"
+              bindLabel="nameUser"
+              control="addressee"
+              label="Destinatario"
+              (change)="changeAddressee($event)"
+              [searchOnInit]="true"
+              [clearable]="false"
+              [showTooltip]="true">
+              <!-- [readonly]="layout == 'ABANDONMENT'" -->
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
@@ -155,6 +174,7 @@
           <div class="form-group">
             <button
               type="button"
+              [disabled]="!form.get('wheelNumber').value"
               class="btn btn-primary btn-sm active text-wrap"
               (click)="btnReemplazarMarcadores()">
               Reemplazar Marcadores

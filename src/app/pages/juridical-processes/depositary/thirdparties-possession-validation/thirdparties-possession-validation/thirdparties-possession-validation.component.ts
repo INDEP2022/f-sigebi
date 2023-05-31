@@ -20,8 +20,10 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GOODS_COLUMNS,
   NOTIFICATIONS_COLUMNS,
@@ -120,12 +122,12 @@ export class ThirdpartiesPossessionValidationComponent
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private goodService: GoodService,
-    // private usersService: UsersService,
     private siabService: SiabService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private historyGoodService: HistoryGoodService,
-    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
+    private userService: UsersService
   ) {
     super();
   }
@@ -159,7 +161,7 @@ export class ThirdpartiesPossessionValidationComponent
     this.form = this.fb.group({
       wheelNumber: '',
       officeExternalKey: [''],
-      addressee: ['', [Validators.pattern(STRING_PATTERN)]],
+      addressee: [''],
       texto: '',
     });
     // this.noExpediente = this.fb.group({
@@ -209,10 +211,9 @@ export class ThirdpartiesPossessionValidationComponent
     const queryParams = `page=${1}&limit=${10}&filter.steeringwheelNumber=${wheelNumber}`;
     this.formPositionThirdParty.reset();
     this.detailGoodPosessionThirdParty = null;
-    this.goodPosessionThirdParty;
+    this.goodPosessionThirdParty = null;
     this.goodPosessionThirdpartyService.getAll(queryParams).subscribe({
       next: data => {
-        console.log('data', data);
         this.goodPosessionThirdParty = data.data[0];
         this.formPositionThirdParty.patchValue(data.data[0]);
         this.formCcpOficio.get('ccp1').patchValue(data.data[0].usrCcp1);
@@ -256,7 +257,7 @@ export class ThirdpartiesPossessionValidationComponent
         // this.formCcpOficio.get('ccp2').patchValue('');
         // this.formCcpOficio.get('firma').patchValue('');
         this.formCcpOficio.reset();
-        this.form.reset();
+        // this.form.reset();
         this.formGood.reset();
       },
     });
@@ -301,6 +302,17 @@ export class ThirdpartiesPossessionValidationComponent
     this.wheelNotifications = null;
   }
 
+  searchInput() {
+    this.dataTableNotifications = [];
+    this.dataTableBienesOficio = [];
+    this.dataTableBienes = [];
+    this.form.reset();
+    this.formCcpOficio.reset();
+    this.formGood.reset();
+    this.wheelNotifications = null;
+    this.getNotifications();
+  }
+
   getNotifications(params = new ListParams()) {
     const numberExpedient = this.noExpediente.value;
     this.expedientNumber = numberExpedient;
@@ -308,6 +320,11 @@ export class ThirdpartiesPossessionValidationComponent
       this.dataTableNotifications = [];
       this.dataTableBienesOficio = [];
       this.dataTableBienes = [];
+      this.form.reset();
+      this.formCcpOficio.reset();
+      this.formGood.reset();
+      this.wheelNotifications = null;
+
       return;
     }
 
@@ -317,7 +334,7 @@ export class ThirdpartiesPossessionValidationComponent
     data.limit = params.limit;
     let queryString = `page=${params.page}&limit=${params.limit}`;
     queryString += `&filter.expedientNumber=${numberExpedient}`;
-    // if (numberExpedient) {
+    // if (numberExpedient) {btnImprimir
     //   // data['filter.expedientNumber'] = numberExpedient;
     // }
 
@@ -342,11 +359,12 @@ export class ThirdpartiesPossessionValidationComponent
   notificationSelected: null | INotification = null;
   selectRowNotification(event: any) {
     this.notificationSelected = event.data;
+
     console.log({ notificationSelected: this.notificationSelected });
     this.form
       .get('wheelNumber')
       .setValue(this.notificationSelected.wheelNumber);
-    this.paramsGood;
+
     this.getGoodsPosessionThird();
   }
 
@@ -357,6 +375,7 @@ export class ThirdpartiesPossessionValidationComponent
     // data.limit = params.limit;
     // const numberExpedient = this.notificationSelected.expedientNumber;
     const numberExpedient = this.noExpediente.value;
+    this.dataTableBienes = [];
     const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}`;
     this.getGoodsByOffice(new ListParams(), numberExpedient);
     // if (numberExpedient) {
@@ -384,6 +403,7 @@ export class ThirdpartiesPossessionValidationComponent
     // data.addFilter('status', 'STI');
     // data.addFilter('fileNumber', numberExpedient);
     const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}&filter.status=STI`;
+    this.dataTableBienesOficio = [];
     this.goodService.getAllFilter(queryString).subscribe({
       next: data => {
         this.dataTableBienesOficio = data.data;
@@ -433,9 +453,9 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   handleSuccess() {
-    // this.getGoods(new ListParams(), this.expedientNumber);
-    // this.alert('success', 'Excelente', 'Se ha agregado el bien correctamente');
-    // this.loading = false;
+    this.getGoods(new ListParams());
+    this.alert('success', 'Excelente', 'Se ha agregado el bien correctamente');
+    this.loading = false;
   }
 
   deleteGoodOffice() {
@@ -620,7 +640,9 @@ export class ThirdpartiesPossessionValidationComponent
     }
     if (!this.form.get('officeExternalKey')) {
       this.pupGeneratorKey();
+      this.pupPrint();
     } else {
+      this.pupPrint();
     }
   }
 
@@ -675,5 +697,23 @@ export class ThirdpartiesPossessionValidationComponent
           this.modalService.show(PreviewDocumentsComponent, config);
         }
       });
+  }
+
+  addressee = new DefaultSelect();
+  getDestiny(params: ListParams) {
+    params['asigUser'] = 'S';
+    this.userService.getAllUsersAsigne(params).subscribe({
+      next: data => {
+        const res = data.data.map(item => {
+          return { ...item, nameUser: `${item.usuario} - ${item.nombre}` };
+        });
+        console.log(res);
+        this.addressee = new DefaultSelect(res, data.count);
+      },
+    });
+  }
+
+  changeAddressee($event: any) {
+    // this.form.get('addressee').setValue($event);
   }
 }
