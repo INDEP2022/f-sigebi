@@ -1,9 +1,7 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('proceedingsNumber')"
-        label="No. Expediente">
+      <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
         <input
           type="text"
           class="form-control"
@@ -14,7 +12,7 @@
     <div class="col-md-3 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('managementNumber')"
-        label="No. de Gesti&oacute;n">
+        label="No_Of_Gestión">
         <input
           type="text"
           class="form-control"
@@ -23,7 +21,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flyerNumber')" label="No. Volante">
+      <form-field [control]="form.get('flyerNumber')" label="Volante">
         <input
           type="text"
           class="form-control"
@@ -32,7 +30,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('officio')" label="No. Oficio">
+      <form-field [control]="form.get('officio')" label="Oficio">
         <input
           type="text"
           class="form-control"
@@ -92,11 +90,38 @@
         <input type="text" class="form-control" formControlName="charge" />
       </form-field>
     </div>
+    <!--$%#$%#$%#$%345345345-->
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-      <form-field [control]="form.get('addressee')" label="Destinatario">
-        <input type="text" class="form-control" formControlName="addressee" />
+      <form-field [control]="form.get('addressee')">
+        <ngx-select
+          [form]="form"
+          [data]="users_1"
+          (fetchItems)="getUsers_1($event)"
+          bindLabel="userAndName"
+          value="id"
+          control="addressee"
+          label="Destinatario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
       </form-field>
     </div>
+
+    <!--form-field [control]="form.get('addressee')" label="Destinatario">
+        <input type="text" class="form-control" formControlName="addressee" />
+      </form-field-->
+    <!--%&%&%&%&%&%&%&%&%&%&%&-->
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -126,9 +151,7 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('paragraphOptional')"
-        label="P&aacute;rrafo Opcional">
+      <form-field [control]="form.get('paragraphOptional')" label="">
         <textarea
           type="text"
           class="form-control"
@@ -138,9 +161,7 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('descriptionSender')"
-        label="Descripci&oacute;n Remitente">
+      <form-field [control]="form.get('descriptionSender')" label="">
         <textarea
           type="text"
           class="form-control"
@@ -148,61 +169,20 @@
       </form-field>
     </div>
   </div>
+
+  <!--                      modulo                          
+  <ng-container
+    class="row"
+    *ngFor="let valor of filtroPersonaExt; let i = index">
+    <app-form-array-oficio
+      [formulario]="form"
+      [filtroPersonaExt]="valor"
+      formArrayName="i"></app-form-array-oficio>
+  </ng-container>
+-->
   <div class="row pl-3">C&#46;C&#46;P&#46;</div>
-
-  <div class="row mt-5">
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-        <select class="form-control" formControlName="typePerson">
-          <!--(change)="validaCampos($event)"-->
-          <option *ngFor="let option of options" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field class="mb-3 mt-3" [control]="form.get('senderUser')">
-        <ngx-select
-          [form]="form"
-          [data]="users$"
-          (change)="getDescUser('control', $event)"
-          [readonly]="form.get('typePerson').value === 'E'"
-          (fetchItems)="getUsers($event)"
-          bindLabel="userAndName"
-          value="id"
-          control="senderUser"
-          label="Usuario"
-          [searchOnInit]="true"
-          [showTooltip]="true"
-          termMaxLength="30"
-          [labelTemplate]="userLabel"
-          [optionTemplate]="userOption">
-        </ngx-select>
-
-        <ng-template #userLabel let-item="item">
-          {{ item.id }} - {{ item.name }}
-        </ng-template>
-        <ng-template #userOption let-item="item">
-          <div [title]="item.id + '-' + item.name">
-            {{ item.id }} - {{ item.name }}
-          </div>
-        </ng-template>
-      </form-field>
-    </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <form-field [control]="form.get('personaExt')" label="Nombre Persona">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="personaExt"
-          [readonly]="!(form.get('typePerson').value === 'E')" />
-      </form-field>
-    </div>
-  </div>
-
   <div class="row mt-3">
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
       <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson_I">
           <option *ngFor="let option of options" [value]="option.value">
@@ -211,7 +191,7 @@
         </select>
       </form-field>
     </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
       <form-field [control]="form.get('senderUser_I')">
         <ngx-select
           [form]="form"
@@ -244,11 +224,62 @@
         <input
           type="text"
           class="form-control"
-          formControlName="personaExt_I"
+          formControlName="personaExt"
           [readonly]="!(form.get('typePerson_I').value === 'E')" />
       </form-field>
     </div>
   </div>
+
+  <div class="row mt-3">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
+      <form-field [control]="form.get('typePerson')" label="Tipo Persona">
+        <select class="form-control" formControlName="typePerson">
+          <option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </form-field>
+    </div>
+
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
+      <form-field [control]="form.get('senderUser')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control', $event)"
+          [readonly]="form.get('typePerson').value === 'E'"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          value="id"
+          control="senderUser"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
+      <form-field [control]="form.get('personaExt')" label="Nombre Persona">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="personaExt"
+          [readonly]="!(form.get('typePerson').value === 'E')" />
+      </form-field>
+    </div>
+  </div>
+
   <hr />
   <div class="row mb-5">
     <div class="col-md-8 col-sm-12 col-xs-12">

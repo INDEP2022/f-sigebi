@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { IBank } from '../../../../core/models/catalogs/bank.model';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
 import { BanksDetailComponent } from '../banks-detail/banks-detail.component';
 import { BANKS_COLUMNS } from './banks-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-banks-list',
@@ -129,7 +132,7 @@ export class BanksListComponent extends BasePage implements OnInit {
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getBanks());
-      }
+      },
     });
   }
 }

@@ -31,7 +31,7 @@
     <div class="col-md-6 mt-5">
       <div class="row mb-4">
         <div class="col-md-4">
-          <ng-custom-select-loading
+          <!-- <ng-custom-select-loading
             [form]="form"
             [readonly]="loading"
             formControlName="id"
@@ -42,16 +42,17 @@
             prefixSearch="$eq"
             path="proceeding/api/v1/proceedings-delivery-reception"
             (valueChange)="update($event)">
-          </ng-custom-select-loading>
+          </ng-custom-select-loading> -->
 
-          <!-- <form-field [control]="form.get('id')" label="No&#46; Acta">
+          <form-field [control]="form.get('id')" label="No&#46; Acta">
             <input
               type="number"
               class="form-control"
               formControlName="id"
               min="1"
+              maxlength="20"
               [readonly]="loading" />
-          </form-field> -->
+          </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('numFile')" label="No Expediente">
@@ -111,7 +112,7 @@
             [readonly]="disabled"></app-proceeding-types-shared>
         </div> -->
         <div class="col-12">
-          <form-field [control]="form.get('tipoActa')" label="Etiqueta">
+          <form-field [control]="form.get('tipoActa')" label="Tipo de Acta">
             <input
               type="text"
               class="form-control"
@@ -173,7 +174,7 @@
           bindLabel="id"
           paramSearch="filter.id"
           prefixSearch="$eq"
-          path="catalog/api/v1/delegation"
+          path="catalog/api/v1/delegation/get-all"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
           [optionTemplate]="delegationOption">
@@ -219,7 +220,7 @@
           bindLabel="id"
           paramSearch="filter.id"
           prefixSearch="$eq"
-          path="catalog/api/v1/delegation"
+          path="catalog/api/v1/delegation/get-all"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
           [optionTemplate]="delegationOption">

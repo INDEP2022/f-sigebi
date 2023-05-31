@@ -26,7 +26,6 @@ export class AffairListComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   columns: IAffair[] = [];
 
-
   constructor(
     private modalService: BsModalService,
     private affairService: AffairService

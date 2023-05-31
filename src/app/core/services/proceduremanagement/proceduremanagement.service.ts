@@ -182,4 +182,14 @@ export class ProcedureManagementService extends HttpService {
       body
     );
   }
+
+  updateForWheelNumber(
+    wheelNumber: number,
+    body: { tiKeyNewPerson: string }
+  ): Observable<IProceduremanagement> {
+    return this.put<IProceduremanagement>(
+      `${ProcedureManagementEndPoints.ProcedureManagement}/editManagementProcedure/${wheelNumber}`,
+      body
+    );
+  }
 }

@@ -13,6 +13,7 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
+  ICopiesJobManagementDto,
   IdatosLocales,
   IGoodJobManagement,
   ImanagementOffice,
@@ -20,6 +21,7 @@ import {
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
@@ -52,6 +54,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
+  filtroPersonaExt: ICopiesJobManagementDto[] = [];
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -59,6 +62,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   valLocal: IdatosLocales;
   year: number;
   users$$ = new DefaultSelect<ISegUsers>();
+  users_1 = new DefaultSelect<ISegUsers>();
 
   constructor(
     private fb: FormBuilder,
@@ -69,32 +73,23 @@ export class OfficeComponent extends BasePage implements OnInit {
     private siabServiceReport: SiabService,
     private usersService: UsersService,
     private AtachedDocumenServ: AtachedDocumentsService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private dictationService: DictationService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.year = new Date().getFullYear();
+
     this.options = [
       { value: null, label: 'Seleccione un valor' },
       { value: 'E', label: 'PERSONA EXTERNA' },
       { value: 'I', label: 'PERSONA INTERNA' },
     ];
+
     this.loadUserDestinatario();
     this.buildForm();
-    this.form.get('typePerson').valueChanges.subscribe(value => {
-      if (value === 'E') {
-        this.form.get('senderUser').setValue(null);
-      } else {
-        this.form.get('senderUser').setValue('');
-      }
-    });
-    this.form.get('typePerson_I').valueChanges.subscribe(value => {
-      if (value === 'E') {
-        this.form.get('senderUser_I').setValue(null);
-      }
-    });
   }
 
   /**
@@ -142,12 +137,13 @@ export class OfficeComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      typePerson: [null, [Validators.required]],
+      typePerson: [null, null],
       senderUser: [null, null],
-      personaExt: [null, [Validators.required]],
-      typePerson_I: [null, [Validators.required]],
+      personaExt: [null, null],
+      typePerson_I: [null, null],
       senderUser_I: [null, null],
-      personaExt_I: [null, [Validators.required]],
+      personaExt_I: [null, null],
+      extPersonArray: this.fb.array([]),
     });
   }
 
@@ -186,17 +182,6 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'error', err.error.message);
         },
       });
-  }
-
-  /*   Evento que se ejecuta para llenar los campos con el nombre de los destinatarios
-========================================================================================*/
-  getDescUser(control: string, event: Event) {
-    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
-    if (control === 'control') {
-      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
-    } else {
-      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
-    }
   }
 
   /*   Evento que se ejecuta para llenar el combo con los destinatarios
@@ -252,25 +237,6 @@ export class OfficeComponent extends BasePage implements OnInit {
         );
       this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
     }
-  }
-
-  /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
-===============================================================================================================*/
-  getPersonaExt_Int(params: _Params) {
-    this.serviceOficces.getPersonaExt_Int(params).subscribe({
-      next: resp => {
-        this.nrSelecttypePerson = resp.data[0].personExtInt;
-        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
-        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
-        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
-
-        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
-        this.form.get('personaExt_I').setValue(resp.data[0].nomPersonExt);
-      },
-      error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
-      },
-    });
   }
 
   /*   Evento que se ejecuta para llenar los parametros con los que se va a realizar la busqueda
@@ -359,7 +325,8 @@ export class OfficeComponent extends BasePage implements OnInit {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
-    this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+
+    this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -397,14 +364,6 @@ export class OfficeComponent extends BasePage implements OnInit {
     });
   }
 
-  getUsers($params: ListParams) {
-    let params = new FilterParams();
-    params.page = $params.page;
-    params.limit = $params.limit;
-    params.search = $params.text;
-    this.getAllUsers(params).subscribe();
-  }
-
   getUsers$($params: ListParams) {
     let params = new FilterParams();
     params.page = $params.page;
@@ -425,14 +384,22 @@ export class OfficeComponent extends BasePage implements OnInit {
     );
   }
 
-  getAllUsers(params: FilterParams) {
+  getUsers_1($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers_1(params).subscribe();
+  }
+
+  getAllUsers_1(params: FilterParams) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
-        this.users$ = new DefaultSelect([], 0, true);
+        this.users_1 = new DefaultSelect([], 0, true);
         return throwError(() => error);
       }),
       tap(response => {
-        this.users$ = new DefaultSelect(response.data, response.count);
+        this.users_1 = new DefaultSelect(response.data, response.count);
       })
     );
   }
@@ -451,6 +418,31 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', responseError.error.message);
       },
     });
+
+    /*let obj = {
+    
+      id :this.idCopias,
+      copyDestinationNumber:this.copyDestinationNumber,
+      typeDictamination: this.form.get("typeDict").value,
+      recipientCopy: this.form.get("typeDict").value,
+      no_Of_Dicta:this.form.get("registerNumber").value, 
+      //copyDestinationNumber:this.form.get("senderUser_I").value,
+      personExtInt:this.form.get("typePerson_I").value, 
+      namePersonExt:this.form.get("personaExt_I").value, 
+      registerNumber:this.form.get("registerNumber").value, 
+}
+
+           
+ this.dictationService
+      .updateUserByOficNum(obj)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast('warning', 'Info', resp[0].message);
+        },
+        error: errror => {
+          this.onLoadToast('error', 'Error', errror.error.message);
+        },
+      });*/
   }
 
   creaObjUpdate(f: FormGroup) {
@@ -475,6 +467,7 @@ export class OfficeComponent extends BasePage implements OnInit {
       .getPuestovalue(userDatos.positionKey)
       .subscribe({
         next: resp => {
+          alert('  getDescUserPuesto ' + resp.data.value);
           this.form.get('charge').setValue(resp.data.value);
         },
         error: err => {
@@ -482,5 +475,60 @@ export class OfficeComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'Error', err.error.message);
         },
       });
+  }
+
+  /*   Evento que se ejecuta para llenar los parametros de las personas involucradas si son externos o internos
+===============================================================================================================*/
+  getPersonaExt_Int(params: _Params) {
+    this.serviceOficces.getPersonaExt_Int(params).subscribe({
+      next: resp => {
+        this.filtroPersonaExt = resp.data;
+        this.nrSelecttypePerson = resp.data[0].personExtInt;
+        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
+
+        this.form.get('typePerson').setValue(this.nrSelecttypePerson);
+        this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
+
+        this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
+        this.form.get('personaExt_I').setValue(resp.data[1].nomPersonExt);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  /*===========================================================
+          FORMULARIO
+==============================================================*/
+
+  getDescUser(control: string, event: Event) {
+    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
+    alert(control);
+    if (control === 'control_I') {
+      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
+    } else {
+      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
+    }
+  }
+
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 }

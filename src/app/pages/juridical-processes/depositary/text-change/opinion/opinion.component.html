@@ -1,9 +1,7 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('expedientNumber')"
-        label="No. Expediente">
+      <form-field [control]="form.get('expedientNumber')" label="Expediente">
         <input
           type="text"
           class="form-control"
@@ -12,9 +10,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('registerNumber')"
-        label="No. de Gesti&oacute;n">
+      <form-field [control]="form.get('registerNumber')" label="Dictamen.">
         <input
           type="text"
           class="form-control"
@@ -23,7 +19,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('wheelNumber')" label="No. Volante">
+      <form-field [control]="form.get('wheelNumber')" label="Volante">
         <input
           type="text"
           class="form-control"
@@ -32,9 +28,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('typeDict')"
-        label="No. Dictaminaci&oacute;n">
+      <form-field [control]="form.get('typeDict')" label="Dictaminaci&oacute;n">
         <input
           type="text"
           class="form-control"
@@ -73,7 +67,7 @@
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
       <form-field
         [control]="form.get('numberDictamination')"
-        label="No. de Dicta">
+        label="No. Of Dicta">
         <input
           type="text"
           class="form-control"
@@ -118,11 +112,11 @@
           [optionTemplate]="userOption">
         </ngx-select>
         <ng-template #userLabel let-item="item">
-          {{ item.id }} - {{ item.name }}
+          {{ item.id }}
         </ng-template>
         <ng-template #userOption let-item="item">
           <div [title]="item.id + '-' + item.name">
-            {{ item.id }} - {{ item.name }}
+            {{ item.id }}
           </div>
         </ng-template>
 
@@ -140,7 +134,8 @@
       </form-field-->
     </div>
   </div>
-  <div class="row mt-5">
+
+  <!--div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('paragraphInitial')"
@@ -148,7 +143,8 @@
         <textarea
           type="text"
           class="form-control"
-          formControlName="paragraphInitial"></textarea>
+          formControlName="paragraphInitial"
+          rows="5"></textarea>
       </form-field>
     </div>
   </div>
@@ -160,7 +156,8 @@
         <textarea
           type="text"
           class="form-control"
-          formControlName="paragraphFinish"></textarea>
+          formControlName="paragraphFinish"
+          rows="5"></textarea>
       </form-field>
     </div>
   </div>
@@ -168,29 +165,89 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('paragraphOptional')"
-        label="P&aacute;rrafo Opcional">
+        label="Adicional al p&aacute;rrafo Final">
         <textarea
           type="text"
           class="form-control"
-          formControlName="paragraphOptional"></textarea>
+          formControlName="paragraphOptional"
+          rows="5"></textarea>
       </form-field>
     </div>
-  </div>
+  </div-->
+
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
-        [control]="form.get('descriptionSender')"
-        label="Descripci&oacute;n Remitente">
+        [control]="form.get('masInfo_1')"
+        label="M&aacute;s Informaci&oacute;n">
         <textarea
           type="text"
           class="form-control"
-          formControlName="descriptionSender"></textarea>
+          formControlName="masInfo_1"
+          rows="5"></textarea>
       </form-field>
     </div>
   </div>
+
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('masInfo_1_1')"
+        label="M&aacute;s Informaci&oacute;n 1">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="masInfo_1_1"
+          rows="5"></textarea>
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('masInfo_1_2')"
+        label="M&aacute;s Informaci&oacute;n 1">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="masInfo_1_2"
+          rows="5"></textarea>
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('masInfo_2')"
+        label="M&aacute;s Informaci&oacute;n 2">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="masInfo_2"
+          rows="5"></textarea>
+      </form-field>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('masInfo_3')"
+        label="M&aacute;s Informaci&oacute;n 3">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="masInfo_3"
+          rows="5"></textarea>
+      </form-field>
+    </div>
+  </div>
+
   <div class="row pl-3">C&#46;C&#46;P&#46;</div>
-  <!--div class="row mt-5">
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+  <div class="row mt-3">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
       <form-field [control]="form.get('typePerson')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson">
           <option *ngFor="let option of options" [value]="option.value">
@@ -199,14 +256,14 @@
         </select>
       </form-field>
     </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
       <form-field [control]="form.get('senderUser')">
         <ngx-select
           [form]="form"
-          [data]="users$"
+          [data]="usersExtCombo"
           (change)="getDescUser('control', $event)"
           [readonly]="form.get('typePerson').value === 'S'"
-          (fetchItems)="getUsers($event)"
+          (fetchItems)="usersExt($event)"
           bindLabel="userAndName"
           value="id"
           control="senderUser"
@@ -227,7 +284,7 @@
         </ng-template>
       </form-field>
     </div>
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
       <form-field [control]="form.get('personaExt')" label="Nombre Persona">
         <input
           type="text"
@@ -236,16 +293,64 @@
           [readonly]="!(form.get('typePerson').value === 'S')" />
       </form-field>
     </div>
-
-
-  </div-->
-
-  <!---->
-  <div class="row mt-3" *ngFor="let item of datosOpinion">
-    <app-textChange-modal
-      [datosOpinion]="item"
-      [form]="form"></app-textChange-modal>
   </div>
+
+  <div class="row mt-3">
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
+      <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
+        <select class="form-control" formControlName="typePerson_I">
+          <option *ngFor="let option of options" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
+      <form-field [control]="form.get('senderUser_I')">
+        <ngx-select
+          [form]="form"
+          [data]="users$"
+          (change)="getDescUser('control_I', $event)"
+          [readonly]="form.get('typePerson_I').value === 'S'"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          value="id"
+          control="senderUser_I"
+          label="Usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
+        </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id }} - {{ item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id }} - {{ item.name }}
+          </div>
+        </ng-template>
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
+      <form-field [control]="form.get('personaExt_I')" label="Nombre Persona">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="personaExt_I"
+          [readonly]="!(form.get('typePerson_I').value === 'S')" />
+      </form-field>
+    </div>
+  </div>
+  <!--div formArrayName="extPerson">
+    <ng-container *ngFor="let item of datosOpinion; let i = index">
+      <app-textChange-modal
+        [datosOpinion]="item"
+        [form]="form"
+        [index]="i"></app-textChange-modal>
+    </ng-container>
+  </div>-->
   <hr />
   <div class="row mb-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -253,7 +358,6 @@
         <div class="m-3">
           <confirm-button
             text="Imprimir"
-            [disabled]="form.invalid"
             [loading]="loading"
             (confirm)="confirm()">
           </confirm-button>
