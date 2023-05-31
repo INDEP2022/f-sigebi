@@ -134,6 +134,11 @@ export class DocumentsService extends HttpService {
     return this.delete(route, params);
   }
 
+  getDeleteDocumentsDictuXStateM(params: any) {
+    const route = `${DocumentsEndpoints.DocumentsDictuXStateM}`;
+    return this.get(route, params);
+  }
+
   // updateClarDocImp(id: string | number, data: Object) {
   //   const route = `clarification-documents-impro/${id}`;
   //   return this.post<Inappropriateness>(route, data);
