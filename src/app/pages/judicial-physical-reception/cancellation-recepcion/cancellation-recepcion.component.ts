@@ -408,8 +408,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         /* if(this.form.get('averPrev').value !) null && this.form.get('averPrev').value != resp.preliminaryInquiry){
       
         } */
-
-        
         console.log(resp.preliminaryInquiry);
         this.form.get('averPrev').setValue(resp.preliminaryInquiry);
         console.log(resp.criminalCase);
