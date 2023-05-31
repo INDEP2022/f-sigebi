@@ -64,4 +64,9 @@ export class GoodProcessService extends HttpService {
       model
     );
   }
+
+  getDateRange(date: string, range: number) {
+    const route = `${GoodProcessPoints.dateRange}/${date}/${range}`;
+    return this.get(route);
+  }
 }

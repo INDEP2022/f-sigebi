@@ -71,6 +71,11 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0px 0px 20px 0px rgba(69, 90, 100, 0.08) !important;
+
+  @media screen and (max-width: 767px) {
+    top: 0;
+    margin-bottom: 10px;
+  }
 }
 
 .stepper {
@@ -157,7 +162,7 @@
   color: #28a745 !important;
 }
 
-:host ::ng-deep ng2-smart-table tr:last-child td:last-child.ng2-smart-actions {
+:host ::ng-deep ng2-smart-table tr:last-child td:first-child.ng2-smart-actions {
   > * {
     display: none;
   }

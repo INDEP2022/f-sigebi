@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,8 +17,12 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
@@ -74,6 +78,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     }.`;
   pantallaOption: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
   paramsGestionDictamen: IJuridicalDocumentManagementParams = {
     volante: null,
     expediente: null,
@@ -118,6 +123,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   screenKey: string = '';
   notificationData: INotification;
   loadingGoods: boolean = false;
+  ReadOnly: boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -128,7 +134,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private dictationService: DictationService,
-    private serviceRelatedDocumentsService: RelatedDocumentsService
+    private serviceRelatedDocumentsService: RelatedDocumentsService,
+    private securityService: SecurityService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -164,18 +171,18 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.setInitVariables();
     this.prepareForm();
-    this.route.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params: any) => {
-        this.origin = params['origin'] ?? null;
-        this.paramsGestionDictamen.volante = params['volante'] ?? null;
-        this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
-        this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
-        this.paramsGestionDictamen.doc = params['doc'] ?? null;
-        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
-        this.paramsGestionDictamen.sale = params['sale'] ?? null;
-        this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
-      });
+    // this.route.queryParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe((params: any) => {
+    //     this.origin = params['origin'] ?? null;
+    //     this.paramsGestionDictamen.volante = params['volante'] ?? null;
+    //     this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
+    //     this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+    //     this.paramsGestionDictamen.doc = params['doc'] ?? null;
+    //     this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
+    //     this.paramsGestionDictamen.sale = params['sale'] ?? null;
+    //     this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
+    //   });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!this.pantallaActual) {
       this.router.navigateByUrl('/pages/');
@@ -219,17 +226,17 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   setInitVariables() {
-    // this.paramsGestionDictamen = {
-    //   expediente: 32440,
-    //   volante: 1558043,
-    //   pDictamen: '10',
-    //   pNoTramite: 1044254,
-    //   tipoOf: 'EXTERNO',
-    //   bien: 'N',
-    //   sale: 'D',
-    //   doc: 'N',
-    //   pGestOk: null,
-    // };
+    this.paramsGestionDictamen = {
+      expediente: 32440,
+      volante: 1558043,
+      pDictamen: '10',
+      pNoTramite: 1044254,
+      tipoOf: 'EXTERNO',
+      bien: 'N',
+      sale: 'D',
+      doc: 'N',
+      pGestOk: null,
+    };
     // {
     //   volante: 1557802,
     //   expediente: 619252,
@@ -282,9 +289,23 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.managementForm = this.fb.group({
-      noVolante: [null, [Validators.required, Validators.maxLength(11)]],
-      noExpediente: [null, [Validators.required, Validators.maxLength(11)]],
-      tipoOficio: [null, [Validators.required, Validators.maxLength(20)]],
+      noVolante: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ],
+      ],
+      noExpediente: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(11),
+        ],
+      ],
+      tipoOficio: [null, [Validators.required]],
       relacionado: [
         { value: '', disabled: true },
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
@@ -329,6 +350,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   initComponentDictamen() {
+    this.ReadOnly = true;
     this.getNotificationData();
     // if (
     //   this.managementForm.get('numero').value ||
@@ -645,9 +667,10 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     console.log(params, this.dataGood);
     await this.flyerService.getGoodStatusDescription(params).subscribe({
       next: res => {
-        console.log(res);
-        console.log('params, ', this.dataGood);
+        // console.log("Respuesta: ", res.count);
+        // console.log('params, ', this.dataGood);
         this.dataGood[count].desEstatus = res.data[0].description;
+        this.totalItems = res.count;
         this.getAvailableGood(this.dataGood[count], count, total);
       },
       error: err => {
@@ -657,6 +680,11 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.getAvailableGood(this.dataGood[count], count, total);
       },
     });
+  }
+  changeImprocedenteDisabled(event: any) {
+    this.dataGood.forEach(element => {});
+    this.dataGoodTable.load(this.dataGood);
+    this.dataGoodTable.refresh();
   }
 
   changeImprocedente(event: any) {
@@ -1005,5 +1033,22 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  getFromSelect(params: ListParams) {
+    this.securityService.getAllUsersTracker(params).subscribe(
+      (data: any) => {
+        let result = data.data.map(async (item: any) => {
+          item['userAndName'] = item.user + ' - ' + item.name;
+        });
+        Promise.all(result).then((resp: any) => {
+          this.select = new DefaultSelect(data.data, data.count);
+          this.loading = false;
+        });
+      },
+      error => {
+        this.select = new DefaultSelect();
+      }
+    );
   }
 }
