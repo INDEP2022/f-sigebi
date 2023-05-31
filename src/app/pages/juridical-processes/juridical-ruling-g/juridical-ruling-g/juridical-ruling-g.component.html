@@ -54,6 +54,24 @@
                   readonly />
               </form-field>
             </div>
+
+            <div class="col-12 p-2" *ngIf="showCriminalCase">
+              <form-field
+                [control]="expedientesForm.get('criminalCase')"
+                label="Causa Penal">
+                <input class="form-control" formControlName="criminalCase" />
+              </form-field>
+
+              <form-field [control]="expedientesForm.get('delito')">
+                <form-check label="¿Es delito?" for="delito">
+                  <input
+                    id="delito"
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="delito" />
+                </form-check>
+              </form-field>
+            </div>
             <!-- Averiguación Previa -->
             <!-- <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
@@ -112,7 +130,7 @@
             <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaPPFF')"
-                label="Fecha P.P.F.F">
+                label="Fecha Aseg">
                 <input
                   class="form-control"
                   formControlName="fechaPPFF"
@@ -130,13 +148,6 @@
                   formControlName="wheelNumber"
                   readonly
                   [disabled]="true" />
-              </form-field>
-            </div>
-            <div class="col-sm-12 col-12 col-md-4 p-2">
-              <form-field
-                [control]="dictaminacionesForm.get('criminalCase')"
-                label="Causa Penal">
-                <input class="form-control" formControlName="criminalCase" />
               </form-field>
             </div>
 
