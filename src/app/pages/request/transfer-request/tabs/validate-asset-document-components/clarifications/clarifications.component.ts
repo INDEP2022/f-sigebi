@@ -99,6 +99,7 @@ export class ClarificationsComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: clarifications');
     this.task = JSON.parse(localStorage.getItem('Task'));
     console.log('task', this.task);
 
