@@ -24,7 +24,7 @@ export const LIST_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
