@@ -125,7 +125,18 @@
               <form-field
                 [control]="dictaminacionesForm.get('wheelNumber')"
                 label="Volante">
-                <input class="form-control" formControlName="wheelNumber" />
+                <input
+                  class="form-control"
+                  formControlName="wheelNumber"
+                  readonly
+                  [disabled]="true" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-2">
+              <form-field
+                [control]="dictaminacionesForm.get('criminalCase')"
+                label="Causa Penal">
+                <input class="form-control" formControlName="criminalCase" />
               </form-field>
             </div>
 
@@ -136,7 +147,7 @@
                 <input
                   class="form-control"
                   formControlName="fechaDictaminacion"
-                  bsDatepicker />
+                  readonly />
               </form-field>
             </div>
 

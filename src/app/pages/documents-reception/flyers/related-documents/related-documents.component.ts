@@ -1,7 +1,9 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+
+import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -118,12 +120,14 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   disabledRadio: boolean = false;
   oficioGestion: IMJobManagement;
   disabledAddresse: boolean = false;
+  statusOf: string = undefined;
   screenKeyManagement: string = 'FACTADBOFICIOGEST';
   screenKeyRelated: string = '';
   screenKey: string = '';
   notificationData: INotification;
   loadingGoods: boolean = false;
   ReadOnly: boolean;
+  today = new DatePipe('en-EN').transform(new Date(), 'dd/MM/yyyy');
 
   constructor(
     private fb: FormBuilder,
@@ -169,20 +173,22 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.validOficioGestion();
+    // console.log("status OF: ", this.oficioGestion.statusOf);
     this.setInitVariables();
     this.prepareForm();
-    // this.route.queryParams
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe((params: any) => {
-    //     this.origin = params['origin'] ?? null;
-    //     this.paramsGestionDictamen.volante = params['volante'] ?? null;
-    //     this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
-    //     this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
-    //     this.paramsGestionDictamen.doc = params['doc'] ?? null;
-    //     this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
-    //     this.paramsGestionDictamen.sale = params['sale'] ?? null;
-    //     this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
-    //   });
+    this.route.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        this.origin = params['origin'] ?? null;
+        this.paramsGestionDictamen.volante = params['volante'] ?? null;
+        this.paramsGestionDictamen.expediente = params['expediente'] ?? null;
+        this.paramsGestionDictamen.tipoOf = params['tipoOf'] ?? null;
+        this.paramsGestionDictamen.doc = params['doc'] ?? null;
+        this.paramsGestionDictamen.pDictamen = params['pDictamen'] ?? null;
+        this.paramsGestionDictamen.sale = params['sale'] ?? null;
+        this.paramsGestionDictamen.pGestOk = params['pGestOk'] ?? null;
+      });
     this.pantallaActual = this.route.snapshot.paramMap.get('id');
     if (!this.pantallaActual) {
       this.router.navigateByUrl('/pages/');
@@ -226,17 +232,17 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
   }
 
   setInitVariables() {
-    this.paramsGestionDictamen = {
-      expediente: 32440,
-      volante: 1558043,
-      pDictamen: '10',
-      pNoTramite: 1044254,
-      tipoOf: 'EXTERNO',
-      bien: 'N',
-      sale: 'D',
-      doc: 'N',
-      pGestOk: null,
-    };
+    // this.paramsGestionDictamen = {
+    //   expediente: 32440,
+    //   volante: 1558043,
+    //   pDictamen: '10',
+    //   pNoTramite: 1044254,
+    //   tipoOf: 'INTERNO',
+    //   bien: 'N',
+    //   sale: 'D',
+    //   doc: 'N',
+    //   pGestOk: null,
+    // };
     // {
     //   volante: 1557802,
     //   expediente: 619252,
@@ -319,6 +325,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       noCiudad: [null],
       ciudad: [null],
       claveOficio: [null],
+      checkText: [null],
       parrafoInicial: [null, Validators.pattern(STRING_PATTERN)],
       tipoTexto: [null],
       justificacion: [null, Validators.pattern(STRING_PATTERN)],
@@ -376,11 +383,12 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     params.addFilter('jobBy', 'POR DICTAMEN');
     await this.flyerService.getMOficioGestion(params.getParams()).subscribe({
       next: res => {
-        // console.log(res);
+        console.log('Dicataminacion', res.data[0]);
         if (res.count == 0) {
           // this.getDictationByWheel();
         } else {
           this.oficioGestion = res.data[0];
+          this.statusOf = res.data[0].statusOf;
           this.setDataOficioGestion();
           // Se tiene el registro
           this.initFormFromImages();
@@ -395,6 +403,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
 
   setDataOficioGestion() {
     this.managementForm.get('tipoOficio').setValue(this.oficioGestion.jobType);
+    console.log('asfasfasfasfa', this.oficioGestion);
+    // this.managementForm.get('statusOf').setValue(this.oficioGestion.statusOf);
     this.managementForm.get('relacionado').setValue(this.oficioGestion.jobBy);
     this.managementForm
       .get('numero')
@@ -795,8 +805,9 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         .getNotificationByFilter(params.getParams())
         .subscribe({
           next: res => {
-            console.log(res);
+            console.log('prueba', res);
             this.notificationData = res.data[0];
+            this.statusOf = res.data[0].wheelStatus;
             this.setDataNotification();
           },
           error: err => {
