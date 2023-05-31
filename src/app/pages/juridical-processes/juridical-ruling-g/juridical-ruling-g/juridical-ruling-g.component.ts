@@ -1,6 +1,7 @@
 // FIXME: 2
 
 /** BASE IMPORT */
+import { DatePipe } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -327,6 +328,7 @@ export class JuridicalRulingGComponent
     private readonly expedientServices: ExpedientService,
     private readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
+    private datePipe: DatePipe,
     private router: Router,
     private usersService: UsersService
   ) {
@@ -502,6 +504,7 @@ export class JuridicalRulingGComponent
     this.loadExpedientInfo(noExpediente).then(({ json }) => {
       json
         .then(res => {
+          console.log('fecha dic', res.data[0].dictDate);
           this.dictNumber = res.data[0].id;
           // this.wheelNumber = res.data[0].wheelNumber;
           this.delegationDictNumber = res.data[0].delegationDictNumber;
@@ -525,7 +528,10 @@ export class JuridicalRulingGComponent
             .setValue(res.data[0].wheelNumber || undefined);
           this.dictaminacionesForm
             .get('fechaDictaminacion')
-            .setValue(new Date(res.data[0].dictDate) || undefined);
+            .setValue(
+              this.datePipe.transform(res.data[0].dictDate, 'dd-MM-yyyy') ||
+                undefined
+            );
           this.dictaminacionesForm
             .get('fechaResolucion')
             .setValue(new Date(res.data[0].dictHcDAte) || undefined);

@@ -125,7 +125,11 @@
               <form-field
                 [control]="dictaminacionesForm.get('wheelNumber')"
                 label="Volante">
-                <input class="form-control" formControlName="wheelNumber" />
+                <input
+                  class="form-control"
+                  formControlName="wheelNumber"
+                  readonly
+                  [disabled]="true" />
               </form-field>
             </div>
 
@@ -136,7 +140,7 @@
                 <input
                   class="form-control"
                   formControlName="fechaDictaminacion"
-                  bsDatepicker />
+                  readonly />
               </form-field>
             </div>
 
