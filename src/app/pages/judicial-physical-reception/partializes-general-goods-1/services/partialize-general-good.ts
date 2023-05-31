@@ -8,6 +8,9 @@ export abstract class PartializeGeneralGood {
   formGood: FormGroup;
   good: IGood;
   formControl: FormGroup;
+  // numberGood: number;
+  goodStatusDesc: string;
+  goodClassNumberDesc: string;
   // isFirstCase: boolean = false;
   formLoading = false;
   buttonsLoading = false;
@@ -75,11 +78,7 @@ export abstract class PartializeGeneralGood {
   }
 
   get val14() {
-    return this.formGood
-      ? this.formGood.get('importe')
-        ? this.formGood.get('importe').value
-        : 0
-      : 0;
+    return this.good ? this.good.val14 : 0;
   }
 
   get vimporte() {
@@ -121,18 +120,6 @@ export abstract class PartializeGeneralGood {
   initFormGood() {
     this.formGood = this.fb.group({
       noBien: [null, [Validators.required]],
-      cantPadre: [null],
-      descripcion: [null],
-      cantidad: [null],
-      avaluo: [null],
-      estatus: [null],
-      estatusDescripcion: [null],
-      extDom: [null],
-      moneda: [null],
-      expediente: [null],
-      clasificador: [null],
-      clasificadorDescripcion: [null],
-      importe: [null],
     });
   }
 

@@ -274,7 +274,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     paramsF.sortBy = 'changeDate';
     this.serviceHistoryGood.getAllFilter(paramsF.getParams()).subscribe(
       res => {
-        console.log(res);
+        console.log(res.data[res.data.length - 1]);
       },
       err => {
         console.log(err);
@@ -3331,7 +3331,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(deleteModel);
             this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
               res => {
-                console.log(this.dataGoodAct);
+                const paramsF = new FilterParams();
+                paramsF.addFilter('propertyNum', this.selectActData.id);
+                paramsF.sortBy = 'changeDate';
+                this.serviceHistoryGood
+                  .getAllFilter(paramsF.getParams())
+                  .subscribe(
+                    res => {
+                      console.log(res.data[res.data.length - 1]);
+                      const putGood: IGood = {
+                        id: this.selectActData.id,
+                        goodId: this.selectActData.goodId,
+                        status: res.data[res.data.length - 1]['status'],
+                      };
+                      this.serviceGood.update(putGood).subscribe(
+                        res => {
+                          console.log(this.dataGoodAct);
                 this.goodData = this.goodData.filter(
                   (e: any) => e.id != this.selectActData.id
                 );
@@ -3350,6 +3365,22 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     }
                   })
                 );
+                        },
+                        err => {this.alert(
+                          'error',
+                          'Ocurrió un error inesperado',
+                          'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                        );}
+                      );
+                    },
+                    err => {
+                      this.alert(
+                        'error',
+                        'Ocurrió un error inesperado',
+                        'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                      );
+                    }
+                  );
               },
               err => {
                 this.alert(
