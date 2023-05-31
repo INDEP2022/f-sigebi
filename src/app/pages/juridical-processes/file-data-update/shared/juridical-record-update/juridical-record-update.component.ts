@@ -14,10 +14,7 @@ import { format } from 'date-fns';
 import esLocale from 'date-fns/locale/es';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, Observable, takeUntil } from 'rxjs';
-import {
-  goFormControlAndFocus,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { goFormControlAndFocus } from 'src/app/common/helpers/helpers';
 import { DocumentsViewerByFolioComponent } from '../../../../../@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectListFilteredModalComponent } from '../../../../../@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import {
@@ -1557,11 +1554,11 @@ export class JuridicalRecordUpdateComponent
     // this.datosEnviados.emit(this.change_Dict)
     if (this.dictum == 'CONOCIMIENTO') {
       this.formControls.reserved.enable();
-      showToast({
-        icon: 'info',
-        title: 'Justificación',
-        text: 'Para el desahogo de Conocimiento es necesario ingresar la justificación',
-      });
+      this.alert(
+        'info',
+        'Justificación',
+        'Para el desahogo de Conocimiento es necesario ingresar la justificación'
+      );
       goFormControlAndFocus('reserved');
     } else {
       this.formControls.reserved.disable();
