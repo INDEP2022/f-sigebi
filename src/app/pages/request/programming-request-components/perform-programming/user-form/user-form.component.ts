@@ -98,14 +98,6 @@ export class UserFormComponent extends BasePage implements OnInit {
             this.modalService.content.callback(true, create);
             this.close();
           },
-          error: error => {
-            this.onLoadToast(
-              'info',
-              'Advertencia',
-              'Correo electrónico ya registrado verifica'
-            );
-            this.loading = false;
-          },
         });
       }
     });

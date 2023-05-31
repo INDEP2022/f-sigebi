@@ -11,7 +11,6 @@ import { IDeductive } from '../../models/catalogs/deductive.model';
 })
 export class DeductiveService implements ICrudMethods<IDeductive> {
   private readonly route: string = ENDPOINT_LINKS.Deductive;
-  private readonly route2: string = 'catalog/deductive/id';
   constructor(private deductiveRepository: Repository<IDeductive>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IDeductive>> {
@@ -27,10 +26,10 @@ export class DeductiveService implements ICrudMethods<IDeductive> {
   }
 
   update(id: string | number, model: IDeductive): Observable<Object> {
-    return this.deductiveRepository.update(this.route2, id, model);
+    return this.deductiveRepository.update(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.deductiveRepository.remove(this.route2, id);
+    return this.deductiveRepository.remove(this.route, id);
   }
 }

@@ -30,7 +30,6 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   public cities = new DefaultSelect();
   public municipalities = new DefaultSelect();
   public localities = new DefaultSelect();
-  public responsibleDelegation = new DefaultSelect();
   public type = new DefaultSelect();
   public user = new DefaultSelect();
   public get idWarehouse() {
@@ -64,30 +63,42 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       idWarehouse: [null],
       description: [
         '',
-        [Validators.pattern(STRING_PATTERN), Validators.required],
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
-      ubication: [null, [Validators.required]],
-      manager: [
+      ubication: [null, Validators.compose([Validators.required])],
+      manager: [null, Validators.compose([Validators.pattern(STRING_PATTERN)])],
+      registerNumber: [null, Validators.compose([Validators.pattern('')])],
+      stateCodeID: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        Validators.compose([Validators.pattern(''), Validators.required]),
       ],
-      registerNumber: [null],
-      stateCodeID: [null],
-      stateCode: [
+      stateCode: [null],
+      cityCodeID: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        Validators.compose([Validators.pattern(''), Validators.required]),
       ],
-      cityCodeID: [null],
-      cityCode: [null, [Validators.required]],
-      municipalityCodeID: [null],
-      municipalityCode: [null, [Validators.required]],
-      localityCodeID: [null],
-      localityCode: [null, [Validators.required]],
+      cityCode: [null],
+      municipalityCodeID: [
+        null,
+        Validators.compose([Validators.pattern(''), Validators.required]),
+      ],
+      municipalityCode: [null],
+      localityCodeID: [null, Validators.compose([Validators.pattern('')])],
+      localityCode: [null],
       indActive: [null],
-      type: [null, [Validators.pattern(STRING_PATTERN), Validators.required]],
+      type: [
+        null,
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
+      ],
       responsibleDelegation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        Validators.compose([Validators.pattern(STRING_PATTERN)]),
       ],
     });
     if (this.warehouse != null) {
@@ -236,7 +247,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   }
   getMunicipalitie(data: any) {
     this.localities = new DefaultSelect([], 0, true);
-    // this.warehouseForm.controls['municipalityCode'].setValue(null);
+    this.warehouseForm.controls['municipalityCode'].setValue(null);
     this.warehouseForm.controls['localityCode'].setValue(null);
     this.getMunicipalities(new ListParams(), data.state);
   }
@@ -259,11 +270,6 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     }
     this.localityService.getAll(params).subscribe(data => {
       this.localities = new DefaultSelect(data.data, data.count);
-    });
-  }
-  getResponsibleDelegation(params: ListParams) {
-    this.warehouseService.getAllDelegation(params).subscribe(data => {
-      this.responsibleDelegation = new DefaultSelect(data.data, data.count);
     });
   }
   getType(params: ListParams, id?: string) {

@@ -24,10 +24,7 @@ export class WarehouseService
   getAll(params?: ListParams): Observable<IListResponse<IWarehouse>> {
     return this.warehouseRepository.getAllPaginated(this.route, params);
   }
-  getAllDelegation(params?: ListParams): Observable<IListResponse<IWarehouse>> {
-    const route = `${this.route}/get-delegation-and-description`;
-    return this.warehouseRepository.getAllPaginated(route, params);
-  }
+
   search(params?: ListParams): Observable<IListResponse<IWarehouse>> {
     const route = `${this.route}/search`;
     return this.warehouseRepository.getAllPaginated(route, params);

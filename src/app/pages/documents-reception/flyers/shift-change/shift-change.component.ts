@@ -448,8 +448,8 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   }
 
   selectDictums(event: IUserRowSelectEvent<IDictation>) {
+    console.log(event);
     this.selectedDictums = event.selected;
-    // console.log({ selectedDictums: this.selectedDictums });
   }
 
   selectProceedings(event: IUserRowSelectEvent<IProceedingDeliveryReception>) {

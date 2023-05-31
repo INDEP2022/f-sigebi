@@ -725,21 +725,21 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             address: this.form.get('direccion').value,
             elaborationDate: format(
               this.form.get('fecElab').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
             datePhysicalReception: format(
               this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
             dateElaborationReceipt: format(
               this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
             dateDeliveryGood: format(
               this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
           };
           const resData = JSON.parse(JSON.stringify(res.data[0]));
           console.log(modelEdit);
@@ -769,21 +769,21 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             address: this.form.get('direccion').value,
             elaborationDate: format(
               this.form.get('fecElab').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
             datePhysicalReception: format(
               this.form.get('fecRecepFisica').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
             dateElaborationReceipt: format(
               this.form.get('fecElabRecibo').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
             dateDeliveryGood: format(
               this.form.get('fecEntregaBienes').value,
-              'yyyy-MM-dd HH:mm'
+              'yyyy-MM,dd HH:mm'
             ),
-            captureDate: format(new Date(), 'yyyy-MM-dd HH:mm'),
+            captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
 
             keysProceedings: this.form.get('acta2').value,
             /* elaborate: 'SERA', */
@@ -1685,7 +1685,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods',
+      '/pages/judicial-physical-reception/partializes-general-goods/v1',
     ]);
   }
 

@@ -137,7 +137,6 @@ export class ValuesComponent extends BasePage implements OnInit {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
-      ...this.params.getValue(),
       ...this.columnFilters,
     };
     this.tvalTableService.getById4(values.cdtabla, params).subscribe({
@@ -145,7 +144,6 @@ export class ValuesComponent extends BasePage implements OnInit {
         console.log(response);
         this.tvalTableList = response.data;
         this.data1.load(this.tvalTableList);
-        this.data1.refresh();
         this.data1.refresh();
         this.totalItems2 = response.count;
         this.loading = false;

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
@@ -89,10 +89,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     this.getInfoRequest();
     this.initFilterForm();
     this.getTypeRelevant(new ListParams());
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodsRequest());
+    this.getGoodsRequest();
   }
 
   getInfoRequest() {
@@ -104,7 +101,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   getGoodsRequest() {
-    this.loading = true;
     if (this.idRequest) {
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.goodService.getAll(this.params.getValue()).subscribe({
@@ -130,12 +126,9 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
             this.paragraphs = data.data;
             this.allDataGood = this.paragraphs;
             this.totalItems = data.count;
-            this.loading = false;
           });
         },
-        error: error => {
-          this.loading = false;
-        },
+        error: error => {},
       });
     } else {
     }

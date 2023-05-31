@@ -23,7 +23,7 @@ interface ISettings {
 })
 export class ColumnsSelectComponent implements OnInit {
   @Input() settings: ISettings = { columns: {} };
-  @Input() defaultColumns: number = 10;
+  @Input() defaultColumns: number = 5;
   @Output() settingsChange = new EventEmitter<any>();
   private allColumns: any = {};
   columns: IColumns[] = [];

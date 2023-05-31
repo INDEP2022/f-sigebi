@@ -19,13 +19,6 @@ export class JobDictumTextsService extends HttpService {
     );
   }
 
-  getById(obj: any) {
-    return this.post<IListResponse<IJobDictumTexts>>(
-      JobDictumTextsEndpoints.JobDictumTextsById,
-      obj
-    );
-  }
-
   update(jobDictumTexts: Partial<IJobDictumTexts>) {
     return this.put(JobDictumTextsEndpoints.JobDictumTexts, jobDictumTexts);
   }

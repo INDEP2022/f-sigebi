@@ -26,17 +26,22 @@
         <form-field
           [control]="managementForm.get('noVolante')"
           label="No. Volante"
-          class="col-md-3">
-          <input class="form-control" type="text" formControlName="noVolante" />
+          class="col-md-3"
+          maxLength="11">
+          <input
+            class="form-control"
+            type="number"
+            formControlName="noVolante" />
         </form-field>
 
         <form-field
           [control]="managementForm.get('noExpediente')"
           label="No. Expediente"
-          class="col-md-3">
+          class="col-md-3"
+          maxLength="11">
           <input
             class="form-control"
-            type="text"
+            type="number"
             formControlName="noExpediente" />
         </form-field>
 
@@ -139,10 +144,10 @@
           <div class="col-md-3">
             <form-radio label="{{ se_refiere_a.A }}">
               <input
+                [attr.disabled]="se_refiere_a_Disabled.A"
                 type="radio"
-                formControlName="checkText"
-                value="{{ se_refiere_a.A }}"
-                (change)="changeImprocedenteDisabled($event.target)" />
+                formControlName="tipoOficio"
+                value="{{ se_refiere_a.A }}" />
             </form-radio>
           </div>
           <div class="col-md-4">
@@ -150,15 +155,16 @@
               <input
                 [attr.disabled]="se_refiere_a_Disabled.B"
                 type="radio"
-                formControlName="checkText"
+                formControlName="tipoOficio"
                 value="{{ se_refiere_a.B }}" />
             </form-radio>
           </div>
           <div class="col-md-4">
             <form-radio label="{{ se_refiere_a.C }}">
               <input
+                [attr.disabled]="se_refiere_a_Disabled.C"
                 type="radio"
-                formControlName="checkText"
+                formControlName="tipoOficio"
                 value="{{ se_refiere_a.C }}" />
             </form-radio>
           </div>
@@ -167,7 +173,7 @@
               <input
                 [attr.disabled]="se_refiere_a_Disabled.D"
                 type="radio"
-                formControlName="checkText"
+                formControlName="tipoOficio"
                 value="{{ se_refiere_a.D }}" />
             </form-radio>
           </div>
@@ -247,9 +253,17 @@
             label="Justificación">
           </ngx-select>
         </form-field>
-        <!-- <form-field [control]="managementForm.get('justificacionDetalle')" class="col-md-6" label="Justificación">
-          <input type="text" class="form-control" formControlName="justificacionDetalle" readonly [disabled]="true" />
-        </form-field> -->
+        <form-field
+          [control]="managementForm.get('justificacionDetalle')"
+          class="col-md-6"
+          label="Justificación">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="justificacionDetalle"
+            readonly
+            [disabled]="true" />
+        </form-field>
         <form-field
           [control]="managementForm.get('noOficio')"
           class="col-md-4 mt-2"
@@ -261,16 +275,22 @@
             readonly
             [disabled]="true" />
         </form-field>
-        <!-- <form-field [control]="managementForm.get('fechaAcuse')" class="col-md-4 mt-2" label="Fecha de Acuse">
-          <input type="text" class="form-control" formControlName="fechaAcuse" readonly [disabled]="true" />
-        </form-field> -->
-
+        <form-field
+          [control]="managementForm.get('fechaAcuse')"
+          class="col-md-4 mt-2"
+          label="Fecha de Acuse">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="fechaAcuse"
+            readonly
+            [disabled]="true" />
+        </form-field>
         <div class="col-md-4">
           <button type="button" class="btn btn-primary active btn-sm mr-2">
             Respuestas FGR
           </button>
         </div>
-        <br />
       </div>
       <hr class="row" />
       <div class="row pb-5">
@@ -311,9 +331,6 @@
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
                 [source]="dataGoodTable"></ng2-smart-table>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
             </div>
           </div>
           <div class="col-md-12 mt-3 text-right">

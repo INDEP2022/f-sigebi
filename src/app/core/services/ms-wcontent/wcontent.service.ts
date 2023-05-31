@@ -83,8 +83,8 @@ export class WContentService extends HttpWContentService {
     );
   }
 
-  getObtainFile(docName: string, params?: ListParams) {
-    return this.get(`${WContentEndpoint.ObtainFile}/${docName}`, params);
+  getObtainFile(docName: string) {
+    return this.get(`${WContentEndpoint.ObtainFile}/${docName}`);
   }
 
   obtainFile(docName: string): Observable<any> {

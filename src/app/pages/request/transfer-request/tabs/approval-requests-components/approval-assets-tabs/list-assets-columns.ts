@@ -9,17 +9,17 @@ export const LIST_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descriptionRelevantType: {
+  goodTypeName: {
     title: 'Tipo de Bien',
     type: 'string',
     sort: false,
   },
-  descriptionPhysicalStatus: {
+  physicalStatusName: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  descriptionConservationStatus: {
+  stateConservationName: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
@@ -34,12 +34,12 @@ export const LIST_ASSETS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  descriptionDestiny: {
+  destinyLigieName: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  descriptionDestinyTransferent: {
+  transferentDestinyName: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,

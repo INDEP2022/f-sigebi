@@ -113,9 +113,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
 
   delete(id: number) {
     this.deductiveService.remove(id).subscribe({
-      next: () => {
-        this.getDeductives(), this.alert('success', 'Deduct', 'Borrado');
-      },
+      next: () => this.getDeductives(),
     });
   }
 }

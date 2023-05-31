@@ -59,7 +59,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.departmentForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       numDelegation: [null, []],
       numSubDelegation: [null, []],
       dsarea: [
@@ -87,16 +87,22 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      depend: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      depend: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       depDelegation: [
         null,
         [
-          // Validators.required,
+          Validators.required,
           Validators.maxLength(4),
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      phaseEdo: [1, [Validators.pattern(NUMBERS_PATTERN)]],
+      phaseEdo: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.department != null) {
       this.edit = true;
@@ -112,8 +118,6 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       );
       this.departmentForm.controls['numDelegation'].disable();
       this.departmentForm.controls['numSubDelegation'].disable();
-      this.departmentForm.controls['id'].disable();
-      this.departmentForm.controls['dsarea'].disable();
     }
     this.getSubDelegations({ page: 1, limit: 10, text: '' });
   }

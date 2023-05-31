@@ -65,11 +65,8 @@ export class InappropriatenessPgrSatFormComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      managedTo: [null, [Validators.required, Validators.maxLength(50)]],
-      positionAddressee: [
-        null,
-        [Validators.required, Validators.maxLength(50)],
-      ],
+      senderName: [null, [Validators.required, Validators.maxLength(50)]],
+      positionSender: [null, [Validators.required, Validators.maxLength(50)]],
       paragraphInitial: [null, [Validators.maxLength(4000)]],
       foundation: [null, [Validators.maxLength(4000)]],
     });

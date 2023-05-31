@@ -106,7 +106,6 @@ export class NotificationFileUpdateComponent
 
   onLoadListNotifications() {
     const param = new FilterParams();
-    const params = new ListParams();
     param.addFilter('expedientNumber', this.form.get('noExpediente').value);
     this.notificationService.getAllFilter(param.getParams()).subscribe({
       next: data => {

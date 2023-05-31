@@ -1,6 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -21,13 +20,8 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() customEvent = new EventEmitter();
 
-  constructor(
-    private fb: FormBuilder,
-    private goodService: GoodService,
-    public router: Router
-  ) {
+  constructor(private fb: FormBuilder, private goodService: GoodService) {
     super();
     //this.settings.actions = false;
     //this.settings.columns = GOODS_WITH_REQUIRED_INFO_COLUMNS;
@@ -94,19 +88,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     });
   }
 
-  openGood(data: any): void {
+  openGood(data: any) {
     console.log(data);
-    //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
-    localStorage.setItem(`Task`, JSON.stringify(data));
-
-    if (data.requestId !== null && data.urlNb !== null) {
-      let url = `${`/pages/general-processes/goods-characteristics`}`;
-      console.log(url);
-      this.customEvent.emit('Hola');
-      //console.log()
-      this.router.navigateByUrl(url);
-    } else {
-      this.alert('warning', 'No disponible', 'Tarea no disponible');
-    }
   }
 }

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ThirdPartyAdmonEndpoints } from 'src/app/common/constants/endpoints/ms-third-party-admon-endpoints';
-import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodPossessionThirdParty } from '../../models/ms-thirdparty-admon/third-party-admon.model';
 
@@ -15,22 +16,11 @@ export class GoodPosessionThirdpartyService extends HttpService {
   }
 
   getAll(
-    params?: _Params
+    params?: ListParams | string
   ): Observable<IListResponse<IGoodPossessionThirdParty>> {
     return this.get<IListResponse<any>>(
       ThirdPartyAdmonEndpoints.GoodPossessionThirdParty,
       params
     );
-  }
-
-  getAllDetailGoodPossessionThirdParty(params?: _Params) {
-    return this.get<
-      IListResponse<{
-        possessionNumber: number;
-        goodNumber: number;
-        steeringwheelNumber: number;
-        nbOrigin: string;
-      }>
-    >(ThirdPartyAdmonEndpoints.DetailGoodPossessionThirdParty, params);
   }
 }

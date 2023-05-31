@@ -1,5 +1,5 @@
 export const DOC_REQUEST_TAB_COLUMNS = {
-  //Documentos Solicitud arreglar paginado
+  //Arreglar
   dDocName: {
     title: 'No. Documento',
     type: 'string',

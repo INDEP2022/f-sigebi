@@ -22,23 +22,20 @@
               type="text"
               class="form-control"
               formControlName="affairKey" />
-            <div class="col-md-4"></div>
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">
+      <div class="row pt-5">
         <div class="col-md-12 pb-5">
           <form-field
             [control]="deductiveForm.get('observations')"
             label="Descripción">
-            <textarea
-              formControlName="observations"
-              rows="2"
-              class="form-control"></textarea>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
           </form-field>
         </div>
-      </div>
-      <div class="row">
         <div class="col-md-3">
           <form-field
             [control]="deductiveForm.get('captureDate')"
@@ -57,9 +54,7 @@
             <input class="form-control" formControlName="protectionKey" />
           </form-field>
         </div>
-      </div>
 
-      <div class="row pt-1">
         <div class="col-md-8">
           <form-field
             [control]="deductiveForm.get('preliminaryInquiry')"
@@ -93,7 +88,7 @@
             [control]="deductiveForm.get('expedientNumber')"
             label="No. Expediente">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="expedientNumber" />
           </form-field>

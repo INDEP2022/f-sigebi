@@ -20,8 +20,4 @@ export class GoodPhotoService extends HttpService {
       params
     );
   }
-
-  getFilterGoodPhoto(params: any) {
-    return this.get<IListResponse<any>>(`good-photo`, params);
-  }
 }

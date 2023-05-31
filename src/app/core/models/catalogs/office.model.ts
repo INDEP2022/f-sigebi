@@ -12,4 +12,5 @@ export interface IOffice {
   phoneTwo: string;
   fax: string;
   typeOffice: string;
+  noRegistration: number;
 }

@@ -17,13 +17,13 @@
                     type="number"
                     min="1"
                     class="form-control"
-                    (keyup.enter)="searchInput()"
+                    (keyup.enter)="getNotifications()"
                     [formControl]="noExpediente" />
                 </form-field>
                 <div>
                   <button
                     [disabled]="loading"
-                    (click)="searchInput()"
+                    (click)="getNotifications()"
                     class="btn btn-sm btn-primary active">
                     <i class="fas fa-search"></i>
                   </button>
@@ -43,17 +43,11 @@
         </form>
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2">
-        <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="tableSettingsNotificaciones"
-            (userRowSelect)="selectRowNotification($event)"
-            [source]="dataTableNotifications">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="paramsNotifications"
-            [totalItems]="totalItemsNotificaciones"></app-pagination>
-        </div>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettingsNotificaciones"
+          [source]="dataTableNotifications">
+        </ng2-smart-table>
       </div>
     </div>
     <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
@@ -62,19 +56,12 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
         <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-        <div
-          [class]="isLoadingGood ? 'table-loading' : ''"
-          class="overflow-auto">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="tableSettingsBienes"
-            [source]="dataTableBienes"
-            (userRowSelect)="rowSelected($event)">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="paramsGood"
-            [totalItems]="totalItemsGood"></app-pagination>
-        </div>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettingsBienes"
+          [source]="dataTableBienes"
+          (userRowSelect)="rowSelected($event)">
+        </ng2-smart-table>
         <br />
         <span class="badge m-2 badge-pill bg-primary"
           >&#42;&#42;Disponibles</span
@@ -123,41 +110,19 @@
           <form-field
             [control]="form.get('wheelNumber')"
             label="No&#46; Volante">
-            <input
-              readonly
-              class="form-control"
-              formControlName="wheelNumber" />
+            <input class="form-control" formControlName="wheelNumber" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('officeExternalKey')"
             label="Clave de Oficio">
-            <input
-              readonly
-              class="form-control"
-              formControlName="officeExternalKey" />
+            <input class="form-control" formControlName="officeExternalKey" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
-          <!-- <form-field [control]="form.get('addressee')" label="Destinatario">
+          <form-field [control]="form.get('addressee')" label="Destinatario">
             <input class="form-control" formControlName="addressee" />
-          </form-field> -->
-
-          <form-field [control]="form.get('addressee')">
-            <ngx-select
-              [form]="form"
-              [data]="addressee"
-              (fetchItems)="getDestiny($event)"
-              bindLabel="nameUser"
-              control="addressee"
-              label="Destinatario"
-              (change)="changeAddressee($event)"
-              [searchOnInit]="true"
-              [clearable]="false"
-              [showTooltip]="true">
-              <!-- [readonly]="layout == 'ABANDONMENT'" -->
-            </ngx-select>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
@@ -174,7 +139,6 @@
           <div class="form-group">
             <button
               type="button"
-              [disabled]="!form.get('wheelNumber').value"
               class="btn btn-primary btn-sm active text-wrap"
               (click)="btnReemplazarMarcadores()">
               Reemplazar Marcadores
@@ -201,27 +165,25 @@
           </form-field>
         </div>
         <!-- Form CON COPIA PARA -->
-        <form [formGroup]="formPositionThirdParty" class="form-material">
+        <form [formGroup]="formCcpOficio" class="form-material">
           <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
-                [control]="formPositionThirdParty.get('usrCcp1')"
+                [control]="formCcpOficio.get('ccp1')"
                 label="C&#46;P&#46;P 1">
-                <input class="form-control" formControlName="usrCcp1" />
+                <input class="form-control" formControlName="ccp1" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
-                [control]="formPositionThirdParty.get('usrCcp2')"
+                [control]="formCcpOficio.get('ccp2')"
                 label="C&#46;P&#46;P 2">
-                <input class="form-control" formControlName="usrCcp2" />
+                <input class="form-control" formControlName="ccp2" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field
-                [control]="formPositionThirdParty.get('usrResponsible')"
-                label="Firma">
-                <input class="form-control" formControlName="usrResponsible" />
+              <form-field [control]="formCcpOficio.get('firma')" label="Firma">
+                <input class="form-control" formControlName="firma" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-4 p-2 text-center">

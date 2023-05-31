@@ -13,7 +13,6 @@ import { _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAttachedDocument } from 'src/app/core/models/ms-documents/attached-document.model';
 import {
-  ICopiesJobManagementDto,
   IdatosLocales,
   IGoodJobManagement,
   ImanagementOffice,
@@ -21,7 +20,6 @@ import {
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
-import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { AtachedDocumentsService } from 'src/app/core/services/ms-documents/attached-documents.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
@@ -54,7 +52,7 @@ export class OfficeComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   nameUserDestinatario: ISegUsers;
   verBoton: boolean = false;
-  filtroPersonaExt: ICopiesJobManagementDto[] = [];
+  // filtroPersonaExt: ICopiesJobManagementDto[] = [];
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
@@ -73,20 +71,13 @@ export class OfficeComponent extends BasePage implements OnInit {
     private siabServiceReport: SiabService,
     private usersService: UsersService,
     private AtachedDocumenServ: AtachedDocumentsService,
-    private dynamicCatalogsService: DynamicCatalogsService,
-    private dictationService: DictationService
+    private dynamicCatalogsService: DynamicCatalogsService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.year = new Date().getFullYear();
-
-    this.options = [
-      { value: null, label: 'Seleccione un valor' },
-      { value: 'E', label: 'PERSONA EXTERNA' },
-      { value: 'I', label: 'PERSONA INTERNA' },
-    ];
 
     this.loadUserDestinatario();
     this.buildForm();
@@ -137,12 +128,12 @@ export class OfficeComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
       ],
-      typePerson: [null, null],
+      typePerson: [null, [Validators.required]],
       senderUser: [null, null],
-      personaExt: [null, null],
-      typePerson_I: [null, null],
+      personaExt: [null, [Validators.required]],
+      typePerson_I: [null, [Validators.required]],
       senderUser_I: [null, null],
-      personaExt_I: [null, null],
+      personaExt_I: [null, [Validators.required]],
       extPersonArray: this.fb.array([]),
     });
   }
@@ -325,8 +316,7 @@ export class OfficeComponent extends BasePage implements OnInit {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
-
-    this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
+    this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -418,31 +408,6 @@ export class OfficeComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', responseError.error.message);
       },
     });
-
-    /*let obj = {
-    
-      id :this.idCopias,
-      copyDestinationNumber:this.copyDestinationNumber,
-      typeDictamination: this.form.get("typeDict").value,
-      recipientCopy: this.form.get("typeDict").value,
-      no_Of_Dicta:this.form.get("registerNumber").value, 
-      //copyDestinationNumber:this.form.get("senderUser_I").value,
-      personExtInt:this.form.get("typePerson_I").value, 
-      namePersonExt:this.form.get("personaExt_I").value, 
-      registerNumber:this.form.get("registerNumber").value, 
-}
-
-           
- this.dictationService
-      .updateUserByOficNum(obj)
-      .subscribe({
-        next: resp => {
-          this.onLoadToast('warning', 'Info', resp[0].message);
-        },
-        error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
-        },
-      });*/
   }
 
   creaObjUpdate(f: FormGroup) {
@@ -482,53 +447,18 @@ export class OfficeComponent extends BasePage implements OnInit {
   getPersonaExt_Int(params: _Params) {
     this.serviceOficces.getPersonaExt_Int(params).subscribe({
       next: resp => {
-        this.filtroPersonaExt = resp.data;
+        // this.filtroPersonaExt = resp.data;
         this.nrSelecttypePerson = resp.data[0].personExtInt;
         this.nrSelecttypePerson_I = resp.data[1].personExtInt;
-
         this.form.get('typePerson').setValue(this.nrSelecttypePerson);
         this.form.get('typePerson_I').setValue(this.nrSelecttypePerson_I);
 
         this.form.get('personaExt').setValue(resp.data[0].nomPersonExt);
-        this.form.get('personaExt_I').setValue(resp.data[1].nomPersonExt);
+        this.form.get('personaExt_I').setValue(resp.data[0].nomPersonExt);
       },
       error: errror => {
         this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
-  }
-
-  /*===========================================================
-          FORMULARIO
-==============================================================*/
-
-  getDescUser(control: string, event: Event) {
-    this.nameUserDestinatario = JSON.parse(JSON.stringify(event));
-    alert(control);
-    if (control === 'control_I') {
-      this.form.get('personaExt_I').setValue(this.nameUserDestinatario.name);
-    } else {
-      this.form.get('personaExt').setValue(this.nameUserDestinatario.name);
-    }
-  }
-
-  getUsers($params: ListParams) {
-    let params = new FilterParams();
-    params.page = $params.page;
-    params.limit = $params.limit;
-    params.search = $params.text;
-    this.getAllUsers(params).subscribe();
-  }
-
-  getAllUsers(params: FilterParams) {
-    return this.usersService.getAllSegUsers(params.getParams()).pipe(
-      catchError(error => {
-        this.users$ = new DefaultSelect([], 0, true);
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.users$ = new DefaultSelect(response.data, response.count);
-      })
-    );
   }
 }

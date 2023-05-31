@@ -14,12 +14,12 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descriptionRelevantType: {
-    title: 'Tipo de Bien',
+  goodTypeName: {
+    title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
-  codeFracction: {
+  fractionCode: {
     title: 'Fracción',
     type: 'string',
     sort: false,
@@ -34,7 +34,7 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  measureUnitLigie: {
+  ligieUnitName: {
     title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
@@ -44,22 +44,22 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descriptionPhysicalStatus: {
+  physicstateName: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  descriptionConservationStatus: {
+  stateConservationName: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  descriptionDestiny: {
+  destinyName: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  descriptionDestinyTransferent: {
+  transferentDestinyName: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,

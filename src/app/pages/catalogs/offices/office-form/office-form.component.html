@@ -1,10 +1,16 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="officeForm" class="form-material">
       <div class="row">
+        <!-- <div class="col-md-2">
+          <form-field [control]="officeForm.get('id')" label="ID">
+            <input type="numbre" class="form-control" formControlName="id" />
+          </form-field>
+        </div> -->
+
         <div class="col-md-12">
           <form-field [control]="officeForm.get('name')" label="Nombre">
             <input type="text" class="form-control" formControlName="name" />
@@ -59,8 +65,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="postalCode"
-              maxlength="5" />
+              formControlName="postalCode" />
           </form-field>
         </div>
       </div>
@@ -106,8 +111,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeOffice"
-              maxlength="1" />
+              formControlName="typeOffice" />
           </form-field>
         </div>
       </div>

@@ -161,7 +161,6 @@
                 type="datetime"
                 class="form-control"
                 formControlName="startDate"
-                (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
                   withTimepicker: true,
@@ -396,7 +395,7 @@
         [settings]="settingUser"
         [source]="usersToProgramming"
         (edit)="openForm($event.data)"
-        (delete)="deleteUser($event.data)">
+        (delete)="delete($event.data)">
       </ng2-smart-table>
       <app-pagination
         [params]="paramsUsers"

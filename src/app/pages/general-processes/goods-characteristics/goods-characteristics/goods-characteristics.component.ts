@@ -24,10 +24,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   good: any;
 
-  handleEvent(data: any) {
-    console.log('Evento recibido:', data);
-  }
-
   get numberGood() {
     return this.form.get('noBien');
   }
@@ -101,6 +97,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+
     this.form.get('noBien').valueChanges.subscribe({
       next: val => {
         this.goodService.getById(val).subscribe({

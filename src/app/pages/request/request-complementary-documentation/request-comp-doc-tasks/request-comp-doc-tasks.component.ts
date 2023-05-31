@@ -1,20 +1,12 @@
 import { Location } from '@angular/common';
-import {
-  Component,
-  HostListener,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
-import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { RequestService } from 'src/app/core/services/requests/request.service';
-import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 
@@ -24,7 +16,6 @@ import { RejectRequestModalComponent } from '../../shared-request/reject-request
   styles: [],
 })
 export class RequestCompDocTasksComponent extends BasePage implements OnInit {
-  @ViewChild('staticTab', { static: false }) staticTabs?: TabsetComponent;
   /**
    * SET STATUS OF TABS
    **/
@@ -51,13 +42,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   requestInfo: any;
   screenWidth: number;
   public typeDoc: string = '';
-  public updateInfo: boolean = false;
-  typeModule: string = '';
-  displayExpedient: boolean = false;
 
   /* injections */
   private requestService = inject(RequestService);
-  private requestHelperService = inject(RequestHelperService);
   /*  */
   constructor(
     private location: Location,
@@ -86,8 +73,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       this.mapTasks(process);
     }
     //});
-
-    this.expedientEventTrigger();
+    this.requestSelected(1);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -104,7 +90,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     const filter = param.getParams();
     this.requestService.getAll(filter).subscribe({
       next: resp => {
-        this.searchRequestSimGoods = resp.data[0].recordId ? false : true;
         this.requestInfo = resp.data[0];
         this.requestId = resp.data[0].id;
       },
@@ -112,16 +97,8 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     this.contributor = 'CARLOS G. PALMA';
   }
 
-  expedientSelected(event: any) {
-    if (event == true) {
-      this.displayExpedient = true;
-      this.requestSelected(1);
-    }
-  }
   requestSelected(type: number) {
     this.typeDocumentMethod(type);
-    this.updateInfo = true;
-    this.typeModule = 'doc-complementary';
   }
 
   typeDocumentMethod(type: number) {
@@ -294,16 +271,5 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       default:
         break;
     }
-  }
-
-  expedientEventTrigger() {
-    this.requestHelperService.currentExpedient.subscribe({
-      next: resp => {
-        if (resp == true) {
-          const requestId = Number(this.route.snapshot.paramMap.get('request'));
-          this.getRequestInfo(requestId);
-        }
-      },
-    });
   }
 }

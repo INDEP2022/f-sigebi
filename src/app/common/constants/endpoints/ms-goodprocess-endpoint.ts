@@ -11,5 +11,4 @@ export enum GoodprocessEndpoints {
   ParametersFaStageCreda = 'parameters/fa-stage-creda',
   QueryVtypeGood = 'application/queryVtypeGood',
   ApplicationPupGenMasiv = 'application/pup-gen-masiv',
-  GetGoodScreenSend = '/application/get-good-status-screen',
 }

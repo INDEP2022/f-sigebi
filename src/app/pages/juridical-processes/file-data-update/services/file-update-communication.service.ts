@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import {
   IJuridicalDocumentManagementParams,
   IJuridicalFileDataUpdateParams,
@@ -18,9 +17,6 @@ export class FileUpdateCommunicationService {
     null;
   private _juridicalRelatedDocumentManagementParams: IJuridicalRelatedDocumentManagementParams =
     null;
-
-  private datosEnviadosSource = new Subject<any>();
-  datosEnviados$ = this.datosEnviadosSource.asObservable();
 
   private _juridicalShiftChangeParams: IJuridicalShiftChangeParams = null;
 
@@ -68,9 +64,5 @@ export class FileUpdateCommunicationService {
 
   set juridicalShiftChangeParams(params: IJuridicalShiftChangeParams) {
     this._juridicalShiftChangeParams = params;
-  }
-
-  enviarDatos(datos: any) {
-    this.datosEnviadosSource.next(datos);
   }
 }

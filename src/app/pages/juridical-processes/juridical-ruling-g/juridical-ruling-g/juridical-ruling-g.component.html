@@ -6,12 +6,6 @@
 
   <div body>
     <div>
-      <div>
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
-      </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
         <form
@@ -29,15 +23,15 @@
 
             <div class="col-12 p-2">
               <form-field [control]="expedientesForm.get('tipoDictaminacion')">
-                <input
-                  class="form-control"
-                  #cveOficio
-                  formControlName="tipoDictaminacion"
-                  readonly
-                  [disabled]="true" />
-                <!-- <ngx-select [searchOnInit]="true" [data]="typesDict" [searchable]="false" [form]="expedientesForm"
-                  label="Tipo Dictaminación" bindLabel="typeDict" control="tipoDictaminacion"
-                  (change)="onTypeDictChange($event)"></ngx-select> -->
+                <ngx-select
+                  [searchOnInit]="true"
+                  [data]="typesDict"
+                  [searchable]="false"
+                  [form]="expedientesForm"
+                  label="Tipo Dictaminación"
+                  bindLabel="typeDict"
+                  control="tipoDictaminacion"
+                  (change)="onTypeDictChange($event)"></ngx-select>
               </form-field>
             </div>
 
@@ -48,10 +42,11 @@
                 <input
                   type="text"
                   class="form-control"
+                  min="0"
+                  maxlength="10"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente"
-                  readonly />
+                  formControlName="noExpediente" />
               </form-field>
             </div>
             <!-- Averiguación Previa -->
@@ -116,8 +111,7 @@
                 <input
                   class="form-control"
                   formControlName="fechaPPFF"
-                  bsDatepicker
-                  [maxDate]="maxDate" />
+                  bsDatepicker />
               </form-field>
             </div>
 
@@ -220,9 +214,7 @@
                 <input
                   class="form-control"
                   #cveOficio
-                  formControlName="cveOficio"
-                  readonly
-                  [disabled]="true" />
+                  formControlName="cveOficio" />
               </form-field>
             </div>
             <div class="col-12 p-2">
@@ -313,9 +305,6 @@
           [attr.class]="'table-bordered'"
           [settings]="settings1"
           [source]="goods"></ng2-smart-table>
-        <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
     <div class="row pt-2">
@@ -420,11 +409,9 @@
         </button>
         <button
           class="btn btn-danger btn-sm active m-3 text-wrap"
-          (click)="btnBorrarDictamen()"
-          [disabled]="buttonDeleteDisabled">
+          (click)="btnBorrarDictamen()">
           Borrar Dictamen
         </button>
-
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
           (click)="btnImprimeOficio()">
@@ -433,8 +420,7 @@
         </button>
         <button
           class="btn btn-info btn-sm active m-3 text-wrap"
-          (click)="btnParcializar()"
-          [disabled]="buttonDisabled">
+          (click)="btnParcializar()">
           Parcializar
         </button>
       </div>
