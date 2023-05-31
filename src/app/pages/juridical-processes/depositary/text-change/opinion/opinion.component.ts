@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
@@ -47,6 +47,7 @@ import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
   styles: [],
 })
 export class OpinionComponent extends BasePage implements OnInit, OnChanges {
+  /*==================================================*/
   form: FormGroup = this.fb.group({
     expedientNumber: [
       null,
@@ -120,6 +121,14 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
     masInfo_3: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    masInfo_1_1: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    masInfo_1_2: [
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
@@ -300,9 +309,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
             this.loadModal(true, filterParams);
           } else {
             this.intIDictation = resp.data[0];
-            this.form
-              .get('expedientNumber')
-              .setValue(this.intIDictation.expedientNumber);
+            //this.form.get('expedientNumber').setValue(this.intIDictation.expedientNumber);
             console.log(' this.intIDictation.id => ' + this.intIDictation.id);
             this.form.get('registerNumber').setValue(this.intIDictation.id);
             this.form
@@ -332,7 +339,10 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
   }
 
   openModal(newOrEdit: boolean, filterParams: BehaviorSubject<FilterParams>) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
     modalConfig.initialState = {
       newOrEdit,
       filterParams,
@@ -709,11 +719,12 @@ this.jobDictumTextsServices
     });
   }
 
+  /*
   get extPersonArray() {
     return this.form.get('extPerson') as FormArray;
   }
 
-  /*
+
 addExtPersonArray(){
 
 const filterForm = this.fb.group({

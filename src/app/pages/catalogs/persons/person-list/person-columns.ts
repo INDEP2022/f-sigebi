@@ -59,16 +59,16 @@ export const PERSON_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  typePerson: {
-    title: 'Tipo Persona',
-    type: 'string',
-    sort: false,
-  },
-  typeResponsible: {
-    title: 'Tipo Responsabilidad',
-    type: 'string',
-    sort: false,
-  },
+  // typePerson: {
+  //   title: 'Tipo Persona',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // typeResponsible: {
+  //   title: 'Tipo Responsabilidad',
+  //   type: 'string',
+  //   sort: false,
+  // },
   // manager: {
   //   title: 'Gerente',
   //   type: 'string',
@@ -89,16 +89,16 @@ export const PERSON_COLUMNS = {
   //   type: 'string',
   //   sort: false,
   // },
-  DetEntFed: {
-    title: 'Ent.Federativa',
-    type: 'string',
-    sort: false,
-  },
-  DetOperation: {
-    title: 'Giro',
-    type: 'string',
-    sort: false,
-  },
+  // DetEntFed: {
+  //   title: 'Ent.Federativa',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // DetOperation: {
+  //   title: 'Giro',
+  //   type: 'string',
+  //   sort: false,
+  // },
   // observations: {
   //   title: 'Observaciones',
   //   type: 'string',

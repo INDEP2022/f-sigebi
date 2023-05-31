@@ -1773,6 +1773,7 @@ export class PerformProgrammingFormComponent
   }
 
   generateFolio(programming: Iprogramming) {
+    console.log('programming', programming);
     return new Promise((resolve, reject) => {
       this.transferentService.getById(programming.tranferId).subscribe({
         next: response => {
@@ -2021,6 +2022,7 @@ export class PerformProgrammingFormComponent
         this.dataProgramming.tranferId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
+          console.log('autoridad', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;

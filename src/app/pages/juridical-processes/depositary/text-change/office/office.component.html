@@ -1,9 +1,7 @@
 <form [formGroup]="form" class="form-material">
   <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('proceedingsNumber')"
-        label="No. Expediente">
+      <form-field [control]="form.get('proceedingsNumber')" label="Expediente">
         <input
           type="text"
           class="form-control"
@@ -12,7 +10,9 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('managementNumber')" label="Dictamen">
+      <form-field
+        [control]="form.get('managementNumber')"
+        label="No_Of_Gestión">
         <input
           type="text"
           class="form-control"
@@ -21,7 +21,7 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('flyerNumber')" label="No. Volante">
+      <form-field [control]="form.get('flyerNumber')" label="Volante">
         <input
           type="text"
           class="form-control"
@@ -100,7 +100,7 @@
           bindLabel="userAndName"
           value="id"
           control="addressee"
-          label="Remitente"
+          label="Destinatario"
           [searchOnInit]="true"
           [showTooltip]="true"
           termMaxLength="30"
@@ -151,9 +151,7 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('paragraphOptional')"
-        label="P&aacute;rrafo Opcional">
+      <form-field [control]="form.get('paragraphOptional')" label="">
         <textarea
           type="text"
           class="form-control"
@@ -163,9 +161,7 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
-      <form-field
-        [control]="form.get('descriptionSender')"
-        label="Descripci&oacute;n Remitente">
+      <form-field [control]="form.get('descriptionSender')" label="">
         <textarea
           type="text"
           class="form-control"
@@ -184,6 +180,7 @@
       formArrayName="i"></app-form-array-oficio>
   </ng-container>
 -->
+  <div class="row pl-3">C&#46;C&#46;P&#46;</div>
   <div class="row mt-3">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
       <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
