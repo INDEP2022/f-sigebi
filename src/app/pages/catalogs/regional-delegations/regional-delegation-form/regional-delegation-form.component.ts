@@ -39,6 +39,8 @@ export class RegionalDelegationFormComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getCity(new ListParams());
+    this.getGeoZone(new ListParams());
   }
 
   private prepareForm() {
@@ -61,7 +63,6 @@ export class RegionalDelegationFormComponent
     });
     if (this.regionalDelegation != null) {
       this.edit = true;
-      console.log(this.regionalDelegation);
       this.regionalDelegationForm.patchValue(this.regionalDelegation);
     }
   }
@@ -89,7 +90,6 @@ export class RegionalDelegationFormComponent
 
   update() {
     this.loading = true;
-
     this.regionalDelegationService
       .update(this.regionalDelegation.id, this.regionalDelegationForm.value)
       .subscribe({
@@ -113,10 +113,15 @@ export class RegionalDelegationFormComponent
       this.selectGeoZone = new DefaultSelect(res.data, res.count);
     });
   }
+  fillSelectZone() {
+    const zone = this.regionalDelegationForm.get('zone').value;
+    this.regionalDelegationForm.controls['idGeographicZona'].setValue(
+      this.regionalDelegation.id
+    );
+  }
 
   getCity(param: ListParams) {
     this.serviceCity.getAll(param).subscribe(res => {
-      console.log(res);
       this.selectCity = new DefaultSelect(res.data, res.count);
     });
   }
