@@ -154,6 +154,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   async generateCaratula() {
+    return;
     let request = this.parameter.getRawValue();
     this.loader.load = true;
 

@@ -63,6 +63,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     };
 
     this.wContentService.getDocumentos(idReq).subscribe(data => {
+      console.log('getImagesGood');
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });
@@ -82,6 +83,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     };
 
     this.wContentService.getDocumentos(idReq).subscribe(data => {
+      console.log('updateinfoPhotos');
       const _data = data.data.filter((img: any) => {
         if (img.dDocType == 'DigitalMedia') return img;
       });

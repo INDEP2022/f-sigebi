@@ -1515,7 +1515,12 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                       this.form.get('autoridadCancela').value,
                                     witness2: this.form.get('elabora').value,
                                     typeProceedings:
+<<<<<<< HEAD
                                       this.form.get('acta').value.charAt[0] == 'C'
+=======
+                                      this.form.get('acta').value.charAt[0] ==
+                                      'C'
+>>>>>>> 21f6424294542183c2eee8f1f87f7b96e77321e5
                                         ? 'RECEPCAN'
                                         : 'SUSPENSION',
                                     responsible: null,
@@ -1741,7 +1746,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           witness1: this.form.get('autoridadCancela').value,
           witness2: this.form.get('elabora').value,
           typeProceedings:
+<<<<<<< HEAD
             this.form.get('acta').value.charAt[0] == 'C' ? 'RECEPCAN' : 'SUSPENSION',
+=======
+            this.form.get('acta').value.charAt[0] == 'C'
+              ? 'RECEPCAN'
+              : 'SUSPENSION',
+>>>>>>> 21f6424294542183c2eee8f1f87f7b96e77321e5
           responsible: null,
           destructionMethod: null,
           observations: this.form.get('observaciones').value,
@@ -1885,7 +1896,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           );
         },
         err => {
+<<<<<<< HEAD
           console.log(this.form.get('acta').value.charAt[0])
+=======
+          console.log(this.form.get('acta').value.charAt[0]);
+>>>>>>> 21f6424294542183c2eee8f1f87f7b96e77321e5
           let newProceeding: IProccedingsDeliveryReception = {
             keysProceedings: this.form.get('acta2').value,
             elaborationDate: format(
@@ -1902,7 +1917,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             witness1: this.form.get('autoridadCancela').value,
             witness2: this.form.get('elabora').value,
             typeProceedings:
+<<<<<<< HEAD
               this.form.get('acta').value.charAt[0] == 'C' ? 'RECEPCAN' : 'SUSPENSION',
+=======
+              this.form.get('acta').value.charAt[0] == 'C'
+                ? 'RECEPCAN'
+                : 'SUSPENSION',
+>>>>>>> 21f6424294542183c2eee8f1f87f7b96e77321e5
             responsible: null,
             destructionMethod: null,
             observations: this.form.get('observaciones').value,
@@ -1931,7 +1952,11 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             receiveBy: null,
             affair: null,
           };
+<<<<<<< HEAD
           console.log(newProceeding)
+=======
+          console.log(newProceeding);
+>>>>>>> 21f6424294542183c2eee8f1f87f7b96e77321e5
           this.serviceProcVal.postProceeding(newProceeding).subscribe(
             res => {
               this.initialBool = true;
@@ -2040,7 +2065,15 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.statusProceeding = 'CERRADO';
                         this.inputsInProceedingClose();
                         this.saveDataAct = [];
+<<<<<<< HEAD
                         this.alert('success','El acta fue abierta con éxito','')
+=======
+                        this.alert(
+                          'success',
+                          'El acta fue abierta con éxito',
+                          ''
+                        );
+>>>>>>> 21f6424294542183c2eee8f1f87f7b96e77321e5
                         /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled'); */
@@ -2383,8 +2416,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         this.prevProce = true;
                         this.numberProceeding = 0;
                         this.statusProceeding = '';
+<<<<<<< HEAD
                             this.labelActa = 'Abrir acta';
                             this.btnCSSAct = 'btn-success';
+=======
+                        this.labelActa = 'Abrir acta';
+                        this.btnCSSAct = 'btn-success';
+>>>>>>> 21f6424294542183c2eee8f1f87f7b96e77321e5
                       } else {
                         this.nextProceeding();
                       }
