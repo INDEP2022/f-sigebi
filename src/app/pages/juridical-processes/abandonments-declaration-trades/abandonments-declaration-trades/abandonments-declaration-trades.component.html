@@ -42,7 +42,8 @@
               [searchMode]="searchMode"
               [confirmSearch]="confirmSearch"
               [selectedNotification]="selectedRow"
-              (onSearch)="search($event)">
+              (onSearch)="search($event)"
+              (datosEnviados)="recibirDatos($event)">
             </app-juridical-record-update>
           </div>
           <!-- Forms VOLANTE EXPEDIENTE -->
@@ -108,7 +109,7 @@
                     [control]="declarationForm.get('officeType')"
                     label="Tipo Oficio">
                     <ng-select
-                      [readonly]="tipoBien == null"
+                      [readonly]="!disabledTIPO_OFICIO"
                       (change)="addText($event)"
                       formControlName="officeType"
                       [searchable]="false"
@@ -137,7 +138,7 @@
               <div class="col-md-6">
                 <div class="row">
                   <form-field
-                    class=""
+                    class="mt-2"
                     [control]="declarationForm.get('sender')">
                     <ngx-select
                       [form]="declarationForm"
@@ -154,7 +155,7 @@
                 </div>
                 <div class="row mt-5">
                   <form-field
-                    class=""
+                    class="mt-2"
                     [control]="declarationForm.get('recipient')">
                     <ngx-select
                       [form]="declarationForm"
@@ -171,6 +172,7 @@
                 </div>
                 <div class="row mt-5">
                   <form-field
+                    class="mt-2"
                     [control]="declarationForm.get('passOfficeArmy')"
                     label="Cve. Oficio">
                     <input
@@ -181,7 +183,9 @@
                   </form-field>
                 </div>
                 <div class="row mt-5">
-                  <form-field class="" [control]="declarationForm.get('city')">
+                  <form-field
+                    class="mt-2"
+                    [control]="declarationForm.get('city')">
                     <ngx-select
                       [form]="declarationForm"
                       [data]="cities"
@@ -232,8 +236,10 @@
                     <ng-option *ngIf="valTiposAll" value="all"
                       >Todos - 0 - TODOS - 0</ng-option
                     >
-                    <ng-option *ngFor="let item of tiposData; index as i">
-                      {{ item }}
+                    <ng-option
+                      *ngFor="let item of tiposData; index as i"
+                      value="{{ item.no_clasif_bien }}">
+                      {{ item.tipoSupbtipoDescription }}
                     </ng-option>
                   </ng-select>
 
@@ -366,6 +372,7 @@
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 text-center">
                   <button
+                    [disabled]="!disbaledAPROBAR"
                     (click)="aprobar()"
                     type="button"
                     class="btn btn-primary btn-sm active ml-2 mr-2">
@@ -423,7 +430,6 @@
                               [control]="formOficio.get('tipoOficio')"
                               label="Tipo Oficio">
                               <input
-                                [readonly]="!disabledBTNs"
                                 type="text"
                                 class="form-control"
                                 formControlName="tipoOficio" />
@@ -434,7 +440,6 @@
                               [control]="formOficio.get('oficioPor')"
                               label="Oficio Por">
                               <input
-                                [readonly]="!disabledBTNs"
                                 type="text"
                                 class="form-control"
                                 formControlName="oficioPor" />
@@ -456,7 +461,6 @@
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('remitente')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="senders"
                             (fetchItems)="getSenders($event)"
@@ -475,7 +479,6 @@
                           *ngIf="!externoVal"
                           [control]="formOficio.get('destinatario')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="recipients"
                             (fetchItems)="getRecipients($event)"
@@ -494,7 +497,6 @@
                           [control]="formOficio.get('destinatario')"
                           label="Destinatario">
                           <input
-                            [readonly]="!disabledBTNs"
                             class="form-control"
                             formControlName="destinatario" />
                         </form-field>
@@ -680,6 +682,7 @@
                     </form-field>
 
                     <ngx-select
+                      id="selectAbandono"
                       *ngIf="valInterno"
                       [data]="items"
                       bindLabel="userAndName"
@@ -719,6 +722,7 @@
                         id="cpp2" />
                     </form-field>
                     <ngx-select
+                      id="selectAbandono"
                       *ngIf="valInterno2"
                       [data]="items"
                       bindLabel="userAndName"

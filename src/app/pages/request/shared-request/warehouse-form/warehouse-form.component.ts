@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { minDate } from 'src/app/common/validations/date.validators';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ILocality } from 'src/app/core/models/catalogs/locality.model';
 import { IMunicipality } from 'src/app/core/models/catalogs/municipality.model';
@@ -89,19 +91,24 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   //Verificar typeTercero//
   prepareForm() {
+    const now = moment();
+    const date = new Date(now.format());
     this.warehouseForm = this.fb.group({
       nbidstore: [
         null,
         [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ],
-      nbusername: [null],
-      /*nbidstore: [
+      nbusername: [
         null,
-        [Validators.maxLength(1000), Validators.pattern(STRING_PATTERN)],
-      ], */
+        [
+          Validators.required,
+          Validators.maxLength(1000),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       tpThird: [null],
 
-      wildebeestSettlement: [null],
+      wildebeestSettlement: [null, [Validators.required]],
       nbwithlocator: [null],
 
       nbcontract: [
@@ -111,10 +118,14 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
       nbstoresiab: [
         null,
-        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(60),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      fhstart: [null],
-      fhend: [null],
+      fhstart: [null, [Validators.required, minDate(new Date(date))]],
+      fhend: [null, [Validators.required, minDate(new Date(date))]],
 
       wildebeestDelegationregion: [
         this.regDelData.description,
@@ -125,9 +136,9 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
-      idState: [null],
-      idCity: [null],
-      wildebeestmunicipality: [null],
+      idState: [null, [Validators.required]],
+      idCity: [null, [Validators.required]],
+      wildebeestmunicipality: [null, [Validators.required]],
       idProgramming: [this.programmingId],
       nbzipcode: [null],
       nbstreet: [
@@ -142,7 +153,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(150), Validators.pattern(STRING_PATTERN)],
       ],
-      tpstore: [null],
+      tpstore: [null, [Validators.required]],
 
       nblength: [
         null,
@@ -152,7 +163,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   userSelect(user: IUserTurn) {
-    console.log(user);
     this.userNameSelect = user.username;
     this.userFirstName = user.firstName;
   }
@@ -169,10 +179,8 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
           .get('wildebeestDelegationregion')
           .setValue(this.regDelData.id);
 
-        console.log(this.warehouseForm.value);
         this.storeService.createdataStore(this.warehouseForm.value).subscribe({
           next: async response => {
-            console.log('creado', response);
             this.onLoadToast(
               'success',
               'Correcto',
@@ -181,9 +189,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
             this.loading = false;
             await this.createTaskWarehouse(response.id);
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
         //Verificar donde se guarda el almacén//
       }
@@ -212,7 +218,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     task['processName'] = 'SolicitudProgramacion';
     body['task'] = task;
     const taskResult = await this.createTaskOrderService(body);
-    console.log('task', taskResult);
     if (taskResult) {
       this.msgGuardado(
         'success',
@@ -230,7 +235,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          console.log(error.error.message);
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
@@ -242,7 +246,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     const user: any = this.authService.decodeToken();
     params['filter.regionalDelegation'] = user.delegacionreg;
     params['filter.search'] = params.text;
-    console.log('params', params);
     this.userProcessService.getAll(params).subscribe({
       next: data => {
         const concatNom = data.data.map(user => {
