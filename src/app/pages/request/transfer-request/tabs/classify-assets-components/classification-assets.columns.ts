@@ -29,7 +29,7 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  unitMeasureName: {
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,

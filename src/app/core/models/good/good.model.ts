@@ -20,7 +20,7 @@ export interface IGood {
   status: string;
   classificationGood?: any;
   remarksOrien?: any;
-  physicalStatus?: boolean;
+  physicalStatus?: number | string;
   destinyName?: string;
   goodId?: number;
   solIncripRegister?: any;

@@ -33,6 +33,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getStates(new ListParams());
   }
 
   private prepareForm() {
@@ -43,7 +44,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       ],
       stateCode: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       keyState: [
         null,
@@ -63,8 +64,12 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   fillForm() {
     this.edit = true;
     this.delegationStateForm.patchValue(this.delegationSate);
-    console.log(this.delegationSate);
-    this.delegationStateForm.controls['regionalDelegation'].setValue(this.delegationSate.stateCode.id);
+    this.delegationStateForm.controls['regionalDelegation'].setValue(
+      this.delegationSate.regionalDelegation.id
+    );
+    this.delegationStateForm.controls['stateCode'].setValue(
+      this.delegationSate.stateCode.descCondition
+    );
   }
 
   getStates(params: ListParams) {
@@ -98,8 +103,8 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.delegationStateService
-      .update(
-        this.delegationSate.regionalDelegation,
+      .newUpdate(
+        // this.delegationSate.regionalDelegation,
         this.delegationStateForm.value
       )
       .subscribe({

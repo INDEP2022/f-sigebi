@@ -81,6 +81,7 @@ export class ApprovalAssetsTabsComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: approval-assets-tabs');
     this.prepareForm();
     this.settings = {
       ...TABLE_SETTINGS,

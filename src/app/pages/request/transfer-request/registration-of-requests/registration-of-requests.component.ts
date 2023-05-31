@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import {
   FilterParams,
   ListParams,
@@ -105,6 +105,7 @@ export class RegistrationOfRequestsComponent
   task: any = null;
   statusTask: any = '';
   pgr: boolean = false;
+  openAddressTab: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -157,6 +158,10 @@ export class RegistrationOfRequestsComponent
     this.route.data.forEach((item: any) => {
       this.process = item.process;
     });
+  }
+
+  onSelect(event: TabDirective) {
+    this.openAddressTab = true;
   }
 
   //cambia el estado del tab en caso de que se asocie un expediente a la solicitud

@@ -21,7 +21,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
-  goodTypeName: {
+  descriptionRelevantType: {
     title: 'Tipo Bien',
     type: 'string',
     sort: false,
@@ -31,10 +31,7 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  unitMeasureName: {
-    /* title: 'Unidad de Medida Transferente',
-    type: 'string',
-    sort: false, */
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'custom',
     class: 'custom-field',
@@ -48,27 +45,28 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  physicstateName: {
+  descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  stateConservationName: {
+  descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  destinyName: {
+  descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  ligieUnit: {
+
+  measureUnitLigie: {
     title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },
-  transferentDestinyName: {
+  descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,
