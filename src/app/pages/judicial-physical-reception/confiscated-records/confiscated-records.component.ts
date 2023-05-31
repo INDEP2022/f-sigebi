@@ -1644,7 +1644,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'ENTREGA'); //!Un in
+    paramsF.addFilter(
+      'typeProceedings',
+      'ENTREGA,DECOMISO',
+      SearchFilter.IN
+    ); //!Un in
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
