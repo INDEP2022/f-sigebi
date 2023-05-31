@@ -1644,7 +1644,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'ENTREGA'); //!Un in
+    paramsF.addFilter(
+      'typeProceedings',
+      'ENTREGA,DECOMISO',
+      SearchFilter.IN
+    );//!Un in
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -3347,32 +3351,30 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       this.serviceGood.update(putGood).subscribe(
                         res => {
                           console.log(this.dataGoodAct);
-                          this.goodData = this.goodData.filter(
-                            (e: any) => e.id != this.selectActData.id
-                          );
-                          this.dataGoodAct.load(this.goodData);
-                          console.log(this.goodData);
-                          this.saveDataAct = this.saveDataAct.filter(
-                            (e: any) => e.id != this.selectActData.id
-                          );
+                this.goodData = this.goodData.filter(
+                  (e: any) => e.id != this.selectActData.id
+                );
+                this.dataGoodAct.load(this.goodData);
+                console.log(this.goodData);
+                this.saveDataAct = this.saveDataAct.filter(
+                  (e: any) => e.id != this.selectActData.id
+                );
 
-                          this.dataGoods.load(
-                            this.dataGoods['data'].map((e: any) => {
-                              if (e.id == this.selectActData.id) {
-                                return { ...e, avalaible: true };
-                              } else {
-                                return e;
-                              }
-                            })
-                          );
+                this.dataGoods.load(
+                  this.dataGoods['data'].map((e: any) => {
+                    if (e.id == this.selectActData.id) {
+                      return { ...e, avalaible: true };
+                    } else {
+                      return e;
+                    }
+                  })
+                );
                         },
-                        err => {
-                          this.alert(
-                            'error',
-                            'Ocurrió un error inesperado',
-                            'Ocurrió un error inesperado. Por favor intentelo nuevamente'
-                          );
-                        }
+                        err => {this.alert(
+                          'error',
+                          'Ocurrió un error inesperado',
+                          'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                        );}
                       );
                     },
                     err => {

@@ -101,6 +101,7 @@ export class AddressTransferorTabComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: address-transferor');
     this.initForm();
     if (this.isNewAddress != true) {
       this.container.createEmbeddedView(this.template);
