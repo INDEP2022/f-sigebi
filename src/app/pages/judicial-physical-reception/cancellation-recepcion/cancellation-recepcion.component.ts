@@ -1948,7 +1948,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             receiveBy: null,
             affair: null,
           };
-
           console.log(newProceeding)
 
           this.serviceProcVal.postProceeding(newProceeding).subscribe(

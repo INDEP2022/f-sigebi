@@ -5,7 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStateRepuve } from 'src/app/core/models/catalogs/state-repuve.model';
 import { StateRepuveService } from 'src/app/core/services/catalogs/state-repuve.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-state-repuves-form',
@@ -31,7 +31,7 @@ export class StateRepuvesFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.stateRepuveForm = this.fb.group({
-      cve: [null, [Validators.required]],
+      key: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -56,18 +56,16 @@ export class StateRepuvesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.stateRepuveService
-      .create(this.stateRepuveForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.stateRepuveService.create(this.stateRepuveForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.stateRepuveService
-      .update(this.stateRepuve.cve, this.stateRepuveForm.getRawValue())
+      .update(this.stateRepuve.key, this.stateRepuveForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

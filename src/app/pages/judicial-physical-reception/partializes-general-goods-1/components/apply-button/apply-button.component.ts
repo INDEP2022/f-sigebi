@@ -633,25 +633,25 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     this.saldo.setValue(0);
     // this.service.pageLoading = false;
     this.loader.load = false;
-    this.onLoadToast(
-      'success',
-      'Parcialización',
-      'La parcialización de bienes se realizo con éxito'
-    );
-    // try {
-    //   await firstValueFrom(this.goodService.update(this.good))
-    //   this.onLoadToast(
-    //     'success',
-    //     'Parcialización',
-    //     'La parcialización de bienes se realizo con éxito'
-    //   );
-    // } catch (x) {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Parcialización',
-    //     'Error al actualizar el bien ' + this.good.goodId
-    //   );
-    // }
+    // this.onLoadToast(
+    //   'success',
+    //   'Parcialización',
+    //   'La parcialización de bienes se realizo con éxito'
+    // );
+    try {
+      await firstValueFrom(this.goodService.update(this.good));
+      this.onLoadToast(
+        'success',
+        'Parcialización',
+        'La parcialización de bienes se realizo con éxito'
+      );
+    } catch (x) {
+      this.onLoadToast(
+        'error',
+        'Parcialización',
+        'Error al actualizar el bien ' + this.good.goodId
+      );
+    }
 
     // this.service.bienesPar = [];
     // this.service.pagedBienesPar = [];

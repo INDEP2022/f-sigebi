@@ -1648,7 +1648,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       'typeProceedings',
       'ENTREGA,DECOMISO',
       SearchFilter.IN
-    ); //!Un in
+    );//!Un in
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
