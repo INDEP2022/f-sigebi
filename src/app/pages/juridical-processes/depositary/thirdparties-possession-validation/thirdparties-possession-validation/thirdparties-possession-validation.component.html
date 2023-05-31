@@ -201,25 +201,27 @@
           </form-field>
         </div>
         <!-- Form CON COPIA PARA -->
-        <form [formGroup]="formCcpOficio" class="form-material">
+        <form [formGroup]="formPositionThirdParty" class="form-material">
           <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
-                [control]="formCcpOficio.get('ccp1')"
+                [control]="formPositionThirdParty.get('usrCcp1')"
                 label="C&#46;P&#46;P 1">
-                <input class="form-control" formControlName="ccp1" />
+                <input class="form-control" formControlName="usrCcp1" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
-                [control]="formCcpOficio.get('ccp2')"
+                [control]="formPositionThirdParty.get('usrCcp2')"
                 label="C&#46;P&#46;P 2">
-                <input class="form-control" formControlName="ccp2" />
+                <input class="form-control" formControlName="usrCcp2" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field [control]="formCcpOficio.get('firma')" label="Firma">
-                <input class="form-control" formControlName="firma" />
+              <form-field
+                [control]="formPositionThirdParty.get('usrResponsible')"
+                label="Firma">
+                <input class="form-control" formControlName="usrResponsible" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
