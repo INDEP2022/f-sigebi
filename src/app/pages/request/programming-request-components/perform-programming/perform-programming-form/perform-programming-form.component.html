@@ -396,7 +396,7 @@
         [settings]="settingUser"
         [source]="usersToProgramming"
         (edit)="openForm($event.data)"
-        (delete)="delete($event.data)">
+        (delete)="deleteUser($event.data)">
       </ng2-smart-table>
       <app-pagination
         [params]="paramsUsers"
