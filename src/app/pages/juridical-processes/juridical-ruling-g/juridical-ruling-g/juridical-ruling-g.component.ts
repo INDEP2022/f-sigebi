@@ -628,10 +628,6 @@ export class JuridicalRulingGComponent
     this.btnDeleteDictation();
   }
 
-  goBack() {
-    window.history.back();
-  }
-
   btnImprimeOficio() {
     console.log(this.expedientesForm);
     if (this.expedientesForm.get('noExpediente').value === null) {
