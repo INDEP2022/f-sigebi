@@ -27,10 +27,13 @@ export const CITY_COLUMNS = {
       }
     },
   },
-  noDelegation: {
+  delegation: {
     title: 'Delegación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.description;
+    },
   },
   legendOffice: {
     title: 'Leyenda Oficio',
