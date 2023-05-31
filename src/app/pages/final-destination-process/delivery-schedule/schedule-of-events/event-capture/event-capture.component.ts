@@ -25,11 +25,13 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodIndicator } from 'src/app/core/models/ms-event-programming/good-indicators.model';
 import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
@@ -125,7 +127,7 @@ export class EventCaptureComponent
   formSiab = this.fb.group(new CaptureEventSiabForm());
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  detail: any[] = [];
+  detail: IGoodIndicator[] = [];
   ctrlButtons = new EventCaptureButtons();
   blkCtrl: IBlkCtrl = {
     component: null, // COMPONENTE
@@ -188,7 +190,8 @@ export class EventCaptureComponent
     private segAccessXAreas: SegAcessXAreasService,
     private eventProgrammingService: EventProgrammingService,
     private detailDeliveryReceptionService: ProceedingsDetailDeliveryReceptionService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private expedientService: ExpedientService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -263,6 +266,64 @@ export class EventCaptureComponent
   }
   ngAfterViewInit(): void {
     console.log(this.itemsElements);
+  }
+
+  async transferClick() {
+    const firstDetail = this.detail[0];
+    console.log('llego', firstDetail);
+    const { transference } = this.registerControls;
+    if (!firstDetail) {
+      transference.reset();
+      return;
+    }
+
+    if (!firstDetail.expedientnumber) {
+      transference.reset();
+      return;
+    }
+    const { expedientnumber } = firstDetail;
+    const identifier = await this.getExpedientById(expedientnumber);
+
+    if (identifier == 'TRANS') {
+      const { type, key } = await this.getTransferType(expedientnumber);
+      if (type == 'E') {
+        const tTrans = await this.getTTrans(expedientnumber);
+        transference.setValue(tTrans);
+      } else {
+        transference.setValue(key);
+      }
+    } else {
+      const tAseg = await this.getTAseg(expedientnumber);
+      transference.setValue(tAseg);
+    }
+
+    const transferent = transference.value;
+    this.transfers = new DefaultSelect([
+      { value: transferent, label: transferent },
+    ]);
+  }
+
+  async getTAseg(expedientId: string | number) {
+    // TODO: IMPLEMENTAR LA INCIDENCIA 863
+    return await lastValueFrom(of('EL FONHAPO'));
+  }
+
+  async getTTrans(expedientId: string | number) {
+    // TODO: IMPLEMENTAR LA INCIDENCIA 863
+    return await lastValueFrom(of('FONDO NACIONAL DE HABITACIONES POPULARES'));
+  }
+
+  async getTransferType(expedientId: string | number) {
+    // TODO: IMPLEMENTAR LA INCIDENCIA 862
+    return await lastValueFrom(of({ type: 'A', key: 'EL FONHAPO' }));
+  }
+
+  async getExpedientById(id: string | number) {
+    return await lastValueFrom(
+      this.expedientService
+        .getById(id)
+        .pipe(map(expedient => expedient.identifier))
+    );
   }
 
   getUserDelegation() {

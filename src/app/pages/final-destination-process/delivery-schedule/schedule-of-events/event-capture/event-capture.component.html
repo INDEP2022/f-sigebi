@@ -104,6 +104,7 @@
 
           <form-field class="col-md-4" [control]="form.get('transference')">
             <ngx-select
+              (click)="transferClick()"
               [data]="transfers"
               [form]="form"
               value="value"
