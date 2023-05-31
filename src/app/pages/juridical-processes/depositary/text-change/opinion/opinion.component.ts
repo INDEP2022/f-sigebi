@@ -5,7 +5,7 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
@@ -29,6 +29,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { OficialDictationService } from 'src/app/core/services/ms-dictation/oficial-dictation.service';
+import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -46,6 +47,7 @@ import { tablaModalComponent } from '../tabla-modal/tablaModal-component';
   styles: [],
 })
 export class OpinionComponent extends BasePage implements OnInit, OnChanges {
+  /*==================================================*/
   form: FormGroup = this.fb.group({
     expedientNumber: [
       null,
@@ -67,14 +69,9 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
-
     charge: [
       null,
-      [
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-        Validators.maxLength(4000),
-      ],
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
     senderUserRemitente: [
       null,
@@ -104,24 +101,41 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       null,
       [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
     ],
-    typePerson: [null, [Validators.required]],
+    typePerson: [null, null],
     senderUser: [null, null],
     personaExt: [null, null],
-    typePerson_I: [null, [Validators.required]],
+    typePerson_I: [null, null],
     senderUser_I: [null, null],
     personaExt_I: [null, null],
-    key: [
-      null,
-      [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-    ],
+    key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
     numberDictamination: [
       null,
       [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(11)],
     ],
+    masInfo_1: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    masInfo_2: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    masInfo_3: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    masInfo_1_1: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
+    masInfo_1_2: [
+      null,
+      [Validators.pattern(STRING_PATTERN), Validators.maxLength(4000)],
+    ],
     extPerson: this.fb.array([
-      this.fb.control('', [Validators.required]),
-      this.fb.control('', [Validators.required]),
-      this.fb.control('', [Validators.required]),
+      this.fb.control('', null),
+      this.fb.control('', null),
+      this.fb.control('', null),
     ]),
   });
 
@@ -140,6 +154,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   //=======================================================================
   users$ = new DefaultSelect<ISegUsers>();
   users$$ = new DefaultSelect<ISegUsers>();
+  usersExtCombo = new DefaultSelect<ISegUsers>();
   @Input() oficnum: number | string;
 
   datosOpinion: any = [];
@@ -154,6 +169,12 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
 
   contadorCCP: IDictationCopies[] = [];
 
+  dictatesNumber: number;
+  rulingType: string;
+  recordNumber: number;
+  copyDestinationNumber: number;
+  idCopias: number;
+
   constructor(
     private fb: FormBuilder,
     private oficialDictationService: OficialDictationService,
@@ -163,7 +184,8 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
     private siabServiceReport: SiabService,
     private usersService: UsersService,
     private service: BankAccountService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private jobDictumTextsServices: JobDictumTextsService
   ) {
     super();
   }
@@ -287,9 +309,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
             this.loadModal(true, filterParams);
           } else {
             this.intIDictation = resp.data[0];
-            this.form
-              .get('expedientNumber')
-              .setValue(this.intIDictation.expedientNumber);
+            //this.form.get('expedientNumber').setValue(this.intIDictation.expedientNumber);
             console.log(' this.intIDictation.id => ' + this.intIDictation.id);
             this.form.get('registerNumber').setValue(this.intIDictation.id);
             this.form
@@ -319,7 +339,10 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
   }
 
   openModal(newOrEdit: boolean, filterParams: BehaviorSubject<FilterParams>) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
     modalConfig.initialState = {
       newOrEdit,
       filterParams,
@@ -363,6 +386,8 @@ carga la  información de la parte media de la página
         this.form.get('paragraphOptional').setValue(resp.text3);
         this.form.get('descriptionSender').setValue(resp.desSenderPa);
         this.getPersonaExt_Int('resp => ', resp);
+
+        this.getPartBodyInputs();
       },
       error: error => {
         this.onLoadToast('info', 'info', error.error.message);
@@ -401,29 +426,49 @@ carga la  información de la parte media de la página
   getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
     let variable: IDictation = JSON.parse(JSON.stringify(datos));
-    /*
-    this.filterParams
-      .getValue()
-      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);*/
 
     this.filterParams
       .getValue()
-      .addFilter('numberOfDicta', 404526, SearchFilter.EQ);
+      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
 
-    console.log(
-      'Entra =>  ' +
-        d +
-        '    datos =>  ' +
-        JSON.stringify(datos) +
-        '        CONSULTA DE PARAMETROS = ' +
-        this.filterParams.getValue().getParams()
-    );
+    this.filterParams.getValue().addFilter('id', 36, SearchFilter.EQ);
+
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          this.contadorCCP = resp.data;
-          this.datosOpinion = resp.data;
+          let datos: IDictationCopies[] = resp.data;
+          this.idCopias = datos[0].id;
+          this.copyDestinationNumber = datos[0].copyDestinationNumber;
+
+          if (datos[0] !== null && datos[0] !== undefined) {
+            this.nrSelecttypePerson_I =
+              datos[0].personExtInt === 'S' ? 'S' : 'I';
+            this.form.get('typePerson_I').setValue(datos[0].personExtInt);
+            if (this.nrSelecttypePerson_I === 'I') {
+              this.form.get('senderUser_I').setValue(datos[0].recipientCopy);
+              this.form
+                .get('personaExt_I')
+                .setValue(this.form.get('senderUser_I').value);
+            } else {
+              this.form.get('senderUser_I').setValue(null);
+              this.form.get('personaExt_I').setValue(datos[0].namePersonExt);
+            }
+          }
+
+          if (datos[1] !== null && datos[1] !== undefined) {
+            this.nrSelecttypePerson = datos[1].personExtInt === 'S' ? 'S' : 'I';
+            this.form.get('typePerson').setValue(datos[1].personExtInt);
+            if (this.nrSelecttypePerson === 'I') {
+              this.form.get('senderUser').setValue(datos[1].recipientCopy);
+              this.form
+                .get('personaExt')
+                .setValue(this.form.get('senderUser').value);
+            } else {
+              this.form.get('senderUser').setValue(null);
+              this.form.get('personaExt').setValue(datos[1].namePersonExt);
+            }
+          }
         },
         error: errror => {
           this.onLoadToast('error', 'Error', errror.error.message);
@@ -519,21 +564,73 @@ carga la  información de la parte media de la página
     );
   }
 
+  usersExt($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsersExt(params).subscribe();
+  }
+
+  getAllUsersExt(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.usersExtCombo = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.usersExtCombo = new DefaultSelect(response.data, response.count);
+      })
+    );
+  }
+
   /*====================================================================
     método para actualizar el dictamen en la parte del body
 =======================================================================*/
   updateDictamen() {
-    let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
-      this.form
-    );
-    console.warn(JSON.stringify(ofis));
+    /*
+   let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(this.form);
     this.oficialDictationService.update(ofis).subscribe({
       next: resp => {
         this.onLoadToast('info', 'info', resp.message[0]);
-        console.log(resp);
       },
       error: err => {
         this.onLoadToast('error', 'Error', err.error.message);
+      },
+    });
+
+let data:Partial<IJobDictumTexts> = this.getDatosToUpdateDictamenBodyText(this.form);
+
+this.jobDictumTextsServices
+               .update(data)
+               .subscribe({
+                  next : resp => {
+                           this.onLoadToast('success', 'success', resp.message[0]);       
+                  },
+                  error : erro => {
+                     this.onLoadToast('error', 'Error', erro.error.message);
+                  },
+               });
+    
+*/
+
+    let obj = {
+      id: this.idCopias,
+      copyDestinationNumber: this.copyDestinationNumber,
+      typeDictamination: this.form.get('typeDict').value,
+      recipientCopy: this.form.get('typeDict').value,
+      numberOfDicta: this.form.get('registerNumber').value,
+      personExtInt: this.form.get('typePerson_I').value,
+      namePersonExt: this.form.get('personaExt_I').value,
+      registerNumber: this.form.get('registerNumber').value,
+    };
+
+    this.dictationService.updateUserByOficNum(obj).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp[0].message);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
   }
@@ -553,6 +650,17 @@ carga la  información de la parte media de la página
       text3: f.value.paragraphOptional,
       text2To: f.value.descriptionSender,
       cveChargeRem: f.value.valueCharge,
+    };
+  }
+
+  getDatosToUpdateDictamenBodyText(f: FormGroup) {
+    return {
+      dictatesNumber: this.dictatesNumber,
+      rulingType: this.rulingType,
+      textx: f.value.masInfo_1,
+      textoy: f.value.masInfo_2,
+      textoz: f.value.masInfo_3,
+      recordNumber: this.recordNumber,
     };
   }
 
@@ -611,11 +719,12 @@ carga la  información de la parte media de la página
     });
   }
 
+  /*
   get extPersonArray() {
     return this.form.get('extPerson') as FormArray;
   }
 
-  /*
+
 addExtPersonArray(){
 
 const filterForm = this.fb.group({
@@ -645,5 +754,56 @@ const filterForm = this.fb.group({
         }
       },
     });
+  }
+
+  getPartBodyInputs() {
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams
+      .getValue()
+      .addFilter(
+        'dictatesNumber',
+        this.form.value.registerNumber,
+        SearchFilter.EQ
+      );
+    this.jobDictumTextsServices
+      .getAll(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          console.log('  jobDictumTextsServices  ');
+          console.log(resp.data);
+          this.dictatesNumber = resp.data[0].dictatesNumber;
+          this.rulingType = resp.data[0].rulingType;
+          this.recordNumber = resp.data[0].recordNumber;
+          this.form.get('masInfo_1').setValue(resp.data[0].textx);
+          this.form.get('masInfo_2').setValue(resp.data[0].textoy);
+          this.form.get('masInfo_3').setValue(resp.data[0].textoz);
+        },
+        error: erro => {
+          this.onLoadToast('error', 'Error', erro.error.message);
+        },
+      });
+  }
+
+  insertRegistroExtCCP(data: IDictationCopies) {
+    this.dictationService.createPersonExt(data).subscribe({
+      next: resp => {
+        this.onLoadToast('warning', 'Info', resp);
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+
+    /*
+ let data:IDictationCopies {
+  numberOfDicta: string;
+  typeDictamination: string;
+  recipientCopy: string;
+  copyDestinationNumber: number;
+  personExtInt: string;
+  namePersonExt: string;
+  registerNumber: number;
+}
+*/
   }
 }

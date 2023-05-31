@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   Component,
   EventEmitter,
@@ -16,6 +17,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { environment } from 'src/environments/environment';
 import { SelectFormComponent } from '../../shared-forms/select-form/select-form.component';
 
 @Component({
@@ -29,6 +31,7 @@ export class TableReplaceColumnModalComponent
   extends BasePage
   implements OnInit
 {
+  url: string = environment.API_URL;
   form: FormGroup; // Input requerido al llamar el modal
   formField: string;
   label: string;
@@ -40,6 +43,7 @@ export class TableReplaceColumnModalComponent
   titleColumnToReplace: string = ''; // nombre de la columna a reemplazar en plura
   tableData: any[] = []; // Input requerido al llamar el modal
   columnsType: any = {}; // Input requerido al llamar el modal
+  selectFirstInput = true;
   // service: any; //
   // dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal
   idSelect: string; // Input requerido al llamar el modal
@@ -48,6 +52,7 @@ export class TableReplaceColumnModalComponent
   paramsControl: FilterParams = new FilterParams(); // Input requerido al llamar el modal
   labelTemplate: TemplateRef<any> = null;
   optionTemplate: TemplateRef<any> = null;
+  disabled = false;
   // paramFilter = 'search';
   // operator = SearchFilter.EQ;
   private _data: any[];
@@ -64,8 +69,55 @@ export class TableReplaceColumnModalComponent
   //   return this.dataObservableFn(this.service, this.paramsControl.getParams());
   // }
 
-  constructor(private modalRef: BsModalRef) {
+  constructor(private modalRef: BsModalRef, private http: HttpClient) {
     super();
+  }
+
+  search() {
+    const params: any = {
+      page: 1,
+      limit: 10,
+    };
+    let text = this.form.get(this.formField)
+      ? this.form.get(this.formField).value
+      : '';
+    if (text) {
+      if (this.prefixSearch) {
+        text = `${this.prefixSearch}:${text}`;
+      }
+      params[this.paramSearch] = text;
+    }
+    // const mParams =
+    //   this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
+    this.http
+      .get(`${this.url}${this.path}`, {
+        params,
+      })
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.onLoadToast(
+              'success',
+              `${this.label} ${this.form.get(this.formField).value} válido`
+            );
+            this.disabled = false;
+          } else {
+            this.onLoadToast(
+              'error',
+              `${this.label} ${this.form.get(this.formField).value} no válido`
+            );
+            this.disabled = true;
+          }
+        },
+        error: err => {
+          this.onLoadToast(
+            'error',
+            `${this.label} ${this.form.get(this.formField).value} no válido`
+          );
+          this.disabled = true;
+        },
+      });
   }
 
   ngOnInit(): void {

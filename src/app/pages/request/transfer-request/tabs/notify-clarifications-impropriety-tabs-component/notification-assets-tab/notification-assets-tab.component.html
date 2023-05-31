@@ -280,6 +280,9 @@
                     [source]="data"
                     (userRowSelect)="goodSelect($event.selected)">
                   </ng2-smart-table>
+                  <!-- <div class="pt-2">
+                    <span>Seleccione un bien para ver su notificación</span>
+                  </div> -->
                   <app-pagination
                     [params]="params"
                     [totalItems]="totalItems"></app-pagination>
@@ -370,6 +373,7 @@
                     (userRowSelect)="notifyAssetRowSelected($event)"
                     (rowSelect)="selectRow($event.data)">
                   </ng2-smart-table>
+
                   <app-pagination
                     [params]="params2"
                     [totalItems]="totalItems2"></app-pagination>

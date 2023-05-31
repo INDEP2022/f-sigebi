@@ -43,11 +43,17 @@
         </form>
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettingsNotificaciones"
-          [source]="dataTableNotifications">
-        </ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettingsNotificaciones"
+            (userRowSelect)="selectRowNotification($event)"
+            [source]="dataTableNotifications">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsNotifications"
+            [totalItems]="totalItemsNotificaciones"></app-pagination>
+        </div>
       </div>
     </div>
     <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
@@ -56,12 +62,19 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
         <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettingsBienes"
-          [source]="dataTableBienes"
-          (userRowSelect)="rowSelected($event)">
-        </ng2-smart-table>
+        <div
+          [class]="isLoadingGood ? 'table-loading' : ''"
+          class="overflow-auto">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="tableSettingsBienes"
+            [source]="dataTableBienes"
+            (userRowSelect)="rowSelected($event)">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsGood"
+            [totalItems]="totalItemsGood"></app-pagination>
+        </div>
         <br />
         <span class="badge m-2 badge-pill bg-primary"
           >&#42;&#42;Disponibles</span
@@ -110,7 +123,10 @@
           <form-field
             [control]="form.get('wheelNumber')"
             label="No&#46; Volante">
-            <input class="form-control" formControlName="wheelNumber" />
+            <input
+              readonly
+              class="form-control"
+              formControlName="wheelNumber" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
