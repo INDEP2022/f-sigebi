@@ -185,10 +185,14 @@ export class JuridicalRulingGComponent
       },
     },
     rowClassFunction: (row: any) => {
-      if (row.data.status === 'STA') {
-        return 'bg-secondary text-white';
-      } else {
+      if (
+        row.data.status === 'STA' ||
+        row.data.status === 'ROP' ||
+        row.data.status === 'ADM'
+      ) {
         return 'bg-success text-white';
+      } else {
+        return 'bg-dark text-white';
       }
     },
     noDataMessage: 'No se encontrarón registros',
