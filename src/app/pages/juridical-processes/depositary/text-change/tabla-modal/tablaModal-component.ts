@@ -85,11 +85,11 @@ export class tablaModalComponent extends BasePage implements OnInit {
       ...this.settings,
       hideSubHeader: false,
       actions: {
-        columnTitle: 'Acciones',
+        columnTitle: 'Sel.',
         edit: true,
         delete: false,
         add: false,
-        position: 'right',
+        position: 'left',
       },
       columns: { ...TEXT_CHANGE_COLUMNS },
     };
