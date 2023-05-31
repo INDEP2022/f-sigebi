@@ -9,31 +9,16 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /* goodTypeName: {
-    title: 'Tipo de Bien',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionRelevantType: {
     title: 'Tipo de Bien',
     type: 'string',
     sort: false,
   },
-  /* physicalStatusName: {
-    title: 'Estado Físico',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  /* stateConservationName: {
-    title: 'Estado de Conservación',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
@@ -44,11 +29,6 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /* ligieUnit: {
-    title: 'Unidad de Medida de la Ligie',
-    type: 'string',
-    sort: false,
-  }, */
   measureUnitLigie: {
     title: 'Unidad de Medida de la Ligie',
     type: 'string',
@@ -59,21 +39,11 @@ export const ASSETS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  /* destinyLigieName: {
-    title: 'Destino Ligie',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  /* transferentDestinyName: {
-    title: 'Destino Transferente',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',

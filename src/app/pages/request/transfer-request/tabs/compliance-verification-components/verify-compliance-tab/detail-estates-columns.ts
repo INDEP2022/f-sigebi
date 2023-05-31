@@ -21,11 +21,6 @@ export const DETAIL_ESTATE_COLUMNS = {
     onComponentInitFunction(instance?: any) {},
     sort: false,
   },
-  /* goodTypeName: {
-    title: 'Tipo Bien',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionRelevantType: {
     title: 'Tipo Bien',
     type: 'string',
@@ -36,15 +31,6 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /* unitMeasureName: {
-    title: 'Unidad de Medida Transferente',
-    type: 'custom',
-    class: 'custom-field',
-    filter: false,
-    renderComponent: SelectInputComponent,
-    onComponentInitFunction(instance?: any) {},
-    sort: false,
-  }, */
   measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'custom',
@@ -59,51 +45,27 @@ export const DETAIL_ESTATE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /* physicstateName: {
-    title: 'Estado Físico',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  /*  stateConservationName: {
-    title: 'Estado de Conservación',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  /* destinyName: {
-    title: 'Destino Ligie',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  /* ligieUnit: {
-    title: 'Unidad de Medida Ligie',
-    type: 'string',
-    sort: false,
-  }, */
+
   measureUnitLigie: {
     title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },
-  /* transferentDestinyName: {
-    title: 'Destino Transferente',
-    type: 'string',
-    sort: false,
-  }, */
   descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',
