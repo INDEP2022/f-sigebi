@@ -169,6 +169,39 @@
       </form-field>
     </div>
   </div>
+  <!--div class="row pl-3"></div-->
+  <hr />
+  <div class="ch-content" header>
+    <h5 class="title">C&#46;C&#46;P&#46;</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div>
+        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="filtroPersonaExt"
+              (edit)="openForm($event.data)"
+              (delete)="showDeleteAlert($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
 
   <!--                      modulo                          
   <ng-container
@@ -180,8 +213,8 @@
       formArrayName="i"></app-form-array-oficio>
   </ng-container>
 -->
-  <div class="row pl-3">C&#46;C&#46;P&#46;</div>
-  <div class="row mt-3">
+
+  <!--div class="row mt-3">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
       <form-field [control]="form.get('typePerson_I')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson_I">
@@ -228,9 +261,9 @@
           [readonly]="!(form.get('typePerson_I').value === 'E')" />
       </form-field>
     </div>
-  </div>
+  </div-->
 
-  <div class="row mt-3">
+  <!--div class="row mt-3">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-4">
       <form-field [control]="form.get('typePerson')" label="Tipo Persona">
         <select class="form-control" formControlName="typePerson">
@@ -278,7 +311,7 @@
           [readonly]="!(form.get('typePerson').value === 'E')" />
       </form-field>
     </div>
-  </div>
+  </div-->
 
   <hr />
   <div class="row mb-5">
