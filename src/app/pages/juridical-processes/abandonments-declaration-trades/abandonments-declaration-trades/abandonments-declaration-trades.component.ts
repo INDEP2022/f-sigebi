@@ -1974,6 +1974,17 @@ export class AbandonmentsDeclarationTradesComponent
         this.m_oficio_gestion.cveManagement == null &&
         this.m_oficio_gestion.managementNumber == null
       ) {
+        // const nextValMOficioGestio = await this.getMOficioGestion__(1);
+        // const _params = new ListParams()
+        // _params['limit'] = 1;
+        // this.mJobManagementService.getAll(_params).subscribe({
+        //   next: resp => {
+        let contNext = 9999999;
+
+        // let contNext = parseInt(resp.data[0].managementNumber) + 1
+        this.loading = false;
+
+        this.m_oficio_gestion.managementNumber = contNext + '';
         this.m_oficio_gestion.cveManagement = `DCB/DEBM/CJBM/?/2023`;
         this.cveManagement = `DCB/DEBM/CJBM/?/2023`;
         this.m_oficio_gestion.statusOf = 'EN REVISION';
