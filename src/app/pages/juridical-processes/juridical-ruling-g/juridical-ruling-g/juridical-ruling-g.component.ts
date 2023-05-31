@@ -340,10 +340,6 @@ export class JuridicalRulingGComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
-    if (this.expedientesForm.get('tipoDictaminacion').value == 'PROCEDENCIA') {
-      this.showCriminalCase = true;
-      console.log('preuybasasfasfasf');
-    }
     // this.activatedRoute.queryParams.subscribe((params: any) => {
     //   this.expedientesForm.get('noExpediente').setValue(params?.expediente);
     //   this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
@@ -386,6 +382,7 @@ export class JuridicalRulingGComponent
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
+      criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       autoriza_nombre: [null, [Validators.pattern(STRING_PATTERN)]],
       cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       estatus: [null],
@@ -411,6 +408,9 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm.get('wheelNumber').setValue(null);
     this.activatedRoute.queryParams.subscribe((params: any) => {
       this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      if (params.tipoDic) {
+        this.showCriminalCase = true;
+      }
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
       this.expedientesForm.get('noVolante').setValue(params?.volante);
       this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
@@ -462,6 +462,7 @@ export class JuridicalRulingGComponent
 
     // ..dictaminación
     this.dictaminacionesForm.get('wheelNumber').setValue(null);
+    this.dictaminacionesForm.get('criminalCase').setValue(null);
     this.dictaminacionesForm.get('etiqueta').setValue(null);
     this.dictaminacionesForm.get('fechaPPFF').setValue(null);
     this.dictaminacionesForm.get('fechaInstructora').setValue(null);
@@ -515,6 +516,7 @@ export class JuridicalRulingGComponent
     this.loadExpedientInfo(noExpediente).then(({ json }) => {
       json
         .then(res => {
+          console.log('fecha dic', res.data[0].dictDate);
           this.dictNumber = res.data[0].id;
           // this.wheelNumber = res.data[0].wheelNumber;
           this.delegationDictNumber = res.data[0].delegationDictNumber;
@@ -562,6 +564,7 @@ export class JuridicalRulingGComponent
           this.dictaminacionesForm
             .get('estatus')
             .setValue(res.data[0].statusDict || undefined);
+          console.log(res.data[0].typeDict);
           if (res.data[0].typeDict == 'PROCEDENCIA') {
             this.buttonDisabled = true;
           }
