@@ -146,14 +146,13 @@
                 value="{{ se_refiere_a.C }}" />
             </form-radio>
           </div>
-          <div class="col-md-1">
-            <form-radio label="{{ se_refiere_a.D }}">
-              <input
-                [attr.disabled]="se_refiere_a_Disabled.D"
-                type="radio"
-                formControlName="checkText"
-                value="{{ se_refiere_a.D }}" />
-            </form-radio>
+          <div class="col-md-1 text-right">
+            <button
+              type="button"
+              class="btn btn-success active btn-sm m-2 p-2"
+              (click)="changeOffice()">
+              Cambio
+            </button>
           </div>
         </div>
         <div class="col-md-12 mb-3">
@@ -254,6 +253,7 @@
             Respuestas FGR
           </button>
         </div>
+        <br />
         <br />
       </div>
       <hr class="row" />
