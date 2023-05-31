@@ -19,16 +19,16 @@ export const WAREHOUSE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  DetManager: {
-    title: 'Responsable',
-    type: 'string',
-    sort: false,
-  },
-  detType: {
-    title: 'Tipo',
-    type: 'string',
-    sort: false,
-  },
+  // DetManager: {
+  //   title: 'Responsable',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // detType: {
+  //   title: 'Tipo',
+  //   type: 'string',
+  //   sort: false,
+  // },
   // registerNumber: {
   //   title: 'No. de registro',
   //   type: 'string',
