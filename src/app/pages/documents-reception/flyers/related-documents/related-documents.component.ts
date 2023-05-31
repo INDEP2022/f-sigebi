@@ -945,7 +945,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         next: data => {
           this.cities = new DefaultSelect(
             data.data.map(i => {
-              i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
+              i.nameCity = i.idCity + ' -- ' + i.legendOffice;
               return i;
             }),
             data.count
