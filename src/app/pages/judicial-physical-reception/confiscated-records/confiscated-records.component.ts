@@ -63,6 +63,7 @@ import {
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from './edo-fisico/edo-fisico.component.component';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 
 @Component({
   selector: 'app-confiscated-records',
@@ -238,12 +239,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private router: Router,
     private serviceGoodProcess: GoodProcessService,
     private modalService: BsModalService,
-    private serviceExpediente: ExpedientService,
     private serviceProgrammingGood: ProgrammingGoodService,
     private serviceProceeding: ProceedingsService,
     private serviceClassifyGood: ClassifyGoodService,
     private serviceGoodQuery: GoodsQueryService,
-    private serviceTransferent: TransferenteService
+    private serviceTransferent: TransferenteService,
+    private serviceHistoryGood: HistoryGoodService
   ) {
     super();
   }
@@ -267,6 +268,16 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('folio').valueChanges.subscribe(res => {
       console.log(res);
     });
+
+    const paramsF = new FilterParams()
+    paramsF.addFilter('propertyNum', 737766)
+    paramsF.sortBy = 'changeDate'
+    this.serviceHistoryGood.getAllFilter(paramsF.getParams()).subscribe(res => {
+      console.log(res)
+    },
+    err => {
+      console.log(err)
+    })
 
     /* this.applyEdoFis(); */
   }
@@ -969,6 +980,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.statusProceeding = '';
     this.numberExpedient = this.form.get('expediente').value;
     this.noRequireAct1();
+    this.transferSelect = new DefaultSelect()
 
     const btn = document.getElementById('expedient-number');
 
@@ -1092,7 +1104,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods/v1',
+      '/pages/judicial-physical-reception/partializes-general-goods',
     ]);
   }
 
@@ -1492,11 +1504,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   nextProceeding() {
     this.nextProce = false;
     this.prevProce = false;
+    this.act2Valid = false;
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
       console.log(this.numberProceeding);
       if (this.numberProceeding <= this.proceedingData.length - 1) {
-        this.act2Valid = false;
         const dataRes = JSON.parse(
           JSON.stringify(this.proceedingData[this.numberProceeding])
         );
@@ -1509,7 +1521,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         );
         this.clearInputs();
         this.fillIncomeProceeding(dataRes, 'nextProceeding');
-        this.act2Valid = false;
         /* console.log('Primer else');
         this.inputsNewProceeding();
 
@@ -2724,6 +2735,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       .PADelActaEntrega(realData.id)
                       .subscribe(
                         res => {
+            
+
+
                           this.form
                             .get('expediente')
                             .setValue(this.numberExpedient);
@@ -2902,11 +2916,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const edoFis: any = await this.getIndEdoFisAndVColumna(data);
     console.log(edoFis);
     if (edoFis.V_NO_COLUMNA === 0) {
-      await this.validatePreInsert(data);
+      console.log(edoFis.V_NO_COLUMNA)
       this.form.get(formName).setValue('OTRO');
-    } else {
       await this.validatePreInsert(data);
+    } else {
+      console.log(edoFis.V_NO_COLUMNA)
       this.form.get(formName).setValue(data[`val${edoFis.V_NO_COLUMNA}`]);
+      await this.validatePreInsert(data);
     }
   }
 
@@ -3237,7 +3253,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                               err => {
                                 this.alert(
                                   'error',
-                                  'Ocurrió un erro inesperado al intentar mover el bien',
+                                  'Ocurrió un error inesperado al intentar mover el bien',
                                   'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
                                 );
                               }

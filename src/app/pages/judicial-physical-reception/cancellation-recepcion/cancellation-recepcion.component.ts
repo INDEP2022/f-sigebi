@@ -466,7 +466,6 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     );
   }
 
-  //!VALIDAR NEGOCIO PARA TRAER BIENES
   getTransfer() {
     this.serviceExpedient
       .getById(this.form.get('expediente').value)
@@ -1293,7 +1292,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   //Botones
   goParcializacion() {
     this.router.navigate([
-      '/pages/judicial-physical-reception/partializes-general-goods/v1',
+      '/pages/judicial-physical-reception/partializes-general-goods',
     ]);
   }
 
