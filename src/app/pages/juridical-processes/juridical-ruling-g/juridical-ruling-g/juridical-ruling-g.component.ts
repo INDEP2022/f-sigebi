@@ -379,6 +379,7 @@ export class JuridicalRulingGComponent
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
+      criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       autoriza_nombre: [null, [Validators.pattern(STRING_PATTERN)]],
       cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       estatus: [null],
@@ -448,13 +449,13 @@ export class JuridicalRulingGComponent
     this.expedientesForm.get('noDictaminacion').setValue(null);
     this.expedientesForm.get('tipoDictaminacion').setValue(null);
     this.expedientesForm.get('averiguacionPrevia').setValue(null);
-    this.expedientesForm.get('causaPenal').setValue(null);
     this.expedientesForm.get('delito').setValue(null);
     this.expedientesForm.get('observaciones').setValue(null);
     this.expedientesForm.get('noVolante').setValue(null);
 
     // ..dictaminación
     this.dictaminacionesForm.get('wheelNumber').setValue(null);
+    this.dictaminacionesForm.get('criminalCase').setValue(null);
     this.dictaminacionesForm.get('etiqueta').setValue(null);
     this.dictaminacionesForm.get('fechaPPFF').setValue(null);
     this.dictaminacionesForm.get('fechaInstructora').setValue(null);
@@ -481,8 +482,8 @@ export class JuridicalRulingGComponent
             .get('autoriza_nombre')
             .setValue(response.indicatedName);
           // ..Datos del expediente
-          this.expedientesForm
-            .get('causaPenal')
+          this.dictaminacionesForm
+            .get('criminalCase')
             .setValue(response.criminalCase);
           this.expedientesForm
             .get('averiguacionPrevia')
