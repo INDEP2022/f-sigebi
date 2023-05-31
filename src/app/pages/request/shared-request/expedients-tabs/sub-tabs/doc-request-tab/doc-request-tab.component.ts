@@ -65,6 +65,7 @@ export class DocRequestTabComponent
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
   paramsRegDel = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
+  paragraphs1: any[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
@@ -216,6 +217,7 @@ export class DocRequestTabComponent
 
     this.docRequestForm.get('noRequest').setValue(this.idRequest);
   }
+  private data: any[][] = [];
 
   getData(params: ListParams) {
     this.loading = true;
@@ -228,12 +230,12 @@ export class DocRequestTabComponent
       .getDocumentos(idSolicitud, params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: async data => {
+        next: async res => {
           //console.log('docs', data);
           const transferent = await this.getInfoRequest();
           if (transferent == 1) {
             console.log('transferente igual a 1');
-            const filterDoc = data.data.filter((item: any) => {
+            const filterDoc = res.data.filter((item: any) => {
               if (
                 item.dDocType == 'Document' &&
                 item.xidTransferente == 1 &&
@@ -267,17 +269,23 @@ export class DocRequestTabComponent
               return items;
             });
 
-            Promise.all(info).then(x => {
-              this.allDataDocReq = x;
-              this.paragraphs.load(x);
-              this.totalItems = this.paragraphs.count();
+            Promise.all(info).then(data => {
+              this.paragraphs1 =
+                res.data.length > 10
+                  ? this.setPaginate([...res.data])
+                  : res.data;
+              this.totalItems = res.data.length;
+
+              //this.allDataDocReq = x;
+              //this.paragraphs.load(x);
+
               this.loading = false;
             });
           }
 
           if (transferent != 1) {
             console.log('transferente diferente a 1');
-            const filterDoc = data.data.filter((item: any) => {
+            const filterDoc = res.data.filter((item: any) => {
               if (
                 (item.dDocType == 'Document' && item.xidBien == '         ') ||
                 item.dDocType == 'Document'
@@ -309,10 +317,16 @@ export class DocRequestTabComponent
               return items;
             });
 
-            Promise.all(info).then(x => {
-              this.allDataDocReq = x;
-              this.paragraphs.load(x);
-              this.totalItems = this.paragraphs.count();
+            Promise.all(info).then(data => {
+              this.paragraphs1 =
+                res.data.length > 10
+                  ? this.setPaginate([...res.data])
+                  : res.data;
+              this.totalItems = res.data.length;
+
+              //this.allDataDocReq = x;
+              //this.paragraphs.load(x);
+
               this.loading = false;
             });
           }
@@ -321,6 +335,20 @@ export class DocRequestTabComponent
           this.loading = false;
         },
       });
+  }
+
+  private setPaginate(value: any[]): any[] {
+    let data: any[] = [];
+    let dataActual: any = [];
+    value.forEach((val, i) => {
+      dataActual.push(val);
+      if ((i + 1) % this.params.value.limit === 0) {
+        this.data.push(dataActual);
+        dataActual = [];
+      }
+    });
+    data = this.data[this.params.value.page - 1];
+    return data;
   }
 
   getInfoRequest() {
@@ -397,6 +425,7 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('transferente getTransferent');
             resolve(data?.nameTransferent);
           },
           error: error => {},
@@ -776,6 +805,7 @@ export class DocRequestTabComponent
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(data => {
+        console.log('transferente getTransfe');
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });
   }

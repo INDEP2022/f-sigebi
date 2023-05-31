@@ -101,6 +101,7 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
   }
 
   getGoodsRequest() {
+    this.loading = true;
     if (this.idRequest) {
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.goodService.getAll(this.params.getValue()).subscribe({
@@ -126,9 +127,12 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
             this.paragraphs = data.data;
             this.allDataGood = this.paragraphs;
             this.totalItems = data.count;
+            this.loading = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.loading = false;
+        },
       });
     } else {
     }
