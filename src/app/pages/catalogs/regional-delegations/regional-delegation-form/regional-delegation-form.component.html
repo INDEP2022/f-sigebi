@@ -36,17 +36,15 @@
         <div class="col-md-4">
           <form-field
             [control]="regionalDelegationForm.get('idGeographicZona')">
-            <!--  <input
-              type="text"
-              class="form-control"
-              formControlName="idGeographicZona" /> -->
             <ngx-select
               (fetchItems)="getGeoZone($event)"
               [form]="regionalDelegationForm"
               [data]="selectGeoZone"
               bindLabel="id"
+              [searchable]="true"
               label="Id zona geogr&aacute;fica"
-              control="idGeographicZona">
+              control="idGeographicZona"
+              (change)="fillSelectZone()">
             </ngx-select>
           </form-field>
         </div>
@@ -94,6 +92,7 @@
               (fetchItems)="getCity($event)"
               [form]="regionalDelegationForm"
               [data]="selectCity"
+              [searchable]="true"
               bindLabel="nameCity"
               label="Ciudad"
               control="city"

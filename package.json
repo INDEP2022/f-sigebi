@@ -30,6 +30,7 @@
     "@angular/router": "^14.2.0",
     "@auth0/angular-jwt": "^5.0.2",
     "@ng-select/ng-select": "^9.0.2",
+    "@ngrx/effects": "^16.0.0",
     "@ngrx/store": "^14.3.2",
     "@ngrx/store-devtools": "^14.3.2",
     "apexcharts": "^3.36.0",

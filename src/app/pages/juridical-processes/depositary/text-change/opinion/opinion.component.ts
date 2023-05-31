@@ -199,9 +199,9 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
-        position: 'right',
+        position: 'left',
       },
     };
   }
@@ -297,8 +297,15 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
 
     this.filterParamsLocal
       .getValue()
-      .addFilter('fecha_inserto', new Date().getFullYear(), SearchFilter.EQ);
-
+      .addFilter(
+        'entryDate',
+        new Date().getFullYear() +
+          '-01-01' +
+          ',' +
+          new Date().getFullYear() +
+          '-12-31',
+        SearchFilter.BTW
+      );
     this.onEnterSearch(this.filterParamsLocal);
     this.verBoton = true;
   }
@@ -427,6 +434,7 @@ carga la  información de la parte media de la página
         },
       });
   }
+
   getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
     let variable: IDictation = JSON.parse(JSON.stringify(datos));
@@ -435,17 +443,11 @@ carga la  información de la parte media de la página
       .getValue()
       .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
 
-    //this.filterParams.getValue().addFilter('id', 36, SearchFilter.EQ);
-
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
-          console.log(' EXTERNOS ', JSON.stringify(resp.data));
           this.dataExt = resp.data;
-          let datos: IDictationCopies[] = resp.data;
-          this.idCopias = datos[0].id;
-          this.copyDestinationNumber = datos[0].copyDestinationNumber;
         },
         error: errror => {
           this.onLoadToast('error', 'Error', errror.error.message);
@@ -765,7 +767,7 @@ carga la  información de la parte media de la página
   insertRegistroExtCCP(data: IDictationCopies) {
     this.dictationService.createPersonExt(data).subscribe({
       next: resp => {
-        this.onLoadToast('warning', 'Info', resp);
+        this.onLoadToast('warning', 'Info', JSON.stringify(resp));
       },
       error: errror => {
         this.onLoadToast('error', 'Error', errror.error.message);
@@ -787,10 +789,18 @@ carga la  información de la parte media de la página
   }
 
   delete(id: number) {
-    alert('BORRARO ' + id);
-    //  this.legendService.remove(id).subscribe({
-    //  next: () => this.getDeductives(),
-    //});
+    alert('   delete  ');
+    /*
+ this.dictationService
+      .deleteCopiesOfficialOpinion()
+      .subscribe({
+        next: resp => {
+        this.refreshTabla();    
+        },
+        error: errror => {
+          this.onLoadToast('error', 'Error', errror.error.message);
+        },
+      });*/
   }
 
   openForm(legend?: ILegend) {
@@ -800,7 +810,6 @@ carga la  información de la parte media de la página
       callback: (next: boolean, datos: any) => {
         if (next) {
           this.seteaTabla(datos);
-          alert('next' + next + ' ' + datos);
         }
       },
     };
@@ -809,20 +818,48 @@ carga la  información de la parte media de la página
   close() {
     this.modalRef.hide();
   }
+
   seteaTabla(datos: any) {
     let dato = JSON.parse(JSON.stringify(datos));
+    /*let obj:IDictationCopies = {
+        id: 3,
+        numberOfDicta: "165564",
+        typeDictamination: this.form.get('typeDict').value,
+        recipientCopy: this.form.get('addressee').value,
+        copyDestinationNumber: 0,
+        personExtInt: dato.typePerson_I,
+        namePersonExt: dato.personaExt_I,
+        registerNumber: this.form.get('registerNumber').value}*/
 
-    let obj: IDictationCopies = {
-      id: this.idCopias,
-      copyDestinationNumber: this.copyDestinationNumber,
-      typeDictamination: this.form.get('typeDict').value,
-      recipientCopy: this.form.get('typeDict').value,
-      numberOfDicta: this.form.get('registerNumber').value,
-      personExtInt: dato.typePerson_I,
-      namePersonExt: dato.personaExt_I,
-      registerNumber: this.form.get('registerNumber').value,
+    let data: IDictationCopies = {
+      numberOfDicta: '165564',
+      typeDictamination: 'PROCEDENCIA',
+      recipientCopy: 'VAZNAR',
+      copyDestinationNumber: 0,
+      personExtInt: 'I',
+      namePersonExt: '',
+      registerNumber: 14969526,
     };
 
-    this.dataExt.push(obj);
+    this.insertRegistroExtCCP(data);
+    this.refreshTabla();
+  }
+
+  refreshTabla() {
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams
+      .getValue()
+      .addFilter('id', this.form.get('expedientNumber').value, SearchFilter.EQ);
+
+    this.dictationService
+      .findUserByOficNum(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.dataExt = resp.data;
+        },
+        error: errror => {
+          this.onLoadToast('error', 'Error', errror.error.message);
+        },
+      });
   }
 }

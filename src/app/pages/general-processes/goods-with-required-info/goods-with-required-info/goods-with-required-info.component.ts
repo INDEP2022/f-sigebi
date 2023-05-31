@@ -21,7 +21,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() customEvent = new EventEmitter();
+  @Output() customEvent = new EventEmitter<string>();
 
   constructor(
     private fb: FormBuilder,

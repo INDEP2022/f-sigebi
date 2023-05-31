@@ -27,11 +27,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   @Input() set press(value: boolean) {
     // debugger;
     if (this.service) {
-      if (
-        this.formGood?.invalid ||
-        this.loading ||
-        this.bienesPar.length === 0
-      ) {
+      if (!this.good || this.loading || this.bienesPar.length === 0) {
         return;
       }
       this.apply();
@@ -243,8 +239,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       const { status, process } = await this.getStatusProcessxPantalla();
       this.good.status = status;
       this.good.extDomProcess = process;
-      this.formGood.get('estatus').setValue(status);
-      this.formGood.get('extDom').setValue(process);
+      // this.formGood.get('estatus').setValue(status);
+      // this.formGood.get('extDom').setValue(process);
     } catch (x) {
       // this.onLoadToast(
       //   'error',
@@ -538,7 +534,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       //   item.avaluo = this.good.appraisedValue;
       // }
       item.avaluo = +(
-        +(this.formGood.get('avaluo').value + '') - this.service.sumAvaluo
+        +(this.good.appraisedValue + '') - this.service.sumAvaluo
       ).toFixed(2);
       if (this.validationClasif()) {
         item.importe = +(this.saldo.value + '');
@@ -625,7 +621,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       0,
       observations.length > 1250 ? 1250 : observations.length
     );
-    this.formGood.get('descripcion').setValue(this.good.description);
+    // this.formGood.get('descripcion').setValue(this.good.description);
     if (this.service.noActa > 0) {
       await firstValueFrom(
         this.detailReceptionService.deleteById(
@@ -637,15 +633,30 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     this.saldo.setValue(0);
     // this.service.pageLoading = false;
     this.loader.load = false;
+    // this.onLoadToast(
+    //   'success',
+    //   'Parcialización',
+    //   'La parcialización de bienes se realizo con éxito'
+    // );
+    try {
+      await firstValueFrom(this.goodService.update(this.good));
+      this.onLoadToast(
+        'success',
+        'Parcialización',
+        'La parcialización de bienes se realizo con éxito'
+      );
+    } catch (x) {
+      this.onLoadToast(
+        'error',
+        'Parcialización',
+        'Error al actualizar el bien ' + this.good.goodId
+      );
+    }
+
     // this.service.bienesPar = [];
     // this.service.pagedBienesPar = [];
     // this.service.formGood.reset();
     // this.service.formControl.reset();
-    this.onLoadToast(
-      'success',
-      'Parcialización',
-      'La parcialización de bienes se realizo con éxito'
-    );
   }
 
   private async applyContent() {
