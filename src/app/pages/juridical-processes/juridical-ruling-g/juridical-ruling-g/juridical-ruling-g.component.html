@@ -440,11 +440,15 @@
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar
         </button>
-        <button
+        <!-- <button
           class="btn btn-danger btn-sm active m-3 text-wrap"
           (click)="btnBorrarDictamen()"
           [disabled]="buttonDeleteDisabled">
           Borrar Dictamen
+        </button> -->
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
         <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
