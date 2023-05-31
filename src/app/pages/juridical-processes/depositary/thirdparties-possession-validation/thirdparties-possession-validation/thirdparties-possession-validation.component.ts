@@ -1,18 +1,28 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { showToast } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import {
+  IAccesTrackingXArea,
+  IUsersTracking,
+} from 'src/app/core/models/ms-security/pup-user.model';
 import { IGoodPossessionThirdParty } from 'src/app/core/models/ms-thirdparty-admon/third-party-admon.model';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -121,7 +131,9 @@ export class ThirdpartiesPossessionValidationComponent
     // private historyGoodService: HistoryGoodService,
     private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
     private userService: UsersService,
-    private authService: AuthService // private securityService: SecurityService
+    private authService: AuthService,
+    private securityService: SecurityService,
+    private departmentService: DepartamentService
   ) {
     super();
   }
@@ -198,19 +210,13 @@ export class ThirdpartiesPossessionValidationComponent
     possessionNumber: new FormControl(null),
     steeringwheelNumber: new FormControl(null),
     text: new FormControl(''),
-    usrAddressee: new FormControl(''),
-    usrCcp1: new FormControl(''),
-    usrCcp2: new FormControl(''),
-    usrResponsible: new FormControl(''),
+    usrAddressee: new FormControl(null, Validators.required),
+    usrCcp1: new FormControl(null, Validators.required),
+    usrCcp2: new FormControl(null, Validators.required),
+    usrResponsible: new FormControl(null, Validators.required),
     addressee: new FormControl(null),
   });
-  // get formControlAddressee() {
-  //   return this.formAddressee.get('addressee');
-  // }
-  // formAddressee = new FormGroup({
-  //   addressee: new FormControl(null),
-  // });
-  // goodPosessionThirdParty: IGoodPossessionThirdParty;
+
   getGoodsPosessionThird() {
     const wheelNumber = this.notificationSelected.wheelNumber;
     if (!wheelNumber) {
@@ -219,19 +225,14 @@ export class ThirdpartiesPossessionValidationComponent
     const queryParams = `page=${1}&limit=${10}&filter.steeringwheelNumber=${wheelNumber}`;
 
     this.goodPosessionThirdpartyService.getAll(queryParams).subscribe({
-      next: data => {
-        this.formPositionThirdParty.patchValue(data.data[0]);
-        // this.formPositionThirdParty.get('text').setValue(data.data[0].text);
-        // this.form.get('officeExternalKey').setValue(data.data[0].jobKey);
-        // this.formGood
-        //   .get('delegationCloseNumber')
-        //   .setValue(data.data[0].delegationCloseNumber);
-        // this.formGood.get('numClueNavy').setValue(data.data[0].numClueNavy);
-        // this.formGood.get('closingDate').setValue(data.data[0].closingDate);
-        if (data.data[0].possessionNumber) {
+      next: dataGoodPosessionThirdParty => {
+        const goodPosessionThirdParty = dataGoodPosessionThirdParty.data[0];
+        this.formPositionThirdParty.patchValue(goodPosessionThirdParty);
+        if (goodPosessionThirdParty?.possessionNumber) {
           this.goodPosessionThirdpartyService
             .getAllDetailGoodPossessionThirdParty(
-              'filter.possessionNumber=' + data.data[0].possessionNumber
+              'filter.possessionNumber=' +
+                goodPosessionThirdParty.possessionNumber
             )
             .subscribe({
               next: data => {
@@ -266,7 +267,17 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   updateGoodPosessionThirdParty() {
-    const id = this.formPositionThirdParty.value.steeringwheelNumber;
+    const id = this.formPositionThirdParty.value.usrCcp1;
+    const values = this.formPositionThirdParty.value;
+    const body = {
+      ...values,
+      usrCcp1: values.usrCcp1.usuario,
+      usrCcp2: values.usrCcp2.usuario,
+      usrResponsible: values.usrResponsible.usuario,
+      usrAddressee: values.usrAddressee.usuario,
+    };
+    delete body.addressee;
+    delete body.nbOrigin;
     this.goodPosessionThirdpartyService
       .updateThirdPartyAdmonOffice(id, this.formPositionThirdParty.value)
       .subscribe({});
@@ -368,10 +379,7 @@ export class ThirdpartiesPossessionValidationComponent
   selectRowNotification(event: any) {
     this.notificationSelected = event.data;
     this.formPositionThirdParty.reset();
-    this.detailGoodPosessionThirdParty = null;
-    // this.form
-    //   .get('wheelNumber')
-    //   .setValue(this.notificationSelected.wheelNumber);
+    // this.detailGoodPosessionThirdParty = null;
     this.formPositionThirdParty
       .get('steeringwheelNumber')
       .setValue(this.notificationSelected.wheelNumber);
@@ -516,6 +524,16 @@ export class ThirdpartiesPossessionValidationComponent
       return;
     }
 
+    if (this.formPositionThirdParty.invalid) {
+      this.formPositionThirdParty.markAllAsTouched();
+      showToast({
+        icon: 'error',
+        text: 'Faltan campos por llenar',
+        title: 'Error',
+      });
+      return;
+    }
+
     if (this.formPositionThirdParty.value.jobKey.includes('?')) {
       const year = this.formPositionThirdParty.value.jobKey.substring(
         this.formPositionThirdParty.value.jobKey.lastIndexOf('/') + 1,
@@ -531,9 +549,7 @@ export class ThirdpartiesPossessionValidationComponent
           })
           .pipe(map((res: any) => res.data[0].job))
       );
-
       console.log('office', office);
-
       this.formPositionThirdParty.value.jobKey;
       this.formPositionThirdParty.get('closingDate').setValue(new Date());
       this.formPositionThirdParty.get('numClueNavy').setValue(office);
@@ -801,7 +817,185 @@ export class ThirdpartiesPossessionValidationComponent
     }
   }
 
-  pupGeneratorKey() {}
+  async pupGeneratorKey() {
+    const values = this.formPositionThirdParty.value;
+    if (!values.usrResponsible) {
+      this.alert('info', '', 'Debe especificar el Responsable.');
+      return;
+    }
+    if (!values.usrAddressee) {
+      this.alert('info', '', 'Debe especificar el Destinatario.');
+      return;
+    }
+    if (!values.jobKey) {
+      let segAccessXAreas, _segAccessXAreas;
+      let segUser;
+      let faEtapaCreada;
+      try {
+        faEtapaCreada = await this.getFaEtapaCreda();
+      } catch (ex) {
+        this.alert(
+          'error',
+          'Error',
+          'Error no se pudo obtener la función FA_ETAPACREDA.'
+        );
+        return;
+      }
+
+      try {
+        const params = {
+          user: values.usrResponsible,
+          assigned: 'S',
+        };
+        segAccessXAreas = (await this.getSegAccessXAreas(
+          params
+        )) as IAccesTrackingXArea;
+
+        segUser = (await this.getSegUsers({
+          user: values.usrResponsible,
+        })) as IUsersTracking;
+      } catch (ex) {
+        this.alert(
+          'error',
+          'Error',
+          'No se localizaron datos de la persona que autoriza.'
+        );
+        return;
+      }
+
+      let level4, level5, level3, level2, department;
+      try {
+        const params = new ListParams();
+        params['filter.id'] = segAccessXAreas.departmentNumber;
+        params['filter.numDelegation'] = segAccessXAreas.delegationNumber;
+        params['filter.numSubDelegation'] = segAccessXAreas.subdelegationNumber;
+        params['filter.phaseEdo'] = faEtapaCreada;
+        department = (await this.getDepartment(params)) as IDepartment;
+        if (department.level || department.depend || department.depDelegation) {
+          if (department.level == 4) {
+            level4 = department.dsarea;
+            level5 = segUser.postKey;
+          } else {
+            level4 = segUser.postKey;
+            level3 = department.dsarea;
+          }
+
+          for (let VI = department.level - 1; VI >= 2; VI--) {
+            let _department;
+            try {
+              const params = new ListParams();
+              params['filter.id'] = department.depend;
+              params['filter.numDelegation'] = department.depDelegation;
+              params['filter.phaseEdo'] = faEtapaCreada;
+              _department = (await this.getDepartment(params)) as IDepartment;
+            } catch (ex) {
+              this.alert(
+                'error',
+                'Error',
+                'No se localizó el predecesor de la persona que autoriza.'
+              );
+              return;
+            }
+            if (_department.level == 3) {
+              level3 = _department.dsarea;
+            } else if (_department.level == 2) {
+              level2 = _department.dsarea;
+            }
+            department.depend = _department.depend;
+            department.depDelegation = _department.depDelegation;
+          }
+          try {
+            const params = {
+              user: values.usrAddressee,
+              assigned: 'S',
+            };
+            _segAccessXAreas = (await this.getSegAccessXAreas(
+              params
+            )) as IAccesTrackingXArea;
+          } catch (ex) {
+            this.alert(
+              'error',
+              'Error',
+              'No se localizaron datos del destinatario.'
+            );
+          }
+        }
+      } catch (ex) {
+        this.alert(
+          'error',
+          'Error',
+          'No se localizó la dependencia de la persona que autoriza.'
+        );
+        return;
+      }
+
+      const paramsDepartment = new ListParams();
+      paramsDepartment['filter.numDelegation'] =
+        _segAccessXAreas.delegationNumber;
+      paramsDepartment['filter.id'] = _segAccessXAreas.departmentNumber;
+      paramsDepartment['filter.phaseEdo'] = faEtapaCreada;
+      const __department = await this.getDepartment(paramsDepartment, false);
+      const year = new Date().getFullYear().toString();
+      const month = (new Date().getMonth() + 1).toString();
+
+      let joyKey = `${level2}${level3}${level4}`;
+      if (department.level + 1 == 5) {
+        joyKey += `${level5}`;
+      }
+      joyKey += `/?/${year}/`.trim();
+      this.formPositionThirdParty.get('jobKey').setValue(joyKey);
+    }
+    this.pupPrint();
+  }
+
+  getFaEtapaCreda() {
+    return Promise.resolve('FA_ETAPACREDA(SYSDATE)');
+  }
+
+  getSegAccessXAreas(params: _Params, first: boolean = true) {
+    return firstValueFrom(
+      this.securityService.getAllUsersAccessTracking(params).pipe(
+        map(res => {
+          if (first) {
+            return res.data[0];
+          } else {
+            return res;
+          }
+        })
+      )
+    );
+  }
+
+  getDepartment(
+    params: ListParams,
+    first: boolean = true
+  ): Promise<IListResponse<IDepartment> | IDepartment> {
+    return firstValueFrom(
+      this.departmentService.getAll(params).pipe(
+        map(res => {
+          if (first) {
+            return res.data[0];
+          } else {
+            return res;
+          }
+        })
+      )
+    );
+  }
+
+  getSegUsers(params: _Params, first: boolean = true) {
+    return firstValueFrom(
+      this.securityService.getAllUsersTracker(params).pipe(
+        map(res => {
+          if (first) {
+            return res.data[0];
+          } else {
+            return res;
+          }
+        })
+      )
+    );
+  }
 
   pupPrint() {
     // let params = { ...this.form.value };
