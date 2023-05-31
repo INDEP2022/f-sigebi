@@ -70,7 +70,11 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/${id}`);
   }
-
+  removeRepuves(route: string, formData: Object) {
+    console.log('esto', formData);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}`, { body: { key: formData } });
+  }
   newRemove(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
