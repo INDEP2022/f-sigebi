@@ -212,4 +212,9 @@ export class DictationService extends HttpService {
     const route = `${DictationEndpoints.GetOfficeByYear3}`;
     return this.get(route + `/${anio}`);
   }
+
+  getFaFlagDest(params: any) {
+    const route = `${DictationEndpoints.FaFlagDest}`;
+    return this.post(route, params);
+  }
 }

@@ -58,7 +58,6 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getImagesGood());
-
   }
 
   getImagesGood() {
@@ -75,10 +74,8 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
         if (_data.length > 0) {
           this.documentsSeaData =
-            _data.length > 10
-              ? this.setPaginate([..._data])
-              : _data;
-          this.totalItems = _data.length
+            _data.length > 10 ? this.setPaginate([..._data]) : _data;
+          this.totalItems = _data.length;
           this.loading = false;
         } else {
           this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
@@ -157,7 +154,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(imageUrl),
           type: 'img',
         },
-        callback: (data: any) => { },
+        callback: (data: any) => {},
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal

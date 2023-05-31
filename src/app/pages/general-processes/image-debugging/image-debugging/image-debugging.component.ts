@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IGoodPhoto } from 'src/app/core/models/ms-goodphoto/good-photo.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -20,11 +23,15 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   statusSelected = new DefaultSelect();
   lotIdSelected = new DefaultSelect();
   eventIdSelected = new DefaultSelect();
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  goodPhoto: IGoodPhoto[] = [];
+  totalItems: number = 0;
 
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
-    private comerEventService: ComerEventService
+    private comerEventService: ComerEventService,
+    private goodPhotoService: GoodPhotoService
   ) {
     super();
     this.settings.actions = false;
@@ -44,6 +51,28 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       idEvent: [null, [Validators.required]],
       idLot: [null, [Validators.required]],
       exists: [null, [Validators.required]],
+    });
+  }
+
+  openButon() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodPhoto(new ListParams()));
+  }
+
+  getGoodPhoto(params: ListParams) {
+    this.loading = true;
+    params[
+      'filter.goodNumber'
+    ] = `$eq:${this.form.controls['goodNumber'].value}`;
+    this.goodPhotoService.getFilterGoodPhoto(params).subscribe({
+      next: response => {
+        console.log(response.data);
+        this.goodPhoto = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
     });
   }
 
@@ -73,6 +102,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       this.form.controls['fileNumber'].setValue(null);
       this.form.controls['idEvent'].setValue(null);
       this.form.controls['idLot'].setValue(null);
+      this.openButon();
     } else {
       this.form.controls['goodStatus'].setValue(datos.goodStatus);
       this.form.controls['fileNumber'].setValue(datos.fileNumber);
@@ -115,7 +145,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           },
           error: error => {
             console.log(error);
-            //this.lotIdSelected = new DefaultSelect();
+            this.eventIdSelected = new DefaultSelect();
           },
         });
       },
@@ -125,31 +155,4 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
     });
   }
-
-  /*idLot(datos: any){
-    this.getIdEvent(datos);
-  }
-
-  getIdEvent(data: any) {
-    const datos: any = {};
-    this.comerEventService.getLotId(data.lotId).subscribe({
-      next: resp => {
-        this.comerEventService.geEventId(resp.eventId).subscribe({
-          next: resp => {
-            //console.log(resp);
-            this.form.controls['idEvent'].setValue(resp.id);
-            //this.lotIdSelected = new DefaultSelect(resp.data, resp.count);
-          },
-          error: error => {
-            console.log(error);
-            //this.lotIdSelected = new DefaultSelect();
-          },
-        });
-      },
-      error: error => {
-        console.log(error);
-        //this.lotIdSelected = new DefaultSelect();
-      },
-    });
-  }*/
 }
