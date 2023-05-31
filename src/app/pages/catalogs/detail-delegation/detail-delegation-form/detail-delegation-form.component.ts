@@ -37,28 +37,16 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.detailDelegationForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      location: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      address: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      position: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      mail: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
-      tel1: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
+      location: [null, [Validators.pattern(STRING_PATTERN)]],
+      address: [null, [Validators.pattern(STRING_PATTERN)]],
+      position: [null, [Validators.pattern(STRING_PATTERN)]],
+      area: [null, [Validators.pattern(STRING_PATTERN)]],
+      mail: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      tel1: [null, [Validators.pattern(PHONE_PATTERN)]],
       tel2: [null, [Validators.pattern(PHONE_PATTERN)]],
       tel3: [null, [Validators.pattern(PHONE_PATTERN)]],
-      numberDelegation: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      numberDelegation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.detailDelegation != null) {
       this.edit = true;
