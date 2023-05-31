@@ -56,6 +56,7 @@ export class DocRequestTabComponent
   @Input() typeDoc = '';
   @Input() updateInfo: boolean = true;
   @Input() displayName: string = '';
+  @Input() typeModule?: string = '';
   title: string = '';
   showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
@@ -93,9 +94,9 @@ export class DocRequestTabComponent
     private requestService: RequestService
   ) {
     super();
-    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.idRequest = this.idRequest
+      ? this.idRequest
+      : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
   }
 
   ngOnInit(): void {
@@ -150,6 +151,11 @@ export class DocRequestTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.typeModule != '' && this.typeModule == 'doc-complementary') {
+      this.idRequest = this.activatedRoute.snapshot.paramMap.get(
+        'request'
+      ) as unknown as number;
+    }
     let onChangeCurrentValue = changes['typeDoc'].currentValue;
     let updateInfo = changes['updateInfo']?.currentValue;
     this.typeDoc = onChangeCurrentValue;

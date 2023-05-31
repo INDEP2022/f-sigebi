@@ -325,7 +325,8 @@ export class OfficeComponent extends BasePage implements OnInit {
     const params = {
       no_of_ges: this.form.value.managementNumber,
     };
-    this.siabServiceReport.fetchReport('RGEROFGESTION_EXT', params).subscribe({
+
+    this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
