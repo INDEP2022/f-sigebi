@@ -185,7 +185,7 @@ export class JuridicalRulingGComponent
       },
     },
     rowClassFunction: (row: any) => {
-      if (row.data.status === 'STI') {
+      if (row.data.status === 'STA') {
         return 'bg-secondary text-white';
       } else {
         return 'bg-success text-white';
