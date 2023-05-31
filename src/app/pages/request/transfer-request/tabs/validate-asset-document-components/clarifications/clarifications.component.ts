@@ -24,6 +24,7 @@ import { ClarificationService } from 'src/app/core/services/catalogs/clarificati
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -83,7 +84,8 @@ export class ClarificationsComponent
     private readonly typeRelevantService: TypeRelevantService,
     private readonly genericService: GenericService,
     private readonly goodResDevService: GetGoodResVeService,
-    private readonly chatClarificationService: ChatClarificationsService
+    private readonly chatClarificationService: ChatClarificationsService,
+    private readonly goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -416,7 +418,19 @@ export class ClarificationsComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodService.getAll(filter).subscribe({
+    this.goodFinderService.goodFinder(filter).subscribe({
+      next: async (resp: any) => {
+        this.assetsArray.load(resp.data);
+        this.loading = false;
+        this.totalItems = resp.count;
+      },
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'No se encontraron registros', '');
+        console.log('no se encontraron registros del bien ', error);
+      },
+    });
+    /*this.goodService.getAll(filter).subscribe({
       next: resp => {
         let result = resp.data.map(async (item: any) => {
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
@@ -457,10 +471,10 @@ export class ClarificationsComponent
       error: error => {
         this.loading = false;
       },
-    });
+    });*/
   }
 
-  getTypeGood(id: number) {
+  /*getTypeGood(id: number) {
     return new Promise((resolve, reject) => {
       if (id) {
         this.typeRelevantService.getById(id).subscribe({
@@ -489,7 +503,7 @@ export class ClarificationsComponent
         resolve(null);
       }
     });
-  }
+  }*/
 
   selectGoods(event: any) {
     if (event.selected.length === 1) {

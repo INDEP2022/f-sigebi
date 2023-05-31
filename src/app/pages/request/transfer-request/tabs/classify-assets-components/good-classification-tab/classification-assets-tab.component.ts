@@ -25,6 +25,7 @@ import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.servic
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -90,7 +91,8 @@ export class ClassificationAssetsTabComponent
     private typeRelevantSevice: TypeRelevantService,
     private genericService: GenericService,
     private goodDomicilieService: GoodDomiciliesService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -139,7 +141,19 @@ export class ClassificationAssetsTabComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodService.getAll(filter).subscribe({
+    this.goodFinderService.goodFinder(filter).subscribe({
+      next: async (resp: any) => {
+        this.totalItems = resp.count;
+        this.paragraphs = resp.data;
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
+        this.onLoadToast('error', 'No se encontraron registros', '');
+      },
+    });
+    /*this.goodService.getAll(filter).subscribe({
       next: resp => {
         var result = resp.data.map(async (item: any) => {
           item['quantity'] = Number(item.quantity);
@@ -186,7 +200,7 @@ export class ClassificationAssetsTabComponent
       error: error => {
         this.loading = false;
       },
-    });
+    });*/
   }
 
   getTypeGood(id: number) {

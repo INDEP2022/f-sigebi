@@ -9,16 +9,14 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -76,7 +74,8 @@ export class ApprovalAssetsTabsComponent
     private readonly typeRelevantSevice: TypeRelevantService,
     private readonly route: ActivatedRoute,
     private readonly fb: FormBuilder,
-    private readonly goodDomicilieService: GoodDomiciliesService
+    private readonly goodDomicilieService: GoodDomiciliesService,
+    private readonly goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -394,7 +393,29 @@ export class ApprovalAssetsTabsComponent
     this.params.value.addFilter('requestId', requestId);
     this.params.value.addFilter('processStatus', 'SOLICITAR_APROBACION');
 
-    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
+    this.goodFinderService
+      .goodFinder(this.params.getValue().getParams())
+      .subscribe({
+        next: async (resp: any) => {
+          const result = resp.data.map(async (item: any) => {
+            const goodMenaje = await this.getMenaje(item.id);
+            item['goodMenaje'] = goodMenaje;
+          });
+
+          Promise.all(result).then(x => {
+            this.totalItems = resp.count;
+            this.paragraphs = resp.data;
+            this.loading = false;
+          });
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se encontraron registros', '');
+          console.log('no se encontraron registros del bien ', error);
+        },
+      });
+
+    /*this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (resp: any) => {
         const result = resp.data.map(async (item: any) => {
           //obtener tipo bien
@@ -435,10 +456,10 @@ export class ApprovalAssetsTabsComponent
         this.paragraphs = [];
         this.onLoadToast('info', '', 'No se encontraron registros');
       },
-    });
+    });*/
   }
 
-  getGoodType(goodTypeId: number) {
+  /*getGoodType(goodTypeId: number) {
     return new Promise((resolve, reject) => {
       if (goodTypeId !== null) {
         this.typeRelevantSevice.getById(goodTypeId).subscribe({
@@ -518,7 +539,7 @@ export class ApprovalAssetsTabsComponent
         resolve('');
       }
     });
-  }
+  }*/
 
   getMenaje(id: number) {
     return new Promise((resolve, reject) => {
