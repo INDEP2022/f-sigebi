@@ -73,6 +73,7 @@ export class RequestRecordTabComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: request-record-tab');
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
