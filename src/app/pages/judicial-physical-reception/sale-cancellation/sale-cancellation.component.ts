@@ -1022,10 +1022,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           },
         });
     } else {
-      this.searchByOthersData()
+      this.searchByOthersData();
     }
   }
-  
+
   //Catalogs
   getRecibe(params: ListParams) {
     console.log(params);
@@ -1833,7 +1833,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'No puede eliminar un Acta fuera del mes de elaboración'
         );
       }
-    }else if (this.act2Valid && this.statusProceeding != '') {
+    } else if (this.act2Valid && this.statusProceeding != '') {
       this.alertQuestion(
         'question',
         '¿Desea eliminar completamente el acta?',
