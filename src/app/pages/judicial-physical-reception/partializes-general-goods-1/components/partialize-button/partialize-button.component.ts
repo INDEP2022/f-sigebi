@@ -28,8 +28,10 @@ export class PartializeButtonComponent
     }
   }
   @Output() filledRow = new EventEmitter();
+  @Output() notFilledRow = new EventEmitter();
   v_inmueble: number;
   vres: number;
+  vresVal14: number;
   vident: number;
   get sumCant() {
     return this.service.sumCant;
@@ -96,8 +98,9 @@ export class PartializeButtonComponent
   }
 
   private validationImporte() {
-    // debugger;
-    const cantidad = +this.cantidad.value;
+    debugger;
+    console.log(this.good);
+    const cantidad = +this.good.quantity;
     if (!this.validationClasif()) {
       if (cantidad < 0.1) {
         // if (this.version === 1 ? cantidad < 0.1 : cantidad < 2) {
@@ -219,7 +222,7 @@ export class PartializeButtonComponent
   }
 
   private fillAvaluo() {
-    // debugger;
+    debugger;
     if (this.good.appraisedValue) {
       const algo = +(this.good.appraisedValue + '') * this.vfactor;
       const newValue = +algo.toFixed(2);
@@ -345,6 +348,7 @@ export class PartializeButtonComponent
     const noBien = this.good.goodId;
     this.service.sumCant += +(cantidad + '');
     this.service.sumVal14 += +(importe + '');
+    this.service.sumAvaluo += +(avaluo + '');
     // this.vident++;
     this.bienesPar.push({
       id: this.vident,
@@ -371,6 +375,8 @@ export class PartializeButtonComponent
   }
 
   private calcImporte() {
+    debugger;
+    this.service.clasificators.includes(this.good.goodClassNumber + '');
     const newImporte: number =
       this.cantPar.value * this.cantidad.value + this.vsum;
     if (newImporte > this.vimporte) {
@@ -402,7 +408,7 @@ export class PartializeButtonComponent
       descripcion: null,
       proceso: null,
       cantidad: this.service.sumCant,
-      avaluo: null,
+      avaluo: this.service.sumAvaluo,
       importe: this.service.sumVal14,
       val10: 0,
       val11: 0,
@@ -412,6 +418,7 @@ export class PartializeButtonComponent
     this.bienesPar = [...this.bienesPar];
     this.filledRow.emit();
     this.form.get('saldo').setValue(this.vres);
+    return true;
   }
 
   private async partializeContent() {
@@ -420,7 +427,7 @@ export class PartializeButtonComponent
     if (this.form.valid && this.formGood.valid) {
       // debugger;
       console.log(this.sumCant + '', this.sumVal14 + '');
-      if (!this.validationImporte()) return;
+      if (!this.validationImporte()) return false;
 
       // if (this.version === 1) {
       //   if (!this.validationImporte()) return;
@@ -433,9 +440,9 @@ export class PartializeButtonComponent
 
       if (this.version === 1) {
         const validationIn = await this.validationInmueble();
-        if (!validationIn) return;
+        if (!validationIn) return false;
         const validationDec = await this.validationDecimales();
-        if (!validationDec) return;
+        if (!validationDec) return false;
         const result = await this.setMeasureData();
         v_cantidad = result.v_cantidad;
         v_unidad = result.v_unidad;
@@ -450,9 +457,9 @@ export class PartializeButtonComponent
         // }
 
         const validationNum = await this.validationNumerario();
-        if (!validationNum) return;
+        if (!validationNum) return false;
         const newImporte = this.calcImporte();
-        if (newImporte === 0) return;
+        if (newImporte === 0) return false;
         // if (!this.validationClasif()) {
         //   this.vsum = this.sumCant ?? 0;
         // } else {
@@ -462,8 +469,9 @@ export class PartializeButtonComponent
         console.log(this.cantidad.value, this.vimporte);
         this.vres = this.vimporte - newImporte;
         this.vident = 0;
-        this.fillBienesParV1(v_cantidad, v_unidad, v_avaluo, newImporte);
+        return this.fillBienesParV1(v_cantidad, v_unidad, v_avaluo, newImporte);
       } else {
+        return false;
         // this.vfactor = this.cantidad.value / this.vimporte;
         // this.vres = this.vimporte - newImporte;
         // this.fillBienesParV2();
@@ -474,13 +482,17 @@ export class PartializeButtonComponent
       setTimeout(() => {
         this.form.markAsUntouched();
       }, 1000);
+      return false;
     }
   }
 
   async partialize() {
     this.loading = true;
     // debugger;
-    await this.partializeContent();
+    const result = await this.partializeContent();
+    if (!result) {
+      this.notFilledRow.emit();
+    }
     this.loading = false;
   }
 }

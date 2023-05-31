@@ -15,6 +15,7 @@
               maxlength="30" />
           </form-field> -->
           <ng-custom-select-loading
+            *ngIf="selectFirstInput"
             [form]="form"
             [formControlName]="formField"
             [label]="label"
@@ -26,6 +27,40 @@
             [labelTemplate]="labelTemplate"
             [optionTemplate]="optionTemplate">
           </ng-custom-select-loading>
+          <ng-container *ngIf="!selectFirstInput">
+            <form-field
+              class="col-xs-4"
+              [control]="form.get(formField)"
+              [label]="label">
+              <input
+                type="number"
+                class="form-control"
+                [formControlName]="formField"
+                (ngModelChange)="disabled = false"
+                min="1"
+                max="9999999999" />
+
+              <!-- <ng-select
+                formControlName="formField"
+                class="form-control"
+                placeholder="Seleccione una acción de cambio"
+                [searchable]="false"
+                [clearable]="false">
+                <ng-option value="1">Cambio de Acta</ng-option>
+                <ng-option value="2">Cambio de Estatus</ng-option>
+              </ng-select> -->
+            </form-field>
+            <div class="col-xs-2 pl-0">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                [disabled]="form.get(formField).value === null"
+                (click)="search()">
+                <i class="fa fa-search"></i> Buscar
+              </button>
+            </div>
+          </ng-container>
+
           <!-- <app-select-form
             [form]="form"
             [formField]="formField"
@@ -72,7 +107,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="!form.valid || disabled"
           [loading]="loading"
           text="Actualizar"
           (confirm)="confirm()">

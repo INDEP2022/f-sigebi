@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { format } from 'date-fns';
-import { firstValueFrom, map } from 'rxjs';
+import { concatMap, firstValueFrom, from, map, mergeMap } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   GoodDTO,
@@ -37,6 +37,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       this.apply();
     }
   }
+  @Output() fillPagedRow = new EventEmitter();
   checkSum: CheckSum;
   vsumimp = 0;
   constructor(
@@ -81,24 +82,41 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     return firstValueFrom(this.goodService.getValidSeq());
   }
 
-  private async fillDescriptions(item: IBienesPar, vimpbien: number) {
+  private fillDescriptions(item: IBienesPar, vimpbien: number) {
     // debugger;
     let vobserv_padre = 'Bien(es) parcializado(s): ';
     let vdesc_padre = 'Bien(es) generado(s): ';
-    try {
-      item.noBien = await this.getBienDual();
-    } catch (x) {}
-    vobserv_padre = vobserv_padre + item.noBien + ' por: ' + vimpbien + ', ';
-    vobserv_padre = vobserv_padre.substring(
-      0,
-      vobserv_padre.length > 600 ? 600 : vobserv_padre.length
+    return this.goodService.getValidSeq().pipe(
+      map(x => {
+        item.noBien = x;
+        vobserv_padre =
+          vobserv_padre + item.noBien + ' por: ' + vimpbien + ', ';
+        vobserv_padre = vobserv_padre.substring(
+          0,
+          vobserv_padre.length > 600 ? 600 : vobserv_padre.length
+        );
+        vdesc_padre = vdesc_padre + item.noBien;
+        vdesc_padre = vdesc_padre.substring(
+          0,
+          vdesc_padre.length > 1250 ? 1250 : vdesc_padre.length
+        );
+        return { vobserv_padre, vdesc_padre, noBien: item.noBien, item };
+      })
     );
-    vdesc_padre = vdesc_padre + item.noBien;
-    vdesc_padre = vdesc_padre.substring(
-      0,
-      vdesc_padre.length > 1250 ? 1250 : vdesc_padre.length
-    );
-    return { vobserv_padre, vdesc_padre, noBien: item.noBien };
+    // try {
+    //   item.noBien = await this.getBienDual();
+    // } catch (x) { }
+    // vobserv_padre = vobserv_padre + item.noBien + ' por: ' + vimpbien + ', ';
+    // vobserv_padre = vobserv_padre.substring(
+    //   0,
+    //   vobserv_padre.length > 600 ? 600 : vobserv_padre.length
+    // );
+    // vdesc_padre = vdesc_padre + item.noBien;
+    // vdesc_padre = vdesc_padre.substring(
+    //   0,
+    //   vdesc_padre.length > 1250 ? 1250 : vdesc_padre.length
+    // );
+    // return { vobserv_padre, vdesc_padre, noBien: item.noBien };
   }
 
   async insertaBien2(
@@ -131,7 +149,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     return firstValueFrom(this.partializeGoodService.insertGood(request));
   }
 
-  private async insertaBien(
+  private insertaBien(
     item: IBienesPar,
     good: IGood,
     statusNew: string,
@@ -168,7 +186,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       pEviction,
       statusNew,
     };
-    return firstValueFrom(this.partializeGoodService.pupInsertGood(request));
+    return this.partializeGoodService.pupInsertGood(request);
   }
 
   private validateStatusXPantalla() {
@@ -420,6 +438,216 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     );
   }
 
+  private async fillRestRow(
+    vsumimp: number,
+    v_importe: number,
+    vfactor: number,
+    vfactornum: number,
+    vval2: number,
+    vimpbien: number,
+    vobservaciones: string,
+    v_estatus: string,
+    v_verif_des: number
+  ) {
+    if (vsumimp < v_importe) {
+      vfactor = (v_importe - vsumimp) / v_importe;
+      vfactornum = (v_importe - vsumimp) / (v_importe - vsumimp);
+      console.log(vfactor, vfactornum);
+      let item: IBienesPar;
+      item = {
+        id: null,
+        noBien: null,
+        descripcion: null,
+        proceso: null,
+        cantidad: null,
+        avaluo: null,
+        importe: 0,
+        val10: null,
+        val11: null,
+        val12: null,
+        val13: null,
+      };
+      // debugger;
+      const { v_cantidad, v_unidad, v_avaluo } = await this.setMeasureData();
+      const clasificador = this.good.goodClassNumber;
+      const numerarioValidation = await firstValueFrom(
+        this.goodSSSubtypeService.getAll2(
+          'filter.numClasifGoods=' + clasificador + '&filter.numType=7'
+        )
+      );
+      const v_numerario = numerarioValidation.count
+        ? numerarioValidation.count
+        : 0;
+      if (v_numerario !== 0) {
+        if (this.validationClasif()) {
+          item = {
+            ...item,
+            val10: 0,
+            val11: 0,
+            val12: 0,
+            val13: 0,
+          };
+        }
+      }
+      // item.id = vident + 1;
+      if (v_numerario === 0) {
+        let mensaje =
+          '(Producto de la Parcialización de Bien No.' +
+          this.good.goodId +
+          '  (' +
+          v_cantidad +
+          ' ' +
+          v_unidad +
+          '), ' +
+          this.good.description +
+          ')';
+        mensaje = mensaje.substring(
+          0,
+          mensaje.length > 1250 ? 1250 : mensaje.length
+        );
+        item.descripcion =
+          'Bien por ' +
+          this.form.get('saldo').value +
+          ' ' +
+          v_unidad +
+          ', ' +
+          mensaje;
+      } else {
+        let mensaje =
+          '(Producto de la Parcialización de Bien No.' +
+          this.good.goodId +
+          ', ' +
+          this.good.description +
+          ')';
+        mensaje = mensaje.substring(
+          0,
+          mensaje.length > 1250 ? 1250 : mensaje.length
+        );
+        item.descripcion =
+          'Numerario por $ ' +
+          this.form.get('saldo').value +
+          ' ' +
+          v_avaluo +
+          ' ' +
+          mensaje;
+      }
+      item.proceso = this.good.extDomProcess;
+      // if (this.good.appraisedValue) {
+      //   item.avaluo = Number((this.good.appraisedValue * vfactor).toFixed(2));
+      // } else {
+      //   item.avaluo = this.good.appraisedValue;
+      // }
+      item.avaluo = +(
+        +(this.formGood.get('avaluo').value + '') - this.service.sumAvaluo
+      ).toFixed(2);
+      if (this.validationClasif()) {
+        item.importe = +(this.saldo.value + '');
+
+        // if (this.good.quantity !== 1) {
+        //   item.cantidad = v_importe - vsumimp;
+        // } else {
+        //   item.cantidad = this.good.quantity;
+        // }
+        vval2 = Number((item.avaluo ? item.avaluo : item.importe).toFixed(2));
+        vimpbien = item.importe;
+      } else {
+        // item.cantidad = v_importe - vsumimp;
+        vval2 = +this.good.val14;
+        vimpbien = item.cantidad;
+      }
+      item.cantidad = +(this.saldo.value + '');
+      this.service.sumCant += item.cantidad;
+      this.service.sumVal14 += item.importe;
+      this.service.sumAvaluo += item.avaluo;
+      const descriptions = await firstValueFrom(
+        this.fillDescriptions(item, vimpbien)
+      );
+      this.bienesPar.pop();
+      this.bienesPar.push(item);
+      this.bienesPar.push({
+        id: null,
+        noBien: null,
+        descripcion: null,
+        proceso: null,
+        cantidad: this.service.sumCant,
+        avaluo: this.service.sumAvaluo,
+        importe: this.service.sumVal14,
+        val10: 0,
+        val11: 0,
+        val12: 0,
+        val13: 0,
+      });
+      this.fillPagedRow.emit();
+      vobservaciones = 'Saldo parcializado del bien: ' + this.good.goodId;
+      // return descriptions;
+      try {
+        await firstValueFrom(
+          this.insertaBien(
+            item,
+            this.good,
+            v_estatus,
+            this.good.extDomProcess,
+            vval2,
+            vobservaciones,
+            vfactor,
+            vfactornum,
+            v_verif_des,
+            this.service.noActa
+          )
+        );
+        return descriptions;
+      } catch (x: any) {
+        console.log(x);
+        this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
+        // this.loading = false;
+        this.loader.load = false;
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  private async finishApply(vobserv_padre: string, vdesc_padre: string) {
+    debugger;
+    const observations =
+      vobserv_padre +
+      ' fecha: ' +
+      format(new Date(), 'dd/MM/yyyy') +
+      '. ' +
+      this.good.observations;
+    this.good.observations = observations.substring(
+      0,
+      observations.length > 600 ? 600 : observations.length
+    );
+    const description = vdesc_padre + this.good.description;
+    this.good.description = description.substring(
+      0,
+      observations.length > 1250 ? 1250 : observations.length
+    );
+    this.formGood.get('descripcion').setValue(this.good.description);
+    if (this.service.noActa > 0) {
+      await firstValueFrom(
+        this.detailReceptionService.deleteById(
+          this.good.goodId,
+          this.service.noActa
+        )
+      );
+    }
+    this.saldo.setValue(0);
+    // this.service.pageLoading = false;
+    this.loader.load = false;
+    // this.service.bienesPar = [];
+    // this.service.pagedBienesPar = [];
+    // this.service.formGood.reset();
+    // this.service.formControl.reset();
+    this.onLoadToast(
+      'success',
+      'Parcialización',
+      'La parcialización de bienes se realizo con éxito'
+    );
+  }
+
   private async applyContent() {
     // this.service.pageLoading = true;
     this.loader.load = true;
@@ -445,203 +673,88 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;
       let vsumimp = 0;
-      let vval2: number,
-        vimpbien: number,
+      let vimpbien: number,
         vident: number,
+        vval2: number,
         vfactor: number,
         vfactornum: number,
         vobservaciones: string,
         vobserv_padre: string,
         vdesc_padre: string;
-      await this.bienesPar.forEach(async item => {
-        if (this.validationClasif()) {
-          vval2 = Number(item.importe.toFixed(2).trim());
-          vimpbien = item.importe;
-        } else {
-          vval2 = +this.good.val14;
-          vimpbien = item.cantidad;
-        }
-        vident = item.id;
-        vfactor = vimpbien / v_importe;
-        vfactornum = vimpbien / (v_importe - vsumimp);
-        vsumimp = vsumimp + vimpbien;
-        const descriptions = await this.fillDescriptions(item, vimpbien);
-        console.log(descriptions);
-        item.noBien = descriptions.noBien;
-        vobserv_padre = descriptions.vobserv_padre;
-        vdesc_padre = descriptions.vdesc_padre;
-        vobservaciones = 'Parcializado del bien: ' + this.good.goodId;
-        // try {
-        //   await this.insertaBien(
-        //     item,
-        //     this.good,
-        //     v_estatus,
-        //     this.good.extDomProcess,
-        //     vval2,
-        //     vobservaciones,
-        //     vfactor,
-        //     vfactornum,
-        //     v_verif_des,
-        //     this.service.noActa
-        //   );
-        // } catch (x: any) {
-        //   console.log(x);
-        //   this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
-        //   // this.loading = false;
-        //   return;
-        // }
-      });
-      if (vsumimp < v_importe) {
-        vfactor = (v_importe - vsumimp) / v_importe;
-        vfactornum = (v_importe - vsumimp) / (v_importe - vsumimp);
-        console.log(vfactor, vfactornum);
-        let item: IBienesPar;
-        item = {
-          id: null,
-          noBien: null,
-          descripcion: null,
-          proceso: null,
-          cantidad: null,
-          avaluo: null,
-          importe: 0,
-          val10: null,
-          val11: null,
-          val12: null,
-          val13: null,
-        };
-        const { v_cantidad, v_unidad, v_avaluo } = await this.setMeasureData();
-        const clasificador = this.good.goodClassNumber;
-        const numerarioValidation = await firstValueFrom(
-          this.goodSSSubtypeService.getAll2(
-            'filter.numClasifGoods=' + clasificador + '&filter.numType=7'
-          )
-        );
-        debugger;
-        const v_numerario = numerarioValidation.count;
-        if (v_numerario !== 0) {
-          if (this.validationClasif()) {
-            item = {
-              ...item,
-              val10: 0,
-              val11: 0,
-              val12: 0,
-              val13: 0,
-            };
-          }
-        }
-        item.id = vident + 1;
-        if (v_numerario === 0) {
-          let mensaje =
-            '(Producto de la Parcialización de Bien No.' +
-            this.good.goodId +
-            '  (' +
-            v_cantidad +
-            ' ' +
-            v_unidad +
-            '), ' +
-            this.good.description +
-            ')';
-          mensaje = mensaje.substring(
-            0,
-            mensaje.length > 1250 ? 1250 : mensaje.length
-          );
-          item.descripcion =
-            'Bien por ' +
-            this.form.get('saldo').value +
-            ' ' +
-            v_unidad +
-            ', ' +
-            mensaje;
-        } else {
-          let mensaje =
-            '(Producto de la Parcialización de Bien No.' +
-            this.good.goodId +
-            ', ' +
-            this.good.description +
-            ')';
-          mensaje = mensaje.substring(
-            0,
-            mensaje.length > 1250 ? 1250 : mensaje.length
-          );
-          item.descripcion =
-            'Numerario por $ ' +
-            this.form.get('saldo').value +
-            ' ' +
-            v_avaluo +
-            ' ' +
-            mensaje;
-        }
-        item.proceso = this.good.extDomProcess;
-        if (this.good.appraisedValue) {
-          item.avaluo = Number((this.good.appraisedValue * vfactor).toFixed(2));
-        } else {
-          item.avaluo = this.good.appraisedValue;
-        }
-        if (this.validationClasif()) {
-          item.importe = v_importe - vsumimp;
-          if (this.good.quantity !== 1) {
-            item.cantidad = v_importe - vsumimp;
-          } else {
-            item.cantidad = this.good.quantity;
-          }
-          vval2 = Number((item.avaluo ? item.avaluo : item.importe).toFixed(2));
-          vimpbien = item.importe;
-        } else {
-          item.cantidad = v_importe - vsumimp;
-          vval2 = +this.good.val14;
-          vimpbien = item.cantidad;
-        }
-        const descriptions = await this.fillDescriptions(item, vimpbien);
-        vobserv_padre = descriptions.vobserv_padre;
-        vdesc_padre = descriptions.vdesc_padre;
-        item.noBien = descriptions.noBien;
-        vobservaciones = 'Saldo parcializado del bien: ' + this.good.goodId;
-        // try {
-        //   await this.insertaBien(
-        //     item,
-        //     this.good,
-        //     v_estatus,
-        //     this.good.extDomProcess,
-        //     vval2,
-        //     vobservaciones,
-        //     vfactor,
-        //     vfactornum,
-        //     v_verif_des,
-        //     this.service.noActa
-        //   );
-        // } catch (x: any) {
-        //   console.log(x);
-        //   this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
-        //   // this.loading = false;
-        //   this.loader.load = false;
-        //   return;
-        // }
-      }
-      const observations =
-        vobserv_padre +
-        ' fecha: ' +
-        format(new Date(), 'dd/MM/yyyy') +
-        '. ' +
-        this.good.observations;
-      this.good.observations = observations.substring(
-        0,
-        observations.length > 600 ? 600 : observations.length
-      );
-      const description = vdesc_padre + this.good.description;
-      this.good.description = description.substring(
-        0,
-        observations.length > 1250 ? 1250 : observations.length
-      );
-      this.formGood.get('descripcion').setValue(this.good.description);
-      // if (this.service.noActa > 0) {
-      //   await firstValueFrom(
-      //     this.detailReceptionService.deleteById(
-      //       this.good.goodId,
-      //       this.service.noActa
-      //     )
-      //   );
-      // }
-      // this.saldo.setValue(0);
+
+      const observable = from(this.bienesPar);
+      let i = 0;
+      observable
+        .pipe(
+          concatMap(item => {
+            if (this.validationClasif()) {
+              vval2 = Number(item.importe.toFixed(2).trim());
+              vimpbien = item.importe;
+            } else {
+              vval2 = +this.good.val14;
+              vimpbien = item.cantidad;
+            }
+            vident = item.id;
+            vfactor = vimpbien / v_importe;
+            vfactornum = vimpbien / (v_importe - vsumimp);
+            vsumimp = vsumimp + vimpbien;
+            return this.fillDescriptions(item, vimpbien).pipe(
+              mergeMap(descriptions => {
+                console.log(descriptions);
+                i++;
+                vobserv_padre = descriptions.vobserv_padre;
+                vdesc_padre = descriptions.vdesc_padre;
+                vobservaciones = 'Parcializado del bien: ' + this.good.goodId;
+                // const delayedMessage = (message: string, delayedTime: number) =>
+                //   EMPTY.pipe(startWith(message), delay(delayedTime));
+                // return this.goodService.getById(this.good.goodId)
+                return this.insertaBien(
+                  descriptions.item,
+                  this.good,
+                  v_estatus,
+                  this.good.extDomProcess,
+                  vval2,
+                  vobservaciones,
+                  vfactor,
+                  vfactornum,
+                  v_verif_des,
+                  this.service.noActa
+                );
+              })
+            );
+          })
+        )
+        .subscribe({
+          next: async response => {
+            console.log(response);
+            if (i === this.bienesPar.length) {
+              console.log('FINALIZO');
+              debugger;
+              const result = await this.fillRestRow(
+                vsumimp,
+                v_importe,
+                vfactor,
+                vfactornum,
+                vval2,
+                vimpbien,
+                vobservaciones,
+                v_estatus,
+                v_verif_des
+              );
+              if (result !== null) {
+                vobserv_padre = result.vobserv_padre;
+                vdesc_padre = result.vdesc_padre;
+              }
+              await this.finishApply(vobserv_padre, vdesc_padre);
+              console.log(this.good);
+            }
+          },
+          error: error => {
+            this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
+            this.loader.load = false;
+            return;
+          },
+        });
     } else {
       // const checkSum = new CheckSum();
       // checkSum.firstCase = this.firstCase;
@@ -677,17 +790,6 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           mensaje.length > 600 ? mensaje.substring(0, 600) : mensaje;
       }
     }
-    // this.service.pageLoading = false;
-    // this.loader.load = false;
-    // this.service.bienesPar = [];
-    // this.service.pagedBienesPar = [];
-    // this.service.formGood.reset();
-    // this.service.formControl.reset();
-    this.onLoadToast(
-      'success',
-      'Parcialización',
-      'La parcialización de bienes se realizo con éxito'
-    );
   }
 
   async apply() {

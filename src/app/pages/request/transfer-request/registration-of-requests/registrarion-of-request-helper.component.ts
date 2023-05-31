@@ -264,15 +264,17 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener una cantidad'
             );
             break;
-          } else if (good.transferentDestiny == null) {
+          } else if (good.ligieUnit == null) {
+          /*else if (good.transferentDestiny == null) {
             sinDestinoT = true;
             this.message(
               'error',
-              `Error en el bien ${good.goodDescription}`,
+              `Error en el bien ${good.id} ${good.goodDescription}`,
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;
-          } else if (good.ligieUnit == null) {
+          } 
+          */
             sinUnidadM = true;
             this.message(
               'error',

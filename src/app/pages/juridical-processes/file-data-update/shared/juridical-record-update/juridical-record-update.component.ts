@@ -49,6 +49,7 @@ import {
 } from '../../../../../core/models/catalogs/transferente.model';
 import { IDocuments } from '../../../../../core/models/ms-documents/documents';
 import {
+  DictumData,
   IInstitutionNumber,
   INotification,
 } from '../../../../../core/models/ms-notification/notification.model';
@@ -161,7 +162,8 @@ export class JuridicalRecordUpdateComponent
   @Output() onSearch = new EventEmitter<
     Partial<IJuridicalFileDataUpdateForm>
   >();
-
+  datosEnviados = new EventEmitter<DictumData>();
+  change_Dict: DictumData;
   public optionsTipoVolante = [
     { value: 'A', label: 'Administrativo' },
     { value: 'P', label: 'Procesal' },
@@ -196,7 +198,7 @@ export class JuridicalRecordUpdateComponent
       this.pageParams = this.fileUpdComService.fileDataUpdateParams;
   }
 
-  private get formControls() {
+  get formControls() {
     return this.fileDataUpdateForm.controls;
   }
 
@@ -674,17 +676,17 @@ export class JuridicalRecordUpdateComponent
 
     // TODO:
     /* BEGIN
-	   SELECT DESC_TRANSFERENTE
-	   INTO   :TRANSFERENTE
-	   FROM   CAT_TRANSFERENTE
-	   WHERE  NO_TRANSFERENTE = :NO_TRANSFERENTE;
-	EXCEPTION
-	   WHEN no_data_found THEN
-	      NULL;
-	   WHEN OTHERS THEN
-	      LIP_MENSAJE(SQLERRM||'.','S');
-	      RAISE FORM_TRIGGER_FAILURE;
-	END; */
+     SELECT DESC_TRANSFERENTE
+     INTO   :TRANSFERENTE
+     FROM   CAT_TRANSFERENTE
+     WHERE  NO_TRANSFERENTE = :NO_TRANSFERENTE;
+  EXCEPTION
+     WHEN no_data_found THEN
+        NULL;
+     WHEN OTHERS THEN
+        LIP_MENSAJE(SQLERRM||'.','S');
+        RAISE FORM_TRIGGER_FAILURE;
+  END; */
 
     if (notif.crimeKey != null)
       this.docRegisterService.getByTableKeyOtKey(2, notif.crimeKey).subscribe({
@@ -806,9 +808,12 @@ export class JuridicalRecordUpdateComponent
               .getDepartamentsFiltered(filterParams.getParams())
               .subscribe((data: { data: { description: any }[] }) => {
                 this.formControls.destinationArea.enable();
-                this.formControls.destinationArea.setValue(
-                  data.data[0].description
-                );
+                if (data.data[0]) {
+                  this.formControls.destinationArea.setValue(
+                    data.data[0].description
+                  );
+                }
+
                 this.formControls.destinationArea.disable();
               });
           },
@@ -1404,15 +1409,17 @@ export class JuridicalRecordUpdateComponent
       exp: this.formControls.expedientNumber.value,
       pNoTramite: this.procedureId,
       affair: this.formControls.affairKey.value,
+      // origin: this.layout,
     };
     this.router.navigate(['/pages/juridical/file-data-update/shift-change'], {
       queryParams: {
-        origin: '/pages/juridical/file-data-update',
+        previousRoute: this.activiveRoute.snapshot.queryParams['previousRoute'],
         form: 'FACTGENACTDATEX',
         iden: this.formControls.wheelNumber.value,
         exp: this.formControls.expedientNumber.value,
         pNoTramite: this.procedureId,
         affair: this.formControls.affairKey.value,
+        // origin: this.layout,
       },
     });
   }
@@ -1543,6 +1550,11 @@ export class JuridicalRecordUpdateComponent
     this.dictum = dictum.description;
     this.cveDictumWhenValidateItem(this.dictum);
     // this.dictOffice = dictum.dict_ofi;
+    console.log('ddd', dictum);
+
+    this.change_Dict = dictum;
+    this.fileUpdComService.enviarDatos(this.change_Dict);
+    // this.datosEnviados.emit(this.change_Dict)
     if (this.dictum == 'CONOCIMIENTO') {
       this.formControls.reserved.enable();
       showToast({

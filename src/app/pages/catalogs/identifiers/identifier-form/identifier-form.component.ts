@@ -64,14 +64,12 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
       description: this.identifierForm.controls['description'].value,
       keyview: this.identifierForm.controls['keyview'].value,
       noRegistration: this.identifierForm.controls['noRegistration'].value,
-    }
+    };
     console.log(data);
-    this.identifierService
-      .update(this.identifier.id, data)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.identifierService.update(this.identifier.id, data).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   close() {

@@ -33,16 +33,29 @@ export abstract class PartializeGeneralGood {
   // };
   settingsGoodsFirstCase = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'left',
+      add: false,
+      edit: false,
+      delete: true,
+    },
     columns: columnsFirstCase,
   };
   settingsGoodsSecondCase = {
     ...TABLE_SETTINGS,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'left',
+      add: false,
+      edit: false,
+      delete: true,
+    },
     columns: columnsSecondCase,
   };
   sumCant = 0;
   sumVal14 = 0;
+  sumAvaluo = 0;
   noActa: number = 0;
   clasificators: string = '1424, 1426, 1427, 1575, 1590';
   protected dbPartialize: string;
@@ -71,9 +84,9 @@ export abstract class PartializeGeneralGood {
 
   get vimporte() {
     return !this.validationClasif()
-      ? +(this.cantidad + '')
-      : this.val14
-      ? +Number((this.val14 + '').replace(',', '.')).toFixed(4)
+      ? +(this.good.quantity + '')
+      : this.good.val14
+      ? +Number((this.good.val14 + '').replace(',', '.')).toFixed(4)
       : -1;
   }
 

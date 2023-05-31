@@ -22,6 +22,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -93,7 +94,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     private procedureManagementService: ProcedureManagementService,
     private authService: AuthService,
     private fractionService: FractionService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
   }
@@ -130,6 +132,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
+    /*this.goodFinderService.goodFinder(this.params.getValue().getParams()).subscribe({
+      next: resp => {
+        resp.data.map((item:any)=>{
+          item['goodTypeName'] =
+        })
+      }
+    })*/
     this.goodService.getAll(this.params.getValue().getParams()).subscribe({
       next: async (data: any) => {
         if (data !== null) {
@@ -780,6 +789,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     ];
     this.listGoodsFractions = [];
     let existAddres = 0;
+    debugger;
     for (let j = 0; j < this.listgoodObjects.length; j++) {
       const item = this.listgoodObjects[j];
       let good: any = {};
@@ -803,8 +813,32 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       good.fractionId = Number(this.fractionProperties['fractionId']);
       good.goodTypeId = Number(this.fractionProperties['goodTypeId']);
 
+      /* inf. del bien */
       good.goodDescription = item.goodDescription;
       good.processStatus = item.processStatus;
+
+      good.quantity = item.quantity ? item.quantity : 0;
+      good.duplicity = item.duplicity;
+      good.capacity = item.capacity;
+      good.fileeNumber = item.fileeNumber;
+      good.volume = item.volume;
+      good.physicalStatus = item.physicalStatus;
+      good.useType = item.useType;
+      good.stateConservation = item.stateConservation;
+      good.origin = item.origin;
+      good.destiny = item.destiny;
+      if (item.transferentDestiny) {
+        good.transferentDestiny = item.transferentDestiny;
+      } else if (!item.transferentDestiny && good.destiny) {
+        good.transferentDestiny = item.destiny;
+      } else {
+        good.transferentDestiny = 1;
+      }
+      good.notesTransferringEntity = item.notesTransferringEntity;
+      good.appraisal = item.appraisal ? 'Y' : 'N';
+      good.compliesNorm = item.compliesNorm ? 'Y' : 'N';
+      good.saeDestiny = item.saeDestiny;
+      /*  */
 
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];

@@ -8,7 +8,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nbidstore')"
-            label="N&uacute;mero de gesti&oacute;n inmueble">
+            label="N&uacute;mero de Gesti&oacute;n Inmueble">
             <input
               type="text"
               class="form-control"
@@ -25,7 +25,7 @@
               [data]="users"
               value="username"
               bindLabel="nomComplete"
-              label="Usuario reponsable"
+              label="Usuario Reponsable"
               (change)="userSelect($event)"
               (fetchItems)="getResponsibleUserSelect($event)"></ngx-select>
           </form-field>
@@ -36,7 +36,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nbstoresiab')"
-            label="Nombre del almac&eacute;n">
+            label="Nombre del Almac&eacute;n">
             <input
               type="text"
               class="form-control"
@@ -53,7 +53,7 @@
               [data]="typeTercero"
               value="code"
               bindLabel="description"
-              label="Tipo tercero"
+              label="Tipo Tercero"
               (fetchItems)="getTypeTerceroSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -76,7 +76,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nbadmonby')"
-            label="Administrado por">
+            label="Administrado Por">
             <input
               type="text"
               class="form-control"
@@ -104,7 +104,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nbidstore')"
-            label="N&uacute;mero de gesti&oacute;n inmueble">
+            label="N&uacute;mero de Gesti&oacute;n Inmueble">
             <input
               type="text"
               class="form-control"
@@ -144,7 +144,7 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-check label="Con localizador" for="label">
+          <form-check label="Con Localizador" for="label">
             <input id="label" type="checkbox" formControlName="nbwithlocator" />
           </form-check>
         </div>
@@ -182,7 +182,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nbcontract')"
-            label="N&uacute;mero de contrato">
+            label="N&uacute;mero de Contrato">
             <input
               type="text"
               class="form-control"
@@ -246,7 +246,7 @@
               [data]="zipCode"
               value="codePostal"
               bindLabel="codePostal"
-              label="C&oacute;digo postal"
+              label="C&oacute;digo Postal"
               (fetchItems)="getZipCodeSelect($event)"></ngx-select>
           </form-field>
           <form-field
@@ -259,7 +259,7 @@
               [searchable]="showZipCode"
               value="id"
               bindLabel="codePostal"
-              label="C&oacute;digo postal"
+              label="C&oacute;digo Postal"
               (fetchItems)="getZipCodeSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -267,7 +267,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('fhstart')"
-            label="inicio operaciones">
+            label="Inicio Operaciones">
             <input
               bsDatepicker
               class="form-control"
@@ -290,7 +290,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('fhend')"
-            label="Fin operaciones">
+            label="Fin Operaciones">
             <input bsDatepicker class="form-control" formControlName="fhend" />
           </form-field>
         </div>
@@ -300,7 +300,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nbnoexternal')"
-            label="N&uacute;mero exterior">
+            label="N&uacute;mero Exterior">
             <input
               type="text"
               class="form-control"
@@ -343,7 +343,7 @@
               [data]="typeWarehouse"
               value="id"
               bindLabel="description"
-              label="Tipo de almac&eacute;n"
+              label="Tipo de Almac&eacute;n"
               (fetchItems)="getTypeWarehouseSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -355,6 +355,8 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!warehouseForm.valid"
+          [text]="'Enviar'"
+          [loadingText]="'Enviando almacén'"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

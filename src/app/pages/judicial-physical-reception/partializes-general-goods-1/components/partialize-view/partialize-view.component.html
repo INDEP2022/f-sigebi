@@ -8,7 +8,8 @@
           type="number"
           class="form-control"
           formControlName="cantPar"
-          min="1" />
+          min="1"
+          max="100" />
       </form-field>
     </div>
 
@@ -18,7 +19,8 @@
           type="number"
           class="form-control"
           formControlName="cantidad"
-          min="1" />
+          min="1"
+          max="9999999999999999999" />
       </form-field>
     </div>
 
@@ -53,11 +55,14 @@
         <div (click)="pressed(1)">1</div>
         <app-partialize-button
           [press]="pressPartialize"
+          (notFilledRow)="loading = false"
           (filledRow)="filledRow()"></app-partialize-button>
       </div>
       <div [class]="stateApply">
         <div (click)="pressed(2)">2</div>
-        <app-apply-button [press]="pressApply"></app-apply-button>
+        <app-apply-button
+          [press]="pressApply"
+          (fillPagedRow)="filledRow()"></app-apply-button>
       </div>
       <!-- Second Step -->
     </div>
