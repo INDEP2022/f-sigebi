@@ -3,9 +3,10 @@
 }
 
 .deleteDate {
-  position: relative;
+  position: absolute;
   margin: 10px auto auto;
-  left: -20px;
+  right: 5px;
+  top: 0px;
   cursor: pointer;
 }
 
