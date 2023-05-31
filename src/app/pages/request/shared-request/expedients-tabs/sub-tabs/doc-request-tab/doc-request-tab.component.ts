@@ -419,6 +419,7 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('transferente getTransferent');
             resolve(data?.nameTransferent);
           },
           error: error => {},
@@ -798,6 +799,7 @@ export class DocRequestTabComponent
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(data => {
+        console.log('transferente getTransfe');
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });
   }
