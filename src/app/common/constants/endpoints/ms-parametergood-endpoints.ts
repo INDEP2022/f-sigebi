@@ -8,4 +8,5 @@ export enum ParameterGoodEndpoints {
   FaseEdo = 'parameters/fa-stage-creda',
   CategorzacionAutomNumerario = 'categorzacion-autom-numerario',
   rNomecla = 'r-nomencla',
+  FaStageCreda = 'parameters/fa-stage-creda',
 }

@@ -64,7 +64,9 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
     this.edit = true;
     this.delegationStateForm.patchValue(this.delegationSate);
     console.log(this.delegationSate);
-    this.delegationStateForm.controls['regionalDelegation'].setValue(this.delegationSate.stateCode.id);
+    this.delegationStateForm.controls['regionalDelegation'].setValue(
+      this.delegationSate.stateCode.id
+    );
   }
 
   getStates(params: ListParams) {

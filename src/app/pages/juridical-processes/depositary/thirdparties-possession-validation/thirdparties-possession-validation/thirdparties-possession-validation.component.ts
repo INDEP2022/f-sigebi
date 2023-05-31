@@ -1,15 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ISentSirsae } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
@@ -20,8 +18,9 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { GoodPosessionThirdpartyService } from 'src/app/core/services/ms-thirdparty-admon/good-possession-thirdparty.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GOODS_COLUMNS,
   NOTIFICATIONS_COLUMNS,
@@ -107,7 +106,7 @@ export class ThirdpartiesPossessionValidationComponent
 
   expedientNumber: number = 0;
   public form: FormGroup;
-  public formCcpOficio: FormGroup;
+  // public formCcpOficio: FormGroup;
   public noExpediente = new FormControl(null);
   public formGood: FormGroup;
   totalItemsNotificaciones: number = 0;
@@ -120,12 +119,12 @@ export class ThirdpartiesPossessionValidationComponent
     private fb: FormBuilder,
     private notificationService: NotificationService,
     private goodService: GoodService,
-    // private usersService: UsersService,
     private siabService: SiabService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private historyGoodService: HistoryGoodService,
-    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService
+    private goodPosessionThirdpartyService: GoodPosessionThirdpartyService,
+    private userService: UsersService
   ) {
     super();
   }
@@ -153,23 +152,30 @@ export class ThirdpartiesPossessionValidationComponent
     //     this.getNotificationByWheel(new ListParams(), x);
     //     this.getGoodsPosessionThird(new ListParams(), x);
     //   });
+    // this.form
+    //   .get('wheelNumber')
+    //   .valueChanges.pipe(debounceTime(500))
+    //   .subscribe(x => {
+    //     this.getNotificationByWheel(new ListParams(), x);
+    //     this.getGoodsPosessionThird(new ListParams(), x);
+    //   });
   }
 
   private prepareForm() {
     this.form = this.fb.group({
       wheelNumber: '',
       officeExternalKey: [''],
-      addressee: ['', [Validators.pattern(STRING_PATTERN)]],
+      addressee: [''],
       texto: '',
     });
     // this.noExpediente = this.fb.group({
     //   noExpediente: '',
     // });
-    this.formCcpOficio = this.fb.group({
-      ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
-      ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
-      firma: ['', [Validators.pattern(STRING_PATTERN)]],
-    });
+    // this.formCcpOficio = this.fb.group({
+    //   ccp1: ['', [Validators.pattern(STRING_PATTERN)]],
+    //   ccp2: ['', [Validators.pattern(STRING_PATTERN)]],
+    //   firma: ['', [Validators.pattern(STRING_PATTERN)]],
+    // });
     this.formGood = this.fb.group({
       delegationCloseNumber: [''],
       numClueNavy: [''],
@@ -200,24 +206,23 @@ export class ThirdpartiesPossessionValidationComponent
     usrCcp2: new FormControl(''),
     usrResponsible: new FormControl(''),
   });
-  goodPosessionThirdParty: IGoodPossessionThirdParty;
+  // goodPosessionThirdParty: IGoodPossessionThirdParty;
   getGoodsPosessionThird() {
     const wheelNumber = this.notificationSelected.wheelNumber;
     if (!wheelNumber) {
       return;
     }
     const queryParams = `page=${1}&limit=${10}&filter.steeringwheelNumber=${wheelNumber}`;
-    this.formPositionThirdParty.reset();
-    this.detailGoodPosessionThirdParty = null;
-    this.goodPosessionThirdParty;
+
     this.goodPosessionThirdpartyService.getAll(queryParams).subscribe({
       next: data => {
-        console.log('data', data);
-        this.goodPosessionThirdParty = data.data[0];
-        this.formPositionThirdParty.patchValue(data.data[0]);
-        this.formCcpOficio.get('ccp1').patchValue(data.data[0].usrCcp1);
-        this.formCcpOficio.get('ccp2').patchValue(data.data[0].usrCcp2);
-        this.formCcpOficio.get('firma').patchValue(data.data[0].usrResponsible);
+        // this.goodPosessionThirdParty = data.data[0];
+        // console.log('data', data);
+        // console.log('data');
+        this.formPositionThirdParty.patchValue({
+          ...data.data[0],
+          steeringwheelNumber: wheelNumber,
+        });
         this.form.get('texto').setValue(data.data[0].text);
         this.form.get('officeExternalKey').setValue(data.data[0].jobKey);
         this.formGood
@@ -226,7 +231,6 @@ export class ThirdpartiesPossessionValidationComponent
         this.formGood.get('numClueNavy').setValue(data.data[0].numClueNavy);
         this.formGood.get('closingDate').setValue(data.data[0].closingDate);
         if (data.data[0].possessionNumber) {
-          // this.form.get('officeExternalKey').disable();
           this.goodPosessionThirdpartyService
             .getAllDetailGoodPossessionThirdParty(
               'filter.possessionNumber=' + data.data[0].possessionNumber
@@ -255,9 +259,10 @@ export class ThirdpartiesPossessionValidationComponent
         // this.formCcpOficio.get('ccp1').patchValue('');
         // this.formCcpOficio.get('ccp2').patchValue('');
         // this.formCcpOficio.get('firma').patchValue('');
-        this.formCcpOficio.reset();
-        this.form.reset();
-        this.formGood.reset();
+        // this.formCcpOficio.reset();
+        // this.form.reset();
+        // this.formPositionThirdParty.reset();
+        // this.formGood.reset();
       },
     });
   }
@@ -267,20 +272,13 @@ export class ThirdpartiesPossessionValidationComponent
     if (!wheelNumber) {
       return;
     }
-
-    // this.params = new BehaviorSubject<ListParams>(new ListParams());
-    // let data = this.params.value;
-    // data.page = params.page;
-    // data.limit = params.limit;
     const queryParams = `page=${params.page}&limit=${params.limit}&filter.wheelNumber=${wheelNumber}`;
-
-    // if (wheelNumber) {
-    //   data['filter.wheelNumber'] = wheelNumber;
-    // // }
 
     this.notificationService.getAllFilter(queryParams).subscribe({
       next: data => {
         this.wheelNotifications = data.data[0];
+
+        this.totalItemsNotificaciones = data.count;
 
         this.totalItemsNotificaciones = data.count;
       },
@@ -292,13 +290,24 @@ export class ThirdpartiesPossessionValidationComponent
 
   clearForm() {
     this.form.reset();
-    this.formCcpOficio.reset();
+    this.formPositionThirdParty.reset();
     this.noExpediente.reset();
     this.formGood.reset();
     this.dataTableBienes = [];
     this.dataTableBienesOficio = [];
     this.dataTableNotifications = [];
     this.wheelNotifications = null;
+  }
+
+  searchInput() {
+    this.dataTableNotifications = [];
+    this.dataTableBienesOficio = [];
+    this.dataTableBienes = [];
+    this.form.reset();
+    this.formPositionThirdParty.reset();
+    this.formGood.reset();
+    this.wheelNotifications = null;
+    this.getNotifications();
   }
 
   getNotifications(params = new ListParams()) {
@@ -308,16 +317,22 @@ export class ThirdpartiesPossessionValidationComponent
       this.dataTableNotifications = [];
       this.dataTableBienesOficio = [];
       this.dataTableBienes = [];
+      this.form.reset();
+      this.formPositionThirdParty.reset();
+      this.formGood.reset();
+      this.wheelNotifications = null;
+
       return;
     }
 
+    // this.params = new BehaviorSubject<ListParams>(new ListParams());
     // this.params = new BehaviorSubject<ListParams>(new ListParams());
     let data = this.params.value;
     data.page = params.page;
     data.limit = params.limit;
     let queryString = `page=${params.page}&limit=${params.limit}`;
     queryString += `&filter.expedientNumber=${numberExpedient}`;
-    // if (numberExpedient) {
+    // if (numberExpedient) {btnImprimir
     //   // data['filter.expedientNumber'] = numberExpedient;
     // }
 
@@ -327,7 +342,10 @@ export class ThirdpartiesPossessionValidationComponent
       next: data => {
         this.dataTableNotifications = data.data;
         this.totalItemsNotificaciones = data.count;
+        this.totalItemsNotificaciones = data.count;
         this.loading = false;
+        this.notificationSelected = this.dataTableNotifications[0];
+        this.getGoods(new ListParams());
         this.notificationSelected = this.dataTableNotifications[0];
         this.getGoods(new ListParams());
       },
@@ -342,11 +360,15 @@ export class ThirdpartiesPossessionValidationComponent
   notificationSelected: null | INotification = null;
   selectRowNotification(event: any) {
     this.notificationSelected = event.data;
-    console.log({ notificationSelected: this.notificationSelected });
+    this.formPositionThirdParty.reset();
+    this.detailGoodPosessionThirdParty = null;
     this.form
       .get('wheelNumber')
       .setValue(this.notificationSelected.wheelNumber);
-    this.paramsGood;
+    this.formPositionThirdParty
+      .get('steeringwheelNumber')
+      .setValue(this.notificationSelected.wheelNumber);
+
     this.getGoodsPosessionThird();
   }
 
@@ -357,6 +379,7 @@ export class ThirdpartiesPossessionValidationComponent
     // data.limit = params.limit;
     // const numberExpedient = this.notificationSelected.expedientNumber;
     const numberExpedient = this.noExpediente.value;
+    this.dataTableBienes = [];
     const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}`;
     this.getGoodsByOffice(new ListParams(), numberExpedient);
     // if (numberExpedient) {
@@ -369,7 +392,7 @@ export class ThirdpartiesPossessionValidationComponent
         this.totalItemsGood = data.count;
         this.isLoadingGood = false;
       },
-      error: err => {
+      error: () => {
         this.isLoadingGood = false;
       },
     });
@@ -380,10 +403,15 @@ export class ThirdpartiesPossessionValidationComponent
     // let data = this.params.value;
     // data.page = params.page;
     // data.limit = params.limit;
+    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    // let data = this.params.value;
+    // data.page = params.page;
+    // data.limit = params.limit;
 
     // data.addFilter('status', 'STI');
     // data.addFilter('fileNumber', numberExpedient);
     const queryString = `page=${params.page}&limit=${params.limit}&filter.fileNumber=${numberExpedient}&filter.status=STI`;
+    this.dataTableBienesOficio = [];
     this.goodService.getAllFilter(queryString).subscribe({
       next: data => {
         this.dataTableBienesOficio = data.data;
@@ -433,9 +461,9 @@ export class ThirdpartiesPossessionValidationComponent
   }
 
   handleSuccess() {
-    // this.getGoods(new ListParams(), this.expedientNumber);
-    // this.alert('success', 'Excelente', 'Se ha agregado el bien correctamente');
-    // this.loading = false;
+    this.getGoods(new ListParams());
+    this.alert('success', 'Excelente', 'Se ha agregado el bien correctamente');
+    this.loading = false;
   }
 
   deleteGoodOffice() {
@@ -467,21 +495,65 @@ export class ThirdpartiesPossessionValidationComponent
     console.log(formDepositario.value);
   }
 
-  sendForm() {
-    let cveOficio = this.form.get('officeExternalKey').value;
-
+  async sendForm() {
     if (
-      this.form.invalid ||
-      this.formCcpOficio.invalid ||
-      this.noExpediente.invalid
+      !this.detailGoodPosessionThirdParty.goodNumber ||
+      !this.formPositionThirdParty.value.jobKey
     ) {
       this.alert(
-        'info',
-        'Revisa los campos',
-        'Existen errores en algunos de tus campos.'
+        'error',
+        'Error',
+        'No puede cerrar el Acta si no se han incorporado bienes y generado la clave armada.'
       );
       return;
     }
+
+    const params = new ListParams();
+    params['filter.fileNumber'] =
+      this.formPositionThirdParty.value.possessionNumber;
+    try {
+      const result = await firstValueFrom(
+        this.goodPosessionThirdpartyService.getAll(params)
+      );
+      this.formPositionThirdParty.patchValue(result.data[0]);
+      const goodPosessionThirdParty = this.formPositionThirdParty.value;
+      if (goodPosessionThirdParty.jobKey.includes('?')) {
+        const anio = goodPosessionThirdParty.jobKey.substring(
+          goodPosessionThirdParty.jobKey.lastIndexOf('/') + 1,
+          goodPosessionThirdParty.jobKey.length
+        );
+
+        const params = new ListParams();
+        params['filter.delegationCloseNumber'] = anio;
+        params['filter.jobKey'] = SearchFilter.LIKE;
+
+        goodPosessionThirdParty.jobKey;
+        // const result: any = await firstValueFrom(
+        //   this.getGoodPosessionThirdPartyKeyOfficeNotLike(params as any)
+        // );
+
+        this.formPositionThirdParty
+          .get('closingDate')
+          .setValue(new Date('2021-01-01') as any);
+        this.formPositionThirdParty.get('numClueNavy').setValue(result.data);
+        // this.formPositionThirdParty.get('jobKey').setValue(result.data);
+      }
+    } catch (ex) {}
+
+    let cveOficio = this.form.get('officeExternalKey').value;
+
+    // if (
+    //   this.form.invalid ||
+    //   this.formCcpOficio.invalid ||
+    //   this.noExpediente.invalid
+    // ) {
+    //   this.alert(
+    //     'info',
+    //     'Revisa los campos',
+    //     'Existen errores en algunos de tus campos.'
+    //   );
+    //   return;
+    // }
 
     if (!cveOficio) {
       this.alert(
@@ -503,7 +575,6 @@ export class ThirdpartiesPossessionValidationComponent
         cveOficio.lastIndexOf('/') + 1,
         cveOficio.length
       );
-      console.log(anio);
       if (!cveOficio.includes('?') && cveOficio.endsWith(anio)) {
         let oficio = maxNumClaveArmada + 1;
 
@@ -568,18 +639,27 @@ export class ThirdpartiesPossessionValidationComponent
     });
   }
 
+  getGoodPosessionThirdPartyKeyOfficeNotLike(...a: any) {
+    return new Promise(res => {});
+  }
+
+  getGoodPosessionThirdPartyKeyOfficeNotLike2(...a: any) {
+    return new Promise(res => {});
+  }
+
   btnInsertarTextoPredefinido() {
     this.form.get('texto').setValue(predifinedText);
   }
 
   btnReemplazarMarcadores() {
+    console.log(this.formPositionThirdParty.value);
     const queryParams = `filter.wheelNumber=${this.formPositionThirdParty.value.steeringwheelNumber}`;
     this.notificationService.getAllFilter(queryParams).subscribe({
       next: data => {
         const tGood =
-          this.detailGoodPosessionThirdParty.goodNumber +
+          (this.detailGoodPosessionThirdParty?.goodNumber || '') +
           ' ' +
-          this.detailGoodPosessionThirdParty.description;
+          (this.detailGoodPosessionThirdParty?.description || '');
         let replaceText = predifinedText.replaceAll(
           '<A>',
           this.wheelNotifications
@@ -587,17 +667,18 @@ export class ThirdpartiesPossessionValidationComponent
             : '<A>'
         );
         const text = this.form.get('texto').value;
-        text.replace('<A>', data.data[0].protectionKey);
-        replaceText = replaceText.replaceAll('<B>', 'BIEN  DESCRIPCIÓN');
-        replaceText = replaceText.replaceAll(
-          '<C>',
-          tGood
-          // this.dataTableBienes
-          //   ? `${this.dataTableBienes[0].goodId}  ${this.dataTableBienes[0].description}`
-          //   : '<C>'
-        );
-
-        this.form.get('texto').setValue(replaceText);
+        if (text) {
+          text.replace('<A>', data.data[0].protectionKey);
+          replaceText = replaceText.replaceAll('<B>', 'BIEN  DESCRIPCIÓN');
+          replaceText = replaceText.replaceAll(
+            '<C>',
+            tGood
+            // this.dataTableBienes
+            //   ? `${this.dataTableBienes[0].goodId}  ${this.dataTableBienes[0].description}`
+            //   : '<C>'
+          );
+          this.form.get('texto').setValue(replaceText);
+        }
       },
       error: err => {},
     });
@@ -614,13 +695,15 @@ export class ThirdpartiesPossessionValidationComponent
     // downloadLink.click();
 
     // console.log(this.flyersForm.value);
-    if (!this.detailGoodPosessionThirdParty.goodNumber) {
+    if (!this.detailGoodPosessionThirdParty?.goodNumber) {
       this.alert('info', '', 'Seleccione un bien');
       return;
     }
     if (!this.form.get('officeExternalKey')) {
       this.pupGeneratorKey();
+      this.pupPrint();
     } else {
+      this.pupPrint();
     }
   }
 
@@ -632,16 +715,16 @@ export class ThirdpartiesPossessionValidationComponent
     //   if (params[key] === null) delete params[key];
     // }
     const params = {
-      PARAMFORM: 'NO',
-      P_FIRMA: 'S',
-      P_NO_POSESION: this.goodPosessionThirdParty.possessionNumber,
+      // PARAMFORM: 'NO',
+      // P_FIRMA: 'S',
+      P_NO_POSESION: this.formPositionThirdParty.value.possessionNumber,
     };
     //let newWin = window.open(pdfurl, 'test.pdf');
     // this.alert('success', '', 'Reporte generado');
     // this.loading = false;
     this.siabService
       // .fetchReport('RGEROFPRECEPDOCUM', params)
-      .fetchReport('RBIEVALPOSTERCERO', params)
+      .fetchReport('FBIEVALPOSTERCERO', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -675,5 +758,23 @@ export class ThirdpartiesPossessionValidationComponent
           this.modalService.show(PreviewDocumentsComponent, config);
         }
       });
+  }
+
+  addressee = new DefaultSelect();
+  getDestiny(params: ListParams) {
+    params['asigUser'] = 'S';
+    this.userService.getAllUsersAsigne(params).subscribe({
+      next: data => {
+        const res = data.data.map(item => {
+          return { ...item, nameUser: `${item.usuario} - ${item.nombre}` };
+        });
+        console.log(res);
+        this.addressee = new DefaultSelect(res, data.count);
+      },
+    });
+  }
+
+  changeAddressee($event: any) {
+    // this.form.get('addressee').setValue($event);
   }
 }
