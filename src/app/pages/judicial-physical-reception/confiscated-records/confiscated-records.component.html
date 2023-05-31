@@ -149,7 +149,6 @@
                 <ngx-select
                   id="transfer"
                   control="transfer"
-                  class="pt-5"
                   [class]="initialdisabled ? 'disabled' : ''"
                   label="Transfer"
                   bindLabel="transferentkey"
@@ -163,7 +162,7 @@
               <form-field [control]="form.get('ident')" label="Ident">
                 <input
                   type="text"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="ident" />
               </form-field>
             </div>
@@ -204,7 +203,7 @@
               <form-field [control]="form.get('folio')" label="Folio">
                 <input
                   type="number"
-                  class="form-control"
+                  class="form-control pt-0"
                   [class]="initialdisabled ? 'disabled' : ''"
                   min="0"
                   [max-length]="5"
@@ -215,7 +214,7 @@
               <form-field [control]="form.get('year')" label="A&ntilde;o">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="year" />
               </form-field>
             </div>
@@ -223,7 +222,7 @@
               <form-field [control]="form.get('mes')" label="Mes">
                 <input
                   type="number"
-                  class="form-control disabled"
+                  class="form-control disabled pt-0"
                   formControlName="mes" />
               </form-field>
             </div>
