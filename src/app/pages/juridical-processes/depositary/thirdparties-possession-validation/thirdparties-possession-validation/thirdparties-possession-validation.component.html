@@ -114,29 +114,26 @@
     </div>
     <br />
     <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="formPositionThirdParty" class="form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <h6>Datos del Volante</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
-            [control]="form.get('wheelNumber')"
+            [control]="formPositionThirdParty.get('steeringwheelNumber')"
             label="No&#46; Volante">
             <input
               readonly
               class="form-control"
-              formControlName="wheelNumber" />
+              formControlName="steeringwheelNumber" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
-            [control]="form.get('officeExternalKey')"
+            [control]="formPositionThirdParty.get('jobKey')"
             label="Clave de Oficio">
-            <input
-              readonly
-              class="form-control"
-              formControlName="officeExternalKey" />
+            <input readonly class="form-control" formControlName="jobKey" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -144,20 +141,21 @@
             <input class="form-control" formControlName="addressee" />
           </form-field> -->
 
-          <form-field [control]="form.get('addressee')">
+          <!-- [form]="formPositionThirdParty" -->
+          <form-field [control]="formPositionThirdParty.get('addressee')">
             <ngx-select
-              [form]="form"
+              [form]="formPositionThirdParty"
               [data]="addressee"
-              (fetchItems)="getDestiny($event)"
+              (fetchItems)="getUserName($event)"
               bindLabel="nameUser"
               control="addressee"
               label="Destinatario"
-              (change)="changeAddressee($event)"
               [searchOnInit]="true"
               [clearable]="false"
               [showTooltip]="true">
               <!-- [readonly]="layout == 'ABANDONMENT'" -->
             </ngx-select>
+            <!-- (change)="changeAddressee($event)" -->
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
@@ -174,7 +172,9 @@
           <div class="form-group">
             <button
               type="button"
-              [disabled]="!form.get('wheelNumber').value"
+              [disabled]="
+                !formPositionThirdParty.get('steeringwheelNumber').value
+              "
               class="btn btn-primary btn-sm active text-wrap"
               (click)="btnReemplazarMarcadores()">
               Reemplazar Marcadores
@@ -192,36 +192,78 @@
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-          <form-field [control]="form.get('texto')" label="Texto">
+          <form-field
+            [control]="formPositionThirdParty.get('text')"
+            label="Texto">
             <textarea
               maxlength="4000"
               rows="12"
               class="form-control"
-              formControlName="texto"></textarea>
+              formControlName="text"></textarea>
           </form-field>
         </div>
         <!-- Form CON COPIA PARA -->
         <form [formGroup]="formPositionThirdParty" class="form-material">
           <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field
+              <!-- <form-field
                 [control]="formPositionThirdParty.get('usrCcp1')"
                 label="C&#46;P&#46;P 1">
                 <input class="form-control" formControlName="usrCcp1" />
+              </form-field> -->
+              <form-field [control]="formPositionThirdParty.get('usrCcp1')">
+                <ngx-select
+                  [form]="formPositionThirdParty"
+                  [data]="userCcp2"
+                  (fetchItems)="getUserName($event, 'ccp1')"
+                  bindLabel="nameUser"
+                  control="usrCcp1"
+                  label="C&#46;P&#46;P 1"
+                  [searchOnInit]="true"
+                  [clearable]="false"
+                  [showTooltip]="true">
+                </ngx-select>
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field
+              <!-- <form-field
                 [control]="formPositionThirdParty.get('usrCcp2')"
                 label="C&#46;P&#46;P 2">
                 <input class="form-control" formControlName="usrCcp2" />
+              </form-field> -->
+              <form-field [control]="formPositionThirdParty.get('usrCcp2')">
+                <ngx-select
+                  [form]="formPositionThirdParty"
+                  [data]="userCcp2"
+                  (fetchItems)="getUserName($event, 'ccp2')"
+                  bindLabel="nameUser"
+                  control="usrCcp2"
+                  label="C&#46;P&#46;P 2"
+                  [searchOnInit]="true"
+                  [clearable]="false"
+                  [showTooltip]="true">
+                </ngx-select>
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field
+              <!-- <form-field
                 [control]="formPositionThirdParty.get('usrResponsible')"
                 label="Firma">
                 <input class="form-control" formControlName="usrResponsible" />
+              </form-field> -->
+              <form-field
+                [control]="formPositionThirdParty.get('usrResponsible')">
+                <ngx-select
+                  [form]="formPositionThirdParty"
+                  [data]="userResponsible"
+                  (fetchItems)="getUserName($event, 'responsible')"
+                  bindLabel="nameUser"
+                  control="usrResponsible"
+                  label="Firma"
+                  [searchOnInit]="true"
+                  [clearable]="false"
+                  [showTooltip]="true">
+                </ngx-select>
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
@@ -237,11 +279,11 @@
           </div>
         </form>
         <!-- Form CON COPIA PARA -->
-        <form [formGroup]="formGood" class="form-material">
+        <form [formGroup]="formPositionThirdParty" class="form-material">
           <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
-                [control]="formGood.get('delegationCloseNumber')"
+                [control]="formPositionThirdParty.get('delegationCloseNumber')"
                 label="Delegación Cierre">
                 <input
                   type="text"
@@ -253,7 +295,7 @@
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 maxlength="40"
-                [control]="formGood.get('numClueNavy')"
+                [control]="formPositionThirdParty.get('numClueNavy')"
                 label="Clave Armada">
                 <input class="form-control" formControlName="numClueNavy" />
               </form-field>
@@ -261,7 +303,7 @@
             <div class="col-sm-12 col-12 col-md-6 p-2">
               <form-field
                 maxlength="40"
-                [control]="formGood.get('closingDate')"
+                [control]="formPositionThirdParty.get('closingDate')"
                 label="Fecha de Cierre">
                 <input
                   class="form-control"
