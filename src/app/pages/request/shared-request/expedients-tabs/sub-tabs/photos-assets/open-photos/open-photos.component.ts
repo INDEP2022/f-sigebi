@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { TABLE_SETTINGS } from '../../../../../../../common/constants/table-settings';
@@ -23,7 +23,8 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   task: any;
   statusTask: any = '';
-
+  documentsSeaData: any[] = [];
+  private data: any[][] = [];
   constructor(
     private bsModalRef: BsModalRef,
     private wContentService: WContentService,
@@ -41,6 +42,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
 
     this.settings = {
       ...TABLE_SETTINGS,
+
       actions: false,
       selectMode: '',
       columns: PHOTOS_TABLE_COLUMNS,
@@ -53,27 +55,57 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
         });
       },
     };
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getImagesGood());
 
-    this.getImagesGood();
   }
 
   getImagesGood() {
     const idReq: Object = {
       xidBien: this.information.id,
     };
+    this.data = [];
+    if (this.data.length == 0) {
+      this.loading = true;
+      this.wContentService.getDocumentos(idReq).subscribe(data => {
+        const _data = data.data.filter((img: any) => {
+          if (img.dDocType == 'DigitalMedia') return img;
+        });
 
-    this.wContentService.getDocumentos(idReq).subscribe(data => {
-      const _data = data.data.filter((img: any) => {
-        if (img.dDocType == 'DigitalMedia') return img;
+        if (_data.length > 0) {
+          this.documentsSeaData =
+            _data.length > 10
+              ? this.setPaginate([..._data])
+              : _data;
+          this.totalItems = _data.length
+          this.loading = false;
+        } else {
+          this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+          this.loading = false;
+        }
       });
-
-      if (_data.length > 0) {
-        this.paragraphs.load(_data);
-        this.totalItems = this.paragraphs.count();
-      } else {
-        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+    } else {
+      this.selectPage();
+    }
+  }
+  private selectPage() {
+    this.documentsSeaData = [...this.data[this.params.value.page - 1]];
+  }
+  private setPaginate(value: any[]): any[] {
+    let data: any[] = [];
+    let dataActual: any = [];
+    value.forEach((val, i) => {
+      dataActual.push(val);
+      if ((i + 1) % this.params.value.limit === 0) {
+        this.data.push(dataActual);
+        dataActual = [];
+      } else if (i === value.length - 1) {
+        this.data.push(dataActual);
       }
     });
+    data = this.data[this.params.value.page - 1];
+    return data;
   }
 
   updateInfoPhotos() {
@@ -124,7 +156,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(imageUrl),
           type: 'img',
         },
-        callback: (data: any) => {},
+        callback: (data: any) => { },
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal

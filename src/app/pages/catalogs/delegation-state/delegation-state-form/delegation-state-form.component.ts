@@ -20,7 +20,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   delegationStateForm: ModelForm<IDelegationState>;
   title: string = 'Delegación Estado';
   edit: boolean = false;
-  delegationSate: IDelegationState;
+  delegationSate: any;
   states = new DefaultSelect<IStateOfRepublic>();
   constructor(
     private modalRef: BsModalRef,
@@ -63,11 +63,8 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   fillForm() {
     this.edit = true;
     this.delegationStateForm.patchValue(this.delegationSate);
-    /**
-     * !Agregar funcionalidad para llenar el select
-     * !cuando lo traiga del backend
-     */
-    // const state = this.delegationSate.keyState
+    console.log(this.delegationSate);
+    this.delegationStateForm.controls['regionalDelegation'].setValue(this.delegationSate.stateCode.id);
   }
 
   getStates(params: ListParams) {

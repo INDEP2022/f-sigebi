@@ -67,8 +67,8 @@
       <div class="row mt-4">
         <div class="col-md-12">
           <form-field [control]="warehouseForm.get('type')">
-            <ngx-select [form]="warehouseForm" [data]="type" label="Tipo Almac&eacute;n" bindLabel="otvalor"
-              value="otkey" (fetchItems)="getType($event)" control="type"></ngx-select>
+            <ngx-select [searchable]="true" [form]="warehouseForm" [data]="type" label="Tipo Almac&eacute;n"
+              bindLabel="otvalor" value="otkey" (fetchItems)="getType($event)" control="type"></ngx-select>
           </form-field>
         </div>
       </div>
