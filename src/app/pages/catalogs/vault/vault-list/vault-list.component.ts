@@ -95,27 +95,34 @@ export class VaultListComponent extends BasePage implements OnInit {
     };
     this.safeService.getAll2(params).subscribe(
       response => {
-        this.vaults = response.data;
-        this.getManager();
+
+        this.getManager(response);
         this.totalItems = response.count;
       },
       error => (this.loading = false)
     );
   }
-  async getManager(): Promise<void> {
-    for (let i = 0; i < this.vaults.length; i++) {
+  async getManager(response: any): Promise<void> {
+    for (let i = 0; i < response.data.length; i++) {
       const params = new ListParams();
-      params['filter.user'] = `$eq:${this.vaults[i].manager}`;
+      params['filter.user'] = `$eq:${response.data[i].manager}`;
       this.securityService.getAllUsersTracker(params).subscribe({
         next: resp => {
-          this.vaults[i].managerDetail = resp.data[0].name;
-          if (i == this.vaults.length - 1) {
+          response.data[i].managerDetail = resp.data[0].name;
+          if (i == response.data.length - 1) {
+            this.vaults = response.data;
+            this.data.load(this.vaults);
+            this.data.refresh();
+            this.loading = false;
+          }
+        }, error: erro => {
+          if (i == response.data.length - 1) {
+            this.vaults = response.data;
             this.data.load(this.vaults);
             this.data.refresh();
             this.loading = false;
           }
         },
-        error: erro => console.log((this.loading = false)),
       });
       await new Promise(resolve => setTimeout(resolve, 300));
     }

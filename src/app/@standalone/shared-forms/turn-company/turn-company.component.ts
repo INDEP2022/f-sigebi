@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGiro } from 'src/app/core/models/parameterization/giro.model';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -22,26 +23,29 @@ export class TurnCompanyComponent extends BasePage implements OnInit {
 
   turn: any = new DefaultSelect<IGiro>();
 
-  constructor(private service: DynamicTablesService) {
+  constructor(private tvalTable1Service: TvalTable1Service) {
     super();
   }
 
   get Federative() {
+    console.log(this.turnField);
     return this.form.get(this.turnField);
   }
 
   ngOnInit(): void {
     //en espera de filtros dinamicos
-    this.getTurn();
+
+    this.getTurn(new ListParams);
   }
 
   getTurn(params?: ListParams) {
-    this.service.getByIdData(8).subscribe({
+    params['filter.nmtable'] = `$eq:8`;
+    this.tvalTable1Service.getAlls(params).subscribe({
       next: data =>
-        (this.turn = new DefaultSelect(
-          data.table.data,
-          data.table.data.lenght
-        )),
+      (this.turn = new DefaultSelect(
+        data.data,
+        data.count
+      )),
       error: err => {
         let error = '';
         if (err.status === 0) {
@@ -53,7 +57,7 @@ export class TurnCompanyComponent extends BasePage implements OnInit {
       },
     });
   }
-  onTurnChange(type: any) {}
+  onTurnChange(type: any) { }
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
