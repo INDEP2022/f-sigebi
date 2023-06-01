@@ -538,7 +538,7 @@
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingGuardGoods"
                 [source]="goodsGuards"
                 (edit)="showGood($event.data)"
@@ -554,7 +554,7 @@
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
                 (edit)="showGood($event.data)"
