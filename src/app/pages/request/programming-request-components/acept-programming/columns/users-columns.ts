@@ -1,5 +1,5 @@
 export const USER_COLUMNS = {
-  firstName: {
+  user: {
     title: 'Usuario',
     type: 'string',
     sort: false,
@@ -11,7 +11,7 @@ export const USER_COLUMNS = {
     sort: false,
   },
 
-  employeeType: {
+  userCharge: {
     title: 'Tipo usuario',
     type: 'string',
     sort: false,

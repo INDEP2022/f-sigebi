@@ -11,7 +11,7 @@ import { BankService } from '../../../../core/services/catalogs/bank.service';
   styles: [],
 })
 export class BanksDetailComponent extends BasePage implements OnInit {
-  title: 'ABOGADO';
+  title: 'BANCO';
   status: string = 'Nuevo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
@@ -51,7 +51,8 @@ export class BanksDetailComponent extends BasePage implements OnInit {
       code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       idProvider: [null],
     });
-    if (this.edit) {
+    if (this.bank) {
+      this.edit = true;
       this.status = 'Actualizar';
       this.form.patchValue(this.bank);
     }
@@ -77,7 +78,7 @@ export class BanksDetailComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    // this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
