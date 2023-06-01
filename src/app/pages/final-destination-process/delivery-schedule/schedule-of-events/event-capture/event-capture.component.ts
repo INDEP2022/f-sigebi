@@ -15,7 +15,9 @@ import {
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ITmpProgValidation } from 'src/app/core/models/good-programming/good-programming';
 import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
@@ -29,8 +31,11 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
@@ -168,7 +173,10 @@ export class EventCaptureComponent extends BasePage implements OnInit {
     private segAccessXAreas: SegAcessXAreasService,
     private eventProgrammingService: EventProgrammingService,
     private detailDeliveryReceptionService: ProceedingsDetailDeliveryReceptionService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private procudeServ: ProcedureManagementService,
+    private security: SecurityService,
+    private progammingServ: ProgrammingGoodService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -724,5 +732,154 @@ export class EventCaptureComponent extends BasePage implements OnInit {
       this.alert('error', 'Error', message);
     }
     // this.router.navigate([HOME_DEFAULT]);
+  }
+
+  async notificationBtn() {
+    let n_cont;
+    let c_mail;
+    let l_ban;
+    let c_user;
+    let v_usuariotlp: number = 0;
+    let v_usuarioost: number = 0;
+
+    const user = this.authService.decodeToken().name.toUpperCase();
+
+    v_usuariotlp = user.indexOf('TLP');
+    v_usuarioost = user.indexOf('OST');
+
+    const STATUS = ['CERRADO', 'CERRADA'];
+
+    if (
+      !STATUS.includes(this.proceeding.statusProceedings) &&
+      this.global.paperworkArea == 'RF' &&
+      this.proceeding.numFile &&
+      v_usuarioost == -1 &&
+      v_usuariotlp == -1
+    ) {
+      const count = await new Promise<number>((resolve, reject) => {
+        const filters = new FilterParams();
+        filters.addFilter(
+          'flierNumber',
+          this.proceeding.numFile,
+          SearchFilter.EQ
+        );
+        filters.addFilter('typeManagement', 2, SearchFilter.EQ);
+
+        this.procudeServ.getAllFiltered(filters.getParams()).subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+          error: () => {
+            resolve(0);
+          },
+        });
+      });
+
+      if (count == 0) {
+        this.emailInser();
+      }
+    } else if (v_usuarioost != -1 || v_usuariotlp != -1) {
+      this.onLoadToast(
+        'info',
+        'Usuario TLP y OST, no puede cargar los correos de envió de convocatoria a SISE.'
+      );
+    }
+  }
+
+  async emailInser() {
+    let c_mail: string;
+    let l_ban: boolean;
+    let c_user: string;
+
+    const { user, mail } = await new Promise<any>((resolve, reject) => {
+      const user = this.authService.decodeToken().name.toUpperCase();
+      const filters = new FilterParams();
+      filters.addFilter(
+        'user',
+        'ZLB11_130' /*this.proceeding.numFile*/,
+        SearchFilter.EQ
+      );
+
+      this.security.getAllUsersTracker(filters.getParams()).subscribe({
+        next: resp => {
+          const user = resp.data[0].user;
+          const mail = resp.data[0].mail;
+          resolve({ user, mail });
+        },
+        error: () => {
+          resolve({ user: '', mail: 'X' });
+        },
+      });
+    });
+
+    c_mail = mail;
+
+    if (c_mail != 'X') {
+      l_ban = true;
+    }
+  }
+
+  async closeProg() {
+    let lv_valmotos: string;
+    let lv_valmensa: string;
+    let lv_pantalla: string = 'FINDICA_0035_1';
+    let v_count: number = 0;
+    let c_str: string;
+    let c_mensaje: string;
+    let n_folio_universal: string;
+    let n_cont: number = 0;
+    let e_execpproc: any;
+
+    const filter = new FilterParams();
+    const user = this.authService.decodeToken().username;
+    filter.addFilter('valUser', user, SearchFilter.EQ);
+    filter.addFilter('valMinutesNumber', this.proceeding.id, SearchFilter.EQ);
+
+    const c_datval = new Promise<ITmpProgValidation[]>((resolve, reject) => {
+      this.progammingServ.getTmpProgValidation(filter.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data);
+        },
+        error: () => {
+          resolve([]);
+        },
+      });
+    });
+
+    c_mensaje = null;
+
+    //no se tiene modelo del bloque BLK_CANT
+    if (0 <= 0) {
+      this.onLoadToast('info', 'No se tienen bienes ingresados');
+    }
+
+    if (this.global.paperworkArea == 'RF') {
+      const count = await new Promise<number>((resolve, reject) => {
+        const filters = new FilterParams();
+        filters.addFilter(
+          'flierNumber',
+          this.proceeding.numFile,
+          SearchFilter.EQ
+        );
+        filters.addFilter('typeManagement', 2, SearchFilter.EQ);
+
+        this.procudeServ.getAllFiltered(filters.getParams()).subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+          error: () => {
+            resolve(0);
+          },
+        });
+      });
+      n_cont = count;
+    }
+
+    const STATUS = ['CERRADA', 'CERRADO'];
+
+    if (!STATUS.includes(this.proceeding.statusProceedings)) {
+      if (this.proceeding.typeProceedings == 'EVENTREC') {
+      }
+    }
   }
 }
