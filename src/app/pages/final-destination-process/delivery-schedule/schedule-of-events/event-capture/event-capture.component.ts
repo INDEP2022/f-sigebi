@@ -1,4 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -7,20 +15,27 @@ import {
   lastValueFrom,
   map,
   of,
+  skip,
   switchMap,
   takeUntil,
   tap,
   throwError,
 } from 'rxjs';
+import { DateCellComponent } from 'src/app/@standalone/smart-table/date-cell/date-cell.component';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ITmpProgValidation } from 'src/app/core/models/good-programming/good-programming';
+import { IGoodIndicator } from 'src/app/core/models/ms-event-programming/good-indicators.model';
 import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { IndicatorsParametersService } from 'src/app/core/services/ms-parametergood/indicators-parameter.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
@@ -29,22 +44,31 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
-import { COLUMNS_CAPTURE_EVENTS } from './columns-capture-events';
+import {
+  COLUMNS_CAPTURE_EVENTS,
+  COLUMNS_CAPTURE_EVENTS_2,
+} from './columns-capture-events';
+import { SmartDateInputHeaderDirective } from './directives/smart-date-input.directive';
 import { CaptureEventProceeding } from './utils/capture-event-proceeding';
 import {
   CaptureEventRegisterForm,
   CaptureEventSiabForm,
 } from './utils/capture-events-forms';
 import { EventCaptureButtons } from './utils/event-capture-butttons';
+
 interface IBlkCtrl {
   component: string | number;
   typeNum: string | number;
-  typeNumCant: string | number;
+  typeNumCant: number;
   userLevel: string | number;
   reopenInd: string | number;
   cEvent: number;
@@ -53,6 +77,8 @@ interface IBlkCtrl {
   goodQuantity: number;
   asigTm: string | number;
   asigCb: string | number;
+  txtDirSatLabel: string;
+  txtDirSat: string;
 }
 
 interface IGlobalV {
@@ -66,7 +92,8 @@ interface IGlobalV {
 }
 
 interface IBlkProceeding {
-  txtCrtSus1: string | number;
+  txtCrtSus1: string;
+  txtCrtSus2: string;
 }
 @Component({
   selector: 'app-event-capture',
@@ -79,7 +106,12 @@ interface IBlkProceeding {
     `,
   ],
 })
-export class EventCaptureComponent extends BasePage implements OnInit {
+export class EventCaptureComponent
+  extends BasePage
+  implements OnInit, AfterViewInit, AfterContentInit
+{
+  @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
+  private itemsElements: QueryList<ElementRef>;
   eventTypes = new DefaultSelect([
     { area_tramite: 'OP', descripcion: 'Oficialía de partes' },
   ]);
@@ -105,7 +137,7 @@ export class EventCaptureComponent extends BasePage implements OnInit {
   formSiab = this.fb.group(new CaptureEventSiabForm());
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  detail: any[] = [];
+  detail: IGoodIndicator[] = [];
   ctrlButtons = new EventCaptureButtons();
   blkCtrl: IBlkCtrl = {
     component: null, // COMPONENTE
@@ -113,7 +145,8 @@ export class EventCaptureComponent extends BasePage implements OnInit {
     typeNumCant: null, // NO_TIPO_CANT
     userLevel: null, // NIVEL_USUARIO
     reopenInd: null, // IND_REAPERTURA
-
+    txtDirSatLabel: 'Vo. Bo. de Sat',
+    txtDirSat: null,
     cEvent: 0, // C_EVENTO
     cQuantity: 0, // C_CANTIDAD
     cSelAll: 0, // SEL_TODO
@@ -124,6 +157,7 @@ export class EventCaptureComponent extends BasePage implements OnInit {
 
   blkProceeding: IBlkProceeding = {
     txtCrtSus1: null,
+    txtCrtSus2: null,
   };
   packNumCtrl = new FormControl(null);
   showPackNumCtrl = false;
@@ -168,19 +202,161 @@ export class EventCaptureComponent extends BasePage implements OnInit {
     private segAccessXAreas: SegAcessXAreasService,
     private eventProgrammingService: EventProgrammingService,
     private detailDeliveryReceptionService: ProceedingsDetailDeliveryReceptionService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private expedientService: ExpedientService,
+    private dynamicCatalogService: DynamicCatalogService,
+    private procedureManagementService: ProcedureManagementService,
+    private procudeServ: ProcedureManagementService,
+    private security: SecurityService,
+    private progammingServ: ProgrammingGoodService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
     this.authUserName = this.authService.decodeToken().name;
-    this.settings = { ...this.settings, columns: COLUMNS_CAPTURE_EVENTS };
-    console.log(this.settings);
+    this.settings = {
+      ...this.settings,
+      columns: {
+        ...COLUMNS_CAPTURE_EVENTS,
+        dateapprovalxadmon: {
+          title: 'Inicio',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          filter: {
+            type: 'custom',
+            component: DateCellComponent,
+          },
+          filterFunction: (value: any, query: any) => {
+            if (query != 'skip') {
+              this.detail = this.detail.map(d => {
+                return { ...d, dateapprovalxadmon: new Date(query) };
+              });
+            }
+            return query;
+          },
+          renderComponent: DateCellComponent,
+          onComponentInitFunction: (instance: DateCellComponent) =>
+            this.test(instance),
+        },
+        dateindicatesuserapproval: {
+          title: 'Finalización',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          filter: {
+            type: 'custom',
+            component: DateCellComponent,
+          },
+          filterFunction: (value: any, query: any) => {
+            if (query != 'skip') {
+              this.detail = this.detail.map(d => {
+                return { ...d, dateindicatesuserapproval: new Date(query) };
+              });
+            }
+            return query;
+          },
+          renderComponent: DateCellComponent,
+        },
+        select: {
+          title: 'Selec.',
+          sort: false,
+          type: 'custom',
+          filter: false,
+          showAlways: true,
+          renderComponent: CheckboxElementComponent,
+        },
+        ...COLUMNS_CAPTURE_EVENTS_2,
+      },
+      hideSubHeader: false,
+      actions: false,
+    };
     this.activatedRoute.queryParams.subscribe(params => {
       this.global.proceedingNum = params['numeroActa'] ?? null;
       this.global.paperworkArea = params['tipoEvento'] ?? null;
     });
 
     console.log(this.global);
+  }
+
+  test(instance: DateCellComponent) {
+    instance.inputChange.subscribe(val => {
+      console.log(val);
+    });
+  }
+  ngAfterContentInit(): void {
+    console.log(this.itemsElements);
+  }
+  ngAfterViewInit(): void {
+    console.log(this.itemsElements);
+  }
+
+  async transferClick() {
+    const firstDetail = this.detail[0];
+    console.log('llego', firstDetail);
+    const { transference } = this.registerControls;
+    if (!firstDetail) {
+      transference.reset();
+      return;
+    }
+
+    if (!firstDetail.expedientnumber) {
+      transference.reset();
+      return;
+    }
+    const { expedientnumber } = firstDetail;
+    const identifier = await this.getExpedientById(expedientnumber);
+
+    if (identifier == 'TRANS') {
+      const { type, key } = await this.getTransferType(expedientnumber);
+      if (type == 'E') {
+        const tTrans = await this.getTTrans(expedientnumber);
+        transference.setValue(tTrans);
+      } else {
+        transference.setValue(key);
+      }
+    } else {
+      const tAseg = await this.getTAseg(expedientnumber);
+      transference.setValue(tAseg);
+    }
+
+    const transferent = transference.value;
+    this.transfers = new DefaultSelect([
+      { value: transferent, label: transferent },
+    ]);
+  }
+
+  async getTAseg(expedientId: string | number) {
+    return await lastValueFrom(
+      this.dynamicCatalogService
+        .getClaveCTransparente(expedientId)
+        .pipe(map(res => res.data[0].clave))
+    );
+  }
+
+  async getTTrans(expedientId: string | number) {
+    return await lastValueFrom(
+      this.dynamicCatalogService
+        .getDescEmisora(expedientId)
+        .pipe(map(res => res.data[0].desc_emisora))
+    );
+  }
+
+  async getTransferType(expedientId: string | number) {
+    return await lastValueFrom(
+      this.dynamicCatalogService.getIncapAndClave(expedientId).pipe(
+        map(res => {
+          return { type: res.data[0].coaelesce, key: res.data[0].clave };
+        })
+      )
+    );
+  }
+
+  async getExpedientById(id: string | number) {
+    return await lastValueFrom(
+      this.expedientService
+        .getById(id)
+        .pipe(map(expedient => expedient.identifier))
+    );
   }
 
   getUserDelegation() {
@@ -223,7 +399,7 @@ export class EventCaptureComponent extends BasePage implements OnInit {
       return;
     }
 
-    if (!area.value) {
+    if (!typeEvent.value) {
       this.alert('error', 'Error', 'No se ha especificado el Tipo de Evento');
       return;
     }
@@ -280,7 +456,9 @@ export class EventCaptureComponent extends BasePage implements OnInit {
   pupUpdate() {}
 
   // PUP_CONDICIONES_FR
-  frConditions() {}
+  frConditions() {
+    this.pupUpdate();
+  }
 
   async getStage() {
     return await lastValueFrom(
@@ -319,6 +497,10 @@ export class EventCaptureComponent extends BasePage implements OnInit {
   }
 
   async ngOnInit() {
+    const { responsible } = this.registerControls;
+    responsible.valueChanges.pipe(skip(1)).subscribe(() => {
+      this.generateCve();
+    });
     await this.initForm();
   }
 
@@ -559,9 +741,22 @@ export class EventCaptureComponent extends BasePage implements OnInit {
     );
   }
 
+  getType() {
+    const params = new FilterParams();
+    params.addFilter('certificateType', this.global.paperworkArea);
+    return lastValueFrom(
+      this.indicatorParametersService.getAll(params.getParams()).pipe(
+        catchError(() => of(null)),
+        map(res => res.data[0].procedureArea.id)
+      )
+    );
+  }
+
   async initForm() {
     this.getInitialParameter();
-
+    if (this.global.paperworkArea) {
+      this.global.paperworkArea = await this.getType();
+    }
     this.getUserLevel().subscribe();
     this.ctrlButtons.sendSise.hide();
     this.ctrlButtons.signOffice.hide();
@@ -672,7 +867,7 @@ export class EventCaptureComponent extends BasePage implements OnInit {
   async getProceeding(params: FilterParams) {
     return await lastValueFrom(
       this.proceedingDeliveryReceptionService.getAll(params.getParams()).pipe(
-        tap(res => {
+        tap(async res => {
           this.proceeding = res.data[0];
           const form = {
             captureDate: new Date(res.data[0].captureDate),
@@ -680,20 +875,130 @@ export class EventCaptureComponent extends BasePage implements OnInit {
             responsible: res.data[0].responsible,
           };
           this.form.patchValue(form);
+          await this.afterGetProceeding();
           this.getDetail().subscribe();
         })
       )
     );
   }
 
+  async afterGetProceeding() {
+    const { typeEvent } = this.registerControls;
+    if (typeEvent.value == 'RF') {
+      const count = (await this.getExpedientsCount()) ?? 0;
+      console.log(count);
+      const options = ['CERRADA', 'CERRADO'];
+      if (options.find(opt => opt == this.proceeding.statusProceedings)) {
+        this.ctrlButtons.closeProg.show();
+        this.ctrlButtons.closeProg.label = 'Abrir Prog.';
+        if (count > 0) {
+          if (this.proceeding.receiveBy != '1') {
+            this.ctrlButtons.sendSise.show();
+          } else {
+            this.ctrlButtons.sendSise.hide();
+          }
+        } else {
+          this.ctrlButtons.sendSise.hide();
+        }
+      } else {
+        this.ctrlButtons.closeProg.label = 'Cerrar Prog.';
+        if (count > 0) {
+          this.ctrlButtons.closeProg.hide();
+        } else {
+          if (this.proceeding.statusProceedings) {
+            this.ctrlButtons.closeProg.show();
+          }
+        }
+      }
+    }
+  }
+
   getDetail() {
     const params = new FilterParams();
     params.addFilter('numberProceedings', this.proceeding.id);
-    return this.detailDeliveryReceptionService.getAll(params.getParams()).pipe(
-      tap(response => {
-        this.detail = response.data;
-      })
-    );
+    return this.eventProgrammingService
+      .getGoodsIndicators(this.proceeding.id)
+      .pipe(
+        tap(res => {
+          const detail = res.data[0];
+
+          this.afterGetDetail(detail);
+          this.detail = res.data.map(detail => {
+            const { typeEvent } = this.registerControls;
+            let locTrans = '';
+            if (typeEvent.value == 'RF') {
+              if (this.blkProceeding.txtCrtSus1) {
+                locTrans = detail.warehouselocation;
+              } else {
+                locTrans = detail.transferentcity;
+              }
+            } else {
+              switch (typeEvent.value) {
+                case 'DN':
+                  locTrans = detail.donationcontractkey;
+                  break;
+                case 'DV':
+                  locTrans = detail.devolutionproceedingkey;
+                  break;
+                case 'CM':
+                  locTrans = detail.dictationkey;
+                  break;
+                case 'DS':
+                  locTrans = detail.destructionproceedingkey;
+                  break;
+                default:
+                  break;
+              }
+            }
+            return { ...detail, locTrans };
+          });
+        })
+      );
+  }
+
+  // DETALLE_ACTA_ENT_RECEP.POST_QUERY
+  afterGetDetail(detail: IGoodIndicator) {
+    const { typeEvent } = this.registerControls;
+    this.blkCtrl.typeNum = detail.typegood;
+    this.blkCtrl.typeNumCant = this.blkCtrl.typeNumCant ?? 0;
+    if (typeEvent.value == 'RF' && detail.status == 'CPR') {
+      (this.settings.columns as any).status.title = 'VA_CPR';
+    }
+
+    if (
+      !this.blkProceeding.txtCrtSus1 &&
+      detail.inventorysiabi?.split('-').length >= 3
+    ) {
+      this.blkProceeding.txtCrtSus1 = detail.inventorysiabi.split('-')[0];
+      const firstDashIndex = detail.inventorysiabi.indexOf('-');
+      const secondDashIndex = detail.inventorysiabi.indexOf(
+        '-',
+        firstDashIndex + 1
+      );
+
+      if (firstDashIndex !== -1 && secondDashIndex !== -1) {
+        this.blkProceeding.txtCrtSus2 = detail.inventorysiabi.substring(
+          firstDashIndex + 1,
+          secondDashIndex
+        );
+      }
+
+      this.blkProceeding.txtCrtSus2 =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(
+          this.blkProceeding.txtCrtSus2.substring(0, 1)
+        ) === -1
+          ? '%'
+          : (this.blkProceeding.txtCrtSus1 = '%');
+
+      if (typeEvent.value == 'RF') {
+        this.blkCtrl.txtDirSatLabel = 'Dirección';
+        (this.settings.columns as any).locTrans.title = 'Almacén';
+        this.blkCtrl.txtDirSat = detail.txt_dirsat;
+      }
+    }
+
+    // TODO: PEDIR TODOS LOS CAMPOS DEL DETALLE
+    // this.blkCtrl.cQuantity = (this.blkCtrl.cQuantity?? 0) + this.
   }
 
   patchProceedingValue(proceeding: IProceedings) {}
@@ -708,7 +1013,20 @@ export class EventCaptureComponent extends BasePage implements OnInit {
           this.alert('error', 'Error', 'No se localizo el tipo de acta');
           return throwError(() => error);
         }),
+
         map(response => response.data[0])
+      )
+    );
+  }
+
+  async getExpedientsCount() {
+    const params = new FilterParams();
+    params.addFilter('expedient', this.proceeding.numFile);
+    params.addFilter('typeManagement', 2);
+    return await lastValueFrom(
+      this.procedureManagementService.getAllFiltered(params.getParams()).pipe(
+        catchError(() => of({ count: 0 })),
+        map(res => res.count)
       )
     );
   }
@@ -724,5 +1042,154 @@ export class EventCaptureComponent extends BasePage implements OnInit {
       this.alert('error', 'Error', message);
     }
     // this.router.navigate([HOME_DEFAULT]);
+  }
+
+  async notificationBtn() {
+    let n_cont;
+    let c_mail;
+    let l_ban;
+    let c_user;
+    let v_usuariotlp: number = 0;
+    let v_usuarioost: number = 0;
+
+    const user = this.authService.decodeToken().name.toUpperCase();
+
+    v_usuariotlp = user.indexOf('TLP');
+    v_usuarioost = user.indexOf('OST');
+
+    const STATUS = ['CERRADO', 'CERRADA'];
+
+    if (
+      !STATUS.includes(this.proceeding.statusProceedings) &&
+      this.global.paperworkArea == 'RF' &&
+      this.proceeding.numFile &&
+      v_usuarioost == -1 &&
+      v_usuariotlp == -1
+    ) {
+      const count = await new Promise<number>((resolve, reject) => {
+        const filters = new FilterParams();
+        filters.addFilter(
+          'flierNumber',
+          this.proceeding.numFile,
+          SearchFilter.EQ
+        );
+        filters.addFilter('typeManagement', 2, SearchFilter.EQ);
+
+        this.procudeServ.getAllFiltered(filters.getParams()).subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+          error: () => {
+            resolve(0);
+          },
+        });
+      });
+
+      if (count == 0) {
+        this.emailInser();
+      }
+    } else if (v_usuarioost != -1 || v_usuariotlp != -1) {
+      this.onLoadToast(
+        'info',
+        'Usuario TLP y OST, no puede cargar los correos de envió de convocatoria a SISE.'
+      );
+    }
+  }
+
+  async emailInser() {
+    let c_mail: string;
+    let l_ban: boolean;
+    let c_user: string;
+
+    const { user, mail } = await new Promise<any>((resolve, reject) => {
+      const user = this.authService.decodeToken().name.toUpperCase();
+      const filters = new FilterParams();
+      filters.addFilter(
+        'user',
+        'ZLB11_130' /*this.proceeding.numFile*/,
+        SearchFilter.EQ
+      );
+
+      this.security.getAllUsersTracker(filters.getParams()).subscribe({
+        next: resp => {
+          const user = resp.data[0].user;
+          const mail = resp.data[0].mail;
+          resolve({ user, mail });
+        },
+        error: () => {
+          resolve({ user: '', mail: 'X' });
+        },
+      });
+    });
+
+    c_mail = mail;
+
+    if (c_mail != 'X') {
+      l_ban = true;
+    }
+  }
+
+  async closeProg() {
+    let lv_valmotos: string;
+    let lv_valmensa: string;
+    let lv_pantalla: string = 'FINDICA_0035_1';
+    let v_count: number = 0;
+    let c_str: string;
+    let c_mensaje: string;
+    let n_folio_universal: string;
+    let n_cont: number = 0;
+    let e_execpproc: any;
+
+    const filter = new FilterParams();
+    const user = this.authService.decodeToken().username;
+    filter.addFilter('valUser', user, SearchFilter.EQ);
+    filter.addFilter('valMinutesNumber', this.proceeding.id, SearchFilter.EQ);
+
+    const c_datval = new Promise<ITmpProgValidation[]>((resolve, reject) => {
+      this.progammingServ.getTmpProgValidation(filter.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.data);
+        },
+        error: () => {
+          resolve([]);
+        },
+      });
+    });
+
+    c_mensaje = null;
+
+    //no se tiene modelo del bloque BLK_CANT
+    if (0 <= 0) {
+      this.onLoadToast('info', 'No se tienen bienes ingresados');
+    }
+
+    if (this.global.paperworkArea == 'RF') {
+      const count = await new Promise<number>((resolve, reject) => {
+        const filters = new FilterParams();
+        filters.addFilter(
+          'flierNumber',
+          this.proceeding.numFile,
+          SearchFilter.EQ
+        );
+        filters.addFilter('typeManagement', 2, SearchFilter.EQ);
+
+        this.procudeServ.getAllFiltered(filters.getParams()).subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+          error: () => {
+            resolve(0);
+          },
+        });
+      });
+      n_cont = count;
+    }
+
+    const STATUS = ['CERRADA', 'CERRADO'];
+
+    if (!STATUS.includes(this.proceeding.statusProceedings)) {
+      if (this.proceeding.typeProceedings == 'EVENTREC') {
+      }
+    }
   }
 }

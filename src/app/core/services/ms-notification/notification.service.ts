@@ -11,6 +11,7 @@ import {
   INotification,
   INotificationInquiry,
   INotificationTransferentIndiciadoCityGetData,
+  INotificationUpdate,
   INotificationXProperty,
   ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
@@ -23,6 +24,7 @@ export class NotificationService extends HttpService {
   private readonly endpoint: string = 'notification';
   constructor(
     private notificationRepository: NotificationRepository<INotification>,
+    private notificationUpdateRepository: NotificationRepository<INotificationUpdate>,
     private notificationRepository2: Repository<INotification>
   ) {
     super();
@@ -37,6 +39,10 @@ export class NotificationService extends HttpService {
     return this.get<IListResponse<INotification>>(
       `${this.route.Notification}?${params}`
     );
+  }
+
+  getAllFilterExpedient(params: any) {
+    return this.get<IListResponse<any>>(`${this.route.Notification}`, params);
   }
 
   getAllFilterTmpNotification(
