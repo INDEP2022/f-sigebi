@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -9,7 +10,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
@@ -26,7 +26,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   totalItems: number = 0;
-  tasks: IRequestTask[] = [];
+  //tasks: IRequestTask[] = [];
+  tasks = new LocalDataSource();
 
   loadingText = '';
   userName = '';
@@ -49,6 +50,14 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    /*this.tasks.onChanged()
+    .subscribe( change => {
+      if (change.action === 'filter') {
+        let filters = change.filter.filters;
+        console.log(filters)
+        filters.map((filter: any) => {})
+      }
+    })*/
   }
 
   private prepareForm() {
@@ -125,7 +134,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   exportToExcel() {
     const filename: string = this.userName + '-Tasks';
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(this.tasks, { filename });
+    this.excelService.export(this.tasks['data'], { filename });
   }
 
   private getTasks() {
@@ -373,21 +382,23 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     params.text = this.consultTasksForm.value.txtSearch;
     params['others'] = this.userName;
 
-    this.tasks = [];
+    //this.tasks = [];
+    this.tasks = new LocalDataSource();
     this.totalItems = 0;
     // if (!isfilterUsed) {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
-    this.taskService
-      .getTasksByUser(
-        this.filterParams.getValue().getParams().concat('&sortBy=id:DESC')
-      )
-      .subscribe({
-        next: response => {
-          console.log('Response: ', response);
-          this.loading = false;
-          console.log('Hay un filtro activo? ', isfilterUsed);
-          /*  if (isfilterUsed) {
+    let filter = this.filterParams
+      .getValue()
+      .getParams()
+      .concat('&sortBy=id:DESC');
+    console.log(filter);
+    this.taskService.getTasksByUser(filter).subscribe({
+      next: response => {
+        console.log('Response: ', response);
+        this.loading = false;
+        console.log('Hay un filtro activo? ', isfilterUsed);
+        /*  if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
             );
@@ -396,17 +407,20 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
             this.tasks = response.data;
             this.totalItems = response.count;
           } */
-          response.data.map((item: any) => {
-            item.taskNumber = item.id;
-            item.requestId =
-              item.requestId != null ? item.requestId : item.programmingId;
-          });
+        response.data.map((item: any) => {
+          item.taskNumber = item.id;
+          item.requestId =
+            item.requestId != null ? item.requestId : item.programmingId;
+        });
 
-          this.tasks = response.data;
-          this.totalItems = response.count;
-        },
-        error: () => ((this.tasks = []), (this.loading = false)),
-      });
+        //this.tasks = response.data;
+        this.tasks.load(response.data);
+        this.totalItems = response.count;
+      },
+      error: () => (
+        (this.tasks = new LocalDataSource()), (this.loading = false)
+      ),
+    });
   }
 
   cleanFilter() {

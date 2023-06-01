@@ -307,7 +307,26 @@ export class Repository<T> implements IRepository<T> {
     // console.log(formData);
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
+
   removeCatalogOpinions(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
+
+  updateCatalogDocCompensation(
+    route: string,
+    id: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+    // console.log(formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+
+  removeCatalogDocCompensation(route: string, id: number | string) {
     const fullRoute = this.buildRoute(route);
     // console.log(`${fullRoute}/id/${id}`);
 

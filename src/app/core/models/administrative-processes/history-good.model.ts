@@ -21,3 +21,7 @@ export interface ISentSirsae {
   user?: string;
   expedientNumber: number;
 }
+export interface IReturnStatusProcess {
+  pGoodNumber: number;
+  pStatus: string;
+}
