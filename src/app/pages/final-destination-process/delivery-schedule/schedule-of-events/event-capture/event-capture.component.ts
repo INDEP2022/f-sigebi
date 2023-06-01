@@ -30,6 +30,7 @@ import { IParameters } from 'src/app/core/models/ms-parametergood/parameters.mod
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
@@ -42,6 +43,7 @@ import {
 } from 'src/app/core/services/ms-proceedings';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -61,7 +63,7 @@ import { EventCaptureButtons } from './utils/event-capture-butttons';
 interface IBlkCtrl {
   component: string | number;
   typeNum: string | number;
-  typeNumCant: string | number;
+  typeNumCant: number;
   userLevel: string | number;
   reopenInd: string | number;
   cEvent: number;
@@ -70,6 +72,8 @@ interface IBlkCtrl {
   goodQuantity: number;
   asigTm: string | number;
   asigCb: string | number;
+  txtDirSatLabel: string;
+  txtDirSat: string;
 }
 
 interface IGlobalV {
@@ -83,7 +87,8 @@ interface IGlobalV {
 }
 
 interface IBlkProceeding {
-  txtCrtSus1: string | number;
+  txtCrtSus1: string;
+  txtCrtSus2: string;
 }
 @Component({
   selector: 'app-event-capture',
@@ -135,7 +140,8 @@ export class EventCaptureComponent
     typeNumCant: null, // NO_TIPO_CANT
     userLevel: null, // NIVEL_USUARIO
     reopenInd: null, // IND_REAPERTURA
-
+    txtDirSatLabel: 'Vo. Bo. de Sat',
+    txtDirSat: null,
     cEvent: 0, // C_EVENTO
     cQuantity: 0, // C_CANTIDAD
     cSelAll: 0, // SEL_TODO
@@ -146,6 +152,7 @@ export class EventCaptureComponent
 
   blkProceeding: IBlkProceeding = {
     txtCrtSus1: null,
+    txtCrtSus2: null,
   };
   packNumCtrl = new FormControl(null);
   showPackNumCtrl = false;
@@ -191,7 +198,9 @@ export class EventCaptureComponent
     private eventProgrammingService: EventProgrammingService,
     private detailDeliveryReceptionService: ProceedingsDetailDeliveryReceptionService,
     private activatedRoute: ActivatedRoute,
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private dynamicCatalogService: DynamicCatalogService,
+    private procedureManagementService: ProcedureManagementService
   ) {
     super();
     this.authUser = this.authService.decodeToken().preferred_username;
@@ -200,7 +209,7 @@ export class EventCaptureComponent
       ...this.settings,
       columns: {
         ...COLUMNS_CAPTURE_EVENTS,
-        start: {
+        dateapprovalxadmon: {
           title: 'Inicio',
           sort: false,
           type: 'custom',
@@ -212,7 +221,7 @@ export class EventCaptureComponent
           filterFunction: (value: any, query: any) => {
             if (query != 'skip') {
               this.detail = this.detail.map(d => {
-                return { ...d, start: new Date(query) };
+                return { ...d, dateapprovalxadmon: new Date(query) };
               });
             }
             return query;
@@ -221,7 +230,7 @@ export class EventCaptureComponent
           onComponentInitFunction: (instance: DateCellComponent) =>
             this.test(instance),
         },
-        end: {
+        dateindicatesuserapproval: {
           title: 'Finalización',
           sort: false,
           type: 'custom',
@@ -231,7 +240,12 @@ export class EventCaptureComponent
             component: DateCellComponent,
           },
           filterFunction: (value: any, query: any) => {
-            console.log({ value, query });
+            if (query != 'skip') {
+              this.detail = this.detail.map(d => {
+                return { ...d, dateindicatesuserapproval: new Date(query) };
+              });
+            }
+            return query;
           },
           renderComponent: DateCellComponent,
         },
@@ -304,18 +318,29 @@ export class EventCaptureComponent
   }
 
   async getTAseg(expedientId: string | number) {
-    // TODO: IMPLEMENTAR LA INCIDENCIA 863
-    return await lastValueFrom(of('EL FONHAPO'));
+    return await lastValueFrom(
+      this.dynamicCatalogService
+        .getClaveCTransparente(expedientId)
+        .pipe(map(res => res.data[0].clave))
+    );
   }
 
   async getTTrans(expedientId: string | number) {
-    // TODO: IMPLEMENTAR LA INCIDENCIA 863
-    return await lastValueFrom(of('FONDO NACIONAL DE HABITACIONES POPULARES'));
+    return await lastValueFrom(
+      this.dynamicCatalogService
+        .getDescEmisora(expedientId)
+        .pipe(map(res => res.data[0].desc_emisora))
+    );
   }
 
   async getTransferType(expedientId: string | number) {
-    // TODO: IMPLEMENTAR LA INCIDENCIA 862
-    return await lastValueFrom(of({ type: 'A', key: 'EL FONHAPO' }));
+    return await lastValueFrom(
+      this.dynamicCatalogService.getIncapAndClave(expedientId).pipe(
+        map(res => {
+          return { type: res.data[0].coaelesce, key: res.data[0].clave };
+        })
+      )
+    );
   }
 
   async getExpedientById(id: string | number) {
@@ -423,7 +448,9 @@ export class EventCaptureComponent
   pupUpdate() {}
 
   // PUP_CONDICIONES_FR
-  frConditions() {}
+  frConditions() {
+    this.pupUpdate();
+  }
 
   async getStage() {
     return await lastValueFrom(
@@ -815,7 +842,7 @@ export class EventCaptureComponent
   async getProceeding(params: FilterParams) {
     return await lastValueFrom(
       this.proceedingDeliveryReceptionService.getAll(params.getParams()).pipe(
-        tap(res => {
+        tap(async res => {
           this.proceeding = res.data[0];
           const form = {
             captureDate: new Date(res.data[0].captureDate),
@@ -823,10 +850,42 @@ export class EventCaptureComponent
             responsible: res.data[0].responsible,
           };
           this.form.patchValue(form);
+          await this.afterGetProceeding();
           this.getDetail().subscribe();
         })
       )
     );
+  }
+
+  async afterGetProceeding() {
+    const { typeEvent } = this.registerControls;
+    if (typeEvent.value == 'RF') {
+      const count = (await this.getExpedientsCount()) ?? 0;
+      console.log(count);
+      const options = ['CERRADA', 'CERRADO'];
+      if (options.find(opt => opt == this.proceeding.statusProceedings)) {
+        this.ctrlButtons.closeProg.show();
+        this.ctrlButtons.closeProg.label = 'Abrir Prog.';
+        if (count > 0) {
+          if (this.proceeding.receiveBy != '1') {
+            this.ctrlButtons.sendSise.show();
+          } else {
+            this.ctrlButtons.sendSise.hide();
+          }
+        } else {
+          this.ctrlButtons.sendSise.hide();
+        }
+      } else {
+        this.ctrlButtons.closeProg.label = 'Cerrar Prog.';
+        if (count > 0) {
+          this.ctrlButtons.closeProg.hide();
+        } else {
+          if (this.proceeding.statusProceedings) {
+            this.ctrlButtons.closeProg.show();
+          }
+        }
+      }
+    }
   }
 
   getDetail() {
@@ -836,6 +895,9 @@ export class EventCaptureComponent
       .getGoodsIndicators(this.proceeding.id)
       .pipe(
         tap(res => {
+          const detail = res.data[0];
+
+          this.afterGetDetail(detail);
           this.detail = res.data.map(detail => {
             const { typeEvent } = this.registerControls;
             let locTrans = '';
@@ -869,6 +931,51 @@ export class EventCaptureComponent
       );
   }
 
+  // DETALLE_ACTA_ENT_RECEP.POST_QUERY
+  afterGetDetail(detail: IGoodIndicator) {
+    const { typeEvent } = this.registerControls;
+    this.blkCtrl.typeNum = detail.typegood;
+    this.blkCtrl.typeNumCant = this.blkCtrl.typeNumCant ?? 0;
+    if (typeEvent.value == 'RF' && detail.status == 'CPR') {
+      (this.settings.columns as any).status.title = 'VA_CPR';
+    }
+
+    if (
+      !this.blkProceeding.txtCrtSus1 &&
+      detail.inventorysiabi?.split('-').length >= 3
+    ) {
+      this.blkProceeding.txtCrtSus1 = detail.inventorysiabi.split('-')[0];
+      const firstDashIndex = detail.inventorysiabi.indexOf('-');
+      const secondDashIndex = detail.inventorysiabi.indexOf(
+        '-',
+        firstDashIndex + 1
+      );
+
+      if (firstDashIndex !== -1 && secondDashIndex !== -1) {
+        this.blkProceeding.txtCrtSus2 = detail.inventorysiabi.substring(
+          firstDashIndex + 1,
+          secondDashIndex
+        );
+      }
+
+      this.blkProceeding.txtCrtSus2 =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(
+          this.blkProceeding.txtCrtSus2.substring(0, 1)
+        ) === -1
+          ? '%'
+          : (this.blkProceeding.txtCrtSus1 = '%');
+
+      if (typeEvent.value == 'RF') {
+        this.blkCtrl.txtDirSatLabel = 'Dirección';
+        (this.settings.columns as any).locTrans.title = 'Almacén';
+        this.blkCtrl.txtDirSat = detail.txt_dirsat;
+      }
+    }
+
+    // TODO: PEDIR TODOS LOS CAMPOS DEL DETALLE
+    // this.blkCtrl.cQuantity = (this.blkCtrl.cQuantity?? 0) + this.
+  }
+
   patchProceedingValue(proceeding: IProceedings) {}
 
   async getProceedingType() {
@@ -881,7 +988,20 @@ export class EventCaptureComponent
           this.alert('error', 'Error', 'No se localizo el tipo de acta');
           return throwError(() => error);
         }),
+
         map(response => response.data[0])
+      )
+    );
+  }
+
+  async getExpedientsCount() {
+    const params = new FilterParams();
+    params.addFilter('expedient', this.proceeding.numFile);
+    params.addFilter('typeManagement', 2);
+    return await lastValueFrom(
+      this.procedureManagementService.getAllFiltered(params.getParams()).pipe(
+        catchError(() => of({ count: 0 })),
+        map(res => res.count)
       )
     );
   }

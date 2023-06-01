@@ -2,6 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
   SimpleChanges,
@@ -20,7 +21,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 })
 export class DateCellComponent
   extends DefaultFilter
-  implements OnInit, ViewCell
+  implements OnInit, ViewCell, OnChanges
 {
   @Input() value: string;
   @Input() rowData: any;
@@ -39,7 +40,6 @@ export class DateCellComponent
     if (this.value) {
       this.control.setValue(new Date(this.value));
     }
-
     this.control.valueChanges
       .pipe(distinctUntilChanged(), debounceTime(this.delay))
       .subscribe((value: Date) => {
@@ -56,5 +56,13 @@ export class DateCellComponent
     this.inputChange.emit({ row: this.rowData, value: this.control.value });
   }
 
-  ngOnChanges(changes: SimpleChanges) {}
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+    if (changes['source']) {
+      console.log(this.value);
+      if (this.value) {
+        this.control.setValue(new Date(this.value));
+      }
+    }
+  }
 }
