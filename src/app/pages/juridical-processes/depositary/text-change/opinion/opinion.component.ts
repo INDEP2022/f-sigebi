@@ -204,7 +204,7 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         add: false,
         position: 'left',
       },
@@ -299,7 +299,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           );
       }
     }
-
+    /*
     this.filterParamsLocal
       .getValue()
       .addFilter(
@@ -314,7 +314,7 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           (new Date().getMonth() + 1) +
           '-31',
         SearchFilter.BTW
-      );
+      );*/
     //Valida los campos de búsqueda
 
     if (
@@ -428,13 +428,13 @@ carga la  información de la parte media de la página
         this.form.get('paragraphInitial').setValue(resp.text1);
         this.form.get('paragraphFinish').setValue(resp.text2);
         this.form.get('paragraphOptional').setValue(resp.text3);
-        this.form.get('descriptionSender').setValue(resp.desSenderPa);
+        this.form.get('masInfo_1').setValue(resp.text2To);
         this.getPersonaExt_Int('resp => ', resp);
 
         this.getPartBodyInputs();
       },
       error: error => {
-        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        //  this.onLoadToast('info', 'Registro', 'No se obtuvo información');
         console.log('error', 'Error', error.error.message);
         // this.onLoadToast('info', 'info', error.error.message);
       },
@@ -459,7 +459,12 @@ carga la  información de la parte media de la página
           let datos: IDictationCopies[] = resp.data;
         },
         error: error => {
-          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          this.onLoadToast(
+            'info',
+            'Registro',
+            'No tiene información asociada con el bloque'
+          );
+
           console.log('error', 'Error', error.error.message);
           //this.onLoadToast('error', 'error', error.error.message);
         },
@@ -469,6 +474,7 @@ carga la  información de la parte media de la página
   getPersonaExt_Int(d: string, datos: any) {
     this.filterParams.getValue().removeAllFilters();
     let variable: IDictation = JSON.parse(JSON.stringify(datos));
+    this.dataExt = [];
     this.refreshTabla();
     this.filterParams
       .getValue()
@@ -512,6 +518,7 @@ carga la  información de la parte media de la página
     this.form.reset();
     this.verBoton = false;
     this.filterParamsLocal.getValue().removeAllFilters();
+    this.dataExt = [];
   }
 
   /*=====================================================================================
@@ -601,17 +608,21 @@ carga la  información de la parte media de la página
 =======================================================================*/
 
   updateDictamen() {
-    console.log(this.form.value);
+    let actulizacion = '';
+    let errorBusqueda = '';
 
     let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
       this.form
     );
+
+    console.log(' insert =>  ' + JSON.stringify(ofis));
     this.oficialDictationService.update(ofis).subscribe({
       next: resp => {
-        this.onLoadToast('info', 'info', resp.message[0]);
+        actulizacion = actulizacion + ' Se actualizo';
       },
       error: err => {
-        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        errorBusqueda = errorBusqueda + 'Error 1';
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
         console.log('error', 'Error', err.error.message);
         // this.onLoadToast('error', 'Error', err.error.message);
       },
@@ -621,22 +632,21 @@ carga la  información de la parte media de la página
       this.form
     );
 
-    let insert = {
-      dictatesNumber: this.form.get('registerNumber').value,
-      rulingType: this.form.get('typeDict').value,
-      textx: this.form.get('masInfo_1').value,
-      textoy: this.form.get('masInfo_2').value,
-      textoz: this.form.get('masInfo_3').value,
-      recordNumber: this.form.get('registerNumber').value,
-    };
     this.jobDictumTextsServices.update(data).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'success', resp.message[0]);
+        actulizacion = actulizacion + ' Se actualizo';
+
+        // this.onLoadToast('success', 'success', resp.message[0]);
       },
       error: erro => {
         this.insertTextos(data);
+        errorBusqueda = errorBusqueda + 'Error 1';
       },
     });
+    Swal.fire('Se actualizo de manera correcta', '', 'success');
+
+    // this.onLoadToast('info', 'Actualización', actulizacion);
+
     /*
     let obj = {
       id: this.idCopias,
@@ -685,14 +695,21 @@ carga la  información de la parte media de la página
   insertTextos(data: IJobDictumTexts) {
     this.jobDictumTextsServices.create(data).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'Registro', resp.message[0]);
+        Swal.fire('Se actualizo de manera correcta', '', 'success');
+        //this.onLoadToast('success', 'Registro', resp.message[0]);
       },
       error: erro => {
-        if (erro.error.message == 'No se encontrarón registros.') {
+        this.onLoadToast(
+          'warning',
+          'Registro nuevo',
+          'No se concreto la acción'
+        );
+        console.log('info', 'Registro', erro.error.message);
+        /* if (erro.error.message == 'No se encontrarón registros.') {
           this.onLoadToast('info', 'Registro', erro.error.message);
         } else {
           this.onLoadToast('info', 'Registro', erro.error.message);
-        }
+        }*/
       },
     });
   }
@@ -710,18 +727,18 @@ carga la  información de la parte media de la página
       recipient: f.value.senderUserRemitente,
       desSenderPa: f.value.addressee,
       text3: f.value.paragraphOptional,
-      text2To: f.value.descriptionSender,
+      text2To: f.value.masInfo_1,
       cveChargeRem: f.value.valueCharge,
     };
   }
 
   getDatosToUpdateDictamenBodyText(f: FormGroup) {
     return {
-      dictatesNumber: this.form.get('registerNumber').value,
+      dictatesNumber: this.form.get('numberDictamination').value,
       rulingType: this.form.get('typeDict').value,
-      textx: this.form.get('masInfo_1').value,
-      textoy: this.form.get('masInfo_2').value,
-      textoz: this.form.get('masInfo_3').value,
+      textx: this.form.get('masInfo_1_1').value,
+      textoy: this.form.get('masInfo_1_2').value,
+      textoz: this.form.get('masInfo_2').value,
       recordNumber: this.form.get('registerNumber').value,
     };
   }
@@ -750,7 +767,12 @@ carga la  información de la parte media de la página
         },
         error: err => {
           this.form.get('charge').setValue('');
-          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          this.onLoadToast(
+            'info',
+            'Registro',
+            'No existe información asociada con el puesto'
+          );
           console.log('error', 'Error', err.error.message);
           // this.onLoadToast('error', 'Error', err.error.message);
         },
@@ -772,9 +794,10 @@ carga la  información de la parte media de la página
 
   reporteExterno() {
     const params = {
-      PNOOFICIO: this.form.value.expedientNumber,
-      PTIPODIC: this.form.value.typeDict,
+      PNOOFICIO: this.form.get('registerNumber').value,
+      PTIPODIC: this.form.get('addressee_I').value,
     };
+
     this.siabServiceReport.fetchReport('RGENABANDEC', params).subscribe({
       next: response => {
         const blob = new Blob([response], { type: 'application/pdf' });
@@ -846,7 +869,12 @@ carga la  información de la parte media de la página
         this.UserDestinatario = [...resp.data];
       },
       error: err => {
-        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        this.onLoadToast(
+          'info',
+          'Registro',
+          'No existe información asociada con los destinatarios'
+        );
+        //this.onLoadToast('info', 'Registro', 'No se obtuvo información');
         console.log('error', 'Error', err.error.message);
         /*  let error = '';
         if (err.status === 0) {
@@ -877,23 +905,29 @@ carga la  información de la parte media de la página
           this.dictatesNumber = resp.data[0].dictatesNumber;
           this.rulingType = resp.data[0].rulingType;
           this.recordNumber = resp.data[0].recordNumber;
-          this.form.get('masInfo_1').setValue(resp.data[0].textx);
-          this.form.get('masInfo_2').setValue(resp.data[0].textoy);
-          this.form.get('masInfo_3').setValue(resp.data[0].textoz);
+          this.form.get('masInfo_1_1').setValue(resp.data[0].textx);
+          this.form.get('masInfo_1_2').setValue(resp.data[0].textoy);
+          this.form.get('masInfo_2').setValue(resp.data[0].textoz);
         },
         error: erro => {
-          this.onLoadToast('info', 'info', 'No existen registros');
+          //this.onLoadToast('info', 'info', 'No existen registros');
           //this.onLoadToast('error', 'Error', erro.error.message);
+          this.onLoadToast(
+            'info',
+            'Registro',
+            'No existe información asociada con el bloque de texto'
+          );
+
           console.log('error', 'Error', erro.error.message);
         },
       });
   }
 
   insertRegistroExtCCP(data: IDictationCopies) {
-    // alert('insertRegistroExtCCP ' + JSON.stringify(data));
+    this.dataExt = [];
     this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        this.onLoadToast('info', 'Info', 'Se inserto');
+        Swal.fire('Usuario turnado exitosamente', '', 'success');
         this.refreshTabla();
       },
       error: errror => {
@@ -916,15 +950,19 @@ carga la  información de la parte media de la página
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(legend.id);
+        this.deleteExterno(legend.id);
         Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: number) {
-    this.dictationService.deleteCopiesdictamenetOfficialOpinion(id).subscribe({
+  deleteExterno(id: number) {
+    let idd = {
+      id: id,
+    };
+    this.dictationService.deleteCopiesdictamenetOfficialOpinion(idd).subscribe({
       next: resp => {
+        this.extPerson.removeAt(id);
         this.refreshTabla();
       },
       error: errror => {
@@ -980,7 +1018,7 @@ carga la  información de la parte media de la página
     console.log(
       'refreshTabla() => ' + this.filterParams.getValue().getParams()
     );
-
+    this.dataExt = [];
     this.dictationService
       .findUserByOficNum(this.filterParams.getValue().getParams())
       .subscribe({
