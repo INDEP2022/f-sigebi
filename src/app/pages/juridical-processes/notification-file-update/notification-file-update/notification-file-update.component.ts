@@ -35,10 +35,11 @@ export class NotificationFileUpdateComponent
   implements OnInit, OnDestroy
 {
   override loading: boolean = true;
-
   totalItems: number = 0;
   dataFactGen: INotification[] = [];
+  verBoton: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
 
   public form: FormGroup;
 
@@ -101,23 +102,32 @@ export class NotificationFileUpdateComponent
   onKeyPress(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       this.onLoadListNotifications();
+      this.verBoton = true;
     }
   }
 
   onLoadListNotifications() {
     const param = new FilterParams();
-    param.addFilter('expedientNumber', this.form.get('noExpediente').value);
-    this.notificationService.getAllFilter(param.getParams()).subscribe({
-      next: data => {
-        this.dataFactGen = data.data;
-        // this.dataFactGen[0].description = data.data[0].departament.description;
-        this.loading = false;
-      },
-      error: () => {
-        this.dataFactGen = [];
-        this.loading = false;
-      },
-    });
+    const params = new ListParams();
+    if (this.form.get('noExpediente').value != null) {
+      param.addFilter('expedientNumber', this.form.get('noExpediente').value);
+      this.notificationService.getAllFilter(param.getParams()).subscribe({
+        next: data => {
+          this.dataFactGen = data.data;
+          // this.dataFactGen[0].description = data.data[0].departament.description;
+          this.loading = false;
+        },
+        error: err => {
+          this.dataFactGen = [];
+          this.loading = false;
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
+      this.verBoton = false;
+    } else {
+      this.verBoton = true;
+      this.loading = false;
+    }
   }
 
   getDicts() {
@@ -163,6 +173,7 @@ export class NotificationFileUpdateComponent
   }
 
   cleanExpediente() {
+    this.verBoton = true;
     this.form.get('noExpediente').setValue('');
   }
 }

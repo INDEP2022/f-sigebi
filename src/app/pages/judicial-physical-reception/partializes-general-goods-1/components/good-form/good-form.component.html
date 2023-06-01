@@ -2,11 +2,7 @@
   <div class="row">
     <div class="col-md-4" style="display: flex; column-gap: 15px">
       <form-field [control]="form.get('noBien')" label="N° de bien">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="noBien"
-          min="1" />
+        <input class="form-control" formControlName="noBien" maxlength="10" />
       </form-field>
       <button
         [disabled]="formLoading"
@@ -86,7 +82,7 @@
               <div class="col-md-6">
                 <div>
                   <label for="">Cantidad de Bien Padre:</label>
-                  {{ form.get('cantPadre').value }}
+                  {{ good?.goodsPartializationFatherNumber }}
                 </div>
               </div>
             </div>
@@ -94,7 +90,7 @@
               <div class="col-md-12">
                 <div>
                   <label for="">Descripción: </label>
-                  {{ form.get('descripcion').value }}
+                  {{ good?.description }}
                 </div>
               </div>
             </div>
@@ -102,10 +98,8 @@
               <div class="col-md-12">
                 <div>
                   <label for="">Clasificador:</label>
-                  <span> {{ form.get('clasificador').value }}</span>
-                  <span class="ml-2">{{
-                    form.get('clasificadorDescripcion').value
-                  }}</span>
+                  <span> {{ good?.goodClassNumber }}</span>
+                  <span class="ml-2">{{ goodClassNumberDesc }}</span>
                 </div>
               </div>
             </div>
@@ -113,13 +107,13 @@
               <div class="col-md-6">
                 <div>
                   <label for="">Cantidad:</label>
-                  {{ form.get('cantidad').value }}
+                  {{ good?.quantity }}
                 </div>
               </div>
               <div class="col-md-6">
                 <div>
                   <label for="">Valor Avalúo:</label>
-                  {{ form.get('avaluo').value }}
+                  {{ good?.appraisedValue }}
                 </div>
               </div>
             </div>
@@ -127,10 +121,8 @@
               <div class="col-md-12">
                 <div>
                   <label for="">Estatus:</label>
-                  <span> {{ form.get('estatus').value }}</span>
-                  <span class="ml-2">{{
-                    form.get('estatusDescripcion').value
-                  }}</span>
+                  <span> {{ good?.goodStatus }}</span>
+                  <span class="ml-2">{{ goodStatusDesc }}</span>
                 </div>
               </div>
             </div>
@@ -138,13 +130,13 @@
               <div class="col-md-6">
                 <div>
                   <label for="">Ext. Dom:</label>
-                  {{ form.get('extDom').value }}
+                  {{ good?.extDomProcess }}
                 </div>
               </div>
               <div class="col-md-6">
                 <div>
                   <label for="">No Expediente:</label>
-                  {{ form.get('expediente').value }}
+                  {{ good?.fileNumber }}
                 </div>
               </div>
             </div>
@@ -152,13 +144,13 @@
               <div class="col-md-6">
                 <div>
                   <label for="">Moneda:</label>
-                  {{ form.get('moneda').value }}
+                  {{ good?.val1 }}
                 </div>
               </div>
               <div class="col-md-6">
                 <div>
                   <label for="">Importe:</label>
-                  {{ form.get('importe').value }}
+                  {{ good?.val14 }}
                 </div>
               </div>
             </div>

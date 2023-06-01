@@ -1,10 +1,12 @@
 // FIXME: 2
 
 /** BASE IMPORT */
+import { DatePipe } from '@angular/common';
 import {
   Component,
   ElementRef,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -73,6 +75,7 @@ export class JuridicalRulingGComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  @Input() showCriminalCase: boolean = false;
   selectedGooods: IGood[] = [];
   selectedGooodsValid: IGood[] = [];
   goods: IGood[] | any[] = TempGood;
@@ -185,10 +188,14 @@ export class JuridicalRulingGComponent
       },
     },
     rowClassFunction: (row: any) => {
-      if (row.data.status === 'STA') {
-        return 'bg-secondary text-white';
-      } else {
+      if (
+        row.data.status === 'STA' ||
+        row.data.status === 'ROP' ||
+        row.data.status === 'ADM'
+      ) {
         return 'bg-success text-white';
+      } else {
+        return 'bg-dark text-white';
       }
     },
     noDataMessage: 'No se encontrarón registros',
@@ -323,6 +330,7 @@ export class JuridicalRulingGComponent
     private readonly expedientServices: ExpedientService,
     private readonly authService: AuthService,
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
+    private datePipe: DatePipe,
     private router: Router,
     private usersService: UsersService
   ) {
@@ -356,9 +364,10 @@ export class JuridicalRulingGComponent
           Validators.maxLength(10),
         ],
       ],
+      criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
+      delito: [false],
       averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
       causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
-      delito: [false],
       observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       noVolante: [null],
     });
@@ -373,6 +382,7 @@ export class JuridicalRulingGComponent
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
+      criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       autoriza_nombre: [null, [Validators.pattern(STRING_PATTERN)]],
       cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       estatus: [null],
@@ -398,6 +408,9 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm.get('wheelNumber').setValue(null);
     this.activatedRoute.queryParams.subscribe((params: any) => {
       this.expedientesForm.get('noExpediente').setValue(params?.expediente);
+      if (params.tipoDic) {
+        this.showCriminalCase = true;
+      }
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
       this.expedientesForm.get('noVolante').setValue(params?.volante);
       this.dictaminacionesForm.get('wheelNumber').setValue(params?.volante);
@@ -442,13 +455,14 @@ export class JuridicalRulingGComponent
     this.expedientesForm.get('noDictaminacion').setValue(null);
     this.expedientesForm.get('tipoDictaminacion').setValue(null);
     this.expedientesForm.get('averiguacionPrevia').setValue(null);
-    this.expedientesForm.get('causaPenal').setValue(null);
-    this.expedientesForm.get('delito').setValue(null);
     this.expedientesForm.get('observaciones').setValue(null);
     this.expedientesForm.get('noVolante').setValue(null);
+    this.expedientesForm.get('criminalCase').setValue(null);
+    this.expedientesForm.get('delito').setValue(null);
 
     // ..dictaminación
     this.dictaminacionesForm.get('wheelNumber').setValue(null);
+    this.dictaminacionesForm.get('criminalCase').setValue(null);
     this.dictaminacionesForm.get('etiqueta').setValue(null);
     this.dictaminacionesForm.get('fechaPPFF').setValue(null);
     this.dictaminacionesForm.get('fechaInstructora').setValue(null);
@@ -461,6 +475,10 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm.get('autoriza_nombre').setValue(null);
     this.dictaminacionesForm.get('cveOficio').setValue(null);
     this.dictaminacionesForm.get('estatus').setValue(null);
+  }
+
+  get typeDictamination() {
+    return this.expedientesForm.get('tipoDictaminacion');
   }
 
   onLoadExpedientData() {
@@ -476,7 +494,7 @@ export class JuridicalRulingGComponent
             .setValue(response.indicatedName);
           // ..Datos del expediente
           this.expedientesForm
-            .get('causaPenal')
+            .get('criminalCase')
             .setValue(response.criminalCase);
           this.expedientesForm
             .get('averiguacionPrevia')
@@ -498,12 +516,13 @@ export class JuridicalRulingGComponent
     this.loadExpedientInfo(noExpediente).then(({ json }) => {
       json
         .then(res => {
+          console.log('fecha dic', res.data[0].dictDate);
           this.dictNumber = res.data[0].id;
           // this.wheelNumber = res.data[0].wheelNumber;
           this.delegationDictNumber = res.data[0].delegationDictNumber;
           this.expedientesForm
             .get('delito')
-            .setValue(res.data[0].esDelit || undefined);
+            .setValue(res.data[0].crimeStatus || undefined);
           this.expedientesForm
             .get('tipoDictaminacion')
             .setValue(res.data[0].typeDict || undefined);
@@ -521,7 +540,10 @@ export class JuridicalRulingGComponent
             .setValue(res.data[0].wheelNumber || undefined);
           this.dictaminacionesForm
             .get('fechaDictaminacion')
-            .setValue(new Date(res.data[0].dictDate) || undefined);
+            .setValue(
+              this.datePipe.transform(res.data[0].dictDate, 'dd-MM-yyyy') ||
+                undefined
+            );
           this.dictaminacionesForm
             .get('fechaResolucion')
             .setValue(new Date(res.data[0].dictHcDAte) || undefined);
@@ -542,6 +564,7 @@ export class JuridicalRulingGComponent
           this.dictaminacionesForm
             .get('estatus')
             .setValue(res.data[0].statusDict || undefined);
+          console.log(res.data[0].typeDict);
           if (res.data[0].typeDict == 'PROCEDENCIA') {
             this.buttonDisabled = true;
           }
@@ -606,13 +629,19 @@ export class JuridicalRulingGComponent
   }
 
   btnImprimeOficio() {
+    console.log(this.expedientesForm);
     if (this.expedientesForm.get('noExpediente').value === null) {
       this.alert('warning', '', 'Debes seleccionar un expediente.');
       return; // Si 'documents' está vacío, detiene la ejecución aquí
     }
-    this.router.navigate([
-      baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link,
-    ]);
+    this.router.navigateByUrl(
+      baseMenu +
+        baseMenuDepositaria +
+        DEPOSITARY_ROUTES_2[0].link +
+        `?origin=juridical-ruling-g&P_VALOR=${
+          this.expedientesForm.get('noVolante').value
+        }&P_NO_TRAMITE=${this.expedientesForm.get('noExpediente').value}`
+    );
   }
   btnParcializar() {
     this.btnVerify();

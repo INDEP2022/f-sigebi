@@ -7,7 +7,10 @@
   <div body>
     <div>
       <div>
-        <button class="btn btn-danger" (click)="goBack()">Regresar</button>
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
       </div>
       <div class="row">
         <!-- INICIA FORM #1 -->
@@ -47,7 +50,26 @@
                   class="form-control"
                   (blur)="changeNumExpediente()"
                   (keypress)="onKeyPress($event)"
-                  formControlName="noExpediente" />
+                  formControlName="noExpediente"
+                  readonly />
+              </form-field>
+            </div>
+
+            <div class="col-12 p-2" *ngIf="showCriminalCase">
+              <form-field
+                [control]="expedientesForm.get('criminalCase')"
+                label="Causa Penal">
+                <input class="form-control" formControlName="criminalCase" />
+              </form-field>
+
+              <form-field [control]="expedientesForm.get('delito')">
+                <form-check label="¿Es delito?" for="delito">
+                  <input
+                    id="delito"
+                    type="checkbox"
+                    class="form-control"
+                    formControlName="delito" />
+                </form-check>
               </form-field>
             </div>
             <!-- Averiguación Previa -->
@@ -108,7 +130,7 @@
             <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaPPFF')"
-                label="Fecha P.P.F.F">
+                label="Fecha Aseg">
                 <input
                   class="form-control"
                   formControlName="fechaPPFF"
@@ -121,7 +143,11 @@
               <form-field
                 [control]="dictaminacionesForm.get('wheelNumber')"
                 label="Volante">
-                <input class="form-control" formControlName="wheelNumber" />
+                <input
+                  class="form-control"
+                  formControlName="wheelNumber"
+                  readonly
+                  [disabled]="true" />
               </form-field>
             </div>
 
@@ -132,7 +158,7 @@
                 <input
                   class="form-control"
                   formControlName="fechaDictaminacion"
-                  bsDatepicker />
+                  readonly />
               </form-field>
             </div>
 
@@ -414,16 +440,17 @@
           <!-- [routerLink]="rutaAprobado" -->
           Aprobar
         </button>
-        <!-- <button
+        <button
           class="btn btn-danger btn-sm active m-3 text-wrap"
           (click)="btnBorrarDictamen()"
           [disabled]="buttonDeleteDisabled">
           Borrar Dictamen
-        </button> -->
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        </button>
+        <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
-        </button>
+        </button> -->
+
         <button
           class="btn btn-primary btn-sm active m-3 text-wrap"
           (click)="btnImprimeOficio()">

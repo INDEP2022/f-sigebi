@@ -111,7 +111,6 @@ export class PerformProgrammingFormComponent
   idProgramming: number = 0;
   idAuthority: string = '';
   idState: number = 0;
-  idTrans: string | number;
   idStation: string | number;
   idTypeRelevant: number = 0;
   showForm: boolean = false;
@@ -137,11 +136,13 @@ export class PerformProgrammingFormComponent
   paramsWarehouseGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsWarehouseGoods: number = 0;
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
+  paramsUsersCheck = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsProg = new BehaviorSubject<ListParams>(new ListParams());
   paramsNewWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
   loadGoods: boolean = false;
+  dataProg: boolean = false;
   newTransferent: boolean = true;
   delegationId: number = 0;
   delRegUserLog: string = '';
@@ -325,7 +326,6 @@ export class PerformProgrammingFormComponent
 
   prepareForm() {
     let now = moment();
-    console.log('fecha', now.format());
     this.formLoading = true;
     const daysToAdd = 5;
     const date = new Date(now.format());
@@ -405,7 +405,6 @@ export class PerformProgrammingFormComponent
   }
 
   showWarehouse(warehouse: IWarehouse) {
-    console.log('almacén', warehouse);
     this.warehouseUbication = warehouse?.ubication;
     this.showUbication = true;
   }
@@ -485,8 +484,11 @@ export class PerformProgrammingFormComponent
             items.userCharge = items.charge?.description;
             return items;
           });
-
-          this.usersToProgramming.load(userData);
+          if (userData.length > 0) {
+            this.usersToProgramming.load(userData);
+          } else {
+            this.usersToProgramming.load([]);
+          }
           this.totalItemsUsers = response.count;
         },
         error: error => {},
@@ -522,7 +524,7 @@ export class PerformProgrammingFormComponent
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -533,7 +535,7 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -545,7 +547,7 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -558,7 +560,7 @@ export class PerformProgrammingFormComponent
     if (municipality && colony && akaWarehouse && postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -572,7 +574,7 @@ export class PerformProgrammingFormComponent
     if (colony && !municipality && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -584,7 +586,7 @@ export class PerformProgrammingFormComponent
     if (colony && municipality && !akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -597,7 +599,7 @@ export class PerformProgrammingFormComponent
     if (colony && municipality && akaWarehouse && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -611,7 +613,7 @@ export class PerformProgrammingFormComponent
     if (colony && municipality && akaWarehouse && postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         municipality: municipality,
@@ -626,7 +628,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && !colony && !municipality && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -638,7 +640,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && !municipality && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -650,7 +652,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && municipality && !postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -663,7 +665,7 @@ export class PerformProgrammingFormComponent
     if (akaWarehouse && colony && municipality && postalCode && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         suburb: colony,
@@ -678,7 +680,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && !akaWarehouse && !colony && !municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         postalCode: postalCode,
@@ -690,7 +692,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && !colony && !municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -702,7 +704,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && colony && !municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -715,7 +717,7 @@ export class PerformProgrammingFormComponent
     if (postalCode && akaWarehouse && colony && municipality && !state) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -729,7 +731,7 @@ export class PerformProgrammingFormComponent
     if (state && !postalCode && !akaWarehouse && !colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         stateKey: state,
@@ -739,7 +741,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && !akaWarehouse && !colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         postalCode: postalCode,
@@ -751,7 +753,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && !colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -764,7 +766,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && colony && !municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -778,7 +780,7 @@ export class PerformProgrammingFormComponent
     if (state && postalCode && akaWarehouse && colony && municipality) {
       const filterColumns: Object = {
         regionalDelegation: Number(this.regionalDelegationUser.id),
-        transferent: Number(this.idTrans),
+        transferent: Number(this.transferentId),
         relevantType: Number(this.idTypeRelevant),
         statusGood: 'APROBADO',
         aliasStore: akaWarehouse,
@@ -869,7 +871,7 @@ export class PerformProgrammingFormComponent
   stateSelect(state: IStateOfRepublic) {
     this.idState = Number(state.id);
     this.getWarehouseSelect(new ListParams());
-    if (this.idTrans) this.getStations(new ListParams());
+    if (this.transferentId) this.getStations(new ListParams());
   }
 
   getTransferentSelect(params?: ListParams) {
@@ -888,7 +890,7 @@ export class PerformProgrammingFormComponent
   }
 
   transferentSelect(transferent: ITransferente) {
-    this.idTrans = transferent?.id;
+    this.transferentId = transferent?.id;
     this.performForm.get('stationId').setValue(null);
     this.performForm.get('autorityId').setValue(null);
     this.getStations(new ListParams());
@@ -896,7 +898,7 @@ export class PerformProgrammingFormComponent
 
   getStations(params?: ListParams) {
     this.showSelectStation = true;
-    params['filter.idTransferent'] = this.idTrans;
+    params['filter.idTransferent'] = this.transferentId;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params['sortBy'] = 'stationName:ASC';
 
@@ -917,12 +919,13 @@ export class PerformProgrammingFormComponent
   stationSelect(item: IStation) {
     this.performForm.get('autorityId').setValue(null);
     this.idStation = item.id;
+    this.stationId = item.id;
     this.getAuthoritySelect(new ListParams());
   }
 
   getAuthoritySelect(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
-    params['filter.idTransferer'] = `$eq:${this.idTrans}`;
+    params['filter.idTransferer'] = `$eq:${this.transferentId}`;
     params['sortBy'] = 'authorityName:ASC';
     delete params['search'];
     delete params.text;
@@ -985,6 +988,7 @@ export class PerformProgrammingFormComponent
 
   authoritySelect(item: IAuthority) {
     this.idAuthority = item.idAuthority;
+    this.autorityId = item.idAuthority;
   }
 
   getTypeRelevantSelect(params: ListParams) {
@@ -1009,7 +1013,7 @@ export class PerformProgrammingFormComponent
     this.loadingGoods = true;
     const filterColumns: Object = {
       regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.idTrans),
+      transferent: Number(this.transferentId),
       relevantType: Number(this.idTypeRelevant),
       statusGood: 'APROBADO',
     };
@@ -1067,6 +1071,7 @@ export class PerformProgrammingFormComponent
             'Advertencía',
             'No hay bienes disponibles para programar'
           );
+          this.estatesList.load([]);
         }
       });
   }
@@ -1228,7 +1233,7 @@ export class PerformProgrammingFormComponent
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
           };
-          const idTransferent = this.idTrans;
+          const idTransferent = this.transferentId;
           config.initialState = {
             idTransferent,
             typeTransportable: 'guard',
@@ -1333,7 +1338,7 @@ export class PerformProgrammingFormComponent
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
           };
-          const idTransferent = this.idTrans;
+          const idTransferent = this.transferentId;
           config.initialState = {
             idTransferent,
             typeTransportable: 'warehouse',
@@ -1459,7 +1464,8 @@ export class PerformProgrammingFormComponent
               'Correcto',
               'Bien eliminado de transportable correctamente'
             );
-
+            const deleteGood = this.goodsTranportables.count();
+            this.headingTransportable = `Transportable(${deleteGood})`;
             this.getProgGoods();
           });
       }
@@ -1533,18 +1539,31 @@ export class PerformProgrammingFormComponent
 
   //Actualizar programación con información de la programación
   confirm() {
-    this.performForm
-      .get('startDate')
-      .setValue(new Date(this.performForm.get('startDate').value));
-    this.performForm
-      .get('endDate')
-      .setValue(new Date(this.performForm.get('endDate').value));
+    console.log(this.dataProg);
 
-    this.performForm.get('tranferId').setValue(this.transferentId);
-    this.performForm.get('stationId').setValue(this.stationId);
-    this.performForm.get('autorityId').setValue(this.autorityId);
+    if (this.performForm.get('startDate').value) {
+      this.performForm
+        .get('startDate')
+        .setValue(new Date(this.performForm.get('startDate').value));
+    }
+    if (this.performForm.get('endDate').value) {
+      this.performForm
+        .get('endDate')
+        .setValue(new Date(this.performForm.get('endDate').value));
+    }
+
+    if (this.transferentId)
+      this.performForm.get('tranferId').setValue(this.transferentId);
+    if (this.stationId)
+      this.performForm.get('stationId').setValue(this.stationId);
+    if (this.autorityId) {
+      this.performForm.get('autorityId').setValue(this.autorityId);
+    }
 
     console.log('this.performForm.value', this.performForm.value);
+    this.performForm
+      .get('regionalDelegationNumber')
+      .setValue(this.delegationId);
     this.alertQuestion(
       'info',
       'Confirmación',
@@ -1692,7 +1711,47 @@ export class PerformProgrammingFormComponent
     if (error > 0) {
       this.onLoadToast('info', 'Error', `${message}`);
     } else if (error == 0) {
+      this.performForm
+        .get('startDate')
+        .setValue(new Date(this.performForm.get('startDate').value));
+      this.performForm
+        .get('endDate')
+        .setValue(new Date(this.performForm.get('endDate').value));
+
+      this.performForm.get('tranferId').setValue(this.transferentId);
+      this.performForm.get('stationId').setValue(this.stationId);
+      this.performForm.get('autorityId').setValue(this.autorityId);
       this.alertQuestion(
+        'info',
+        'Confirmación',
+        `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
+      ).then(async question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          const folio: any = await this.generateFolio(this.performForm.value);
+          this.performForm.get('folio').setValue(folio);
+          const task = JSON.parse(localStorage.getItem('Task'));
+          const updateTask = await this.updateTask(folio, task.id);
+          if (updateTask) {
+            this.programmingGoodService
+              .updateProgramming(this.idProgramming, this.performForm.value)
+              .subscribe({
+                next: async () => {
+                  this.performForm
+                    .get('regionalDelegationNumber')
+                    .setValue(this.delegation);
+                  this.generateTaskAceptProgramming(folio);
+                  this.loading = false;
+                },
+                error: error => {
+                  console.log('error', error);
+                },
+              });
+          }
+        }
+      });
+
+      /*this.alertQuestion(
         'question',
         'Enviar Programación',
         `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
@@ -1714,7 +1773,7 @@ export class PerformProgrammingFormComponent
               },
             });
         }
-      });
+      }); */
     }
   }
 
@@ -1797,7 +1856,7 @@ export class PerformProgrammingFormComponent
     });
   }
 
-  delete(user: any) {
+  deleteUser(user: any) {
     this.alertQuestion(
       'warning',
       'Confirmación',
@@ -1808,15 +1867,39 @@ export class PerformProgrammingFormComponent
           programmingId: Number(user.programmingId),
           email: user.email,
         };
-        this.programmingService.deleteUserProgramming(userObject).subscribe({
-          next: () => {
-            this.onLoadToast('success', 'Usuario eliminado correctamente', '');
-            this.showUsersProgramming();
-          },
-          error: error => {},
-        });
+
+        this.programmingService
+          .deleteUserProgramming(userObject)
+          .subscribe(data => {
+            this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
+            this.reloadData();
+          });
       }
     });
+  }
+
+  reloadData() {
+    this.paramsUsersCheck.getValue()['filter.programmingId'] =
+      this.idProgramming;
+    this.programmingService
+      .getUsersProgramming(this.paramsUsersCheck.getValue())
+      .subscribe({
+        next: response => {
+          const userData = response.data.map(items => {
+            items.userCharge = items.charge?.description;
+            return items;
+          });
+          if (userData.length > 0) {
+            this.usersToProgramming.load(userData);
+          } else {
+            this.usersToProgramming.load([]);
+          }
+          this.totalItemsUsers = response.count;
+        },
+        error: error => {
+          this.usersToProgramming.load([]);
+        },
+      });
   }
 
   reportGoodsProgramming() {
@@ -1888,8 +1971,15 @@ export class PerformProgrammingFormComponent
         );
 
       this.transferentId = this.dataProgramming.tranferId;
+      console.log(
+        'this.dataProgramming.tranferId;',
+        this.dataProgramming.tranferId
+      );
       this.stationId = this.dataProgramming.stationId;
       this.autorityId = this.dataProgramming.autorityId;
+      console.log('this.autorityId', this.autorityId);
+      this.delegationId = this.dataProgramming.regionalDelegationNumber;
+      this.dataProg = true;
       this.paramsTransportableGoods.getValue()['filter.programmingId'] =
         this.idProgramming;
 
@@ -1927,6 +2017,8 @@ export class PerformProgrammingFormComponent
       }
 
       this.params.getValue()['filter.id'] = this.dataProgramming.stationId;
+      this.params.getValue()['filter.idTransferent'] =
+        this.dataProgramming.tranferId;
       this.stationService.getAll(this.params.getValue()).subscribe({
         next: response => {
           const nameAndId = `${response.data[0].id} - ${response.data[0].stationName}`;
@@ -1935,15 +2027,15 @@ export class PerformProgrammingFormComponent
         error: error => {},
       });
 
-      this.paramsAuthority.getValue()['filter.idAuthority'] =
-        this.dataProgramming.autorityId;
+      this.paramsAuthority.getValue()['filter.idTransferer'] =
+        this.transferentId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
           console.log('autoridad', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;
-          this.idTrans = this.dataProgramming.tranferId;
+          this.transferentId = this.dataProgramming.tranferId;
           this.getAuthoritySelect(new ListParams());
         },
         error: error => {},
@@ -1968,10 +2060,10 @@ export class PerformProgrammingFormComponent
               );
               item['aliasWarehouse'] = aliasWarehouse;
 
-              if (item.statePhysicalSae == 1)
-                item['statePhysicalSae'] = 'BUENO';
-              if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
+              if (item.physicalStatus == 1) item['physicalStatus'] = 'BUENO';
+              if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
               showTransportable.push(item);
+              console.log('showTransportable', showTransportable);
               this.goodsTranportables.load(showTransportable);
               this.totalItemsTransportableGoods =
                 this.goodsTranportables.count();
@@ -2062,7 +2154,6 @@ export class PerformProgrammingFormComponent
   checkInfoDate(event: any) {
     const startDate = event;
     const endDate = new Date(this.performForm.get('endDate').value);
-    console.log(startDate);
     const _startDateFormat = moment(startDate).format('DD-MM-YYYY');
     const _endDateFormat = moment(endDate).format('DD-MM-YYYY');
     if (_startDateFormat > _endDateFormat) {

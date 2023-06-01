@@ -46,11 +46,9 @@
 
           <form-field [control]="form.get('id')" label="No&#46; Acta">
             <input
-              type="number"
               class="form-control"
               formControlName="id"
-              min="1"
-              maxlength="20"
+              maxlength="10"
               [readonly]="loading" />
           </form-field>
         </div>
