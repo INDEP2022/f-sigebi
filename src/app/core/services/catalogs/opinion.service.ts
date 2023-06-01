@@ -38,11 +38,14 @@ export class OpinionService
     return this.opinionRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IOpinion): Observable<Object> {
-    return this.opinionRepository.update(this.route, id, model);
+  updateCatalogOpinions(
+    id: string | number,
+    model: IOpinion
+  ): Observable<Object> {
+    return this.opinionRepository.updateCatalogOpinions(this.route, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.opinionRepository.remove(this.route, id);
+  removeCatalogOpinions(id: string | number): Observable<Object> {
+    return this.opinionRepository.removeCatalogOpinions(this.route, id);
   }
 }

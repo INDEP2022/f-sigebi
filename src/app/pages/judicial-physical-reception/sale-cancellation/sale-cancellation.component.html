@@ -44,20 +44,20 @@
                 <i class="fa fa-angle-left"></i>
               </button>
               <span class="mr-3 ml-3"
-                >{{
-                  numberProceeding + 1 > proceedingData.length
-                    ? 'Nuevo'
-                    : numberProceeding + 1
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length ? null : ' - '
-                }}
-                {{
-                  numberProceeding + 1 > proceedingData.length
-                    ? null
-                    : proceedingData.length
-                }}</span
-              >
+              >{{
+                numberProceeding + 1 > proceedingData.length
+                  ? 'Nuevo'
+                  : numberProceeding + 1
+              }}
+              {{
+                numberProceeding + 1 > proceedingData.length ? null : ' - '
+              }}
+              {{
+                numberProceeding + 1 > proceedingData.length
+                  ? null
+                  : proceedingData.length
+              }}</span
+            >
               <button
                 class="btn btn-secondary btn-sm active"
                 [disabled]="!nextProce"

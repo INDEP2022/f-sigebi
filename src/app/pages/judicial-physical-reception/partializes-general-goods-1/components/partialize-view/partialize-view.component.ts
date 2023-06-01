@@ -54,39 +54,9 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     this.service.bienesPar = value;
   }
 
-  filledRow() {
-    // debugger;
-    const final = this.page * this.params.value.limit;
-    if (this.bienesPar && this.bienesPar.length > 0) {
-      // debugger;
-      const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
-      this.service.pagedBienesPar = [
-        ...bienesNotTotal
-          .slice((this.page - 1) * this.params.value.limit, final)
-          .concat(this.bienesPar[this.bienesPar.length - 1]),
-      ];
-    } else {
-      this.service.pagedBienesPar = [...this.service.bienesPar];
-    }
-    this.loading = false;
+  get form() {
+    return this.service.formControl;
   }
-  // get pagedBienesPar() {
-
-  //   const final = (this.page * 10) - 1;
-  //   if (this.bienesPar && this.bienesPar.length > 0) {
-  //     // debugger;
-  //     const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
-  //     return bienesNotTotal
-  //       .slice(
-  //         (this.page - 1) * 10,
-  //         final
-  //       )
-  //       .concat(this.bienesPar[this.bienesPar.length - 1]);
-  //   } else {
-  //     return this.service.bienesPar;
-  //   }
-
-  // }
 
   get firtsCase() {
     return this.service.firstCase;
@@ -109,6 +79,23 @@ export class PartializeViewComponent extends BasePage implements OnInit {
 
   get firstCase() {
     return this.service.firstCase;
+  }
+
+  filledRow() {
+    // debugger;
+    const final = this.page * this.params.value.limit;
+    if (this.bienesPar && this.bienesPar.length > 0) {
+      // debugger;
+      const bienesNotTotal = this.bienesPar.slice(0, this.bienesPar.length - 1);
+      this.service.pagedBienesPar = [
+        ...bienesNotTotal
+          .slice((this.page - 1) * this.params.value.limit, final)
+          .concat(this.bienesPar[this.bienesPar.length - 1]),
+      ];
+    } else {
+      this.service.pagedBienesPar = [...this.service.bienesPar];
+    }
+    this.loading = false;
   }
 
   get statePartialize() {
@@ -163,10 +150,6 @@ export class PartializeViewComponent extends BasePage implements OnInit {
         this.filledRow();
       },
     });
-  }
-
-  get form() {
-    return this.service.formControl;
   }
 
   deleteRow(row: { data: IBienesPar; index: number }) {

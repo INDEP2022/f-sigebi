@@ -98,7 +98,7 @@ export class PartializeButtonComponent
   }
 
   private validationImporte() {
-    debugger;
+    // debugger;
     console.log(this.good);
     const cantidad = +this.good.quantity;
     if (!this.validationClasif()) {
@@ -222,7 +222,7 @@ export class PartializeButtonComponent
   }
 
   private fillAvaluo() {
-    debugger;
+    // debugger;
     if (this.good.appraisedValue) {
       const algo = +(this.good.appraisedValue + '') * this.vfactor;
       const newValue = +algo.toFixed(2);
@@ -375,7 +375,7 @@ export class PartializeButtonComponent
   }
 
   private calcImporte() {
-    debugger;
+    // debugger;
     this.service.clasificators.includes(this.good.goodClassNumber + '');
     const newImporte: number =
       this.cantPar.value * this.cantidad.value + this.vsum;
