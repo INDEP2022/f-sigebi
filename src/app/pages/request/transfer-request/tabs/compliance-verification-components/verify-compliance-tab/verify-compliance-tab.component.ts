@@ -793,7 +793,7 @@ export class VerifyComplianceTabComponent
       confirmButtonText: 'Eliminar',
     }).then(async result => {
       if (result.isConfirmed) {
-        debugger;
+        //debugger;
         this.loader.load = true;
         //eliminar el chat clarification
         const idChatClarification =
