@@ -250,7 +250,7 @@ export class ReturnToPerformProgrammingFormComponent
     return this.transferentService
       .getById(this.programming.tranferId)
       .subscribe(data => {
-        this.programming.tranferId = data.nameTransferent;
+        //this.programming.tranferId = data.nameTransferent;
       });
   }
 
@@ -258,7 +258,7 @@ export class ReturnToPerformProgrammingFormComponent
     return this.stationService
       .getById(this.programming.stationId)
       .subscribe(data => {
-        this.programming.stationId = data.stationName;
+        //this.programming.stationId = data.stationName;
       });
   }
 
@@ -273,7 +273,7 @@ export class ReturnToPerformProgrammingFormComponent
         let authority = response.data.find(res => {
           return res;
         });
-        this.programming.autorityId = authority.authorityName;
+        //this.programming.autorityId = authority.authorityName;
       },
     });
   }
@@ -282,7 +282,7 @@ export class ReturnToPerformProgrammingFormComponent
     return this.typeRelevantService
       .getById(this.programming.typeRelevantId)
       .subscribe(data => {
-        this.programming.typeRelevantId = data.description;
+        //this.programming.typeRelevantId = data.description;
       });
   }
 

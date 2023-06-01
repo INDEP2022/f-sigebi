@@ -103,7 +103,7 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     // DISABLED BUTTON - FINALIZED //
     // this.task = JSON.parse(localStorage.getItem('Task'));
     // this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    console.log('id Bien', this.idGood);
 
     this.prepareForm();
     this.getDocType(new ListParams());
@@ -200,9 +200,9 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       Promise.all(typeDoc).then(info => {
         if (info.length == 0) {
           this.onLoadToast(
-            'warning',
-            'No se le encontraron documentos al bien.',
-            ''
+            'info',
+            'Información',
+            'No se encontraron documentos'
           );
           this.loading = false;
         } else {
