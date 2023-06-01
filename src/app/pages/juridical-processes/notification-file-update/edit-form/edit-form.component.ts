@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import { INotificationUpdate } from 'src/app/core/models/ms-notification/notification.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -18,6 +19,7 @@ import { MODAL_CONFIG } from '../../../../common/constants/modal-config';
 export class EditFormComponent extends BasePage implements OnInit {
   deductiveForm: ModelForm<any>;
   title: string = 'Dictaminación';
+  notification: INotificationUpdate[] = [];
   edit: boolean = false;
   dict: any;
   dictation: IDictation;
@@ -58,7 +60,7 @@ export class EditFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     console.log(this.deductiveForm);
     this.deductiveForm = this.fb.group({
-      id: [null],
+      //id: [null],
       expedientNumber: [
         null,
         [
@@ -68,14 +70,58 @@ export class EditFormComponent extends BasePage implements OnInit {
           this.positiveNumberValidator,
         ],
       ],
-      wheelNumber: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      affairKey: [null, [Validators.required]],
-      captureDate: [null, [Validators.required]],
-      protectionKey: [null, [Validators.required]],
-      preliminaryInquiry: [null, [Validators.required]],
-      criminalCase: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      /*wheelNumber: [null],
+      receiptDate: [null],
+      officeExternalKey: [null],
+      externalOfficeDate: [null],
+
+      observations: [null,],
+      affairKey: [null],
+      captureDate: [null],
+      protectionKey: [null],
+      preliminaryInquiry: [null],
+      criminalCase: [null],
+      //status: [null],
+
+      externalRemitter: [null],
+      touchPenaltyKey: [null],
+      circumstantialRecord: [null],
+      addressee: [null],
+      crimeKey: [null],
+      entFedKey: [null],
+      viaKey: [null],
+      consecutiveNumber: [null],
+      delegationNumber: [null],
+      subDelegationNumber: [null],
+      indiciadoNumber: [null],
+      delDestinyNumber: [null],
+      subDelDestinyNumber: [null],
+      departamentDestinyNumber: [null],
+      officeNumber: [null],
+      minpubNumber: [null],
+      cityNumber: [null],
+      courtNumber: [null],
+      registerNumber: [null],
+      dictumKey: [null],
+      identifier: [null],
+      observationDictum: [null],
+      wheelStatus: [null],
+      transference: [null],
+      expedientTransferenceNumber: [null],
+      priority: [null],
+      wheelType: [null],
+      reserved: [null],
+      entryProcedureDate: [null],
+      userInsert: [null],
+      originNumber: [null],
+      stationNumber: [null],
+      autorityNumber: [null],
+      endTransferNumber: null,
+      dailyEviction:  [null],
+      hcCaptureDate: [null],
+      hcEntryProcedureDate: [],
+      desKnowingDate: null,
+      addressGeneral: [null]*/
     });
     debugger;
     if (this.dict != null) {
@@ -115,11 +161,24 @@ export class EditFormComponent extends BasePage implements OnInit {
     // this.dict.wheelNumber = parsedID;
     // http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation
     //console.log(this.dict);
+    const data: any = {};
+    for (const controlName in this.deductiveForm.controls) {
+      if (this.deductiveForm.controls.hasOwnProperty(controlName)) {
+        const control = this.deductiveForm.controls[controlName];
+        data[controlName] = control.value;
+      }
+    }
+
+    console.log(data);
+
     this.dict['expedientNumber'] =
       this.deductiveForm.controls['expedientNumber'].value;
+    //this.dict['affair'] = null;
     const id = this.dict['wheelNumber'];
-    console.log(this.dict);
-    this.notificationService.updateWithBody(id, this.dict).subscribe({
+
+    //console.log(this.dict);
+
+    this.notificationService.updateWithBody(id, data).subscribe({
       next: data => {
         this.handleSuccess();
       },
