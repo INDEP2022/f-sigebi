@@ -213,6 +213,7 @@ export class RequestRecordTabComponent
       ],
       protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
   }

@@ -66,7 +66,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     selectedRowIndex: -1,
     mode: 'external',
     columns: {
-      goodId: {
+      id: {
         title: 'No. Bien',
         type: 'string',
         sort: false,
@@ -278,10 +278,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             exchangeValue: data.toggle ? 1 : null,
             numberGood: data.row.id,
             numberProceedings: this.idProceeding,
+            received: data.toggle ? 'S' : null
           };
           this.serviceDetailProc.editDetailProcee(modelEdit).subscribe(
             res => {
               data.row.exchangeValue = data.toggle ? 1 : null;
+              data.row.received = data.toggle ? 'S' : null
             },
             err => {
               console.log(err);
@@ -582,6 +584,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   ...e,
                   avalaible: false,
                   exchangeValue: element.exchangeValue === '1' ? 1 : null,
+                  received: element.exchangeValue ? 'S' : null,
                   acta: dataRes.keysProceedings,
                 };
               } else {
@@ -1022,10 +1025,10 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           },
         });
     } else {
-      this.searchByOthersData();
+      this.searchByOthersData()
     }
   }
-
+  
   //Catalogs
   getRecibe(params: ListParams) {
     console.log(params);
@@ -1833,7 +1836,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'No puede eliminar un Acta fuera del mes de elaboración'
         );
       }
-    } else if (this.act2Valid && this.statusProceeding != '') {
+    }else if (this.act2Valid && this.statusProceeding != '') {
       this.alertQuestion(
         'question',
         '¿Desea eliminar completamente el acta?',
