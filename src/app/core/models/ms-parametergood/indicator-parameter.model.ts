@@ -5,6 +5,6 @@ export interface IIndicatorParameter {
   description: string;
   procedureArea: IProcedureArea;
   registryNumber: string;
-  certificateType: null;
-  certificateRE: null;
+  certificateType: string;
+  certificateRE: string;
 }

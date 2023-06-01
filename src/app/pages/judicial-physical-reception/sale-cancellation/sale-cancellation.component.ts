@@ -1382,6 +1382,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                                   this.form
                                     .get('statusProceeding')
                                     .setValue('CERRADO');
+
                                   const btn =
                                     document.getElementById('expedient-number');
                                   this.render.removeClass(btn, 'disabled');

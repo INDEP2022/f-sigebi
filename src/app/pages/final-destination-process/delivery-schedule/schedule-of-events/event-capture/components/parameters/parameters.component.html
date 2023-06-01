@@ -5,6 +5,7 @@
       [control]="formSiab.get('initialDate')"
       label="Fecha Inicial">
       <input
+        (bsValueChange)="initialDateChange($event)"
         type="text"
         class="form-control"
         bsDatepicker

@@ -50,7 +50,13 @@ export interface IParamsLegalOpinionsOffice {
 @Component({
   selector: 'app-legal-opinions-office',
   templateUrl: './legal-opinions-office.component.html',
-  styles: [],
+  styles: [
+    `
+      /* span.see-more.btn-link {
+        color: red !important;
+      } */
+    `,
+  ],
 })
 export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -140,6 +146,11 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   // Electronic Firm
   routeFirm: string = 'electronicfirm';
   fileFirm: any;
+  // Good Loop
+  goodLoopCurrent: number = 0;
+  goodLoopTotal: number = 0;
+  goodLoopPage: number = 0;
+  goodLoopTmpData: IDictationXGood1[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -586,18 +597,230 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     params.addFilter('natureDocument', this.dictationData.typeDict);
     params.addFilter('documentNumber', this.dictationData.id);
     params.addFilter('documentType', this.dictationData.statusDict);
-    let subscription = this.svLegalOpinionsOfficeService
+    this.svLegalOpinionsOfficeService
       .getElectronicFirmData(params.getParams())
       .subscribe({
         next: data => {
-          console.log('FIRMA ELECTRONICA', data);
-          subscription.unsubscribe();
+          console.log('COUNT FIRMA ELECTRONICA XML', data);
+          this.deleteTempDictation(true);
+          this.alertInfo('warning', 'Se realizó la firma del dictamen', '');
         },
         error: error => {
           console.log(error);
-          subscription.unsubscribe();
+          if (error.status == 400) {
+            this.deleteTempDictation(true);
+            this.startLoopGoods(); // Inicar Loop de bienes
+          } else {
+            this.alertInfo(
+              'warning',
+              'No se encontró el archivo firmado. El documento no ha sido enviado',
+              ''
+            );
+          }
         },
       });
+  }
+
+  returnStatusProcess(
+    dataLength: number,
+    count: number,
+    dataCurrent: IDictationXGood1[]
+  ) {
+    if (this.goodLoopTmpData[count].good) {
+      // Review Status Screen
+      const params = new FilterParams();
+      params.removeAllFilters();
+      params.addFilter(
+        'screenKey',
+        this.dictationData.typeDict == 'DESTRUCCION'
+          ? 'FACTJURDICTAMAS'
+          : 'FACTJURDICTAMASG'
+      );
+      params.addFilter('typeDict', this.dictationData.typeDict);
+      params.addFilter(
+        'processExtSun',
+        this.goodLoopTmpData[count].good.extDomProcess
+      );
+      params.addFilter('status', this.goodLoopTmpData[count].good.goodStatus);
+      this.svLegalOpinionsOfficeService
+        .getScreenStatusService(params.getParams())
+        .subscribe({
+          next: res => {
+            console.log('REVIEW STATUS SCREEN', res);
+            this.goodLoopCurrent++;
+            if (dataLength == count + 1) {
+              this.goodLoopPage++;
+              this.controlGoodLoop([]);
+            } else {
+              count++;
+              this.returnStatusProcess(dataLength, count, dataCurrent);
+            }
+          },
+          error: error => {
+            console.log(error);
+            if (error.status == 400) {
+              this.goodLoopCurrent++;
+              if (dataLength == count + 1) {
+                this.goodLoopPage++;
+                this.controlGoodLoop([]);
+              } else {
+                count++;
+                this.returnStatusProcess(dataLength, count, dataCurrent);
+              }
+            } else {
+              // Return Status
+              let body: any = {
+                pGoodNumber: this.goodLoopTmpData[count].good.goodId,
+                pStatus: this.goodLoopTmpData[count].good.status,
+              };
+              this.svLegalOpinionsOfficeService
+                .returnStatusProcess(body)
+                .subscribe({
+                  next: data => {
+                    console.log('RETURN STATUS PROCESS', data);
+                    this.updateStatusGood(
+                      dataLength,
+                      count,
+                      dataCurrent,
+                      data.data[0].estatus,
+                      this.goodLoopTmpData[count].good.goodId
+                    );
+                  },
+                  error: error => {
+                    console.log(error);
+                    this.goodLoopCurrent++;
+                    if (dataLength == count + 1) {
+                      this.goodLoopPage++;
+                      this.controlGoodLoop([]);
+                    } else {
+                      count++;
+                      this.returnStatusProcess(dataLength, count, dataCurrent);
+                    }
+                    this.onLoadToast(
+                      'error',
+                      'No se encontró el estatus anterior del bien',
+                      'Para el bien: ' + this.goodLoopTmpData[count].good.goodId
+                    );
+                  },
+                });
+            }
+          },
+        });
+    } else {
+      this.goodLoopCurrent++;
+      if (dataLength == count + 1) {
+        this.goodLoopPage++;
+        this.controlGoodLoop([]);
+      } else {
+        count++;
+        this.returnStatusProcess(dataLength, count, dataCurrent);
+      }
+    }
+  }
+
+  reviewStatusScreen() {}
+
+  startLoopGoods() {
+    this.goodLoopCurrent = 1;
+    this.goodLoopTotal = 0;
+    this.goodLoopTmpData = [];
+    this.getLoopGoodList();
+  }
+
+  getLoopGoodList() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('typeDict', this.dictationData.typeDict);
+    params.addFilter('ofDictNumber', this.dictationData.id);
+    params.limit = 10;
+    params.page = this.goodLoopPage;
+    this.svLegalOpinionsOfficeService.getGoods(params.getParams()).subscribe({
+      next: res => {
+        console.log('GOODS LIST', res);
+        this.goodLoopTmpData = res.data;
+        this.goodLoopTotal = res.count;
+        this.controlGoodLoop(this.goodLoopTmpData);
+      },
+      error: error => {
+        console.log(error);
+        this.goodLoopCurrent =
+          this.goodLoopCurrent + 10 > this.goodLoopTotal
+            ? this.goodLoopTotal
+            : this.goodLoopCurrent + 10;
+        this.goodLoopPage++; // Next page
+        if (this.goodLoopCurrent < this.goodLoopTotal) {
+          this.getLoopGoodList();
+        } else if ((this.goodLoopCurrent = this.goodLoopTotal)) {
+          // FIN PROCESO
+        }
+      },
+    });
+  }
+
+  controlGoodLoop(dataCurrent: IDictationXGood1[]) {
+    if (dataCurrent.length > 0) {
+      this.returnStatusProcess(dataCurrent.length, 0, dataCurrent);
+    } else {
+      if (this.goodLoopCurrent < this.goodLoopTotal) {
+        this.getLoopGoodList();
+      } else if ((this.goodLoopCurrent = this.goodLoopTotal)) {
+        // FIN PROCESO
+      }
+    }
+  }
+
+  updateStatusGood(
+    dataLength: number,
+    count: number,
+    dataCurrent: IDictationXGood1[],
+    statusGood: string,
+    goodId: number
+  ) {
+    let body: any = {
+      goodStatus: statusGood,
+      goodId: goodId,
+    };
+    this.svLegalOpinionsOfficeService.updateGood(body).subscribe({
+      next: data => {
+        console.log('UPDATE STATUS', data);
+        this.goodLoopCurrent++;
+        if (dataLength == count + 1) {
+          this.goodLoopPage++;
+          this.controlGoodLoop([]);
+        } else {
+          count++;
+          this.returnStatusProcess(dataLength, count, dataCurrent);
+        }
+      },
+      error: error => {
+        console.log(error);
+        this.goodLoopCurrent++;
+        if (dataLength == count + 1) {
+          this.goodLoopPage++;
+          this.controlGoodLoop([]);
+        } else {
+          count++;
+          this.returnStatusProcess(dataLength, count, dataCurrent);
+        }
+        this.onLoadToast(
+          'error',
+          'No se regresó el valor anterior del dictamen',
+          'Para el bien: ' + this.goodLoopTmpData[count].good.goodId
+        );
+      },
+    });
+  }
+
+  deleteTempDictation(onlydelete: boolean) {
+    let body: any = {};
+    this.svLegalOpinionsOfficeService.deleteTmpDictation(body).subscribe({
+      next: data => {
+        console.log('DELETE TMP_DICTAMINACIONES', data);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   getOfficeDictationData() {
@@ -933,12 +1156,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
             this.cityData = new DefaultSelect(
               data.data.map(i => {
                 i.nameAndId =
-                  '#' +
-                  i.idCity +
-                  ' -- ' +
-                  i.nameCity +
-                  ' -- ' +
-                  i.legendOffice;
+                  i.idCity + ' -- ' + i.nameCity + ' -- ' + i.legendOffice;
                 return i;
               }),
               data.count
@@ -978,7 +1196,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
           next: data => {
             this.cityData = new DefaultSelect(
               data.data.map((i: any) => {
-                i['nameAndId'] = '#' + i.id_ciudad + ' -- ' + i.leyenda_oficio;
+                i['nameAndId'] = i.id_ciudad + ' -- ' + i.leyenda_oficio;
                 i['idCity'] = i.id_ciudad;
                 return i;
               }),
@@ -1052,7 +1270,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: data => {
           this.addressee = new DefaultSelect(
             data.data.map(i => {
-              i['description'] = '#' + i.user + ' -- ' + i.userDetail.name;
+              i['description'] = i.user + ' -- ' + i.userDetail.name;
               return i;
             }),
             data.count
@@ -1096,7 +1314,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         next: data => {
           let tempDataUser = new DefaultSelect(
             data.data.map(i => {
-              i.name = '#' + i.id + ' -- ' + i.name;
+              i.name = i.id + ' -- ' + i.name;
               return i;
             }),
             data.count
