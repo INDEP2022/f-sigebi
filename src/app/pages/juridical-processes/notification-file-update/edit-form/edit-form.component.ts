@@ -104,6 +104,7 @@ export class EditFormComponent extends BasePage implements OnInit {
     //console.log(data);
     this.dict['expedientNumber'] =
       this.deductiveForm.controls['expedientNumber'].value;
+    //this.dict['affair'] = null;
     const id = this.dict['wheelNumber'];
     //console.log(this.dict);
     this.notificationService.updateWithBody(id, data).subscribe({
