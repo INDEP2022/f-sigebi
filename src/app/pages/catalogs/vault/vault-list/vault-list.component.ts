@@ -95,7 +95,6 @@ export class VaultListComponent extends BasePage implements OnInit {
     };
     this.safeService.getAll2(params).subscribe(
       response => {
-
         this.getManager(response);
         this.totalItems = response.count;
       },
@@ -115,7 +114,8 @@ export class VaultListComponent extends BasePage implements OnInit {
             this.data.refresh();
             this.loading = false;
           }
-        }, error: erro => {
+        },
+        error: erro => {
           if (i == response.data.length - 1) {
             this.vaults = response.data;
             this.data.load(this.vaults);

@@ -40,29 +40,44 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       satTypeJob: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          // Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       idTypeDocSat: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          // Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       idTypeDocSatXml: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          // Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       typeDocSae: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          // Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      type: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      type: [
+        null,
+        [
+          // Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
     });
     if (this.docCompensation != null) {
       this.edit = true;
       this.docCompensationForm.patchValue(this.docCompensation);
     }
-    // if (this.docCompensation != null) {
-    //   this.fillForm();
-    // }
   }
 
   fillForm() {
@@ -116,7 +131,10 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.docCompensationService
-      .update(this.docCompensation.id, this.docCompensationForm.value)
+      .updateCatalogDocCompensation(
+        this.docCompensation.id,
+        this.docCompensationForm.value
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

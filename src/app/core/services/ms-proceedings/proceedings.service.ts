@@ -95,6 +95,13 @@ export class ProceedingsService extends HttpService {
     return this.post(this.route, formData);
   }
 
+  getCurTrans(expedientId: string | number) {
+    return this.get<{
+      no_transferente: string;
+      clave: string;
+    }>(`application/get-cur-transf/${expedientId}`);
+  }
+
   remove(proceedingsNumb: number) {
     return this.delete<IListResponse<IProceedings>>(
       `${this.endpoint}/${proceedingsNumb}`
