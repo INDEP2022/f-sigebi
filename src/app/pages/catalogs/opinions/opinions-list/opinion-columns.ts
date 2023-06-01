@@ -9,11 +9,6 @@ export const OPINION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noRegistration: {
-    title: 'Número de registro',
-    type: 'number',
-    sort: false,
-  },
   dict_ofi: {
     title: 'Dictamen_ofi',
     type: 'string',
