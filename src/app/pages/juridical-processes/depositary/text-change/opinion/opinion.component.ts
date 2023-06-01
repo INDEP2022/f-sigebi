@@ -153,6 +153,10 @@ export class OpinionComponent extends BasePage implements OnInit, OnChanges {
   verBoton: boolean = false;
   filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
 
+  tipoReporteImpresion: string;
+
+  tipoImpresion: string;
+
   //=======================================================================
   users$ = new DefaultSelect<ISegUsers>();
   users$$ = new DefaultSelect<ISegUsers>();
@@ -298,12 +302,16 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
     this.filterParamsLocal
       .getValue()
       .addFilter(
-        'entryDate',
+        'dictDate',
         new Date().getFullYear() +
-          '-01-01' +
+          '-' +
+          (new Date().getMonth() + 1) +
+          '-01' +
           ',' +
           new Date().getFullYear() +
-          '-12-31',
+          '-' +
+          (new Date().getMonth() + 1) +
+          '-31',
         SearchFilter.BTW
       );
     this.onEnterSearch(this.filterParamsLocal);
@@ -316,10 +324,13 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
       .findByIdsOficNum(filterParams.getValue().getParams())
       .subscribe({
         next: resp => {
+          console.log('onEnterSearch => ' + JSON.stringify(resp));
+
           if (resp.data.length > 1) {
             this.loadModal(true, filterParams);
           } else {
             this.intIDictation = resp.data[0];
+
             //this.form.get('expedientNumber').setValue(this.intIDictation.expedientNumber);
             console.log(' this.intIDictation.id => ' + this.intIDictation.id);
             this.form.get('registerNumber').setValue(this.intIDictation.id);
@@ -383,6 +394,11 @@ carga la  información de la parte media de la página
   complementoFormulario(obj: any) {
     this.oficialDictationService.getById(obj).subscribe({
       next: resp => {
+        console.warn(
+          'complementoFormulario DICTAMENT : >===>> ',
+          JSON.stringify(resp)
+        );
+
         this.form.get('addressee').setValue(resp.recipient);
         this.form.get('senderUserRemitente').setValue(resp.sender);
         const param = new ListParams();
@@ -422,12 +438,6 @@ carga la  información de la parte media de la página
       .subscribe({
         next: resp => {
           let datos: IDictationCopies[] = resp.data;
-
-          this.form.get('senderUser').setValue(datos[0].namePersonExt);
-          this.nrSelecttypePerson = datos[0].personExtInt === 'S' ? 'S' : 'I';
-
-          this.form.get('senderUser').setValue(datos[1].namePersonExt);
-          this.nrSelecttypePerson_I = datos[1].personExtInt === 'S' ? 'S' : 'I';
         },
         error: error => {
           this.onLoadToast('error', 'error', error.error.message);
@@ -675,6 +685,16 @@ carga la  información de la parte media de la página
              método para mandar a llamar el reporte
 =======================================================================*/
   public confirm() {
+    this.reporteExterno();
+    /*
+    if(this.tipoReporteImpresion==="EXTERNO"){
+      
+    }else{
+      this.reporteInterno();
+    }*/
+  }
+
+  reporteExterno() {
     const params = {
       PNOOFICIO: this.form.value.expedientNumber,
       PTIPODIC: this.form.value.typeDict,
@@ -697,6 +717,31 @@ carga la  información de la parte media de la página
       },
     });
   }
+
+  reporteInterno() {
+    const params = {
+      no_of_ges: this.form.value.managementNumber,
+    };
+
+    this.siabServiceReport.fetchReport('RGEROFGESTION', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+
   //======================================================================
 
   get extPerson(): FormArray {
@@ -789,18 +834,14 @@ carga la  información de la parte media de la página
   }
 
   delete(id: number) {
-    alert('   delete  ');
-    /*
- this.dictationService
-      .deleteCopiesOfficialOpinion()
-      .subscribe({
-        next: resp => {
-        this.refreshTabla();    
-        },
-        error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
-        },
-      });*/
+    this.dictationService.deleteCopiesdictamenetOfficialOpinion(id).subscribe({
+      next: resp => {
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
   }
 
   openForm(legend?: ILegend) {
@@ -821,27 +862,17 @@ carga la  información de la parte media de la página
 
   seteaTabla(datos: any) {
     let dato = JSON.parse(JSON.stringify(datos));
-    /*let obj:IDictationCopies = {
-        id: 3,
-        numberOfDicta: "165564",
-        typeDictamination: this.form.get('typeDict').value,
-        recipientCopy: this.form.get('addressee').value,
-        copyDestinationNumber: 0,
-        personExtInt: dato.typePerson_I,
-        namePersonExt: dato.personaExt_I,
-        registerNumber: this.form.get('registerNumber').value}*/
-
-    let data: IDictationCopies = {
-      numberOfDicta: '165564',
-      typeDictamination: 'PROCEDENCIA',
-      recipientCopy: 'VAZNAR',
+    let obj: IDictationCopies = {
+      numberOfDicta: this.form.get('registerNumber').value,
+      typeDictamination: this.form.get('typeDict').value,
+      recipientCopy: dato.typePerson_I,
       copyDestinationNumber: 0,
-      personExtInt: 'I',
-      namePersonExt: '',
-      registerNumber: 14969526,
+      personExtInt: dato.typePerson_I,
+      namePersonExt: dato.personaExt_I,
+      registerNumber: this.form.get('registerNumber').value,
     };
 
-    this.insertRegistroExtCCP(data);
+    this.insertRegistroExtCCP(obj);
     this.refreshTabla();
   }
 
