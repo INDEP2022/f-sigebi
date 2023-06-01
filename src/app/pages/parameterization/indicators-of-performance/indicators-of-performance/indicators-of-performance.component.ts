@@ -24,8 +24,7 @@ import {
 })
 export class IndicatorsOfPerformanceComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 
@@ -73,19 +72,32 @@ export class IndicatorsOfPerformanceComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters1[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters1[field];
             }
           });
-          this.getValuesAll();
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getValuesAll());
         }
       });
     this.data2

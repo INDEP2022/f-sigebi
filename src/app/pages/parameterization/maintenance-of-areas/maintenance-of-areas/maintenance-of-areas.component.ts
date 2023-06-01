@@ -89,13 +89,24 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -127,7 +138,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
+      () => { }
     );
   }
 
@@ -202,7 +213,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
           this.departments = response.data;
           this.data.load(this.departments);
           this.data.refresh();
-          this.totalItems = response.count;
+          this.totalItems = response.count | 0;
           this.loading = false;
         },
         error: error => (this.loading = false),
