@@ -525,5 +525,11 @@ ng-scrollbar.table-scrollbar {
 }
 
 #selectAbandono div ng-select {
-  height: 43px !important;
+  height: 38px !important;
+}
+
+.card-header-span-fix .page-item .page-link {
+  display: flex !important;
+  font-size: auto !important;
+  margin-top: auto !important;
 }

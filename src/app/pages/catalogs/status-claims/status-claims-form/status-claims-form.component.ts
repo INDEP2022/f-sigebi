@@ -34,22 +34,9 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(80),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      flag: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(60),
-          Validators.pattern(STRING_PATTERN),
-        ]),
-      ],
+      flag: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
     if (this.statusClaims != null) {
       this.edit = true;
@@ -66,9 +53,7 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.StatusClaimsService.create(
-      this.statusClaimsForm.getRawValue()
-    ).subscribe({
+    this.StatusClaimsService.create(this.statusClaimsForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -78,7 +63,7 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.StatusClaimsService.update(
       this.statusClaims.id,
-      this.statusClaimsForm.getRawValue()
+      this.statusClaimsForm.value
     ).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

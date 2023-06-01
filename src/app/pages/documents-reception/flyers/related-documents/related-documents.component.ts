@@ -1,24 +1,27 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
-
-import { BehaviorSubject, takeUntil } from 'rxjs';
-
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { _Params } from 'src/app/common/services/http.service';
+import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement/good-job-management.model';
 import { IMJobManagement } from 'src/app/core/models/ms-officemanagement/m-job-management.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -27,9 +30,11 @@ import {
 } from 'src/app/core/shared/patterns';
 import { IJuridicalDocumentManagementParams } from 'src/app/pages/juridical-processes/file-data-update/interfaces/file-data-update-parameters';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { ERROR_REPORT } from '../related-documents/utils/related-documents.message';
 import { FlyersService } from '../services/flyers.service';
 import { DocumentsFormComponent } from './documents-form/documents-form.component';
+import { ModalPersonaOficinaComponent } from './modal-persona-oficina/modal-persona-oficina.component';
 import {
   IDataGoodsTable,
   RELATED_DOCUMENTS_COLUMNS_GOODS,
@@ -60,6 +65,10 @@ import { RelatedDocumentsService } from './services/related-documents.service';
   ],
 })
 export class RelatedDocumentsComponent extends BasePage implements OnInit {
+  filtroPersonaExt: ICopiesJobManagementDto[] = [];
+  filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
+  nrSelecttypePerson: string | number;
+  nrSelecttypePerson_I: string | number;
   managementForm: FormGroup;
   typeClasify: any;
   select = new DefaultSelect();
@@ -139,7 +148,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private dictationService: DictationService,
     private serviceRelatedDocumentsService: RelatedDocumentsService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private serviceOficces: GoodsJobManagementService
   ) {
     super();
     RELATED_DOCUMENTS_COLUMNS_GOODS.seleccion = {
@@ -935,7 +945,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         next: data => {
           this.cities = new DefaultSelect(
             data.data.map(i => {
-              i.nameCity = '#' + i.idCity + ' -- ' + i.nameCity;
+              i.nameCity = i.idCity + ' -- ' + i.legendOffice;
               return i;
             }),
             data.count
@@ -1061,5 +1071,91 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
         this.select = new DefaultSelect();
       }
     );
+  }
+
+  openForm(legend?: ILegend) {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      legend,
+      callback: (next: boolean, datos: any) => {
+        if (next) {
+          this.seteaTabla(datos);
+        }
+      },
+    };
+    this.modalService.show(ModalPersonaOficinaComponent, modalConfig);
+  }
+
+  seteaTabla(datos: any) {
+    let dato: ICopiesJobManagementDto = JSON.parse(JSON.stringify(datos));
+
+    let obj = {
+      managementNumber: this.managementForm.get('numero').value,
+      addresseeCopy: 0,
+      delDestinationCopyNumber: 0,
+      personExtInt: dato.personExtInt,
+      nomPersonExt: dato.nomPersonExt,
+      recordNumber: this.managementForm.get('numero').value,
+    };
+
+    this.serviceOficces.createCopiesJobManagement(obj).subscribe({
+      next: resp => {
+        console.log('resp  =>  ' + resp);
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+    this.refreshTabla();
+    console.log(
+      'this.filtroPersonaExt => ' + JSON.stringify(this.filtroPersonaExt)
+    );
+  }
+
+  refreshTabla() {
+    this.filterParams2
+      .getValue()
+      .addFilter('numero', this.managementForm.value.numero, SearchFilter.EQ);
+
+    this.getPersonaExt_Int(this.filterParams2.getValue().getParams());
+  }
+
+  getPersonaExt_Int(params: _Params) {
+    this.serviceOficces.getPersonaExt_Int(params).subscribe({
+      next: resp => {
+        this.filtroPersonaExt = resp.data;
+        this.nrSelecttypePerson = resp.data[0].personExtInt;
+        this.nrSelecttypePerson_I = resp.data[1].personExtInt;
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+
+  showDeleteAlert(legend: ILegend) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(legend.id);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.serviceOficces.deleteCopiesJobManagement(id).subscribe({
+      next: resp => {
+        console.log('resp  =>  ' + resp);
+        this.refreshTabla();
+      },
+      error: errror => {
+        this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
   }
 }
