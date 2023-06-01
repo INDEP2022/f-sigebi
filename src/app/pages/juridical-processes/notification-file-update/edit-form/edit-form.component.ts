@@ -37,15 +37,6 @@ export class EditFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    /*for (const controlName in this.deductiveForm.controls) {
-      if (this.deductiveForm.controls.hasOwnProperty(controlName)) {
-        if (controlName != 'expedientNumber') {
-          this.deductiveForm.controls[controlName].disable();
-          //console.log(controlName);
-        }
-      }
-    }*/
-    //this.example();
   }
 
   example() {
@@ -53,14 +44,13 @@ export class EditFormComponent extends BasePage implements OnInit {
     const modalRef = this.modalService.show(EditFormComponent, modalConfig);
     modalRef.content.$unSubscribe.subscribe(formData => {
       // Manejar los valores del formulario rescatados
-      console.log(formData);
+      //console.log(formData);
     });
   }
 
   private prepareForm() {
     console.log(this.deductiveForm);
     this.deductiveForm = this.fb.group({
-      //id: [null],
       expedientNumber: [
         null,
         [
@@ -70,58 +60,6 @@ export class EditFormComponent extends BasePage implements OnInit {
           this.positiveNumberValidator,
         ],
       ],
-      /*wheelNumber: [null],
-      receiptDate: [null],
-      officeExternalKey: [null],
-      externalOfficeDate: [null],
-
-      observations: [null,],
-      affairKey: [null],
-      captureDate: [null],
-      protectionKey: [null],
-      preliminaryInquiry: [null],
-      criminalCase: [null],
-      //status: [null],
-
-      externalRemitter: [null],
-      touchPenaltyKey: [null],
-      circumstantialRecord: [null],
-      addressee: [null],
-      crimeKey: [null],
-      entFedKey: [null],
-      viaKey: [null],
-      consecutiveNumber: [null],
-      delegationNumber: [null],
-      subDelegationNumber: [null],
-      indiciadoNumber: [null],
-      delDestinyNumber: [null],
-      subDelDestinyNumber: [null],
-      departamentDestinyNumber: [null],
-      officeNumber: [null],
-      minpubNumber: [null],
-      cityNumber: [null],
-      courtNumber: [null],
-      registerNumber: [null],
-      dictumKey: [null],
-      identifier: [null],
-      observationDictum: [null],
-      wheelStatus: [null],
-      transference: [null],
-      expedientTransferenceNumber: [null],
-      priority: [null],
-      wheelType: [null],
-      reserved: [null],
-      entryProcedureDate: [null],
-      userInsert: [null],
-      originNumber: [null],
-      stationNumber: [null],
-      autorityNumber: [null],
-      endTransferNumber: null,
-      dailyEviction:  [null],
-      hcCaptureDate: [null],
-      hcEntryProcedureDate: [],
-      desKnowingDate: null,
-      addressGeneral: [null]*/
     });
     debugger;
     if (this.dict != null) {
@@ -156,11 +94,6 @@ export class EditFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    // this.loading = true;
-    // let parsedID = parseInt(this.dict.wheelNumber);
-    // this.dict.wheelNumber = parsedID;
-    // http://sigebimsdev.indep.gob.mx/dictation/api/v1/dictation
-    //console.log(this.dict);
     const data: any = {};
     for (const controlName in this.deductiveForm.controls) {
       if (this.deductiveForm.controls.hasOwnProperty(controlName)) {
@@ -168,16 +101,11 @@ export class EditFormComponent extends BasePage implements OnInit {
         data[controlName] = control.value;
       }
     }
-
-    console.log(data);
-
+    //console.log(data);
     this.dict['expedientNumber'] =
       this.deductiveForm.controls['expedientNumber'].value;
-    //this.dict['affair'] = null;
     const id = this.dict['wheelNumber'];
-
     //console.log(this.dict);
-
     this.notificationService.updateWithBody(id, data).subscribe({
       next: data => {
         this.handleSuccess();
