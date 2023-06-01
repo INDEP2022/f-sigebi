@@ -64,7 +64,7 @@ export class DictationService extends HttpService {
   }
 
   createPersonExt(body: IDictationCopies) {
-    return this.post(this.route.Dictation, body);
+    return this.post(this.route.CopiesOfficialOpinion, body);
   }
 
   update(body: Partial<IDictation>) {
