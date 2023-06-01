@@ -25,10 +25,7 @@ import {
   templateUrl: './issuing-institution-list.component.html',
   styles: [],
 })
-export class IssuingInstitutionListComponent
-  extends BasePage
-  implements OnInit
-{
+export class IssuingInstitutionListComponent extends BasePage implements OnInit {
   institutionClassificationList: IInstitutionClassification[] = [];
   issuingInstitutionList: IIssuingInstitution[] = [];
   issuingInstitution: IIssuingInstitution;
@@ -116,7 +113,13 @@ export class IssuingInstitutionListComponent
               delete this.columnFilters[field];
             }
           });
-          this.getInstitutionClassification();
+
+
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getInstitutionClassification());
+
+
         }
       });
     this.params
@@ -130,6 +133,8 @@ export class IssuingInstitutionListComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(this.params.getValue().page)
+
     this.institutionClasificationService.getAll2(params).subscribe({
       next: response => {
         this.institutionClassificationList = response.data;
@@ -216,6 +221,7 @@ export class IssuingInstitutionListComponent
               delete this.columnFilters1[field];
             }
           });
+          this.params2 = this.pageFilter(this.params2);
           this.getIssuingInstitution();
         }
       });

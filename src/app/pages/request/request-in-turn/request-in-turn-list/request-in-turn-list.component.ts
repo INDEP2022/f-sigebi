@@ -49,7 +49,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.settings = {
       ...TABLE_SETTINGS,
-      hideSubHeader: false,
+      //hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
       columns: REQUEST_IN_TURN_COLUMNS,

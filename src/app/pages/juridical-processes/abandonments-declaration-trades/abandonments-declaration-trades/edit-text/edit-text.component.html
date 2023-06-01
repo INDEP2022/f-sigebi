@@ -25,8 +25,19 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button (confirm)="confirm()"></confirm-button>
+        <confirm-button
+          *ngIf="filterButton == 1"
+          [disabled]="!disabledDictum"
+          (confirm)="confirm()"></confirm-button>
+        <confirm-button
+          *ngIf="filterButton != 1"
+          (confirm)="confirm()"></confirm-button>
       </div>
+
+      <!-- <div class="m-3">
+        
+      </div> -->
+
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar

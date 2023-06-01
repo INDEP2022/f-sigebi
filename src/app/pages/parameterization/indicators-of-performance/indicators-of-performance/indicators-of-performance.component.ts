@@ -81,6 +81,9 @@ export class IndicatorsOfPerformanceComponent
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'procedureArea':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -88,7 +91,9 @@ export class IndicatorsOfPerformanceComponent
 
             if (filter.search !== '') {
               console.log(
-                (this.columnFilters1[field] = `${searchFilter}:${filter.search}`)
+                (this.columnFilters1[
+                  field
+                ] = `${searchFilter}:${filter.search}`)
               );
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {

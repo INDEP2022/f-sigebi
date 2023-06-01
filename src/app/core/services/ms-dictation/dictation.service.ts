@@ -232,10 +232,10 @@ export class DictationService extends HttpService {
     return this.post(route, params);
   }
 
-  deleteCopiesdictamenetOfficialOpinion(id: number) {
+  deleteCopiesdictamenetOfficialOpinion(obj: any) {
     return this.delete<IListResponse<IDictationCopies>>(
       this.route.CopiesOfficialOpinion,
-      id
+      obj
     );
   }
 }
