@@ -55,7 +55,7 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
   }
   getTmpProgValidation(params: string) {
     return this.httpClient.get<IListResponse<ITmpProgValidation>>(
-      `${environment.API_URL}/programminggood/api/v1/tmp-prog-validation${params}`
+      `${environment.API_URL}programminggood/api/v1/tmp-prog-validation?${params}`
     );
   }
 

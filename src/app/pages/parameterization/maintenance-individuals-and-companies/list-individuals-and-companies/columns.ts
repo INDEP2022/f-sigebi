@@ -59,4 +59,8 @@ export const COLUMNS = {
     title: 'Giro',
     sort: false,
   },
+  numberDeep: {
+    title: 'No.Escritura',
+    sort: false,
+  },
 };

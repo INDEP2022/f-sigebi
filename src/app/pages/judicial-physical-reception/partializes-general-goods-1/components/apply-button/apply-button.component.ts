@@ -55,12 +55,6 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     return this.service.vimporte;
   }
 
-  private async getVerificaDesCargaMasiva() {
-    return firstValueFrom(
-      this.goodService.getValidMassiveDownload(this.good.goodId)
-    );
-  }
-
   private async getStatusProcessxPantalla() {
     return await firstValueFrom(
       this.goodService.getStatusAndProcess({
@@ -197,11 +191,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     );
   }
 
-  private async validationsV1(
-    v_verif_des: number,
-    v_importe: number,
-    v_estatus: string
-  ) {
+  private async validationsV1(v_importe: number, v_estatus: string) {
     // try {
     //   vb_estatus_valido = (await this.validateStatusXPantalla()) ? true : false;
     // } catch (x) { }
@@ -235,6 +225,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     v_estatus = this.good.status;
     // vaccion = 'FINAL';
     // vproextdom = this.good.extDomProcess;
+    // debugger;
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
       this.good.status = status;
@@ -249,21 +240,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       // );
       // return;
     }
-    try {
-      v_verif_des = await this.getVerificaDesCargaMasiva();
-    } catch (x: any) {
-      console.log(x);
-      v_verif_des = 0;
-      // this.onLoadToast(
-      //   'error',
-      //   'Verificación Descarga Masiva',
-      //   x.error.message
-      // );
-      // this.loading = false;
-      // return;
-    }
+
     return {
-      v_verif_des,
       v_importe,
       v_estatus,
     };
@@ -445,6 +423,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     v_estatus: string,
     v_verif_des: number
   ) {
+    debugger;
     if (vsumimp < v_importe) {
       vfactor = (v_importe - vsumimp) / v_importe;
       vfactornum = (v_importe - vsumimp) / (v_importe - vsumimp);
@@ -552,6 +531,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vimpbien = item.cantidad;
       }
       item.cantidad = +(this.saldo.value + '');
+      this.saldo.setValue(0);
       this.service.sumCant += item.cantidad;
       this.service.sumVal14 += item.importe;
       this.service.sumAvaluo += item.avaluo;
@@ -573,6 +553,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         val12: 0,
         val13: 0,
       });
+
       this.fillPagedRow.emit();
       vobservaciones = 'Saldo parcializado del bien: ' + this.good.goodId;
       // return descriptions;
@@ -605,7 +586,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   }
 
   private async finishApply(vobserv_padre: string, vdesc_padre: string) {
-    debugger;
+    // debugger;
     const observations =
       vobserv_padre +
       ' fecha: ' +
@@ -630,7 +611,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         )
       );
     }
-    this.saldo.setValue(0);
+
     // this.service.pageLoading = false;
     this.loader.load = false;
     // this.onLoadToast(
@@ -639,7 +620,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     //   'La parcialización de bienes se realizo con éxito'
     // );
     try {
-      await firstValueFrom(this.goodService.update(this.good));
+      await firstValueFrom(this.goodService.updateCustom(this.good));
       this.onLoadToast(
         'success',
         'Parcialización',
@@ -675,12 +656,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         return;
       }
-      const result = await this.validationsV1(
-        v_verif_des,
-        v_importe,
-        v_estatus
-      );
-      v_verif_des = result.v_verif_des;
+      // debugger;
+      const result = await this.validationsV1(v_importe, v_estatus);
+      v_verif_des = this.service.verif_des;
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;
       let vsumimp = 0;
@@ -693,32 +671,38 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         vobserv_padre: string,
         vdesc_padre: string;
 
-      const observable = from(this.bienesPar);
+      const observable = from(
+        this.bienesPar.slice(0, this.bienesPar.length - 1)
+      );
       let i = 0;
       observable
         .pipe(
           concatMap(item => {
+            console.log(item);
             if (this.validationClasif()) {
-              vval2 = Number(item.importe.toFixed(2).trim());
-              vimpbien = item.importe;
+              vval2 = Number((+(item.importe + '')).toFixed(2).trim());
+              vimpbien = +(item.importe + '');
             } else {
               vval2 = +this.good.val14;
-              vimpbien = item.cantidad;
+              vimpbien = +(item.cantidad + '');
             }
             vident = item.id;
             vfactor = vimpbien / v_importe;
             vfactornum = vimpbien / (v_importe - vsumimp);
             vsumimp = vsumimp + vimpbien;
+            console.log(vsumimp, vimpbien);
+
             return this.fillDescriptions(item, vimpbien).pipe(
               mergeMap(descriptions => {
-                console.log(descriptions);
+                console.log(descriptions, this.bienesPar[i]);
+                this.bienesPar[i].noBien = descriptions.noBien;
                 i++;
                 vobserv_padre = descriptions.vobserv_padre;
                 vdesc_padre = descriptions.vdesc_padre;
                 vobservaciones = 'Parcializado del bien: ' + this.good.goodId;
                 // const delayedMessage = (message: string, delayedTime: number) =>
                 //   EMPTY.pipe(startWith(message), delay(delayedTime));
-                // return this.goodService.getById(this.good.goodId)
+                // return this.goodService.getById(this.good.goodId);
                 return this.insertaBien(
                   descriptions.item,
                   this.good,
@@ -737,10 +721,12 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         )
         .subscribe({
           next: async response => {
-            console.log(response);
-            if (i === this.bienesPar.length) {
+            console.log(response, i);
+            if (this.bienesPar.length > 0 && i === this.bienesPar.length - 1) {
               console.log('FINALIZO');
-              debugger;
+              this.loader.load = false;
+              // this.fillPagedRow.emit();
+              // debugger;
               const result = await this.fillRestRow(
                 vsumimp,
                 v_importe,
@@ -761,6 +747,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             }
           },
           error: error => {
+            console.log(error);
             this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
             this.loader.load = false;
             return;
