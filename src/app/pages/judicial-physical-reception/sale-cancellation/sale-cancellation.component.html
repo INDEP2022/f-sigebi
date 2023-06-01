@@ -7,14 +7,21 @@
       <div class="row mb-4">
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col">
               <button
                 id="expedient-number"
                 class="btn btn-primary btn-sm active mr-4 disabled"
                 (click)="goodsByExpediente()">
-                Buscar
+                <i class="fa fa-search"></i> Buscar
               </button>
-              <span>{{ statusProceeding }}</span>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-info btn-sm active"
+                (click)="clearAll()"
+                >
+                Limpiar
+              </button>
             </div>
           </div>
         </div>
@@ -64,6 +71,13 @@
                 (click)="nextProceeding()">
                 <i class="fa fa-angle-right"></i>
               </button>
+              <button
+                *ngIf="newAct"
+                id="expedient-number"
+                class="btn btn-primary btn-sm active ml-4"
+                (click)="newProceeding()">
+                Nueva acta
+              </button>
             </div>
           </div>
         </div>
@@ -71,20 +85,32 @@
       <hr class="row" />
       <div class="row mb-3 mt-3">
         <div class="col-md-4">
-          <div class="col-md-9">
-            <form-field [control]="form.get('expediente')" label="Expediente">
-              <input
-                (ngModelChange)="
-                  toggleByLength('expedient-number', 'expediente')
-                "
-                type="number"
-                class="form-control"
-                [readOnly]="blockExpedient"
-                [min]="0"
-                [max-length]="10"
-                formControlName="expediente" />
-            </form-field>
+          <div class="row">
+            <div class="col">
+              <form-field [control]="form.get('expediente')" label="Expediente">
+                <input
+                  (ngModelChange)="
+                    toggleByLength('expedient-number', 'expediente')
+                  "
+                  type="number"
+                  class="form-control"
+                  [readOnly]="blockExpedient"
+                  [min]="0"
+                  [max-length]="10"
+                  formControlName="expediente" />
+              </form-field>
+            </div>
+            <div *ngIf="form.get('statusProceeding').value != null" class="col">
+              <form-field [control]="form.get('statusProceeding')" label="Estatus del acta">
+                <input
+                  type="text"
+                  readOnly="true"
+                  class="form-control"
+                  formControlName = 'statusProceeding' />
+              </form-field>
+            </div>
           </div>
+          
         </div>
         <div class="col-md-4">
           <div class="row">

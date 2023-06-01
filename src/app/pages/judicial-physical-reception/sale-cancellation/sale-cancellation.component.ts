@@ -178,7 +178,6 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   records = new DefaultSelect(['A']);
   selectActData: any = null;
   selectData: any = null;
-  statusProceeding: string;
   transferSelect = new DefaultSelect();
   rec_adm: string = '';
   v_atrib_del = 0;
@@ -193,6 +192,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   isEnableRecibe = true;
   isEnableTestigo = true;
   reopening = false;
+  newAct = true
 
   constructor(
     private fb: FormBuilder,
@@ -227,6 +227,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       listExpedients: [null],
       expediente: [null, [Validators.required]],
+      statusProceeding: [null],
       averPrev: [null],
       causaPenal: [null],
       acta: [null],
@@ -273,7 +274,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   onSelectRow(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: data => {
-        if (!['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
+        if (!['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
           const modelEdit: IDetailProceedingsDeliveryReception = {
             exchangeValue: data.toggle ? 1 : null,
             numberGood: data.row.id,
@@ -617,8 +618,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('observaciones').setValue(dataRes.observations);
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
-        this.statusProceeding = dataRes.statusProceedings;
-        if (this.statusProceeding === 'ABIERTA') {
+        this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
         } else {
@@ -652,8 +653,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.form.get('observaciones').setValue(dataRes.observations);
         this.form.get('recibe2').setValue(dataRes.witness2);
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
-        this.statusProceeding = dataRes.statusProceedings;
-        if (this.statusProceeding === 'ABIERTA') {
+        this.form.get('statusProceeding').setValue(dataRes.statusProceedings);
+        if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
         } else {
@@ -961,7 +962,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.goodData = [];
     this.dataGoodAct.load(this.goodData);
     this.numberProceeding = 0;
-    this.statusProceeding = '';
+    this.form.get('statusProceeding').reset();
     this.numberExpedient = this.form.get('expediente').value;
     this.form.get('folioEscaneo').reset();
     this.labelActa = 'Abrir acta';
@@ -1176,7 +1177,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
-        if (['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
+        if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
           this.alertQuestion(
             'question',
             `¿Está seguro de abrir el acta ${this.form.get('acta2')}?`,
@@ -1196,7 +1197,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                   res => {
                     this.labelActa = 'Cerrar acta';
                     this.btnCSSAct = 'btn-primary';
-                    this.statusProceeding = 'ABIERTA';
+                    this.form.get('statusProceeding').setValue('ABIERTA');
                     this.reopening = true;
                     const paramsF = new FilterParams();
                     paramsF.addFilter(
@@ -1217,7 +1218,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                                 res => {
                                   this.labelActa = 'Abrir acta';
                                   this.btnCSSAct = 'btn-primary';
-                                  this.statusProceeding = 'CERRADO';
+                                  this.form.get('statusProceeding').setValue('CERRADO');
                                   const btn =
                                     document.getElementById('expedient-number');
                                   this.render.removeClass(btn, 'disabled');
@@ -1310,7 +1311,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     };
     this.serviceProcVal.editProceeding(id, modelEdit).subscribe(
       res => {
-        this.statusProceeding = 'ABIERTA';
+        this.form.get('statusProceeding').setValue('ABIERTA');
         this.labelActa = 'Cerrar acta';
         this.btnCSSAct = 'btn-primary';
         this.form.get('fecCaptura').setValue(new Date());
@@ -1454,7 +1455,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                             res => {
                               const VAL_MOVIMIENTO = res.data[0]['valmovement'];
                               if (VAL_MOVIMIENTO != 0) {
-                                this.statusProceeding = 'CERRADO';
+                                this.form.get('statusProceeding').setValue('CERRADO');
                                 this.labelActa = 'Abrir acta';
                                 this.btnCSSAct = 'btn-success';
                                 this.alert(
@@ -1512,7 +1513,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           const scanStatus = data.data[0]['scanStatus'];
 
           if (scanStatus === 'ESCANEADO') {
-            this.statusProceeding = 'CERRADO';
+            this.form.get('statusProceeding').setValue('CERRADO');
             this.labelActa = 'Abrir acta';
             this.btnCSSAct = 'btn-info';
             const paramsF = new FilterParams();
@@ -1566,7 +1567,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   //*Agregar bienes
   newAddGood() {
     if (this.selectData != null) {
-      if (['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
+      if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
         this.alert(
           'warning',
           'El acta ya esta cerrada, no puede realizar modificaciones a esta',
@@ -1675,7 +1676,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   newDeleteGoods() {
     if (this.selectActData != null) {
-      if (['CERRADO', 'CERRADA'].includes(this.statusProceeding)) {
+      if (['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)) {
         this.alert(
           'error',
           'El acta está cerrada',
@@ -1748,6 +1749,23 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //NAVIGATE
   //NAVIGATE PROCEEDING
+  clearAll(){
+    this.clearInputs()
+    this.form.get('expediente').reset()
+    this.form.get('averPrev').reset()
+    this.form.get('causaPenal').reset()
+    this.form.get('statusProceeding').reset()
+    
+    this.dataGoods.load([])
+
+    this.blockExpedient = false
+    this.navigateProceedings = false
+    this.searchByOtherData = false
+
+    this.dataExpedients = new DefaultSelect([])
+    this.numberProceeding = 0
+  }
+
   clearInputs() {
     this.form.get('acta2').reset();
     this.form.get('entrega').reset();
@@ -1767,6 +1785,28 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.form.get('folio').reset();
   }
 
+  newProceeding() {
+    /* this.inputsNewProceeding(); */
+    this.numberProceeding = this.proceedingData.length;
+    this.clearInputs();
+    this.form.get('ident').setValue('ADM');
+    this.checkChange();
+    this.minDateFecElab = new Date();
+    this.form.get('statusProceeding').reset();
+    this.labelActa = 'Abrir acta';
+    this.btnCSSAct = 'btn-success';
+    this.act2Valid = false;
+    this.navigateProceedings = true;
+    this.nextProce = false;
+    this.initialBool = false;
+    /* this.newAct = false;
+    this.requireAct1(); */
+    this.prevProce = true;
+    this.goodData = [];
+    /* this.saveDataAct = []; */
+    this.dataGoodAct.load(this.goodData);
+  }
+
   nextProceeding() {
     if (this.numberProceeding <= this.proceedingData.length - 1) {
       this.numberProceeding += 1;
@@ -1781,7 +1821,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         this.checkChange();
         this.minDateFecElab = new Date();
         this.clearInputs();
-        this.statusProceeding = '';
+        this.form.get('statusProceeding').reset();
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-info';
         this.act2Valid = false;
@@ -1819,7 +1859,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     const perm = 1;
 
     if (perm == 1) {
-      if (this.statusProceeding === 'CERRADO') {
+      if (['CERRADO','CERRADA'].includes(this.form.get('statusProceeding').value)) {
         this.alert(
           'error',
           'No puede elimar acta',
@@ -1836,7 +1876,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
           'No puede eliminar un Acta fuera del mes de elaboración'
         );
       }
-    }else if (this.act2Valid && this.statusProceeding != '') {
+    }else if (this.act2Valid && this.form.get('statusProceeding').value != null) {
       this.alertQuestion(
         'question',
         '¿Desea eliminar completamente el acta?',
