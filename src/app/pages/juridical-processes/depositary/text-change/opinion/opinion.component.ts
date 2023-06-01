@@ -354,7 +354,9 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           }
         },
         error: err => {
-          this.onLoadToast('error', 'error', err.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', err.error.message);
+          // this.onLoadToast('error', 'error', err.error.message);
         },
       });
   }
@@ -420,7 +422,9 @@ carga la  información de la parte media de la página
         this.getPartBodyInputs();
       },
       error: error => {
-        this.onLoadToast('info', 'info', error.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', error.error.message);
+        // this.onLoadToast('info', 'info', error.error.message);
       },
     });
   }
@@ -443,7 +447,9 @@ carga la  información de la parte media de la página
           let datos: IDictationCopies[] = resp.data;
         },
         error: error => {
-          this.onLoadToast('error', 'error', error.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', error.error.message);
+          //this.onLoadToast('error', 'error', error.error.message);
         },
       });
   }
@@ -463,7 +469,9 @@ carga la  información de la parte media de la página
           this.dataExt = resp.data;
         },
         error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', errror.error.message);
+          // this.onLoadToast('error', 'Error', errror.error.message);
         },
       });
   }
@@ -591,7 +599,9 @@ carga la  información de la parte media de la página
         this.onLoadToast('info', 'info', resp.message[0]);
       },
       error: err => {
-        this.onLoadToast('error', 'Error', err.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        // this.onLoadToast('error', 'Error', err.error.message);
       },
     });
 
@@ -653,7 +663,9 @@ carga la  información de la parte media de la página
         this.onLoadToast('warning', 'Info', resp[0].message);
       },
       error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', errror.error.message);
+        // this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
   }
@@ -661,11 +673,14 @@ carga la  información de la parte media de la página
   insertTextos(data: IJobDictumTexts) {
     this.jobDictumTextsServices.create(data).subscribe({
       next: resp => {
-        this.onLoadToast('success', 'success', resp.message[0]);
-        alert(resp.message[0]);
+        this.onLoadToast('success', 'Registro', resp.message[0]);
       },
       error: erro => {
-        this.onLoadToast('error', 'Error', erro.error.message);
+        if (erro.error.message == 'No se encontrarón registros.') {
+          this.onLoadToast('info', 'Registro', erro.error.message);
+        } else {
+          this.onLoadToast('info', 'Registro', erro.error.message);
+        }
       },
     });
   }
@@ -723,7 +738,9 @@ carga la  información de la parte media de la página
         },
         error: err => {
           this.form.get('charge').setValue('');
-          this.onLoadToast('error', 'Error', err.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', err.error.message);
+          // this.onLoadToast('error', 'Error', err.error.message);
         },
       });
   }
@@ -817,13 +834,15 @@ carga la  información de la parte media de la página
         this.UserDestinatario = [...resp.data];
       },
       error: err => {
-        let error = '';
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', err.error.message);
+        /*  let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
         } else {
           this.onLoadToast('error', 'Error', err.error.message);
-        }
+        }*/
       },
     });
   }
@@ -851,21 +870,29 @@ carga la  información de la parte media de la página
           this.form.get('masInfo_3').setValue(resp.data[0].textoz);
         },
         error: erro => {
-          this.onLoadToast('error', 'Error', erro.error.message);
+          this.onLoadToast('info', 'info', 'No existen registros');
+          //this.onLoadToast('error', 'Error', erro.error.message);
+          console.log('error', 'Error', erro.error.message);
         },
       });
   }
 
   insertRegistroExtCCP(data: IDictationCopies) {
-    alert('insertRegistroExtCCP ' + JSON.stringify(data));
+    // alert('insertRegistroExtCCP ' + JSON.stringify(data));
     this.dictationService_1.createPersonExt(data).subscribe({
       next: resp => {
-        this.onLoadToast('warning', 'Info', 'Se inserto');
+        this.onLoadToast('info', 'Info', 'Se inserto');
         this.refreshTabla();
       },
       error: errror => {
-        alert('errror ' + errror);
-        this.onLoadToast('error', 'Error', errror.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+
+        console.log('error', 'Error', errror.error.message);
+        /* if(errror.error.message=="No se encontrarón registros."){
+            this.onLoadToast('info', 'Registro', errror.error.message);}else{
+            this.onLoadToast('info', 'Registro', errror.error.message);
+            }
+        this.onLoadToast('error', 'Error', errror.error.message);*/
       },
     });
   }
@@ -889,7 +916,9 @@ carga la  información de la parte media de la página
         this.refreshTabla();
       },
       error: errror => {
-        this.onLoadToast('error', 'Error', errror.error.message);
+        this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+        console.log('error', 'Error', errror.error.message);
+        // this.onLoadToast('error', 'Error', errror.error.message);
       },
     });
   }
@@ -948,7 +977,9 @@ carga la  información de la parte media de la página
           console.log('refreshTabla() => ' + JSON.stringify(this.dataExt));
         },
         error: errror => {
-          this.onLoadToast('error', 'Error', errror.error.message);
+          this.onLoadToast('info', 'Registro', 'No se obtuvo información');
+          console.log('error', 'Error', errror.error.message);
+          // this.onLoadToast('error', 'Error', errror.error.message);
         },
       });
   }
