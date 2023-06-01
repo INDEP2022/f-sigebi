@@ -61,15 +61,22 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     this.modalService.show(GoodSubtypeFormComponent, config);
   }
 
-  delete(goodSubtype: IGoodSubType) {
+  showDeleteAlert(goodSubtype: IGoodSubType) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(goodSubtype.id);
       }
+    });
+  }
+  delete(id: number) {
+    this.goodTypesService.remove(id).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'Sub-tipo', 'Borrado');
+      },
     });
   }
 }

@@ -173,6 +173,15 @@ export class GoodService extends HttpService {
     return this.post(GoodEndpoints.Good, good);
   }
 
+  updateCustom(good: IGood) {
+    return this.put(GoodEndpoints.Good + '/update-custom/' + good.goodId, {
+      extDomProcess: good.extDomProcess,
+      description: good.description,
+      observations: good.observations,
+      status: good.status,
+    });
+  }
+
   //
   update(good: IGood) {
     console.log('Se metio a update');

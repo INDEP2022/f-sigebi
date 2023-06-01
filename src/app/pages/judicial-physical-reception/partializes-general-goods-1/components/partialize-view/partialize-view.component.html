@@ -4,23 +4,13 @@
   <div class="row">
     <div class="col-md-4">
       <form-field [control]="form.get('cantPar')" label="Veces a Parcializar">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="cantPar"
-          min="1"
-          max="100" />
+        <input class="form-control" formControlName="cantPar" maxlength="3" />
       </form-field>
     </div>
 
     <div class="col-md-4">
       <form-field [control]="form.get('cantidad')" label="Cantidad">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="cantidad"
-          min="1"
-          max="9999999999999999999" />
+        <input class="form-control" formControlName="cantidad" maxlength="20" />
       </form-field>
     </div>
 

@@ -55,12 +55,6 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     return this.service.vimporte;
   }
 
-  private async getVerificaDesCargaMasiva() {
-    return firstValueFrom(
-      this.goodService.getValidMassiveDownload(this.good.goodId)
-    );
-  }
-
   private async getStatusProcessxPantalla() {
     return await firstValueFrom(
       this.goodService.getStatusAndProcess({
@@ -197,11 +191,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     );
   }
 
-  private async validationsV1(
-    v_verif_des: number,
-    v_importe: number,
-    v_estatus: string
-  ) {
+  private async validationsV1(v_importe: number, v_estatus: string) {
     // try {
     //   vb_estatus_valido = (await this.validateStatusXPantalla()) ? true : false;
     // } catch (x) { }
@@ -235,6 +225,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     v_estatus = this.good.status;
     // vaccion = 'FINAL';
     // vproextdom = this.good.extDomProcess;
+    debugger;
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
       this.good.status = status;
@@ -249,21 +240,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       // );
       // return;
     }
-    try {
-      v_verif_des = await this.getVerificaDesCargaMasiva();
-    } catch (x: any) {
-      console.log(x);
-      v_verif_des = 0;
-      // this.onLoadToast(
-      //   'error',
-      //   'Verificación Descarga Masiva',
-      //   x.error.message
-      // );
-      // this.loading = false;
-      // return;
-    }
+
     return {
-      v_verif_des,
       v_importe,
       v_estatus,
     };
@@ -633,25 +611,25 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     this.saldo.setValue(0);
     // this.service.pageLoading = false;
     this.loader.load = false;
-    this.onLoadToast(
-      'success',
-      'Parcialización',
-      'La parcialización de bienes se realizo con éxito'
-    );
-    // try {
-    //   await firstValueFrom(this.goodService.update(this.good))
-    //   this.onLoadToast(
-    //     'success',
-    //     'Parcialización',
-    //     'La parcialización de bienes se realizo con éxito'
-    //   );
-    // } catch (x) {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Parcialización',
-    //     'Error al actualizar el bien ' + this.good.goodId
-    //   );
-    // }
+    // this.onLoadToast(
+    //   'success',
+    //   'Parcialización',
+    //   'La parcialización de bienes se realizo con éxito'
+    // );
+    try {
+      await firstValueFrom(this.goodService.updateCustom(this.good));
+      this.onLoadToast(
+        'success',
+        'Parcialización',
+        'La parcialización de bienes se realizo con éxito'
+      );
+    } catch (x) {
+      this.onLoadToast(
+        'error',
+        'Parcialización',
+        'Error al actualizar el bien ' + this.good.goodId
+      );
+    }
 
     // this.service.bienesPar = [];
     // this.service.pagedBienesPar = [];
@@ -675,12 +653,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
         );
         return;
       }
-      const result = await this.validationsV1(
-        v_verif_des,
-        v_importe,
-        v_estatus
-      );
-      v_verif_des = result.v_verif_des;
+      debugger;
+      const result = await this.validationsV1(v_importe, v_estatus);
+      v_verif_des = this.service.verif_des;
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;
       let vsumimp = 0;
@@ -698,8 +673,9 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       observable
         .pipe(
           concatMap(item => {
+            console.log(item);
             if (this.validationClasif()) {
-              vval2 = Number(item.importe.toFixed(2).trim());
+              vval2 = Number((+(item.importe + '')).toFixed(2).trim());
               vimpbien = item.importe;
             } else {
               vval2 = +this.good.val14;
@@ -761,6 +737,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
             }
           },
           error: error => {
+            console.log(error);
             this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
             this.loader.load = false;
             return;
