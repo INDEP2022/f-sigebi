@@ -42,7 +42,7 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
         },
       });
     }
-    this.getFederative(new ListParams);
+    this.getFederative(new ListParams());
   }
 
   getFederative(params: ListParams) {
