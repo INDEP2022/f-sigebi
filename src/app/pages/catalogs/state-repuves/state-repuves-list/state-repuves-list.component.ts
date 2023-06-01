@@ -3,10 +3,12 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
+
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+
 import { IStateRepuve } from 'src/app/core/models/catalogs/state-repuve.model';
 import { StateRepuveService } from 'src/app/core/services/catalogs/state-repuve.service';
 import { BasePage } from 'src/app/core/shared/base-page';

@@ -58,6 +58,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
             if (filter.search !== '') {
               if (filter.field == 'regionalDelegation') {
                 filter.field = 'regionalDelegation.id';
+                console.log();
               }
               if (filter.field == 'stateCode') {
                 filter.field = 'stateCode.codeCondition';

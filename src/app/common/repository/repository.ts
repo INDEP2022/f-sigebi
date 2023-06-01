@@ -299,4 +299,17 @@ export class Repository<T> implements IRepository<T> {
     const ms = route.split('/')[0];
     return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
   }
+
+  updateCatalogOpinions(route: string, id: number | string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+    // console.log(formData);
+    return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
+  }
+  removeCatalogOpinions(route: string, id: number | string) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(`${fullRoute}/id/${id}`);
+
+    return this.httpClient.delete(`${fullRoute}/id/${id}`);
+  }
 }

@@ -274,7 +274,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     paramsF.sortBy = 'changeDate';
     this.serviceHistoryGood.getAllFilter(paramsF.getParams()).subscribe(
       res => {
-        console.log(res);
+        console.log(res.data[res.data.length - 1]);
       },
       err => {
         console.log(err);
@@ -439,6 +439,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   getDataExpedient() {
     this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
       resp => {
+        /* if(){
+
+        } */
+
         console.log(resp);
         console.log(resp.criminalCase);
         this.form.get('causaPenal').setValue(resp.criminalCase);
@@ -1644,7 +1648,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.form.get('expediente').value,
       SearchFilter.EQ
     );
-    paramsF.addFilter('typeProceedings', 'ENTREGA'); //!Un in
+    paramsF.addFilter('typeProceedings', 'ENTREGA,DECOMISO', SearchFilter.IN); //!Un in
     this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -3331,25 +3335,58 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(deleteModel);
             this.serviceDetailProc.deleteDetailProcee(deleteModel).subscribe(
               res => {
-                console.log(this.dataGoodAct);
-                this.goodData = this.goodData.filter(
-                  (e: any) => e.id != this.selectActData.id
-                );
-                this.dataGoodAct.load(this.goodData);
-                console.log(this.goodData);
-                this.saveDataAct = this.saveDataAct.filter(
-                  (e: any) => e.id != this.selectActData.id
-                );
+                const paramsF = new FilterParams();
+                paramsF.addFilter('propertyNum', this.selectActData.id);
+                paramsF.sortBy = 'changeDate';
+                this.serviceHistoryGood
+                  .getAllFilter(paramsF.getParams())
+                  .subscribe(
+                    res => {
+                      console.log(res.data[res.data.length - 1]);
+                      const putGood: IGood = {
+                        id: this.selectActData.id,
+                        goodId: this.selectActData.goodId,
+                        status: res.data[res.data.length - 1]['status'],
+                      };
+                      this.serviceGood.update(putGood).subscribe(
+                        res => {
+                          console.log(this.dataGoodAct);
+                          this.goodData = this.goodData.filter(
+                            (e: any) => e.id != this.selectActData.id
+                          );
+                          this.dataGoodAct.load(this.goodData);
+                          console.log(this.goodData);
+                          this.saveDataAct = this.saveDataAct.filter(
+                            (e: any) => e.id != this.selectActData.id
+                          );
 
-                this.dataGoods.load(
-                  this.dataGoods['data'].map((e: any) => {
-                    if (e.id == this.selectActData.id) {
-                      return { ...e, avalaible: true };
-                    } else {
-                      return e;
+                          this.dataGoods.load(
+                            this.dataGoods['data'].map((e: any) => {
+                              if (e.id == this.selectActData.id) {
+                                return { ...e, avalaible: true };
+                              } else {
+                                return e;
+                              }
+                            })
+                          );
+                        },
+                        err => {
+                          this.alert(
+                            'error',
+                            'Ocurrió un error inesperado',
+                            'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                          );
+                        }
+                      );
+                    },
+                    err => {
+                      this.alert(
+                        'error',
+                        'Ocurrió un error inesperado',
+                        'Ocurrió un error inesperado. Por favor intentelo nuevamente'
+                      );
                     }
-                  })
-                );
+                  );
               },
               err => {
                 this.alert(

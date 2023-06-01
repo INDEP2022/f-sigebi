@@ -14,6 +14,7 @@ export const EXTERNOS_COLUMS = {
     type: 'string',
     sort: false,
   },
+  /*,
   numberOfDicta: {
     title: 'Númbero Dicta',
     type: 'string',
@@ -23,5 +24,5 @@ export const EXTERNOS_COLUMS = {
     title: 'Numbero de registro',
     type: 'string',
     sort: false,
-  },
+  },*/
 };

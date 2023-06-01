@@ -1,4 +1,4 @@
-<app-card [header]="true" (customEvent)="handleEvent($event)">
+<app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Caracter&Iacute;sticas del bien</h5>
   </div>
@@ -44,7 +44,8 @@
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="noClasif" />
+                        formControlName="noClasif"
+                        (customEvent)="handleEvent($event)" />
                     </form-field>
                   </div>
                   <div class="row pt-3">

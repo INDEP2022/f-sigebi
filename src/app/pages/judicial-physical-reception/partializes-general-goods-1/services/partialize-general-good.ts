@@ -1,6 +1,7 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { IBienesPar } from '../models/bienesPar.model';
 import { columnsFirstCase, columnsSecondCase } from '../models/columns';
 
@@ -8,12 +9,16 @@ export abstract class PartializeGeneralGood {
   formGood: FormGroup;
   good: IGood;
   formControl: FormGroup;
+  // numberGood: number;
+  goodStatusDesc: string;
+  goodClassNumberDesc: string;
   // isFirstCase: boolean = false;
   formLoading = false;
   buttonsLoading = false;
   pageLoading = false;
   pagedBienesPar: any[] = [];
   firstCase = true;
+  verif_des: number;
   private _bienesPar: IBienesPar[] = [];
   get bienesPar() {
     return this._bienesPar;
@@ -75,11 +80,7 @@ export abstract class PartializeGeneralGood {
   }
 
   get val14() {
-    return this.formGood
-      ? this.formGood.get('importe')
-        ? this.formGood.get('importe').value
-        : 0
-      : 0;
+    return this.good ? this.good.val14 : 0;
   }
 
   get vimporte() {
@@ -120,28 +121,30 @@ export abstract class PartializeGeneralGood {
 
   initFormGood() {
     this.formGood = this.fb.group({
-      noBien: [null, [Validators.required]],
-      cantPadre: [null],
-      descripcion: [null],
-      cantidad: [null],
-      avaluo: [null],
-      estatus: [null],
-      estatusDescripcion: [null],
-      extDom: [null],
-      moneda: [null],
-      expediente: [null],
-      clasificador: [null],
-      clasificadorDescripcion: [null],
-      importe: [null],
+      noBien: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
     });
   }
 
   initFormControl() {
     this.formControl = this.fb.group({
       ind: [null],
-      cantPar: [null, [Validators.required, Validators.min(1)]],
-      cantidad: [null, [Validators.required, Validators.min(1)]],
-      saldo: [null, [Validators.required, Validators.min(1)]],
+      cantPar: [
+        null,
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.pattern(NUM_POSITIVE),
+        ],
+      ],
+      cantidad: [
+        null,
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.pattern(NUM_POSITIVE),
+        ],
+      ],
+      saldo: [null, [Validators.required]],
     });
   }
 }

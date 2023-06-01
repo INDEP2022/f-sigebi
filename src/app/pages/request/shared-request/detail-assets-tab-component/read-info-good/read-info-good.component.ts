@@ -65,6 +65,7 @@ export class ReadInfoGoodComponent
   showButton = true;
   subType: string;
   norm: string;
+  uniqueKey: string;
 
   private readonly fractionsService = inject(FractionService);
   private readonly genericService = inject(GenericService);
@@ -170,6 +171,7 @@ export class ReadInfoGoodComponent
         this.saeMeasureUnit = good.measureUnitSae ? good.measureUnitSae : '';
 
         this.fraction = good.fractionCodeFracction;
+        this.uniqueKey = good.uniqueKey ? good.uniqueKey : '';
       },
       error: error => {
         console.log(error);

@@ -74,10 +74,18 @@ export class StateRepuvesFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+
     this.stateRepuveService.update(this.stateRepuveForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
+
+    this.stateRepuveService
+      .update(this.stateRepuve.key) //correguir.
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

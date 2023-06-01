@@ -71,6 +71,10 @@ export class DictationService extends HttpService {
     return this.put(this.route.Dictation, body);
   }
 
+  updateExpedientNumber(id: number, body: Partial<IDictation>) {
+    return this.put(this.route.Dictation + '/' + id, body);
+  }
+
   remove(body: { id: string | number; typeDict: string }) {
     return this.delete(this.route.Dictation, body);
   }
@@ -216,5 +220,22 @@ export class DictationService extends HttpService {
   getFaFlagDest(params: any) {
     const route = `${DictationEndpoints.FaFlagDest}`;
     return this.post(route, params);
+  }
+
+  updateOfficialDictation(params: any) {
+    const route = `${DictationEndpoints.OfficialDictation}`;
+    return this.put(route, params);
+  }
+
+  createOfficialDictation(params: any) {
+    const route = `${DictationEndpoints.OfficialDictation}`;
+    return this.post(route, params);
+  }
+
+  deleteCopiesdictamenetOfficialOpinion(id: number) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      id
+    );
   }
 }
