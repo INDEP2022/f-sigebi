@@ -146,14 +146,13 @@
                 value="{{ se_refiere_a.C }}" />
             </form-radio>
           </div>
-          <div class="col-md-1">
-            <form-radio label="{{ se_refiere_a.D }}">
-              <input
-                [attr.disabled]="se_refiere_a_Disabled.D"
-                type="radio"
-                formControlName="checkText"
-                value="{{ se_refiere_a.D }}" />
-            </form-radio>
+          <div class="col-md-1 text-right">
+            <button
+              type="button"
+              class="btn btn-success active btn-sm m-2 p-2"
+              (click)="changeOffice()">
+              Cambio
+            </button>
           </div>
         </div>
         <div class="col-md-12 mb-3">
@@ -255,6 +254,7 @@
           </button>
         </div>
         <br />
+        <br />
       </div>
       <hr class="row" />
       <div class="row pb-5">
@@ -347,7 +347,8 @@
                 formControlName="text3"></textarea>
             </form-field>
           </div>
-          <div class="col-md-12">
+
+          <!-- <div class="col-md-12">
             <div class="row">
               <form-field
                 class="col-md-4"
@@ -392,7 +393,7 @@
                   value="user"></ngx-select>
               </form-field>
             </div>
-          </div>
+          </div> -->
           <!-- <div class="col-md-6">
             <div class="row">
               <form-field
@@ -447,6 +448,39 @@
           </div> -->
 
           <!-- <label class="label form-control-label">c.p.p</label> -->
+        </div>
+        <div class="ch-content" header>
+          <h5 class="title">C&#46;C&#46;P&#46;</h5>
+          <div class="col-md-5 buttons">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+            <div>
+              <button
+                (click)="openForm()"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
+            </div>
+          </div>
+        </div>
+        <div body>
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="filtroPersonaExt"
+                    (edit)="openForm($event.data)"
+                    (delete)="showDeleteAlert($event.data)">
+                  </ng2-smart-table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
 

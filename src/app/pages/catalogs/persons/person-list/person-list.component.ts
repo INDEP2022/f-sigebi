@@ -110,6 +110,7 @@ export class PersonListComponent extends BasePage implements OnInit {
           this.person = response.data;
           this.data.load(this.person);
           this.data.refresh();
+          this.totalItems = response.count;
           this.loading = false;
         } else {
           this.data.load([]);

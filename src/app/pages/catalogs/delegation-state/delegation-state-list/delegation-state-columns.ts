@@ -1,7 +1,7 @@
 export const DELEGATION_STATE_COLUMNS = {
   regionalDelegation: {
     title: 'Registro',
-    type: 'number',
+    type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value.id;

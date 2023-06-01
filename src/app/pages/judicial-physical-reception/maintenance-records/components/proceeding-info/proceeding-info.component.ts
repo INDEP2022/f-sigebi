@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
+  NUM_POSITIVE,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -114,7 +115,7 @@ export class ProceedingInfoComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      id: [null],
+      id: [null, Validators.pattern(NUM_POSITIVE)],
       numFile: [null],
       cveActa: [null, [Validators.pattern(STRING_PATTERN)]],
       tipoActa: [null],

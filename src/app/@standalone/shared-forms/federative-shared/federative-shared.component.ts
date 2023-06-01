@@ -33,7 +33,7 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.Federative);
+    console.log(this.Federative.value);
     if (this.Federative.value) {
       this.service.getById(this.Federative.value).subscribe({
         next: resp => {
@@ -42,13 +42,7 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
         },
       });
     }
-    // this.Federative.valueChanges.subscribe({
-    //   next: id => {
-    //     console.log(id);
-    //     if (!id) return;
-
-    //   },
-    // });
+    this.getFederative(new ListParams());
   }
 
   getFederative(params: ListParams) {
@@ -67,7 +61,7 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
     });
   }
   onFederativeChange(type: any) {
-    this.federative = new DefaultSelect();
+    // this.federative = new DefaultSelect();
     // this.form.updateValueAndValidity();
   }
 

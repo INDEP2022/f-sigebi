@@ -127,6 +127,8 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
           },
         });
       }
+    } else {
+      this.onLoadToast('warning', 'Debe de llenar los campos requeridos', '');
     }
   }
   getRowSelec(data: string) {

@@ -91,6 +91,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   handleError(error: HttpErrorResponse) {
+    // debugger;
     const status = error.status;
     let message = '';
     if (Array.isArray(error?.error?.message) === true) {
@@ -137,6 +138,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   private handleSuccess(response: HttpEvent<any>) {
+    // debugger;
     if (response instanceof HttpResponse) {
       this.validateResponse(response);
       if (!response.body) {
@@ -170,12 +172,26 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     const statusCode = Number(response.body?.statusCode);
     if (!statusCode) return;
     if (statusCode >= 400) {
+      console.log(response);
       const error = new HttpErrorResponse({
-        error: { message: response.body?.message[0] ?? '' },
+        error: {
+          message: response.body?.message
+            ? Array.isArray(response.body?.message)
+              ? response.body?.message[0]
+              : response.body?.message
+            : '',
+        },
         headers: response.headers,
         status: statusCode,
         url: response.url,
       });
+      console.log(
+        response.body?.message
+          ? Array.isArray(response.body?.message)
+            ? response.body?.message[0]
+            : response.body?.message
+          : ''
+      );
       this.handleError(error);
       throw error;
     }

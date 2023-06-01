@@ -161,7 +161,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   async generateCaratula() {
     let request = this.request;
     this.loader.load = true;
-    debugger;
     const expedient: any = await this.saveExpedientSami();
     if (expedient.id) {
       let resevateDate = '';
