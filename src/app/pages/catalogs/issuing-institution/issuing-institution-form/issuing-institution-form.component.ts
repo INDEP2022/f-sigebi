@@ -20,7 +20,8 @@ import { IssuingInstitutionService } from './../../../../core/services/catalogs/
 })
 export class IssuingInstitutionFormComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   issuingInstitutionForm: ModelForm<IIssuingInstitution>;
   issuingInstitution: IIssuingInstitution;
   title: string = 'Institución Emisora';
@@ -84,15 +85,15 @@ export class IssuingInstitutionFormComponent
       );
       this.issuingInstitution.numCity
         ? this.getFromSelectCity(
-          new ListParams(),
-          this.issuingInstitution.numCity.toString()
-        )
+            new ListParams(),
+            this.issuingInstitution.numCity.toString()
+          )
         : this.getFromSelectCity(new ListParams());
       this.issuingInstitution.numTransference
         ? this.getFromSelectTransfer(
-          new ListParams(),
-          this.issuingInstitution.numTransference.toString()
-        )
+            new ListParams(),
+            this.issuingInstitution.numTransference.toString()
+          )
         : this.getFromSelectTransfer(new ListParams());
     } else {
       this.issuingInstitutionForm.controls['numClasif'].setValue(

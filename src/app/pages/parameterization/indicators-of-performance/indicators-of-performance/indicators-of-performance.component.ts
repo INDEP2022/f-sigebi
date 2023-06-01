@@ -24,7 +24,8 @@ import {
 })
 export class IndicatorsOfPerformanceComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 
@@ -92,7 +93,9 @@ export class IndicatorsOfPerformanceComponent
 
             if (filter.search !== '') {
               console.log(
-                (this.columnFilters1[field] = `${searchFilter}:${filter.search}`)
+                (this.columnFilters1[
+                  field
+                ] = `${searchFilter}:${filter.search}`)
               );
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
