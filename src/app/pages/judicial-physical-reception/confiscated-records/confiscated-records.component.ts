@@ -436,19 +436,31 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.form.get('mes').updateValueAndValidity();
   }
 
+  tunOffOtherData(){
+    this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
+      resp => {
+        console.log(this.form.get('causaPenal').value != resp.criminalCase)
+        console.log(this.form.get('averPrev').value != resp.preliminaryInquiry)
+               
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
   getDataExpedient() {
     this.serviceExpedient.getById(this.form.get('expediente').value).subscribe(
       resp => {
 
-        /* if(){
+        
 
-        } */
-
-        console.log(resp);
         console.log(resp.criminalCase);
         this.form.get('causaPenal').setValue(resp.criminalCase);
         console.log(resp.preliminaryInquiry);
         this.form.get('averPrev').setValue(resp.preliminaryInquiry);
+        console.log(resp);
+        
       },
       err => {
         console.log(err);
@@ -919,7 +931,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.initialdisabled = false;
             this.requireAct1();
             this.inputsInProceedingClose();
-            this.newSearchExp();
+            /* this.newSearchExp(); */
             console.log('Fue en este checkChange');
             this.checkChange();
             this.minDateFecElab = new Date();
@@ -988,6 +1000,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     this.numberExpedient = this.form.get('expediente').value;
     this.noRequireAct1();
     this.transferSelect = new DefaultSelect();
+    this.tunOffOtherData()
 
     const btn = document.getElementById('expedient-number');
 
@@ -1043,7 +1056,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.goodData = [];
           }
         );
-
+        this.getDataExpedient()
         //!if de activar PGR
 
         this.newGetGoods();

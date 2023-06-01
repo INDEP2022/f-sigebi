@@ -1267,13 +1267,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 VAL_MOVIMIENTO = res.data[0]['valmovement'];
                 if (VAL_MOVIMIENTO === 1) {
                   const tipo_acta = 'DXCV';
-                  this.openProceedingFn();
+                  this.openProceedingFn(resData.id);
                 } else {
-                  this.openProceedingFn();
+                  this.openProceedingFn(resData.id);
                 }
               },
               err => {
-                this.openProceedingFn();
+                this.openProceedingFn(resData.id);
               }
             );
         }
@@ -1282,7 +1282,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     );
   }
 
-  openProceedingFn() {
+  openProceedingFn(id: string) {
     const modelEdit: IProccedingsDeliveryReception = {
       comptrollerWitness: this.form.get('testigo').value,
       observations: this.form.get('observaciones').value,
@@ -1308,7 +1308,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       ),
       captureDate: format(new Date(), 'yyyy-MM,dd HH:mm'),
     };
-    this.serviceDetailProc.editDetailProcee(modelEdit).subscribe(
+    this.serviceProcVal.editProceeding(id, modelEdit).subscribe(
       res => {
         this.statusProceeding = 'ABIERTA';
         this.labelActa = 'Cerrar acta';
@@ -1348,7 +1348,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               VAL_MOVIMIENTO = res.data[0]['valmovement'];
               if (VAL_MOVIMIENTO === 1) {
                 const tipo_acta = 'DXCV';
-                this.openProceedingFn();
+                this.openProceedingFn(resData.id);
               } else {
                 this.closeProceedingFn();
               }
