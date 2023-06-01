@@ -88,6 +88,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   };
 
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   goodsInfoTrans: any[] = [];
   goodsInfoGuard: any[] = [];
@@ -96,8 +97,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   totalItemsTransportable: number = 0;
   totalItemsGuard: number = 0;
   totalItemsWarehouse: number = 0;
-  idTransferent: any;
-  idStation: any;
+  idTransferent: number;
+  idStation: number;
   programming: Iprogramming;
   usersData: LocalDataSource = new LocalDataSource();
   estateData: any[] = [];
@@ -110,7 +111,11 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén INDEP(0)`;
-
+  nameTransferent: string = '';
+  nameStation: string = '';
+  authorityName: string = '';
+  typeRelevantName: string = '';
+  nameWarehouse: string = '';
   transGoods: any[] = [];
   guardGoods: any[] = [];
   warehouseGoods: any[] = [];
@@ -146,6 +151,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getProgrammingId();
+    const user: any = this.authService.decodeToken();
+    console.log('user', user);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUsersProgramming());
@@ -157,7 +164,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   getProgrammingId() {
     this.formLoading = true;
-    return this.programmingService
+    this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
         console.log('programming', data);
@@ -170,7 +177,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
-        this.statusProgramming();
       });
   }
 
@@ -183,19 +189,26 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   getTransferent() {
-    return this.transferentService
+    this.transferentService
       .getById(this.programming.tranferId)
       .subscribe(data => {
-        this.programming.tranferId = data.nameTransferent;
+        this.nameTransferent = data.nameTransferent;
       });
   }
 
   getStation() {
-    return this.stationService
-      .getById(this.programming.stationId)
-      .subscribe(data => {
-        this.programming.stationId = data.stationName;
-      });
+    this.paramsStation.getValue()['filter.id'] = this.programming.stationId;
+    this.paramsStation.getValue()['filter.idTransferent'] =
+      this.programming.tranferId;
+
+    this.stationService.getAll(this.paramsStation.getValue()).subscribe({
+      next: response => {
+        this.nameStation = response.data[0].stationName;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   getAuthority() {
@@ -209,7 +222,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         let authority = response.data.find(res => {
           return res;
         });
-        this.programming.autorityId = authority.authorityName;
+        this.authorityName = authority.authorityName;
       },
     });
   }
@@ -218,7 +231,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     return this.typeRelevantService
       .getById(this.programming.typeRelevantId)
       .subscribe(data => {
-        this.programming.typeRelevantId = data.description;
+        this.typeRelevantName = data.description;
       });
   }
 
@@ -226,7 +239,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     return this.warehouseService
       .getById(this.programming.storeId)
       .subscribe(data => {
-        this.programming.storeId = data.description;
+        this.nameWarehouse = data.description;
         this.formLoading = false;
       });
   }
@@ -249,10 +262,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         },
         error: error => (this.loading = false),
       });
-  }
-
-  statusProgramming() {
-    //console.log('Status programación', this.programming.status);
   }
 
   confirm() {}
@@ -554,6 +563,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['programmingId'] = this.programmingId;
     //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
+    task['idDelegationRegional'] = user.department;
     task['urlNb'] = 'pages/request/programming-request/schedule-notify';
     task['processName'] = 'SolicitudProgramacion';
     body['task'] = task;
@@ -581,6 +591,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['programmingId'] = this.programmingId;
     //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
+    task['idDelegationRegional'] = user.department;
     task['urlNb'] = 'pages/request/programming-request/execute-reception';
     task['processName'] = 'SolicitudProgramacion';
     body['task'] = task;
@@ -609,6 +620,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['programmingId'] = this.programmingId;
     //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
+    task['idDelegationRegional'] = user.department;
     task['urlNb'] = 'pages/request/programming-request/formalize-programming';
     task['processName'] = 'SolicitudProgramacion';
     body['task'] = task;
