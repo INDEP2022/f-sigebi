@@ -2,9 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">Mantenimiento de par&aacute;metros</h5>
     <div class="buttons">
-      <button
-        class="btn btn-primary active btn-sm mr-3"
-        (click)="openForm(null, false)">
+      <button class="btn btn-primary active btn-sm mr-3" (click)="openForm(null, false)">
         Nuevo
       </button>
       <app-columns-select [(settings)]="settings"></app-columns-select>
@@ -14,12 +12,8 @@
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''" class="table-responsive">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="openForm($event.data, true)"
-            (delete)="deleteParameter($event.id)"></ng2-smart-table>
+          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data"
+            (edit)="openForm($event.data, true)" (delete)="deleteParameter($event.id)"></ng2-smart-table>
         </div>
       </div>
     </div>

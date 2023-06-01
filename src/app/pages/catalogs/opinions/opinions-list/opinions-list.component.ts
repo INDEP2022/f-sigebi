@@ -3,7 +3,11 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -20,6 +24,8 @@ export class OpinionsListComponent extends BasePage implements OnInit {
   opinions: IOpinion[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
 
   constructor(
     private opinionService: OpinionService,
@@ -28,9 +34,36 @@ export class OpinionsListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = OPINION_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' ||
+            filter.field == 'description' ||
+            filter.field == 'dict_ofi' ||
+            filter.field == 'areaProcess'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getDeductives();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDeductives());
@@ -38,9 +71,15 @@ export class OpinionsListComponent extends BasePage implements OnInit {
 
   getDeductives() {
     this.loading = true;
-    this.opinionService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.opinionService.getAll(params).subscribe({
       next: response => {
         this.opinions = response.data;
+        this.data.load(this.opinions);
+        this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -73,7 +112,7 @@ export class OpinionsListComponent extends BasePage implements OnInit {
   }
 
   delete(id: number) {
-    this.opinionService.remove(id).subscribe({
+    this.opinionService.removeCatalogOpinions(id).subscribe({
       next: () => this.getDeductives(),
     });
   }

@@ -65,6 +65,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
               }
 
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log('TESTTTTTT', this.columnFilters);
             } else {
               delete this.columnFilters[field];
             }
@@ -84,7 +85,8 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.delegationStateService.getAll(params).subscribe({
-      next: response => {
+      next: (response: any) => {
+        console.log('TESTSETTINGS', this.settings);
         this.delegationsState = response.data;
         this.totalItems = response.count || 0;
         this.data.load(response.data);

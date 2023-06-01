@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -34,6 +34,8 @@ export class LegalOpinionsOfficeFindAppointmentComponent
   @Output() continueEmitter = new EventEmitter<any>();
   @Output() cancelEmitter = new EventEmitter<boolean>();
 
+  @Input() expediente: string = '';
+
   constructor(
     private fb: FormBuilder,
     private svLegalOpinionsOfficeService: LegalOpinionsOfficeService
@@ -50,10 +52,14 @@ export class LegalOpinionsOfficeFindAppointmentComponent
       hideSubHeader: true, //oculta subheaader de filtro
       columns: COLUMNS_APPOINTMENT,
     };
+    console.log(this.expediente);
   }
 
   ngOnInit(): void {
-    this.buildForm();
+    setTimeout(() => {
+      this.buildForm();
+      this.getAppoinmentData();
+    }, 1000);
   }
 
   buildForm() {
@@ -63,7 +69,7 @@ export class LegalOpinionsOfficeFindAppointmentComponent
         [Validators.pattern(NUM_POSITIVE), Validators.maxLength(11)],
       ],
       expedientNumber: [
-        { value: '', disabled: false },
+        { value: this.expediente, disabled: false },
         [Validators.maxLength(11), Validators.pattern(NUM_POSITIVE)],
       ],
       wheelNumber: [
