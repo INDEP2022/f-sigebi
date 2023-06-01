@@ -65,7 +65,7 @@
             <div class="row" *ngIf="dictDate != null">
               <div class="d-flex justify-content-end">
                 <div>
-                  <h6>{{ dictDate2 }}</h6>
+                  <h6>{{ dictDate3 }}</h6>
                 </div>
               </div>
             </div>
@@ -428,6 +428,7 @@
                               [control]="formOficio.get('tipoOficio')"
                               label="Tipo Oficio">
                               <input
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="tipoOficio" />
@@ -438,6 +439,7 @@
                               [control]="formOficio.get('oficioPor')"
                               label="Oficio Por">
                               <input
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="oficioPor" />
@@ -449,6 +451,7 @@
                               label="No. Gesti&oacute;n">
                               <input
                                 readonly
+                                [(ngModel)]="no_OficioGestion"
                                 type="number"
                                 class="form-control"
                                 formControlName="oficio" />
@@ -502,7 +505,6 @@
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('ciudad')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="cities2"
                             (fetchItems)="getCities2($event)"
