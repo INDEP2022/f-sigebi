@@ -331,7 +331,9 @@ Obtiene los filtros y en base a ellos se hace la búsqueda
           } else {
             this.intIDictation = resp.data[0];
 
-            //this.form.get('expedientNumber').setValue(this.intIDictation.expedientNumber);
+            this.form
+              .get('expedientNumber')
+              .setValue(this.intIDictation.expedientNumber);
             console.log(' this.intIDictation.id => ' + this.intIDictation.id);
             this.form.get('registerNumber').setValue(this.intIDictation.id);
             this.form
@@ -576,7 +578,10 @@ carga la  información de la parte media de la página
   /*====================================================================
     método para actualizar el dictamen en la parte del body
 =======================================================================*/
+
   updateDictamen() {
+    console.log(this.form.value);
+
     let ofis: Partial<IOfficialDictation> = this.getDatosToUpdateDictamenBody(
       this.form
     );
@@ -589,16 +594,24 @@ carga la  información de la parte media de la página
       },
     });
 
-    let data: Partial<IJobDictumTexts> = this.getDatosToUpdateDictamenBodyText(
+    let data: IJobDictumTexts = this.getDatosToUpdateDictamenBodyText(
       this.form
     );
 
+    let insert = {
+      dictatesNumber: this.form.get('registerNumber').value,
+      rulingType: this.form.get('typeDict').value,
+      textx: this.form.get('masInfo_1').value,
+      textoy: this.form.get('masInfo_2').value,
+      textoz: this.form.get('masInfo_3').value,
+      recordNumber: this.form.get('registerNumber').value,
+    };
     this.jobDictumTextsServices.update(data).subscribe({
       next: resp => {
         this.onLoadToast('success', 'success', resp.message[0]);
       },
       error: erro => {
-        this.onLoadToast('error', 'Error', erro.error.message);
+        this.insertTextos(data);
       },
     });
 
@@ -619,6 +632,17 @@ carga la  información de la parte media de la página
       },
       error: errror => {
         this.onLoadToast('error', 'Error', errror.error.message);
+      },
+    });
+  }
+  insertTextos(data: IJobDictumTexts) {
+    this.jobDictumTextsServices.create(data).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'success', resp.message[0]);
+        alert(resp.message[0]);
+      },
+      error: erro => {
+        this.onLoadToast('error', 'Error', erro.error.message);
       },
     });
   }
@@ -643,12 +667,12 @@ carga la  información de la parte media de la página
 
   getDatosToUpdateDictamenBodyText(f: FormGroup) {
     return {
-      dictatesNumber: this.dictatesNumber,
-      rulingType: this.rulingType,
-      textx: f.value.masInfo_1,
-      textoy: f.value.masInfo_2,
-      textoz: f.value.masInfo_3,
-      recordNumber: this.recordNumber,
+      dictatesNumber: this.form.get('registerNumber').value,
+      rulingType: this.form.get('typeDict').value,
+      textx: this.form.get('masInfo_1').value,
+      textoy: this.form.get('masInfo_2').value,
+      textoz: this.form.get('masInfo_3').value,
+      recordNumber: this.form.get('registerNumber').value,
     };
   }
 
@@ -810,6 +834,9 @@ carga la  información de la parte media de la página
   }
 
   insertRegistroExtCCP(data: IDictationCopies) {
+    //console.log("  insertRegistroExtCCP  ");
+    //console.log(JSON.stringify(data));
+
     this.dictationService.createPersonExt(data).subscribe({
       next: resp => {
         this.onLoadToast('warning', 'Info', JSON.stringify(resp));
