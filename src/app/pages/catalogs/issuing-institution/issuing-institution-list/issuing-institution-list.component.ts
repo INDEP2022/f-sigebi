@@ -223,8 +223,6 @@ export class IssuingInstitutionListComponent
               delete this.columnFilters1[field];
             }
           });
-          console.log(this.params.getValue().page)
-
           if (this.params2.getValue().page > 1) {
             console.log(this.params2.getValue().page)
             const params = this.params2.getValue();
