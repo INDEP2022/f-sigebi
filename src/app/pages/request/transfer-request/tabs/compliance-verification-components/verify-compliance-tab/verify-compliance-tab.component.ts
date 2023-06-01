@@ -121,6 +121,7 @@ export class VerifyComplianceTabComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: verify-compliance-tab');
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
@@ -792,7 +793,7 @@ export class VerifyComplianceTabComponent
       confirmButtonText: 'Eliminar',
     }).then(async result => {
       if (result.isConfirmed) {
-        debugger;
+        //debugger;
         this.loader.load = true;
         //eliminar el chat clarification
         const idChatClarification =

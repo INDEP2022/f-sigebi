@@ -25,9 +25,9 @@
 
   <div body>
     <div class="md-tabs">
-      <tabset>
+      <tabset #myTabset>
         <!-- VOLANTE/EXPEDIENTE PANTALLA -->
-        <tab heading="VOLANTE/EXPEDIENTE">
+        <tab id="A" heading="VOLANTE/EXPEDIENTE">
           <!-- Forms VOLANTE EXPEDIENTE -->
           <!-- <ngx-form-volante-expediente
             [form]="form"
@@ -62,10 +62,31 @@
           <form
             [formGroup]="declarationForm"
             class="container-fluid form-material">
-            <div class="row" *ngIf="dictDate != null">
+            <div class="row">
               <div class="d-flex justify-content-end">
                 <div>
-                  <h6>{{ dictDate2 }}</h6>
+                  <h6>{{ dictDate3 }}</h6>
+                </div>
+                <div class="d-inline mx-2">
+                  <div class="btn-group">
+                    <button
+                      type="button"
+                      (click)="newDictums()"
+                      tooltip="Agregar Dictamen"
+                      containerClass="tooltip-style"
+                      class="btn btn-info btn-sm active ml-2 mr-2">
+                      <i class="bx bx-plus bx-sm float-icon"></i>
+                    </button>
+                    <button
+                      type="button"
+                      [disabled]="!disabledListDictums"
+                      (click)="listDictums()"
+                      tooltip="Dictámenes Disponibles"
+                      containerClass="tooltip-style"
+                      class="btn btn-primary btn-sm active">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -141,6 +162,7 @@
                     class=""
                     [control]="declarationForm.get('sender')">
                     <ngx-select
+                      [readonly]="!disabledDictum"
                       [form]="declarationForm"
                       [data]="senders"
                       (fetchItems)="getSenders($event)"
@@ -158,6 +180,7 @@
                     class=""
                     [control]="declarationForm.get('recipient')">
                     <ngx-select
+                      [readonly]="!disabledDictum"
                       [form]="declarationForm"
                       [data]="recipients"
                       (fetchItems)="getRecipients($event)"
@@ -185,6 +208,7 @@
                 <div class="row mt-5">
                   <form-field class="" [control]="declarationForm.get('city')">
                     <ngx-select
+                      [readonly]="!disabledDictum"
                       [form]="declarationForm"
                       [data]="cities"
                       (fetchItems)="getCities($event)"
@@ -228,6 +252,7 @@
                     <option value="1">OPTION</option>
                   </ng-select> -->
                   <ng-select
+                    [readonly]="!disabledDictum"
                     (change)="onLoadGoodList($event)"
                     formControlName="averiPrevia"
                     class="form-control">
@@ -256,7 +281,7 @@
 
           <div class="row pt-2 mb-2" *ngIf="!formLoading">
             <div class="col-sm-12 col-12 col-md-12 pr-3">
-              <div>
+              <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="monitorABN"
                   (userRowSelect)="selectProceedings($event)"
@@ -303,6 +328,7 @@
                   label="Inicio">
                   <!-- <label class="label w-100">page</label> -->
                   <textarea
+                    [readonly]="!disabledDictum"
                     (dblclick)="editText($event, 'declaratoriaInicio')"
                     rows="5"
                     class="form-control w-100"
@@ -315,6 +341,7 @@
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
+                    [readonly]="!disabledDictum"
                     (dblclick)="editText($event, 'declaratoriaFin')"
                     rows="7"
                     class="form-control w-100"
@@ -332,11 +359,15 @@
                 <div class="col-sm-12 col-12 col-md-3 text-center">
                   <button
                     (click)="imgSolicitud()"
+                    tooltip="Generar Folio de Escaneo y Solicitud"
+                    containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file-find"></i>
                   </button>
                   <button
                     (click)="escanearFolioEscaneo()"
+                    tooltip="Escanear"
+                    containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file"></i>
                   </button>
@@ -355,11 +386,15 @@
                 <div class="col-sm-12 col-12 col-md-3 text-center">
                   <button
                     (click)="imprimirFolioEscaneo()"
+                    tooltip="imprimir Solicitud de Escaneo"
+                    containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file-find"></i>
                   </button>
                   <button
                     (click)="visualizacionFolioEscaneo()"
+                    tooltip="Consulta de imágenes escaneadas"
+                    containerClass="tooltip-style"
                     class="btn btn-secondary btn-sm active m-1">
                     <i class="bx bxs-file"></i>
                   </button>
@@ -428,6 +463,7 @@
                               [control]="formOficio.get('tipoOficio')"
                               label="Tipo Oficio">
                               <input
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="tipoOficio" />
@@ -438,6 +474,7 @@
                               [control]="formOficio.get('oficioPor')"
                               label="Oficio Por">
                               <input
+                                readonly
                                 type="text"
                                 class="form-control"
                                 formControlName="oficioPor" />
@@ -449,6 +486,7 @@
                               label="No. Gesti&oacute;n">
                               <input
                                 readonly
+                                [(ngModel)]="no_OficioGestion"
                                 type="number"
                                 class="form-control"
                                 formControlName="oficio" />
@@ -494,15 +532,14 @@
                           *ngIf="externoVal"
                           [control]="formOficio.get('destinatario')"
                           label="Destinatario">
-                          <input
+                          <textarea
                             class="form-control"
-                            formControlName="destinatario" />
+                            formControlName="destinatario"></textarea>
                         </form-field>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
                         <form-field [control]="formOficio.get('ciudad')">
                           <ngx-select
-                            [readonly]="!disabledBTNs"
                             [form]="formOficio"
                             [data]="cities2"
                             (fetchItems)="getCities2($event)"
@@ -543,34 +580,46 @@
                             formControlName="noExpediente" />
                         </form-field>
                       </div>
-                      <div class="col-sm-12 col-12 mt-5">
+                      <div class="col-sm-12 col-12 mt-3">
                         <div class="form-group">
-                          <label class="form-control-label w-100"
-                            >DATA DE OFICIO</label
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 11px"
+                            >CLAVE OFICIO</label
                           >
-                          <label class="form-control-label w-100">{{
-                            cveManagement
-                          }}</label>
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 14px"
+                            >{{ cveManagement }}</label
+                          >
                         </div>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
                         <div class="form-group">
-                          <label class="form-control-label w-100"
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 11px"
                             >FECHA DE CAPTURA</label
                           >
-                          <label class="form-control-label w-100">{{
-                            dateCapture2
-                          }}</label>
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 14px"
+                            >{{ dateCapture2 }}</label
+                          >
                         </div>
                       </div>
                       <div class="col-sm-12 col-12 mt-5">
                         <div class="form-group">
-                          <label class="form-control-label w-100"
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 11px"
                             >ESTATUS</label
                           >
-                          <label class="form-control-label w-100">{{
-                            statusOfMOficioGestion
-                          }}</label>
+                          <label
+                            class="form-control-label w-100"
+                            style="font-size: 14px"
+                            >{{ statusOfMOficioGestion }}</label
+                          >
                         </div>
                       </div>
                     </div>
@@ -643,7 +692,7 @@
           <hr class="row" />
           <div class="row">
             <div class="col-sm-12 col-12 col-md-6">
-              <h6>Con Copia Para &#40;C&#46;C&#46;P&#46;&#41;</h6>
+              <h6>C&#46;C&#46;P&#46;</h6>
             </div>
           </div>
           <br />
@@ -696,12 +745,12 @@
                 <div class="row">
                   <div class="col-sm-12 col-12 col-md-2 p-1 pt-0 pb-0">
                     <form-field
-                      [control]="formCcpOficio.get('ccp')"
+                      [control]="formCcpOficio.get('ccp2')"
                       label="C&#46;P&#46;P">
                       <select
                         (change)="ccpChange2($event)"
                         class="form-control"
-                        formControlName="ccp">
+                        formControlName="ccp2">
                         <!-- <option [value]="null">Seleccione un valor</option> -->
                         <option [value]="'INTERNO'">INTERNO</option>
                         <option [value]="'EXTERNO'">EXTERNO</option>
@@ -711,10 +760,10 @@
                   <div class="col-sm-12 col-12 col-md-10 p-1 pt-0 pb-0">
                     <form-field
                       *ngIf="!valInterno2"
-                      [control]="formCcpOficio.get('ccp2')">
+                      [control]="formCcpOficio.get('nombreUsuario2')">
                       <input
                         class="form-control"
-                        formControlName="ccp2"
+                        formControlName="nombreUsuario2"
                         type="text"
                         name="cpp2"
                         id="cpp2" />

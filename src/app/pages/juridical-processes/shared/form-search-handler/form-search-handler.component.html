@@ -43,7 +43,7 @@
   [config]="{ ignoreBackdropClick: true }"
   bsModal
   class="modal fade w-100">
-  <app-modal class="modal-dialog modal-lg modal-dialog-centered">
+  <app-modal class="modal-dialog modalSizeXL modal-dialog-centered">
     <div header>
       <h5 class="modal-title">&nbsp;&nbsp;Seleccionar {{ title }}</h5>
     </div>
@@ -99,11 +99,13 @@
           </ng-scrollbar>
         </div>
       </div>
-      <app-pagination
-        *ngIf="dataObservableFn"
-        [filterParams]="filterParams"
-        [totalItems]="totalItems">
-      </app-pagination>
+      <div class="overflow-auto card-header-span-fix mt-5">
+        <app-pagination
+          *ngIf="dataObservableFn"
+          [filterParams]="filterParams"
+          [totalItems]="totalItems">
+        </app-pagination>
+      </div>
     </div>
     <div footer>
       <div class="d-flex justify-content-center">

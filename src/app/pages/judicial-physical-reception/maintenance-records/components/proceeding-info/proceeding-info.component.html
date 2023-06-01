@@ -3,21 +3,15 @@
     <div class="row header-proceeding-info">
       <h5 class="title col-md-6">Informaci&oacute;n del Acta</h5>
       <div class="col-md-6 buttons">
-        <div class="col-md-6">
-          <button
-            [class]="disabled || form.invalid || registro ? 'disabled' : ''"
-            class="btn btn-primary btn-sm active"
-            (click)="filter()">
-            <i class="fa fa-search"></i> Filtrar
-          </button>
-        </div>
-        <div class="col-md-6">
-          <app-clean-filters-shared
-            [form]="form"
-            (cleanFiltersEvent)="
-              deleteProceedings()
-            "></app-clean-filters-shared>
-        </div>
+        <button
+          [class]="disabled || form.invalid || registro ? 'disabled' : ''"
+          class="btn btn-primary btn-sm active"
+          (click)="filter()">
+          <i class="fa fa-search"></i> Filtrar
+        </button>
+        <app-clean-filters-shared
+          [form]="form"
+          (cleanFiltersEvent)="deleteProceedings()"></app-clean-filters-shared>
         <!-- <div class="col-md-6">
           <button
             [class]="disabled || form.invalid || !registro ? 'disabled' : ''"
@@ -44,18 +38,16 @@
             (valueChange)="update($event)">
           </ng-custom-select-loading> -->
 
-          <form-field [control]="form.get('id')" label="No&#46; Acta">
+          <form-field [control]="form.get('id')" label="No. Acta">
             <input
-              type="number"
               class="form-control"
               formControlName="id"
-              min="1"
-              maxlength="20"
+              maxlength="10"
               [readonly]="loading" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('numFile')" label="No Expediente">
+          <form-field [control]="form.get('numFile')" label="No. Expediente">
             <input
               type="number"
               class="form-control"
@@ -168,16 +160,17 @@
         <ng-custom-select-loading
           [form]="form"
           [readonly]="loading"
-          formControlName="numDelegation1"
+          formControlName="numDelegation1Description"
           label="Delegación Recibe"
-          value="id"
-          bindLabel="id"
-          paramSearch="filter.id"
+          value="description"
+          bindLabel="description"
+          paramSearch="filter.description"
           prefixSearch="$eq"
           path="catalog/api/v1/delegation/get-all"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
-          [optionTemplate]="delegationOption">
+          [optionTemplate]="delegationOption"
+          (getObject)="updateDelegationRecibe($event)">
         </ng-custom-select-loading>
         <!-- <app-recibe-form
           [form]="form"
@@ -214,16 +207,17 @@
         <ng-custom-select-loading
           [form]="form"
           [readonly]="loading"
-          formControlName="numDelegation2"
+          formControlName="numDelegation2Description"
           label="Delegación Administra "
-          value="id"
-          bindLabel="id"
-          paramSearch="filter.id"
+          value="description"
+          bindLabel="description"
+          paramSearch="filter.description"
           prefixSearch="$eq"
           path="catalog/api/v1/delegation/get-all"
           [updateValues]="true"
           [labelTemplate]="delegationLabel"
-          [optionTemplate]="delegationOption">
+          [optionTemplate]="delegationOption"
+          (getObject)="updateDelegationAdministra($event)">
         </ng-custom-select-loading>
       </div>
 

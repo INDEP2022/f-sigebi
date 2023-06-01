@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, takeUntil, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -25,13 +25,13 @@ import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AssignReceiptFormComponent } from '../../../shared-request/assign-receipt-form/assign-receipt-form.component';
+import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
+import { UploadFileComponent } from '../../../shared-request/expedients-tabs/sub-tabs/photos-assets/upload-file/upload-file.component';
 import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
-import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 import { GenerateReceiptGuardFormComponent } from '../../shared-components-programming/generate-receipt-guard-form/generate-receipt-guard-form.component';
 import { GoodsReceiptsFormComponent } from '../../shared-components-programming/goods-receipts-form/goods-receipts-form.component';
-import { DocumentsListComponent } from '../documents-list/documents-list.component';
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import {
@@ -56,14 +56,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsProceeding = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
+  paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsReception = new BehaviorSubject<ListParams>(new ListParams());
   paramsGuard = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   goodsWarehouse: LocalDataSource = new LocalDataSource();
+  nameWarehouse: string = '';
   ubicationWarehouse: string = '';
   totalItems: number = 0;
   totalItemsGuard: number = 0;
   totalItemsWarehouse: number = 0;
+  selectGood: IGood;
+  goodIdSelect: string | number;
   programmingId: number = 0;
   idTransferent: any;
   idRegDelegation: any;
@@ -71,7 +75,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén SAT(0)`;
   idStation: any;
-
+  transferentName: string = '';
+  stationName: string = '';
+  authorityName: string = '';
+  typeRelevantName: string = '';
+  formLoading: boolean = false;
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -158,10 +166,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showHideErrorInterceptorService.showHideError(false);
+    this.formLoading = true;
     this.prepareForm();
     this.showDataProgramming();
-    this.showReceiptsGuard();
 
     this.paramsGuard
       .pipe(takeUntil(this.$unSubscribe))
@@ -196,6 +203,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.getTypeRelevant();
         this.getwarehouse();
         this.getUsersProgramming();
+
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getInfoGoodsProgramming());
       });
   }
 
@@ -209,14 +220,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   getTransferent(data: Iprogramming) {
     this.transferentService.getById(data.tranferId).subscribe(data => {
-      this.programming.tranferId = data.nameTransferent;
+      this.transferentName = data.nameTransferent;
     });
   }
 
   getStation(data: Iprogramming) {
-    this.stationService.getById(data.stationId).subscribe(data => {
-      this.programming.stationId = data.stationName;
-    });
+    this.paramsStation.getValue()['filter.id'] = data.stationId;
+    this.paramsStation.getValue()['filter.idTransferent'] = data.tranferId;
+    this.stationService
+      .getAll(this.paramsStation.getValue())
+      .subscribe(data => {
+        this.stationName = data.data[0].stationName;
+      });
   }
 
   getAuthority() {
@@ -231,7 +246,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         let authority = data.data.find(res => {
           return res;
         });
-        this.programming.autorityId = authority.authorityName;
+        this.authorityName = authority.authorityName;
       });
   }
 
@@ -239,7 +254,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     return this.typeRelevantService
       .getById(this.programming.typeRelevantId)
       .subscribe(data => {
-        this.programming.typeRelevantId = data.description;
+        this.typeRelevantName = data.description;
       });
   }
 
@@ -247,60 +262,53 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     return this.warehouseService
       .getById(this.programming.storeId)
       .subscribe(data => {
-        this.programming.storeId = data.description;
+        this.nameWarehouse = data.description;
+
         this.ubicationWarehouse = data.ubication;
       });
   }
 
-  /*------------- function button to show info programming ---*/
-  getReportGoods() {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getInfoGoodsProgramming());
-  }
-
   /*----------Show info goods programming --------- */
   getInfoGoodsProgramming() {
-    const filterColumns: Object = {
-      regionalDelegation: Number(this.idRegDelegation),
-      transferent: Number(this.idTransferent),
-      relevantType: Number(this.idTypeRelevat),
-      statusGood: 'APROBADO',
-    };
-
-    this.goodsQueryService
-      .postGoodsProgramming(this.params.getValue(), filterColumns)
-      .subscribe({
-        next: response => {
-          const filterData = response.data.map(items => {
-            if (items.physicalState == 1 || items.stateConservation == 1) {
-              items.physicalState = 'BUENO';
-              items.stateConservation = 'BUENO';
-              return items;
-            } else if (
-              items.physicalState == 2 ||
-              items.stateConservation == 2
-            ) {
-              items.physicalState = 'MALO';
-              items.stateConservation = 'MALO';
-              return items;
-            }
-          });
-          this.goods = filterData;
-
-          /*for (let i = 0; i < this.goods.length; i++) {
-            console.log('info', this.goods[i].quantitySae);
-            this.executeForm.get('quantitySae').setValue(this.goods[i].quantitySae);
-            console.log(this.executeForm.get('quantitySae').value);
-          } */
-          /*this.goods.forEach(item => {
-            console.log(item.quantitySae);
-            this.executeForm.patchValue({ quantitySae: item.quantitySae });
-            this.executeForm.reset()
-          }) */
-        },
-        error: error => (this.loading = false),
+    this.params.getValue()['filter.programmingId'] = this.programmingId;
+    this.programmingService
+      .getGoodsProgramming(this.params.getValue())
+      .subscribe(data => {
+        this.filterStatusTrans(data.data);
+        /*
+        this.filterStatusGuard(data.data);
+        this.filterStatusWarehouse(data.data); */
       });
+  }
+
+  filterStatusTrans(data: IGoodProgramming[]) {
+    const goodsTrans = data.filter(items => {
+      return items.status == 'EN_TRANSPORTABLE';
+    });
+
+    goodsTrans.map(items => {
+      this.goodService.getGoodByIds(items.goodId).subscribe({
+        next: response => {
+          if (response.saePhysicalState == 1)
+            response.saePhysicalState = 'BUENO';
+          if (response.saePhysicalState == 2)
+            response.saePhysicalState = 'MALO';
+          if (response.decriptionGoodSae == null)
+            response.decriptionGoodSae = 'Sin descripción';
+          // queda pendiente mostrar el alías del almacén //
+          console.log('repsonse', response);
+          this.executeForm.get('decriptionGoodSae').setValue(response);
+          this.goods.push(response);
+          //this.goodsTranportables.load(this.goodsInfoTrans);
+          //this.totalItemsTransportable = this.goodsTranportables.count();
+        },
+      });
+    });
+  }
+
+  goodSelect(good: IGood) {
+    this.goodIdSelect = good.id;
+    this.selectGood = good;
   }
 
   /*infoGoods() {
@@ -334,7 +342,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         console.log('Se manda', GoodData);
         this.goodService.updateByBody(GoodData).subscribe(() => {
           this.onLoadToast('success', 'Bien actualizado correctamente', '');
-          this.getReportGoods();
+          //this.getReportGoods();
         });
       }
     });
@@ -364,6 +372,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .subscribe(data => {
         this.getGoodsGuards(data.data);
         this.getGoodsWarehouse(data.data);
+        this.formLoading = false;
       });
   }
 
@@ -592,35 +601,48 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   uploadDocuments() {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
-    config.initialState = {
-      callback: (data: any) => {
-        if (data) {
-        }
-      },
-    };
-
-    const uploadDocuments = this.modalService.show(
-      DocumentsListComponent,
-      config
-    );
+    if (this.goodIdSelect) {
+      let config: ModalOptions = {
+        initialState: {
+          idGood: this.goodIdSelect,
+          parameter: '',
+          typeDoc: 'request-assets',
+          callback: (next: boolean) => {
+            //if(next) this.getExample();
+          },
+        },
+        class: `modalSizeXL modal-dialog-centered`,
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowDocumentsGoodComponent, config);
+    } else {
+      this.onLoadToast(
+        'info',
+        'Acción invalida',
+        'Necesitas tener un bien seleccionado'
+      );
+    }
   }
 
   uploadPicture() {
+    let loadingPhotos = 0;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-
     config.initialState = {
-      callback: (data: any) => {
-        if (data) {
+      data: this.selectGood,
+      callBack: (next: boolean) => {
+        if (next) {
+          this.formLoading = true;
+          loadingPhotos = loadingPhotos + 1;
+          setTimeout(() => {
+            this.formLoading = false;
+          }, 7000);
+          if (loadingPhotos == 1) {
+            this.onLoadToast('success', 'Imagen cargada correctamente', '');
+          }
         }
       },
     };
-
-    const uploadPictures = this.modalService.show(
-      PhotographyFormComponent,
-      config
-    );
+    this.modalService.show(UploadFileComponent, config);
   }
 
   createReceipt() {

@@ -79,7 +79,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         sort: false,
       },
       numFile: {
-        title: 'N° Archivo',
+        title: 'No. Archivo',
         sort: false,
       },
       witness1: {
@@ -98,6 +98,9 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         title: 'Observaciones',
         sort: false,
       },
+    },
+    rowClassFunction: (row: any) => {
+      return row?.data?.statusProceedings;
     },
     noDataMessage: 'No se encontrarón registros',
   };
@@ -352,7 +355,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
         },
         error: error => {
           console.log(error);
-          this.onLoadToast('error', 'No se encontraron datos');
+          // this.onLoadToast('error', 'No se encontraron datos');
           this.loading = false;
           this.data.load([]);
         },

@@ -18,6 +18,16 @@ export const NOTARY_COLUMNS = {
 
       return value;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'S', title: 'SI' },
+          { value: 'N', title: 'NO' },
+        ],
+      },
+    },
     sort: false,
   },
   notaryNumber: {

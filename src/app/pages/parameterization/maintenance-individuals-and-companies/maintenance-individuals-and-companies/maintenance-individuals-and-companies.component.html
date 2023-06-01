@@ -130,10 +130,14 @@
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-4">
-          <app-turn-company [form]="form"></app-turn-company>
+        <div class="col-md-12">
+          <app-turn-company
+            [form]="form"
+            [turnField]="'keyOperation'"></app-turn-company>
         </div>
-        <div class="col-md-8 mt-2">
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12 mt-2">
           <form-field [control]="form.get('profile')" label="Perfil">
             <textarea
               type="text"
@@ -143,12 +147,14 @@
         </div>
       </div>
       <div class="row mt-4" *ngIf="form.get('typePerson').value === 'M'">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field [control]="form.get('manager')" label="Representante">
             <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row mt-4" *ngIf="form.get('typePerson').value === 'M'">
+        <div class="col-md-8">
           <form-field [control]="form.get('numberDeep')" label="No Escritura">
             <input
               type="text"

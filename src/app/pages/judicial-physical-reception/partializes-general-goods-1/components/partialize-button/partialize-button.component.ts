@@ -98,7 +98,7 @@ export class PartializeButtonComponent
   }
 
   private validationImporte() {
-    debugger;
+    // debugger;
     console.log(this.good);
     const cantidad = +this.good.quantity;
     if (!this.validationClasif()) {
@@ -206,7 +206,13 @@ export class PartializeButtonComponent
         .getAll2('filter.numType=$in:7&filter.numClasifGoods=' + clasificador)
         .pipe(catchError(error => of({ count: 0 })))
     );
-    this.v_numerario = numerarioValidation.count;
+    // debugger;
+    this.v_numerario = numerarioValidation
+      ? numerarioValidation.count
+        ? numerarioValidation.count
+        : 0
+      : 0;
+
     if (this.v_numerario === 0) {
       if (this.cantidad.value === this.good.quantity) {
         this.onLoadToast(
@@ -222,7 +228,7 @@ export class PartializeButtonComponent
   }
 
   private fillAvaluo() {
-    debugger;
+    // debugger;
     if (this.good.appraisedValue) {
       const algo = +(this.good.appraisedValue + '') * this.vfactor;
       const newValue = +algo.toFixed(2);
@@ -248,6 +254,7 @@ export class PartializeButtonComponent
     v_unidad: string,
     v_avaluo: string
   ) {
+    // debugger;
     if (this.v_numerario === 0) {
       let result =
         ', (Producto de la Parcialización de Bien No.' +
@@ -375,7 +382,7 @@ export class PartializeButtonComponent
   }
 
   private calcImporte() {
-    debugger;
+    // debugger;
     this.service.clasificators.includes(this.good.goodClassNumber + '');
     const newImporte: number =
       this.cantPar.value * this.cantidad.value + this.vsum;

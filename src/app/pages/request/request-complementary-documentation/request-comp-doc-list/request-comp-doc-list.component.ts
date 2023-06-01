@@ -33,8 +33,6 @@ export class RequestCompDocListComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   editRequest(event: any) {
-    debugger;
-    console.log(event);
     this.router.navigate(
       ['tasks', event.data.process, event.data.requestNumber],
       { relativeTo: this.activatedRoute }

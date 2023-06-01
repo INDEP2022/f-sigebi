@@ -67,4 +67,11 @@ export class MJobManagementService extends HttpService {
   update(params?: any): Observable<IListResponse<IMJobManagement>> {
     return this.put<IListResponse<IMJobManagement>>('m-job-management', params);
   }
+  createCopyOficeManag(params?: any): Observable<any> {
+    return this.post<IListResponse<any>>('copies-job-management', params);
+  }
+
+  createDocumentOficeManag(params?: any): Observable<any> {
+    return this.post<IListResponse<any>>('document-job-management', params);
+  }
 }

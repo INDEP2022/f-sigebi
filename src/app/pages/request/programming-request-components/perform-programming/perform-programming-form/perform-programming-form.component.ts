@@ -1721,6 +1721,9 @@ export class PerformProgrammingFormComponent
       this.performForm.get('tranferId').setValue(this.transferentId);
       this.performForm.get('stationId').setValue(this.stationId);
       this.performForm.get('autorityId').setValue(this.autorityId);
+      this.performForm
+        .get('regionalDelegationNumber')
+        .setValue(this.delegationId);
       this.alertQuestion(
         'info',
         'Confirmación',
@@ -1811,20 +1814,21 @@ export class PerformProgrammingFormComponent
   async generateTaskAceptProgramming(folio: string) {
     const user: any = this.authService.decodeToken();
     let body: any = {};
-
+    const _task = JSON.parse(localStorage.getItem('Task'));
+    body['idTask'] = _task.id;
+    body['userProcess'] = user.username;
     body['type'] = 'SOLICITUD_PROGRAMACION';
-    body['subtype'] = 'Programar_Recepcion';
+    body['subtype'] = 'Realizar_Programacion';
     body['ssubtype'] = 'ENVIAR';
 
     let task: any = {};
     task['id'] = 0;
-    //task['assignees'] = this.nickName;
-    //task['assigneesDisplayname'] = this.userName;
+    task['assignees'] = _task.assignees;
+    task['assigneesDisplayname'] = _task.assigneesDisplayname;
     task['creator'] = user.username;
     task['taskNumber'] = Number(this.idProgramming);
     task['title'] = 'Aceptar Programación con folio: ' + folio;
     task['programmingId'] = this.idProgramming;
-    //task['requestId'] = this.programmingId;
     task['expedientId'] = 0;
     task['idDelegationRegional'] = this.delegationId;
     task['urlNb'] = 'pages/request/programming-request/acept-programming';
@@ -1832,12 +1836,13 @@ export class PerformProgrammingFormComponent
     body['task'] = task;
 
     const taskResult = await this.createTaskOrderService(body);
+    console.log('task', taskResult);
     this.loading = false;
     if (taskResult) {
       this.msgGuardado(
         'success',
         'Creación de tarea exitosa',
-        `Se creó la tarea Realizar Programación con el folio: ${folio}`
+        `Se creó la tarea Aceptar Programación con el folio: ${folio}`
       );
     }
   }

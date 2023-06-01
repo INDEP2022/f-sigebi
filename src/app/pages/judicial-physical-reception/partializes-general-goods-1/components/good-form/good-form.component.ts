@@ -54,7 +54,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       },
       error: err => {
         this.resetForm();
-        this.onLoadToast('error', 'N° Bien ' + this.noBien, 'No encontrado');
+        this.onLoadToast('error', 'No. Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
       },
     });
@@ -264,6 +264,12 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     return { bandera: 1, mensaje: '' };
   }
 
+  // private async getVerificaDesCargaMasiva() {
+  //   return firstValueFrom(
+  //     this.goodService.getValidMassiveDownload(this.good.goodId)
+  //   );
+  // }
+
   resetForm() {
     // this.service.formControl.
     this.service.good = null;
@@ -274,6 +280,8 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     this.service.sumCant = 0;
     this.service.sumVal14 = 0;
     this.service.sumAvaluo = 0;
+    this.service.goodStatusDesc = '';
+    this.service.goodClassNumberDesc = '';
   }
 
   private validateStatusXPantalla(good: IGood) {
@@ -301,6 +309,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
   async selectGoodContent(good: IGood) {
     let bandera;
     let clasif: number;
+    this.service.verif_des = 0;
     // debugger;
     if (!good) {
       this.service.good = null;
@@ -310,6 +319,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       return;
     }
     if (this.version === 1) {
+      debugger;
       let vb_estatus_valido;
       // vb_estatus_valido = await this.validateStatusXPantalla(good);
       try {
@@ -323,6 +333,21 @@ export class GoodFormComponent extends AlertButton implements OnInit {
           'El Bien no cuenta con un estatus correcto'
         );
         return;
+      }
+      try {
+        this.service.verif_des = await firstValueFrom(
+          this.goodService.getValidMassiveDownload(good.goodId)
+        );
+      } catch (x: any) {
+        console.log(x);
+        this.service.verif_des = 0;
+        // this.onLoadToast(
+        //   'error',
+        //   'Verificación Descarga Masiva',
+        //   x.error.message
+        // );
+        // this.loading = false;
+        // return;
       }
 
       console.log(good.goodClassNumber);
@@ -355,6 +380,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       } catch (x) {
         this.service.noActa = 0;
       }
+
       this.service.good = good;
       if ([1424, 1426, 1427, 1575, 1590].includes(+good.goodClassNumber)) {
         this.firstCase = true;

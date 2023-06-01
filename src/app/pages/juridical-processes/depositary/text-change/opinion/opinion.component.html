@@ -10,7 +10,9 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('registerNumber')" label="Dictamen.">
+      <form-field
+        [control]="form.get('registerNumber')"
+        label="No. Oficio Dic.">
         <input
           type="text"
           class="form-control"
@@ -62,6 +64,8 @@
       </button>
     </div>
   </div>
+
+  <p><b>Dictamen</b></p>
   <hr />
   <div class="row mt-5">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -135,7 +139,7 @@
     </div>
   </div>
 
-  <!--div class="row mt-5">
+  <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('paragraphInitial')"
@@ -173,7 +177,7 @@
           rows="5"></textarea>
       </form-field>
     </div>
-  </div-->
+  </div>
 
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -231,7 +235,7 @@
     </div>
   </div>
 
-  <div class="row mt-5">
+  <!--div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('masInfo_3')"
@@ -243,9 +247,7 @@
           rows="5"></textarea>
       </form-field>
     </div>
-  </div>
-  <div class="row pl-3">C&#46;C&#46;P&#46;</div>
-  <hr />
+  </div-->
 
   <!---
       <ng-container formArrayName="extPerson">
@@ -375,7 +377,10 @@
   </div>
  <button type="button" class="btn  btn-sm btn-info active " (click)="addExtPersonArray()"> [[+]] </button-->
   <div class="ch-content" header>
-    <h5 class="title">Lista personas</h5>
+    <h5 class="title">C&#46;C&#46;P&#46;</h5>
+
+    <hr />
+
     <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings"></app-columns-select>
       <div>
@@ -401,9 +406,7 @@
         </div>
       </div>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+    <!--app-pagination [params]="params" [totalItems]="totalItems"></app-pagination-->
   </div>
   <hr />
   <div class="row mb-5">
