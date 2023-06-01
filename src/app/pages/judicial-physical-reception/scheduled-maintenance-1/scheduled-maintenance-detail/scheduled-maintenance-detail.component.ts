@@ -98,6 +98,38 @@ export class ScheduledMaintenanceDetailComponent
       console.log(x);
       if (x === 'CERRADA') {
         this.closeActa();
+      } else {
+        const detail = JSON.parse(
+          window.localStorage.getItem('detailActa')
+        ) as IProceedingDeliveryReception;
+        detail.keysProceedings = this.form.get('claveActa').value;
+        detail.statusProceedings = this.statusActaValue;
+        detail.closeDate = new Date().toISOString();
+        detail.captureDate = firstFormatDateToSecondFormatDate(
+          detail.captureDate
+        );
+        let message = '';
+        this.proceedingService
+          .update2(detail)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe({
+            next: response => {
+              this.onLoadToast(
+                'success',
+                'Se actualizo el acta N° ' + detail.id
+              );
+              this.pageLoading = false;
+              // this.massiveUpdate(`Se actualizo el acta N° ${detail.id} `);
+            },
+            error: err => {
+              this.onLoadToast(
+                'error',
+                'No se pudo actualizar el acta N° ' + detail.id
+              );
+              // this.massiveUpdate('');
+              this.pageLoading = false;
+            },
+          });
       }
     });
   }

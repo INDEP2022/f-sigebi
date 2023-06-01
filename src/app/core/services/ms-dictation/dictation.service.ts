@@ -64,7 +64,7 @@ export class DictationService extends HttpService {
   }
 
   createPersonExt(body: IDictationCopies) {
-    return this.post(this.route.Dictation, body);
+    return this.post(this.route.CopiesOfficialOpinion, body);
   }
 
   update(body: Partial<IDictation>) {
@@ -230,5 +230,12 @@ export class DictationService extends HttpService {
   createOfficialDictation(params: any) {
     const route = `${DictationEndpoints.OfficialDictation}`;
     return this.post(route, params);
+  }
+
+  deleteCopiesdictamenetOfficialOpinion(id: number) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      id
+    );
   }
 }

@@ -67,6 +67,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.showDelegation);
     if (this.showSubdelegation) {
       this.form.get(this.delegationField).valueChanges.subscribe(res => {
         const sfield = document.getElementById('sdele');
@@ -79,8 +80,8 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
       });
     } else {
       console.log('no');
+      this.getDelegations(new ListParams());
     }
-    this.getDelegations(new ListParams());
   }
 
   getDelegations(params: ListParams) {

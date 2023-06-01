@@ -29,6 +29,8 @@ export class DocCompensationSatListComponent
     super();
     this.settings.columns = DOCCOMPENSATIONSAT_COLUMS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -63,15 +65,22 @@ export class DocCompensationSatListComponent
     this.modalService.show(DocCompensationSatFormComponent, config);
   }
 
-  delete(docCompesationSat: IDocCompesationSat) {
+  showDeleteAlert(docCompesationSat: IDocCompesationSat) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(docCompesationSat.id);
       }
+    });
+  }
+  delete(id: number) {
+    this.docCompesationSatService.remove(id).subscribe({
+      next: () => {
+        this.getExample(), this.alert('success', 'Deduct', 'Borrado');
+      },
     });
   }
 }
