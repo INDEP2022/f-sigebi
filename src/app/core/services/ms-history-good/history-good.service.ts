@@ -6,6 +6,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IHistoryGood,
+  IReturnStatusProcess,
   ISentSirsae,
 } from '../../models/administrative-processes/history-good.model';
 
@@ -71,5 +72,8 @@ export class HistoryGoodService extends HttpService {
   getHistoryStatusGoodById(query: any) {
     const route = `${HistoryGoodEndpoints.HistoryStatusGoodFindById}`;
     return this.post(route, query);
+  }
+  returnStatusProcess(data: IReturnStatusProcess) {
+    return this.post<any>(HistoryGoodEndpoints.ReturnStatusProcess, data);
   }
 }

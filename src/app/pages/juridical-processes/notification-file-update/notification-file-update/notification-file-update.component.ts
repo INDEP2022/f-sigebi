@@ -10,13 +10,13 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
@@ -44,7 +44,8 @@ export class NotificationFileUpdateComponent
   formData: any;
   override loading: boolean = true;
   totalItems: number = 0;
-  dataFactGen: INotification[] = [];
+  //dataFactGen: INotificationUpdate[] = [];
+  dataFactGen: LocalDataSource = new LocalDataSource();
   verBoton: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParamsLocal = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -129,40 +130,29 @@ export class NotificationFileUpdateComponent
   getFilterExpedientNumber() {
     const param = new FilterParams();
     const params = new ListParams();
-
-    param.addFilter('expedientNumber', this.form.get('noExpediente').value);
-    this.notificationService.getAllFilter(param.getParams()).subscribe({
-      next: data => {
-        this.dataFactGen = data.data;
-        //console.log(data.count);
-        this.totalItems = data.count;
-        // this.dataFactGen[0].description = data.data[0].departament.description;
-        this.loading = false;
-      },
-      error: err => {
-        this.dataFactGen = [];
-        this.loading = false;
-        this.onLoadToast('error', 'Error', err.error.message);
-      },
-    });
+    this.params.getValue()[
+      'filter.expedientNumber'
+    ] = `$eq:${this.form.controls['noExpediente'].value}`;
+    this.notificationService
+      .getAllFilterExpedient(this.params.getValue())
+      .subscribe({
+        next: data => {
+          this.totalItems = data.count || 0;
+          this.dataFactGen.load(data.data);
+          this.dataFactGen.refresh();
+          console.log(data.data);
+          this.loading = false;
+        },
+        error: err => {
+          this.loading = false;
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
   }
 
   getDicts() {
-    this.loading = true;
-    // let params = {
-    //   ...this.params.getValue(),
-    //   ...this.columnFilters,
-    // };
-    // this.deductiveService.getAll(params).subscribe({
-    //   next: response => {
-    //     this.deductives = response.data;
-    //     this.totalItems = response.count || 0;
-    //     this.data.load(response.data);
-    //     this.data.refresh();
-    //     this.loading = false;
-    //   },
-    //   error: error => (this.loading = false),
-    // });
+    this.loading = false;
+    this.onLoadListNotifications();
   }
 
   openForm(dict?: any) {
@@ -173,7 +163,6 @@ export class NotificationFileUpdateComponent
         if (next) this.getDicts();
       },
     };
-    //this.formSubmitted.emit(this.formData);
     this.modalService.show(EditFormComponent, modalConfig);
   }
 
