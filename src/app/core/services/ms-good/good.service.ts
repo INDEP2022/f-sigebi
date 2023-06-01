@@ -65,9 +65,10 @@ export class GoodService extends HttpService {
   }
 
   getActAccount(model: IGoodStatusProcess) {
-    return this.post<IResponse>(GoodEndpoints.GoodGetActAccount, model).pipe(
-      map(x => x.count)
-    );
+    return this.post<IResponse<{ actNumber: number }>>(
+      GoodEndpoints.GoodGetActAccount,
+      model
+    ).pipe(map(x => (x.count === 0 ? 0 : x.data ? x.data.actNumber : 0)));
   }
 
   getStatusAndProcess(model: IGoodScreenACtionStatusProcess) {
@@ -170,6 +171,15 @@ export class GoodService extends HttpService {
 
   create(good: IGood) {
     return this.post(GoodEndpoints.Good, good);
+  }
+
+  updateCustom(good: IGood) {
+    return this.put(GoodEndpoints.Good + '/update-custom/' + good.goodId, {
+      extDomProcess: good.extDomProcess,
+      description: good.description,
+      observations: good.observations,
+      status: good.status,
+    });
   }
 
   //

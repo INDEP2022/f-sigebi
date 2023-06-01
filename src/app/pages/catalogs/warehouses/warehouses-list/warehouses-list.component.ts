@@ -9,6 +9,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
@@ -31,7 +32,8 @@ export class WarehousesListComponent extends BasePage implements OnInit {
   constructor(
     private warehouseService: WarehouseService,
     private modalService: BsModalService,
-    private tvalTable1Service: TvalTable1Service
+    private tvalTable1Service: TvalTable1Service,
+    private securityService: SecurityService
   ) {
     super();
     this.settings.columns = WAREHOUSE_COLUMNS;
@@ -79,7 +81,16 @@ export class WarehousesListComponent extends BasePage implements OnInit {
     };
     this.warehouseService.getAll(params).subscribe({
       next: response => {
-        this.getDetType(response);
+        // this.getDetType(response).then(() => {
+        //   this.getUser();
+        // }).catch((error) => {
+        this.warehouses = response.data;
+        console.log(response.data);
+        this.data.load(this.warehouses);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+        // });
       },
       error: error => {
         this.data.load([]);
@@ -123,13 +134,47 @@ export class WarehousesListComponent extends BasePage implements OnInit {
       await new Promise(resolve => setTimeout(resolve, 300));
     }
   }
-
+  async getUser(): Promise<void> {
+    for (let i = 0; i < this.warehouses.length; i++) {
+      const params = new ListParams();
+      params['filter.user'] = `$eq:${this.warehouses[i].manager}`;
+      if (this.warehouses[i].manager) {
+        this.securityService.getAllUsersTracker(params).subscribe({
+          next: resp => {
+            console.log(resp.data[0].name);
+            this.warehouses[i].DetManager = resp.data[0].name;
+          },
+          error: erro => console.log(erro),
+          complete: () => {
+            if (i == this.warehouses.length - 1) {
+              this.warehouses = this.warehouses;
+              console.log(this.warehouses);
+              this.data.load(this.warehouses);
+              this.data.refresh();
+              this.loading = false;
+            }
+          },
+        });
+      } else if (i == this.warehouses.length - 1) {
+        this.warehouses = this.warehouses;
+        console.log(this.warehouses);
+        this.data.load(this.warehouses);
+        this.data.refresh();
+        this.loading = false;
+      }
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+  }
   openForm(warehouse?: IWarehouse) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       warehouse,
       callback: (next: boolean) => {
-        if (next) this.getWarehouses();
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getWarehouses());
+        }
       },
     };
     this.modalService.show(WarehousesDetailComponent, modalConfig);

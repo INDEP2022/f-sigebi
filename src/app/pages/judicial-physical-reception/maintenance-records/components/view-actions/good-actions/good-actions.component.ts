@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { firstValueFrom } from 'rxjs';
 import { TableReplaceColumnModalComponent } from 'src/app/@standalone/modals/table-replace-column-modal/table-replace-column-modal.component';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -23,9 +24,15 @@ import {
   ProceedingsDeliveryReceptionService,
   ProceedingsDetailDeliveryReceptionService,
 } from 'src/app/core/services/ms-proceedings';
-import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE,
+  POSITVE_NUMBERS_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { AlertButton } from 'src/app/pages/judicial-physical-reception/scheduled-maintenance-1/models/alert-button';
-import { secondFormatDate } from 'src/app/shared/utils/date';
+import {
+  firstFormatDateToSecondFormatDate,
+  secondFormatDate,
+} from 'src/app/shared/utils/date';
 import { MaintenanceRecordsService } from './../../../services/maintenance-records.service';
 
 @Component({
@@ -35,7 +42,6 @@ import { MaintenanceRecordsService } from './../../../services/maintenance-recor
     `
       .selectGood {
         display: flex;
-        width: 100%;
         margin-left: 20px;
         column-gap: 10px;
         ng-custom-select-loading {
@@ -77,7 +83,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   ) {
     super();
     this.form = this.fb.group({
-      goodId: [null],
+      goodId: [null, Validators.pattern(NUM_POSITIVE)],
       action: [null],
     });
   }
@@ -107,9 +113,18 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     this.selectedGood = good;
   }
 
-  addGood() {
+  async addGood() {
     // console.log(row);
     // debugger;
+    const good = await firstValueFrom(
+      this.goodService.getById(this.form.get('goodId').value)
+    );
+    if (!good) {
+      this.onLoadToast('error', 'Bien', 'No encontrado');
+      return;
+    }
+    console.log('Encontrado');
+    this.selectedGood = good;
     const newGood: IDetailProceedingsDeliveryReception = {
       numberProceedings: +this.nroActa,
       numberGood: this.form.get('goodId').value,
@@ -205,15 +220,13 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           },
           settings: { ...TABLE_SETTINGS },
           tableData: this.rowsSelected,
+          selectFirstInput: false,
           // service: this.proceedingService,
           // dataObservableFn: this.proceedingService.getAll2,
-          labelTemplate: this.actaLabel,
-          optionTemplate: this.actaOption,
           idSelect: 'id',
-          labelSelect: 'keysProceedings',
-          label: 'Acta',
-          paramSearch: 'filter.keysProceedings',
-          prefixSearch: '$ilike',
+          labelSelect: 'id',
+          label: 'N° Acta',
+          paramSearch: 'filter.id',
           path: 'proceeding/api/v1/proceedings-delivery-reception',
           form: this.fb.group({
             numberProceedings: [
@@ -279,6 +292,17 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   }
 
   changeGoodsAct(message: string, numberProceedings: string) {
+    // this.detailService.changeAct(this.rowsSelected, numberProceedings).subscribe({
+    //   next: response => {
+    //     // console.log(re);
+    //     this.onLoadToast('success', 'Bienes Cambiados', message);
+    //     this.updateTable.emit();
+    //   },
+    //   error: err => {
+    //     this.onLoadToast('error', 'Bienes no cambiados', message);
+    //   }
+    // })
+
     this.proceedingService
       .createMassiveDetail(
         this.rowsSelected.map(x => {
@@ -286,21 +310,41 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
             ...x,
             numberProceedings: +numberProceedings,
             numberGood: +(x.numberGood + ''),
+            approvedDateXAdmon: x.approvedDateXAdmon
+              ? firstFormatDateToSecondFormatDate(x.approvedDateXAdmon + '')
+              : null,
+            dateIndicatesUserApproval: x.dateIndicatesUserApproval
+              ? firstFormatDateToSecondFormatDate(
+                  x.dateIndicatesUserApproval + ''
+                )
+              : null,
           };
         })
       )
       .subscribe({
         next: response => {
+          console.log(response);
+          // if(response)
           // debugger;
-          this.proceedingService
-            .deleteMassiveDetails(this.rowsSelected)
-            .subscribe({
-              next: response => {
-                // debugger;
-                this.onLoadToast('success', 'Bienes Actualizados', message);
-                this.updateTable.emit();
-              },
-            });
+          const toDeleteds = response.filter(x =>
+            x.hasOwnProperty('numberGood')
+          );
+          if (toDeleteds && toDeleteds.length > 0) {
+            this.proceedingService
+              .deleteMassiveDetails(this.rowsSelected)
+              .subscribe({
+                next: response => {
+                  // debugger;
+                  this.onLoadToast('success', 'Bienes Actualizados', message);
+                  this.updateTable.emit();
+                },
+              });
+          } else {
+            this.onLoadToast('error', 'No se pudo actualizar bienes', message);
+          }
+        },
+        error: err => {
+          console.log(err);
         },
       });
   }

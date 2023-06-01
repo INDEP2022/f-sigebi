@@ -65,8 +65,11 @@ export class InappropriatenessPgrSatFormComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      senderName: [null, [Validators.required, Validators.maxLength(50)]],
-      positionSender: [null, [Validators.required, Validators.maxLength(50)]],
+      managedTo: [null, [Validators.required, Validators.maxLength(50)]],
+      positionAddressee: [
+        null,
+        [Validators.required, Validators.maxLength(50)],
+      ],
       paragraphInitial: [null, [Validators.maxLength(4000)]],
       foundation: [null, [Validators.maxLength(4000)]],
     });
@@ -82,15 +85,17 @@ export class InappropriatenessPgrSatFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.notification.clarificationType,
-      sender: this.form.controls['senderName'].value,
+      clarification: this.notification?.clarificationType,
+      sender: this.request?.nameOfOwner,
       foundation: this.form.controls['foundation'].value,
       id: null,
       version: 1,
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
-      positionSender: this.form.controls['positionSender'].value,
+      positionSender: this.request?.holderCharge,
       invoiceLearned: this.folioReporte,
+      managedTo: this.form.controls['managedTo'].value,
+      positionAddressee: this.form.controls['positionAddressee'].value,
       //invoiceNumber: 1,
       modificationDate: new Date(),
       creationUser: token.name,
@@ -98,8 +103,8 @@ export class InappropriatenessPgrSatFormComponent
       modificationUser: token.name,
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
-      rejectNoticeId: this.notification.rejectNotificationId,
-      areaUserCapture: token.delegacionreg,
+      rejectNoticeId: this.notification?.rejectNotificationId,
+      areaUserCapture: token.name,
     };
 
     this.loading = true;

@@ -115,6 +115,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   }
 
   confirm() {
+    console.log(this.form.value);
     if (this.form.valid) {
       this.loading = true;
       this.form.get('typeResponsible').patchValue('D');

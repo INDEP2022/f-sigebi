@@ -38,12 +38,21 @@
       <div class="row pt-5">
         <div class="col-md-6">
           <form-field
-            [control]="departmentForm.get('dsarea')"
-            label="Descripci&oacute;n de &aacute;rea">
-            <input type="text" class="form-control" formControlName="dsarea" />
+            [control]="departmentForm.get('id')"
+            label="Clave administrativa">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-6">
+          <form-field
+            [control]="departmentForm.get('dsarea')"
+            label="&Aacute;rea">
+            <input type="text" class="form-control" formControlName="dsarea" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
           <form-field
             [control]="departmentForm.get('description')"
             label="Descripci&oacute;n">
@@ -54,7 +63,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+
+      <!-- <div class="row pt-5">
         <div class="col-md-3">
           <form-field
             [control]="departmentForm.get('lastOffice')"
@@ -105,7 +115,7 @@
               formControlName="phaseEdo" />
           </form-field>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
   <div footer>

@@ -53,7 +53,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   confirm() {
     this.edit ? this.update() : this.create();
   }
-  create() {
+  create(): void {
     this.loading = true;
     this.valuesForm.controls['table'].setValue(this.value.nmtabla);
     this.tvalTableService

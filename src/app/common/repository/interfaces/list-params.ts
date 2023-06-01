@@ -6,7 +6,7 @@ export class ListParams {
   limit?: number = 10;
   pageSize?: number = 10;
   take?: number = 10;
-  //filter?: string = '';
+  // filter?: string = '';
 }
 
 export class FilterBulkTechnical {
@@ -39,6 +39,10 @@ export class FilterParams {
 
   addFilter2(filter: string) {
     this.filters.push(filter);
+  }
+
+  addFilter3(field: string, value: string) {
+    this.filters.push(`${field}=${value}`);
   }
 
   addFilter(field: string, value: string | number, operator?: SearchFilter) {

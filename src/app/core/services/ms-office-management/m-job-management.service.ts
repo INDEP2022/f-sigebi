@@ -56,4 +56,15 @@ export class MJobManagementService extends HttpService {
   ): Observable<IListResponse<IMJobManagement>> {
     return this.post<IListResponse<any>>(`application/maxLnJob`, params);
   }
+
+  create(params?: any): Observable<IListResponse<IMJobManagement>> {
+    return this.post<IListResponse<IMJobManagement>>(
+      'm-job-management',
+      params
+    );
+  }
+
+  update(params?: any): Observable<IListResponse<IMJobManagement>> {
+    return this.put<IListResponse<IMJobManagement>>('m-job-management', params);
+  }
 }

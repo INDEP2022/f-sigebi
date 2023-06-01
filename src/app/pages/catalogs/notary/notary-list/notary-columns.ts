@@ -12,6 +12,22 @@ export const NOTARY_COLUMNS = {
   valid: {
     title: 'Válido',
     type: 'string',
+    valuePrepareFunction: (value: string) => {
+      if (value == 'S') return 'Si';
+      if (value == 'N') return 'No';
+
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'S', title: 'SI' },
+          { value: 'N', title: 'NO' },
+        ],
+      },
+    },
     sort: false,
   },
   notaryNumber: {

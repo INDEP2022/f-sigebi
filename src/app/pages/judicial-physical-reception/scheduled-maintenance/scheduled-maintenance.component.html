@@ -42,13 +42,13 @@
               formControlName="rangeDate"
               readonly
               [maxDate]="hoy" />
+            <div
+              *ngIf="rangeDateValue !== null"
+              class="deleteDate"
+              (click)="deleteRange()">
+              x
+            </div>
           </form-field>
-          <div
-            *ngIf="rangeDateValue !== null"
-            class="deleteDate"
-            (click)="deleteRange()">
-            x
-          </div>
         </div>
         <!-- <div class="col-md-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
@@ -91,7 +91,7 @@
         </div>
       </div>
       <div class="row mb-3">
-        <div class="col-md-12 mt-2">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="coordRegional"
@@ -100,7 +100,7 @@
             bindLabel="description"
             paramSearch="search"
             [multiple]="true"
-            path="catalog/api/v1/delegation">
+            path="catalog/api/v1/delegation/get-all">
           </ng-custom-select-loading>
           <!-- <ng-template #coordinationLabel let-item="item">
             {{ item.id }} - {{ item.description }}
@@ -121,7 +121,7 @@
             [(params)]="paramsCoords"></app-select-form> -->
           <!-- <app-regional-coord-shared [form]="form"></app-regional-coord-shared> -->
         </div>
-        <div class="col-md-12 mt-2">
+        <div class="col-lg-6 mt-2">
           <ng-custom-select-loading
             [form]="form"
             formControlName="usuario"
@@ -158,14 +158,14 @@
             [form]="form"></app-elaborate-users-shared> -->
         </div>
       </div>
-      <div class="row">
+      <!-- <div class="row">
         <form-field [control]="form.get('claveActa')" label="Programación">
           <input
             class="form-control"
             formControlName="claveActa"
             maxlength="75" />
         </form-field>
-      </div>
+      </div> -->
       <!-- <app-key-proceedings-form
         [form]="form"
         statusActaValue="ABIERTA"></app-key-proceedings-form> -->
@@ -199,7 +199,7 @@
             [defaultColumns]="5"></app-columns-select>
           <div
             [class]="
-              loading || loadingExcel || data.length === 0 ? 'disabled' : ''
+              loading || loadingExcel || items.length === 0 ? 'disabled' : ''
             "
             (click)="exportExcel()">
             <app-excel-report
