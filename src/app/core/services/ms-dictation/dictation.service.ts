@@ -227,4 +227,11 @@ export class DictationService extends HttpService {
     const route = `${DictationEndpoints.OfficialDictation}`;
     return this.post(route, params);
   }
+
+  deleteCopiesdictamenetOfficialOpinion(id: number) {
+    return this.delete<IListResponse<IDictationCopies>>(
+      this.route.CopiesOfficialOpinion,
+      id
+    );
+  }
 }
