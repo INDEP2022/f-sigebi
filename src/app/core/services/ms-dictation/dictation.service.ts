@@ -71,6 +71,10 @@ export class DictationService extends HttpService {
     return this.put(this.route.Dictation, body);
   }
 
+  updateExpedientNumber(id: number, body: Partial<IDictation>) {
+    return this.put(this.route.Dictation + '/' + id, body);
+  }
+
   remove(body: { id: string | number; typeDict: string }) {
     return this.delete(this.route.Dictation, body);
   }
