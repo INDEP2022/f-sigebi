@@ -10,7 +10,9 @@
       </form-field>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
-      <form-field [control]="form.get('registerNumber')" label="Dictamen.">
+      <form-field
+        [control]="form.get('registerNumber')"
+        label="No. Oficio Dic.">
         <input
           type="text"
           class="form-control"
@@ -62,6 +64,8 @@
       </button>
     </div>
   </div>
+
+  <p><b>Dictamen</b></p>
   <hr />
   <div class="row mt-5">
     <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
@@ -135,7 +139,7 @@
     </div>
   </div>
 
-  <!--div class="row mt-5">
+  <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('paragraphInitial')"
@@ -173,7 +177,7 @@
           rows="5"></textarea>
       </form-field>
     </div>
-  </div-->
+  </div>
 
   <div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -231,7 +235,7 @@
     </div>
   </div>
 
-  <div class="row mt-5">
+  <!--div class="row mt-5">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <form-field
         [control]="form.get('masInfo_3')"
@@ -243,7 +247,7 @@
           rows="5"></textarea>
       </form-field>
     </div>
-  </div>
+  </div-->
 
   <!---
       <ng-container formArrayName="extPerson">

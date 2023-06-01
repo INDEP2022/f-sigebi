@@ -76,6 +76,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     // debugger;
     let vobserv_padre = 'Bien(es) parcializado(s): ';
     let vdesc_padre = 'Bien(es) generado(s): ';
+
     return this.goodService.getValidSeq().pipe(
       map(x => {
         item.noBien = x;
@@ -795,7 +796,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     // this.loading = true;
     this.msgSaveModal(
       'Aceptar',
-      '¿Desea aplicar para parcialización los bienes en la tabla?',
+      '¿Desea parcializar los bienes?',
       'Confirmación',
       undefined
     );
