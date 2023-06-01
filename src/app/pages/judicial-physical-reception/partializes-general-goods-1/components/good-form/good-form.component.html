@@ -1,7 +1,7 @@
 <form class="form-material" [formGroup]="form" id="good-form-partialized">
   <div class="row">
     <div class="col-md-4" style="display: flex; column-gap: 15px">
-      <form-field [control]="form.get('noBien')" label="N° de bien">
+      <form-field [control]="form.get('noBien')" label="No. de bien">
         <input class="form-control" formControlName="noBien" maxlength="10" />
       </form-field>
       <button
@@ -18,7 +18,7 @@
         value="goodId"
         bindLabel="goodId"
         paramSearch="filter.goodId"
-        typeToSearchText="Escriba el N° de bien"
+        typeToSearchText="Escriba el No de bien"
         [prefixSearch]="goodFilter"
         [moreParams]="moreParams"
         [isLoadInOnInit]="false"
@@ -75,7 +75,7 @@
             <div class="row pt-2">
               <div class="col-md-6">
                 <div>
-                  <label for="">No&#46; Bien&#58;</label>
+                  <label for="">No. Bien&#58;</label>
                   {{ goodId }}
                 </div>
               </div>
@@ -135,7 +135,7 @@
               </div>
               <div class="col-md-6">
                 <div>
-                  <label for="">No Expediente:</label>
+                  <label for="">No. Expediente:</label>
                   {{ good?.fileNumber }}
                 </div>
               </div>
