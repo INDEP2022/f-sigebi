@@ -176,6 +176,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.addresseeDataSelect = null;
     const token = this.authService.decodeToken();
     console.log(token);
+    this.anotherSearchAppointment();
     if (token.preferred_username) {
       this.getUserDataLogged(
         token.preferred_username
