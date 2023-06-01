@@ -15,6 +15,7 @@ import {
   lastValueFrom,
   map,
   of,
+  skip,
   switchMap,
   takeUntil,
   tap,
@@ -496,6 +497,10 @@ export class EventCaptureComponent
   }
 
   async ngOnInit() {
+    const { responsible } = this.registerControls;
+    responsible.valueChanges.pipe(skip(1)).subscribe(() => {
+      this.generateCve();
+    });
     await this.initForm();
   }
 
@@ -736,9 +741,22 @@ export class EventCaptureComponent
     );
   }
 
+  getType() {
+    const params = new FilterParams();
+    params.addFilter('certificateType', this.global.paperworkArea);
+    return lastValueFrom(
+      this.indicatorParametersService.getAll(params.getParams()).pipe(
+        catchError(() => of(null)),
+        map(res => res.data[0].procedureArea.id)
+      )
+    );
+  }
+
   async initForm() {
     this.getInitialParameter();
-
+    if (this.global.paperworkArea) {
+      this.global.paperworkArea = await this.getType();
+    }
     this.getUserLevel().subscribe();
     this.ctrlButtons.sendSise.hide();
     this.ctrlButtons.signOffice.hide();
